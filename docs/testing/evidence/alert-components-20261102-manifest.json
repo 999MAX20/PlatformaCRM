@@ -1,0 +1,1235 @@
+{
+  "task": "ALERT-COMPONENTS-20261102",
+  "completedLocalDate": "2026-11-03",
+  "root": "C:\\Users\\user\\Desktop\\PlatformaCRM",
+  "branch": "codex/ui-testing-toolkit",
+  "head": "e02a28f550e94a543c3d88acac7c1b19ee48f90b",
+  "boundary": "Dirty canonical tree, own delta only. No release/live certification; foreign WIP preserved.",
+  "ownedSource": {
+    "frontend/src/components/ui/StatusNotice.tsx": {
+      "before": "1d89e110ee63459efdf242f123f04a71c63bfbdc63d295830485955d8fa42db3",
+      "after": "0511da1fdeaf3d0baf67d43fb82e9328105eaff82278fd73dcb1568b278d8f75"
+    },
+    "frontend/src/styles.css": {
+      "before": "932d89b91a04042bb38def4f45d2d850aeee5f4bb17d1d1b54ad37ab93ba8b3e",
+      "after": "db29887a73fc9c1e1dc072122cd538324f3c21c3e7729930639c3677ffc206b0"
+    },
+    "frontend/src/app/providers.tsx": {
+      "before": "a90f3ed360be50bf68061f8e666107f7421d6167be4e4db7797c68739a8a4f39",
+      "after": "f06675724b17be8888fb6ee9a305ca188687a75b288b4e9a63f3475a0699811a"
+    },
+    "frontend/src/components/notifications/NotificationHost.tsx": {
+      "before": null,
+      "after": "53987dce8cc686949be6576af636ff08a48653ea82d5fc35cd55b0635d32c571"
+    },
+    "frontend/src/components/notifications/NotificationProvider.tsx": {
+      "before": "7ba86c1f9610f80d1935cace8d03779725badc54d05d2af821b2ae7cca045918",
+      "after": "cec592082167ee8ca843e7b7c16cc2b78ab90d20698f19a20330438fc60f47df"
+    },
+    "frontend/src/components/notifications/notificationPolicy.ts": {
+      "before": "c6f239479351bee93d85b1981e10f347c21a60b46e7a0054c19b084db915f0a9",
+      "after": "4d5c23a58c615880180d5936349cf78eff286307194eca1f6a141618369a8506"
+    },
+    "frontend/src/components/actions/UndoToastProvider.tsx": {
+      "before": "f83f6fb0748de00e4b1993f5f28c145a6ab684c47f0e8ce7085f98037bc5de41",
+      "after": "45c227437ec80a24f576ce4507fcb24713d807a08f36e54f4ff2eb04d1ae2de0"
+    },
+    "frontend/src/components/ui/ConnectivityBanner.tsx": {
+      "before": "fae52dab137ecc277d5fe3b68a5e77e57a4b76e6a11d86d88495a9c66a562e78",
+      "after": "9b7401d5aea0555cbf88000c84c01e5a23765c6c0ebe0032046e1b40a939181b"
+    },
+    "frontend/src/components/ui/ConnectivityStatus.tsx": {
+      "before": "0bcc035bf0b56b78a60064db4bf07d8256f1b4eb62f9f18afba5c9ffc17beb36",
+      "after": "eb0e1e131967ce40ab830ca1683428836d1f831cbb9863e684b9731c6f45dc2b"
+    },
+    "frontend/src/components/ui/FieldErrorSummary.tsx": {
+      "before": "52174eb52cd22ab3e87ab19f3a2ce25119867749dcd97a4ba5678a59c1623963",
+      "after": "6cae25089240eb9ee010315b088f3546c14c95f757c62122863393bc2ffbe4b0"
+    },
+    "frontend/src/components/ui/FallbackSurfaces.tsx": {
+      "before": "cb2ace1eb06932825e2031dab49b672d235dfd5ae9808e150456c84c331c9441",
+      "after": "45b9c33f72d93b94e354e9b13c3b0d94091b0a0e7394b011bebce3c07a8211ab"
+    },
+    "frontend/src/components/notifications/UnreadMessagesNotice.tsx": {
+      "before": "6ba42f0d6fb781e04534f0357227cf6f30878f9f49a183bf55f062333d788046",
+      "after": "adf8176f8331c0542c21b3121e05d4a1388e934e45310ed1d647d8a1d4eebcca"
+    },
+    "frontend/src/components/layout/InboxNotificationEffects.tsx": {
+      "before": "d9e0944787cc87be253a36657325ee951f1782664b47c7d0bf014f8b6d1b6b43",
+      "after": "184a8a17fdc167453c91a8395cbae9a78bbc07aeb018fdb01e5b921f52bdb446"
+    },
+    "frontend/scripts/tests/notification-dedupe.test.mjs": {
+      "before": "4c4dfa342a5df84add19ca64f87fb4a0555d965254331665708327932284bfd6",
+      "after": "3c493438f6a78724cdffc9ee6b25cbe3b9bf5b253aa4a052c4f5b3a959b434b5"
+    },
+    "frontend/scripts/tests/fallback-surface-policy.test.mjs": {
+      "before": "8a67321a5dd0ca2b0e42bb07c2e36a703ee0a74c9a6f9fc57b3968bc29fdb57f",
+      "after": "b156056076cccbb18dbceae5256153330795bfaea00943f00854a5547d252875"
+    },
+    "frontend/e2e/state-behavior.spec.ts": {
+      "before": "04350e49d56440f39ce4407eb7340924cd33b5d1a96ca94029d8ca5da7b2a805",
+      "after": "bd8d8061183eefeda77e95d504418342ca3895e2a7416b783468a3810ea6d5fe"
+    },
+    "frontend/e2e/fixtures/alert-components.html": {
+      "before": null,
+      "after": "e656963176c50d0c2650685da51a6285b8eb922e5a7390ac82fea3f2849ee6ea"
+    },
+    "frontend/e2e/fixtures/alert-components.tsx": {
+      "before": null,
+      "after": "2fafca5dc7070ca5f0bd6d34830a1af569a50e6eb7bf23530c929ab14b275720"
+    },
+    "frontend/e2e/alert-components.spec.ts": {
+      "before": null,
+      "after": "b200a5c598a3b3aa26b1dfe13983afc11deb19b11806b4bdb99aaccb9cb6ad46"
+    },
+    "frontend/playwright.alerts.config.ts": {
+      "before": null,
+      "after": "892ddf8475fe89cdb4426c1d2d90caed108c18800c3b2a6cae1affea6454fda4"
+    },
+    "frontend/e2e/alert-application.spec.ts": {
+      "before": null,
+      "after": "99c67eca95a1414d648914965f24289aa86edf52859c64fd492763f3abbe7ea6"
+    },
+    "frontend/playwright.alert-app.config.ts": {
+      "before": null,
+      "after": "31b9d2a3e539baf2e152e511303923b523f10a92623af19f81eb6f0b7c7f0d7d"
+    }
+  },
+  "dependencyInputs": {
+    "frontend/package.json": "9ab5c255c4cc3762ec9dde652858227015cd4524a626764dad315eb93d7834b1",
+    "frontend/package-lock.json": "761474d8afcf44c975a3a0eb5497f3207bf18d4c28568f9b5747b52be88fea84",
+    "frontend/vite.config.ts": "290771b45b9118397bf9fd9b7fbbf3dcc564051dbd765731675345a45180d4fc",
+    "frontend/tsconfig.app.json": "f9d244af30ca5582e226ce9e4159a8cf9eecf378d7a7ba27842c5e2d0c01b8d4"
+  },
+  "runtime": {
+    "root": "C:\\Users\\user\\Desktop\\PlatformaCRM",
+    "backend": "http://127.0.0.1:58234",
+    "frontend": "http://127.0.0.1:58235",
+    "database": "C:\\Users\\user\\Desktop\\PlatformaCRM\\output\\alert-components-20261102\\alerts.sqlite3",
+    "processes": [
+      {
+        "name": "backend",
+        "pid": 1744
+      },
+      {
+        "name": "frontend",
+        "pid": 15872
+      }
+    ]
+  },
+  "tests": {
+    "node": 24,
+    "componentBrowser": 29,
+    "isolatedApplicationBrowser": 3,
+    "build": "PASS: i18n6650 + tsc -b + app/widget"
+  },
+  "localLogs": {
+    "node-before-test-update.log": "9af7fd896a748ad1a1ea7c117e23049992261fbec024420676b7c930ca74fad5",
+    "node-final.log": "cbe7758537e91299b97b862098389fe1ecd14a2a92b601452ec6a66043d32f48",
+    "browser-run1.log": "0fdf781025f78798f8027889712f48dd55387692ccf9edefeec5c3b833a310d8",
+    "browser-targeted2.log": "8b369e01c15ab48f0e05142cad799d47ead8e917f723c478d74c112a10016259",
+    "browser-targeted3.log": "f85524883772d0d486ee619482f7237bca9761c185822180567f31e108ac5328",
+    "browser-run4.log": "665cec829831a052e47163ef26358881ae0e96e974048994edc3a72d87ec17ab",
+    "browser-chat5.log": "38e179ef79c475c2541452ae785144e36353df10138c23ecdf56f9392f52bf5c",
+    "browser-final.log": "1cd2b154190ac8e1032bad8fb58de280e477554b3c68e823afad34ac9c701038",
+    "app-run1.log": "f18721fe18cefb99cf1ebc8b0e1a3eedd3b3c8d78e435a63e3015dbf3c50d06b",
+    "app-run2.log": "4819d84a6c7abcbc3f2f74ec4efa6898279581ddeed4fe3fee6c826d4ecd2d96",
+    "build.log": "defa0cb59a5b1ddde277c0017f02d1dcc9fbbafa76d6ff978ea12d23ac952f3b",
+    "migrate.log": "10e771c4766389e777d330d1fb7a8209074a4058858e135333c7af78b22d3502",
+    "seed.log": "dce846a6b4d33091e4a9c40b5aa255fb0a7306b284bb12e63e5db52ca8538b7d"
+  },
+  "computedStyles": {
+    "computed-en-1440.json": {
+      "cards": [
+        {
+          "tone": "warning",
+          "background": "rgb(244, 197, 66)",
+          "color": "rgb(23, 32, 30)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 380,
+          "top": 854,
+          "bottom": 976,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "success",
+          "background": "rgb(0, 122, 89)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 380,
+          "top": 732,
+          "bottom": 846,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "info",
+          "background": "rgb(36, 94, 138)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 380,
+          "top": 602,
+          "bottom": 724,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "warning",
+          "background": "rgb(244, 197, 66)",
+          "color": "rgb(23, 32, 30)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 380,
+          "top": 472,
+          "bottom": 594,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "danger",
+          "background": "rgb(163, 59, 53)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 380,
+          "top": 342,
+          "bottom": 464,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "success",
+          "background": "rgb(0, 122, 89)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 380,
+          "top": 212,
+          "bottom": 334,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        }
+      ],
+      "host": {
+        "left": 1036,
+        "right": 1416,
+        "bottom": 976,
+        "width": 380
+      },
+      "overflow": false,
+      "navTop": 0
+    },
+    "computed-en-320.json": {
+      "cards": [
+        {
+          "tone": "warning",
+          "background": "rgb(244, 197, 66)",
+          "color": "rgb(23, 32, 30)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 288,
+          "top": 748,
+          "bottom": 912,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "success",
+          "background": "rgb(0, 122, 89)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 288,
+          "top": 626,
+          "bottom": 740,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "info",
+          "background": "rgb(36, 94, 138)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 288,
+          "top": 475,
+          "bottom": 618,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "warning",
+          "background": "rgb(244, 197, 66)",
+          "color": "rgb(23, 32, 30)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 288,
+          "top": 324,
+          "bottom": 467,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "danger",
+          "background": "rgb(163, 59, 53)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 288,
+          "top": 173,
+          "bottom": 316,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "success",
+          "background": "rgb(0, 122, 89)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 288,
+          "top": 22,
+          "bottom": 165,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        }
+      ],
+      "host": {
+        "left": 16,
+        "right": 304,
+        "bottom": 912,
+        "width": 288
+      },
+      "overflow": false,
+      "navTop": 928
+    },
+    "computed-en-390.json": {
+      "cards": [
+        {
+          "tone": "warning",
+          "background": "rgb(244, 197, 66)",
+          "color": "rgb(23, 32, 30)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 358,
+          "top": 790,
+          "bottom": 912,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "success",
+          "background": "rgb(0, 122, 89)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 358,
+          "top": 668,
+          "bottom": 782,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "info",
+          "background": "rgb(36, 94, 138)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 358,
+          "top": 538,
+          "bottom": 660,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "warning",
+          "background": "rgb(244, 197, 66)",
+          "color": "rgb(23, 32, 30)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 358,
+          "top": 408,
+          "bottom": 530,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "danger",
+          "background": "rgb(163, 59, 53)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 358,
+          "top": 278,
+          "bottom": 400,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "success",
+          "background": "rgb(0, 122, 89)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 358,
+          "top": 148,
+          "bottom": 270,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        }
+      ],
+      "host": {
+        "left": 16,
+        "right": 374,
+        "bottom": 912,
+        "width": 358
+      },
+      "overflow": false,
+      "navTop": 928
+    },
+    "computed-en-768.json": {
+      "cards": [
+        {
+          "tone": "warning",
+          "background": "rgb(244, 197, 66)",
+          "color": "rgb(23, 32, 30)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 380,
+          "top": 782,
+          "bottom": 904,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "success",
+          "background": "rgb(0, 122, 89)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 380,
+          "top": 660,
+          "bottom": 774,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "info",
+          "background": "rgb(36, 94, 138)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 380,
+          "top": 530,
+          "bottom": 652,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "warning",
+          "background": "rgb(244, 197, 66)",
+          "color": "rgb(23, 32, 30)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 380,
+          "top": 400,
+          "bottom": 522,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "danger",
+          "background": "rgb(163, 59, 53)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 380,
+          "top": 270,
+          "bottom": 392,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "success",
+          "background": "rgb(0, 122, 89)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 380,
+          "top": 140,
+          "bottom": 262,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        }
+      ],
+      "host": {
+        "left": 364,
+        "right": 744,
+        "bottom": 904,
+        "width": 380
+      },
+      "overflow": false,
+      "navTop": 928
+    },
+    "computed-kk-1440.json": {
+      "cards": [
+        {
+          "tone": "warning",
+          "background": "rgb(244, 197, 66)",
+          "color": "rgb(23, 32, 30)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 380,
+          "top": 854,
+          "bottom": 976,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "success",
+          "background": "rgb(0, 122, 89)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 380,
+          "top": 732,
+          "bottom": 846,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "info",
+          "background": "rgb(36, 94, 138)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 380,
+          "top": 602,
+          "bottom": 724,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "warning",
+          "background": "rgb(244, 197, 66)",
+          "color": "rgb(23, 32, 30)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 380,
+          "top": 472,
+          "bottom": 594,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "danger",
+          "background": "rgb(163, 59, 53)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 380,
+          "top": 342,
+          "bottom": 464,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "success",
+          "background": "rgb(0, 122, 89)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 380,
+          "top": 212,
+          "bottom": 334,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        }
+      ],
+      "host": {
+        "left": 1036,
+        "right": 1416,
+        "bottom": 976,
+        "width": 380
+      },
+      "overflow": false,
+      "navTop": 0
+    },
+    "computed-kk-320.json": {
+      "cards": [
+        {
+          "tone": "warning",
+          "background": "rgb(244, 197, 66)",
+          "color": "rgb(23, 32, 30)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 288,
+          "top": 748,
+          "bottom": 912,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "success",
+          "background": "rgb(0, 122, 89)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 288,
+          "top": 626,
+          "bottom": 740,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "info",
+          "background": "rgb(36, 94, 138)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 288,
+          "top": 454,
+          "bottom": 618,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "warning",
+          "background": "rgb(244, 197, 66)",
+          "color": "rgb(23, 32, 30)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 288,
+          "top": 282,
+          "bottom": 446,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "danger",
+          "background": "rgb(163, 59, 53)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 288,
+          "top": 110,
+          "bottom": 274,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "success",
+          "background": "rgb(0, 122, 89)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 288,
+          "top": -62,
+          "bottom": 102,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        }
+      ],
+      "host": {
+        "left": 16,
+        "right": 304,
+        "bottom": 912,
+        "width": 288
+      },
+      "overflow": false,
+      "navTop": 928
+    },
+    "computed-kk-390.json": {
+      "cards": [
+        {
+          "tone": "warning",
+          "background": "rgb(244, 197, 66)",
+          "color": "rgb(23, 32, 30)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 358,
+          "top": 769,
+          "bottom": 912,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "success",
+          "background": "rgb(0, 122, 89)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 358,
+          "top": 647,
+          "bottom": 761,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "info",
+          "background": "rgb(36, 94, 138)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 358,
+          "top": 517,
+          "bottom": 639,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "warning",
+          "background": "rgb(244, 197, 66)",
+          "color": "rgb(23, 32, 30)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 358,
+          "top": 387,
+          "bottom": 509,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "danger",
+          "background": "rgb(163, 59, 53)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 358,
+          "top": 257,
+          "bottom": 379,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "success",
+          "background": "rgb(0, 122, 89)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 358,
+          "top": 127,
+          "bottom": 249,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        }
+      ],
+      "host": {
+        "left": 16,
+        "right": 374,
+        "bottom": 912,
+        "width": 358
+      },
+      "overflow": false,
+      "navTop": 928
+    },
+    "computed-kk-768.json": {
+      "cards": [
+        {
+          "tone": "warning",
+          "background": "rgb(244, 197, 66)",
+          "color": "rgb(23, 32, 30)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 380,
+          "top": 782,
+          "bottom": 904,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "success",
+          "background": "rgb(0, 122, 89)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 380,
+          "top": 660,
+          "bottom": 774,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "info",
+          "background": "rgb(36, 94, 138)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 380,
+          "top": 530,
+          "bottom": 652,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "warning",
+          "background": "rgb(244, 197, 66)",
+          "color": "rgb(23, 32, 30)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 380,
+          "top": 400,
+          "bottom": 522,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "danger",
+          "background": "rgb(163, 59, 53)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 380,
+          "top": 270,
+          "bottom": 392,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "success",
+          "background": "rgb(0, 122, 89)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 380,
+          "top": 140,
+          "bottom": 262,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        }
+      ],
+      "host": {
+        "left": 364,
+        "right": 744,
+        "bottom": 904,
+        "width": 380
+      },
+      "overflow": false,
+      "navTop": 928
+    },
+    "computed-ru-1440.json": {
+      "cards": [
+        {
+          "tone": "warning",
+          "background": "rgb(244, 197, 66)",
+          "color": "rgb(23, 32, 30)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 380,
+          "top": 854,
+          "bottom": 976,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "success",
+          "background": "rgb(0, 122, 89)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 380,
+          "top": 732,
+          "bottom": 846,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "info",
+          "background": "rgb(36, 94, 138)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 380,
+          "top": 602,
+          "bottom": 724,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "warning",
+          "background": "rgb(244, 197, 66)",
+          "color": "rgb(23, 32, 30)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 380,
+          "top": 472,
+          "bottom": 594,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "danger",
+          "background": "rgb(163, 59, 53)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 380,
+          "top": 342,
+          "bottom": 464,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "success",
+          "background": "rgb(0, 122, 89)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 380,
+          "top": 212,
+          "bottom": 334,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        }
+      ],
+      "host": {
+        "left": 1036,
+        "right": 1416,
+        "bottom": 976,
+        "width": 380
+      },
+      "overflow": false,
+      "navTop": 0
+    },
+    "computed-ru-320.json": {
+      "cards": [
+        {
+          "tone": "warning",
+          "background": "rgb(244, 197, 66)",
+          "color": "rgb(23, 32, 30)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 288,
+          "top": 748,
+          "bottom": 912,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "success",
+          "background": "rgb(0, 122, 89)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 288,
+          "top": 626,
+          "bottom": 740,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "info",
+          "background": "rgb(36, 94, 138)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 288,
+          "top": 433,
+          "bottom": 618,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "warning",
+          "background": "rgb(244, 197, 66)",
+          "color": "rgb(23, 32, 30)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 288,
+          "top": 240,
+          "bottom": 425,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "danger",
+          "background": "rgb(163, 59, 53)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 288,
+          "top": 47,
+          "bottom": 232,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "success",
+          "background": "rgb(0, 122, 89)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 288,
+          "top": -146,
+          "bottom": 39,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        }
+      ],
+      "host": {
+        "left": 16,
+        "right": 304,
+        "bottom": 912,
+        "width": 288
+      },
+      "overflow": false,
+      "navTop": 928
+    },
+    "computed-ru-390.json": {
+      "cards": [
+        {
+          "tone": "warning",
+          "background": "rgb(244, 197, 66)",
+          "color": "rgb(23, 32, 30)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 358,
+          "top": 769,
+          "bottom": 912,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "success",
+          "background": "rgb(0, 122, 89)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 358,
+          "top": 647,
+          "bottom": 761,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "info",
+          "background": "rgb(36, 94, 138)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 358,
+          "top": 496,
+          "bottom": 639,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "warning",
+          "background": "rgb(244, 197, 66)",
+          "color": "rgb(23, 32, 30)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 358,
+          "top": 345,
+          "bottom": 488,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "danger",
+          "background": "rgb(163, 59, 53)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 358,
+          "top": 194,
+          "bottom": 337,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "success",
+          "background": "rgb(0, 122, 89)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 358,
+          "top": 43,
+          "bottom": 186,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        }
+      ],
+      "host": {
+        "left": 16,
+        "right": 374,
+        "bottom": 912,
+        "width": 358
+      },
+      "overflow": false,
+      "navTop": 928
+    },
+    "computed-ru-768.json": {
+      "cards": [
+        {
+          "tone": "warning",
+          "background": "rgb(244, 197, 66)",
+          "color": "rgb(23, 32, 30)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 380,
+          "top": 782,
+          "bottom": 904,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "success",
+          "background": "rgb(0, 122, 89)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 380,
+          "top": 660,
+          "bottom": 774,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "info",
+          "background": "rgb(36, 94, 138)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 380,
+          "top": 530,
+          "bottom": 652,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "warning",
+          "background": "rgb(244, 197, 66)",
+          "color": "rgb(23, 32, 30)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 380,
+          "top": 400,
+          "bottom": 522,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "danger",
+          "background": "rgb(163, 59, 53)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 380,
+          "top": 270,
+          "bottom": 392,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        },
+        {
+          "tone": "success",
+          "background": "rgb(0, 122, 89)",
+          "color": "rgb(255, 255, 255)",
+          "padding": "16px",
+          "radius": "12px",
+          "width": 380,
+          "top": 140,
+          "bottom": 262,
+          "font": "14px",
+          "line": "21px",
+          "atomic": "true"
+        }
+      ],
+      "host": {
+        "left": 364,
+        "right": 744,
+        "bottom": 904,
+        "width": 380
+      },
+      "overflow": false,
+      "navTop": 928
+    }
+  },
+  "screenshots": {
+    "app-error-ru.png": "ae5badf78a9b991bd25a0bd44b3db72a4cd3817e68215973c58830281e13e727",
+    "app-success-en.png": "1ba066612b514fa45fecfece2967337e6bc48147ae4169154cbaf373e9d44320",
+    "forced-colors.png": "2c55b1ab6d98a294b1a89f4aa2f99cb5b5edc35a596c636c6317097f32997865",
+    "stack-ru-1440.png": "07c2fa45486e2bdd8b4641b52247cfaa5d5f7f67c1441d2f13567b7b4651bf63",
+    "stack-ru-390.png": "994e1eac0c1a7ee3f60f21b06b5c1655902e642ee7d26f9cf61d616442d0d358"
+  },
+  "publication": {
+    "actualRemoteMain": "e02a28f550e94a543c3d88acac7c1b19ee48f90b",
+    "trackingRefCaveat": "origin/main is stale because remote.origin.fetch does not include main; verified FETCH_HEAD and ls-remote instead.",
+    "blockedBy": "pre-existing .git/index.lock, empty index; no own commit/push/CI/deploy"
+  }
+}

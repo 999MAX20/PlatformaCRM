@@ -16,6 +16,9 @@ export DEBUG="${DEBUG:-True}"
 export SECRET_KEY="${SECRET_KEY:-dev-secret-key-change-for-production-32-plus-chars}"
 export DATABASE_URL="${DATABASE_URL:-sqlite:///db.sqlite3}"
 export REDIS_URL="${REDIS_URL:-memory://}"
+if [ "$REDIS_URL" = "memory://" ]; then
+  export DJANGO_CACHE_URL="${DJANGO_CACHE_URL:-locmemcache://pilot-smoke}"
+fi
 export CELERY_TASK_ALWAYS_EAGER="${CELERY_TASK_ALWAYS_EAGER:-True}"
 export CELERY_TASK_STORE_EAGER_RESULT="${CELERY_TASK_STORE_EAGER_RESULT:-False}"
 export AUTOMATIONS_RUN_INLINE="${AUTOMATIONS_RUN_INLINE:-True}"

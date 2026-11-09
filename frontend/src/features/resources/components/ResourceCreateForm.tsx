@@ -9,12 +9,13 @@ import { Button } from "../../../components/ui/Button";
 import { useI18n } from "../../../lib/i18n";
 import type { Id, Resource, TeamMember, WorkingHours } from "../../../types";
 
-export function ResourceCreateForm({ businessId, initial, teamMembers, businessHours, disabled, onSubmit }: {
+export function ResourceCreateForm({ businessId, initial, teamMembers, businessHours, disabled, onSubmit, submitError }: {
   businessId: Id;
   initial?: Partial<Resource>;
   teamMembers: TeamMember[];
   businessHours: WorkingHours[];
   disabled: boolean;
+  submitError?: unknown;
   onSubmit: (payload: Partial<Resource>) => Promise<unknown>;
 }) {
   const { t } = useI18n();
@@ -23,7 +24,10 @@ export function ResourceCreateForm({ businessId, initial, teamMembers, businessH
   const branches = useQuery({ queryKey: ["branches", businessId], queryFn: () => branchesApi.listAll({ business: businessId }) });
   if (branches.isLoading) return <LoadingState />;
   if (branches.error) return <ErrorState error={branches.error} />;
-  if (branches.data?.length) return <ResourceForm businessId={businessId} initial={initial} teamMembers={teamMembers} disabled={disabled} showContextHint={false} onSubmit={onSubmit} />;
+  if (branches.data?.length) return <>
+    {submitError ? <ErrorState error={submitError} /> : null}
+    <ResourceForm businessId={businessId} initial={initial} teamMembers={teamMembers} disabled={disabled} showContextHint={false} onSubmit={onSubmit} />
+  </>;
   if (!scheduleStep || !draft) return (
     <ResourceForm businessId={businessId} initial={draft || initial} teamMembers={teamMembers}
       disabled={disabled} showContextHint={false} submitLabel={t("resources.setupSchedule")}

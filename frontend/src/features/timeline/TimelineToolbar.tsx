@@ -33,9 +33,9 @@ export function TimelineToolbar({
       data-testid="timeline-toolbar"
     >
       {filters.entity_id ? <p className="text-sm text-platforma-subtle">{t("timeline.object")} #{filters.entity_id}</p> : null}
-      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-[minmax(180px,1fr)_minmax(160px,220px)_minmax(160px,220px)]">
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-[minmax(0,var(--global-search-width,480px))_minmax(160px,220px)_minmax(160px,220px)]">
         <Input
-          aria-label={t("timeline.search")}
+          pageSearch aria-label={t("timeline.search")}
           placeholder={t("timeline.searchPlaceholder")}
           leftIcon={<Search size={18} />}
           type="search"

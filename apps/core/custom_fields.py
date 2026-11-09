@@ -20,6 +20,8 @@ def custom_field_entity_access(*, actor, business, entity_type, entity_id, actio
         "lead": ("leads.Lead", Resources.LEADS),
         "deal": ("crm.Deal", Resources.DEALS),
         "appointment": ("scheduling.Appointment", Resources.APPOINTMENTS),
+        "service": ("services.Service", Resources.SETTINGS),
+        "specialist": ("scheduling.Resource", Resources.SETTINGS),
     }
     if not user_can_access_business(actor, business):
         raise PermissionDenied("Business is not available.")
@@ -29,6 +31,8 @@ def custom_field_entity_access(*, actor, business, entity_type, entity_id, actio
     entity = apps.get_model(model_name).objects.filter(business=business, pk=entity_id).first()
     if entity is None:
         raise ValidationError({"entity_id": "CRM record is not available."})
+    if entity_type == "specialist" and entity.resource_type != "staff":
+        raise ValidationError({"entity_id": "Select a specialist record."})
     assert_resource_enabled(business, resource)
     assert_can(actor, business, Resources.SETTINGS, Actions.VIEW)
     assert_can(actor, business, resource, Actions.VIEW, obj=entity)
@@ -43,6 +47,26 @@ def assert_custom_field_editable(definition, actor):
         raise ValidationError({"definition": "Inactive fields cannot be edited."})
     if not all(custom_field_role_allowed(definition, actor, action) for action in ("view", "edit")):
         raise PermissionDenied("You cannot edit this custom field.")
+
+
+def scope_custom_field_values(queryset, *, actor):
+    from django.db.models import CharField, Subquery
+    from django.db.models.functions import Cast
+    from apps.businesses.access import Resources
+    from apps.core.crm_read_scope import readable_queryset, scope_entity_history
+    from apps.core.permissions import accessible_businesses
+    from apps.services.models import Service
+    from apps.scheduling.models import Resource
+
+    result = scope_entity_history(queryset.exclude(entity_type__in=["service", "specialist"]), actor=actor)
+    for business in accessible_businesses(actor):
+        for kind, entities in (("service", Service.objects.all()),
+                               ("specialist", Resource.objects.filter(resource_type="staff"))):
+            visible = readable_queryset(entities, actor=actor, business=business, resource=Resources.SETTINGS)
+            ids = visible.order_by().annotate(entity_id_text=Cast("pk", CharField())).values("entity_id_text")
+            result |= queryset.filter(business=business, definition__business=business,
+                definition__entity_type=kind, entity_type=kind, entity_id__in=Subquery(ids))
+    return result
 
 
 def custom_field_role_allowed(definition, user, action):

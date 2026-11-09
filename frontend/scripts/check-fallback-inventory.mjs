@@ -8,6 +8,7 @@ import {
   apiModulePolicies,
   backgroundTaskPolicies,
   defectPrecedents,
+  historicalDefectSource,
   errorCodeRegistry,
   fallbackCategories,
   idempotentMutationRules,
@@ -84,12 +85,12 @@ function normalizeEndpoint(raw) {
     .replace(/\$\{[^}]+\}/g, ":param")
     .replace(/\\`/g, "`")
     .trim();
-  return endpoint.startsWith("/api/") ? endpoint : null;
+  return endpoint.startsWith("/api/") || endpoint === "/ready/" ? endpoint : null;
 }
 
 // Resolve only literal const values, using lexical symbols so shadowed identifiers
 // cannot inherit a module-level endpoint. Never execute application source.
-export function constantApiArguments(source) {
+export function constantApiArguments(source, { patterns = false } = {}) {
   const fileName = "inventory.ts";
   const ast = ts.createSourceFile(fileName, source, ts.ScriptTarget.Latest, true);
   const program = ts.createProgram([fileName], { noLib: true, noResolve: true }, {
@@ -105,7 +106,8 @@ export function constantApiArguments(source) {
   function resolve(node, seen = new Set()) {
     if (!node || seen.has(node)) return null;
     seen = new Set([...seen, node]);
-    if (ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node)) return node.text;
+    if (ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node)) return [node.text];
+    if (patterns && (ts.isParenthesizedExpression(node) || ts.isAsExpression(node))) return resolve(node.expression, seen);
     if (ts.isIdentifier(node)) {
       const declaration = checker.getSymbolAtLocation(node)?.valueDeclaration;
       if (declaration && ts.isVariableDeclaration(declaration)
@@ -113,13 +115,29 @@ export function constantApiArguments(source) {
           && (declaration.parent.flags & ts.NodeFlags.Const)) {
         return resolve(declaration.initializer, seen);
       }
+      if (patterns && declaration && ts.isParameter(declaration)) return [":param"];
+    }
+    if (patterns && ts.isConditionalExpression(node)) {
+      const left = resolve(node.whenTrue, seen);
+      const right = resolve(node.whenFalse, seen);
+      return left && right ? [...new Set([...left, ...right])] : null;
+    }
+    if (patterns && ts.isCallExpression(node) && ts.isIdentifier(node.expression)) {
+      const declaration = checker.getSymbolAtLocation(node.expression)?.valueDeclaration;
+      if (declaration && ts.isVariableDeclaration(declaration)
+          && ts.isVariableDeclarationList(declaration.parent) && (declaration.parent.flags & ts.NodeFlags.Const)
+          && declaration.initializer && ts.isArrowFunction(declaration.initializer)) {
+        return resolve(declaration.initializer.body, seen);
+      }
     }
     if (ts.isTemplateExpression(node)) {
-      let result = node.head.text;
+      let result = [node.head.text];
       for (const span of node.templateSpans) {
-        const value = resolve(span.expression, seen);
+        const value = resolve(span.expression, seen)
+          ?? (patterns && ts.isPropertyAccessExpression(span.expression) ? [":param"] : null);
         if (value === null) return null;
-        result += value + span.literal.text;
+        result = result.flatMap(prefix => value.map(item => prefix + item + span.literal.text));
+        if (result.length > 64) return null;
       }
       return result;
     }
@@ -128,7 +146,7 @@ export function constantApiArguments(source) {
   function visit(node) {
     if (ts.isCallExpression(node)) {
       const value = resolve(node.arguments[0]);
-      if (value !== null) values.set(node.expression.getStart(ast), value);
+      if (value !== null) values.set(node.expression.getStart(ast), patterns ? value : value[0]);
     }
     ts.forEachChild(node, visit);
   }
@@ -147,9 +165,10 @@ function extractApiOperations(rootDir) {
     const moduleName = path.basename(file, ".ts");
     if (["client", "crud"].includes(moduleName)) continue;
     const source = fs.readFileSync(file, "utf8");
-    const constantArguments = constantApiArguments(source);
+    const constantArguments = constantApiArguments(source, { patterns: true });
     const relative = toPosix(path.relative(repoDir, file));
-    const callPattern = /\b(apiClient|axios)\.(get|post|put|patch|delete)\b/g;
+    const clients = ["apiClient", "axios", ...[...source.matchAll(/\bconst\s+(\w+)\s*=\s*axios\.create\(/g)].map(match => match[1])];
+    const callPattern = new RegExp(`\\b(${clients.join("|")})\\.(get|post|put|patch|delete)\\b`, "g");
     for (const match of source.matchAll(callPattern)) {
       const argumentStart = firstArgumentStart(source, match.index + match[0].length);
       const quoted = argumentStart >= 0 ? readQuoted(source, argumentStart) : null;
@@ -170,14 +189,14 @@ function extractApiOperations(rootDir) {
           continue;
         }
       }
-      const rawEndpoint = constantArguments.get(match.index) ?? quoted?.value;
-      const endpoint = rawEndpoint ? normalizeEndpoint(rawEndpoint) : null;
-      if (!endpoint) {
+      const rawEndpoints = constantArguments.get(match.index) ?? (quoted ? [quoted.value] : []);
+      const endpoints = rawEndpoints.map(normalizeEndpoint);
+      if (!endpoints.length || endpoints.some(endpoint => !endpoint)) {
         unresolved.push(`${relative}:${lineNumber(source, match.index)} ${match[0]}`);
         continue;
       }
       usedModules.add(moduleName);
-      operations.push({
+      for (const endpoint of new Set(endpoints)) operations.push({
         method: match[2].toUpperCase(),
         endpoint,
         moduleName,
@@ -390,8 +409,10 @@ function validateInventory(inventory) {
     else if (!status.category || !status.copyFamily || !status.recovery) errors.push(`missing provider status policy: ${status.model}.${status.status}`);
   }
   const defectSource = fs.readFileSync(path.join(repoDir, "actual_docs", "DEFECT_KNOWLEDGE_BASE.md"), "utf8");
+  const historicalDefects = fs.readFileSync(path.join(repoDir, historicalDefectSource), "utf8");
   for (const precedent of defectPrecedents) {
-    if (!defectSource.includes(precedent)) errors.push(`missing defect precedent: ${precedent}`);
+    const source = precedent.startsWith("ZD-") ? historicalDefects : defectSource;
+    if (!source.includes(precedent)) errors.push(`missing defect precedent: ${precedent}`);
   }
   if (inventory.routes.length !== routeActionRegistry.length) errors.push("route inventory does not match route registry");
   if (!inventory.apiOperations.some((operation) => operation.kind === "query")) errors.push("no API queries detected");
@@ -456,7 +477,7 @@ export function renderFallbackReport(inventory) {
     `## Background Job Inventory\n\n${table(["Task", "Queue", "Permission owner", "Idempotency", "Retry location", "Source"], taskRows)}\n\n` +
     `## Async And Provider Status Inventory\n\n${table(["Model", "Status", "Category", "Copy family", "Recovery", "Source"], statusRows)}\n\n` +
     `## Defect Precedent Contract\n\n` +
-    `All later fallback phases must apply ${defectPrecedents.map((value) => `\`${value}\``).join(", ")} from \`actual_docs/DEFECT_KNOWLEDGE_BASE.md\`. In particular, raw technical text must never reach merchant UI, recovery must appear once, cancel/focus context must remain stable, and the normal success path must remain green.\n`;
+    `Current regression rules are in \`actual_docs/DEFECT_KNOWLEDGE_BASE.md\`; ZD precedents are historical evidence in \`${historicalDefectSource}\`, not current task authority. Raw technical text must never reach merchant UI, recovery must appear once, cancel/focus context must remain stable, and the normal success path must remain green.\n`;
 }
 
 export function verifyFallbackInventory({ write = false } = {}) {

@@ -5,7 +5,7 @@ import type { CrmCardPayload } from "../../../types";
 import { StatusBadge } from "../../ui/StatusBadge";
 import { drawerSurfaceClass, EmptyBlock } from "./shared";
 
-export function EntityAppointmentsPanel({ data }: { data: CrmCardPayload }) {
+export function EntityAppointmentsPanel({ data, locale, timeZone, onOpenAppointment }: { data: CrmCardPayload; locale?: string; timeZone?: string; onOpenAppointment?: (id: number) => void }) {
   const { t } = useI18n();
   return (
     <div className="space-y-3">
@@ -13,9 +13,9 @@ export function EntityAppointmentsPanel({ data }: { data: CrmCardPayload }) {
         <div key={appointment.id} className={drawerSurfaceClass}>
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <Link className="platforma-focus-ring truncate font-bold text-platforma-ink" to={`/app/appointments/${appointment.id}`}>{appointment.service_name || t("nav.appointments")}</Link>
+              {onOpenAppointment ? <button type="button" className="platforma-focus-ring rounded-control text-left font-bold text-platforma-ink" onClick={() => onOpenAppointment(appointment.id)}>{appointment.service_name || t("nav.appointments")}</button> : <Link className="platforma-focus-ring truncate font-bold text-platforma-ink" to={`/app/appointments/${appointment.id}`}>{appointment.service_name || t("nav.appointments")}</Link>}
               <p className="mt-1 text-xs font-semibold text-platforma-muted">
-                {formatDateTime(appointment.start_at)}
+                {formatDateTime(appointment.start_at, timeZone, false, locale)}
                 {appointment.resource_name ? ` / ${appointment.resource_name}` : ""}
               </p>
             </div>

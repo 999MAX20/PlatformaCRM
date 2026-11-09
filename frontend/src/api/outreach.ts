@@ -6,7 +6,7 @@ import type { Id, OutreachCampaign, OutreachConsent, OutreachRecipient, Outreach
 export type OutreachAudiencePreview = {
   count: number;
   clients: Array<{
-    id: Id;
+    id: Id | null;
     full_name: string;
     phone: string;
     telegram_id: string;

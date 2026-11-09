@@ -284,8 +284,8 @@ export type WebsiteChatConversationPayload = {
 export type WebsiteChatConversationResponse = {
   conversation_id: string;
   message_id: number;
-  lead_id: number | null;
-  client_id: number | null;
+  lead_id: null;
+  client_id: null;
   status: string;
 };
 

@@ -7,7 +7,7 @@ export type Lead = {
   attention_reasons?: Array<"unassigned" | "no_action" | "overdue_action">;
   id: Id;
   business: Id;
-  client: Id;
+  client: Id | null;
   client_name?: string;
   client_phone?: string;
   client_email?: string;
@@ -40,7 +40,7 @@ export type Lead = {
 export type Deal = {
   id: Id;
   business: Id;
-  client: Id;
+  client: Id | null;
   client_name?: string;
   client_phone?: string;
   client_email?: string;
@@ -55,7 +55,7 @@ export type Deal = {
   stage_is_won?: boolean;
   stage_is_lost?: boolean;
   title: string;
-  amount: string;
+  amount: string | null;
   currency: string;
   probability: number;
   expected_close_at: string | null;
@@ -93,14 +93,14 @@ export type DealSummary = {
   open: number;
   won: number;
   lost: number;
-  open_value: string;
-  won_value: string;
-  lost_value: string;
+  open_value: string | null;
+  won_value: string | null;
+  lost_value: string | null;
   lost_count: number;
   conversion_rate: number;
   stale_deals: number;
-  pipeline_value: string;
-  expected_revenue: string;
+  pipeline_value: string | null;
+  expected_revenue: string | null;
   overdue: number;
   no_tasks: number;
   hot: number;
@@ -122,7 +122,7 @@ export type Appointment = {
   booked_duration_minutes?: number | null;
   id: Id;
   business: Id;
-  client: Id;
+  client: Id | null;
   client_name?: string;
   client_phone?: string;
   lead: Id | null;
@@ -165,6 +165,11 @@ export type Notification = {
   action_label: string;
   read_at: string | null;
   is_read: boolean;
+  kind?: "work" | "announcement";
+  message_key?: string;
+  author_name?: string;
+  opened_at?: string | null;
+  acknowledged_at?: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -173,7 +178,7 @@ export type OutreachRecipient = {
   id: Id;
   campaign: Id;
   business: Id;
-  client: Id;
+  client: Id | null;
   client_name?: string;
   client_phone?: string;
   notification: Id | null;
@@ -193,7 +198,7 @@ export type OutreachRecipient = {
 export type OutreachConsent = {
   id: Id;
   business: Id;
-  client: Id;
+  client: Id | null;
   client_name?: string;
   client_phone?: string;
   channel: "telegram" | "whatsapp";
@@ -208,7 +213,7 @@ export type OutreachConsent = {
 };
 
 export type DuplicateClient = {
-  id: Id;
+  id: Id | null;
   full_name: string;
   phone: string;
   email: string;
@@ -216,9 +221,10 @@ export type DuplicateClient = {
 };
 
 export type LeadDuplicateCheckResponse = DuplicateCheckResponse & {
+  has_restricted_related_leads?: boolean;
   related_leads: Array<{
     id: Id;
-    client: Id;
+    client: Id | null;
     status: Lead["status"];
     source: Lead["source"];
     message: string;
@@ -240,9 +246,9 @@ export type CrmFunnelMetrics = {
     open_count: number;
     won_count: number;
     lost_count: number;
-    open_value: string;
-    won_value: string;
-    lost_value: string;
+    open_value: string | null;
+    won_value: string | null;
+    lost_value: string | null;
   };
   appointments: {
     total: number;
@@ -285,8 +291,8 @@ export type ScopedManagerPerformance = {
     lead_to_deal_rate: number;
     won_deals: number;
     lost_deals: number;
-    won_value: string;
-    lost_value: string;
+    won_value: string | null;
+    lost_value: string | null;
     appointments_completed: number;
     appointments_no_show: number;
     open_tasks: number;
@@ -302,7 +308,7 @@ export type { PlatformOperationsSummary, PlatformMerchantOperations, PlatformMer
 export type { Bot, BotChannel, IntegrationEventLog, ApiToken, ApiTokenCreateResponse, WebhookEndpoint, WebhookDeliveryLog, BusinessConnector, ConnectorCapability, ConnectorCredential, BusinessEvent, ConnectorSyncRun } from "./integrations";
 export type { BotConversation, BotMessage, Conversation, Message, QuickReplyTemplate } from "./conversations";
 export type { FileAttachment } from "./files";
-export type { Client, LeadSummary, Pipeline, PipelineStage, DealBoardStage, DealBoard, Note, CrmEntityType, CrmCardActionDetail, Tag, TaggedObject, SegmentFilter, Segment, CrmCardPayload, DuplicateCheckResponse, CustomFieldDefinition, CustomFieldValue, CrmCardCustomField, LeadFormField, LeadCaptureForm, LeadFormSubmission } from "./crm";
+export type { Client, LeadSummary, Pipeline, PipelineStage, DealBoardStage, DealBoard, Note, CrmEntityType, CrmCardActionDetail, Tag, TaggedObject, SegmentFilter, Segment, CrmCardPayload, DuplicateCheckResponse, CustomFieldEntityType, CustomFieldDefinition, CustomFieldValue, CrmCardCustomField, LeadFormField, LeadCaptureForm, LeadFormSubmission } from "./crm";
 export type { Service, Resource, WorkingHours, ScheduleException, AppointmentMessageSetting, AvailableSlot } from "./scheduling";
 export type { NotificationPreference } from "./notifications";
 export type { OutreachTemplate, OutreachCampaign } from "./outreach";

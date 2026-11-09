@@ -3,6 +3,13 @@ import type { PaginatedResponse } from "./client";
 import type { BotSuggestedReplyResponse } from "./bots";
 import type { Appointment, BotConversation, BotMessage, Client, Deal, DuplicateClient, Id, Lead, Task } from "../types";
 
+export type InboxReadRestrictedAcknowledgement = { read_restricted: true };
+export type InboxWriteResult<T> = T | InboxReadRestrictedAcknowledgement;
+export function inboxWriteNoticeKey(result: unknown, successKey: string): string {
+  return result !== null && typeof result === "object" && "read_restricted" in result && result.read_restricted === true
+    ? "common.saved" : successKey;
+}
+
 export type InboxConversation = BotConversation;
 export type InboxMessage = BotMessage;
 export type InboxLinkCandidate = { id: number; title: string; detail: string };
@@ -116,7 +123,7 @@ function idempotencyConfig(idempotencyKey?: string) {
 
 export type InboxPipelineResult = {
   conversation: InboxConversation;
-  client: Client;
+  client: Client | null;
   lead: Lead | null;
   deal: Deal | null;
   task: Task | null;
@@ -256,7 +263,7 @@ export const inboxApi = {
     return data;
   },
   createTask: async ({ conversationId, title, description, priority, due_at, idempotencyKey }: { conversationId: Id; title?: string; description?: string; priority?: Task["priority"]; due_at?: string | null; idempotencyKey?: string }) => {
-    const { data } = await apiClient.post<Task>(`/api/inbox/conversations/${conversationId}/create-task/`, {
+    const { data } = await apiClient.post<InboxWriteResult<Task>>(`/api/inbox/conversations/${conversationId}/create-task/`, {
       title,
       description,
       priority: priority || "normal",
@@ -279,7 +286,7 @@ export const inboxApi = {
     startAt: string;
     notes?: string;
   }) => {
-    const { data } = await apiClient.post<Appointment>(`/api/inbox/conversations/${conversationId}/create-appointment/`, {
+    const { data } = await apiClient.post<InboxWriteResult<Appointment>>(`/api/inbox/conversations/${conversationId}/create-appointment/`, {
       service_id: serviceId,
       resource_id: resourceId ?? null,
       branch_id: branchId ?? null,
@@ -308,11 +315,11 @@ export const inboxApi = {
     return data;
   },
   createLead: async ({ conversationId, message }: { conversationId: Id; message?: string }) => {
-    const { data } = await apiClient.post<Lead>(`/api/inbox/conversations/${conversationId}/create-lead/`, { message });
+    const { data } = await apiClient.post<InboxWriteResult<Lead>>(`/api/inbox/conversations/${conversationId}/create-lead/`, { message });
     return data;
   },
   createDeal: async ({ conversationId, title }: { conversationId: Id; title?: string }) => {
-    const { data } = await apiClient.post<Deal>(`/api/inbox/conversations/${conversationId}/create-deal/`, { title });
+    const { data } = await apiClient.post<InboxWriteResult<Deal>>(`/api/inbox/conversations/${conversationId}/create-deal/`, { title });
     return data;
   },
   runPipeline: async ({ conversationId, previewId, actions }: PipelineConfirmation) => {

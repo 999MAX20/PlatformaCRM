@@ -17,6 +17,7 @@ import {
 import axios from "axios";
 import { normalizeAppError } from "../../api/appError";
 import { SERVICE_AVAILABLE_EVENT } from "../../api/connectivity";
+import { NotificationPortal, useConnectionNoticeState } from "../../components/notifications/NotificationHost";
 import { Button } from "../../components/ui/Button";
 import { ErrorState } from "../../components/ui/StateViews";
 import { StatusNotice } from "../../components/ui/StatusNotice";
@@ -62,6 +63,7 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { t } = useI18n();
+  const { unavailable } = useConnectionNoticeState();
   const [isAuthenticated, setAuthenticated] = useState(false);
   const [isLoading, setLoading] = useState(true);
   const [user, setUser] = useState<CurrentUser | null>(null);
@@ -253,17 +255,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const recoveryAppError = useMemo(() => recoveryError ? normalizeAppError(recoveryError) : undefined, [recoveryError]);
   const recoveryDelay = useRecoveryDelay(recoveryAppError);
-  const message = recoveryAppError ? t(recoveryAppError.messageKey) : "";
+  const connectionRelated = recoveryAppError && ["offline", "temporary", "provider"].includes(recoveryAppError.category);
+  const message = recoveryAppError ? t(connectionRelated ? "auth.sessionRecoveryFailed" : recoveryAppError.messageKey) : "";
   const retry = <Button type="button" disabled={recoveryDelay > 0} isLoading={isRecovering} onClick={() => void restoreCurrentSession()}>{recoveryDelay > 0 ? t("fallback.retryAfter", { seconds: recoveryDelay }) : t("common.retry")}</Button>;
   return <AuthContext.Provider value={value}>
     {recoveryError && !isAuthenticated ? <div data-testid="session-recovery" className="mx-auto max-w-xl p-6"><ErrorState error={recoveryError} action={retry} /></div> : children}
-    {(logoutError || isLoggingOut) ? <div data-testid="logout-status" className="fixed inset-x-3 bottom-24 z-[90] mx-auto max-w-xl lg:bottom-4">
+    <NotificationPortal group="session">
+    {(logoutError || isLoggingOut) ? <div data-testid="logout-status" className="platforma-notification-card">
       <StatusNotice tone={logoutError ? "danger" : "info"} title={t(logoutError ? "auth.logoutFailed" : "auth.loggingOut")}
         action={logoutError ? <Button type="button" onClick={logout}>{t("common.retry")}</Button> : undefined} />
     </div> : null}
-    {recoveryError && isAuthenticated && !logoutError && !isLoggingOut ? <div data-testid="session-recovery" className="fixed inset-x-3 bottom-24 z-[90] mx-auto max-w-xl lg:bottom-4">
+    {recoveryError && isAuthenticated && !logoutError && !isLoggingOut && !(unavailable && connectionRelated) ? <div data-testid="session-recovery" className="platforma-notification-card">
       <StatusNotice tone="warning" title={message} action={retry} details={recoveryAppError ? <RecoveryDetails error={recoveryAppError} /> : undefined} />
     </div> : null}
+    </NotificationPortal>
   </AuthContext.Provider>;
 }
 

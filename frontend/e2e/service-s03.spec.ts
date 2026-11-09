@@ -15,46 +15,23 @@ async function login(page: Page, email = "business_owner@example.com") {
   await expect(page).toHaveURL(email.startsWith("platform") ? /\/platform/ : /\/app/);
 }
 
-test("service status shows actual impact and safely handles stale, recovered and failed reads", async ({ page }, info) => {
+test("service events show actual impact without the removed header indicator", async ({ page }, info) => {
   await login(page);
-  const notice = page.getByTestId("service-status-notice");
-  await expect(notice).toContainText(ru["serviceStatus.degraded.title"]);
-  await expect(notice).toContainText(ru["serviceStatus.component.exports"]);
-  await expect(notice).not.toContainText("CELERY");
+  await expect(page.getByTestId("service-status-trigger")).toHaveCount(0);
   await page.getByTestId("header-notifications-trigger").click();
-  await expect(page.getByText("Экспорт: Обработка задерживается. Проверьте состояние сервиса перед повтором действий.", { exact: true })).toHaveCount(1);
-  await page.getByTestId("header-notifications-trigger").click();
+  await expect(page.getByText(ru["notification.service.exports.started"], { exact: true })).toHaveCount(1);
   await page.screenshot({ path: info.outputPath("service-impact.png"), fullPage: true });
-
-  // Boundary injection only after the real endpoint/fixture proves the banner.
-  let state = "unknown";
-  await page.route("**/api/service-status/?*", async route => {
-    if (state === "error") return route.fulfill({ status: 503, json: { detail: "Unavailable" } });
-    return route.fulfill({ json: { status: state, checked_at: new Date().toISOString(), max_age_seconds: 180,
-      components: [{ component: "exports", state, last_state: "degraded", episode: 1,
-        observed_at: new Date().toISOString(), started_at: new Date().toISOString(),
-        recovered_at: state === "healthy" ? new Date().toISOString() : null }] } });
-  });
-  await notice.getByRole("button", { name: ru["common.refresh"] }).click();
-  await expect(notice).toContainText(ru["serviceStatus.unknown.title"]);
-  state = "healthy";
-  await notice.getByRole("button", { name: ru["common.refresh"] }).click();
-  await expect(notice).toContainText(ru["serviceStatus.recovered.title"]);
-  state = "error";
-  await notice.getByRole("button", { name: ru["common.refresh"] }).click();
-  await expect(notice).toContainText(ru["serviceStatus.unknown.title"]);
-  await page.unroute("**/api/service-status/?*");
-  await notice.getByRole("button", { name: ru["common.refresh"] }).click();
-  await expect(notice).toContainText(ru["serviceStatus.degraded.title"]);
   for (const [language, copy] of [["kk", kk], ["en", en]] as const) {
+    await page.route("**/api/auth/me/", async route => {
+      const response = await route.fetch(); const user = await response.json();
+      await route.fulfill({ response, json: { ...user, preferences: { ...user.preferences, language } } });
+    });
     await page.evaluate(value => localStorage.setItem("ai_smb_language", value), language);
     await page.reload();
-    await expect(notice).toContainText(copy["serviceStatus.degraded.title"]);
-    const refresh = notice.getByRole("button", { name: copy["common.refresh"] });
-    await refresh.focus();
-    await expect(refresh).toBeFocused();
-    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBeTruthy();
-    await page.screenshot({ path: info.outputPath(`service-impact-${language}.png`), fullPage: true });
+    await page.getByTestId("header-notifications-trigger").click();
+    await expect(page.getByText(copy["notification.service.exports.started"], { exact: true })).toHaveCount(1);
+    await expect(page.getByTestId("service-status-trigger")).toHaveCount(0);
+    await page.unroute("**/api/auth/me/");
   }
 });
 

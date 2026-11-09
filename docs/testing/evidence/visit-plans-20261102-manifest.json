@@ -1,0 +1,143 @@
+{
+  "task": "CRM-R01-PLANS-20261102",
+  "base": "e02a28f550e94a543c3d88acac7c1b19ee48f90b",
+  "boundary": "working files include pre-existing prerequisites; hashes are snapshot identities, not exclusive authorship",
+  "files": {
+    "apps/clients/lifecycle.py": {
+      "sha256": "b309676777f451443ed04e31624f09da7df678c21e52e166ab3c30d3538a6e77",
+      "preexisting_dirty": false
+    },
+    "apps/clients/services.py": {
+      "sha256": "020fdf11d344bbd8b6aaaed515d0febaccc661d5da8ae48361b3bb95b12fcd6f",
+      "preexisting_dirty": false
+    },
+    "apps/core/crm_cards.py": {
+      "sha256": "efaed9fb46762c6e5f519ef52fc2f33385734ef95679161e308f56b59fdec828",
+      "preexisting_dirty": true
+    },
+    "apps/core/crm_read_scope.py": {
+      "sha256": "5c907d669765288363d5f483a6ef666b48b73409096f44a9c059a271187d6025",
+      "preexisting_dirty": false
+    },
+    "apps/scheduling/migrations/0011_visit_plans.py": {
+      "sha256": "cc254198a5835390ac65274fec36975ad7db72762081a4d3411f3c00824567f2",
+      "preexisting_dirty": false
+    },
+    "apps/scheduling/models.py": {
+      "sha256": "40c2e65d901b604e49de3c99182ccda51afdced9ea73cb03ee553140705e1221",
+      "preexisting_dirty": false
+    },
+    "apps/scheduling/plan_access.py": {
+      "sha256": "d1b62f056f2f49af2213f8e0e87a82af183ce1ecc5820d85a9a50083cdd4513b",
+      "preexisting_dirty": false
+    },
+    "apps/scheduling/plan_lifecycle.py": {
+      "sha256": "9392db1111f20906b9f7e91ddbb1eba66a2d3234dfb50c09fd1499dd7e4bc7b3",
+      "preexisting_dirty": false
+    },
+    "apps/scheduling/plan_selectors.py": {
+      "sha256": "3f41f25dcfc42181729bb61e8985bf6d98fb552cee56b2a0bcbaf336fd8909b2",
+      "preexisting_dirty": false
+    },
+    "apps/scheduling/plan_serializers.py": {
+      "sha256": "bf8ca8adeefbd2f9614a59699dbda6174d24a5bda927928418c4873938535a09",
+      "preexisting_dirty": false
+    },
+    "apps/scheduling/plan_services.py": {
+      "sha256": "5449b4a2514d03d9806f29cf6ab8b3ec18c3612114e2e7e1414261383881cccf",
+      "preexisting_dirty": false
+    },
+    "apps/scheduling/plan_views.py": {
+      "sha256": "8719dfa77e83683872eaa15362e2f38e359dd115b71d9204813959ac222b9213",
+      "preexisting_dirty": false
+    },
+    "apps/scheduling/services.py": {
+      "sha256": "e7290bcc97662a2ef554d360117029e8c7524e99528a3ad9746de52377455bce",
+      "preexisting_dirty": true
+    },
+    "apps/scheduling/tests_plan_concurrency.py": {
+      "sha256": "4cc886f17501d95b6c7e3a5385755755a1746283691d056bb69ff0f00aed1ebf",
+      "preexisting_dirty": false
+    },
+    "apps/scheduling/tests_visit_plans.py": {
+      "sha256": "492c2b8aa589d2046cd176e082b7efddbe4d8be4ca5d61494f37368bd08b2081",
+      "preexisting_dirty": false
+    },
+    "config/urls.py": {
+      "sha256": "289133660e1f629e69845c199a8f415250748a2e6b3d7fdd5fd9e77b37de6534",
+      "preexisting_dirty": false
+    },
+    "frontend/scripts/tests/appointment-cache.test.mjs": {
+      "sha256": "bf09dd1233a03960d39d6b83cd7f7176775ea43fa6754b2fb677dbf1c1967f2a",
+      "preexisting_dirty": false
+    },
+    "frontend/src/api/visitPlans.ts": {
+      "sha256": "396aa18807e9fcaeb621a9aa681d466531c38b428b6732c30a0cfcd0975c67f5",
+      "preexisting_dirty": false
+    },
+    "frontend/src/components/crm/drawers/client.tsx": {
+      "sha256": "ee041b5216e750aad41493e0d495bccbc22939ecf79b614c4856ddbed23c02c5",
+      "preexisting_dirty": true
+    },
+    "frontend/src/components/crm/drawers/shared.tsx": {
+      "sha256": "6844a5ca86dc47aa164ed2dfd06e6629bd03e00a646b980e0af7ac44c9c74285",
+      "preexisting_dirty": true
+    },
+    "frontend/src/components/crm/drawers/timeline.tsx": {
+      "sha256": "141e9aaf5db6a7c2deb6d4c0c8e012f84edb0ef13ca438e24c2ddd434a8887b6",
+      "preexisting_dirty": false
+    },
+    "frontend/src/components/forms/AppointmentForm.tsx": {
+      "sha256": "bd43cc600176c44035d3403a8dab1d2cc15eb640f9735cd5e75c30d2e7bdc9a7",
+      "preexisting_dirty": false
+    },
+    "frontend/src/features/calendar/AppointmentWorkspacePage.tsx": {
+      "sha256": "78e8a86d45254015c3544b9ee8ddab03a813cc8a8d835e745580d00bedfe8fdd",
+      "preexisting_dirty": true
+    },
+    "frontend/src/features/calendar/PlanEditor.tsx": {
+      "sha256": "c83628693dbc9ea31ff298467d922797b8361119db8ce7b8a1cc611b88608755",
+      "preexisting_dirty": false
+    },
+    "frontend/src/features/calendar/PlanHistory.tsx": {
+      "sha256": "d95ca65bbe42e2a98dfc8bdbb863b4bfe0e1bf494e191f72622fe6ecf0744885",
+      "preexisting_dirty": false
+    },
+    "frontend/src/features/calendar/RecordsPage.tsx": {
+      "sha256": "00a6899dcecc3743dc2d22a7d93e00eb4182faaf5d74a0de7f975964708dd758",
+      "preexisting_dirty": true
+    },
+    "frontend/src/features/calendar/VisitPlansPage.tsx": {
+      "sha256": "b8e44d5cecd808f9735ee16ada504f14c6b5100f4f6678b29730fe483d0a8e8c",
+      "preexisting_dirty": false
+    },
+    "frontend/src/features/clients/ClientWorkspacePage.tsx": {
+      "sha256": "b0f13f39939d89dbc4a22f7356f79f45e2ac56c19777d7484b243d532e7b4bf8",
+      "preexisting_dirty": true
+    },
+    "frontend/src/features/clients/components/ClientWorkspaceSections.tsx": {
+      "sha256": "e1ca984513d91a1843cc8e91f7c404c7ccb90acbf5026f5d585fa9bf4a090493",
+      "preexisting_dirty": true
+    },
+    "frontend/src/lib/appointmentCache.ts": {
+      "sha256": "940cbb98142efd6ac7b528470dbbb826b48c98cdc5e1a52884ea5711c74b7038",
+      "preexisting_dirty": false
+    },
+    "frontend/src/lib/i18n/en/calendar.ts": {
+      "sha256": "80b2cd8b601e048ca2511504cb721e0bf32bfe5a34b93636d85448c319814847",
+      "preexisting_dirty": true
+    },
+    "frontend/src/lib/i18n/kk/calendar.ts": {
+      "sha256": "cbee0b432414a0619e3989fd2da5fa9634fe277afb608fd8b0d0eb28cb996280",
+      "preexisting_dirty": true
+    },
+    "frontend/src/lib/i18n/ru/calendar.ts": {
+      "sha256": "dba552b7f7cedf0dddc2c9ee0f9ad3537aac3cbf5b9e7ed212beb2ad969fc48a",
+      "preexisting_dirty": true
+    },
+    "frontend/src/types/index.ts": {
+      "sha256": "e3f8e10eb1cb7902d9459bd8d7a6e601de30ea60ce96fd2f51c8074058209784",
+      "preexisting_dirty": true
+    }
+  }
+}

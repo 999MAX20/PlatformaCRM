@@ -28,12 +28,13 @@ const gate = createGate(configuration({ STAND_ORIGIN: origin, STAND_PASSWORD_HAS
   STAND_WEBHOOK_PATHS: '["/api/integrations/test-webhook"]' }));
 gate.listen(0, '127.0.0.1'); await once(gate, 'listening');
 mkdirSync(join(directory, 'static')); writeFileSync(join(directory, 'index.html'), 'private-spa'); writeFileSync(join(directory, 'static', 'test.js'), 'private-static');
+mkdirSync(join(directory, 'landing')); writeFileSync(join(directory, 'landing', 'index.html'), 'public-landing'); writeFileSync(join(directory, 'landing', 'privacy.html'), 'landing-privacy');
 const appAddress = `127.0.0.1:${app.address().port}`;
 const text = readFileSync(new URL('./Caddyfile', import.meta.url), 'utf8')
   .replace(/^\{\r?\n[\s\S]*?\r?\n\}\s*/, '{\n admin off\n auto_https off\n}\n')
   .replaceAll('{$WEB_DOMAIN}', origin).replaceAll('stand-access:8080', `127.0.0.1:${gate.address().port}`)
   .replaceAll('web:8000', appAddress).replaceAll('web:3000', appAddress).replaceAll('api:4000', appAddress)
-  .replace('root * /srv', `root * "${directory.replaceAll('\\', '/')}"`)
+  .replaceAll('root * /srv', `root * "${directory.replaceAll('\\', '/')}"`)
   .replace('root * /static', `root * "${join(directory, 'static').replaceAll('\\', '/')}"`);
 writeFileSync(join(directory, 'Caddyfile'), text);
 const caddy = spawn(binary, ['run', '--config', join(directory, 'Caddyfile'), '--adapter', 'caddyfile'], { windowsHide: true, stdio: ['ignore', 'ignore', 'pipe'] });
@@ -53,7 +54,7 @@ try {
     await new Promise(resolve => setTimeout(resolve, 100));
   }
   assert.ok(ready, 'Caddy starts');
-  for (const path of ['/', '/api/clients', '/static/test.js', '/assets/app.js', '/_next/static/app.js', '/media/file', '/verify']) {
+  for (const path of ['/', '/landing/index.html', '/landing/privacy.html', '/api/clients', '/static/test.js', '/assets/app.js', '/_next/static/app.js', '/media/file', '/verify']) {
     const denied = await request(path, { headers: { 'x-forwarded-uri': '/api/integrations/test-webhook', 'x-forwarded-method': 'POST', 'x-stand-client': 'fake', 'x-stand-authorized': 'true' } });
     assert.equal(denied.status, 401, path); assert.ok(!(await denied.text()).includes('private-'));
   }
@@ -63,6 +64,11 @@ try {
   const result = await request('/_stand/access', { method: 'POST', headers: { origin, cookie: csrfCookie, 'content-type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams({ csrf, password, next: '/clients' }) });
   assert.equal(result.status, 303);
   const session = result.headers.get('set-cookie').split(';')[0];
+  for (const [path, expected] of [['/', 'public-landing'], ['/index.html?lang=en', 'public-landing'], ['/landing/privacy.html', 'landing-privacy'], ['/login', 'private-spa'], ['/app/calendar', 'private-spa']]) {
+    const response = await request(path, { headers: { cookie: session } });
+    assert.equal(response.status, 200, path); assert.equal(await response.text(), expected, path);
+  }
+  for (const path of ['/landing/missing.html', '/media/private.pdf']) assert.equal((await request(path, { headers: { cookie: session } })).status, 404, path);
   const ok = await request('/api/clients', { method: 'POST', headers: { cookie: session, 'content-type': 'text/plain' }, body: 'body-preserved' });
   assert.equal(await ok.text(), 'private-upstream:/api/clients:body-preserved');
   assert.equal(ok.headers.get('cache-control'), 'no-store, private');

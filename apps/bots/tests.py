@@ -280,7 +280,7 @@ class BotsFoundationTests(TestCase):
         response = self.api.post(
             f"/api/public/website-chat/{channel.public_token}/conversations/",
             {
-                "message": "РҐРѕС‡Сѓ Р·Р°РїРёСЃР°С‚СЊСЃСЏ Рё СѓР·РЅР°С‚СЊ С†РµРЅСѓ",
+                "message": "Хочу записаться и узнать цену",
                 "external_user_id": "suggest-visitor-100",
             },
             format="json",
@@ -483,7 +483,7 @@ class BotsFoundationTests(TestCase):
         self._prepare_agent_readiness(bot)
         response = self.api.post(
             f"/api/public/website-chat/{channel.public_token}/conversations/{conversation.public_id}/messages/",
-            {"message": "РќСѓР¶РЅР° Р·Р°РїРёСЃСЊ Рё С†РµРЅР°"},
+            {"message": "Нужна запись и цена"},
             format="json",
         )
 
@@ -765,8 +765,11 @@ class BotsFoundationTests(TestCase):
         confirmation.save(update_fields=["send_at", "updated_at"])
         delivery_results = process_due_notifications()
         confirmation.refresh_from_db()
-        self.assertEqual(delivery_results[0]["status"], "sent")
-        self.assertEqual(confirmation.status, Notification.Statuses.SENT)
+        self.assertEqual(delivery_results, [])
+        self.assertEqual(confirmation.status, Notification.Statuses.PENDING)
+        self.assertEqual(confirmation.attempts, 0)
+        from apps.notifications.personal_selectors import personal_states
+        self.assertTrue(personal_states(actor=self.owner, business=self.business).filter(notification=confirmation).exists())
 
         conversation.client.telegram_id = "battle-client-tg"
         conversation.client.save(update_fields=["telegram_id", "updated_at"])
@@ -2175,7 +2178,7 @@ class InboxBackendTests(TestCase):
             conversation=conversation,
             direction=BotMessage.Directions.INBOUND,
             sender_type=BotMessage.SenderTypes.CLIENT,
-            text="РќСѓР¶РЅР° С†РµРЅР° Рё РєРѕРЅСЃСѓР»СЊС‚Р°С†РёСЏ",
+            text="Нужна цена и консультация",
         )
         support = User.objects.create_user(
             username="inbox-support",
@@ -2218,7 +2221,7 @@ class InboxBackendTests(TestCase):
             conversation=conversation,
             direction=BotMessage.Directions.INBOUND,
             sender_type=BotMessage.SenderTypes.CLIENT,
-            text="РҐРѕС‡Сѓ СѓР·РЅР°С‚СЊ С†РµРЅСѓ",
+            text="Хочу узнать цену",
         )
         self.api.force_authenticate(self.owner)
         preview_response = self.api.post(f"/api/inbox/conversations/{conversation.id}/qualify/", format="json")
@@ -2227,7 +2230,7 @@ class InboxBackendTests(TestCase):
             conversation=conversation,
             direction=BotMessage.Directions.INBOUND,
             sender_type=BotMessage.SenderTypes.CLIENT,
-            text="Р РµС‰Рµ РЅСѓР¶РЅР° Р·Р°РїРёСЃСЊ РЅР° Р·Р°РІС‚СЂР°",
+            text="И еще нужна запись на завтра",
         )
 
         response = self.api.post(

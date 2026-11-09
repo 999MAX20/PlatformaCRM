@@ -1,100 +1,26 @@
-import { Phone } from "lucide-react";
-
-import { Button } from "../../../components/ui/Button";
 import { formatDateTime } from "../../../lib/format";
+import { useI18n } from "../../../lib/i18n";
+import { useActiveBusiness } from "../../../hooks/useBusiness";
+import type { useCustomColumns } from "../../../components/crm/CustomFieldColumns";
 import type { ClientTableRow, Translate } from "../types";
-import { sourceLabel } from "../utils";
-import { ClientAvatar, ClientStatusBadge } from "./ClientPrimitives";
+import { ClientStatusBadge } from "./ClientPrimitives";
 
-export function MobileClientCards({
-  rows,
-  selectedClientId,
-  onSelectClient,
-  onOpenClient,
-  t,
-}: {
+export function MobileClientCards({ rows, onOpenClient, customColumns, t }: {
   rows: ClientTableRow[];
-  selectedClientId: number | null;
-  onSelectClient: (id: number) => void;
   onOpenClient: (id: number) => void;
+  customColumns: ReturnType<typeof useCustomColumns>["columns"];
   t: Translate;
 }) {
-  return (
-    <div className="min-h-0 flex-1 space-y-3 overflow-y-auto p-3 md:hidden">
-      {rows.map((row) => (
-        <article
-          key={row.client.id}
-          aria-selected={selectedClientId === row.client.id}
-          className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-card"
-        >
-          <button
-            type="button"
-            onClick={() => onSelectClient(row.client.id)}
-            className="flex w-full items-start justify-between gap-3 text-left"
-          >
-            <div className="flex min-w-0 items-center gap-3">
-              <ClientAvatar name={row.client.full_name} />
-              <div className="min-w-0">
-                <h3 className="truncate text-sm font-bold text-platforma-text">
-                  {row.client.full_name}
-                </h3>
-                <p className="mt-1 truncate text-xs font-medium text-platforma-muted">
-                  {row.client.phone ||
-                    row.client.email ||
-                    t("clients.noContacts")}
-                </p>
-              </div>
-            </div>
-            <ClientStatusBadge status={row.status} t={t} />
-          </button>
-
-          <dl className="mt-4 space-y-2 text-sm">
-            <div className="flex justify-between gap-4">
-              <dt className="text-platforma-muted">{t("clients.source")}</dt>
-              <dd className="font-semibold text-platforma-text">
-                {sourceLabel(row.client.source, t)}
-              </dd>
-            </div>
-            <div className="flex justify-between gap-4">
-              <dt className="text-platforma-muted">{t("clients.lastContact")}</dt>
-              <dd className="text-right font-semibold text-platforma-text">
-                {row.lastContactAt
-                  ? formatDateTime(row.lastContactAt)
-                  : t("clients.noContact")}
-              </dd>
-            </div>
-            <div className="flex justify-between gap-4">
-              <dt className="text-platforma-muted">{t("clients.nextStep")}</dt>
-              <dd className="text-right font-semibold text-platforma-text">
-                {row.nextStep.title}
-              </dd>
-            </div>
-          </dl>
-
-          <div className="mt-4 flex gap-2">
-            <Button
-              type="button"
-              className="min-h-11 flex-1"
-              disabled={!row.client.phone}
-              onClick={() =>
-                row.client.phone &&
-                window.open(`tel:${row.client.phone}`, "_self")
-              }
-            >
-              <Phone size={16} /> {t("clients.call")}
-            </Button>
-            <Button
-              type="button"
-              variant="secondary"
-              data-testid="client-card-action-open"
-              className="min-h-11 flex-1"
-              onClick={() => onOpenClient(row.client.id)}
-            >
-              {t("clients.details")}
-            </Button>
-          </div>
-        </article>
-      ))}
-    </div>
-  );
+  const { language } = useI18n();
+  const { business } = useActiveBusiness();
+  return <ul className="divide-y divide-platforma-border md:hidden">{rows.map(row => <li key={row.client.id} className="p-4">
+    <button type="button" data-testid="client-card-action-open" onClick={() => onOpenClient(row.client.id)} className="platforma-focus-ring block w-full space-y-2 rounded text-left">
+      <span className="flex items-start justify-between gap-3"><span className="min-w-0 break-words font-medium text-brand-700">{row.client.full_name}</span><ClientStatusBadge status={row.status} t={t} /></span>
+      <span className="block break-all text-xs text-platforma-subtle">{row.client.phone || row.client.email || t("clients.noContacts")}</span>
+      {row.lastContactAt && <span className="block text-xs text-platforma-subtle">{t("clients.lastActivity")}: {formatDateTime(row.lastContactAt, business?.timezone || "Asia/Qyzylorda", true, language)}</span>}
+      {row.nextStep.title && <span className="block text-sm">{row.nextStep.title}</span>}
+      {customColumns.map(column => <span key={column.id} className="block break-words text-sm"><span className="text-platforma-subtle">{column.header}: </span>{column.cell(row.client)}</span>)}
+    </button>
+    {row.client.phone && <a href={`tel:${row.client.phone}`} className="platforma-focus-ring mt-2 inline-flex min-h-11 items-center rounded px-2 text-sm text-brand-700 underline-offset-4 hover:underline">{t("clients.call")}</a>}
+  </li>)}</ul>;
 }

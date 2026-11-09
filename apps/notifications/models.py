@@ -1,11 +1,23 @@
 from django.conf import settings
-from django.db import models
+from django.db import models, transaction
 from django.utils import timezone
 
 from apps.businesses.models import Business, TimeStampedModel
 from apps.core.sanitization import SanitizedErrorFieldsMixin
 from apps.clients.models import Client
 from apps.scheduling.models import Appointment
+
+
+class NotificationQuerySet(models.QuerySet):
+    def bulk_create(self, objs, **kwargs):
+        from apps.notifications.recipients import create_recipient_states
+
+        if kwargs.get("ignore_conflicts") or kwargs.get("update_conflicts"):
+            raise ValueError("Notification bulk conflicts require an explicit idempotent producer.")
+        with transaction.atomic(using=self.db):
+            rows = super().bulk_create(objs, **kwargs)
+            create_recipient_states(rows, using=self.db)
+            return rows
 
 
 class Notification(SanitizedErrorFieldsMixin, TimeStampedModel):
@@ -39,6 +51,12 @@ class Notification(SanitizedErrorFieldsMixin, TimeStampedModel):
         HIGH = "high", "High"
         URGENT = "urgent", "Urgent"
 
+    class Kinds(models.TextChoices):
+        WORK = "work", "Work"
+        ANNOUNCEMENT = "announcement", "Announcement"
+
+    objects = NotificationQuerySet.as_manager()
+
     business = models.ForeignKey(Business, on_delete=models.CASCADE, related_name="notifications")
     recipient = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -59,6 +77,12 @@ class Notification(SanitizedErrorFieldsMixin, TimeStampedModel):
     action_url = models.CharField(max_length=255, blank=True)
     action_label = models.CharField(max_length=64, blank=True)
     read_at = models.DateTimeField(null=True, blank=True)
+    kind = models.CharField(max_length=24, choices=Kinds.choices, default=Kinds.WORK)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True,
+                               related_name="authored_notifications")
+    revoked_at = models.DateTimeField(null=True, blank=True)
+    publication_key = models.UUIDField(null=True, blank=True, editable=False)
+    audience_fixed_at = models.DateTimeField(null=True, blank=True, editable=False)
     attempts = models.PositiveSmallIntegerField(default=0)
     max_attempts = models.PositiveSmallIntegerField(default=3)
     next_retry_at = models.DateTimeField(null=True, blank=True)
@@ -71,6 +95,9 @@ class Notification(SanitizedErrorFieldsMixin, TimeStampedModel):
 
     class Meta:
         ordering = ["read_at", "-send_at"]
+        constraints = [
+            models.UniqueConstraint(fields=["business", "publication_key"], name="unique_notification_publication"),
+        ]
         indexes = [
             models.Index(fields=["business", "status", "read_at", "send_at"]),
             models.Index(fields=["business", "category", "priority"]),
@@ -80,6 +107,16 @@ class Notification(SanitizedErrorFieldsMixin, TimeStampedModel):
 
     def __str__(self):
         return f"{self.channel} notification for {self.client or self.business}"
+
+    def save(self, *args, **kwargs):
+        from apps.notifications.recipients import create_recipient_states
+
+        adding = self._state.adding
+        using = kwargs.get("using") or self._state.db or "default"
+        with transaction.atomic(using=using):
+            super().save(*args, **kwargs)
+            if adding:
+                create_recipient_states([self], using=using)
 
     @property
     def is_read(self):
@@ -94,6 +131,23 @@ class Notification(SanitizedErrorFieldsMixin, TimeStampedModel):
         if self.read_at is not None:
             self.read_at = None
             self.save(update_fields=["read_at", "updated_at"])
+
+
+class NotificationRecipient(models.Model):
+    """Fixed audience and private state; Business is derived through notification."""
+
+    notification = models.ForeignKey(Notification, on_delete=models.CASCADE, related_name="recipient_states")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="notification_states")
+    received_at = models.DateTimeField(default=timezone.now, editable=False)
+    opened_at = models.DateTimeField(null=True, blank=True)
+    read_at = models.DateTimeField(null=True, blank=True)
+    acknowledged_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["notification", "user"], name="unique_notification_recipient"),
+        ]
+        indexes = [models.Index(fields=["user", "read_at", "received_at"], name="notif_recipient_unread_idx")]
 
 
 class NotificationPreference(TimeStampedModel):

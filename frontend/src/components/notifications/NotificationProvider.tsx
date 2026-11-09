@@ -1,5 +1,5 @@
 import { X } from "lucide-react";
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 import type { AppError } from "../../api/appError";
 import { Button } from "../ui/Button";
@@ -8,13 +8,16 @@ import { StatusNotice, type StatusNoticeTone } from "../ui/StatusNotice";
 import { RecoveryDetails } from "../ui/RecoveryDetails";
 import { useRecoveryDelay } from "../actions/useRecoveryDelay";
 import { canShowSupportDetails } from "../actions/actionFeedbackPolicy";
-import { notificationDedupeKey } from "./notificationPolicy";
+import { notificationContent, notificationDedupeKey } from "./notificationPolicy";
+import { NotificationPortal, restoreNoticeFocus } from "./NotificationHost";
 
 type NotificationTone = StatusNoticeTone;
 
 export type NotificationOptions = {
   appError?: AppError;
   message?: string;
+  title?: string;
+  description?: string;
   tone?: NotificationTone;
   durationMs?: number;
   actionLabel?: string;
@@ -34,24 +37,43 @@ export function ActionFeedbackToast({ item, onDismiss, dismissAfterAction = true
   const [isHovered, setIsHovered] = useState(false);
   const [isActing, setIsActing] = useState(false);
   const [hasFocus, setHasFocus] = useState(false);
+  const [leaving, setLeaving] = useState(false);
+  const card = useRef<HTMLDivElement>(null);
+  const opener = useRef(document.activeElement instanceof HTMLElement ? document.activeElement : null);
+  const pending = useRef(false);
   const delay = useRecoveryDelay(item.appError);
   const tone = item.tone || (item.appError ? "danger" : "info");
-  const message = item.message || (item.appError ? t(item.appError.messageKey) : t("actions.errorGeneric"));
+  const content = notificationContent(item, item.appError ? t(item.appError.messageKey) : t("actions.errorGeneric"));
+  const dismiss = useCallback(() => {
+    restoreNoticeFocus(card.current, opener.current);
+    setLeaving(true);
+  }, []);
+  useLayoutEffect(() => {
+    const node = card.current;
+    return () => restoreNoticeFocus(node, opener.current);
+  }, []);
 
   useEffect(() => {
-    if (isHovered || hasFocus || isActing || delay > 0) return undefined;
-    const timer = window.setTimeout(() => onDismiss(item.id), item.durationMs ?? 5_000);
+    if (!leaving) return;
+    const timer = window.setTimeout(() => onDismiss(item.id), window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 200);
     return () => window.clearTimeout(timer);
-  }, [delay, hasFocus, isActing, isHovered, item.durationMs, item.id, onDismiss]);
+  }, [leaving, item.id, onDismiss]);
+
+  useEffect(() => {
+    if (leaving || isHovered || hasFocus || isActing || delay > 0) return undefined;
+    const timer = window.setTimeout(dismiss, item.durationMs ?? 5_000);
+    return () => window.clearTimeout(timer);
+  }, [delay, hasFocus, isActing, isHovered, leaving, item.durationMs, item.id, dismiss]);
 
   return (
+    <div ref={card} className="platforma-notification-card" data-leaving={leaving || undefined} inert={leaving}>
     <StatusNotice
       data-testid="action-feedback"
       compact
       actionPlacement="corner"
       tone={tone}
-      title={message}
-      className="pointer-events-auto w-[min(360px,calc(100vw-2rem))] shadow-panel backdrop-blur-sm transition"
+      title={content.title}
+      description={content.description}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onFocusCapture={() => setHasFocus(true)}
@@ -60,14 +82,14 @@ export function ActionFeedbackToast({ item, onDismiss, dismissAfterAction = true
       }}
       role={tone === "danger" || tone === "warning" ? "alert" : "status"}
       ariaLive={tone === "danger" || tone === "warning" ? "assertive" : "polite"}
-      action={(
+      dismiss={(
         <button
           type="button"
-          className="platforma-focus-ring grid h-7 w-7 shrink-0 place-items-center rounded-control text-platforma-faint transition hover:bg-surface-card hover:text-platforma-text"
+          className="platforma-notice-close"
           aria-label={t("common.close")}
-          onClick={() => onDismiss(item.id)}
+          onClick={dismiss}
         >
-          <X size={15} />
+          <X aria-hidden="true" size={16} />
         </button>
       )}
       details={(item.actionLabel && item.onAction) || (item.appError && canShowSupportDetails(item.appError)) ? (
@@ -84,14 +106,17 @@ export function ActionFeedbackToast({ item, onDismiss, dismissAfterAction = true
             isLoading={isActing}
             disabled={delay > 0}
             onClick={async () => {
+              if (pending.current) return;
+              pending.current = true;
               setIsActing(true);
               try {
                 await item.onAction?.();
+                if (dismissAfterAction) dismiss();
               } catch {
                 // The mutation owns the follow-up error notification. Keep the
                 // retry control recoverable and avoid an unhandled rejection.
               } finally {
-                if (dismissAfterAction) onDismiss(item.id);
+                pending.current = false;
                 setIsActing(false);
               }
             }}
@@ -103,26 +128,25 @@ export function ActionFeedbackToast({ item, onDismiss, dismissAfterAction = true
         </div>
       ) : null}
     />
+    </div>
   );
 }
 
 export function NotificationProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<NotificationItem[]>([]);
+  const nextId = useRef(0);
 
   const dismiss = useCallback((id: number) => {
     setItems((current) => current.filter((item) => item.id !== id));
   }, []);
 
   const showNotification = useCallback((options: NotificationOptions) => {
+    const item = { ...options, id: ++nextId.current, createdAt: Date.now() };
     setItems((current) => {
       const key = notificationDedupeKey(options);
       if (key && current.some(item => notificationDedupeKey(item) === key)) return current;
       return [
-        {
-          ...options,
-          id: Date.now() + Math.floor(Math.random() * 1000),
-          createdAt: Date.now(),
-        },
+        item,
         ...current,
       ].slice(0, 4);
     });
@@ -133,14 +157,11 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   return (
     <NotificationContext.Provider value={value}>
       {children}
-      <div
-        className="pointer-events-none fixed bottom-5 right-5 flex max-h-[calc(100dvh-8rem)] flex-col-reverse items-end gap-2 overflow-y-auto"
-        style={{ zIndex: "var(--platforma-z-toast)" }}
-      >
+      <NotificationPortal group="notifications">
         {items.map((item) => (
           <ActionFeedbackToast key={item.id} item={item} onDismiss={dismiss} />
         ))}
-      </div>
+      </NotificationPortal>
     </NotificationContext.Provider>
   );
 }

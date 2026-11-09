@@ -1,0 +1,463 @@
+{
+  "task": "RECORDS-WORKSPACE-20261102",
+  "head": "e02a28f550e94a543c3d88acac7c1b19ee48f90b",
+  "boundary": "Full candidate file hashes, includes pre-existing foreign hunks; not whole-file ownership or publication. Original baseline in output. Registry contains concurrent audit entries.",
+  "files": [
+    {
+      "path": "STATUS.md",
+      "sha256": "7740470dc73446ff58384662b4a8ad25ba62d8471a93be59421d6eccf716a5fc"
+    },
+    {
+      "path": "apps/ai_core/assistant.py",
+      "sha256": "1bde78bc73acac861c96e32de0de92e7bcfb3d14fb871f5b9830351b14912f73"
+    },
+    {
+      "path": "apps/ai_core/conversation_router.py",
+      "sha256": "e3b8aa1f79f57bd423f637c3885718ab1868a82d669f0cf51337f4a85f8d3b48"
+    },
+    {
+      "path": "apps/ai_core/crm_planner.py",
+      "sha256": "f5a612b4ba440567a153a0b8d29b248e789aa320a0b489a29ef472d9dfc3dafc"
+    },
+    {
+      "path": "apps/ai_core/crm_tools.py",
+      "sha256": "a3a2fb68e8b9cb4b900ba3839c64e1e120f10a5cf259b48d48769b252f59f0f3"
+    },
+    {
+      "path": "apps/ai_core/crm_transitions.py",
+      "sha256": "034cb329288fe9aae95c45b3938c186c997d19b5edcfd97210682e58c30d87b7"
+    },
+    {
+      "path": "apps/ai_core/crm_writes.py",
+      "sha256": "8ebf0bb2317b2723a85f95af74e9539dfa28ece3e480655d629a9b3ff2112079"
+    },
+    {
+      "path": "apps/ai_core/recommendations.py",
+      "sha256": "b3802f6c9192c90964fce2c6074435aecb05ded7033404af556101385c42a93c"
+    },
+    {
+      "path": "apps/ai_core/serializers.py",
+      "sha256": "10da00092db6a52009a75f73e30d0f7eb3ebe18e437ebc8862977e8531c89f01"
+    },
+    {
+      "path": "apps/ai_core/tests_crm_tools.py",
+      "sha256": "44efcf5f23d4d936e97cec59222a52c09abb3c8a772731ae18df5bcff9ae57b9"
+    },
+    {
+      "path": "apps/ai_core/tests_record_workflow.py",
+      "sha256": "ec34c983a3585f011eb196f9e6229816211ea3435427c48c62a8ceb754233480"
+    },
+    {
+      "path": "apps/ai_core/tool_registry.py",
+      "sha256": "8689d8f4cfc6ca078cd5a605a6a4a271996d9f8d1467eb52102580ad5fae7966"
+    },
+    {
+      "path": "apps/ai_core/views.py",
+      "sha256": "2114b0827c8dfedafe2c771a09b06d4a8f92877c5e957e76fd0e54cb7d009167"
+    },
+    {
+      "path": "apps/analytics/tests_record_metrics.py",
+      "sha256": "3677973245de4082104c72a9134586e206b4ee387262e2c1b8e4f2daf98c4dd0"
+    },
+    {
+      "path": "apps/analytics/workspace.py",
+      "sha256": "9c36c424732d160a7dbe255156492f3fcfa842720dee19867e1a69f207cb83e4"
+    },
+    {
+      "path": "apps/analytics/workspace_export.py",
+      "sha256": "7ada60c1217f7a9b7d05fedff74a3df412ee4e3c1a3601f822388ac7b1f2d69e"
+    },
+    {
+      "path": "apps/automations/engine.py",
+      "sha256": "21d8d476b5b80996ff066c799e62c19705e0ceba90650dd5e1c98eca3a719b2e"
+    },
+    {
+      "path": "apps/automations/tests.py",
+      "sha256": "9a57abe9e041ce7c8b101058833567767a7556edcdfce698f674dc8fe3098097"
+    },
+    {
+      "path": "apps/automations/tests_follow_up_policy.py",
+      "sha256": "30b6eed0d6f44ff83eced95db06436eb30b335a3c9b691d783f0aef16942f6b6"
+    },
+    {
+      "path": "apps/core/crm_cards.py",
+      "sha256": "8ccf7ab6dff3e64c04047f6d941c2b94bc30f9a50031d496e775c5db5f145f66"
+    },
+    {
+      "path": "apps/core/operational_dashboard.py",
+      "sha256": "61be333814ba110a828ed1caeb146780db930ca812d7dd1f3506971ba28449e2"
+    },
+    {
+      "path": "apps/core/tests_record_queues.py",
+      "sha256": "19735e3bd773a55a6321293a4335ca02a44d1d86e0549e9545d8f6dc687adc94"
+    },
+    {
+      "path": "apps/core/views.py",
+      "sha256": "718490530c35f42f550ca86a64569ca47979d0d40466b3104c5d977c8a6a7733"
+    },
+    {
+      "path": "apps/core/work_queues.py",
+      "sha256": "ce403a59e85b96ccbde7bee0d6395aafae48db818cd5cbf6f6469edb44e7ac64"
+    },
+    {
+      "path": "apps/scheduling/legacy_record_links.py",
+      "sha256": "e106f402e262cf08c6ba05bb1f39849c340799abd01637e0ec96f6f7d3f145f4"
+    },
+    {
+      "path": "apps/scheduling/record_workspace.py",
+      "sha256": "32cae3114defe0cad45833ad5e99d6766edea64f5e21efca69e8022b0026345d"
+    },
+    {
+      "path": "apps/scheduling/serializers.py",
+      "sha256": "701702b45b49a09a2fb305fe9fa66d8c21c76c487c6bc4ae3e3a5b1a2df3d5ac"
+    },
+    {
+      "path": "apps/scheduling/services.py",
+      "sha256": "e39bd98b7ef05228ae3b1a3528fc3ea1b67cb631ce8a2a18d468fd25629c0ef2"
+    },
+    {
+      "path": "apps/scheduling/tests_record_completion.py",
+      "sha256": "8c3b499462fb8230fddbfecbe00d53f01c5c86512133dd52270b51edc37f798c"
+    },
+    {
+      "path": "apps/scheduling/tests_record_concurrency.py",
+      "sha256": "b481ab8406b341dff426bd6135be70837b49d5218f80a5b263aeab73cef2b891"
+    },
+    {
+      "path": "apps/scheduling/tests_record_workspace.py",
+      "sha256": "80acecce45d8104a9c87499ff4b997aa5dafc6fd9e4101c3dff716ee35b13709"
+    },
+    {
+      "path": "apps/scheduling/views.py",
+      "sha256": "10cc3414b1971cb0853a949c6dc64750d58a7018b5810a2c0a8f9388bc41cfbd"
+    },
+    {
+      "path": "docs/current/acceptance.md",
+      "sha256": "c9fc45e97e93bbf9bb7318dbb581a37e5d4a0b6b281eada80dc5bf939b36e6c1"
+    },
+    {
+      "path": "docs/current/ai.md",
+      "sha256": "674e26e073fb59ac33320f7c28637a87badca6c232d97f6d60c41f0d9a4a6b38"
+    },
+    {
+      "path": "docs/current/crm.md",
+      "sha256": "1c006003d7104909ae70db9ffa8b7de340527e420d5641ebddb999bb250354ff"
+    },
+    {
+      "path": "docs/current/frontend.md",
+      "sha256": "758d8013e46f13b139ecc9bab11ed00d56ded3268be18784b0bd141d025bba20"
+    },
+    {
+      "path": "docs/current/roadmap.md",
+      "sha256": "7932e2fc25b08dad71dab12f76b6e0a8ecf1c7eeb1855b1516dade4f8720c0fb"
+    },
+    {
+      "path": "docs/documentation-index.json",
+      "sha256": "6007400718cf7eec43b9a1c599f90111bf931cf8a0a212f2839477e3b90888c8"
+    },
+    {
+      "path": "docs/pre-production/capabilities.md",
+      "sha256": "96f1eb3ff78fb0eb048d30d7ff1e893013c310ed6e1f50e1ea9314a3974c4735"
+    },
+    {
+      "path": "docs/pre-production/clients.md",
+      "sha256": "358b1043fd41be3c80d744f9b9361a4392ea95e39417991c9baebbd4208ec10b"
+    },
+    {
+      "path": "docs/pre-production/inbox.md",
+      "sha256": "58d721254fdd103accf5356bdcf944460336dfb10172cdcc06848cf2468887d6"
+    },
+    {
+      "path": "docs/pre-production/leads-deals.md",
+      "sha256": "1acbaa25c70c031798eb389d45b1ff842c973ecd3a8106be08cea2f0a42fe7d9"
+    },
+    {
+      "path": "docs/pre-production/tasks-automations.md",
+      "sha256": "0a53fc7b3411ed820ea8f211b1b74a23c415998d686035d9c7ec62e1e5a4aed5"
+    },
+    {
+      "path": "docs/testing/evidence/records-workspace-20261102.md",
+      "sha256": "c24a851ac4fac936afc971fe6623fb7acddd4d96195f302cbb59c6bfe5a291a6"
+    },
+    {
+      "path": "docs/testing/task-state/PRIMARY-SESSION.md",
+      "sha256": "992755451ab603cc4e80438fa26f6337b3067bc43f30e5cf5d2e50bc842e52bf"
+    },
+    {
+      "path": "frontend/scripts/tests/record-filters.test.mjs",
+      "sha256": "321b6ed99bf2777e0f5291629b88f9a312360c7bb4e58f7ce07edcb0bd968813"
+    },
+    {
+      "path": "frontend/scripts/tests/record-legacy-export.test.mjs",
+      "sha256": "6607c843b86999b5a158d184c8b6c4a04657cb5892ded40989fff5f3affc5435"
+    },
+    {
+      "path": "frontend/scripts/tests/route-prefetch.test.mjs",
+      "sha256": "5a6c6d41a7b449ece728c14d8a1fe6b7484dc695851640298ed2447326133d29"
+    },
+    {
+      "path": "frontend/scripts/tests/timeline-presentation.test.mjs",
+      "sha256": "72f327d5575e25443a7008fca2b9d4e33bdd73cf34b306b142e559f11d8bc7bf"
+    },
+    {
+      "path": "frontend/src/api/ai.ts",
+      "sha256": "378c78aeb9d313f8b834fd9660c83d7567336863ac9d8e9c1d2e59717117135d"
+    },
+    {
+      "path": "frontend/src/api/appointments.ts",
+      "sha256": "1bcf3fae4ed24da22e275442a5fc843f109df1ed8380584ab42ad78401979d04"
+    },
+    {
+      "path": "frontend/src/api/crmCards.ts",
+      "sha256": "83a928231d2df213cfc61a222f36a2ad4af083e196c961cc31e79702c7073463"
+    },
+    {
+      "path": "frontend/src/api/deals.ts",
+      "sha256": "88f81384662bd36783b83193011c959499437824a7e20d72c886e4d1f3513338"
+    },
+    {
+      "path": "frontend/src/api/importExport.ts",
+      "sha256": "31254a7b7999006b0f253753a936de779ae53a21847b4f444b53846d9dd7b3af"
+    },
+    {
+      "path": "frontend/src/api/leads.ts",
+      "sha256": "c4d118581d8edce7419a32e7e145a12d729740adfb918a4f00f93d446ece206e"
+    },
+    {
+      "path": "frontend/src/api/workQueues.ts",
+      "sha256": "ac1abad9ea95c17bf1c7e7015c27898a5e25a7f963fe8a407ce150594318247c"
+    },
+    {
+      "path": "frontend/src/app/merchantRoutes.tsx",
+      "sha256": "66de33cf8b419cc6db45c25169724bc2896f50977209b617d185168b395aefd2"
+    },
+    {
+      "path": "frontend/src/app/routeLoaders.tsx",
+      "sha256": "3c26c384fbf4a942be84cb6b7b7f5ee3dab50045c48e88863c7e869ae346b544"
+    },
+    {
+      "path": "frontend/src/app/routeMetadata.ts",
+      "sha256": "c245c547aeaeb2e9954a0572a466ef45a04515f9ce859480bb0d364c1870222d"
+    },
+    {
+      "path": "frontend/src/components/crm/CrmEntityDrawer.tsx",
+      "sha256": "9c4b52534d2d3303611d207dce9204d56dc1daeb0d55e21289dea68348834e2a"
+    },
+    {
+      "path": "frontend/src/components/crm/drawers/EntityAppointmentsPanel.tsx",
+      "sha256": "c1869c5f863b95b40b57f34798fe3749aa3bb2c93a01f413c2d04338a221f65a"
+    },
+    {
+      "path": "frontend/src/components/crm/drawers/EntityAttachmentsPanel.tsx",
+      "sha256": "4df02ac27381734c0ab4cca5db0e643aa50a25c6ababebda476bfed7c6617a73"
+    },
+    {
+      "path": "frontend/src/components/crm/drawers/EntityTasksPanel.tsx",
+      "sha256": "2a2ca0a836697828e050762a88c8adbd2f855be068e3cd42d3c18034633d0fa0"
+    },
+    {
+      "path": "frontend/src/components/crm/drawers/appointment.tsx",
+      "sha256": "142fcf6900fe8f2a82431c2944901a2a6ed6a6dbded66b02a08d38d87bcea457"
+    },
+    {
+      "path": "frontend/src/components/crm/drawers/client.tsx",
+      "sha256": "5ddd226b127e962abab71a147e7c54ecb81313ffe76f94a391b62d0dc3de186e"
+    },
+    {
+      "path": "frontend/src/components/crm/drawers/config.ts",
+      "sha256": "6fdec959fae30ce07757261142b88172598f1be7887f9a648bc981beb7a75d42"
+    },
+    {
+      "path": "frontend/src/components/crm/drawers/shared.tsx",
+      "sha256": "19f458617389aa351987d81f00ab8a16ca4ce87f981cd1171958f2a54db33c31"
+    },
+    {
+      "path": "frontend/src/components/crm/drawers/shell.tsx",
+      "sha256": "e7e2d10e1f93021171ed4dbada796aa75c83773f50b5c68bdcb28e1a359ee8aa"
+    },
+    {
+      "path": "frontend/src/components/forms/AppointmentRescheduleForm.tsx",
+      "sha256": "94db3bc18673982c83a31829dea2db84f87c7faeb54fdbcb446616bb7ec46c72"
+    },
+    {
+      "path": "frontend/src/components/layout/CommandPalette.tsx",
+      "sha256": "e10db9a4b0b0700ca9a035ce9315043776c110eab0c8fb5eae78cd180a4606fa"
+    },
+    {
+      "path": "frontend/src/components/layout/GlobalSearch.tsx",
+      "sha256": "9c11637a6585ed728ef5c8a619a551b78d3cbd6473959df776c09b4951c41a07"
+    },
+    {
+      "path": "frontend/src/components/layout/MobileNav.tsx",
+      "sha256": "4811017fb5b602997806876b81a40dce6d328978535ca598730f46ce5373dd76"
+    },
+    {
+      "path": "frontend/src/components/layout/Sidebar.tsx",
+      "sha256": "e4c52e36364c2938bb76417586e8a1d46d1c0b486c8ddcc6ccaaa38bd46a862d"
+    },
+    {
+      "path": "frontend/src/features/analytics/AnalyticsPage.tsx",
+      "sha256": "6e9348c0070241cde08bd4bc2025defad2772471df0ebb0624e5a646d4cbf781"
+    },
+    {
+      "path": "frontend/src/features/analytics/ExportHistory.tsx",
+      "sha256": "591b49b59534bfc856414def9043e8016cdbeb5a5e7f4b8e9b6312382445b515"
+    },
+    {
+      "path": "frontend/src/features/analytics/WorkspaceSections.tsx",
+      "sha256": "e158dd0523f0e9c218749d7f917a90f95a0d760cc702a7cca255fc665e5bc7fc"
+    },
+    {
+      "path": "frontend/src/features/automations/AutomationTemplates.tsx",
+      "sha256": "f2845bbce95bd4001fa61b97ebfd4c419715a63b7b2e220b4e43cb384f398487"
+    },
+    {
+      "path": "frontend/src/features/automations/AutomationsPage.tsx",
+      "sha256": "4e20de4253ba7c8c4258848952ad0bd64e3b31ddec49035ae840f754443dd37e"
+    },
+    {
+      "path": "frontend/src/features/automations/useAutomationEditor.ts",
+      "sha256": "6709bf05aef51b2cd827ecaa7d776fae63729109bccccb356a58a95dc4749ed7"
+    },
+    {
+      "path": "frontend/src/features/calendar/AppointmentWorkspacePage.tsx",
+      "sha256": "f06e419a42306d1627336bdee8fe7722f31b8fcc930f8db36790122aa2bc1950"
+    },
+    {
+      "path": "frontend/src/features/calendar/CalendarPage.tsx",
+      "sha256": "cc18e5037a602c3c9924ec34d85bc835b493ecb2dba23739791808b39c2b38cd"
+    },
+    {
+      "path": "frontend/src/features/calendar/CalendarStatusDialog.tsx",
+      "sha256": "56eb874bfaf07b12a5e24e0f025a1a4b62ead557f12a73a966263e15594566ad"
+    },
+    {
+      "path": "frontend/src/features/calendar/LegacyAssignment.tsx",
+      "sha256": "2b3fd5bc42afd3b52cadc9a4efb55a9e2072d2f4c6b89e7d26a0a136958e52e8"
+    },
+    {
+      "path": "frontend/src/features/calendar/LegacyRecordsPage.tsx",
+      "sha256": "774a048f5daf034dcb6f0f8acd82e587fedcc2ced9d841f872b4622d6cbb6419"
+    },
+    {
+      "path": "frontend/src/features/calendar/RecordsPage.tsx",
+      "sha256": "00d7e3e7d4d47b99ef0cb21a58f9957ca6eb94231bc6650d951ad8bfc2fcbf11"
+    },
+    {
+      "path": "frontend/src/features/calendar/RecordsTable.tsx",
+      "sha256": "66c0cbf438810f27f96c958e448c34b1f45305d7c1ea2c02ed04f0fe1f8fcc9e"
+    },
+    {
+      "path": "frontend/src/features/calendar/recordFilters.ts",
+      "sha256": "70626c8b61a8accc398fec9686d01e4df136895ece1852aff39f14bff887e50c"
+    },
+    {
+      "path": "frontend/src/features/calendar/useCalendarCommands.ts",
+      "sha256": "e2f9f83753f8296a79175ebb33920f90a0a7c0a4c13aeefef42b013fbfab96de"
+    },
+    {
+      "path": "frontend/src/features/clients/ClientWorkspacePage.tsx",
+      "sha256": "b49df9d7d83e12f7a5dbd0f02c0ce857f3494329e5a9d97892964de50cf070a0"
+    },
+    {
+      "path": "frontend/src/features/clients/components/ClientWorkspaceSections.tsx",
+      "sha256": "72de0a9d303512d7b86acbeddbab470a8b1257a88358b808e2ef6962636dcd09"
+    },
+    {
+      "path": "frontend/src/features/conversations/ConversationsPage.tsx",
+      "sha256": "9467989fabdf01e393f3f4a61fa5fc0b985dec501d39d8f4165a46e20d3c53aa"
+    },
+    {
+      "path": "frontend/src/features/conversations/components/InboxCustomerContext.tsx",
+      "sha256": "47d301eae0aad13ba04d4e3215705d63bf81c00865a2140315391d01ed4a4f6d"
+    },
+    {
+      "path": "frontend/src/features/conversations/components/PipelineConfirmationDialog.tsx",
+      "sha256": "b89fe41d07eb8210810c67ed389b9a4b83f1fb768c3ab8c0e8e040d9d50e0ddf"
+    },
+    {
+      "path": "frontend/src/features/dashboard/DashboardPage.tsx",
+      "sha256": "fabe6bb3c5ae41218d384cc4b3a8d9788a62782a2d0fc15b495623933b29c72e"
+    },
+    {
+      "path": "frontend/src/features/dashboard/OperationalDashboard.tsx",
+      "sha256": "6f5ce588eba9ed37a83656847409a37b61253a573501e0d7cc34b7fc6c5bf1ff"
+    },
+    {
+      "path": "frontend/src/features/dashboard/OwnerDashboard.tsx",
+      "sha256": "3a5aca6431181b713a6fd6235ba0f4aa85fabe02fc5ca54facdfabbe862d2d17"
+    },
+    {
+      "path": "frontend/src/features/dashboard/dashboardQueries.ts",
+      "sha256": "2ddfadfcffd85a252db7d29defb02d7874b06e0501e6dc0d8a1edf6bd5a8227d"
+    },
+    {
+      "path": "frontend/src/features/resources/components/SpecialistLifecycle.tsx",
+      "sha256": "140564879d2607adc1e051bf2023e002a147378678742fd48d6a637aac490e90"
+    },
+    {
+      "path": "frontend/src/features/settings/sections/CustomFieldsSection.tsx",
+      "sha256": "dcfc1fbb1462870a8ed838d93b41ca3d082c0373fbe282b3fb0bc39ad4729e03"
+    },
+    {
+      "path": "frontend/src/features/tasks/TasksPage.tsx",
+      "sha256": "8319b1785730282ca78b7bc8b4b69f6ec3f4fdd8606edc27d1c6fa62ff8b5bc8"
+    },
+    {
+      "path": "frontend/src/features/tasks/components/TaskEditor.tsx",
+      "sha256": "fdb0195e566439ecab91154a9f3f3c7664f6059618a6e2db1fb0e69ae3ad7cdb"
+    },
+    {
+      "path": "frontend/src/features/tasks/taskWorkspaceQueries.ts",
+      "sha256": "274dc02f3f4d081be704a341ea039ca75fa9eb1fcf9ca0efbb8d6ae664016a58"
+    },
+    {
+      "path": "frontend/src/features/timeline/TimelineToolbar.tsx",
+      "sha256": "3299bebb3480448829b3627ad8f41813b4e5475c39a9cead6ef414c57785d2c8"
+    },
+    {
+      "path": "frontend/src/features/timeline/timelinePresentation.ts",
+      "sha256": "0ae7c9281114de605ce688a23a29eda3917ab59ff67b06799bb843f5f427aabb"
+    },
+    {
+      "path": "frontend/src/hooks/useRecordSearch.ts",
+      "sha256": "8b005f65742fcc28e6d01e17447948fd300afde133d7ae543122b03dd94637bc"
+    },
+    {
+      "path": "frontend/src/lib/i18n/en/automations.ts",
+      "sha256": "a9fe668b1884c1ccc8a6f5cd0d0daae5f61247e0440d6d7493287ebf36e89b6e"
+    },
+    {
+      "path": "frontend/src/lib/i18n/en/calendar.ts",
+      "sha256": "283bce5f42062aaaafdd02a79642381c8bc305c83f78c082607fa972240b628d"
+    },
+    {
+      "path": "frontend/src/lib/i18n/kk/automations.ts",
+      "sha256": "aa3dcdfa746f7903a91762b3346993648832d0757a4665d14aaa989663dcb8ec"
+    },
+    {
+      "path": "frontend/src/lib/i18n/kk/calendar.ts",
+      "sha256": "14a2f843b296a6ce0f2cf56f0d3940d3bec3490855b8a0fc9fcb39bf4d95947f"
+    },
+    {
+      "path": "frontend/src/lib/i18n/ru/automations.ts",
+      "sha256": "a86c865cc0e9d0ba74092a2af3fa79177de3dbf1e151eb1d139a17f34de7301e"
+    },
+    {
+      "path": "frontend/src/lib/i18n/ru/calendar.ts",
+      "sha256": "7b9b36d2e055ca241eab4e961d34ca1f9e234552a2e6091cd19d9dd6af586e70"
+    },
+    {
+      "path": "frontend/src/lib/startPage.ts",
+      "sha256": "8aa55971e623c60da390b20fde1bed376192b723906d87a3ee5e980374ba96a7"
+    },
+    {
+      "path": "frontend/src/types/analyticsWorkspace.ts",
+      "sha256": "922904fdd5846b98409a8273c8e121c3484913477d7a3130bcb841117d39b419"
+    },
+    {
+      "path": "frontend/src/types/timeline.ts",
+      "sha256": "bab31e8bc96f857727ff69f2dedfc0612851ffb361035eb8519bcde41f141d48"
+    }
+  ]
+}

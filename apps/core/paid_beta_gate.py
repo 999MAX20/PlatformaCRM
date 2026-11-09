@@ -1,11 +1,11 @@
 from dataclasses import asdict, dataclass
-from email.utils import parseaddr
 
 from django.conf import settings
 
 from apps.core.backup_readiness import run_backup_restore_readiness_check
 from apps.core.operations_health import platform_operations_health
 from apps.core.production_audit import run_production_readiness_audit
+from apps.core.production_rules import has_transactional_email as _has_transactional_email
 from apps.integrations.provider_rollout import run_provider_rollout_readiness_check
 
 
@@ -30,19 +30,6 @@ def _item(key, title, condition, detail, action):
 
 def _required_bool(name):
     return bool(getattr(settings, name, False))
-
-
-def _has_transactional_email():
-    _, email_address = parseaddr(str(getattr(settings, "DEFAULT_FROM_EMAIL", "") or ""))
-    email_domain = email_address.rsplit("@", 1)[-1].lower() if "@" in email_address else ""
-    return all(
-        [
-            bool(str(getattr(settings, "EMAIL_HOST", "")).strip()),
-            bool(email_address),
-            email_domain not in {"", "localhost", "local", "test.local", "zani.local", "example.com"},
-            bool(getattr(settings, "EMAIL_USE_TLS", False)) or bool(getattr(settings, "EMAIL_USE_SSL", False)),
-        ]
-    )
 
 
 def _has_sentry_observability():

@@ -249,6 +249,8 @@ def _get_or_create_business(
             timezone=timezone_name,
         )
         created = True
+        from apps.branches.single_location import ensure_initial_location
+        ensure_initial_location(business)
     else:
         if business.owner_id != owner.id:
             raise OwnershipConflict(errors={"landing_id": "This landing is already linked to another owner."})

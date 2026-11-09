@@ -1,3 +1,4 @@
+from apps.core.client_projection import client_relation_q, client_search_q
 from django.db import transaction
 from django.db.models import Case, Count, IntegerField, Q, Value, When
 from django.utils import timezone
@@ -93,7 +94,7 @@ class TaskViewSet(IdempotentCRMCreateMixin, TenantModelViewSet):
             queryset = queryset.filter(business_id=business_id)
         client_ids = self.parse_query_id_list("client_ids")
         if client_ids:
-            queryset = queryset.filter(Q(client_id__in=client_ids) | Q(conversation__client_id__in=client_ids)).distinct()
+            queryset = queryset.filter((client_relation_q(self.request.user) & Q(client_id__in=client_ids)) | (client_relation_q(self.request.user, path="conversation__client") & Q(conversation__client_id__in=client_ids))).distinct()
         lead_ids = self.parse_query_id_list("lead_ids")
         if lead_ids:
             queryset = queryset.filter(Q(lead_id__in=lead_ids) | Q(conversation__lead_id__in=lead_ids)).distinct()
@@ -130,10 +131,10 @@ class TaskViewSet(IdempotentCRMCreateMixin, TenantModelViewSet):
             queryset = queryset.filter(
                 Q(title__icontains=search)
                 | Q(description__icontains=search)
-                | Q(client__full_name__icontains=search)
+                | client_search_q(self.request.user, search, fields=("full_name",))
                 | Q(deal__title__icontains=search)
-                | Q(conversation__external_user_id__icontains=search)
-                | Q(conversation__client__full_name__icontains=search)
+                | (Q(conversation__client__isnull=True, conversation__external_user_id__icontains=search) | (client_relation_q(self.request.user, path="conversation__client") & Q(conversation__external_user_id__icontains=search)))
+                | client_search_q(self.request.user, search, path="conversation__client", fields=("full_name",))
                 | Q(assignee__full_name__icontains=search)
                 | Q(assignee__email__icontains=search)
             )

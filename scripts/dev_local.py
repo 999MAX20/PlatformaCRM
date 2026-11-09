@@ -83,6 +83,9 @@ def probe(mode):
         if settings.ENVIRONMENT not in {'local', 'development'}:
             raise RuntimeError('Development launch is disabled outside a local/development environment.')
         database = settings.DATABASES['default']
+        if database['ENGINE'] == 'django.db.backends.postgresql':
+            from scripts.local_postgres import ensure_running
+            ensure_running(database)
         if database['ENGINE'].endswith('sqlite3') and not Path(database['NAME']).is_file():
             raise RuntimeError('Working SQLite database is missing. No database was created.')
         broker = urlsplit(settings.CELERY_BROKER_URL)

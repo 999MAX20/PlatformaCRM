@@ -10,6 +10,7 @@ from apps.businesses.capabilities import resource_is_enabled
 from apps.core.crm_read_scope import readable_link, readable_queryset
 from apps.scheduling.models import Appointment
 from apps.tasks.models import Task
+from apps.conversations.read_results import REFERENCE_MODELS, REFERENCE_RESOURCES, metadata_reference_ids
 from apps.clients.models import Client
 from apps.leads.models import Lead
 from apps.crm.models import Deal
@@ -55,10 +56,15 @@ def inbox_list_link_visibility(conversations, *, actor):
     businesses = {item.business_id: item.business for item in conversations}
     result = {}
     for business_id, business in businesses.items():
-        for key, model in (("client", Client), ("lead", Lead), ("deal", Deal)):
-            ids = {getattr(item, f"{key}_id") for item in conversations if item.business_id == business_id}
+        for key, model in REFERENCE_MODELS.items():
+            items = [item for item in conversations if item.business_id == business_id]
+            ids = {getattr(item, f"{key}_id", None) for item in items}
+            for item in items:
+                ids.update(metadata_reference_ids(item, key))
+            if key not in LINK_RESOURCES and not any(ids):
+                continue
             visible = readable_queryset(model.objects.filter(pk__in=ids), actor=actor,
-                                        business=business, resource=LINK_RESOURCES[key])
+                                        business=business, resource=REFERENCE_RESOURCES[key])
             result[(business_id, key)] = set(visible.values_list("pk", flat=True))
     return result
 

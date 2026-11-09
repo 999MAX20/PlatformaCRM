@@ -110,6 +110,11 @@ export function VisitPlansPage() {
       }
     }
   };
+  const dialogLabels = {
+    add: "plans.addStep", edit: "plans.editStep", schedule: "plans.schedule",
+    remove: "plans.remove", archive: "plans.archivePlan", restore: "plans.restorePlan", responsible: "plans.changeResponsible",
+  } as const;
+  const dialogLabel = creating ? "plans.create" : dialog ? dialogLabels[dialog.kind] : "plans.edit";
   const recovery = error ? <ErrorState message={getRecoverableMessage(error)} action={<Button variant="secondary" onClick={refresh}>{t("common.refresh")}</Button>} /> : null;
   if (!business) return <EmptyState title={t("appointments.noBusiness")} />;
   return <div className="space-y-4" data-testid="visit-plans">
@@ -134,8 +139,12 @@ export function VisitPlansPage() {
         <div className="flex items-center justify-between gap-3"><Button variant="secondary" disabled={!list.data.previous} onClick={() => update("page", String(page - 1))}>{t("pagination.previous")}</Button><span>{page}</span><Button variant="secondary" disabled={!list.data.next} onClick={() => update("page", String(page + 1))}>{t("pagination.next")}</Button></div>
       </> : <EmptyState title={t("plans.empty")} />}
     </>}
-    <Modal title={t(creating ? "plans.create" : dialog?.kind === "schedule" ? "plans.schedule" : "plans.edit")} open={creating || !!dialog} onClose={() => { if (!save.isPending) { update("create", ""); setDialog(null); setError(null); } }} size="lg">
+    <Modal title={t(dialogLabel)} open={creating || !!dialog} onClose={() => { if (!save.isPending) { update("create", ""); setDialog(null); setError(null); } }} size="lg">
       {recovery}
+      {!creating && plan && <div className="mb-4 space-y-1 text-sm">
+        <p className="font-semibold">{t("plans.plan")} #{plan.id} · {plan.client_name}</p>
+        {dialog?.step && <p>{t("plans.step")} #{dialog.step.id} · {dialog.step.service_name}</p>}
+      </div>}
       {reviewCurrent && plan ? <div className="rounded-card border border-platforma-border p-3 text-sm"><p className="font-semibold">{t("plans.currentComposition")}</p><ul>{plan.steps.map(step => <li key={step.id}>{step.service_name} · {step.removed_at ? t("plans.removed") : step.appointment ? t(`status.${step.status}`) : t("plans.unscheduled")}</li>)}</ul></div> : null}
       {catalogError ? <ErrorState message={getRecoverableMessage(catalogError)} action={<Button onClick={() => { void catalog.services.refetch(); void catalog.resources.refetch(); void branches.refetch(); void members.refetch(); }}>{t("common.retry")}</Button>} /> : catalog.services.isPending || catalog.resources.isPending || branches.isPending ? <LoadingState /> : creating || dialog?.kind === "add" || dialog?.kind === "edit" ? <PlanEditor
         key={creating ? "create" : `${dialog?.kind}-${dialog?.step?.id}`}
@@ -145,9 +154,9 @@ export function VisitPlansPage() {
       /> : dialog?.kind === "schedule" && plan && dialog.step ? client.isPending ? <LoadingState /> : client.error ? <ErrorState message={getRecoverableMessage(client.error)} action={<Button onClick={() => void client.refetch()}>{t("common.retry")}</Button>} /> : <AppointmentForm key={`${dialog.step.id}-${dialog.step.service}-${dialog.step.branch}-${dialog.step.resource}`} businessId={business.id} clients={client.data ? [client.data] : []} services={catalog.services.data || []} resources={catalog.resources.data || []} leads={[]} recordFirst fixedContext currency={business.currency} timeZone={business.timezone}
         prefill={{ client: plan.client, service: dialog.step.service, resource: dialog.step.resource, branch: dialog.step.branch, responsible_user: dialog.step.responsible_user || plan.responsible_user }}
         onSubmit={payload => send("schedule", { expected_revision: dialogRevision, step_id: dialog.step!.id, start_at: payload.start_at, resource: payload.resource, branch: payload.branch, expected_price: payload.expected_price, expected_duration_minutes: payload.expected_duration_minutes, notes: payload.notes })} /> : dialog && plan ? <form className="space-y-4" onSubmit={event => { event.preventDefault(); void send(dialog.kind === "remove" ? "revise" : dialog.kind, { expected_revision: dialogRevision, ...(dialog.kind === "responsible" ? {} : { reason }), ...(dialog.kind === "remove" ? { consent, remove: [dialog.step!.id] } : {}), ...(dialog.kind === "responsible" ? { responsible_user: responsible, step_ids: selectedSteps } : {}) }); }}>
-        {dialog.kind === "responsible" ? <><Select label={t("appointment.responsible")} value={responsible} options={memberOptions.map(member => ({ value: member.id, label: member.name }))} onChange={event => setResponsible(Number(event.target.value))} />{plan.steps.filter(step => step.appointment && !step.responsible_user && ["created", "confirmed", "rescheduled"].includes(step.status)).map(step => <label key={step.id} className="flex items-center gap-2 text-sm"><input type="checkbox" checked={selectedSteps.includes(step.id)} onChange={event => setSelectedSteps(current => event.target.checked ? [...current, step.id] : current.filter(value => value !== step.id))} />{step.service_name} · {step.start_at ? formatDateTime(step.start_at, business.timezone, false, language === "kk" ? "kk-KZ" : language === "en" ? "en-US" : "ru-RU") : ""}</label>)}</> : <Textarea label={t("plans.reason")} required maxLength={500} value={reason} onChange={event => setReason(event.target.value)} />}
+        {dialog.kind === "responsible" ? <><Select portal label={t("appointment.responsible")} value={responsible} options={memberOptions.map(member => ({ value: member.id, label: member.name }))} onChange={event => setResponsible(Number(event.target.value))} />{plan.steps.filter(step => step.appointment && !step.responsible_user && ["created", "confirmed", "rescheduled"].includes(step.status)).map(step => <label key={step.id} className="flex items-center gap-2 text-sm"><input type="checkbox" checked={selectedSteps.includes(step.id)} onChange={event => setSelectedSteps(current => event.target.checked ? [...current, step.id] : current.filter(value => value !== step.id))} />{step.service_name} · {step.start_at ? formatDateTime(step.start_at, business.timezone, false, language === "kk" ? "kk-KZ" : language === "en" ? "en-US" : "ru-RU") : ""}</label>)}</> : <Textarea label={t("plans.reason")} required maxLength={500} value={reason} onChange={event => setReason(event.target.value)} />}
         {dialog.kind === "remove" ? <label className="flex items-center gap-2 text-sm"><input type="checkbox" required checked={consent} onChange={event => setConsent(event.target.checked)} />{t("plans.consent")}</label> : null}
-        <Button type="submit" isLoading={save.isPending}>{t("plans.confirm")}</Button>
+        <Button type="submit" variant={dialog.kind === "archive" || dialog.kind === "remove" ? "warning" : "primary"} isLoading={save.isPending}>{t(dialogLabel)}</Button>
       </form> : null}
     </Modal>
   </div>;

@@ -1,4 +1,8 @@
 from rest_framework import serializers
+from apps.core.client_projection import ClientProjectionMixin, reader_actor, visible_client
+from apps.clients.duplicate_visibility import project_duplicate_rows
+from apps.core.crm_read_scope import readable_queryset
+from apps.businesses.access import Resources
 
 from apps.clients.models import Client
 from apps.clients.services import duplicate_payload, find_duplicate_clients
@@ -12,7 +16,7 @@ from apps.services.models import Service
 from apps.tasks.models import Task
 
 
-class LeadSerializer(serializers.ModelSerializer):
+class LeadSerializer(ClientProjectionMixin, serializers.ModelSerializer):
     lifecycle_update_fields = {
         "status",
         "previous_status",
@@ -102,7 +106,7 @@ class LeadSerializer(serializers.ModelSerializer):
         return create_lead(actor=actor, request=request, **validated_data)
 
 
-class LeadListSerializer(serializers.ModelSerializer):
+class LeadListSerializer(ClientProjectionMixin, serializers.ModelSerializer):
     attention_reasons = serializers.SerializerMethodField()
 
     def get_attention_reasons(self, obj):
@@ -250,21 +254,30 @@ class LeadDuplicateCheckSerializer(serializers.Serializer):
 
     def duplicates(self):
         business = self.validated_data["business"]
+        actor = reader_actor(self.context)
         client = None
         if self.validated_data.get("client"):
             client = Client.objects.filter(id=self.validated_data["client"], business=business).first()
-        phone = self.validated_data.get("phone") or getattr(client, "phone", "")
-        email = self.validated_data.get("email") or getattr(client, "email", "")
-        duplicates = find_duplicate_clients(business, phone=phone, email=email, exclude_client_id=getattr(client, "id", None))
-        client_rows = duplicate_payload(duplicates, phone=phone, email=email)
+        readable_client = visible_client(client, actor=actor, business=business)
+        phone = self.validated_data.get("phone") or getattr(readable_client, "phone", "")
+        email = self.validated_data.get("email") or getattr(readable_client, "email", "")
+        duplicates = find_duplicate_clients(business, phone=phone, email=email, exclude_client_id=getattr(readable_client, "id", None))
+        client_rows = project_duplicate_rows(duplicate_payload(duplicates, phone=phone, email=email), actor=actor, business=business)
         lead_rows = []
+        restricted_related = False
         if client:
-            related_leads = Lead.objects.filter(business=business, client=client).order_by("-created_at")[:5]
+            related_leads = Lead.objects.filter(business=business, client=client)
+            readable_leads = readable_queryset(related_leads, actor=actor, business=business, resource=Resources.LEADS)
+            restricted_related = related_leads.exclude(pk__in=readable_leads.values("pk")).exists()
             lead_rows = [
-                {"id": lead.id, "client": lead.client_id, "status": lead.status, "source": lead.source, "message": lead.message}
-                for lead in related_leads
+                {"id": lead.id, "client": lead.client_id if readable_client is not None else None,
+                 "status": lead.status, "source": lead.source, "message": lead.message}
+                for lead in readable_leads.order_by("-created_at")[:5]
             ]
-        return {"duplicates": client_rows, "related_leads": lead_rows}
+        result = {"duplicates": client_rows, "related_leads": lead_rows}
+        if restricted_related:
+            result["has_restricted_related_leads"] = True
+        return result
 
 
 class LeadFormFieldSerializer(serializers.ModelSerializer):
@@ -325,7 +338,7 @@ class LeadFormSerializer(serializers.ModelSerializer):
         return attrs
 
 
-class LeadFormSubmissionSerializer(serializers.ModelSerializer):
+class LeadFormSubmissionSerializer(ClientProjectionMixin, serializers.ModelSerializer):
     form_name = serializers.CharField(source="form.name", read_only=True)
 
     class Meta:
@@ -353,6 +366,10 @@ class LeadFormSubmissionSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data["payload_json"] = sanitize_config(data.get("payload_json") or {})
+        duplicate = data.get("duplicate_json") or {}
+        data["duplicate_json"] = {**duplicate, "duplicates": project_duplicate_rows(
+            duplicate.get("duplicates", []), actor=reader_actor(self.context), business=instance.business,
+        )}
         return data
 
 

@@ -11,7 +11,8 @@ export function dealPipelineLabel(pipeline: Pipeline, t: Translate) {
     ? t("deals.defaultPipeline") : pipeline.name;
 }
 
-export function money(value: string | number, currency = "KZT") {
+export function money(value: string | number | null | undefined, currency = "KZT") {
+  if (value == null) return "-";
   return `${Number(value || 0).toLocaleString("ru-RU")} ${currency}`;
 }
 

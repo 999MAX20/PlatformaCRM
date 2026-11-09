@@ -31,6 +31,11 @@ TIMELINE_LIMIT = 50
 NOTES_LIMIT = 50
 
 
+class CrmCardConversationSerializer(InboxConversationSerializer):
+    class Meta(InboxConversationSerializer.Meta):
+        fields = [field for field in InboxConversationSerializer.Meta.fields if field != "ai_safety"]
+
+
 ACTION_DEFINITIONS = {
     "client": {
         "create_lead": (Resources.LEADS, Actions.CREATE),
@@ -461,7 +466,7 @@ def build_crm_card_payload(*, business, actor=None, client=None, lead=None, deal
     )
     conversations = (
         BotConversation.objects.filter(business=business)
-        .select_related("business", "bot", "client", "lead", "assigned_to")
+        .select_related("business", "bot", "client", "lead", "deal", "assigned_to")
         .annotate(
             latest_message_id=Subquery(latest_message.values("id")[:1]),
             latest_message_direction=Subquery(latest_message.values("direction")[:1]),
@@ -506,7 +511,7 @@ def build_crm_card_payload(*, business, actor=None, client=None, lead=None, deal
 
     notes_filters = list(timeline_filters)
 
-    timeline = ActivityEvent.objects.filter(business=business).filter(_or_queries(timeline_filters)).distinct().order_by("-created_at")
+    timeline = ActivityEvent.objects.filter(business=business).select_related("client").filter(_or_queries(timeline_filters)).distinct().order_by("-created_at")
     notes = Note.objects.filter(business=business).select_related("business", "client", "author").filter(_or_queries(notes_filters)).distinct().order_by("-created_at")
 
     timeline = scope_entity_records(timeline, actor=actor, business=business, visible=visible)
@@ -533,6 +538,15 @@ def build_crm_card_payload(*, business, actor=None, client=None, lead=None, deal
     primary_entity = _primary_entity_payload(client=client, lead=lead, deal=deal, appointment=appointment)
     available_actions = _available_actions(client=client, lead=lead, deal=deal, appointment=appointment, deals=deals)
     action_entity_type, action_entity = _primary_entity_context(client=client, lead=lead, deal=deal, appointment=appointment)
+
+    projection_context = {"actor": actor, "client_projection_businesses": {business.pk: business}, "client_projection_visibility": {}}
+
+    def serialize(serializer, instances, *, many=False):
+        rows = list(instances) if many else [instances]
+        for row in rows:
+            if row is not None and row.business_id == business.pk:
+                row._state.fields_cache["business"] = business
+        return serializer(rows if many else instances, many=many, context=dict(projection_context)).data
 
     return {
         "primary_entity": primary_entity,
@@ -561,17 +575,17 @@ def build_crm_card_payload(*, business, actor=None, client=None, lead=None, deal
                 "notes": related_counts["notes"] > NOTES_LIMIT,
             },
         },
-        "client": ClientSerializer(client, context={"actor": actor}).data if client is not None else None,
-        "lead": LeadListSerializer(primary_lead).data if primary_lead is not None else None,
-        "deal": DealListSerializer(primary_deal, context={"actor": actor}).data if primary_deal is not None else None,
-        "appointment": AppointmentSerializer(primary_appointment, context={"actor": actor}).data if primary_appointment is not None else None,
-        "leads": LeadListSerializer(leads[:RELATED_LIMIT], many=True).data,
-        "deals": DealListSerializer(deals[:RELATED_LIMIT], many=True, context={"actor": actor}).data,
-        "appointments": AppointmentSerializer(appointments[:RELATED_LIMIT], many=True, context={"actor": actor}).data,
-        "tasks": TaskSerializer(tasks[:RELATED_LIMIT], many=True).data,
-        "conversations": InboxConversationSerializer(conversations[:RELATED_LIMIT], many=True).data,
-        "timeline": ActivityEventSerializer(timeline[:TIMELINE_LIMIT], many=True).data,
-        "notes": NoteSerializer(notes[:NOTES_LIMIT], many=True).data,
+        "client": serialize(ClientSerializer, client) if client is not None else None,
+        "lead": serialize(LeadListSerializer, primary_lead) if primary_lead is not None else None,
+        "deal": serialize(DealListSerializer, primary_deal) if primary_deal is not None else None,
+        "appointment": serialize(AppointmentSerializer, primary_appointment) if primary_appointment is not None else None,
+        "leads": serialize(LeadListSerializer, leads[:RELATED_LIMIT], many=True),
+        "deals": serialize(DealListSerializer, deals[:RELATED_LIMIT], many=True),
+        "appointments": serialize(AppointmentSerializer, appointments[:RELATED_LIMIT], many=True),
+        "tasks": serialize(TaskSerializer, tasks[:RELATED_LIMIT], many=True),
+        "conversations": serialize(CrmCardConversationSerializer, conversations[:RELATED_LIMIT], many=True),
+        "timeline": serialize(ActivityEventSerializer, timeline[:TIMELINE_LIMIT], many=True),
+        "notes": serialize(NoteSerializer, notes[:NOTES_LIMIT], many=True),
         "tags": _tags_payload(business, related_entity_query),
         "attachments": _attachments_payload(business, related_entity_query),
         "consents": _consent_summary_payload(business, client),

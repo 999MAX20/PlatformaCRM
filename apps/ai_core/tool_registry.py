@@ -35,6 +35,7 @@ class AIToolDefinition:
 
 
 TOOLS = {
+    "crm_schedule": AIToolDefinition("crm_schedule", "Create the requested client and visits as one transaction."),
     "crm_read": AIToolDefinition("crm_read", "Search and read permitted CRM records.", requires_confirmation=False),
     "crm_create": AIToolDefinition("crm_create", "Create a CRM record after reviewing its fields."),
     "crm_update": AIToolDefinition("crm_update", "Update the exact reviewed CRM record."),
@@ -136,7 +137,7 @@ def execute_tool_call_once(log_id, user, *, approval_id=None):
             from apps.businesses.models import Business
             business_id = AIToolCallLog.objects.values_list("business_id", flat=True).get(id=log_id)
             Business.objects.select_for_update().get(pk=business_id)
-            log = AIToolCallLog.objects.select_for_update().select_related("business", "conversation").get(id=log_id)
+            log = AIToolCallLog.objects.select_for_update(of=("self",)).select_related("business", "conversation").get(id=log_id)
             with command_agent(log):
                 locked_approval = None
                 if log.tool_name.startswith("crm_"):

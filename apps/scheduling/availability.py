@@ -110,13 +110,13 @@ def get_available_slots(business, service, date, resource=None, after_time=None,
 
     from apps.branches.schedule import resolve_branch, branch_available_slots
     branch = resolve_branch(business, branch)
-    if branch is not None:
+    if branch is not None and not branch.uses_business_defaults:
         return branch_available_slots(business, service, date, resource=resource, branch=branch,
                                       after_time=after_time, exclude_appointment=exclude_appointment)
 
     weekday = date.weekday()
     from apps.branches.schedule import resource_absent
-    if resource_absent(resource, date):
+    if resource_absent(resource, date, branch):
         return []
     working_hours = _working_hours_for(business, weekday, resource=resource, date=date)
     if not working_hours or working_hours.is_day_off:
@@ -135,7 +135,9 @@ def get_available_slots(business, service, date, resource=None, after_time=None,
             raise ValueError("after_time must be a time or datetime instance.")
         day_start = max(day_start, threshold)
 
-    duration = timedelta(minutes=service.duration_minutes)
+    from apps.branches.schedule import booking_terms
+    _, minutes, _ = booking_terms(business, service, resource, branch, appointment=exclude_appointment)
+    duration = timedelta(minutes=minutes)
     step = timedelta(minutes=SLOT_STEP_MINUTES)
     busy_query = Appointment.objects.filter(
         business=business,
@@ -168,7 +170,7 @@ def validate_appointment_availability(business, service, start_at, resource=None
 
     from apps.branches.schedule import resolve_branch, validate_branch_slot
     branch = resolve_branch(business, branch)
-    if branch is not None:
+    if branch is not None and not branch.uses_business_defaults:
         return validate_branch_slot(business, service, start_at, resource=resource, branch=branch,
                                     exclude_appointment=exclude_appointment)
 
@@ -178,9 +180,11 @@ def validate_appointment_availability(business, service, start_at, resource=None
 
     local_start = start_at.astimezone(tz)
     from apps.branches.schedule import resource_absent
-    if resource_absent(resource, local_start.date()):
+    if resource_absent(resource, local_start.date(), branch):
         raise ScheduleConflict(errors={"start_at": "The specialist is unavailable on this date."})
-    duration = timedelta(minutes=service.duration_minutes)
+    from apps.branches.schedule import booking_terms
+    _, minutes, _ = booking_terms(business, service, resource, branch, appointment=exclude_appointment)
+    duration = timedelta(minutes=minutes)
     end_at = start_at + duration
 
     working_hours = _working_hours_for(business, local_start.date().weekday(), resource=resource, date=local_start.date())

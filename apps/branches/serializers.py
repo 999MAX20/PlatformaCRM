@@ -11,8 +11,8 @@ class BranchSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Branch
-        fields = ["id", "business", "name", "address", "phone", "is_active", "archived_at", "can_manage", "can_book", "can_work", "created_at", "updated_at"]
-        read_only_fields = ["is_active", "archived_at", "created_at", "updated_at"]
+        fields = ["id", "business", "name", "address", "phone", "is_active", "archived_at", "uses_business_defaults", "can_manage", "can_book", "can_work", "created_at", "updated_at"]
+        read_only_fields = ["is_active", "archived_at", "uses_business_defaults", "created_at", "updated_at"]
 
     def get_can_manage(self, obj):
         from apps.businesses.access import Actions, Resources, can

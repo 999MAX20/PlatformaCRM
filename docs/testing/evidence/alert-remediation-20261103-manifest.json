@@ -1,0 +1,52 @@
+{
+  "task": "ALERT-REMEDIATION-20261103",
+  "root": "C:\\Users\\user\\Desktop\\PlatformaCRM",
+  "branch": "codex/ui-testing-toolkit",
+  "head": "e02a28f550e94a543c3d88acac7c1b19ee48f90b",
+  "boundary": "dirty canonical working tree; no published candidate",
+  "source_hashes": {
+    "frontend/e2e/service-s03.spec.ts": "1a3777bfdfe64ad5ca066c0c6e2da00f5e0a65284a730e08fad96db6d4bfc442",
+    "frontend/src/components/forms/ClientForm.tsx": "37e616ee7dd4d2eefce4be823a5b6f4c1f3ccb68042963f6ceaf4dd48b833130",
+    "frontend/src/components/layout/AppLayout.tsx": "9a9eb4287a6f455c1175595bda05cfbc0f01ab56e0d9d653fc3c8c6eda28d47e",
+    "frontend/src/components/layout/Header.tsx": "ad8fa846299177f7ee0199a9b7144b4fbccddf9195c2e6e4511b30e2787ff136",
+    "frontend/src/components/layout/NotificationBell.tsx": "0aaec396191589da5d92e1dcbe989cfd2ef25881f4262b27654b0ad858d77953",
+    "frontend/src/components/notifications/ServiceStatusNotice.tsx": "9a96b5fb0fbc21622d24cf1d882a3501d82b67db8be5dbb54876126bb1112fa6",
+    "frontend/src/features/account/AccountPage.tsx": "df9524f790a56d940fad35f14a95bff1a7380390e302240fc95705d5e98a9334",
+    "frontend/src/features/analytics/FinancialSummary.tsx": "54cb3b20bb3e7662857c7b7b06a119a75f51503c56b1b0b748d6c64fe85b7865",
+    "frontend/src/features/clients/ClientsPage.tsx": "cfefbb5faaeb706616370fef5baf99c5e13478d2ad97ecd46e92b53632175acc",
+    "frontend/src/features/clients/components/ClientsModals.tsx": "90b610f1fcbda731268882c0774bd652312591096d97eddab08d3e494e0db4fb",
+    "frontend/src/features/resources/components/ResourceCreateForm.tsx": "811f7eb22357ae2a153db07f395f0baee4f8b760306c25b143b463db8340f29c",
+    "frontend/src/features/resources/components/ResourceEditModal.tsx": "ca0a7df005cef3b8114f0a95392f11488a1d468aa95e6bb6bfa739e178eb60d2",
+    "frontend/src/features/resources/ResourcesPage.tsx": "20f7e12849ac4891f2820958aa2cb714938b33977ae4fc7f1c9e75adebec79eb",
+    "frontend/src/lib/i18n/en/support.ts": "d350a4933e22558249479067f663ecfba8fe3cee3d1d26d8b98dc7781debd3e0",
+    "frontend/src/lib/i18n/kk/support.ts": "9739c5d931757c83d504add765075edceee5f24b4b52a8f9a6862104cdb4a3b9",
+    "frontend/src/lib/i18n/ru/support.ts": "131d95fbd7d15c5b7494c0d109696604b74576621313db62c1e2a07e17ad7891",
+    "frontend/e2e/alert-remediation.spec.ts": "9b15b7dcb87744443efea841a8133207d0b1af615d7fe81f886d418e8a23d972",
+    "frontend/playwright.alert-remediation.config.ts": "6120f78703052255a9f1cfeb04bdb000963242b2dbb590e16d4b1623a4a8f05c"
+  },
+  "preexisting_notification_serializer_diff_unchanged": true,
+  "checks": {
+    "browser_unique_scenarios": 22,
+    "completion_run": {
+      "pass": 20,
+      "fail": 2,
+      "cause": "login HTTP429 before target forms"
+    },
+    "focused_recheck": {
+      "pass": 2,
+      "fail": 0
+    },
+    "node_tests": 19,
+    "build_types_i18n": "PASS;6655 keys per language",
+    "bundle": "PASS shell budget; ru/kk >500kB warnings retained",
+    "legacy_service_s03": "FAIL: exact event text replaced by existing personal projection message_key"
+  },
+  "assets": {
+    "financial-prerequisite-en.png": "7aed73a7040012f6507607ad2192221666b7668403fd242281cda3324790a484",
+    "financial-prerequisite-kk.png": "838c7947e8992de6896d393dd5fcf4455d03cef4105c5246de4ff6427bf8cf33",
+    "financial-prerequisite-ru.png": "5f7bcd7790f2b60773ed52118413e01e331cda3e61086e5514f459e3ea0561ea",
+    "service-details-en.png": "b85fc5f8efaf41cc287580ac90ad52618749f8234ca29e0155538c087095ac7d",
+    "service-details-kk.png": "c97c57e871952bb3bb1768d7369eb6d4d866337b9b566e8ca0615785e729e561",
+    "service-details-ru.png": "66ff6973a54b5811ce2474a564bd3c7c90824753c849ea982a4aa21fdd2f9101"
+  }
+}

@@ -7,7 +7,8 @@ from django.utils import timezone
 from rest_framework.exceptions import APIException, ValidationError
 
 from apps.scheduling.availability import business_zone, get_available_slots
-from .models import Branch, BranchService, SpecialistBranch
+from .models import Branch
+from .catalog import booking_offers, booking_assignments
 
 
 def public_branches(conversation):
@@ -91,18 +92,15 @@ def build_branch_context(conversation, *, qualification=None, days=5, slots_per_
     today = timezone.localtime(timezone.now(), business_zone(business)).date()
     intent = getattr(qualification, "intent", None) == "appointment_request" if qualification else any(
         re.search(r"запис|брон|слот|вариант|жазыл|book|appointment", text.casefold()) for text in messages[:3])
-    offers = list(BranchService.objects.filter(branch__in=selected or branches, is_active=True,
-        service__is_active=True, service__is_archived=False).select_related("service", "branch"))
+    offers = booking_offers(selected or branches)
     service_data = lambda offer: {"id": offer.service_id, "name": offer.service.name,
         "branch_id": offer.branch_id, "branch_name": offer.branch.name,
         "duration_minutes": offer.duration_minutes, "price_from": str(offer.price_from) if offer.price_from is not None else None}
     matched = _match_service(list({offer.service_id: offer.service for offer in offers}.values()),
         " ".join(messages[:8]).casefold(), qualification=qualification)
-    assignments = list(SpecialistBranch.objects.filter(branch__in=selected, is_active=True,
-        resource__is_active=True, resource__retired_at__isnull=True, resource__resource_type="staff")
-        .select_related("resource", "branch").prefetch_related("services"))
+    assignments = booking_assignments(selected)
     if matched:
-        assignments = [row for row in assignments if matched.pk in [service.pk for service in row.services.all()]]
+        assignments = [row for row in assignments if matched.pk in row.service_ids]
     resources = list({row.resource_id: row.resource for row in assignments}.values())
     resource = _remembered_resource(resources, messages[:8])
     public_resource = lambda item: {"id": item.pk, "name": item.name, "resource_type": item.resource_type,

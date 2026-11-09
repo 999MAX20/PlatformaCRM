@@ -5,6 +5,9 @@ import type { Id, Service } from "../types";
 export type ServiceListParams = {
   business?: Id;
   search?: string;
+  custom_field?: string;
+  custom_operator?: string;
+  custom_value?: string;
   status?: "active" | "inactive" | "archived" | "";
   page?: number;
   page_size?: number;

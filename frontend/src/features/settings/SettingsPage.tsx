@@ -14,8 +14,12 @@ import { SecuritySection } from "./sections/SecuritySection";
 import { TeamSection } from "./sections/TeamSection";
 import { UsageSection } from "./sections/UsageSection";
 import { useSettingsModel } from "./useSettingsModel";
+import { VoiceInputSection } from "./sections/VoiceInputSection";
+import { IntegrationsSection } from "./sections/IntegrationsSection";
 
 const sections = [
+  ["integrations", IntegrationsSection],
+  ["voice-input", VoiceInputSection],
   ["business-profile", BusinessProfileSection],
   ["team-access", TeamSection],
   ["roles", RolesSection],

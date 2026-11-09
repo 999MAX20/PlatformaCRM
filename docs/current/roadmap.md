@@ -1,7 +1,112 @@
 Дополнение по находкам полного аудита04.11: [циклы исправлений](audit-remediation-cycles.md).
 Это детализация существующих87findings; планирование не закрывает этапы roadmap.
 
-## CRM-R01 — Records и планы: согласованный объём02–03.11.2026
+## CRM-R01 — первый пакет одиночной записи, 31.10.2026
+
+Локально реализован и проверен согласованный первый пакет: Клиент/Inbox → один
+Appointment без обязательного прохождения Lead/Deal, отдельный ответственный,
+актуальные права/слот/условия и единое состояние карточки/календаря/списка клиента.
+Повторный визит из закрытого обращения сохраняет старые Lead/Deal и историю.
+Это частичное выполнение новой дельты R01; историческое закрытие14.10 сохраняется.
+В этом пакете код и локальные доказательства завершены, решений владельца нет.
+02.11 исправлены CI-фикстура уведомлений и зависимости; целевые проверки и npm audit
+PASS. Исправления опубликованы02e89c3b, CI41437983420 успешен; полный R01 открыт.
+Публикация и фактический CI: [evidence](../testing/task-state/PRIMARY-SESSION.md#crm-r01-record-first-20261031--single-appointment-package). Среда: scheduling0010 применена02.11 только к локальной dev-БД с backup и
+проверками UI-REFRESH-20261102; target/live/deployment не выполнялись. Следующие незакрытые результаты
+общей дельты: версионированные цены, авансы/распределение/возврат/остаток, D01
+и полная AC-CRM-PILOT приёмка. Организационный план/неназначенные этапы, Records
+consumers и defaults реализованы последующими пакетами и опубликованы6349acdf;
+[проверки и границы](../testing/evidence/records-publication-20261103.md).
+Это не закрывает денежную, live и общую пилотную приёмку.
+
+## REFACTOR-20261030 — итоговая проверка и публикация
+
+Технический объём P01–P18 реализован и опубликован в main: CRM `368a3fa4`,
+Market `568f6c5`. Дополнительный аудит контрактов и поведения завершён;
+замечания по write-selection, catalog adapter и generated lint устранены.
+Settings: 11→0–4 необязательных запросов; Tasks после prefetch: повтор 1→0.
+Это не измерение latency. [Результаты, границы и проверки](../testing/evidence/refactor-20261030.md).
+
+P19 — только сопоставление: CRM-C21/AC-CAMPAIGN и соответствующая Market/CRM
+продуктовая приёмка остаются открыты. Статусы R/CG/live/production не повышены.
+Исторические FAIL и чужой WIP сохранены. Прежние записи REFACTOR о блокировке
+Header/B2C и непубликации заменены этим подтверждённым техническим результатом.
+
+
+# PlatformaCRM — единый roadmap до production
+
+## Текущий пилот — решение владельца02.11.2026
+
+Обязательны оставшаяся дельта R01 и помощник сотрудника D01 (текст/голос),
+реальные каналы, целевая среда и рабочая приёмка R02–R05. D02 exchange и
+CRM-C21 кампании перенесены в будущее, не являются условиями этого пилота.
+Native ведёт второй разработчик; наша реализация — CRM/backend/web и D01,
+без native-кода/builds/store. Сохранённые общие требования не означают отмену
+native-направления или его готовность. Ни одна поздняя таблица ТЗ не возвращает
+Market/native в нашу текущую очередь. Циклы реализации — ниже.
+
+## Синхронизация с объединённым ТЗ — 29.10.2026
+
+Источник требований: [объединённое ТЗ PlatformaCRM/PlatformaMarket](<C:/Users/user/Desktop/PLATFORMA_CRM_MARKET_UNIFIED_TECHNICAL_SPEC.md>),
+`UNIFIED-SPEC-20261028`, фактическая редакция29.10, §§0.6–0.8, 1.2–1.12, 23, 25–29.
+SHA256 прочитанного среза — `a4e1449d1aadfde70346a56033fd28affa3e7edaa54183e1558e45e7bce39659`.
+Это локальный внешний источник; на другом компьютере нужна та же редакция/хеш.
+Существенные требования и критерии CRM приведены ниже, поэтому очередь не зависит
+от доступности внешнего файла. Изменения/проверки — [checkpoint](../testing/task-state/PRIMARY-SESSION.md#roadmap-spec-sync-20261029--accepted-crm-requirements-and-roadmap).
+
+**Статус синхронизации:** документационный результат. Принятые решения перенесены;
+новая реализация, повторные runtime-проверки, рабочие миграции и deployment этим
+не выполнялись. Исходная версия CRM — `7b9543d4` плюс сохранённый чужой WIP;
+локальные OFFICIAL/FU/уведомления не превращаются в опубликованный общий PASS.
+ТЗ целиком не объявлено утверждённым: принятые направления, техническая подготовка,
+внешние зависимости и ещё не выбранная политика различаются.
+
+### Что заменено и что сохраняется
+
+- U0: полный CRM-пилот начинается с **двух независимых Business клиник**, подготовка
+  ёмкости — до пяти. Это не пять филиалов MB01, не тарифная квота и не доказанная
+  производительность. Состав уже выбранных клиник оформляется при подключении;
+  повторный выбор названий не требуется. Ролевой/данный manifest остаётся обязательным.
+- U2/U3/U4: основной видимый путь пилота — **Inbox/Клиент → Запись → результат/следующий
+  визит**. Заявки/Сделки временно скрыты из этого пути; backend, данные, API, история
+  и остальные сценарии сохраняются. Это новое требование, а не уже сделанный редизайн.
+- Решения28–29.10: план самостоятельных визитов, оба режима оплаты, пакетная цена,
+  зачёт аванса и ответственный приняты в границах ниже. Прежние слова «курс/оплата/
+  смена режима ещё не выбраны» заменены принятым направлением с техническим остатком.
+- WhatsApp: официальный временный BSP, переносимость к прямому Meta; прежний GREEN-API
+  QR не принят как замена. В репозитории уже выбран **YCloud TP Lite для первого
+  локального этапа** (28.10); его код/evidence сохраняются. Общее «провайдер не выбран»
+  из ТЗ не отменяет этот факт: коммерческая пригодность, eligibility, активация,
+  секреты/номер, target webhook, недостающие возможности и live приёмка ещё открыты.
+- RPO обычных данных ≤15 минут / RTO основных операций ≤4 часов — принятые цели29.10
+  для CRM, а не измеренный SLA. Нужны target restore и сверка внешних денежных фактов;
+  ни прежние ≤5 минут/≤2 часов, ни старые предложения1ч/4ч не текущий норматив.
+- Исторические R01, MB1–MB5, S01–S04, AUD и ADMIN closures сохраняют свои версии и
+  границы. Поздние AUD-11/AUD-19 не возвращаются в OPEN из старой таблицы ТЗ;
+  персональная лента/мониторинг уведомлений сохраняются отдельным новым scope.
+  OFFICIAL-17≠AUD-17 и OFFICIAL-18≠AUD-18; их evidence не складывается как один этап.
+- CRM-R06 остаётся отложенным: новая оплата посещений — деньги клиники, не SaaS billing.
+  Клиническая карта/диагнозы, кресла/оборудование и
+  произвольный ERP/write-back не включаются автоматически. Полный Market выполняется
+  в его roadmap; в CRM перенесены только принятые общие и интеграционные требования.
+  Решением30.10 внутренняя фактическая аналитика и CRM-команды включены в ограниченный
+  пилот помощника сотрудника CRM-D01 ниже; остальная AI-аналитика остаётся отложенной.
+
+### Порядок результата: пакеты ТЗ в существующей очереди
+
+PK — ссылки трассировки ТЗ, не второй backlog. Подготовка независимых пакетов может
+идти параллельно только в явно порученном scope; даты ниже не обещают загрузку команды.
+
+| Пакет ТЗ | Где выполняется | Результат и следующий незакрытый критерий |
+| --- | --- | --- |
+| PK0 Безопасность | AUD, OFFICIAL/FU, CRM-R02/R04 | Разобрать применимые security/CI gaps на одном кандидате, tenant/object/field/branch/private-file/MFA/consent и recovery; локальные closures и CI неизменённого кода переиспользуются в своей границе; полный допуск не получен |
+| PK1 Повседневная CRM | CRM-R01, новая дельта U2–U4/OP-RECORD ниже; оставшиеся AUD | Точный контракт Записи/плана/денег/совместимости → доменные инварианты → API/история → достижимый UI → проверки; исторический R01 закрыт; новая дельта выполнена частично: одиночная Запись опубликована, план/деньги/legacy и полная приёмка открыты |
+| PK2 Реальные каналы | CRM-R02/R03 | Telegram и официальный WhatsApp отдельно: inbound/ответ/напоминания/delivery/recovery и ручной режим при AI outage; YCloud local text stage не закрывает live или templates/reminders |
+| PK3 Среда и legal | CRM-R02/R04, CG-03/04 | Yandex Cloud target (регион/ресурсы ещё не выбраны), все очереди/workers/beat/AV/private storage/почта, restore/rollback/alerts, тексты/основания; цели15мин/4ч, дежурство24/7 серьёзных сбоев; внешняя приёмка открыта |
+| PK4 Две клиники | CRM-R05, UX-4, FC-003/008, BE-REM-007 | Роли двух Business проходят единый рабочий день на одном candidate, с каналами, ручной работой, планом/оплатой, ошибками и поддержкой; именная приёмка не выполнена |
+| PK5 До пяти клиник | CRM-R02/R04/R05 | После результата двух клиник — контролируемое подключение остальных, измерения users/visits/messages/files/queues, изоляции и восстановления; число tenants не capacity PASS |
+| PK6 Market и связи — ПОСЛЕ ПИЛОТА | CRM-D02 / CRM-C21; профильный roadmap Market | Опциональный exchange и кампании команды через CRM как отдельные законченные результаты; полный Market/B2C/P1–P7/агентская модель не переносятся в очередь CRM |
+| PK7 Выпуск web; native — второй разработчик | CRM-R07; внешняя native-граница AC-MOBILE-REUSE; CRM-R06 для платного CRM | Ранний reuse-анализ native, затем выбранные builds/devices/push/deeplinks и store receipts; цель27.11 и ориентир подачи около10.11 — цели владельца, оценка/аккаунты/review открыты |
 
 ### CRM-R01 — единая Запись и план посещений
 
@@ -38,7 +143,7 @@ Lead/Deal процесса, включая Appointment pipeline и связан�
 назначенная запись возвращает в доступный план. Снятие не стирает историю,
 отмена не позволяет перепривязать старый этап к новому визиту.
 Опубликованная версия `6349acdf`; изолированные SQLite/PostgreSQL и synthetic
-RU/KK/EN browser. [Команды/результаты/границы](../testing/evidence/records-publication-20261103.md).
+RU/KK/EN browser. [Команды/результаты/границы](../testing/evidence/visit-plans-20261102.md).
 Остаток **кода/доказательств принятого цикла**: нет выявленных незакрытых пунктов;
 **публикация**: Records/планы и RF-01–09 отправлены в main, `6349acdf`;
 **среда**: scheduling0011 не применена к рабочей БД, deployment/live отдельно;
@@ -56,7 +161,7 @@ scoped проверки подтверждены на выделенном ка�
 реализованы поверх single-Appointment основы. Следующий цикл планов посещений
 также опубликован в `6349acdf`; новая денежная логика ещё не реализована. Проверенная версия: `6349acdf`,
 изолированные SQLite/PostgreSQL/browser; это не deployed или полный R01 PASS.
-[Матрица фактических consumers, проверки и ограничения](../testing/evidence/records-publication-20261103.md).
+[Матрица фактических consumers, проверки и ограничения](../testing/evidence/records-workspace-20261102.md).
 
 Пользователь работает с Клиентом, Inbox, Записью, Календарём и Задачей. В текущем
 пилотном merchant UI нет самостоятельных рабочих страниц «Заявки»/«Сделки» и
@@ -175,6 +280,70 @@ R01 — ценовые версии и распределение после л�
 положительный пакет с нулевой базой остаётся
 вопросом будущего денежного цикла. Этот статус не закрывает AC-CRM-PILOT-01–14 целиком.
 
+### Трассировка всех CRM-C требований
+
+CRM-C — номера из ТЗ, не новые исполнения. Статус указан по текущему roadmap/
+checkpoint, а не автоматически скопирован из исторической таблицы ТЗ.
+
+| ТЗ | Существующая очередь | Сделано / следующий незакрытый результат |
+| --- | --- | --- |
+| CRM-C01 Доступ | AUD, OFFICIAL/FU, CRM-R02/R04 | Scoped guards сохранены; полный кандидатный tenant/object/field/branch/revoke/worker/export/AI gate открыт |
+| CRM-C02 Клиенты/история | AUD-03/11, CRM-R01/R05 | Notes и merge имеют свои closures, AUD-11 не OPEN; проверить compatibility нового pilot flow с разрешёнными связями/archive/merge |
+| CRM-C03 Lead/Deal | AUD-13/15/20; новая дельта CRM-R01 | Старые domain closures сохранены; единая Запись и Records consumers реализованы и опубликованы в scoped пакете6349acdf; денежная дельта и полная пилотная приёмка открыты |
+| CRM-C04 Полнота поиска | AUD-08/09 | Полный server search/async selectors/aggregates по доступной выборке; не объявлять существующие server aggregates дефектом без входа |
+| CRM-C05 Филиалы | CRM-MB01, CRM-R05 | MB1–MB5 scoped PASS сохранён; пять филиалов не две независимые клиники, повторная приёмка затронутого нового workflow |
+| CRM-C06 Календарь | CRM-R01/S01, OP-RECORD-06 | Booking/overlap и новый Records/early completion/неденежный план реализованы в scoped пакетах; актуальная общая AC01–14, денежные эффекты и target-приёмка остаются открыты |
+| CRM-C07 Задачи/follow-up | D-04, CRM-S01, OFFICIAL-18 | Одна встроенная follow-up и отдельный create_task сохранены; совместимость новых assignments/плана и никаких повторных effects |
+| CRM-C08 Автоматизации | AUD-04/05/06/07 | Атомарность/редактор/validator scoped closures; AUD-07 история/error/pagination закрыты30.10; affected triggers новой Записи открыты |
+| CRM-C09 Inbox | AUD-14/20, OFFICIAL-10, CRM-R03/R05 | Ручной flow/current child-read preserved; новая Запись/provenance/closed-Lead/legacy draft и live delivery отдельно |
+| CRM-C10 Клиентский AI | CRM-R03/R05, OFFICIAL-22 | Limited model и approval guards не общий PASS; controlled create/выбранный ответственный/точный слот/current rights и повтор затронутых model scenarios |
+| CRM-C11 Handoff | CRM-R02-AI-RETURN, CRM-R03/R04 | Локальный час после успешного ответа сохранён; safety/pause не auto-resume, целевой beat/autostart/delivery открыт |
+| CRM-C12 Импорт | AUD-16/20/21/22, OFFICIAL-09/11/17, AUD-12 | Mapping/errors/history UI закрыт AUD12a/b в существующем входе; новые точки входа и зависимости планов отдельно |
+| CRM-C13 Экспорт | AUD-18, OFFICIAL-12/FU-BE-02, AUD-12, CRM-R04 | Current fingerprint/field masking сохранены; history UI закрыт AUD12c; target worker/storage и новые projections требуют своей границы |
+| CRM-C14 Offline | AUD-01/10; AC-MOBILE-REUSE | AUD-10 закрыт в scoped-границах30.10 (8d710f03): durable keys/capacity/conflict/recovery проверены; текущий аудит и исторический native рассматриваются отдельно. Полная offline CRM и replay денег не обещаны |
+| CRM-C15 Деньги/аналитика | CRM-R01/S01, OP-RECORD-04 | Текущий ledger/period/no-data сохраняется; принятые plan/advance/allocation/refund и price versions ещё требуют реализации/evidence |
+| CRM-C16 Settings/уведомления | AUD-17, NOTIFICATIONS-PERSONAL/REFRESH/SSE, CRM-R03/R04 | AUD-17 прежней модели закрыт; новые personal/read/ack/monitoring scopes и их publication/target boundaries сохранены; важная недоставка→задача по принятому правилу |
+| CRM-C17 Аккаунт/support | ADMIN-01–05, CRM-R02/R04/R06 | ADMIN01–04 scoped closures; ADMIN05 foundation не полный commercial PASS, target SMTP/MFA/migrations/consent по сценарию |
+| CRM-C18 Файлы | CRM-S04/R04, BE-GAP-011 | Local AV/recovery не target private storage/keys/retention; проверять current permission, quarantine и восстановление |
+| CRM-C19 Эксплуатация | CRM-R02/R04, CG-04 | Цели15мин/4ч и серьёзные incident duty24/7 приняты; provider/restore/load/runbooks/люди/замещение и измерения открыты |
+| CRM-C20 Legal/коммерция | CRM-R02/R04/R06/R07, CG-03/07 | Реальные тексты/основания/обработка/retention открыты; R06 по-прежнему отложен, ручные деньги плана не тарифы SaaS |
+| CRM-C21 Кампании Market | CRM-D02 / §23 ТЗ, AC-CAMPAIGN | Отдельный принятый CRM-результат: segments/preview/launch/continuation/recovery/current consent и controlled receipts; W1/OFFICIAL guards не полный UI/live PASS  **После пилота, решение02.11; не текущий gate.** |
+| CRM-C22 Native reuse — второй разработчик | CRM-R07 / AC-MOBILE-REUSE, CG-08; вне нашей реализации | Проверить известный RN/Expo branch задел и минимальную адаптацию; нет автоматического merge, native/device/store PASS не заявлен |
+
+### Продуктовые IDs V1: сохранённая привязка
+
+Таблица дополняет исторические 126 CRM IDs из приложения ТЗ; это привязка
+требований [product](product.md), не 37 новых задач и не новые отметки PASS.
+AUD/ADMIN/MB/S/R/FC/BE/D/V1-O сохраняют свои разделы и границы ниже.
+
+| ID продукта | Где выполняется / ограничение |
+| --- | --- |
+| V1-P01, V1-P02, V1-P03, V1-P04 | CRM-R01/R05/R07: административная multi-tenant CRM, первый стоматологический пилот; нейтральный общий UI, не клиническая карта/ERP |
+| V1-F01, V1-F02, V1-F03, V1-F04, V1-F05, V1-F06, V1-F07, V1-F08 | CRM-R01/CRM-C02–09: клиент, обращение, ответственный, работа/задачи/визит/переписка; U2 меняет видимый путь, сохраняет Lead/Deal backend |
+| V1-F09, V1-F10, V1-F11, V1-F12, V1-F13 | CRM-R01/AUD-04–12/16/18/20–22: ledger/метрики/import/дубли/archive/automation; новая plan-money дельта отдельно, существующие closures не общий PASS |
+| V1-F14, V1-A01 | CRM-C10/CRM-R03/R05: клиентский AI optional/current source/controlled actions; решение30.10 частично возобновляет D01: фактическая аналитика и подтверждаемые CRM-команды сотрудника через текст/голос; расширенная аналитика отложена |
+| V1-I01, V1-I02, V1-I03 | CRM-R03/R07: WhatsApp/Telegram пилот, Instagram/форма сайта — будущая V1 приёмка; двусторонний website-chat не обязателен; CRM-C21 email — отдельная кампания |
+| V1-M01, V1-M02 | CRM-R01/CRM-C15: отдельный ручной ledger либо один явно выбранный external источник; поступления/возвраты/разница без суммирования источников, прибыль/долг не утверждены; план/зачёты — новая дельта, SaaS R06 отдельно |
+| V1-Q01, V1-Q02, V1-Q03, V1-Q04, V1-Q05 | CRM-R01/R04/R05/R07: простота/права/качество/устойчивость/данные по продукту; негативы, recovery и единый candidate, не сумма scoped PASS |
+| V1-R01, V1-R02, V1-R03 | CRM-C01/05/17/R01/R04: существующие роли/tenant/branch/field и platform boundaries; новое назначение не новый permission framework |
+| V1-W01, V1-W02, V1-W03, V1-W04, V1-W05, V1-W06 | CRM-R01/R05: единая Запись/повтор/следующее действие, archive dependency и ручное переназначение после отключения входа; новая дельта не отменяет историю |
+
+### Общие критерии ТЗ в CRM
+
+| Критерий | CRM-граница и открытый результат |
+| --- | --- |
+| AC-SEC | PK0/R01/R04/R07: current role/tenant/object/field/branch/private files/revoke/AI и отрицательные сценарии одного кандидата; исторический partial scan не полная проверка |
+| AC-DATA | CG-03/R02/R04: legal purposes/retention/access/delete/archive и защищённые документы, отзыв Market-связи относится к будущему D02; скачанную копию нельзя отозвать |
+| AC-I18N | R01/R05/R07: RU/KK/EN, нейтральные labels/важные суммы/согласия, keyboard/assistive errors/ввод/recovery, viewport/browser/OS и именованный принимающий; FB-009 не объявлен выполненным |
+| AC-MOBILE, AC-MOBILE-REUSE | Внешнее направление второго разработчика, R07/CG-08: существующий CRM RN/Expo задел → актуальные API/права/Record → реальные builds/devices/push/deeplinks/store; Market mobile EDS не добавляет CRM функцию подписи |
+| AC-RESTORE | R04/CG-04: измеренные15мин/4ч, consistent DB/files/keys/queues, внешняя сверка и отсутствие повторного эффекта после restore |
+| AC-RELEASE | R07: immutable SHA/schema/config/provider/data manifest, точный CI и выбранные release gates, target receipts, операторы и решение допуска; deployment отдельно |
+
+Market-only P1–P7, закупки/банк/НДС/доставка/агентская модель/подписи/рейтинг/
+автономная финпанель и их Q/Т/П/AT/AC выполняются в roadmap Market. Здесь они
+учтены как источники/зависимости обмена, не новые CRM-модули. Полный scope
+объединённого ТЗ не сокращается таким распределением ответственности.
+
 ### Новые критерии единой Записи: AC-CRM-PILOT
 
 Полная приёмка всех14 критериев **остаётся открытой**. Первый пакет одиночной
@@ -200,36 +369,144 @@ R01 — ценовые версии и распределение после л�
 | AC-CRM-PILOT-13 | Общая тема/shared components/tokens/RU/KK/EN, keyboard/recovery/viewport и удобство с персоналом; новый макет не объявлен принятым |
 | AC-CRM-PILOT-14 | Одиночный визит и план N самостоятельных Appointment; этапы без даты не занимают слот; gradual booking, общий календарь/список/план, цены/платежи и versioned изменения будущей части |
 
-## CRM-R01 — первый пакет одиночной записи, 31.10.2026
+### Зависимости CG и оставшиеся решения
 
-Локально реализован и проверен согласованный первый пакет: Клиент/Inbox → один
-Appointment без обязательного прохождения Lead/Deal, отдельный ответственный,
-актуальные права/слот/условия и единое состояние карточки/календаря/списка клиента.
-Повторный визит из закрытого обращения сохраняет старые Lead/Deal и историю.
-Это частичное выполнение новой дельты R01; историческое закрытие14.10 сохраняется.
-В этом пакете код и локальные доказательства завершены, решений владельца нет.
-02.11 исправлены CI-фикстура уведомлений и зависимости; целевые проверки и npm audit
-PASS. Исправления опубликованы02e89c3b, CI41437983420 успешен; полный R01 открыт.
-Публикация и фактический CI: [evidence](../testing/task-state/PRIMARY-SESSION.md#crm-r01-record-first-20261031--single-appointment-package). Среда: рабочая scheduling0010
-не применялась, live/deployment не выполнялись. Следующие незакрытые результаты
-общей дельты: план посещений/деньги/распределение, AI-default ответственного,
-скрытие legacy-навигации и полная AC-CRM-PILOT приёмка. Они не начаты этим пакетом.
+CG — трассировка внешних/подготовительных границ в R02–R07, не второй список задач.
+Применимые принятые CRM-решения2–23 не заново OPEN из-за отсутствия schema/API. Бизнес-остаток,
+не определённый принятыми правилами, выносится владельцу конкретным сценарием.
+Роли ниже взяты из ТЗ; именные принимающие/дежурные ещё назначаются при подключении.
 
-## REFACTOR-20261030 — итоговая проверка и публикация
+| Gate ТЗ | Где и кто готовит | Что осталось до закрытия |
+| --- | --- | --- |
+| CG-01 | CRM-R02/R05; Максим/Никита/клиники | Manifest уже выбранных двух Business, пользователи/роли/данные/каналы, приёмка, оператор и stopping rules; без новой просьбы выбрать названия |
+| CG-02 | CRM-R02/R03; Максим/поставщик/Никита | YCloud TP Lite локальная основа учтена; полная цена/пригодность официального BSP на2→5, договор/eligibility/onboarding/владение WABA/номерами/перенос к Meta, capabilities и live receipts; Coexistence не обещана |
+| CG-03 | CRM-R02/R04/R07; Максим/юридическая функция | Тексты вместо placeholders, основания данных/AI/BSP/email/каналов, цели согласий, retention/удаление/запросы/договорные роли; не придумывать сроки/налоговые или правовые основания |
+| CG-04 | CRM-R02/R04; Никита/операции/Максим | Yandex Cloud target (регион/ресурсы ещё не выбраны), measured capacity2→5, схема/проверка15мин/4ч, БД/private files/keys/queues/PITR/rollback, наблюдаемость и 24/7 serious-incident duty; штатная поддержка по опубликованному графику, конкретные люди/стоимость открыты |
+| CG-05 | CRM-R03 / CRM-C21; Никита/провайдер | Последняя consent-проверка, начатый HTTP, unknown/cancel/reconcile и невозможность обещать отзыв уже выполненного внешнего действия |
+| CG-06 | CRM-R01/D-02/03/05/08/V1-O; Никита, только невыбранный business остаток — владелец | Exact transitions/legacy navigation/assignments/corrections/allocation/versioning по уже принятым правилам; Business.status и дополнительная политика не выбираются догадкой |
+| CG-07 | CRM-R06/R07; Максим/бухгалтер/Никита | Цена/квоты/AI unit/processing/enforcement/refund/recovery SaaS отложены; оплата планов посещений не закрывает этот gate |
+| CG-08 | CRM-R07; второй разработчик, вне нашей реализации | Reuse diff, coverage, devices/builds/push, company store accounts/privacy/signing profiles, acceptance/submission/review; оценка сроков, а не новая дата из наличия ветки |
 
-Технический объём P01–P18 реализован и опубликован в main: CRM `368a3fa4`,
-Market `568f6c5`. Дополнительный аудит контрактов и поведения завершён;
-замечания по write-selection, catalog adapter и generated lint устранены.
-Settings: 11→0–4 необязательных запросов; Tasks после prefetch: повтор 1→0.
-Это не измерение latency. [Результаты, границы и проверки](../testing/evidence/refactor-20261030.md).
+**Следующие незакрытые критерии:** AUD-01–22 и ограниченный AUD-V01 завершены
+в своих scope по поздним receipts; прежняя очередь AUD-10/08/09/07/12 исчерпана.
+Для нового пилота остаются дельта CRM-R01 после первого пакета одиночной Записи,
+обязательный CRM-D01 и CG-01–04. D02/C21 — после пилота; CG08 — второй разработчик. Scoped AUD не заменяет integration/live/release acceptance.
+Публикацию локального WIP проверять отдельно; следующую реализацию задаёт поручение.
 
-P19 — только сопоставление: CRM-C21/AC-CAMPAIGN и соответствующая Market/CRM
-продуктовая приёмка остаются открыты. Статусы R/CG/live/production не повышены.
-Исторические FAIL и чужой WIP сохранены. Прежние записи REFACTOR о блокировке
-Header/B2C и непубликации заменены этим подтверждённым техническим результатом.
+## Оставшаяся работа по законченным циклам — сверка02.11.2026
+
+Это декомпозиция существующих R/D/CG/AC, не новый backlog и не поручение начать
+реализацию. Один цикл заканчивается наблюдаемым результатом, проверкой и обновлением
+evidence; это не обещание длительности или выполнения всего направления за один чат.
+Перед каждым циклом сверить текущий код и его receipt: уже закрытое не переписывать.
+Зависимые backend-сервисы проверяются до UI; цикл реализации включает достижимый UI,
+где он применим. Новые решения нужны лишь для действительно невыбранного поведения.
+
+### Код и локальная приёмка
+
+| Существующая граница | Один законченный цикл | Зависимость / критерий завершения |
+| --- | --- | --- |
+| R01 / OP-RECORD | Проект технического контракта подготовлен02.11 в [CRM](crm.md#технический-контракт-оставшегося-r01--подготовка02112026) | Неденежные VisitPlan/VisitPlanStep и API реализованы; денежные версии/зачёты остаются проектом. Особый случай нулевых баз и конкретные новые terminal corrections не утверждены автоматически |
+| R01 / AC01–08/10–13 | Первый цикл: страница «Записи», Appointment pipeline и безопасная замена Lead/Deal входов/логики | Scoped Records/pipeline/legacy-пакет реализован и опубликован6349acdf; consumer matrix и проверки — в evidence выше. Денежный цикл, автоматический AI-default и полная новая приёмка остаются открыты |
+| R01 / AC14 | План посещений без денежной дельты: этапы, назначение/перенос/отмена самостоятельных Appointment | Контракт; общий клиент/филиал/права/слоты, UI плана и календарь, history/replay/overlap проверены |
+| R01 / AC09/14 | Пакетная и повизитная цена, версии и точное распределение | План и ledger contract; суммы/округление/zero-price, неизменность завершённых визитов и UI расчёта проверены |
+| R01 / AC09/14 | Авансы/частичная оплата и зачёт после completion | Распределение; receipt отдельно от allocation, конкурентный no double spend, replay/rollback и видимый остаток |
+| R01 / AC09/14 | Прекращение плана, возврат или сохранение остатка и коррекция completion | Предыдущий денежный цикл; явный выбор/причина/права, no overrefund и отсутствие второго receipt, UI/история/recovery |
+| R01 / AC04/06/14 | AI-default ответственного и наследование/override плана и визитов | Текущие membership/branch guards; ручной одиночный default уже реализован, его не переписывать; invalid setting/replay/override проверены |
+| R01 / AC03/10/11 | Входит в первый цикл страницы «Записи»: скрытие Lead/Deal и безопасная legacy-навигация | Не отдельная отложенная косметическая правка; matrix настоящих связей/прав, история и старые ID без auto-convert |
+| R01 / AC05/07/08/10–13 | Завершение совместимости новой Записи: состояния, автоматизации, метрики и старые consumers | После плана/денег/legacy — проверка точных gaps, минимальные исправления и regression; существующие closures переиспользуются |
+| D01 | Контракт инструментов/аналитики/подтверждений и условий аудио | Источники, права, версии, ошибки, retention; только нерешённые вопросы владельцу |
+| D01 | Текстовая аналитика и поиск с источниками и no-data/fallback | Контракт; полная серверная выборка, field/tenant/branch, отозванный доступ и обычная CRM без AI |
+| D01 | Подтверждаемые текстовые команды | Контракт и применимые R01 API; stale preview/replay/denial/история и достижимый результат в CRM |
+| D01 | Голос поверх тех же инструментов | Проверенные текстовые команды, выбранный speech; RU/KK/смешанная речь, шум, mobile/desktop, исправление и подтверждение |
+| UI-аудит02.11 / R01 accessibility | UIP01/02 учесть при реализации «Записей» и скрытии старого UI | Не отдельная переделка выводимой из рабочего процесса страницы «Заявки»; проверить мобильный следующий шаг и семантику нового списка |
+| UI-аудит02.11 / AC-I18N | Даты RU/KK/EN и склонение количества сделок | UIP03/05; согласованный formatter и затронутые consumers, representative locales/build |
+| UI-аудит02.11 / recovery | Повтор загрузки подключений после ошибки | UIP04; error→retry→data/empty, сохранение loading/denied поведения |
+
+UI-пункты — предложения из [ограниченного аудита](../testing/ui-purpose-audit-20261102.md),
+а не полный перечень дефектов CRM. Их реализация требует отдельного поручения.
+
+### Публикация и доказательства уже реализованного
+
+| Граница | Один законченный цикл | Условие |
+| --- | --- | --- |
+| Персональные уведомления и остальной локальный WIP | Отдельная сверка одного принадлежащего задаче пакета → affected checks при изменённых inputs → scoped commit/push/CI | Новый явный scope на конкретный пакет; эта docs-задача не публикует чужую реализацию и не подтверждает весь WIP |
+| R01 / AC01–14 | Итоговая матрица новой Записи на одном кандидате | После нужных циклов кода; API/UI/roles/tenant/concurrency/recovery и связанные consumers, без фиктивного общего PASS |
+| AC-SEC/FC003/FC008/BE-REM007 | Сертификация названного release candidate | Зафиксированные SHA/schema/config; применимые общие/отрицательные проверки и исправление доказанных gaps, не повтор закрытых AUD по возрасту |
+
+### Среда, внешние зависимости и запуск
+
+| Граница | Один законченный цикл | Условие |
+| --- | --- | --- |
+| R02 / CG01 | Manifest двух выбранных Business | Пользователи/роли/данные/каналы, принимающие/оператор/stopping rules; не просить заново выбрать бизнесы |
+| R02/R03 / CG02 | Пригодность и активация официального BSP | Цена/условия/ownership/eligibility/capabilities/onboarding; target и реальные доступы по отдельному разрешению |
+| R03 / CG05 | Live-приёмка одного канала за цикл | Telegram и WhatsApp отдельно: inbound/ответ/template/reminder/delivery/recovery/handoff; local text slice не полный канал |
+| R02/R04 / CG03 | Legal/data пакет | Реальные тексты, цели/основания/retention/удаление, AI/BSP/аудио; Market — в будущем D02; требует компетентного принимающего |
+| R04 / CG04 | Настройка и проверка выбранной целевой среды | Yandex Cloud target (регион/ресурсы ещё не выбраны), workers/beat/AV/storage/mail/health/secrets, конкретные операторы; разрешение на target |
+| R04 / AC-RESTORE | Измеренный restore/rollback | Целевая среда: DB/files/keys/queues, RPO15мин/RTO4ч, external reconciliation без повторного эффекта |
+| R04/R05 / CG04 | Нагрузка2→5 и реагирование на инциденты | Измерения users/visits/messages/files/queues, alerts и дежурство24/7 серьёзных сбоев, люди/замещение |
+| R05 / UX4 | Рабочий день двух Business | R01/D01/каналы/среда: полный сценарий и именная приёмка сотрудников; затем расширение до пяти отдельным циклом |
+| R07 / AC-RELEASE | Выпуск выбранного web-кандидата; native ведёт второй разработчик | Общие gates/CI/legal/операторы/manifest и target receipts; deployment только отдельным разрешением |
+
+### Отложено владельцем или требует отдельного возобновления
+
+R06/ADMIN05/CG07: сначала коммерческие условия/провайдер, затем оплата/доступ/
+recovery и live-приёмка отдельными циклами; полный ADMIN stage6 остаётся открыт.
+FB009: ручная assistive/screen-reader приёмка не выполнена, отложена отдельно.
+D03–D06: ERP/1С, vertical расширения, платёжный gateway клиентов и новые права/
+метрики/terminal corrections вне уже принятого R01 не запущены. Расширенная
+предиктивная/автономная AI-аналитика вне возобновлённого D01 также отложена.
+
+Практический порядок: страница «Записи» + Appointment pipeline + замена Lead/Deal
+consumers → план → деньги → итоговая совместимость и
+полная приёмка; обязательный D01 и независимая подготовка CG01–04 включены
+в текущий pilot scope. CG08/native выполняет второй разработчик.
+Не повторять закрытые S01–S04/MB1–MB5/AUD/P01–P18 без нового доказанного gap.
+
+## Датированные результаты и ранее принятые границы
+
+Ниже сохранены версии, локальные закрытия и остатки прежних задач. Формулировки
+«следующий», «не начат» и число tests внутри датированных записей относятся к
+их срезу; актуальная очередь — таблицы синхронизации выше и AUD ниже. Старое
+закрытие не сертификат новой дельты ТЗ; прошлое OPEN не отменяет более поздний
+точный результат. Неопубликованное code/docs WIP не включено в публикацию этой
+документной задачи и не объявлено проверенным ею.
+
+NOTIFICATIONS-SSE-20261029: локально реализован опциональный канал Redis → отдельный
+ASGI → открытый мониторинг owner/admin. Две сессии: изменения около1с, resync после
+разрыва подтверждён; резервный опрос60с сохранён. Backend105, PostgreSQL3, Node10,
+системные проверки и сборка PASS; HEAD98925b67 + сохранённый WIP, точный срез в PRIMARY.
+Код/доказательства/решение владельца в этом scope: остатка нет. Среда: включение
+на рабочем сервере и deployment не выполнялись. Публикация зависит от ранее
+неопубликованной основы; следующий критерий — согласованный target/publication scope.
 
 
-# PlatformaCRM — единый roadmap до production
+## NOTIFICATIONS-PERSONAL-20261028 — персональная лента и ознакомление
+
+Выполнено полностью в согласованном локальном scope, проверка 29.10.2026.
+Результат: независимые состояния сотрудников; объявления всему фиксированному
+составу бизнеса; публикация/отзыв и мониторинг каждого получателя только owner/admin.
+Открытие, текущее прочтение и явное ознакомление разделены. Read-all действует на
+личную ленту текущего Business на начало операции; новые поступления/чужие состояния
+не затрагиваются. Текущий доступ к рабочему источнику проверяется до выдачи и счётчиков.
+
+Код/локальные доказательства/решения: остатка нет в этом scope. Публикация —
+отдельный незакрытый результат, а не отсутствующая реализация: исходники персональной
+ленты остаются в working tree вне HEAD на срезе02.11; повторный PASS текущего WIP
+этой документационной сверкой не заявлен. Среда: working migration0006/0007 и локальный owner UI проверены29.10
+по отдельному поручению; Git-публикация и deployment не выполнены; новые внешние каналы сотрудников и адресные
+группы отложены, не скрыты общей отметкой. Проверки:304 backend в итоговой совокупности,
+отдельная migration1/PG3, system/drift, types/i18n/build и scoped браузер RU/KK/EN.
+Версия HEAD98925b67 + prior WIP + patch, ветка codex/ui-testing-toolkit, каноническая
+папка PlatformaCRM. Точные прогоны, исправленные fixture failures, среда и ограничения —
+[checkpoint](../testing/task-state/PRIMARY-SESSION.md#notifications-personal-20261028--personal-feed-and-announcement-monitoring-locally-verified).
+OFFICIAL-21 / AUD-17 остаётся закрытым для прежней модели; это отдельно согласованное
+изменение требований. Следующий незакрытый критерий этой работы — принятие целевой
+среды/публикации отдельным поручением.
+NOTIFICATIONS-REFRESH-20261029: выявленная в working UI задержка после read-all
+устранена общим обновлением кэша отметок; Node2/build/scoped browser PASS.
+Код/доказательства этого исправления закрыты локально, публикация отдельно; точные
+проверки и сохранённая SQLite fixture error — в PRIMARY. AUD-11 и прочие очереди не запускались.
 
 Общий документационный срез 21.10.2026 на `ce2c290d` (история;
 последующие AUD имеют собственные версии/evidence ниже): перечисленные ниже закрытые AUD и сохранение
@@ -254,12 +531,306 @@ R01 закрыт по уточнённому владельцем объёму; 
 внутренней готовности S02 закрыт в согласованной scoped-границе и опубликован.
 S03 закрыт в согласованной scoped-границе и опубликован; CI/evidence — в checkpoint.
 S04 закрыт в локальной изолированной границе и опубликован; CI/evidence — в checkpoint.
-R02: 14.10 получены решения владельца; Meta и PS Cloud отложены; реализован и
-локально проверен возврат отвеченного диалога к AI через час. Пилот ориентирован на 30.10,
-минимум две недели; среда и подключение каналов ещё не приняты.
+Исторический R02 от14.10: прямой Meta и PS Cloud тогда отложены; целевой BSP/Meta
+и пилот2→5 уточнены в синхронизации29.10 выше. Реализован и
+локально проверен возврат отвеченного диалога к AI через час. 30.10 был желаемым началом, не принятой датой готовности;
+минимум две недели пилота, target среда и доставка каналов ещё не приняты.
 Завершение отдельных модулей не означает готовность платного production.
 Запись этапа не разрешает расходы, внешние отправки, миграции или запуск.
 Отложенные направления возобновляются только по отдельному решению владельца.
+
+## FU-HIST-02 public intake privacy - local remediation 28.10.2026
+
+Local response-privacy remediation complete: public success no longer identifies
+existing private contacts or exposes CRM associations. Internal matching/evidence,
+opt-out and fresh conversation/follow-up remain. HEAD98925b67 + prior WIP + patch;
+final106 isolated backend tests PASS, system/drift/syntax and frontend consumer/
+i18n/types/app+widget builds PASS. Independent review no findings. Commands, failed
+BEFORE and evidence: FU-HIST-02-20261028 in PRIMARY-SESSION.
+No bounded code/evidence/owner-decision remainder. Publication and live environment
+acceptance are separate; timing/resource side channels and broader intake-write
+policy are outside this finding. No next finding or policy choice is authorized here.
+
+## OFFICIAL-03 WhatsApp tenant binding - local remediation 28.10.2026
+
+Local remediation complete: verified channel identity is preserved through webhook
+routing; all changes are checked before effects, statuses target the matching Bot
+and Business, and stored copies exclude other routes. HEAD98925b67 + prior WIP + patch;
+final102 isolated tests, system/drift/syntax PASS; independent review no findings.
+Exact evidence and failed iterations: OFFICIAL-03-20261028 in PRIMARY-SESSION.
+No remaining code/evidence/owner-decision gap in this bounded finding. Environment:
+publication and live WhatsApp/R02 acceptance remain separate and open. This result
+does not authorize a new finding, provider activation or production deployment.
+
+## OFFICIAL-22 AI approval binding - local remediation 28.10.2026
+
+OFFICIAL-22, 28.10.2026: local AI approval-binding remediation complete. Created request
+evidence cannot be rebound/extended through generic update; reason-only edits cannot restore
+stale lifecycle state. HEAD98925b67 + prior WIP + patch; final17 regressions and78 dependent
+tests verified on identical production code. Initial failed expectation and final correction
+retained in OFFICIAL-22-20261028, PRIMARY-SESSION. No bounded code/evidence/owner-policy gap;
+publication and target-environment acceptance remain separate. OFFICIAL03 was separately
+authorized and its scoped result is recorded above.
+
+## OFFICIAL-13 appointment automation status - local remediation 28.10.2026
+
+OFFICIAL-13, 28.10.2026: local appointment automation status read-boundary fix complete.
+Notification counts/details use current VIEW/scope; independent linked-record visibility
+and canonical calendar links prevent identifier leakage. HEAD98925b67 + prior WIP + patch;
+final isolated116 tests PASS. Exact evidence/failed iterations in OFFICIAL-13-20261028,
+PRIMARY-SESSION. No remaining bounded code/evidence/owner-decision item. Publication and
+target environment acceptance remain separate; OFFICIAL22 is next independent candidate,
+not authorized by this closure.
+
+## OFFICIAL-09 catalog access - local remediation 28.10.2026
+
+OFFICIAL-09, 28.10.2026: local catalog Service authorization fix complete. Imports/manual
+writes enforce SETTINGS UPDATE and shared branch access, preserve inactive/archive state
+and roll back denied/failed writes. Evidence: OFFICIAL-09-20261028 in PRIMARY-SESSION,
+HEAD98925b67 + prior WIP + patch; isolated affected and regression checks PASS. No remaining
+bounded code/evidence item. Publication and target-environment acceptance remain separate;
+no deployment or new phase authorized. OFFICIAL13 remains an independent next candidate.
+
+## OFFICIAL-10 Inbox scope - local remediation 28.10.2026
+
+OFFICIAL-10 Inbox scope, 28.10.2026: create-action responses now require current
+child VIEW/scope/capability and same Business before returning CRM data. Without VIEW,
+writes still succeed but direct responses acknowledge read_restricted without record
+fields; pipeline child fields are null, created flags unchanged. Task/Appointment keyed
+replies reserialize current resource under current actor, never replay old DTO blindly.
+Stored receipts, creation/dedup/locking/status unchanged; known metadata ID copies also
+guarded. Pending booking without saved Appointment keeps its offered slot.
+BEFORE17:15 security failures,2 controls. AFTER20 new tests within75 affected and
+combined992 PASS, zero skips; syntax/system/drift/actual frontend consumers/
+i18n/types/build PASS. HEAD98925b67 + WIP/fourteen prior fixes + patch. Evidence:
+OFFICIAL-10-INBOX-20261028 checkpoint; output/security-remediation-20261028/
+inbox-create-read-visibility/fix-report.md. Local scoped proof, not production PASS.
+
+No remaining bounded Inbox create/replay criterion. Generic non-Inbox replay and
+non-create readers are unchanged and outside this packet, not newly certified. No new
+write permission/creation rule, full-browser/release/deployed acceptance or policy decision.
+
+## OFFICIAL-16 - scoped local remediation 28.10.2026
+
+OFFICIAL-16, 28.10.2026: Lead duplicate-check details now pass existing LEADS
+VIEW/object scope/capability and Business filtering BEFORE LIMIT5. Hidden rows return
+no IDs/messages/status/source; optional restricted-match boolean preserves generic
+duplicate warning without private count. Client projection reuses BE02/BE03: no hidden
+Client FK or contact lookup/exclusion derived from an unreadable Client ID.
+LeadForm preserves allowed counts/self-only editing and generic create-anyway warning,
+clearing restricted state on error/no selection. No new endpoint permission or writes.
+BEFORE10 security failures +5 controls after timestamp-fixture correction. AFTER15
+new tests within86 affected and combined957 PASS, zero skips; syntax/system/
+drift/component/i18n/types/build PASS. HEAD98925b67 + WIP/thirteen prior fixes + patch.
+Evidence OFFICIAL-16-20261028 checkpoint and output/security-remediation-20261028/
+lead-duplicate-visibility/fix-report.md. Local synthetic only; OFFICIAL10 remains open.
+
+No remaining bounded Lead duplicate-detail code/evidence criterion. This is a separate
+OFFICIAL16 closure, not another BE03 count; OFFICIAL10 remains unclosed. Endpoint
+access semantics and the existing generic match-presence signal are preserved, not a
+new role or anti-enumeration policy. No full browser/production/release acceptance.
+
+## FU-BE-03 - scoped local remediation 28.10.2026
+
+FU-BE-03, 28.10.2026: Client duplicate details now require current Client VIEW,
+object scope, capability and same Business. CREATE-only keeps one non-identifying
+warning for hidden matches; exclude_client_id cannot suppress an unreadable match.
+Shared read projection covers Client check/Inbox warning and stored import snapshots,
+plus the same DTO copies in form submissions/activity. Current reader used on every
+read; stored evidence, matching/import writes and public warning semantics unchanged.
+UI keeps duplicate banner/confirmation/create-anyway, no hidden open/merge target.
+BEFORE18 security assertions across11 methods +2 reproduced snapshot copies; five
+baseline controls PASS after fixture corrections. AFTER20 new tests within136 affected
+and combined942 PASS, zero skips. Syntax/system/drift/component/i18n/types/build
+PASS. HEAD98925b67 + WIP/twelve prior fixes + patch. FU-BE-03-20261028 checkpoint;
+output/security-remediation-20261028/client-duplicate-visibility/fix-report.md.
+Local synthetic evidence only. OFFICIAL16/10 remain separate and unclosed.
+
+No remaining code/evidence criterion in bounded Client duplicate DTO read scope.
+OFFICIAL16 Lead duplicate endpoint, OFFICIAL10 other child readers and unresolved owner
+policies remain open; this packet does not count them closed. No deployment/full browser
+or production/provider certification. Same-source stored duplicate copies included to
+avoid reintroducing this DTO through another representation; no new product workflow.
+
+## FU-BE-02 - scoped local remediation 28.10.2026
+
+FU-BE-02, 28.10.2026: linked Client projections now apply existing CLIENTS VIEW,
+object scope, capability and same-Business policy. Readable parent records remain;
+hidden Client IDs/contact labels and typed copies are masked in serializers, CRM-card,
+history, queues, AI context/rules, outreach previews/evidence and CSV. Contact-search and exact Client-ID filter
+branches respect Client visibility; stored Lead/Deal export fingerprints include it.
+Actor context is explicit; no actor fails closed. Frontend accepts nullable links,
+retains generic placeholders and avoids null-equality joins. No new ownership rule.
+BEFORE22:61 failing assertions across18 methods,4 controls PASS after fixture correction.
+Focused25 PASS; final27 plus affected history/card suites 105 PASS; combined
+894 PASS without skips. Syntax/system/drift/component/i18n/types/build PASS.
+HEAD98925b67 + prior WIP/eleven fixes + this patch. Evidence FU-BE-02-20261028 in
+PRIMARY and output/security-remediation-20261028/client-pii-projections/fix-report.md.
+Local synthetic evidence only; no production/provider/browser-E2E certification.
+
+Bounded linked-Client source projection criterion closed locally. FU-BE-03 duplicate
+responses and OFFICIAL-10 other child reads remain separate; no automatic duplicate
+closure. Parent free-text/customer message classification, production/load/browser
+E2E certification and unresolved owner policies are outside this packet.
+
+## OFFICIAL-05 - scoped local remediation 28.10.2026
+
+OFFICIAL-05, 28.10.2026: unverified public form/chat flags no longer replace
+existing per-channel OPTED_OUT. Common record_explicit_consent creates absent rows
+and conditionally updates only non-OUT rows at SQL write, then refreshes existing
+result. Refusal evidence/timestamps retained; normal intake/new/UNKNOWN/IN unchanged.
+Existing inbound START and authorized management re-consent remain separate and PASS.
+BEFORE15 security failing assertions across7 methods; corrected existing404 denial
+control PASS before source patch. AFTER106/combined654 PASS without skips;
+syntax/system/drift PASS. HEAD98925b67 + WIP/ten prior fixes + patch. Evidence:
+OFFICIAL-05-20261028 in PRIMARY; output/security-remediation-20261028/
+public-intake-optout/fix-report.md. Only local synthetic consents, no actual sends.
+
+No remaining code/evidence criterion in bounded public opt-out preservation.
+Deterministic SQLite write-interleaving proof is not threaded/PostgreSQL production
+concurrency certification. No new consent-policy/identity product flow; unresolved
+owner decisions and auth/reset stay outside this packet.
+
+## OFFICIAL-11 - scoped local remediation 28.10.2026
+
+OFFICIAL-11, 28.10.2026: consent XLSX now uses existing bounded core reader
+after actual upload max+1 byte check. ZIP expansion/entries/ratio and XML/worksheet
+bounds run before openpyxl; rows stream to unchanged consent normalizer, with explicit
+file errors and iterator/workbook cleanup. No eager worksheet list or silent trim.
+Existing aliases, values, active sheet/cached formulas, CSV and consent rules retained.
+BEFORE18:14 failing assertions across10 methods, one old underreported-dimension
+error,7 controls PASS. AFTER52/combined551 PASS without skips; syntax/system/drift
+PASS. HEAD98925b67 + WIP/nine previous fixes + patch. OFFICIAL-11-20261028 in PRIMARY;
+output/security-remediation-20261028/consent-xlsx-limits/fix-report.md.
+Only synthetic tiny fixtures/mocks; no stress/production or publication claim.
+
+No remaining code/evidence criterion in bounded consent-XLSX parser integration.
+No blanket CSV/JSON audit, working-data/role migration, provider or production stress
+certification. Auth/reset and unresolved owner policies remain excluded.
+
+## OFFICIAL-12 - scoped local remediation 28.10.2026
+
+OFFICIAL-12, 28.10.2026: alternate Deal readers now share existing sensitive
+amount policy (owner/admin/manager/accountant or BILLING VIEW as already defined).
+CSV/queues/summary/typed activity metadata/CRM timeline/AI rule sources/Deal-value
+analytics mask denied monetary fields and derivatives; actor context explicit.
+Amount filters/order denied before use; stored Deal export fingerprint includes
+field access. Missing context fails closed. Nullable frontend types and two money
+helpers show existing '-' for hidden values, preserving ordinary numeric formatting.
+BEFORE30 failing assertions across15 methods,3 controls PASS (see fixture correction
+in checkpoint); AFTER18+3 supplemental controls,19 unique methods PASS; combined
+523 PASS without skips. Syntax/system/drift, i18n/types/main Vite build PASS.
+HEAD98925b67 + WIP/eight prior fixes + patch. OFFICIAL-12-20261028 in PRIMARY-SESSION;
+output/security-remediation-20261028/deal-amount-projections/fix-report.md.
+Local synthetic evidence only; no provider/production/publication certification.
+
+No remaining code/evidence criterion in this bounded alternate Deal amount-read
+packet. No permissions/domain reset, old-data rewrite or unrelated financial-policy
+change; full-project/production and pending owner decisions remain outside scope.
+
+## OFFICIAL-02 - scoped local remediation 28.10.2026
+
+OFFICIAL-02, 28.10.2026: legacy analytics intersects source Lead/Deal/
+Appointment/Task VIEW, object scope and capability before counts/grouping/sums.
+Reuses existing analytics _scoped in manager metrics, dashboard and legacy summary/
+CSV. Member boundary and permitted formulas retained; Lead-to-Deal conversion also
+requires a readable Lead without changing the historical reporting-period formula.
+BEFORE15:13 failing assertions across10 methods,5 controls PASS; AFTER38/combined
+375 PASS without skips, syntax/system/migration-drift PASS. HEAD98925b67 + WIP/
+seven prior fixes + patch. OFFICIAL-02-20261028 in PRIMARY-SESSION; evidence in
+output/security-remediation-20261028/analytics-resource-visibility/fix-report.md.
+Scoped local synthetic evidence only; no production acceptance or publication.
+
+No remaining code/evidence criterion in this bounded source-resource analytics
+packet. Field-level masking and other findings remain separate; no full-project/live
+acceptance, auth/reset or pending owner-policy work included.
+
+## OFFICIAL-07 - scoped local remediation 28.10.2026
+
+OFFICIAL-07, 28.10.2026: ensure_default_roles now initializes absent presets
+only; onboarding never overwrites existing role metadata, activation, JSON, denies,
+scope or permission rows. Initialization of a new role is atomic. Explicit audited
+TEAM MANAGE permission editing remains separate; no reset API/permission added.
+Corrected BEFORE12:11 failing assertions across10 methods,2 controls PASS;
+AFTER23/combined316 PASS without skips, syntax/system/migration-drift PASS.
+HEAD98925b67 + preserved WIP/six prior fixes + patch. OFFICIAL-07-20261028 in
+PRIMARY-SESSION; output/security-remediation-20261028/onboarding-preset-preservation/
+fix-report.md. Local isolated synthetic evidence only; no publication/live acceptance.
+
+No remaining code/evidence criterion in this bounded initialization packet.
+Legacy role repair/reset, concurrent-initialization certification and live acceptance
+are outside this packet. Owner decisions AUD-17/Business.status remain open.
+
+## OFFICIAL-04 - scoped local remediation 28.10.2026
+
+OFFICIAL-04, 28.10.2026: Notes reads now intersect inherited tenant/Clients
+access with the linked record's current VIEW/object scope using existing
+scope_entity_history before pagination and serialization. Hidden recognized links
+return404 for detail and inherited object actions; ordinary CRUD, archived/unlinked
+history and existing non-CRM/system policy remain. BEFORE13:21 failing assertions,
+4 controls PASS; inherited archive baseline1 failed. AFTER23/combined270 PASS without
+skips; system/migration-drift and syntax/diff PASS. HEAD98925b67 + preserved WIP/five
+prior fixes + this patch. Evidence: OFFICIAL-04-20261028 in PRIMARY-SESSION;
+output/security-remediation-20261028/notes-linked-object-access/fix-report.md.
+Local synthetic SQLite only, no production/live acceptance or publication.
+
+No remaining code/evidence criterion in this bounded packet. Production acceptance
+and unresolved AUD-17/Business.status/legacy-draft decisions are outside its scope.
+
+## OFFICIAL-06 — ограниченное исправление 28.10.2026
+
+Выполнено полностью в локальном scope безопасных outreach templates после явного
+подтверждения владельца. Bounded flat-variable render вместо format_map; API/runtime
+и stored-text branches защищены, valid/escaped/Unicode controls и rollback сохранены.
+BEFORE13:20 FAIL,3 controls PASS; AFTER ordered13/совместно184 PASS без skip,
+system/drift PASS. Версия 98925b67 + сохранённые WIP/четыре прошлых fix и этот patch;
+OFFICIAL-06-20261028 в [checkpoint](../testing/task-state/PRIMARY-SESSION.md).
+Остатка кода/доказательств этого scope нет. Live sends, provider quotas, legacy-data
+migration, publication и production acceptance не выполнялись. Auth/reset safety
+block, AUD-17/Business.status/legacy draft policy не затронуты. Следующий OFFICIAL-04.
+
+## OFFICIAL-08 — ограниченное исправление 28.10.2026
+
+Выполнено полностью в scoped pricing tenant validation: serializer учитывает
+сохранённый Business при PATCH, два decision-reader игнорируют чужие legacy offers.
+BEFORE подтверждён cross-link и влияние ошибочных строк; AFTER focused13/совместно171
+PASS без skip, system/drift PASS. Версия 98925b67 + сохранённые WIP/три предыдущих
+fix и этот patch; OFFICIAL-08-20261028 в
+[checkpoint](../testing/task-state/PRIMARY-SESSION.md). Остатка кода/доказательств
+этого scope нет; real-data cleanup, DB constraint, внешнее repricing и публикация
+не выполнялись. Auth/reset/AUD-17/Business.status и другие findings отдельно.
+
+## OFFICIAL-20 — ограниченное исправление 28.10.2026
+
+Выполнено полностью в scoped readiness redaction: raw broker/origin/provider URLs
+заменены configured-state деталями в общих producers API/CLI; статусы и инструкции
+сохранены. BEFORE synthetic credentials появились в platform response; AFTER
+focused9/совместно135 PASS без skip, system/drift PASS. Версия 98925b67 + сохранённые
+WIP/два предыдущих fix и этот patch; OFFICIAL-20-20261028 в
+[checkpoint](../testing/task-state/PRIMARY-SESSION.md). Остатка кода/доказательств
+этого fix нет. Production/config inspection и публикация исключены; auth/reset,
+AUD-17/Business.status и другие findings не входят в этот результат.
+
+## FU-BE-01 — ограниченное исправление 28.10.2026
+
+Выполнено полностью в локальном scope выдачи invitation bearer: token/invite_path
+маскируются без TEAM MANAGE конкретного Business; manager delivery/create/accept
+сохранены. BEFORE подтверждён new-account/admin claim через TEAM VIEW; AFTER
+focused11 и совместно174 PASS + 3 PG-only ownership-concurrency skip, system/drift
+PASS. Версия 98925b67 + сохранённый WIP/patch; FU-BE-01-20261028 в
+[checkpoint](../testing/task-state/PRIMARY-SESSION.md). Остатка кода/доказательств
+новой выдачи bearer нет; старые скопированные ссылки не отозваны, incident response
+и publication/deployment не выполнялись. Другие findings не закрываются.
+
+## OFFICIAL-01 — ограниченное исправление 28.10.2026
+
+Выполнено полностью в локальном scope: generic DELETE Business отключён для всех
+actors; отдельный lifecycle удаления не вводится. BEFORE member 204 с каскадным
+удалением, AFTER focused8/affected163 PASS + 3 PG-only skip, system/drift PASS. Версия —
+98925b67 + сохранённый WIP и локальный patch; evidence и команды —
+OFFICIAL-01-20261028 в [checkpoint](../testing/task-state/PRIMARY-SESSION.md).
+Остатка кода/доказательств этого узкого fix нет. Commit/push/deploy исключены;
+это не полный security PASS. AUD-17/Business.status и другие findings отдельно.
 
 ## PROJECT-AUDIT-20261017
 
@@ -290,7 +861,8 @@ AI/operations/ADMIN-05 и Q01–25 связаны с существующими 
 Срез 17.10 на `56dd124`: **20 подтверждённых пунктов (12 исходных + 8 новых),
 2 риска на проверку**. [Доказательства и ограничения](../testing/project-audit-20261017.md).
 Аудит/планирование завершены. AUD-01/02/03/13/14/15/06/04/05/16/20/21/22/18 выполнены полностью
-в согласованных локальных границах. AUD-10 выполнен частично; остаток ниже. Это единственная очередь
+в согласованных локальных границах. AUD-10 закрыт позднее30.10; актуальные
+результаты остальных AUD приведены в строках ниже. Это единственная очередь
 исправлений данного аудита. Существующие этапы/acceptance IDs ниже сохраняются.
 
 Статусы результата: **Выполнено полностью / Выполнено частично / Не выполнено**
@@ -313,19 +885,19 @@ deployment записываются отдельно. Для каждого из
 | AUD-04 / P1 | **Сбой создания автоматизации оставляет активный фрагмент.** Атомарное создание/изменение состава; сбой любой части откатывает правило/действия/историю. Активация только валидного состава. | AUD-06 | Выполнено полностью в согласованном локальном scope 19.10. Manual/template creation и полная замена состава атомарны вместе с audit/activity; generic CRUD защищает активный состав общей блокировкой Business. Focused26 PASS; affected208: 205 PASS, 3 PG-only skip; PostgreSQL29 PASS, включая гонки delete/delete и activate/delete; system/migration drift PASS. Код/доказательства/решение: остатка нет в scope. Среда: deployment отдельно. Версия/команды — [AUD-04 checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-04-20261019--atomic-automation-configuration). UI-редактор закрыт отдельно в AUD-05. |
 | AUD-05 / P2 | **Простая форма создаёт включаемое правило без действий.** Достижимый редактор существующего правила и проверки активации; создать → настроить → проверить → включить → выполнить реальное действие. | AUD-04, AUD-06 | Выполнено полностью в согласованном локальном scope 19.10. Достижимый редактор, detail preview с UPDATE, атомарное сохранение; полный сценарий создал одну реальную Task. Focused30, affected153 (150 PASS, 3 PG-only skip), system/migration drift, helpers4, browser RU/KK/EN desktop/mobile и build/types/i18n/bundle PASS. Код/доказательства/решение: остатка нет. Среда: live worker/providers и deployment отдельно. Версия/команды — [AUD-05 checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-05-20261019--reachable-automation-rule-editor). |
 | AUD-06 / P2 | **Preview автоматизации принимает неисполняемую конфигурацию.** Обязательные поля/типы/связи/права каждого действия; предметные поля UI, понятные ошибки. Одинаковая проверка preview/save/activate/execute. | Нет | Выполнено полностью в согласованном локальном scope 19.10. Общий валидатор шести действий, права/активные участники/trigger; предметная форма RU/KK/EN, ошибки и актуальность preview. Focused14 PASS; affected207: 206 PASS, 1 PG-only skip; system/migration drift и browser/build PASS. Код/доказательства/решение: остатка нет в scope. Среда: deployment/live providers отдельно. Версия/команды — [AUD-06 checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-06-20261019--executable-automation-action-configuration). Атомарность закрыта отдельно в AUD-04; редактор закрыт отдельно в AUD-05. |
-| AUD-07 / P2 | **Полная история автоматизаций.** Серверная пагинация/фильтры и показатели; loading/error503/empty/retry различаются. | Нет | Выполнено30.10 локально: backend40 union, Node10, system/drift/build/types и RU/KK/EN browser PASS; base68cf93d7, evidence AUD07 в PRIMARY. Код/доказательства/решение: остатка нет. Опубликовано2a710d32, remote SHA подтверждён, CI выполняется; live/deployment отдельно. Следующий AUD12 не начат. |
+| AUD-07 / P2 | **Полная история автоматизаций.** Серверная пагинация/фильтры и показатели; loading/error503/empty/retry различаются. | Нет | Выполнено30.10 локально: backend40 union, Node10, system/drift/build/types и RU/KK/EN browser PASS; base68cf93d7, evidence AUD07 в PRIMARY. Код/доказательства/решение: остатка нет. Опубликовано2a710d32, remote SHA подтверждён, CI был в работе на дату receipt; текущий CI здесь заново не проверен; live/deployment отдельно. AUD12 завершён позднее31.10; эта строка не задаёт текущую очередь. |
 | AUD-08 / P2 | **Поиск и выбор клиента ограничены первой страницей.** Серверный поиск и асинхронные селекторы с подгрузкой; проверить старый объект, разные страницы, пустой результат, ошибку и роль. Не загружать всю базу в браузер. | Нет | **Выполнено в согласованном scope30.10, локально проверено.** Глобальный поиск/палитра и выбор Client в Deal/Lead/Task: серверный поиск, страницы по20, selected-ID hydration, loading/error/empty/retry, сохранение формы по Escape. Business-фильтр применяется внутри текущего VIEW; два доступных бизнеса не смешиваются. Кандидат36 backend/14 Node/system/drift/build/forced types и RU/KK/EN desktop/mobile browser PASS. Код/локальные доказательства/решения: остатка нет. Опубликовано d22cd337, origin/main SHA подтверждён; CI40962432948 выполняется, deployment вне scope; base878f9743, команды/версия — AUD-08-20261030 в PRIMARY. |
-| AUD-09 / P2 | **Полные показатели услуг.** Серверная сводка до пагинации и счётчики всех доступных записей; фильтры/архив/Business/роль сохранены. | Нет | Выполнено30.10 локально: owning16/dependent3, system/drift, build/types и RU/KK/EN browser PASS на отдельном кандидате base a45b0d80. Код/доказательства/решение: остатка нет. Опубликовано1ac77023, remote SHA подтверждён; CI queued. Receipt — AUD09 в PRIMARY; deployment/live отдельно. Следующий AUD07 не начат. |
-| AUD-10 / P2 | **Offline-очередь теряет действия и допускает повторы.** Изоляция очереди, без молчаливой потери; стабильные command keys, replay/конфликт/ошибка и ручное восстановление. Проверить потерянный ответ после commit, 41 команду, смену аккаунта. | AUD-01 | **Выполнено в согласованном scope30.10; опубликовано8d710f03.** Нет вытеснения41-й команды; storage error сохраняет ввод, stable key до первого запроса, same-key replay/ручной conflict/retry/discard и достижимые Lead note/task формы. Старые бесключевые и после1ч от первой попытки — только сверка, без слепого replay; logout/access clearing сохранены. Node18, локальные backend61+дополнительные controls и RU/KK/EN desktop/mobile browser PASS. Отдельный кандидат AUD10:36/backend, system/drift/build/types PASS, но дополнительный OWN-assignment тест FAILED (201 вместо403). Требуется ранее подготовленный OFFICIAL-18: текущий source с ним PASS, владелец30.10 разрешил минимальную зависимость и весь исходящий диапазон; OFFICIAL18 опубликован bae967bd, remote SHA подтверждён. Совместный минимальный кандидат65/no skips и browser PASS; prerequisite-only28 PASS. Код/локальные доказательства/решения: остатка нет. Публикация/remote SHA подтверждены; CI40957243699 выполняется, green не заявлен; deployment вне scope. Base dcd5b141; команды/evidence — AUD-10-20261030 в PRIMARY. |
+| AUD-09 / P2 | **Полные показатели услуг.** Серверная сводка до пагинации и счётчики всех доступных записей; фильтры/архив/Business/роль сохранены. | Нет | Выполнено30.10 локально: owning16/dependent3, system/drift, build/types и RU/KK/EN browser PASS на отдельном кандидате base a45b0d80. Код/доказательства/решение: остатка нет. Опубликовано1ac77023, remote SHA подтверждён; CI queued на дату receipt, не текущий live-статус. Receipt — AUD09 в PRIMARY; deployment/live отдельно. AUD07 завершён позднее30.10; эта строка не задаёт текущую очередь. |
+| AUD-10 / P2 | **Offline-очередь теряет действия и допускает повторы.** Изоляция очереди, без молчаливой потери; стабильные command keys, replay/конфликт/ошибка и ручное восстановление. Проверить потерянный ответ после commit, 41 команду, смену аккаунта. | AUD-01 | **Выполнено в согласованном scope30.10; опубликовано8d710f03.** Нет вытеснения41-й команды; storage error сохраняет ввод, stable key до первого запроса, same-key replay/ручной conflict/retry/discard и достижимые Lead note/task формы. Старые бесключевые и после1ч от первой попытки — только сверка, без слепого replay; logout/access clearing сохранены. Node18, локальные backend61+дополнительные controls и RU/KK/EN desktop/mobile browser PASS. Отдельный кандидат AUD10:36/backend, system/drift/build/types PASS, но дополнительный OWN-assignment тест FAILED (201 вместо403). Требуется ранее подготовленный OFFICIAL-18: текущий source с ним PASS, владелец30.10 разрешил минимальную зависимость и весь исходящий диапазон; OFFICIAL18 опубликован bae967bd, remote SHA подтверждён. Совместный минимальный кандидат65/no skips и browser PASS; prerequisite-only28 PASS. Код/локальные доказательства/решения: остатка нет. Публикация/remote SHA подтверждены; CI40957243699 completed success30.10; deployment вне scope. Base dcd5b141; команды/evidence — AUD-10-20261030 в PRIMARY. |
 | AUD-11 / P2 | **Атомарное объединение клиента с обязательной историей и аудитом.** Ошибка откатывает перенос связей/ledger, архив и историю. | Нет | Выполнено в согласованном scope 29.10. Общая транзакция API и domain service; ошибка до/после audit insert, откат и повтор проверены. Изолированный кандидат:54 теста PASS/no skips, system/drift PASS. Код/доказательства/решение: остатка нет; deployment вне scope. База692e46f0, версия/публикация и команды — AUD-11-20261029 в PRIMARY. |
 | AUD-12 / P2 | **Импорт и экспорт не имеют полного рабочего интерфейса.** 12a mapping→preview→полные ошибки→повтор; 12b история импортов с правильным entity и пагинацией; 12c сохраняемая история export jobs/download после reload. Закрывать подпункты отдельно, весь пункт только после всех трёх. | AUD-16/18/20/21/22 закрыты локально | **12a выполнен в локальном scope31.10:** mapping→preview→все ошибки→исправление/повтор в существующем импорте заявок и общем ImportPanel. Backend50/Node5/system/drift/build/types/i18n, RU/KK/EN browser PASS; base4c6587c6, evidence AUD12a в PRIMARY. Остатка кода/доказательств/решений в12a нет; опубликовано f9a7a6c8, remote SHA подтверждён, CI41112355081 выполняется. **12b выполнен в локальном scope31.10:** полная история по Business/entity/actor, серверные страницы/счётчики и актуальные детали задания; reload/503/retry/keyboard/RU/KK/EN проверены. Backend27/Node12/system/drift/build/types/i18n PASS на кандидате от72dda967, evidence AUD12b в PRIMARY. Остатка кода/доказательств/решений в12b нет; опубликовано1b25694a, remote SHA подтверждён, CI41118186023 выполняется. **12c выполнен локально31.10:** полная серверная история фоновых ExportJob, фильтры/страницы/размер/статус/скачивание после reload; текущие права, actor/tenant, polling/503/retry/RU/KK/EN проверены. Малый синхронный CSV не создаёт job. AUD-12 закрыт в принятом UI scope, остатка кода/доказательств/решений нет; опубликовано0db46068, remote SHA подтверждён, CI41127057520 выполняется. Worker/storage целевой среды и live/deployment вне scope. Evidence AUD-REMAINING в PRIMARY. |
 | AUD-13 / P1 | **PATCH переназначает чужую заявку в обход scope.** Проверять UPDATE исходного объекта; assignment через сервис, с историей/уведомлениями. Тест generic PATCH против assign, own/team/business, null/self/чужой member; проверить затронутые общие consumers. | Нет | Выполнено полностью в согласованном локальном scope 17.10. Исходный UPDATE перед PATCH/PUT, assignment через сервис, atomic history/notifications; focused13 PASS, affected324: 323 PASS / 1 PG-only skip, system/migration drift PASS. Код/доказательства/решение: остатка нет в scope. Среда: deployment/live отдельно; PostgreSQL concurrency не пересертифицирована, существующие locks сохранены. Версия/точные проверки — [AUD-13 checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-13-20261017--original-object-update-and-lead-assignment). |
 | AUD-14 / P1 | **Обычный PATCH сообщения обходит отправку через Inbox.** Серверное управление delivery metadata и право на родительский диалог; send/retry только через сервис. Проверить подмену sender/payload, requeue, редактирование истории и legacy Message API. | AUD-13 — проверить общий guard | Выполнено полностью в согласованном локальном scope 17.10. Generic история неизменяема, inbound allowlist и parent scope, server-only delivery metadata; send/retry сохранены. Focused15 PASS; affected288: 286 PASS, 2 PG-only skip; новый concurrent intake PostgreSQL17 PASS; system/migration drift PASS. Код/доказательства/решение: остатка нет. Среда: deployment/live provider отдельно; неизменённый handoff PG-only test не запускался. Версия/команды — [AUD-14 checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-14-20261017--immutable-message-history-and-parent-scope). |
 | AUD-15 / P1 | **Стадии и переходы принимают чужие воронки.** Проверить Business и pipeline у всех концов перехода; отрицательные POST/PATCH с foreign и same-business wrong pipeline, отсутствие изменения чужой доски. | Нет | Выполнено полностью в согласованном локальном scope 19.10. Business/pipeline и оба конца перехода проверяются при POST/PUT/PATCH; pipeline существующей стадии неизменяем. Focused12 и affected158 PASS, system/migration drift PASS. Код/доказательства/решение: остатка нет в scope. Среда: deployment и проверка старых рабочих данных отдельно, автоматической миграции нет. Версия/команды — [AUD-15 checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-15-20261019--pipeline-configuration-relationship-boundaries). |
 | AUD-16 / P2 | **ImportJob разрешает подменять серверные поля.** Allowlist входов, immutable actor/status/counters/preview; mapping только через повторный preview, locked confirmation с повторной валидацией. AV/лимит исходных байтов уже проверяются при confirm и должны сохраниться. | Нет | Выполнено полностью в согласованном локальном scope 19.10. Upload allowlist, immutable API/admin history, валидируемый mapping/preview, locked confirm с актуальными правами/строками/AV/лимитом; rollback и recovery. Проверено 112 SQLite-тестов (ещё 2 PG-only skip), PostgreSQL17, system/migration drift PASS. Код/доказательства/решение: остатка нет в scope. Среда: deployment отдельно. Команды/исправление ошибочного test label — [AUD-16 checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-16-20261019--import-job-write-boundaries). |
-| AUD-17 / P2 | **Массовое прочтение уведомлений не проверяет UPDATE.** Проверка UPDATE и scope всех обновляемых строк; owner/marketer/VIEW-only/другой Business, персональные и общие уведомления. Inbox имеет дополнительный фильтр, дефект не означает чтение всех его уведомлений. | Нет | Не выполнено. Сделано: дефект и evidence зафиксированы; остаток: код и проверки указанного результата. |
+| AUD-17 / P2 | **Массовое прочтение уведомлений не проверяет UPDATE.** Проверка UPDATE и scope всех обновляемых строк; owner/marketer/VIEW-only/другой Business, персональные и общие уведомления. Inbox имеет дополнительный фильтр, дефект не означает чтение всех его уведомлений. | Нет | **Выполнено в согласованном локальном scope 28.10 (OFFICIAL-21).** Решение владельца: обновить разрешённую часть, остальные оставить непрочитанными. Текущие VIEW+UPDATE объекта, фактический count, VIEW-only403, TEAM/shared/Inbox/bell/replay/rollback сохранены; final62 isolated tests, system/drift PASS, независимый review без замечаний. Код/доказательства/решение: остатка нет в scope; среда: deployment и PostgreSQL concurrency не сертифицированы. HEAD98925b67 + WIP + patch, без публикации. [Checkpoint](../testing/task-state/PRIMARY-SESSION.md#official-21-20261028--authorized-mark-all-read-subset-fixed-locally). |
 | AUD-18 / P2 | **Старый экспорт доступен после сужения прав.** Проверять актуальность permission/scope snapshot или безопасно пересобирать экспорт. Проверить narrowing, отзыв роли/филиала и разрешённое скачивание; уже скачанную копию отозвать нельзя. | Нет | **Выполнено полностью в локальном scope, 27.10.** Fingerprint прав/capabilities, команды, филиалов и доступных записей проверяется при генерации и download; отчёты учитывают исходные ресурсы и область команды. Изменённый/legacy контекст требует нового экспорта403; stored bytes и notes redaction сохранены. 71 affected tests без skip, system/drift PASS. Код/доказательства/решения: остатка нет в scope. Среда: deployment/live storage-worker отдельно, рабочая БД не затронута. Версия/команды/ограничения — [AUD-18 checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-18-20261027--current-export-download-authorization). |
-| AUD-19 / P2 | **CRUD полей лид-форм не определяет Business через form.** Единообразно разрешать business_lookup и сохранять tenant guards. Проверить create/detail/edit/delete поля через API и достижимый редактор, foreign form и отказ роли. | AUD-02 | **Локальный scope проверен и опубликован29.10: cd7a2598, main.** Общий resolver сохраняет tenant guards и Business в audit/activity; редактор «Заявки → Ещё → Формы заявок», RU/KK/EN, права роли, пустое состояние и recovery. Поверх опубликованного CI-repair acb8687e (полный CI success): backend80 без skip, system/drift, Node2, build/types и targeted desktop/mobile browser PASS. Исправлены перекрытие входа на1036px и HTML pattern ключа. Код/доказательства/решения: остатка нет в согласованном scope. Среда: рабочие миграции/deployment не выполнялись; remote SHA подтверждён; [CI](https://github.com/999MAX20/PlatformaCRM/actions/runs/40835060335) выполняется, PASS ещё не заявлен. Подробности в [checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-19-20261029--lead-form-field-tenant-resolution-and-editor-verified). Следующий AUD-10 требует нового поручения. |
+| AUD-19 / P2 | **CRUD полей лид-форм не определяет Business через form.** Единообразно разрешать business_lookup и сохранять tenant guards. Проверить create/detail/edit/delete поля через API и достижимый редактор, foreign form и отказ роли. | AUD-02 | **Локальный scope проверен и опубликован29.10: cd7a2598, main.** Общий resolver сохраняет tenant guards и Business в audit/activity; редактор «Заявки → Ещё → Формы заявок», RU/KK/EN, права роли, пустое состояние и recovery. Поверх опубликованного CI-repair acb8687e (полный CI success): backend80 без skip, system/drift, Node2, build/types и targeted desktop/mobile browser PASS. Исправлены перекрытие входа на1036px и HTML pattern ключа. Код/доказательства/решения: остатка нет в согласованном scope. Среда: рабочие миграции/deployment не выполнялись; remote SHA подтверждён; [CI](https://github.com/999MAX20/PlatformaCRM/actions/runs/40835060335) выполняется, PASS ещё не заявлен. Подробности в [checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-19-20261029--lead-form-field-tenant-resolution-and-editor-verified). AUD-10 завершён позднее30.10; прежняя очередь не актуальна. |
 | AUD-20 / P2 | **Начальное состояние API/create и импорта заявок и сделок.** Причина потери, серверные timestamps/actor/history; невалидные строки отклоняются. Стадия/status сделки согласованы; UI/import/Inbox выбирают активную открытую стадию. | AUD-16 | **Выполнено полностью в локальном scope, 21.10.** Доменные creation services, preview/confirm, атомарность/rollback/retry и аналогичные deal paths проверены. Backend307 + Inbox1, system/drift, frontend build/bundle и браузер PASS. Код/доказательства/решения без остатка; deployment/live не выполнялись. Код 1d95d1de опубликован в main; последующий CI выявил AI-create consumer и dependency audit: исправление 893619fd опубликовано, локально AI19/affected214, frontend/audit/browser PASS. Python audit также исправлен (Pillow13/certifi2026.10.19), accounts/API128 OK с 3 PG-only skip; объединённый код/lock4056a471 опубликован, полный CI — отдельный результат. [Полный CI](https://github.com/999MAX20/PlatformaCRM/actions/runs/39590140960) — отдельный результат. Версия/среда/команды/CI — [AUD-20 checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-20-20261021--initial-lead-and-deal-lifecycle-invariants). |
 | AUD-21 / P2? | **Параллельный confirm импорта: риск двойной обработки.** Сначала изолированный PostgreSQL тест двух confirm; затем lock/idempotency при подтверждении риска. Проверить один результат/набор событий, повтор и rollback. | AUD-16 | **Выполнено полностью в локальном scope, 21.10.** Row lock AUD-16 достаточен; runtime не менялся. PostgreSQL17: confirm/confirm и preview/confirm, реальное ожидание lock при сбое после строки/финального audit, чистый rollback, один результат/events/sync/audit, callbacks и отказ повтору. 48 import-проверок без skip, system/drift PASS; evidence/версия — AUD-21-20261021 checkpoint, основа3834922c. Остатка кода/доказательств/решений нет; deployment/live не выполнялись. |
 | AUD-22 / P2 | **XLSX материализуется до ограничения количества строк.** Контролируемый subprocess с жёстким memory/time лимитом; проверить dimensions/rows/columns и compressed ratio без нагрузки рабочей среды. При подтверждении — ранняя потоковая остановка и закрытие workbook при ошибке. | Нет | **Выполнено полностью в локальном scope, 21.10.** Probe256МБ/12сек подтвердил риск; ZIP/XML preflight, технические лимиты всех листов, потоковое чтение реальных строк и finally cleanup реализованы. Focused10/affected68 без skip, system/drift и повторный bounded probe PASS. Лимиты — operations; версия/evidence — AUD-22-20261021 checkpoint, основа66b3f64a. Остатка кода/доказательств/решений нет; deployment/live и общая нагрузочная сертификация не выполнялись. |
@@ -336,10 +908,14 @@ AUD-15**, затем **AUD-06 → AUD-04 → AUD-05 → AUD-16 → AUD-20 → AU
 AUD-18 → AUD-17 → AUD-11 → AUD-19**, затем **AUD-10 → AUD-08 → AUD-09 →
 AUD-07 → AUD-12**; AUD-V01 закрывается по выбранным границам проверки.
 Это порядок результатов, а не поручение выполнить все этапы одним сообщением.
-AUD-01/02/03/13/14/15/06/04/05/16/20/21/22/18 выполнены полностью в своих scope.
-Текущий опубликованный статус каждого AUD определяется его строкой и checkpoint.
-AUD-19 проверен и опубликован cd7a2598; следующий в этой задаче AUD-10
-требует нового поручения. Другие локальные пакеты не включены в AUD-19.
+AUD-01/02/03/13/14/15/06/04/05/16/20/21/22/18/17 выполнены в своих scope.
+AUD-11 закрыт29.10; AUD-19 проверен отдельным кандидатом и опубликован cd7a2598.
+CI AUD-19 cd7a2598 и docs e9c1681b success по receipt29.10; следующий
+AUD-12 и ограниченный AUD-V01 завершены31.10 по evidence AUD-REMAINING; внешние integration/release критерии сохранены. AUD10 опубликован, CI success;
+AUD08 опубликован d22cd337, CI выполняется; детали в его checkpoint. Это не закрывает
+новую дельту единой Записи и не разрешает следующий этап. AUD-17 локально закрыт решением и проверками OFFICIAL-21. Персональная модель
+прочтения заменяет shared-read поведение отдельным принятым NOTIFICATIONS-PERSONAL-20261028;
+историческая audit-строка ниже/выше сохраняет границу прежнего исправления.
 Общий документационный срез `ce2c290d` опубликован, CI success; отдельные версии и scoped
 checks сохранены в checkpoint соответствующего AUD. Общий CI не закрывает AUD-V01.
 
@@ -535,7 +1111,7 @@ Settings опубликованы `c40aff4` со scoped PASS и receipt `3d29172
 | PLATFORM-SUPPORT / INCIDENT-LINK | Обращения и связь с конкретным эпизодом; support0001 активирована локально | support0002/core0012 и наблюдатель требуют отдельной рабочей активации; вложения/внешние уведомления/SLA вне первой версии |
 | S03 / CONNECTION-RECOVERY | Состояние фоновой работы, начало/восстановление/устаревание; возврат связи после фоновой вкладки | Рабочий collector/beat/core0012 и независимый мониторинг полного отказа — R04; UI-проба не доказывает доступность провайдеров |
 | S04 | Изолированный PostgreSQL/Redis/Celery/ClamAV recovery и restore | Target Linux/storage/backup/rollback/alerts и RPO/RTO — R04; локальный стенд не production |
-| R02-AI-RETURN | Час тишины после ответа сотрудника, safety исключения; локальная активация bots0012 | Автозапуск после reboot и целевой worker/beat отдельно; R02 целиком открыт, Meta/PS Cloud отложены |
+| R02-AI-RETURN | Час тишины после ответа сотрудника, safety исключения; локальная активация bots0012 | Автозапуск после reboot и целевой worker/beat отдельно; R02 целиком открыт; официальный BSP→Meta принят, YCloud local slice отдельно; целевая среда Yandex Cloud не принята |
 | Клиентский AI, приёмка 08.10 | Исторические real-model сценарии и локальный пилот | Последующие prompt/филиал/таймер изменения требуют применимой проверки перед live-допуском; R03/R04/R05 остаются |
 
 Для каждой последующей завершённой части записывать здесь либо в её разделе:
@@ -573,6 +1149,18 @@ S01–S04 завершены в указанных границах; R02–R07 �
 | CRM-S03 | Понятное состояние сервиса и уведомления: отделены сообщения сотруднику от диагностики оператору, определены начало/восстановление/устаревание инцидента и защита от повторных уведомлений. Необязательный неподключённый провайдер не изображает отказ CRM. При полном отказе CRM независимое внешнее оповещение остаётся частью будущей целевой среды. | ЗАКРЫТ в scoped-границе; код опубликован, CI/evidence в checkpoint |
 | CRM-S04 | Локальная эксплуатация и восстановление: изолированные PostgreSQL/Redis/workers, recovery/retry/cancel без повторных эффектов, экспорт/файлы, резервное копирование и фактическое восстановление. Этот результат подготавливает R04, но не закрывает проверку будущей production-среды. | ЗАКРЫТ в локальной изолированной границе; код опубликован, CI/evidence в checkpoint |
 
+
+Уточнение03.11, ALERT-REMEDIATION: глобальная полоса убрана; последующее решение HEADER-CLEANUP
+также убирает индикатор из шапки. Причины недоступности финансовых данных остаются в отчёте со ссылками по
+правам. UI-срез локальный, публикация заблокирована; общий статус S03 не расширен.
+RECORDS-BELL-FIX03.11 закрывает локальный дефект конкретного текста service events:
+безопасная проекция компонента/перехода, проверки API и RU/KK/EN колокольчика PASS.
+Удалённый индикатор не возвращён. В этом исправлении остатка кода нет;
+публикация заблокирована index.lock/mixed prerequisites, среда/live acceptance
+сохраняются. Полный S03 этим не закрывается.
+[Evidence](../testing/evidence/records-bell-fix-20261103.md).
+
+
 Понятные ошибки, сохранение ввода, конфликт/повтор и видимый результат действия —
 критерии соответствующего этапа, а не отдельный пятый редизайн. Использовать
 существующие модульные проверки; новые проверки привязывать к конкретному пробелу
@@ -585,13 +1173,13 @@ S01–S04 завершены в указанных границах; R02–R07 �
 
 | ID | Наблюдаемый результат | Зависимость | Статус |
 | --- | --- | --- | --- |
-| CRM-R01 | Приёмка выбранного повседневного CRM-цикла и оставшихся применимых controls | Завершение календаря и сверка Settings | ЗАКРЫТ 14.10 по уточнённому владельцем scope; FB009 отложен без PASS; общая production-приёмка отдельно |
-| CRM-R02 | Определены границы реального пилота: участники, роли, каналы, среда, оператор и финансирование | Решение владельца по запуску; существующие V1-правила | В РАБОТЕ 14.10; решения записаны, провайдер/среда и часть правил открыты |
-| CRM-R03 | Telegram и WhatsApp, каждый отдельно, проходят обращение → AI/человек → CRM → доставку и recovery, включая напоминания | R02; необходимые CRM-сценарии R01 | НЕ НАЧАТ; live delivery не доказана |
-| CRM-R04 | Целевая среда восстанавливается после отказов и обслуживается оператором | R02; точная конфигурация кандидата | НЕ НАЧАТ; target operations не доказаны |
-| CRM-R05 | Персонал проходит полный рабочий день на названном пилотном кандидате | R01, R03, R04 | НЕ НАЧАТ; клиническая приёмка не доказана |
+| CRM-R01 | Исторический повседневный цикл; новая дельта единой Записи/плана/оплаты по U2–U4 отдельно выше | Для дельты: OP-RECORD/domain/API/права/совместимость → UI → AC-CRM-PILOT-01–14 | Старый scope ЗАКРЫТ14.10, FB009 отложен без PASS; новая дельта ЧАСТИЧНО ВЫПОЛНЕНА: одиночная Запись, Records consumers и организационный план опубликованы в scoped пакетах; деньги/распределение/D01/полная приёмка открыты |
+| CRM-R02 | Две независимые клиники, подготовка до пяти, manifest/роли/каналы/Yandex Cloud target (регион/ресурсы ещё не выбраны)/операторы | Принятые решения U0/29.10; CG-01–04 | ВЫПОЛНЕНО ЧАСТИЧНО: решения и локальный YCloud TP Lite есть; commercial/activation/live/target/legal остаются |
+| CRM-R03 | Telegram и официальный WhatsApp BSP, каждый отдельно: единая Запись/AI/человек, delivery/напоминания/recovery | R02 и применимый новый workflow R01; CG-02/05 | Live-приёмка НЕ ВЫПОЛНЕНА; локальный YCloud text stage не templates/reminders/полный канал |
+| CRM-R04 | Target restore15мин RPO/4ч RTO, серьёзные инциденты24/7, штатная поддержка по графику | R02/CG-04; named candidate и capacity2→5 | НЕ ВЫПОЛНЕНО в target; S04 локальный, измерения/люди/замещение открыты |
+| CRM-R05 | Полный рабочий день двух Business через Запись/план/оплату, затем контролируемое расширение до пяти | Новая дельта R01/AC01–14, R03/R04, CG-01/03 | НЕ ВЫПОЛНЕНО; приёмка персонала/target не доказана |
 | CRM-R06 | Согласован и проверен коммерческий пакет CRM + AI | Отдельное возобновление billing, решения V1-O01–O04 | ОТЛОЖЕНО |
-| CRM-R07 | Точный платный production-кандидат принят и допущен к запуску | R01–R06, юридические тексты, разрешённый target | НЕ НАЧАТ |
+| CRM-R07 | Наш web candidate; native/builds/devices/store — второй разработчик; платный CRM по отдельному R06 | Новые применимые R01–R06, AC-MOBILE-REUSE/CG-08, legal/target | НЕ ВЫПОЛНЕНО; 27.11 и подача около10.11 — цели, не гарантированный release |
 
 R01 и определение R02 не требуют последовательного переписывания модулей.
 После R02 подготовка R03 и R04 может идти независимо по непересекающимся задачам,
@@ -605,8 +1193,9 @@ R01 и определение R02 не требуют последователь
 и возобновить R01. Существующие закрытия не отменяются; редизайн Истории отдельно
 не поручен. Конкретный непокрытый сценарий R01 фиксируется по evidence.
 
-Результат: сотрудник в своей роли находит/создаёт клиента, обрабатывает обращение,
-ведёт заявку/сделку, назначает следующий шаг и визит, отражает результат, при
+Исторический результат R01 от14.10: сотрудник находит/создаёт клиента, обрабатывает
+обращение, ведёт заявку/сделку в историческом scope14.10 (в новом пилоте заменяется
+Записью), назначает следующий шаг и визит, отражает результат, при
 необходимости регистрирует фактическую оплату. Связанные сущности сохраняют свои
 независимые жизненные циклы. Scope выбирается по оставшимся критериям, не по всем файлам.
 
@@ -646,14 +1235,13 @@ webhook, доступ к номеру/аккаунту и разрешение �
 для YCloud. R02/R03 не закрываются этим локальным результатом; следующий критерий —
 согласованный target и доступ TP Lite, затем отдельная реальная приёмка.
 
-
 Результат: определены участники, каналы/провайдеры, получатели,
 финансирование, окружение, оператор, разрешённые операции и порядок остановки.
 Настройки обязательной передачи человеку сохраняют safety; новые права и lifecycle
-не выводятся из удобства пилота. Решение 14.10 заменяет прежнее направление Yandex:
-выбрать инфраструктуру на территории Казахстана.
+не выводятся из удобства пилота. Последнее поручение владельца03.11 выбирает Yandex Cloud; прежнее направление14.10
+сохраняется как история. Регион, сервисы, ресурсы и пригодность среды ещё не приняты.
 
-Владелец определил: 3–5 пользователей, обратная связь через администратора,
+В исходном решении14.10: 3–5 пользователей, обратная связь через администратора,
 реальные данные после открытия доступа, Telegram + WhatsApp собственных аккаунтов
 клиники, только клиентский AI, ответы и напоминания. Цель — проверить весь текущий
 CRM-функционал и поведение без возобновления отложенных направлений. Название
@@ -662,12 +1250,14 @@ CRM-функционал и поведение без возобновления
 владелец. Пилот бесплатный, финансируется владельцем, новые лимиты расходов не нужны;
 существующие safety/rate limits сохраняются. Начало желательно 30.10.2026,
 длительность минимум около двух недель. Данные сохраняются для последующей работы.
-Уточнение 21.10: закрытый пилот предназначен для нескольких стоматологических
-бизнесов. Это не перевод «3–5 пользователей» в число клиник и не квота на бизнес;
-точный состав участников/аккаунтов фиксируется при подключении. Независимые бизнесы
-изолированы, филиалы одной компании остаются внутри Business. Желаемая дата 30.10
-не является уже подтверждённым сроком готовности.
-14.10 владелец отложил подключение Meta и конфигурацию PS Cloud и поручил
+Актуальный состав U0/29.10: две независимые клиники на старте, подготовка ёмкости
+до пяти; это не число пользователей и не филиалы MB01. Состав уже выбранных клиник,
+роли/аккаунты/данные/каналы закрепляются в manifest. Каждая клиника имеет свой
+Business, филиалы одной компании остаются внутри Business. Дата30.10 — прежняя
+цель, не подтверждённая готовность; календарные цели native/release описаны выше.
+Исторически14.10 прямой Meta и PS Cloud отложены. Сейчас нужен официальный BSP
+с переносимостью к Meta, локальный YCloud TP Lite выбран для первого этапа;
+target/provider contracts и live отдельно. Сохраняется порученный14.10
 CRM-R02-AI-RETURN: возврат после успешного ответа сотрудника и часа тишины,
 без обхода неотвеченных обращений, safety/review и ручной паузы. Реализация и
 проверки — [checkpoint](../testing/task-state/PRIMARY-SESSION.md#crm-r02-ai-return-20261014--answered-handoff-idle-recovery).
@@ -675,7 +1265,8 @@ CRM-R02-AI-RETURN: возврат после успешного ответа с�
 и открытые решения — в [checkpoint](../testing/task-state/PRIMARY-SESSION.md#crm-r02-20261014--pilot-decisions-and-provider-research).
 
 DoD: записаны решения и разрешённые эффекты, необходимые credentials заведены безопасно
-в отдельно разрешённой операции, определены RPO/RTO/retention и владельцы эксплуатации.
+в отдельно разрешённой операции, цели RPO≤15мин/RTO≤4ч обеспечены проектом
+и измерениями; retention, дежурные/замещение и эксплуатационные процедуры оформлены.
 Для реальных данных определена готовность юридических документов: текущие signup
 страницы имеют placeholder-тексты; принятые тексты предоставляет владелец.
 Нерешённое блокирует только зависимый сценарий. Этот roadmap решений не подменяет.
@@ -683,7 +1274,9 @@ DoD: записаны решения и разрешённые эффекты, �
 ### CRM-R03 — реальное обращение и доставка
 
 Результат: каждый из двух выбранных каналов доставляет входящее, ответ и handoff, связывает работу
-с CRM и показывает фактический статус отправки. DoD: provider authentication,
+с единой Записью/Inbox по принятому контракту и показывает фактический статус
+отправки. Официальный BSP→Meta, YCloud local text boundary и CG-02 сохраняются.
+DoD: provider authentication,
 tenant binding, duplicate/replay, задержка/timeout, отзыв доступа, retry/reconnect,
 передача человеку, повторное входящее после terminal status по согласованному правилу,
 public ingress/abuse и отсутствие повторных эффектов в проверяемых границах.
@@ -703,12 +1296,16 @@ AV/signatures/quarantine, storage cap/retention и закрытый download.
 Проверяются очереди текущего task routing, включая notifications, reports_exports,
 file_scans; синхронный connector sync имеет отдельное evidence. SQLite/eager и
 работающий локальный ClamAV не закрывают target PostgreSQL/Redis/cloud storage.
-Команды, цели, фактические RPO/RTO и ограничения записываются в отчёте операции.
+Команды и фактические показатели сопоставляются с целями RPO обычных данных≤15мин
+и RTO основных операций≤4ч. Платёжные факты/подписанные документы сверяются без
+тихих потерь/дублей, не обещая RPO=0. Нужны 24/7 дежурство серьёзных сбоев,
+штатная поддержка по графику, именованные люди/замещение. Целевой PASS не получен.
 
 ### CRM-R05 — рабочий день клиники
 
 Результат: администратор/управляющий/специалист проходят согласованный полный цикл
-на одной версии с реальными ролевыми ограничениями, записью/переносом/отменой,
+на одной версии в двух независимых Business через единую Запись, список/календарь,
+план самостоятельных визитов и принятые способы оплаты, с реальными правами, переносом/отменой,
 отсутствием специалиста, follow-up, ручным Inbox и недоступным AI.
 DoD: UX-4 и клиническая обратная связь, сверка незавершённой работы, восстановление
 после ошибок и итоговая приёмка зависимых областей на том же кандидате.
@@ -739,6 +1336,13 @@ Git push не означает deployment. Остаточные ограниче
 не отменяет эти требования; изменение состава V1 требует отдельного решения.
 
 ## CRM-MB01: запрошенная многофилиальная работа
+
+Дельта по решению06.11: автоматическая основная точка без повторного каталога,
+явная настройка второй точки, серверный запрет архивирования последней активной,
+контекст филиала и конкретные уточнения голосовой записи реализованы.
+Локальные проверки, состояние рабочей схемы и остаток публикации —
+[SINGLE-LOCATION-20261106](../testing/evidence/single-location-20261106.md).
+Исторический MB1–MB5 PASS не подменяет проверку этой дельты; full D01/live открыты.
 
 Добавлено по запросу владельца 12.10.2026: один Business и одна CRM обслуживают
 несколько филиалов; контрольный сценарий — пять филиалов. Результат — общая команда
@@ -776,16 +1380,269 @@ Git push не означает deployment. Остаточные ограниче
 Закрытие: серверные инварианты и совместимость данных → API и доступ → достижимые
 экраны команды/графика/календаря → проверки одного бизнеса с пятью филиалами.
 
+## CRM-D01 — помощник сотрудника: аналитика и управление CRM, текст/голос
+
+VOICE-RELIABILITY06.11: сбой «completed без Appointment» воспроизведён на исходном
+аудио с полным планом: модель оставляла только создание клиента, сервер завершал
+этот неполный план. Локально исправлены маршрутизация явной команды записи,
+проверка сохранённых Appointment перед успехом и конкретный ответ о результате.
+11 новых regression и итоговые102 affected/dependent, system/drift, четыре реальных
+ASR/model аудиосценария PASS: три формулировки создают визит/replay без дубля,
+отсутствующее время требует уточнения без записи клиента. Первый FAIL сохранён.
+В scope исправления остатка кода/локальных доказательств нет; полная D01/human
+языки/шум и production остаются открыты. Публикация блокируется расхождением Git
+и чужим исходящим диапазоном; нового решения по поведению не требуется.
+[Проверки и ограничения](../testing/evidence/single-location-20261106.md#voice-reliability-20261106).
+
+Согласованная дельта06.11 VOICE-WORKFLOWS реализована локально: связанный поиск/
+создание клиента + запись или датированный план; атомарный rollback, сохранение
+уточнений, серверный часовой пояс и приватная история со ссылками на все результаты.
+На66101d50 + scoped WIP: affected165/final64/PostgreSQL58, real-model7, UI/build PASS.
+В принятом scope остатка кода/локальных доказательств нет. Открыты human языки/шум
+и полная D01-приёмка (доказательства), production broker/recovery/rollout (среда),
+Git lock/17чужих исходящих коммитов (публикация). Нового решения для этой дельты
+не требуется. Следующий незакрытый критерий — human/полная предметная приёмка;
+автоматическое расширение scope не разрешено. [Evidence](../testing/evidence/voice-workflows-20261106.md).
+
+Решение05.11 VOICE-DIRECT (завершение локальной проверки06.11): запись → явная
+«Отправить» → обычное разрешённое действие/уточнение → результат. Расшифровка
+и второй клик убраны; маршрут сохраняет исходную реплику, field planner различает
+описание работы и пустое «создай задачу». Точный шаг, approval от отправки и
+доменное выполнение атомарны, остальные AI-пути сохраняют review.
+Код/локальные доказательства этой дельты на66101d50 + scoped WIP завершены;
+рабочая БД/env/deployment не менялись. Открыты: human RU/KK/mixed/noise и полная
+D01-приёмка (доказательства), production broker/recovery/rollout (среда), Git lock/
+чужая исходящая история (публикация). Нового решения для выполненного scope не
+нужно; расширение операций не разрешено. [Проверки](../testing/evidence/voice-direct-20261105.md).
+
+Повторное открытие05.11 (VOICE-REBUILD): владелец сообщил о пропадании середины
+записи и повторном вопросе о названии. Переделаны capture/индикация обрыва,
+компактная панель с живой линией и передача исходного запроса в планировщик.
+В этом предыдущем срезе сохранялись операции, подтверждения и приватность;
+последующая дельта VOICE-DIRECT меняет только способ авторизации отправки. [Текущий срез, проверки и остаток](../testing/evidence/voice-rebuild-20261105.md).
+Предыдущий scoped PASS не доказывал работу физического микрофона владельца.
+На66101d50 + scoped dirty delta: код/изолированные проверки завершены,
+backend98/system/drift, browser10 distinct, Node7/build и реальный21сек Task PASS.
+Доказательства human microphone/шум, production-среда и публикация остаются;
+нового решения владельца для выполненного scope не требуется.
+
+Уточнение05.11 (VOICE-NATURAL): полный PCM до Stop, пунктуация без удаления слов
+и естественный GPT-4o mini greeting/chat реализованы локально на66101d50 + scoped
+dirty delta. Реальный synthetic RU browser→Task и affected84/build/types PASS.
+В принятом scope код/локальные проверки завершены; human RU/KK/mixed/noise,
+production broker/recovery и публикация остаются открыты. Новое решение владельца
+для выполненного scope не требуется; весь D01 этим не закрыт.
+[Версия, проверки и ограничения](../testing/evidence/voice-natural-20261105.md).
+
+**Решения владельца30.10 и02.11.2026: ОБЯЗАТЕЛЬНО В ПИЛОТЕ; НЕ ВЫПОЛНЕНО.**
+Владелец согласовал описанный ниже объём. Это частичное возобновление D01,
+а не разрешение всей ранее отложенной AI-аналитики. Реализация включена в текущую очередь после необходимых контрактов; на срезе
+02.11 этот новый scope ещё без runtime-приёмки. В согласованном цикле04–05.11
+первоначально реализован голосовой вход сотрудника: хедер, запись/расшифровка,
+редактирование, приватный диалог и подтверждение. VOICE-DIRECT выше заменяет
+промежуточный текст и второй клик для обычных голосовых команд.
+Личные настройки и OpenRouter STT adapter добавлены без working-DB миграций.
+Scoped UI/build и affected backend проверки прошли локально; код/локальные
+доказательства голосового scope закрыты. Live RU/KK/mixed, публикация и rollout
+остаются открытыми. [Срез и ограничения](../testing/evidence/voice-assistant-20261104.md).
+Уточнение владельца05.11 реализовано отдельной дельтой: голос — самостоятельная
+функция CRM без AI-агента; приватный диалог сотрудник/Business, встроенные инструкции
+и настройки сервиса.92 backend/6 browser/4 Node/build/types/i18n/system/drift и
+чистая миграция вперёд/назад PASS на HEAD66101d50+task WIP, isolated SQLite/browser.
+Код и локальные доказательства независимости закрыты.05.11 владелец разрешил
+довести и проверить реальный сценарий: рабочая ai_core0009 применена с backup;
+Whisper Large V3 через OpenRouter с ZDR/no-data-collection→gpt-4o-mini→Task
+прошёл API и браузер. Исправлена лишняя просьба о сроке задачи. Локальный
+dev без Redis/worker использует inline mode; production default не менялся.
+[Live-срез](../testing/evidence/voice-live-20261105.md). Остаток: KK/mixed/шум,
+production worker/rollout и полная предметная приёмка D01. Дополнительного решения
+владельца для закрытого локального сценария не требуется. Публикация блокируется
+lock/чужим outgoing.
+[Срез независимости](../testing/evidence/voice-interface-20261105.md).
+Это scoped-прогресс голосового сценария, не закрытие полного D01. Подробная
+граница и следующий критерий: [контракт голосового помощника](voice-assistant.md).
+Исторические closures клиентского AI, аналитики и R01 сохраняют свои границы.
+
+### Результат и граница двух помощников
+
+Первый помощник обслуживает клиентов через Inbox/внешние каналы по существующему
+контракту. Второй доступен авторизованному сотруднику на любой странице CRM,
+отвечает по разрешённым данным и выполняет ограниченные команды. Контексты и
+полномочия раздельные; общие поиск, доменные сервисы и проверки прав переиспользуются.
+Текст клиентского диалога, заметок или вложений — данные, не инструкции сотруднику.
+По запросу сотрудника доступный диалог может стать источником черновика команды.
+
+Business, филиал, object/field permissions и действующее членство ограничивают
+поиск, аналитические выборки, предпросмотр и выполнение на сервере. Назначение
+ответственного не выдаёт доступ. Смена Business сбрасывает контекст; слова «второй»
+и «этот клиент» связываются с точным ранее показанным объектом. Голос не является
+идентификацией пользователя или заменой авторизации.
+
+### Фактическая аналитика пилота
+
+Вопросы о записях сегодня, неподтверждённых визитах завтра, отменах/неявках за
+период, своих просроченных задачах и обращениях без ответа сотрудника. Сумма
+зарегистрированных оплат — только при соответствующих правах и существующем
+согласованном определении показателя. Backend считает полную разрешённую выборку;
+модель формулирует ответ. Каждый ответ указывает период, область/филиал, смысл
+показателя и ссылки на доступные записи/выборку; отсутствие данных или доступа
+обозначается явно. Дата визита и дата отмены не подменяются друг другом.
+Прогнозы, оценка сотрудников, новые KPI и недоказанные объяснения причин вне пилота.
+
+### Разрешённые команды пилота
+
+| Команда | Наблюдаемое поведение / критерий |
+| --- | --- |
+| Найти клиента или запись | Поиск по имени/телефону/дате/специалисту в разрешённой выборке; несколько совпадений требуют выбора. Открытие карточки без подтверждения изменения |
+| Найти либо создать клиента и записать | Телефон/совпадения проверяются; одно имя не основание для merge. Филиал, специалист, услуга, длительность, слот и допустимость цены проверяются. Одна Appointment видна в списке и календаре; самостоятельное создание клиента тоже допустимо |
+| Перенести запись | Точная запись, старое → новое время, проверка слота и подтверждение; напоминания пересчитываются существующими правилами |
+| Отменить запись | Точная запись, необходимая причина, последствия и подтверждение; история сохраняется, деньги автоматически не возвращаются |
+| Добавить заметку | Разрешённый объект, предпросмотр текста и места сохранения; обычные ограничения видимости заметок |
+| Создать задачу | Название, срок, связь и допустимый ответственный; подтверждённая карточка и обычные правила назначения |
+
+Для текстового AI-агента изменения подтверждаются кнопкой по карточке. В голосовой
+панели решение05.11 заменяет повторный просмотр обычной команды явной кнопкой
+«Отправить»; сервер сохраняет точные параметры, права, аудит и replay. Неявка не входит
+в выполняемые команды: фраза «не пришёл, удали» не превращается молча в отмену;
+помощник объясняет различие и предлагает обычную карточку. Удаление данных,
+массовые операции, платежи/возвраты, изменение прав и автономные изменения вне scope.
+Аналитический ответ может стать началом команды, например задача по выбранному
+обращению, но не выполняет действие автоматически.
+
+### Интерфейс и надёжность
+
+Одна панель: desktop — вход из хедера с сохранением страницы, mobile — отдельный
+экран/крупная панель. Микрофон, отправка, уточнения и результат; текстовый ввод
+при недоступном распознавании. Расшифровка не выводится. Микрофон только
+по явному нажатию с видимым индикатором. Ответ текстовый; TTS исключён из
+первого этапа. Без распознавания работает текст, без AI — обычная CRM.
+
+Голосовой путь: запись → явная отправка → STT → структурированная команда →
+серверные проверки/approval → доменный сервис. Текстовый агент сохраняет
+предпросмотр и отдельное подтверждение. Произвольные SQL/запись в БД и имитация кликов
+не являются механизмом исполнения. Перед разработкой сверить существующие AI tools,
+approvals, сервисы и selectors, добавлять только недостающий слой.
+Авторизация привязана к точной версии параметров; устаревшие параметры
+отклоняются. Для review нужна новая карточка/подтверждение, для direct — новый запрос. При исполнении повторно проверяются права, версии и слот.
+Повторы, двойной клик и потерянный ответ не создают дубли; результат команды можно
+восстановить. История содержит инициатора, подтверждённое действие и итоговые связи.
+Для нового клиента + записи предпочтительна атомарная операция; точную транзакционную
+границу закрепить в контракте. Любой допустимый частичный результат должен быть
+явным и иметь безопасное продолжение. Напоминания создаются обычной автоматизацией
+при настроенных канале/правилах после сохранения; доставка через очередь отдельно
+от успешного создания записи. Реальная доставка доказывается в R03, не голосовым UI.
+
+### Последовательность, приёмка и остаток
+
+1. Контракт разрешённых инструментов, аналитических определений, данных/прав,
+   подтверждений, идемпотентности и recovery; выбор распознавания, обработки аудио
+   и условий хранения/передачи с учётом CG-03/04. Сырые аудиозаписи не включать
+   в обязательную историю без отдельного принятого основания.
+2. Текстовый помощник: фактические ответы и согласованные команды с подтверждением.
+3. Голосовой ввод поверх тех же инструментов, desktop/mobile и RU/KK/смешанная речь.
+4. Приёмка полного рабочего дня в R05 на одном кандидате с обычной CRM как fallback.
+
+Запись/перенос/отмена зависят от новой дельты R01/OP-RECORD и её domain/API contract.
+Поиск, задачи и независимая аналитика могут готовиться раньше в порученном scope;
+AUD-08/09 и другие применимые пробелы полноты данных учитываются, не обходятся
+загрузкой первой страницы. Native использует ту же серверную границу, его builds,
+devices и store-приёмка остаются R07. Недоступность помощника не блокирует обычную
+CRM; это не снимает критерии закрытия самого D01.
+
+Проверки: happy/invalid, несколько клиентов/специалистов, телефон/даты/имена,
+неизвестная услуга/занятый слот, роли/Business/филиалы/поля и отзыв доступа в диалоге;
+изменение карточки после preview, двойной клик/обрыв/потерянный ответ/replay;
+источники с посторонними инструкциями; аналитика против серверной полной выборки.
+Desktop/mobile, текст/голос, RU/KK и смешанная речь в реалистичном шуме; результат
+проверяется в карточке, списке/календаре, истории и состоянии напоминания.
+Измерять время до правильного результата, уточнения, исправления, успешные команды
+и ручное завершение. Около10сек — цель простых команд, не обещание или общий PASS.
+
+Остаток **код**: не весь scope с нуля — голосовой вход, приватные диалоги,
+предложения/подтверждения и ограниченные CRM-инструменты реализованы; контекстный
+вход из карточок клиента/записи добавлен отдельной дельтой. **Доказательства**:
+полная предметная матрица команд и аналитики D01, критичные имена/телефоны/даты,
+RU/KK/mixed/шум, изменения между предложением и подтверждением, восстановление
+и метрики практической эффективности. Первоначальный live Task-сценарий использовал
+Whisper Large V3; текущий Turbo05.11 отдельно прошёл synthetic RU API→Task/replay.
+Исправлены ложные запреты содержимого задач/заметок, инструкция схемы planner,
+маршрут отмены и сохранение специалиста/причины при переносе.
+Семь команд через изолированный worker с реальной моделью прошли; production broker/recovery не проверены. [Новый срез с командами/очередью и ограничениями](../testing/evidence/voice-hardening-20261105.md).
+**Среда**: физические микрофоны, целевой broker/worker, перезапуск и recovery,
+rollout. **Решения**: состав пилота и контракт аудио приняты; TTS, постоянное
+прослушивание и автономное исполнение исключены. Полный D01 остаётся открытым.
+Версия: HEAD66101d50 + существующий WIP; локальное доказательство не означает
+публикацию/deployment. Следующий критерий — реальный сценарий для каждой
+разрешённой команды и аналитического вопроса по текущей модели, затем языковая
+и эксплуатационная приёмка. [Контракт и границы](voice-assistant.md).
+
 ## Отложенные направления
 
 | ID | Направление и условие возвращения |
 | --- | --- |
-| CRM-D01 | Развитие внутреннего CRM AI/аналитика — пауза; отдельное решение, runtime сохранён |
-| CRM-D02 | Расширение внешних коннекторов и marketplace write-back; отдельный provider/scope, не часть допуска одного канала |
+| CRM-D01 | Частично возобновлён30.10: помощник сотрудника с фактической аналитикой и подтверждаемыми CRM-командами, текст/голос — scope выше, не выполнен. Расширенная/предиктивная аналитика и автономные изменения остаются отложенными |
+| CRM-D02 | Решение02.11: CRM↔Market exchange и CRM-C21 кампании исключены из пилота, реализация в дальнейшем по отдельному возобновлению; AC-CRM/AC-CAMPAIGN сохранены ниже. Общие коннекторы/marketplace write-back также отложены |
 | CRM-D03 | 1С/МойСклад/ERP синхронизация; отдельная потребность и интеграционный контракт. UI13.10 закрыт только визуально; функциональный остаток 16.10 и условия проверки — [паспорт](../pre-production/integrations.md) |
 | CRM-D04 | Vertical rewrite, кресла/оборудование и прочие расширения; отдельные требования |
 | CRM-D05 | Gateway платежей пациентов; отдельная денежная/провайдерская политика |
 | CRM-D06 | Новые права, метрики, terminal corrections, stage graph и AI-мутации за текущим контрактом; сначала конкретный сценарий/решение |
+
+### CRM-D02 — принятая граница связи с Market и кампаний
+
+Решение владельца02.11: обмен CRM↔Market и кампании Market через CRM
+ИСКЛЮЧЕНЫ ИЗ ТЕКУЩЕГО ПИЛОТА. Реализация сохранена на будущее после отдельного
+возобновления; условия ниже сохраняются, но не блокируют R01/D01/R03–R05.
+Остальной ERP/marketplace write-back также остаётся отложенным.
+
+1. **Опциональный exchange, AC-CRM:** verified Market legal entity↔CRM Business;
+   выбранные направления/объекты заказов, статусов, документов, платёжных/возвратных
+   фактов. Совпадение БИН/email не authorization. Source/version/purpose/actor/
+   idempotency/correlation, revoke/duplicate/outage/reconciliation без loop.
+   Market — источник подписанного оригинала и денег; импортный факт не второй
+   manual receipt, не подпись/refund от имени CRM-сотрудника. Назначенная роль
+   получает разрешённый документ без обязательного Market-login через защищённую
+   повторную авторизацию. Уже скачанные копии не отзываются. Точная object/direction
+   matrix, transport/API, consent/retention и два end-to-end направления открыты.
+2. **CRM-C21 / AC-CAMPAIGN:** команда ведёт Market-кампании через CRM, без отдельного
+   маркетингового модуля Market. Сегменты потенциальных/новых/действующих участников,
+   покупателей/поставщиков/агентов; invitation/onboarding/cart/repeat/reactivation.
+   WhatsApp/email/Telegram обязательны в этом scope, Instagram желателен; email
+   здесь не обязательный третий канал клинического пилота R03. Preview → малая
+   стартовая группа → расширение по результатам, без утверждения чисел50/200.
+   Максим/разрешённая делегированная роль выбирают аудиторию/тексты/бюджет.
+   Не более **одного рекламного контакта человеку за семь суток по всем кампаниям**;
+   service отдельно. Versioned opt-in/channel/purpose, STOP до launch/delivery,
+   continuation/errors/recovery без дублей и controlled live receipts. Market event
+   даёт факт сегмента, не согласие. In-flight STOP/unknown capability — CG-05.
+   Важная service-недоставка после ограниченных retries создаёт задачу ответственному;
+   иной канал только разрешённый. Число/расписание retries и recipient matrix готовятся,
+   пример0/1/5/30 не норматив. Guard fixes и personal notifications не полный PASS.
+
+Финансовая админ-панель/расходы/прибыль Market автономны и не переезжают в CRM.
+Supplier-агентская модель, B2C/P1–P7, рейтинг (открыт/без реализации) и mobile EDS
+Market не становятся задачами CRM. Это не возвращение старой clinic-referral модели.
+
+### CRM-R07 — native reuse и календарная цель
+
+Решение владельца02.11: native реализует второй разработчик. В текущую
+очередь нашей реализации не входят reuse-аудит, native-код, builds/devices/push
+и store-публикация. Общие серверные контракты сохраняем совместимыми; отдельное
+поручение требуется только для конкретной серверной зависимости. Native не
+объявлен готовым, внешняя приёмка остаётся ответственностью этого направления.
+
+Из ТЗ§25/CRM-C22: известен отдельный RN/Expo задел `codex/mobile-release` на
+исторически проверенном `73482a3bea7f168113c58d8cb928214c97f032d5`, `mobile/`,
+`apps/mobile`, `/api/mobile/v1/`. Здесь ветка заново не проверялась и не вливалась.
+Первый результат — read-only diff к выбранному текущему кандидату, матрица
+роль×сценарий×web/iOS/Android, supported devices/OS и минимальный план адаптации.
+Затем auth/refresh/revoke/secure storage, tenant/branch/field guards, единая Запись,
+push/deeplinks/return, background/kill/offline/conflict и актуальный backend.
+Build/install на реальных iOS/Android, push/device и отдельные store submission/review
+receipts обязательны; EAS/config/адаптивный web не native PASS. Не переносить
+исторические Lead/Deal экраны как обязательный новый pilot flow. Offline не разрешает
+слепой replay денег/подписи. Дата27.11/подача около10.11 — цель владельца из ТЗ,
+не оценка выполнимости/гарантия store review. Native scope не блокирует независимую
+подготовку web, но без его приёмки весь соответствующий выпуск не закрывается.
 
 ## Полная привязка сохранённых acceptance IDs
 
@@ -811,18 +1668,18 @@ Git push не означает deployment. Остаточные ограниче
 | BE-GAP-011 | R04: cloud files/retention/recovery; локальный AV не переоткрывается |
 | BE-GAP-012 | D04: vertical roadmap отложен |
 | D-01 | R01: только оставшиеся legacy сценарии специалиста; принятые правила сохраняются |
-| D-02 | R02/R03: правило нового входящего после terminal state для выбранного канала |
+| D-02 | Вопрос22 принят: новая самостоятельная Appointment с provenance, без обязательного нового Lead/reopen. Exact channel/legacy transitions — новая дельта R01/R03; остальной terminal policy не утверждён |
 | D-03 | R01: конкретные связи/archive/restore; закрытый Inbox relink сохраняется |
 | D-04 | Решён 14.10 и проверен в S01: create_follow_up переиспользует встроенную задачу; create_task отдельно |
-| D-05 | R01: конкретная приёмка completion/no-show; новое исправление истории — D06 |
+| D-05 | 18А: раннее фактическое completion разрешённой роли с причиной/историей, один зачёт аванса. Exact corrections/no-show/terminal compatibility — технический контракт дельты R01, без удаления history |
 | D-06 | Определения ANALYTICS-REDESIGN приняты 14.10; новые KPI/реконструкция истории — D06 |
 | D-07 | Текущие controlled creates — паспорт AI/R03; новые мутации — D06 |
 | D-08 | R01: существующие stage-сценарии; новый строгий граф/fallback — D06 |
 | D-09 | Закрыто для support-note: platform_admin + exact grant + recent MFA; ADMIN-01/03 имеют отдельные разрешения обеим platform-ролям |
 | V1-O01, V1-O02, V1-O03, V1-O04 | R06: отложенные коммерческие решения, не требования немедленной разработки |
 | V1-O05 | R02/R03: clinic escalation, без ослабления обязательной safety |
-| V1-O06 | R01: существующая матрица; новое распределение прав — D06 |
-| V1-O07 | R01: существующий lifecycle; новые terminal corrections — D06 |
+| V1-O06 | R01: существующие права, принятые назначения13–16 и OP-RECORD-08 без новой permission-модели; иной невыбранный business scope — D06 |
+| V1-O07 | R01: принятые visible states/early completion17Б/18А и OP-RECORD-06; точные corrections/legacy guards готовятся, дополнительный невыбранный scope — D06 |
 | V1-O08 | R01: определения существующих метрик; новые — D06 |
 | V1-O09 | R02: приоритет спорного сценария; R01: import/automation; R03: ingress/replay |
 
@@ -862,3 +1719,65 @@ frontend build/types/i18n/bundle PASS в изолированной среде.
 код/решения/среда/live evidence ADMIN05 отложены владельцем. Рабочие миграции и
 доставка ADMIN01–04 отдельно. Следующий незакрытый критерий — отложенный остаток
 ADMIN05; этот результат не запускает его реализацию или другой этап.
+
+
+## OFFICIAL-15 current-state verification, 28.10.2026
+
+OFFICIAL-15, 28.10.2026: no_change to production code. Current FU-BE-02
+already passes actor into CRM-card Task previews and uses it for linked-field masking,
+relations/actions; missing actor fails closed. Dedicated12 new regressions cover all
+four card routes, forbidden/allowed fields, scalar/list/request/actor, OWN/TEAM/current
+rights, Client aliases, parent task/specialist and Business/capability controls.
+Current-tree initial11 PASS; final owning131 and combined1004 PASS, zero skips;
+syntax/system/migration drift/diff PASS. HEAD98925b67 +15 prior fixes/WIP + tests/docs.
+Evidence OFFICIAL-15-20261028 checkpoint and output/security-remediation-20261028/
+task-preview-context/fix-report.md. Local scoped closure of an already-remediated
+finding; no new functional patch, generic replay or production certification.
+
+
+## OFFICIAL-17 Client import remediation, 28.10.2026
+
+OFFICIAL-17, 28.10.2026: Client import writes now distinguish current UPDATE
+for existing matches (including archived/no-op) from CREATE for new Clients, under
+the existing object policy. Shared Client notes write rule is reused by API/import;
+proposed fields are validated before mutation. Client/Lead/Deal sheets use the same
+Client boundary/current request actor; legacy direct row calls use job.actor, no actor
+fails closed. Fill-only matching, duplicate warning, archive state and atomic rollback
+remain. Existing ImportJob CREATE admission remains, not an update-only upload feature.
+27 new tests within103 affected and combined1040 PASS/no skips; syntax/system/drift/
+diff/reverse PASS. HEAD98925b67 + previous WIP/16 closed findings + patch, local only.
+Evidence OFFICIAL-17-20261028 checkpoint and output/security-remediation-20261028/
+client-import-update-permission/fix-report.md. Current OWN/TEAM UPDATE semantics for
+unowned Client retained exactly; no new ownership rule or production certification.
+
+
+## OFFICIAL-18 scoped assignment remediation, 28.10.2026
+
+OFFICIAL-18, 28.10.2026: Lead follow-up Task creation now validates the
+resolved assignee with ordinary validate_assignment(creating=True) and checks TASKS
+CREATE on the final unsaved Task, not on the source Lead. Current source Lead VIEW,
+Business/module and archive/lock checks remain; direct service calls also enforce actor.
+Wrong source-based TASKS guards removed for this action only. No TASKS UPDATE required,
+default/null/unassigned behavior retained where normal creation policy permits.
+BEFORE20:8 security gaps,2 false denials,10 controls. AFTER28 new tests within113
+affected and combined1068 PASS, zero skips; syntax/system/drift/diff/reverse PASS.
+HEAD98925b67 + WIP/17 prior closed findings + patch. Evidence OFFICIAL-18-20261028
+checkpoint and output/security-remediation-20261028/lead-task-assignment/fix-report.md.
+Local assignment-boundary proof only; generic replay/production/PG not certified.
+This is OFFICIAL-18, unrelated to already-closed historical AUD18 export.
+
+
+## OFFICIAL-19 scoped outreach remediation, 28.10.2026
+
+OFFICIAL-19, 28.10.2026: existing outreach role eligibility is now intersected
+with current NOTIFICATIONS action/object decisions at all12 role-helper callsites.
+CRUD uses CREATE/UPDATE and server-owned candidate; campaign actions and consent bulk
+use existing MANAGE map/actual campaign or consent candidate. Explicit overrides and
+OWN/TEAM/current membership apply before writes/domain calls. No new role eligibility
+or Client-derived consent owner. Capability helper reused; notifications currently has
+no module mapping/toggle, only injected disabled-boundary integration proof claimed.
+BEFORE22:14 failing methods/17 security assertions,8 controls PASS. AFTER27 new tests
+within98 affected and combined1095 PASS/no skips; syntax/system/drift/diff/reverse PASS.
+HEAD98925b67 + WIP/18 prior closed packets + patch. Evidence OFFICIAL-19-20261028 and
+output/security-remediation-20261028/outreach-mutation-permissions/fix-report.md.
+No real delivery or production/PG/full browser certification.

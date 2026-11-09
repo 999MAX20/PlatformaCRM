@@ -2,15 +2,14 @@ from django.db import transaction
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.response import Response
-from rest_framework.fields import IntegerField
+from rest_framework.fields import IntegerField, ChoiceField, ListField
 
 from apps.businesses.models import Business
 from apps.businesses.access import Actions, Resources, assert_can
 from apps.core.audit import write_audit_log
-from apps.core.crm_read_scope import scope_entity_history
 from apps.core.custom_fields import (
     assert_custom_field_editable, custom_field_entity_access, custom_field_role_allowed,
-    validate_custom_field_value,
+    validate_custom_field_value, scope_custom_field_values,
 )
 from apps.core.models import AuditLog, CustomFieldDefinition, CustomFieldValue
 from apps.core.permissions import user_can_access_business
@@ -63,8 +62,35 @@ class CustomFieldValueViewSet(TenantModelViewSet):
     queryset = CustomFieldValue.objects.select_related("business", "definition")
     serializer_class = CustomFieldValueSerializer
 
+    @action(detail=False, methods=["get"])
+    def context(self, request):
+        business_id = IntegerField(min_value=1).run_validation(request.query_params.get("business"))
+        business = Business.objects.filter(pk=business_id).first()
+        if business is None or not user_can_access_business(request.user, business):
+            raise PermissionDenied("Business is not available.")
+        assert_can(request.user, business, Resources.SETTINGS, Actions.VIEW)
+        kind = ChoiceField(choices=CustomFieldDefinition.EntityTypes.values).run_validation(request.query_params.get("entity_type"))
+        ids = ListField(child=IntegerField(min_value=1), max_length=100).run_validation(request.query_params.getlist("ids"))
+        definitions = [field for field in CustomFieldDefinition.objects.filter(business=business,
+            entity_type=kind, is_active=True).order_by("sort_order", "pk")
+            if custom_field_role_allowed(field, request.user, "view")]
+        editable = {}
+        for pk in ids:
+            custom_field_entity_access(actor=request.user, business=business, entity_type=kind, entity_id=str(pk), action=Actions.VIEW)
+            try:
+                custom_field_entity_access(actor=request.user, business=business, entity_type=kind, entity_id=str(pk))
+                editable[str(pk)] = True
+            except (PermissionDenied, ValidationError):
+                editable[str(pk)] = False
+        values = CustomFieldValue.objects.filter(business=business, entity_type=kind,
+            entity_id__in=[str(pk) for pk in ids], definition__in=definitions)
+        return Response({"definitions": CustomFieldDefinitionSerializer(definitions, many=True).data,
+            "values": CustomFieldValueSerializer(values, many=True).data,
+            "editable_entities": editable, "editable_fields": [field.pk for field in definitions
+                if custom_field_role_allowed(field, request.user, "edit")]})
+
     def get_queryset(self):
-        queryset = scope_entity_history(super().get_queryset().filter(
+        queryset = scope_custom_field_values(super().get_queryset().filter(
             entity_type__in=CustomFieldDefinition.EntityTypes.values,
         ), actor=self.request.user)
         if "business" in self.request.query_params:

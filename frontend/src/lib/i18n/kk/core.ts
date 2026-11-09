@@ -155,7 +155,7 @@ export const core: Record<string, string> = {
   "common.search": "Іздеу",
   "common.noResults": "Нәтиже жоқ",
   "common.clear": "Тазарту",
-  "common.reset": "Сброс",
+  "common.reset": "Қалпына келтіру",
   "common.clearAll": "Бәрін тазарту",
   "common.advanced": "Кеңейтілген",
   "pagination.range": "{from}—{to} / {total} көрсетілді",
@@ -212,10 +212,9 @@ export const core: Record<string, string> = {
   "language.ru": "Русский",
   "language.kk": "Қазақша",
   "language.en": "English",
-  "notFound.eyebrow": "Қауіпсіз пилоттық маршрут",
-  "notFound.title": "Бет әлі қосылмаған",
-  "notFound.text":
-    "Пайдаланушыны тұйық жолға жібермейміз: бұл маршрут қауіпсіз пилоттық бет ретінде сақталды. Жұмыс кабинетіне оралып, негізгі сценарийлерді тексеруді жалғастырыңыз.",
+  "notFound.eyebrow": "404",
+  "notFound.title": "Бет табылмады",
+  "notFound.text": "Мекенжайды тексеріңіз немесе кабинетке оралыңыз.",
   "notFound.backWorkspace": "Кабинетке оралу",
   "table.emptyDescription":
     "Алғашқы жазбалар жасалғаннан кейін осында пайда болады.",

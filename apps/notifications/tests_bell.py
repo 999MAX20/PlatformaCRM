@@ -30,6 +30,8 @@ class NotificationBellSurfaceTests(APITestCase):
         for excluded in (outbound, cancelled, future):
             excluded.refresh_from_db()
             self.assertIsNone(excluded.read_at)
-        # General delivery management still has every authorized record.
+        self.assertIsNotNone(due.recipient_states.get(user=self.owner).read_at)
+        # External delivery records remain available; unavailable internal work
+        # does not become visible by omitting the bell flag.
         general = self.client.get("/api/notifications/")
-        self.assertEqual(general.data["count"], 4)
+        self.assertEqual(general.data["count"], 2)

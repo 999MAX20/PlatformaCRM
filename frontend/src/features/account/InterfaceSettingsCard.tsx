@@ -1,5 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import { Link } from "react-router";
 
 import { updateCurrentUser } from "../../api/auth";
 import { getApiErrorMessage } from "../../api/client";
@@ -13,6 +14,7 @@ import { useAuth } from "../auth/AuthProvider";
 import { useActiveBusiness } from "../../hooks/useBusiness";
 import { availableStartPages } from "../../lib/startPage";
 import { tokenStorage } from "../../lib/storage";
+import { hasPermission } from "../../lib/permissions";
 import type { UserPreference } from "../../types";
 import { NotificationSoundControl } from "./NotificationSoundControl";
 
@@ -73,6 +75,7 @@ function PersonalInterfaceSettings({ businessId, merchant = false }: { businessI
         </div>
       </form>
       {merchant && <NotificationSoundControl />}
+      {merchant && hasPermission(user, businessId, "ai_assistant", "suggest") && <Link className="platforma-focus-ring mt-4 inline-block text-sm underline" to="/app/settings/voice">{t("voice.settings")}</Link>}
     </Card>
   );
 }

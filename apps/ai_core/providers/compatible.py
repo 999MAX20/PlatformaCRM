@@ -53,6 +53,8 @@ class OpenAICompatibleProvider(BaseAIProvider):
         }
         if getattr(prompt, "response_format", None):
             payload["response_format"] = prompt.response_format
+        if self.provider == "openrouter" and getattr(prompt, "provider_options", None):
+            payload["provider"] = prompt.provider_options
         endpoint = self.base_url.rstrip("/") + "/chat/completions"
         api_request = request.Request(
             endpoint,

@@ -1,10 +1,16 @@
 import { routeMetadata, merchantRoutePermission } from "./routeMetadata";
 import { Navigate } from "react-router";
-import { RecordsPage, LegacyRecordsPage } from "./routeLoaders";
+import { lazy } from "react";
+const VoiceSettingsPage = lazy(() => import("../features/voice/VoiceSettingsPage"));
+const VoiceHistoryPage = lazy(() => import("../features/voice/VoiceHistoryPage"));
+import { RecordsPage, LegacyRecordsPage, ImportWorkspacePage } from "./routeLoaders";
 
-import { PageLoader, UserStartRedirect, BusinessRouteRedirect } from "./routeGuards";
-import { DashboardPage, AccountPage, ClientsPage, ClientWorkspacePage, TasksPage, TaskWorkspacePage, CalendarPage, AppointmentWorkspacePage, ConversationsPage, TimelinePage, BotsPage, BotDetailPage, IntegrationsPage, PricingPage, AIAgentsPage, AutomationsPage, ResourcesPage, ServicesPage, BranchesPage, AnalyticsPage, SettingsPage, WorkingHoursPage, SupportListPage, SupportDetailPage } from "./routeLoaders";
+import { PageLoader, UserStartRedirect, BusinessRouteRedirect, SettingsAccessRoute, IntegrationsSettingsRedirect } from "./routeGuards";
+import { DashboardPage, AccountPage, ClientsPage, ClientWorkspacePage, TasksPage, TaskWorkspacePage, CalendarPage, AppointmentWorkspacePage, ConversationsPage, TimelinePage, BotsPage, BotDetailPage, PricingPage, AIAgentsPage, AutomationsPage, ResourcesPage, ServicesPage, BranchesPage, AnalyticsPage, SettingsPage, WorkingHoursPage, SupportListPage, SupportDetailPage } from "./routeLoaders";
 export const merchantFeatureRoutes = [
+  { path: "voice/history", resource: "ai_assistant", permissionAction: "suggest", element: <PageLoader><VoiceHistoryPage /></PageLoader> },
+  { path: "settings/voice", resource: "ai_assistant", permissionAction: "suggest", element: <PageLoader><VoiceSettingsPage /></PageLoader> },
+{ path: "integrations/import", resource: "integrations", action: "manage", element: <PageLoader><ImportWorkspacePage /></PageLoader> },
 { path: routeMetadata.appointments.segment, ...merchantRoutePermission("appointments"), element: <PageLoader><RecordsPage /></PageLoader> },
 { path: "appointments/:id", resource: "appointments", element: <PageLoader><AppointmentWorkspacePage /></PageLoader> },
 { path: routeMetadata.support.segment, ...merchantRoutePermission("support"), element: <PageLoader><SupportListPage /></PageLoader> },
@@ -132,7 +138,7 @@ export const merchantFeatureRoutes = [
   },
 { path: routeMetadata.integrations.segment, ...merchantRoutePermission("integrations"), element: (
       <PageLoader>
-        <IntegrationsPage />
+        <IntegrationsSettingsRedirect />
       </PageLoader>
     ) },
 {
@@ -244,9 +250,9 @@ export const merchantFeatureRoutes = [
         <AnalyticsPage />
       </PageLoader>
     ) },
-{ path: routeMetadata.settings.segment, ...merchantRoutePermission("settings"), element: (
+{ path: routeMetadata.settings.segment, element: (
       <PageLoader>
-        <SettingsPage />
+        <SettingsAccessRoute><SettingsPage /></SettingsAccessRoute>
       </PageLoader>
     ) },
 {

@@ -1,3 +1,14 @@
+## Доступ к автоматической основной точке — 06.11.2026
+
+Активный участник Business без BranchAccess имеет доступ к автоматической
+основной точке в пределах существующих ролевых/object/field permissions.
+Явный BranchAccess, включая пустой список, всегда имеет приоритет.
+При создании второй точки отсутствующий grant материализуется только на первую;
+all_branches и существующие явные ограничения сохраняются. Создание новой точки
+по-прежнему требует SETTINGS UPDATE и network grant/owner. Архивирование
+перепроверяет право и оставшуюся активную точку на сервере под Business lock.
+[Проверки и границы](../testing/evidence/single-location-20261106.md).
+
 ## C09 — настройка ответственного AI-записи
 
 GET businesses/{id}/booking-responsible-options/ и PATCH ai_booking_responsible_user
@@ -41,10 +52,209 @@ AUD-19: TenantModelViewSet и IsTenantMember используют объявле
 Подмена формы другим Business запрещена даже при доступе к обоим. Новых grants нет.
 Проверки отдельного кандидата и публикация — [AUD-19 checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-19-20261029--lead-form-field-tenant-resolution-and-editor-verified).
 
+Персональные уведомления — решение владельца 28.10.2026, реализация
+NOTIFICATIONS-PERSONAL-20261028. Активный участник видит только собственную
+фиксированную аудиторию внутренней ленты текущего Business. Для рабочих уведомлений
+дополнительно проверяются текущие права и capability связанного объекта до пагинации
+и счётчиков. Исторический текст рабочего события не раскрывает закрытые поля;
+лента показывает локализованный тип и безопасную ссылку на доступный источник.
+Для серверных service-status событий разрешён только ключ из фиксированного набора
+компонентов и переходов started/recovered, с проверкой Business и номера эпизода.
+Это не разрешает отдавать сохранённый текст/технический reference или обходить
+recipient/access-фильтр. [Проверка](../testing/evidence/records-bell-fix-20261103.md).
+Объявления доступны всем зафиксированным действующим участникам независимо от
+NOTIFICATIONS VIEW и настроек категорий. Личное open/read/unread/acknowledge
+не требует UPDATE/MANAGE и никогда не меняет состояния другого пользователя.
+
+Публикация, отзыв и поимённый мониторинг объявлений разрешены только фактическому
+владельцу Business или активному администратору с текущим NOTIFICATIONS MANAGE.
+Одного MANAGE у маркетолога недостаточно. Общая запись неизменяема; API не принимает
+подмену автора, получателя или времени. Generic create/update/delete внутренних
+уведомлений запрещены; клиентская внешняя доставка сохраняет прежние проверки.
+
+«Прочитать всё» атомарно обновляет доступную личную ленту выбранного Business
+на начало операции, независимо от фильтров показа; новые поступления, opened_at
+и acknowledged_at не затрагиваются. OFFICIAL-21 / AUD-17 остаётся закрытым
+исправлением прежнего общего состояния; новый согласованный персональный контракт
+заменяет его VIEW+UPDATE-правило только для внутреннего личного прочтения.
+Доказательства и границы: NOTIFICATIONS-PERSONAL-20261028 в PRIMARY-SESSION.
+
+FU-HIST-02: anonymous form/widget input is not authority to read private Client
+membership or CRM links. Public form duplicate_warning remains false solely for
+response compatibility; it does not describe internal matching. Website chat returns
+client_id/lead_id as null in every creation mode, retaining its fresh conversation
+capability and message/status receipt. Stored duplicate evidence and authenticated
+staff-read authorization are unchanged. Local evidence: FU-HIST-02-20261028 in PRIMARY.
+
 Статус: **действующий контракт**. Срез 07.10.2026, `f01d226`.
 Сохраняет принятые ограничения; не вводит роли, grants или новую permission-модель.
 
+OFFICIAL-19, 28.10.2026: existing outreach role eligibility is now intersected
+with current NOTIFICATIONS action/object decisions at all12 role-helper callsites.
+CRUD uses CREATE/UPDATE and server-owned candidate; campaign actions and consent bulk
+use existing MANAGE map/actual campaign or consent candidate. Explicit overrides and
+OWN/TEAM/current membership apply before writes/domain calls. No new role eligibility
+or Client-derived consent owner. Capability helper reused; notifications currently has
+no module mapping/toggle, only injected disabled-boundary integration proof claimed.
+BEFORE22:14 failing methods/17 security assertions,8 controls PASS. AFTER27 new tests
+within98 affected and combined1095 PASS/no skips; syntax/system/drift/diff/reverse PASS.
+HEAD98925b67 + WIP/18 prior closed packets + patch. Evidence OFFICIAL-19-20261028 and
+output/security-remediation-20261028/outreach-mutation-permissions/fix-report.md.
+No real delivery or production/PG/full browser certification.
+
+OFFICIAL-18, 28.10.2026: Lead follow-up Task creation now validates the
+resolved assignee with ordinary validate_assignment(creating=True) and checks TASKS
+CREATE on the final unsaved Task, not on the source Lead. Current source Lead VIEW,
+Business/module and archive/lock checks remain; direct service calls also enforce actor.
+Wrong source-based TASKS guards removed for this action only. No TASKS UPDATE required,
+default/null/unassigned behavior retained where normal creation policy permits.
+BEFORE20:8 security gaps,2 false denials,10 controls. AFTER28 new tests within113
+affected and combined1068 PASS, zero skips; syntax/system/drift/diff/reverse PASS.
+HEAD98925b67 + WIP/17 prior closed findings + patch. Evidence OFFICIAL-18-20261028
+checkpoint and output/security-remediation-20261028/lead-task-assignment/fix-report.md.
+Local assignment-boundary proof only; generic replay/production/PG not certified.
+This is OFFICIAL-18, unrelated to already-closed historical AUD18 export.
+
+OFFICIAL-17, 28.10.2026: Client import writes now distinguish current UPDATE
+for existing matches (including archived/no-op) from CREATE for new Clients, under
+the existing object policy. Shared Client notes write rule is reused by API/import;
+proposed fields are validated before mutation. Client/Lead/Deal sheets use the same
+Client boundary/current request actor; legacy direct row calls use job.actor, no actor
+fails closed. Fill-only matching, duplicate warning, archive state and atomic rollback
+remain. Existing ImportJob CREATE admission remains, not an update-only upload feature.
+27 new tests within103 affected and combined1040 PASS/no skips; syntax/system/drift/
+diff/reverse PASS. HEAD98925b67 + previous WIP/16 closed findings + patch, local only.
+Evidence OFFICIAL-17-20261028 checkpoint and output/security-remediation-20261028/
+client-import-update-permission/fix-report.md. Current OWN/TEAM UPDATE semantics for
+unowned Client retained exactly; no new ownership rule or production certification.
+
+OFFICIAL-15, 28.10.2026: no_change to production code. Current FU-BE-02
+already passes actor into CRM-card Task previews and uses it for linked-field masking,
+relations/actions; missing actor fails closed. Dedicated12 new regressions cover all
+four card routes, forbidden/allowed fields, scalar/list/request/actor, OWN/TEAM/current
+rights, Client aliases, parent task/specialist and Business/capability controls.
+Current-tree initial11 PASS; final owning131 and combined1004 PASS, zero skips;
+syntax/system/migration drift/diff PASS. HEAD98925b67 +15 prior fixes/WIP + tests/docs.
+Evidence OFFICIAL-15-20261028 checkpoint and output/security-remediation-20261028/
+task-preview-context/fix-report.md. Local scoped closure of an already-remediated
+finding; no new functional patch, generic replay or production certification.
+
+OFFICIAL-10 Inbox scope, 28.10.2026: create-action responses now require current
+child VIEW/scope/capability and same Business before returning CRM data. Without VIEW,
+writes still succeed but direct responses acknowledge read_restricted without record
+fields; pipeline child fields are null, created flags unchanged. Task/Appointment keyed
+replies reserialize current resource under current actor, never replay old DTO blindly.
+Stored receipts, creation/dedup/locking/status unchanged; known metadata ID copies also
+guarded. Pending booking without saved Appointment keeps its offered slot.
+BEFORE17:15 security failures,2 controls. AFTER20 new tests within75 affected and
+combined992 PASS, zero skips; syntax/system/drift/actual frontend consumers/
+i18n/types/build PASS. HEAD98925b67 + WIP/fourteen prior fixes + patch. Evidence:
+OFFICIAL-10-INBOX-20261028 checkpoint; output/security-remediation-20261028/
+inbox-create-read-visibility/fix-report.md. Local scoped proof, not production PASS.
+
+CREATE does not grant child record VIEW in an Inbox response. Current independent
+record read policy applies to fresh/reused/replayed child DTOs and typed ID copies.
+Safe write acknowledgement is not a new permission or read grant. Parent text/workflow
+state remains parent-authorized data; no general free-text DLP policy introduced.
+
+OFFICIAL-16, 28.10.2026: Lead duplicate-check details now pass existing LEADS
+VIEW/object scope/capability and Business filtering BEFORE LIMIT5. Hidden rows return
+no IDs/messages/status/source; optional restricted-match boolean preserves generic
+duplicate warning without private count. Client projection reuses BE02/BE03: no hidden
+Client FK or contact lookup/exclusion derived from an unreadable Client ID.
+LeadForm preserves allowed counts/self-only editing and generic create-anyway warning,
+clearing restricted state on error/no selection. No new endpoint permission or writes.
+BEFORE10 security failures +5 controls after timestamp-fixture correction. AFTER15
+new tests within86 affected and combined957 PASS, zero skips; syntax/system/
+drift/component/i18n/types/build PASS. HEAD98925b67 + WIP/thirteen prior fixes + patch.
+Evidence OFFICIAL-16-20261028 checkpoint and output/security-remediation-20261028/
+lead-duplicate-visibility/fix-report.md. Local synthetic only; OFFICIAL10 remains open.
+
+Lead duplicate-check is not authority to read a hidden Lead. Existing Business-member
+endpoint access is preserved (no new CREATE/VIEW workflow gate invented); personal
+details independently require canonical LEADS read scope. A restricted-match boolean
+keeps the existing generic warning, not an exact hidden count. Client details follow
+their independent Client policy even when related Lead details are readable.
+
+FU-BE-03, 28.10.2026: Client duplicate details now require current Client VIEW,
+object scope, capability and same Business. CREATE-only keeps one non-identifying
+warning for hidden matches; exclude_client_id cannot suppress an unreadable match.
+Shared read projection covers Client check/Inbox warning and stored import snapshots,
+plus the same DTO copies in form submissions/activity. Current reader used on every
+read; stored evidence, matching and public warning semantics unchanged. Import
+writes additionally follow OFFICIAL-17 current per-row CREATE/UPDATE and notes policy.
+UI keeps duplicate banner/confirmation/create-anyway, no hidden open/merge target.
+BEFORE18 security assertions across11 methods +2 reproduced snapshot copies; five
+baseline controls PASS after fixture corrections. AFTER20 new tests within136 affected
+and combined942 PASS, zero skips. Syntax/system/drift/component/i18n/types/build
+PASS. HEAD98925b67 + WIP/twelve prior fixes + patch. FU-BE-03-20261028 checkpoint;
+output/security-remediation-20261028/client-duplicate-visibility/fix-report.md.
+Local synthetic evidence only. OFFICIAL16/10 remain separate and unclosed.
+
+Duplicate detection for a CREATE workflow does not authorize reading an existing
+Client's other contacts/name/ID. Preserve its existing generic warning while projecting
+only currently readable Client details. Client OWN/TEAM remains canonical, with no
+implicit ownership via a Lead. Exclusion IDs are effective only for readable Client
+records. This does not impose new create/merge rights or redesign anti-enumeration.
+
+FU-BE-02, 28.10.2026: linked Client projections now apply existing CLIENTS VIEW,
+object scope, capability and same-Business policy. Readable parent records remain;
+hidden Client IDs/contact labels and typed copies are masked in serializers, CRM-card,
+history, queues, AI context/rules, outreach previews/evidence and CSV. Contact-search and exact Client-ID filter
+branches respect Client visibility; stored Lead/Deal export fingerprints include it.
+Actor context is explicit; no actor fails closed. Frontend accepts nullable links,
+retains generic placeholders and avoids null-equality joins. No new ownership rule.
+BEFORE22:61 failing assertions across18 methods,4 controls PASS after fixture correction.
+Focused25 PASS; final27 plus affected history/card suites 105 PASS; combined
+894 PASS without skips. Syntax/system/drift/component/i18n/types/build PASS.
+HEAD98925b67 + prior WIP/eleven fixes + this patch. Evidence FU-BE-02-20261028 in
+PRIMARY and output/security-remediation-20261028/client-pii-projections/fix-report.md.
+Local synthetic evidence only; no production/provider/browser-E2E certification.
+
+A readable Lead/Deal/Appointment/Task does not grant independent Client access.
+Current Client policy governs linked IDs/PII and typed projections even for readable
+parents. Existing Client OWN/TEAM semantics are reused (no implicit ownership via a
+Lead); capabilities and same Business apply. Parent-authored text remains governed
+by its parent; this is not free-text DLP or a new permission framework.
+
+## Применение прав к новому пилоту — требование 29.10.2026
+
+Две независимые клиники — разные Business, пять филиалов MB01 не заменяют
+multi-tenant приёмку. Единая Запись/план сохраняют server tenant/object/field/branch
+и child-read guards; скрытие Lead/Deal из UI не отключает их API capabilities.
+Ответственный и Специалист различаются; назначение/наследование/override не выдают
+доступ. Выбранный manual/AI assignee — допустимый активный участник, проверяемый
+в момент действия. Старые nullable/hidden зависимости имеют безопасный путь без
+раскрытия данных; replay использует текущую projection, не старый широкий DTO.
+Опциональная Market-связь требует проверки tenants/полномочий и повторного
+скачивания/revoke; БИН/email и импортный event не право на подпись/refund.
+Новая permission-модель не введена. [Принятые границы и открытые проверки](roadmap.md#трассировка-всех-crm-c-требований).
+
 ## Business и серверные права
+
+OFFICIAL-22: generic ApprovalRequest UPDATE/MANAGE does not authorize replacing
+the command, payload/fingerprint, source evidence or validity window. These fields
+are immutable from creation in all states; a new action requires a new approval.
+Existing reason-only edits and decision endpoints retain their current permissions.
+Reason/no-op saves do not overwrite concurrent decision/execution state. Underlying
+CRM rights and current approver authority remain independently checked at execution.
+
+OFFICIAL-13: appointment automation status requires NOTIFICATIONS VIEW and the
+existing capability guard. Counts and failed rows use current Notification scope
+before aggregation/LIMIT8, including ordinary private-conversation restrictions.
+OWN retains business-wide notifications; TEAM retains its existing team-recipient
+semantics. Linked Client and Appointment data require their independent current read
+rights. Hidden Appointment IDs and navigation URLs are masked; readable notification
+status remains. Calendar target URLs are rebuilt from the readable linked Appointment;
+detached links expose no stale ID. Direct calls without an authorized actor expose no
+counts or rows.
+
+OFFICIAL-09: catalog CSV/XLSX confirmation and manual catalog service writes require
+current SETTINGS UPDATE on the existing Service or unsaved candidate, including
+the shared-object branch restriction. INTEGRATIONS admission alone is insufficient.
+Product-only catalog events retain their existing integration policy. ImportJob
+ownership remains unchanged; the row helper uses the current request actor, with
+job.actor only for legacy direct calls. Missing actor fails closed for Service writes.
 
 CRM-MB01, решение владельца 12.10.2026: клиентская база и история остаются общими
 внутри Business с действующими record/field permissions; создание/изменение записи
@@ -59,6 +269,107 @@ CRM-MB01, решение владельца 12.10.2026: клиентская б�
 связь. Queryset ограничивается до поиска, подсчёта, pagination и сериализации.
 Generic update не меняет владельца Business, включая ownership через parent.
 Same-business связь сама по себе ещё не даёт актёру права на связанный объект.
+
+OFFICIAL-05, 28.10.2026: unverified public form/chat flags no longer replace
+existing per-channel OPTED_OUT. Common record_explicit_consent creates absent rows
+and conditionally updates only non-OUT rows at SQL write, then refreshes existing
+result. Refusal evidence/timestamps retained; normal intake/new/UNKNOWN/IN unchanged.
+Existing inbound START and authorized management re-consent remain separate and PASS.
+BEFORE15 security failing assertions across7 methods; corrected existing404 denial
+control PASS before source patch. AFTER106/combined654 PASS without skips;
+syntax/system/drift PASS. HEAD98925b67 + WIP/ten prior fixes + patch. Evidence:
+OFFICIAL-05-20261028 in PRIMARY; output/security-remediation-20261028/
+public-intake-optout/fix-report.md. Only local synthetic consents, no actual sends.
+
+Matching an anonymous supplied phone/email is not authority to remove a saved
+marketing refusal. Public positive flags may retain existing first-consent behavior
+but cannot override OPTED_OUT. This does not redefine authorized consent-management
+or existing channel-bound inbound START evidence rules; no public force-override or
+new role permission is introduced. Refusal is per Business/client/channel.
+
+OFFICIAL-12, 28.10.2026: alternate Deal readers now share existing sensitive
+amount policy (owner/admin/manager/accountant or BILLING VIEW as already defined).
+CSV/queues/summary/typed activity metadata/CRM timeline/AI rule sources/Deal-value
+analytics mask denied monetary fields and derivatives; actor context explicit.
+Amount filters/order denied before use; stored Deal export fingerprint includes
+field access. Missing context fails closed. Nullable frontend types and two money
+helpers show existing '-' for hidden values, preserving ordinary numeric formatting.
+BEFORE30 failing assertions across15 methods,3 controls PASS (see fixture correction
+in checkpoint); AFTER18+3 supplemental controls,19 unique methods PASS; combined
+523 PASS without skips. Syntax/system/drift, i18n/types/main Vite build PASS.
+HEAD98925b67 + WIP/eight prior fixes + patch. OFFICIAL-12-20261028 in PRIMARY-SESSION;
+output/security-remediation-20261028/deal-amount-projections/fix-report.md.
+Local synthetic evidence only; no provider/production/publication certification.
+
+The existing sensitive-field rule is unchanged, including manager/accountant role
+exceptions; this patch does not invent a new BILLING requirement for those roles.
+Denied monetary values are null/empty currency or empty CSV; record counts and
+independent scope remain. Mixed-Business summaries with any hidden contributing
+amount mask the whole monetary aggregate. Saved typed monetary metadata is redacted
+on read, not rewritten; arbitrary user-authored prose is not a field-policy parser.
+
+OFFICIAL-02, 28.10.2026: legacy analytics intersects source Lead/Deal/
+Appointment/Task VIEW, object scope and capability before counts/grouping/sums.
+Reuses existing analytics _scoped in manager metrics, dashboard and legacy summary/
+CSV. Member boundary and permitted formulas retained; Lead-to-Deal conversion also
+requires a readable Lead without changing the historical reporting-period formula.
+BEFORE15:13 failing assertions across10 methods,5 controls PASS; AFTER38/combined
+375 PASS without skips, syntax/system/migration-drift PASS. HEAD98925b67 + WIP/
+seven prior fixes + patch. OFFICIAL-02-20261028 in PRIMARY-SESSION; evidence in
+output/security-remediation-20261028/analytics-resource-visibility/fix-report.md.
+Scoped local synthetic evidence only; no production acceptance or publication.
+
+Analytics membership/report visibility does not substitute for source-record VIEW.
+Resource/capability denial yields existing zero/empty metrics; it does not alter
+permissions or automatically deny independently readable records of another resource.
+Field-level amount masking, Client retention denominator and connector/setup reporting
+remain separate boundaries and are not certified by this source-resource fix.
+
+OFFICIAL-07, 28.10.2026: ensure_default_roles now initializes absent presets
+only; onboarding never overwrites existing role metadata, activation, JSON, denies,
+scope or permission rows. Initialization of a new role is atomic. Explicit audited
+TEAM MANAGE permission editing remains separate; no reset API/permission added.
+Corrected BEFORE12:11 failing assertions across10 methods,2 controls PASS;
+AFTER23/combined316 PASS without skips, syntax/system/migration-drift PASS.
+HEAD98925b67 + preserved WIP/six prior fixes + patch. OFFICIAL-07-20261028 in
+PRIMARY-SESSION; output/security-remediation-20261028/onboarding-preset-preservation/
+fix-report.md. Local isolated synthetic evidence only; no publication/live acceptance.
+
+Existing presets with missing permission rows are preserved as existing, not
+automatically repaired or reset. This initializer does not alter access-resolution
+fallbacks. Explicit reset/repair requires separately agreed scope; no such action
+or automatic migration of actual roles was performed.
+
+OFFICIAL-04, 28.10.2026: Notes reads now intersect inherited tenant/Clients
+access with the linked record's current VIEW/object scope using existing
+scope_entity_history before pagination and serialization. Hidden recognized links
+return404 for detail and inherited object actions; ordinary CRUD, archived/unlinked
+history and existing non-CRM/system policy remain. BEFORE13:21 failing assertions,
+4 controls PASS; inherited archive baseline1 failed. AFTER23/combined270 PASS without
+skips; system/migration-drift and syntax/diff PASS. HEAD98925b67 + preserved WIP/five
+prior fixes + this patch. Evidence: OFFICIAL-04-20261028 in PRIMARY-SESSION;
+output/security-remediation-20261028/notes-linked-object-access/fix-report.md.
+Local synthetic SQLite only, no production/live acceptance or publication.
+
+OFFICIAL-08, 28.10: pricing competitor offer сверяет Business и rule по эффективным
+сохранённым/входящим значениям, включая PATCH без business. Владение обоими Business
+не разрешает cross-link; обычные same-Business изменения/явный repair допустимы.
+Recommendation и autopilot observation gate используют только offers того же
+Business. Legacy ошибочные строки автоматически не мигрируются. Проверки и границы —
+OFFICIAL-08-20261028 в текущем checkpoint; ценовая формула и права не меняются.
+
+FU-BE-01, 28.10: общий BusinessInvitationSerializer возвращает пустые строки
+в token и invite_path без текущего TEAM MANAGE для Business приглашения; отсутствие
+request/user context также закрывает секреты. TEAM VIEW сохраняет только прежние
+метаданные. Управляющие сохраняют ссылку для доставки; preview/accept и consented
+reissue сохраняют существующие проверки. Старые уже полученные bearer не отзываются
+автоматически. Проверки и границы — FU-BE-01-20261028 в текущем checkpoint.
+
+OFFICIAL-01, 28.10: generic `DELETE /api/businesses/{id}/` не поддерживается
+и возвращает 405 после аутентификации, включая owner/admin/platform actors.
+Членство и право настройки не дают отдельного lifecycle удаления Business.
+GET/POST/PUT/PATCH/HEAD/OPTIONS сохраняют прежние проверки и audit при записи.
+Изолированные проверки и границы — OFFICIAL-01-20261028 в текущем checkpoint.
 
 AUD-16, 19.10: ImportJob не принимает служебные поля из запроса и не поддерживает
 generic изменение/удаление. Business/entity/source фиксируются при upload, actor —
@@ -246,6 +557,17 @@ Support-note требует platform_admin (с существующей superuse
 Primary factor выдаёт одноразовый challenge, не JWT-сессию до проверки фактора.
 TOTP replay отсекается счётчиком, recovery codes одноразовые и хранятся хешами;
 TOTP secrets зашифрованы keyring. Секреты/коды/refresh/challenge не логируются.
+Вход Django admin применяет ту же политику MFA: TOTP или одноразовый recovery code
+проверяется до создания административной сессии. Требуемый enrollment выполняется
+через существующий вход CRM. Каждый admin route проверяет proof пользователя,
+auth epoch и устройства; прежняя password-only сессия не обходит включённую MFA.
+Вход admin ограничен по IP и идентификатору (`AUTH_ADMIN_LOGIN_RATE`, 5/min),
+смена пароля — по пользователю (`AUTH_PASSWORD_CHANGE_RATE`, 5/min) до проверки
+пароля/фактора. Общий Django Redis cache хранит квоты всех web workers;
+`DJANGO_CACHE_URL` по умолчанию использует `REDIS_URL`. Недоступный cache не
+разрешает попытку. DRF read/write throttling остаётся базовым abuse-контролем,
+не атомарным пределом для одновременных запросов. Изолированные проверки явно
+используют отдельный locmem cache; staging/production такой backend отвергают.
 Password/security/MFA reset проверяют текущий пароль/фактор по своему контракту,
 отзывают сессии и audit. Reset обязательной MFA требует повторного enrollment,
 не выдаёт MFA-free privileged session. Step-up привязан к user/auth epoch.
@@ -393,3 +715,13 @@ ADMIN-05, локальная основа16.10: merchant orders требуют b
 MFA, открытым обращением этого Business и основанием. Платёж не снимает независимые
 блокировки; изменившаяся подписка/условия блокируют применение. Полный коммерческий
 доступ не заявлен; границы — [паспорт](../pre-production/subscription-usage.md).
+## Повторные проверки при чтении — 06.11.2026
+
+JWT authentication создаёт свежий User на каждый запрос. Для GET/HEAD его членства
+и явные правила ролей повторно используются только внутри этого запроса. Следующий
+запрос заново читает БД; отзыв членства/прав, auth_epoch и device session проверены
+регрессионными тестами. Для write-запросов такой snapshot не создаётся. Проверки
+конкретного объекта, OWN/TEAM, филиала и актуального support grant не заменяются
+общим разрешением. SSE повторно авторизуется через `get_user` без read snapshot.
+Это оптимизация существующих проверок, не новая модель прав или кеш между запросами.
+[Профиль и проверки](../testing/evidence/performance-20261106.md).

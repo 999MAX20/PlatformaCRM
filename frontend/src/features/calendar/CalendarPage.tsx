@@ -11,7 +11,6 @@ import { useNavigate } from "react-router";
 
 import { getApiErrorMessage } from "../../api/client";
 
-import { Select } from "../../components/ui/Select";
 import { branchIntervals } from "./branchHours";
 
 import { useActionFeedback } from "../../components/actions/useActionFeedback";
@@ -19,7 +18,7 @@ import { useActionFeedback } from "../../components/actions/useActionFeedback";
 import { usePageHeader } from "../../components/layout/PageHeaderContext";
 import { useNotification } from "../../components/notifications/NotificationProvider";
 import { Button } from "../../components/ui/Button";
-import { Input } from "../../components/ui/Input";
+import { CrmEntityDrawer } from "../../components/crm/CrmEntityDrawer";
 
 import { ErrorState, LoadingState } from "../../components/ui/StateViews";
 import { dateInTimeZone, todayInTimeZone } from "../../lib/format";
@@ -33,7 +32,6 @@ import type { Appointment, Client, Task } from "../../types";
 import { localeByLanguage } from "./calendarConstants";
 
 import {
-  formatTimeZoneLabel,
   getWeekday,
   getWorkingHoursFor,
   shiftCalendarPeriod,
@@ -41,11 +39,8 @@ import {
 import { AppointmentDrawerPanel } from "./components/AppointmentDrawerPanel";
 import { CalendarBoard } from "./components/CalendarBoard";
 import { CalendarDayInspector } from "./components/CalendarDayInspector";
-import {
-  ActiveCalendarFilters,
-  type ActiveCalendarFilterChip,
-} from "./components/CalendarFilters";
 import { CalendarToolbar } from "./components/CalendarToolbar";
+import { CalendarYearBoard } from "./components/CalendarYearBoard";
 import { useAuth } from "../auth/AuthProvider";
 import { canAccessAppointmentAction } from "./appointmentAccess";
 
@@ -78,19 +73,16 @@ export function CalendarPage() {
   const {
     searchParams,
     setSearchParams,
+    updateCalendar,
     branchFilter,
     date,
+    periodDate,
     setDate,
     viewMode,
     setViewMode,
     serviceFilter,
-    setServiceFilter,
     resourceFilter,
-    setResourceFilter,
     statusFilter,
-    setStatusFilter,
-    search,
-    setSearch,
     appointmentIdFromUrl,
     calendarRange,
     businessTimeZone,
@@ -124,8 +116,9 @@ export function CalendarPage() {
   const [selectedAppointmentId, setSelectedAppointmentId] = useState<
     number | null
   >(null);
+  const [cardAppointmentId, setCardAppointmentId] = useState<number | null>(null);
   const [inspectorOpen, setInspectorOpen] = useState(() =>
-    ["day", "list"].includes(searchParams.get("view") || ""),
+    searchParams.has("day") || ["day", "list"].includes(searchParams.get("view") || ""),
   );
   const [rescheduleTarget, setRescheduleTarget] = useState<Appointment | null>(
     null,
@@ -141,9 +134,14 @@ export function CalendarPage() {
   const {
     branchesQuery,
     hasBranches,
+    scheduleBranch,
     branchCatalog,
     tasks,
     appointments,
+    yearSummary,
+    outsideDay,
+    inspectorAppointments,
+    inspectorTasks,
     deepLinkedAppointment,
     dayAvailableSlots,
     dateExceptions,
@@ -152,6 +150,8 @@ export function CalendarPage() {
     userId: user?.id,
     canViewTasks,
     calendarRange,
+    viewMode,
+    inspectorOpen,
     businessTimeZone,
     branchFilter,
     serviceFilter,
@@ -169,10 +169,6 @@ export function CalendarPage() {
       setRescheduleTarget(null);
       setStatusReasonTarget(null);
       setArchiveTarget(null);
-      setServiceFilter("");
-      setResourceFilter("");
-      setStatusFilter("");
-      setSearch("");
       setSearchParams(
         (current) => {
           const next = new URLSearchParams(current);
@@ -183,6 +179,7 @@ export function CalendarPage() {
             "resource",
             "status",
             "search",
+            "day",
           ])
             next.delete(key);
           return next;
@@ -246,37 +243,52 @@ export function CalendarPage() {
   if (createContext.error) return <ErrorState message={createContext.error} />;
   if (createContext.isLoading) return <LoadingState scope="page" />;
 
-  const appointmentItems = appointments.data || [];
+  const appointmentItems = [...new Map([...(appointments.data || []), ...(outsideDay ? inspectorAppointments.data || [] : [])].map(item => [item.id, item])).values()];
   const clientItems = createContext.includeClient(clients.data || []);
   const serviceItems = services.data || [];
   const resourceItems = resources.data || [];
   const leadItems = leads.data || [];
   const workingHourItems = workingHours.data || [];
-  const taskItems = (tasks.data || []) as Task[];
+  const taskItems = [...new Map([...(tasks.data || []), ...(outsideDay ? inspectorTasks.data || [] : [])].map(item => [item.id, item])).values()] as Task[];
+  const detailsEnabled = viewMode !== "year" || inspectorOpen || !!appointmentIdFromUrl;
+  const locale = localeByLanguage[language];
+  const todayValue = todayInTimeZone(businessTimeZone);
+  const toolbar = <CalendarToolbar key={business.id} date={periodDate} viewMode={viewMode} locale={locale} todayValue={todayValue}
+    filters={{ service: serviceFilter, resource: resourceFilter, status: statusFilter, branch: branchFilter }}
+    serviceOptions={serviceItems.map(item => ({ value: String(item.id), label: item.name }))}
+    resourceOptions={resourceItems.filter(item => item.resource_type === "staff").map(item => ({ value: String(item.id), label: item.name }))}
+    branchOptions={(branchesQuery.data || []).map(item => ({ value: String(item.id), label: item.name }))}
+    isServicesLoading={services.isLoading} isResourcesLoading={resources.isLoading}
+    onDateChange={next => { setInspectorOpen(false); setSelectedAppointmentId(null); updateCalendar({ date: next, appointment: "" }); }}
+    onViewModeChange={next => { setInspectorOpen(false); setSelectedAppointmentId(null); setViewMode(next); }}
+    onShiftDate={direction => { setInspectorOpen(false); setSelectedAppointmentId(null); updateCalendar({ date: shiftCalendarPeriod(periodDate, direction, viewMode), appointment: "" }); }}
+    onApplyFilters={filters => { setSelectedAppointmentId(null); updateCalendar({ ...filters, appointment: "" }); }} t={t} />;
   const isCalendarDataLoading =
     branchesQuery.isLoading ||
     branchCatalog.isLoading ||
-    appointments.isLoading ||
+    (detailsEnabled && appointments.isLoading) ||
+    (viewMode === "year" && yearSummary.isLoading) ||
     clients.isLoading ||
     services.isLoading ||
     resources.isLoading ||
     leads.isLoading ||
     workingHours.isLoading ||
-    tasks.isLoading;
+    (detailsEnabled && tasks.isLoading);
   const calendarDataError =
     branchesQuery.error ||
     branchCatalog.error ||
-    appointments.error ||
+    (detailsEnabled && appointments.error) ||
+    (viewMode === "year" && yearSummary.error) ||
     deepLinkedAppointment.error ||
     clients.error ||
     services.error ||
     resources.error ||
     leads.error ||
     workingHours.error ||
-    tasks.error;
+    (detailsEnabled && tasks.error);
   if (calendarDataError) {
     return (
-      <div data-testid="calendar-error-state">
+      <>{toolbar}<div data-testid="calendar-error-state">
         <ErrorState
           error={calendarDataError}
           message={getApiErrorMessage(calendarDataError)}
@@ -289,6 +301,9 @@ export function CalendarPage() {
                 void Promise.all(
                   [
                     appointments,
+                    yearSummary,
+                    inspectorAppointments,
+                    inspectorTasks,
                     deepLinkedAppointment,
                     branchesQuery,
                     branchCatalog,
@@ -308,11 +323,9 @@ export function CalendarPage() {
             </Button>
           }
         />
-      </div>
+      </div></>
     );
   }
-  const locale = localeByLanguage[language];
-  const todayValue = todayInTimeZone(businessTimeZone);
   const clientById = new Map(clientItems.map((client) => [client.id, client]));
   const serviceById = new Map(
     serviceItems.map((service) => [service.id, service]),
@@ -323,25 +336,12 @@ export function CalendarPage() {
   const leadById = new Map(leadItems.map((lead) => [lead.id, lead]));
 
   const appointmentList = appointmentItems.filter((item) => {
-    const client = clientById.get(item.client);
-    const service = serviceById.get(item.service);
-    const resource = item.resource ? resourceById.get(item.resource) : null;
-    const query = search.trim().toLowerCase();
     if (item.is_archived) return false;
     if (serviceFilter && item.service !== Number(serviceFilter)) return false;
     if (resourceFilter && item.resource !== Number(resourceFilter))
       return false;
     if (statusFilter && item.status !== statusFilter) return false;
-    if (!query) return true;
-    return [
-      client?.full_name || item.client_name,
-      service?.name || item.service_name,
-      resource?.name || item.resource_name,
-      item.source,
-      item.notes,
-    ]
-      .filter(Boolean)
-      .some((value) => String(value).toLowerCase().includes(query));
+    return true;
   });
 
   const dayAppointments = appointmentList
@@ -376,11 +376,11 @@ export function CalendarPage() {
         getWeekday(date),
         selectedResourceId,
       );
-  const branchDayLabel = branchFilter
+  const branchDayLabel = scheduleBranch
     ? branchIntervals(branchCatalog.data, date, selectedResourceId)
         .map((item) => `${item.start}–${item.end}`)
         .join(", ") || t("calendar.freeDay")
-    : t("branches.choose");
+    : "";
   const hoursLabel = hasBranches
     ? branchDayLabel
     : selectedDayHours && !selectedDayHours.is_day_off
@@ -390,25 +390,20 @@ export function CalendarPage() {
     serviceFilter && resourceFilter && !dayAvailableSlots.isError
       ? dayAvailableSlots.data?.length
       : undefined;
-  const timeZoneLabel = formatTimeZoneLabel(businessTimeZone);
 
-  function shiftDate(days: number) {
-    setDate(shiftCalendarPeriod(date, days, viewMode));
-  }
 
   function selectAppointment(appointment: Appointment) {
     setSelectedAppointmentId(appointment.id);
     setInspectorOpen(true);
-    setDate(dateInTimeZone(appointment.start_at, businessTimeZone));
+    updateCalendar({ day: dateInTimeZone(appointment.start_at, businessTimeZone) });
   }
 
   function openAppointmentWorkspace(appointment: Appointment) {
-    navigate(`/app/calendar/${appointment.id}`);
+    setCardAppointmentId(appointment.id);
   }
 
   function selectMonthDay(nextDate: string) {
-    setDate(nextDate);
-    clearDeepLink();
+    updateCalendar({ day: nextDate, appointment: "" });
     setSelectedAppointmentId(null);
     setInspectorOpen(true);
   }
@@ -427,7 +422,12 @@ export function CalendarPage() {
   function closeInspector() {
     setInspectorOpen(false);
     setSelectedAppointmentId(null);
-    clearDeepLink();
+    setSearchParams(current => {
+      const next = new URLSearchParams(current);
+      next.delete("day");
+      next.delete("appointment");
+      return next;
+    }, { replace: true });
     requestAnimationFrame(() =>
       document
         .querySelector<HTMLButtonElement>(`[data-calendar-day="${date}"]`)
@@ -524,125 +524,23 @@ export function CalendarPage() {
     );
   }
 
-  const serviceFilterOptions = serviceItems.map((service) => ({
-    value: String(service.id),
-    label: service.name,
-  }));
-  const resourceFilterOptions = resourceItems.map((resource) => ({
-    value: String(resource.id),
-    label: resource.name,
-  }));
-  const activeFilterChips = [
-    serviceFilter
-      ? {
-          key: "service",
-          label:
-            serviceById.get(Number(serviceFilter))?.name ||
-            t("calendar.allServices"),
-          clear: () => setServiceFilter(""),
-        }
-      : null,
-    resourceFilter
-      ? {
-          key: "resource",
-          label:
-            resourceById.get(Number(resourceFilter))?.name ||
-            t("calendar.allResources"),
-          clear: () => setResourceFilter(""),
-        }
-      : null,
-    statusFilter
-      ? {
-          key: "status",
-          label: t(`status.${statusFilter}`),
-          clear: () => setStatusFilter(""),
-        }
-      : null,
-    search.trim()
-      ? { key: "search", label: search.trim(), clear: () => setSearch("") }
-      : null,
-  ].filter(Boolean) as ActiveCalendarFilterChip[];
-
-  function clearAllFilters() {
-    setServiceFilter("");
-    setResourceFilter("");
-    setStatusFilter("");
-    setSearch("");
-  }
-
   return (
     <>
-      <CalendarToolbar
-        date={date}
-        viewMode={viewMode}
-        locale={locale}
-        todayValue={todayValue}
-        serviceFilter={serviceFilter}
-        resourceFilter={resourceFilter}
-        statusFilter={statusFilter}
-        serviceOptions={serviceFilterOptions}
-        resourceOptions={resourceFilterOptions}
-        isServicesLoading={services.isLoading}
-        isResourcesLoading={resources.isLoading}
-        onDateChange={setDate}
-        onViewModeChange={setViewMode}
-        onShiftDate={shiftDate}
-        onServiceChange={setServiceFilter}
-        onResourceChange={setResourceFilter}
-        onStatusChange={setStatusFilter}
-        t={t}
-      >
-        <div className="w-full min-w-0 sm:min-w-64 sm:flex-1">
-          <Input
-            aria-label={t("calendar.searchPlaceholder")}
-            placeholder={t("calendar.searchPlaceholder")}
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-          />
-        </div>
-        {hasBranches && (
-          <div className="min-w-0 flex-1 sm:w-64 sm:flex-none">
-            <Select
-              aria-label={t("branches.branch")}
-              value={branchFilter}
-              onChange={(event) =>
-                setSearchParams((current) => {
-                  const next = new URLSearchParams(current);
-                  if (event.target.value)
-                    next.set("branch", event.target.value);
-                  else next.delete("branch");
-                  return next;
-                })
-              }
-              options={[
-                { value: "", label: t("branches.all") },
-                ...(branchesQuery.data || []).map((branch) => ({
-                  value: branch.id,
-                  label: branch.name,
-                })),
-              ]}
-            />
-          </div>
-        )}
-      </CalendarToolbar>
-      <p className="mb-2 text-right text-xs text-platforma-muted">
-        {businessTimeZone} · {timeZoneLabel}
-      </p>
-      <ActiveCalendarFilters
-        chips={activeFilterChips}
-        onClearAll={clearAllFilters}
-        t={t}
-      />
+      {toolbar}
       {isCalendarDataLoading && <LoadingState />}
       <section
         data-testid={
           isCalendarDataLoading ? undefined : "calendar-workspace-ready"
         }
       >
-        <CalendarBoard
+        {viewMode === "year" ? <CalendarYearBoard date={date} periodDate={periodDate} today={todayValue} locale={locale}
+          loading={yearSummary.isLoading} days={yearSummary.data?.days || []}
+          onSelectDay={selectMonthDay} onNavigate={setDate}
+          onOpenMonth={next => { setInspectorOpen(false); setSelectedAppointmentId(null); updateCalendar({ date: next, view: "month", appointment: "" }); }} t={t} /> : <CalendarBoard
           loading={isCalendarDataLoading}
           canViewTasks={canViewTasks}
           date={date}
+          periodDate={periodDate}
           viewMode={viewMode}
           today={todayValue}
           locale={locale}
@@ -652,11 +550,13 @@ export function CalendarPage() {
           onSelectDay={selectMonthDay}
           onNavigate={setDate}
           t={t}
-        />
+        />}
       </section>
       <CalendarDayInspector
-        open={inspectorOpen}
-        loading={isCalendarDataLoading}
+        open={inspectorOpen && !cardAppointmentId}
+        loading={isCalendarDataLoading || (outsideDay && (inspectorAppointments.isLoading || (canViewTasks && inspectorTasks.isLoading)))}
+        error={outsideDay ? inspectorAppointments.error || inspectorTasks.error : undefined}
+        onRetry={() => { void inspectorAppointments.refetch(); if (canViewTasks) void inspectorTasks.refetch(); }}
         canViewTasks={canViewTasks}
         date={date}
         locale={locale}
@@ -669,11 +569,14 @@ export function CalendarPage() {
         selectedAppointmentId={selectedAppointment?.id || null}
         canCreate={canCreateAppointment}
         hoursLabel={hoursLabel}
+        branchId={scheduleBranch}
+        branches={branchesQuery.data || []}
+        onBranchChange={value => { setSelectedAppointmentId(null); updateCalendar({ branch: value, appointment: "" }); }}
         availableSlots={availableSlots}
         hoursUrl={
           canManageWorkingHours
             ? hasBranches
-              ? `/app/business/branches?branch=${branchFilter}&section=schedule`
+              ? `/app/business/branches?branch=${scheduleBranch}&section=schedule`
               : "/app/business/working-hours"
             : undefined
         }
@@ -719,6 +622,7 @@ export function CalendarPage() {
           />
         ) : null}
       </CalendarDayInspector>
+      <CrmEntityDrawer entity={cardAppointmentId ? { type: "appointment", id: cardAppointmentId } : null} onClose={() => setCardAppointmentId(null)} />
 
       <CalendarBookingDialog
         t={t}

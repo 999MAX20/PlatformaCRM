@@ -19,6 +19,8 @@ const statusNotice = read("src/components/ui/StatusNotice.tsx");
 const notificationProvider = read("src/components/notifications/NotificationProvider.tsx");
 const stateViews = read("src/components/ui/StateViews.tsx");
 const importPanel = read("src/features/integrations/components/ImportPanel.tsx");
+const importReview = read("src/features/integrations/components/ImportJobReview.tsx");
+const importErrors = read("src/features/integrations/components/ImportErrors.tsx");
 
 test("shared fallback family consumes AppError and exports every required surface", () => {
   assert.match(fallbackSurfaces, /export function InlineFallback/);
@@ -74,7 +76,12 @@ test("field error summary avoids exposing technical field names without approved
   assert.match(fieldErrorSummary, /technicalMessagePattern/);
   assert.match(fieldErrorSummary, /fallback\.fields\.invalidValue/);
   assert.doesNotMatch(importPanel, />\s*\{item\.(?:field|message)\}\s*</);
-  assert.match(importPanel, /integrations\.import\.(?:rowNeedsReview|columnsNeedReview)/);
+  assert.match(importPanel, /<ImportJobReview/);
+  assert.match(importReview, /<ImportErrors/);
+  assert.doesNotMatch(importErrors, />\s*\{item\.(?:field|message)\}\s*</);
+  assert.match(importErrors, /integrations\.import\.rowError/);
+  assert.match(importErrors, /field: t\(`integrations\.import\.fields\.\$\{item\.field\}`\)/);
+  assert.match(importErrors, /message: errorMessage\(item\.message, t\)/);
 });
 
 test("known merchant surfaces do not render raw error-bearing fields or native alerts", () => {

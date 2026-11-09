@@ -45,7 +45,7 @@ export type WorkQueueLeadItem = WorkQueueBaseItem & {
   type: "lead";
   status: string;
   source: string;
-  client_id: Id;
+  client_id: Id | null;
   responsible_user_id: Id | null;
   age_hours: number | null;
 };
@@ -56,9 +56,9 @@ export type WorkQueueDealItem = WorkQueueBaseItem & {
   status: string;
   stage_id: Id | null;
   stage_name: string;
-  client_id: Id;
+  client_id: Id | null;
   owner_id: Id | null;
-  amount: string;
+  amount: string | null;
   currency: string;
   risk_level: "low" | "medium" | "high" | string;
   risk_percent: number;
@@ -67,7 +67,7 @@ export type WorkQueueDealItem = WorkQueueBaseItem & {
 export type WorkQueueAppointmentItem = WorkQueueBaseItem & {
   type: "appointment";
   status: string;
-  client_id: Id;
+  client_id: Id | null;
   lead_id: Id | null;
   service_id: Id;
   resource_id: Id | null;

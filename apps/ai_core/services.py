@@ -7,7 +7,7 @@ from django.utils import timezone
 from rest_framework.exceptions import PermissionDenied, ValidationError
 
 from apps.ai_core.ai_client import AIClientResult, generate_text
-from apps.ai_core.agent_runtime import agent_binding, bind_agent, conversation_binding
+from apps.ai_core.agent_runtime import agent_binding, bind_runtime, conversation_binding
 from apps.ai_core.context_service import get_business_knowledge_context
 from apps.ai_core.models import AIJob, AIRequestLog
 from apps.ai_core.prompt_service import build_prompt
@@ -39,7 +39,7 @@ def run_ai_request(
 ):
     assert_entitlement_allows(business, EntitlementMetrics.AI_REQUESTS)
     runtime_context = dict(input_json or {})
-    scenario = "analyst" if prompt_type in {"business_event_analyst", "business_history_analyst"} else "employee" if prompt_type in {"crm_assistant", "daily_summary", "crm_action_plan", "agent_turn_plan"} else None
+    scenario = "analyst" if prompt_type in {"business_event_analyst", "business_history_analyst"} else "employee" if prompt_type in {"crm_assistant", "daily_summary", "crm_action_plan", "agent_turn_plan", "voice_chat"} else None
     scenario_config = None
     if source == AIRequestLog.Sources.CRM and scenario:
         from apps.ai_core.workflows import assert_workflow_enabled, workflow_fingerprint
@@ -92,7 +92,13 @@ def run_ai_request(
     if policy.json_output:
         prompt.response_format = {"type": "json_object"}
     language_name = {"ru": "Russian", "kk": "Kazakh", "en": "English"}.get(response_language)
-    if language_name:
+    if language_name and prompt_type in {"agent_turn_plan", "crm_action_plan"}:
+        prompt.messages[0]["content"] += (
+            f" Output language requirement: write only the clarification question in {language_name}."
+            " Preserve request, query, title, description, notes and other supplied record values in their original language."
+            " These are user data, not translated response prose. Keep schema keys, source IDs and codes unchanged."
+        )
+    elif language_name:
         prompt.messages[0]["content"] += (
             f" Output language requirement: write all human-readable response text, including the JSON answer field, in {language_name}."
             " Keep schema keys, source IDs, entity names and codes unchanged. The question's language does not change this requirement."
@@ -263,7 +269,7 @@ def process_ai_job(job_id):
     )
     try:
         runtime_context = job.input_json.get("runtime_context") or {}
-        with bind_agent(runtime_context.get("_agent", {}).get("agent_id")):
+        with bind_runtime(runtime_context.get("_agent", {})):
             if runtime_context.get("_agent") and runtime_context["_agent"] != agent_binding(job.business):
                 raise PermissionDenied("Agent settings changed. Submit a new request.")
             if job.prompt_type == "agent_conversation":

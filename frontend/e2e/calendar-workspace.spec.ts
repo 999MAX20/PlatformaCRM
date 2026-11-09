@@ -59,11 +59,10 @@ for (const [locale, copy] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
     const cell = page.locator(`[data-calendar-day="${day}"]`);
     if (!info.project.name.startsWith("mobile")) await cell.hover();
     else await cell.focus();
-    const preview = page.getByTestId("calendar-day-preview");
-    await expect(preview).toBeVisible();
-    await expect(preview).toContainText(s.visits[2].client_name!);
-    await page.keyboard.press("Escape");
-    await expect(preview).toBeHidden();
+    await page.waitForTimeout(700);
+    await expect(page.getByTestId("calendar-day-preview")).toHaveCount(0);
+    await expect(page.getByTestId("calendar-period-picker")).toHaveCount(0);
+    await expect(page.getByTestId("calendar-view-week")).toHaveCount(0);
     await cell.focus();
     await cell.press("ArrowRight");
     await expect(page.locator('[data-calendar-day="2030-01-08"]')).toBeFocused();
@@ -76,7 +75,8 @@ for (const [locale, copy] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
     for (const task of s.tasks) await expect(inspector.locator(`a[href="/app/tasks/${task.id}"]`)).toHaveCount(1);
     const visit = inspector.locator(`[data-appointment-id="${s.visits[0].id}"]`);
     await visit.click();
-    await expect(page.getByTestId("calendar-appointment-detail")).toContainText(s.visits[0].client_name!);
+    await expect(page.getByTestId("calendar-appointment-detail")).toBeVisible();
+  await expect(page.getByTestId("calendar-appointment-detail")).not.toContainText(s.visits[0].client_name!);
     await inspector.getByRole("button", { name: copy["common.back"], exact: true }).click();
     await expect(visit).toBeFocused();
     await visit.press("Enter");
@@ -100,19 +100,10 @@ for (const [locale, copy] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
     await page.keyboard.press("Escape");
     await expect(inspector).toBeHidden();
     await expect(cell).toBeFocused();
-    await page.getByTestId("calendar-view-week").click();
+    await page.goto(`/app/calendar?date=${day}&view=week&branch=${s.branch.id}`);
     await expect(page.getByTestId("calendar-board-week")).toBeVisible();
     await expect(page.locator("[data-calendar-day]")).toHaveCount(7);
     await page.screenshot({ path: info.outputPath(`calendar-week-${locale}.png`), fullPage: true });
-    await page.getByTestId("calendar-period-picker").click();
-    const picker = page.getByTestId("calendar-date-picker");
-    await expect(picker.getByRole("combobox", { name: copy["crmFilters.year"], exact: true })).toBeVisible();
-    await picker.locator('[data-date="2030-01-07"]').focus();
-    await page.keyboard.press("ArrowRight");
-    await expect(picker.locator('[data-date="2030-01-08"]')).toBeFocused();
-    await page.keyboard.press("Enter");
-    await expect(picker).toBeHidden();
-    await expect(page).toHaveURL(/date=2030-01-08/);
     await page.goto(`/app/calendar?date=2030-01-31&view=month&branch=${s.branch.id}`);
     await expect(page.getByTestId("calendar-workspace-ready")).toBeVisible();
     await page.route(/\/api\/appointments\/\?.*start_from=2030-02-01/, async route => {
@@ -166,8 +157,9 @@ test("view-only calendar works without optional task/client/lead access and deni
     expect(response.ok(), await response.text()).toBeTruthy();
   }
   await s.action("branches/member-access", { member: member.id, all_branches: false, branch_ids: [s.branch.id] });
-  await page.context().clearCookies();
   await page.evaluate(() => localStorage.clear());
+  await page.goto("about:blank");
+  await page.context().clearCookies();
   const operator = await crmSession(page, member.user.email);
   const profile = await operator.read("auth/me");
   expect(profile.effective_permissions[String(s.business)].some((permission: { resource: string; action: string }) => permission.resource === "appointments" && permission.action === "update")).toBe(false);
@@ -179,7 +171,8 @@ test("view-only calendar works without optional task/client/lead access and deni
   const inspector = page.getByTestId("calendar-day-inspector");
   await expect(inspector.getByText(ru["calendar.tasksToday"] + ":", { exact: false })).toHaveCount(0);
   await inspector.locator(`[data-appointment-id="${s.visits[0].id}"]`).click();
-  await expect(page.getByTestId("calendar-appointment-detail")).toContainText(s.visits[0].client_name!);
+  await expect(page.getByTestId("calendar-appointment-detail")).toBeVisible();
+  await expect(page.getByTestId("calendar-appointment-detail")).not.toContainText(s.visits[0].client_name!);
   await expect(page.getByTestId("calendar-reschedule-action")).toHaveCount(0);
   await expect(page.getByTestId("calendar-appointment-status-confirmed")).toHaveCount(0);
   await expect(page.getByRole("button", { name: ru["calendar.newBooking"], exact: true })).toHaveCount(0);

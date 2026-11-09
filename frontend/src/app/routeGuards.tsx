@@ -10,7 +10,7 @@ import { getAuthReturnPathFromState } from "../features/auth/authReturnPath";
 
 import { useActiveBusiness } from "../hooks/useBusiness";
 import { useI18n } from "../lib/i18n";
-import { permissionForbiddenMessage } from "../lib/permissions";
+import { hasPermission, permissionForbiddenMessage } from "../lib/permissions";
 import { getUserStartPath } from "../lib/startPage";
 export function MerchantRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading, isMerchantUser, isPlatformUser } =
@@ -91,6 +91,18 @@ export function UserStartRedirect() {
   const { business, isLoading } = useActiveBusiness();
   if (isLoading) return <LoadingState scope="page" />;
   return <Navigate to={getUserStartPath(user, business?.id)} replace />;
+}
+export function SettingsAccessRoute({ children }: { children: React.ReactNode }) {
+  const { user } = useAuth();
+  const { business, isLoading } = useActiveBusiness();
+  if (isLoading) return <LoadingState scope="page" />;
+  return hasPermission(user, business?.id, "settings", "update") || hasPermission(user, business?.id, "integrations", "view")
+    ? children : <ForbiddenState />;
+}
+
+export function IntegrationsSettingsRedirect() {
+  const location = useLocation();
+  return <Navigate to={`/app/settings${location.search}#integrations`} replace />;
 }
 export function LegacyDashboardRedirect() {
   const location = useLocation();

@@ -1,124 +1,79 @@
-import { ChevronLeft, ChevronRight, Filter } from "lucide-react";
-import { useState, type ReactNode } from "react";
-
+import { ChevronLeft, ChevronRight, SlidersHorizontal } from "lucide-react";
+import { useRef, useState } from "react";
 import { Button } from "../../../components/ui/Button";
-import { Modal } from "../../../components/ui/Modal";
+import { CalendarPopover } from "../../../components/ui/CalendarPopover";
+import { Select } from "../../../components/ui/Select";
 import { cn } from "../../../lib/cn";
 import { CalendarPicker } from "./CalendarPicker";
-import { CalendarResourceFilters } from "./CalendarFilters";
 import { formatCalendarPeriod } from "../calendarUtils";
 import type { CalendarTranslate, CalendarViewMode, SearchableCalendarFilterOption } from "../calendarTypes";
 
-export function CalendarToolbar({
-  date,
-  viewMode,
-  locale,
-  todayValue,
-  serviceFilter,
-  resourceFilter,
-  statusFilter,
-  serviceOptions,
-  resourceOptions,
-  isServicesLoading,
-  isResourcesLoading,
-  onDateChange,
-  onViewModeChange,
-  onShiftDate,
-  onServiceChange,
-  onResourceChange,
-  onStatusChange,
-  children,
-  t,
+export type CalendarFilters = { service: string; resource: string; status: string; branch: string };
+
+export function CalendarToolbar({ date, viewMode, locale, todayValue, filters, serviceOptions,
+  resourceOptions, branchOptions, isServicesLoading, isResourcesLoading, onDateChange,
+  onViewModeChange, onShiftDate, onApplyFilters, t,
 }: {
-  date: string;
-  viewMode: CalendarViewMode;
-  locale: string;
-  todayValue: string;
-  serviceFilter: string;
-  resourceFilter: string;
-  statusFilter: string;
+  date: string; viewMode: CalendarViewMode; locale: string; todayValue: string;
+  filters: CalendarFilters;
   serviceOptions: SearchableCalendarFilterOption[];
   resourceOptions: SearchableCalendarFilterOption[];
-  isServicesLoading: boolean;
-  isResourcesLoading: boolean;
+  branchOptions: SearchableCalendarFilterOption[];
+  isServicesLoading: boolean; isResourcesLoading: boolean;
   onDateChange: (value: string) => void;
   onViewModeChange: (value: CalendarViewMode) => void;
-  onShiftDate: (days: number) => void;
-  onServiceChange: (value: string) => void;
-  onResourceChange: (value: string) => void;
-  onStatusChange: (value: string) => void;
-  children?: ReactNode;
+  onShiftDate: (direction: number) => void;
+  onApplyFilters: (filters: CalendarFilters) => void;
   t: CalendarTranslate;
 }) {
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const filterCount = [serviceFilter, resourceFilter, statusFilter].filter(Boolean).length;
-  const filterControls = (
-    <CalendarResourceFilters
-      serviceFilter={serviceFilter}
-      resourceFilter={resourceFilter}
-      statusFilter={statusFilter}
-      serviceOptions={serviceOptions}
-      resourceOptions={resourceOptions}
-      isServicesLoading={isServicesLoading}
-      isResourcesLoading={isResourcesLoading}
-      onServiceChange={onServiceChange}
-      onResourceChange={onResourceChange}
-      onStatusChange={onStatusChange}
-      t={t}
-    />
-  );
+  const [draft, setDraft] = useState(filters);
+  const filterTrigger = useRef<HTMLButtonElement>(null);
+  const close = (restoreFocus = true) => {
+    setFiltersOpen(false);
+    if (restoreFocus) filterTrigger.current?.focus({ preventScroll: true });
+  };
+  const filterCount = Object.values(filters).filter(Boolean).length;
+  const fields = [
+    { key: "resource", label: t("records.specialist"), options: resourceOptions, disabled: isResourcesLoading },
+    ...(branchOptions.length > 1 || filters.branch ? [{ key: "branch", label: t("records.branch"), options: branchOptions }] : []),
+    { key: "status", label: t("records.status"), options: ["created", "confirmed", "rescheduled", "completed", "cancelled", "no_show"].map(value => ({ value, label: t(`status.${value}`) })) },
+    { key: "service", label: t("records.service"), options: serviceOptions, disabled: isServicesLoading },
+  ];
+  const previousLabel = viewMode === "year" ? "calendar.previousYear" : viewMode === "month" ? "calendar.previousMonth" : "calendar.previousWeek";
+  const nextLabel = viewMode === "year" ? "calendar.nextYear" : viewMode === "month" ? "calendar.nextMonth" : "calendar.nextWeek";
 
-  return (
-    <section className="mb-4 rounded-card border border-platforma-border bg-platforma-card p-3 shadow-xs">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex min-w-0 flex-wrap items-center gap-2">
-          <Button variant="secondary" size="icon" className="h-10 w-10 shrink-0" onClick={() => onShiftDate(-1)} aria-label={t(viewMode === "month" ? "calendar.previousMonth" : viewMode === "week" ? "calendar.previousWeek" : "calendar.previousDay")}>
-            <ChevronLeft size={18} />
-          </Button>
-          <CalendarPicker
-            value={date}
-            onChange={onDateChange}
-            locale={locale}
-            todayValue={todayValue}
-            periodLabel={formatCalendarPeriod(date, locale, viewMode)}
-          />
-          <Button variant="secondary" size="icon" className="h-10 w-10 shrink-0" onClick={() => onShiftDate(1)} aria-label={t(viewMode === "month" ? "calendar.nextMonth" : viewMode === "week" ? "calendar.nextWeek" : "calendar.nextDay")}>
-            <ChevronRight size={18} />
-          </Button>
-          <Button variant="secondary" className="h-10 px-3" onClick={() => onDateChange(todayValue)}>
-            {t("calendar.today")}
-          </Button>
+  return <div className="platforma-calendar-toolbar sticky top-[var(--app-header-height)] z-40 mb-2 min-w-0 bg-surface py-1" data-testid="calendar-toolbar">
+    <div className="flex min-w-0 flex-wrap items-center gap-2 px-1 py-1 lg:flex-nowrap lg:overflow-x-auto" data-testid="calendar-toolbar-row">
+      <Button variant="secondary" size="icon" className="h-11 w-11 shrink-0" onClick={() => onShiftDate(-1)} aria-label={t(previousLabel)}><ChevronLeft size={18} /></Button>
+      <CalendarPicker value={date} onChange={onDateChange} locale={locale} todayValue={todayValue} periodLabel={formatCalendarPeriod(date, locale, viewMode)} />
+      <Button variant="secondary" size="icon" className="h-11 w-11 shrink-0" onClick={() => onShiftDate(1)} aria-label={t(nextLabel)}><ChevronRight size={18} /></Button>
+      <Button variant="ghost" className="h-11 shrink-0 px-3" onClick={() => onDateChange(todayValue)}>{t("calendar.today")}</Button>
+      <div className="ml-auto grid shrink-0 grid-cols-3 rounded-control border border-platforma-border bg-platforma-card" role="group" aria-label={t("calendar.viewMode")}>
+        {(["week", "month", "year"] as const).map(mode => <button key={mode} type="button" data-testid={`calendar-view-${mode}`} aria-pressed={viewMode === mode}
+          className={cn("platforma-focus-ring min-h-11 rounded-control px-3 text-sm font-semibold", viewMode === mode ? "bg-brand-600 text-white" : "text-platforma-text hover:bg-surface-hover")}
+          onClick={() => onViewModeChange(mode)}>{t(mode === "year" ? "crmFilters.year" : `calendar.${mode}`)}</button>)}
+      </div>
+      <Button ref={filterTrigger} variant="secondary" className="h-11 shrink-0" aria-haspopup="dialog" aria-expanded={filtersOpen}
+        aria-controls={filtersOpen ? "calendar-filter-panel" : undefined} data-testid="calendar-filters-trigger"
+        onClick={() => { if (filtersOpen) close(); else { setDraft(filters); setFiltersOpen(true); } }}>
+        <SlidersHorizontal size={17} />{t("calendar.filters")}{filterCount ? ` (${filterCount})` : ""}
+      </Button>
+    </div>
+    {filtersOpen && <CalendarPopover anchor={filterTrigger} id="calendar-filter-panel" testId="calendar-filters" label={t("calendar.filters")} onClose={close}>
+      <form className="space-y-4" onSubmit={event => { event.preventDefault(); onApplyFilters(draft); close(); }}>
+        {fields.map(field => {
+          const key = field.key as keyof CalendarFilters;
+          const unknown = draft[key] && !field.options.some(option => option.value === draft[key]);
+          return <Select portal key={key} label={field.label} value={draft[key]} disabled={field.disabled}
+            options={[{ value: "", label: t("records.all") }, ...field.options, ...(unknown ? [{ value: draft[key], label: `#${draft[key]}` }] : [])]}
+            onChange={event => setDraft(current => ({ ...current, [key]: event.target.value }))} />;
+        })}
+        <div className="sticky bottom-0 flex flex-wrap items-center justify-between gap-2 border-t border-platforma-border bg-surface-card pt-3">
+          <Button type="button" variant="ghost" onClick={() => setDraft({ resource: "", branch: "", service: "", status: "" })}>{t("common.reset")}</Button>
+          <div className="ml-auto flex gap-2"><Button type="button" variant="secondary" onClick={() => close()}>{t("common.cancel")}</Button><Button type="submit">{t("crmFilters.apply")}</Button></div>
         </div>
-          <div className="grid shrink-0 grid-cols-2 rounded-control border border-platforma-border bg-surface-muted p-1">
-            {[
-              { value: "week", label: t("calendar.week") },
-              { value: "month", label: t("calendar.month") },
-            ].map((item) => (
-              <button
-                key={item.value}
-                type="button"
-                data-testid={`calendar-view-${item.value}`}
-                aria-pressed={viewMode === item.value}
-                className={cn(
-                  "rounded-control px-3 py-2 text-xs font-bold transition sm:text-sm",
-                  viewMode === item.value ? "bg-platforma-card text-brand-700 shadow-xs" : "text-platforma-muted hover:bg-surface-hover hover:text-platforma-text",
-                )}
-                onClick={() => onViewModeChange(item.value as CalendarViewMode)}
-              >
-                {item.label}
-              </button>
-            ))}
-          </div>
-      </div>
-
-      <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-platforma-border pt-3">
-        {children}
-        <Button variant="secondary" aria-haspopup="dialog" aria-expanded={filtersOpen} onClick={() => setFiltersOpen(true)}><Filter size={17} />{t("calendar.filters")}{filterCount ? ` · ${filterCount}` : ""}</Button>
-      </div>
-      <Modal open={filtersOpen} onClose={() => setFiltersOpen(false)} title={t("calendar.filters")} size="sm" testId="calendar-filters">
-        <div className="space-y-4">{filterControls}</div>
-        <div className="mt-5 flex justify-end"><Button onClick={() => setFiltersOpen(false)}>{t("common.close")}</Button></div>
-      </Modal>
-    </section>
-  );
+      </form>
+    </CalendarPopover>}
+  </div>;
 }

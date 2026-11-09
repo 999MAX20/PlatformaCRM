@@ -1,0 +1,20 @@
+{
+  "frontend/e2e/records-toolbar.spec.ts": "2614ac3628089110526baad5ff8ce827e68036ff2a2f3805ec816fcc7148955c",
+  "frontend/scripts/tests/record-filters.test.mjs": "823850f83e835b746c7180991e438eb39f6f79d3a99cb6c5b4b8f3883935a026",
+  "frontend/src/components/crm/EntityWorkspace.tsx": "39f10688206eec403fea8bf706b14508abed26611155b1e94065a48a94f96ef8",
+  "frontend/src/components/forms/AppointmentForm.tsx": "558db75034f21ff5ce1fa5da5141566261eb2d21c777773aac9c9615ad6daf2b",
+  "frontend/src/components/forms/AppointmentRescheduleForm.tsx": "301bf01e7ead306b74623de30383fc79a9be02fd80d46b9e6ee6fd5163925040",
+  "frontend/src/components/ui/DateRangePicker.tsx": "c30e9a7c10f43b95b94d636ef90adcc46127518ae7b97c78f775b6eaf74baf70",
+  "frontend/src/features/calendar/AppointmentWorkspacePage.tsx": "29316f5c6bc0bc930843e80590b74b6e9e45c2545654f0501de908d4a337605e",
+  "frontend/src/features/calendar/recordFilters.ts": "51d354f259b6c9390df72a394c23db445bdd34de80bc6545fe6b5c1952bbda9f",
+  "frontend/src/features/calendar/RecordsPage.tsx": "0e8a006548272770850a51db5d65ae077dbf9075ccf9600a8a2759bf196039a8",
+  "frontend/src/features/calendar/RecordsTable.tsx": "e575e032818dfef9a2810d5ec9eea871c3f16a516c0c1d94008f28d4dac32431",
+  "frontend/src/features/calendar/RecordsToolbar.tsx": "40c779a10ba3c70824c628f3539eef2dd6362cb1dc59f103fc0529c50f7134c8",
+  "frontend/src/features/calendar/useRecordsPeriod.ts": "c624e0a959a9bf03c7e7f24bd6991385eb38e59360af9abb48e11ed9dc82636e",
+  "frontend/src/features/calendar/VisitPlansPage.tsx": "3a9c138e2d4860521c995a6e0baea2411f4e3a9330778c4768de84192b25bdc7",
+  "frontend/src/lib/i18n/en/calendar.ts": "74a8245d676172fee7bcc1ff844aaad681e96969bcf2cbb2bdcc2a5670c7e3ee",
+  "frontend/src/lib/i18n/kk/calendar.ts": "0674e1add198b8e020c2bbbcfdbb075ef2a2771055f7316a636ac3c4b1cd68c5",
+  "frontend/src/lib/i18n/ru/calendar.ts": "a72ec263b3fabcdaa6e02f27345e65c5bfa7345197bdde5963f39232d7a225ae",
+  "frontend/src/features/calendar/RecordsSearch.tsx": "a0d188758f17455509651d3dc3617a040545f96bb5414e4c4a1d390356795ff2",
+  "frontend/src/features/calendar/RecordsPeriodPanel.tsx": "a9e9db14da4f8d3dfb07ef225c629020e7aaf71dbef93f76efcfcc4d971bb263"
+}

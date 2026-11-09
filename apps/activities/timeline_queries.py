@@ -1,4 +1,7 @@
 """Read-only activity filters. Input querysets must already be access-scoped."""
+from apps.core.client_projection import client_relation_q, client_search_q
+from apps.core.crm_read_scope import readable_across_businesses
+from apps.clients.models import Client
 from datetime import datetime, time, timedelta
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
@@ -79,10 +82,12 @@ def date_boundary(value, *, end, business):
     raise serializers.ValidationError({"date_to" if end else "date_from": "Invalid date."})
 
 
-def filter_timeline(queryset, values, business):
+def filter_timeline(queryset, values, business, *, user=None):
     for field in ("business", "client", "entity_type", "entity_id", "category", "event_type"):
         if values.get(field):
             queryset = queryset.filter(**{field: values[field]})
+    if values.get("client"):
+        queryset = queryset.filter(client_relation_q(user))
     actor = values.get("actor")
     if actor:
         queryset = queryset.filter(actor__isnull=True) if actor == "none" else queryset.filter(actor_id=int(actor))
@@ -97,7 +102,9 @@ def filter_timeline(queryset, values, business):
         raise serializers.ValidationError({"date_to": "Invalid date range."})
     if values.get("q"):
         query = values["q"]
-        queryset = queryset.filter(Q(text__icontains=query) | Q(event_type__icontains=query) | Q(client__business_id=F("business_id"), client__full_name__icontains=query))
+        clients = readable_across_businesses(Client.objects.all(), actor=user, resource=Resources.CLIENTS) if user is not None else Client.objects.none()
+        readable = Q(client__isnull=True) | Q(client__in=clients, client__business_id=F("business_id"))
+        queryset = queryset.filter((readable & Q(text__icontains=query)) | Q(event_type__icontains=query) | client_search_q(user, query, fields=("full_name",)))
     members = BusinessMember.objects.filter(business_id=OuterRef("business_id"), user_id=OuterRef("actor_id"))
     return queryset.annotate(actor_is_member=Exists(members)).order_by("-created_at", "-pk")
 

@@ -154,7 +154,10 @@ def export_entity(request, entity_type):
     business = accessible_businesses(request.user).filter(id=business_id).first() if business_id else accessible_businesses(request.user).first()
     if business is None:
         raise PermissionDenied("Business is required.")
-    resource = _resource_for_entity(entity_type)
+    from apps.core.export_jobs import export_resource
+    resource = export_resource(entity_type)
+    if resource is None:
+        raise ValidationError("Unsupported export entity.")
     assert_can(request.user, business, resource, Actions.VIEW)
     response, job = request_entity_export(business=business, actor=request.user, export_key=entity_type)
     audit_target = job or business
@@ -213,7 +216,11 @@ def _resource_for_export_key(export_key):
         return Resources.ANALYTICS
     if export_key in {"source_roi", "manager_performance", "funnel_velocity", "retention_ltv"}:
         return Resources.ANALYTICS
-    return _resource_for_entity(export_key)
+    from apps.core.export_jobs import export_resource
+    resource = export_resource(export_key)
+    if resource is None:
+        raise ValidationError("Unsupported export entity.")
+    return resource
 
 
 def _validate_import_file(upload):

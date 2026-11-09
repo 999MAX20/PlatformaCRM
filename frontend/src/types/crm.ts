@@ -215,7 +215,7 @@ export type CrmCardPayload = {
   deals: Deal[];
   appointments: Appointment[];
   tasks: Task[];
-  conversations: BotConversation[];
+  conversations: Omit<BotConversation, "ai_safety">[];
   timeline: ActivityEvent[];
   notes: Note[];
   tags: TaggedObject[];
@@ -235,10 +235,12 @@ export type DuplicateCheckResponse = {
   duplicates: DuplicateClient[];
 };
 
+export type CustomFieldEntityType = CrmEntityType | "service" | "specialist";
+
 export type CustomFieldDefinition = {
   id: Id;
   business: Id;
-  entity_type: CrmEntityType;
+  entity_type: CustomFieldEntityType;
   key: string;
   label: string;
   field_type:
@@ -267,7 +269,7 @@ export type CustomFieldValue = {
   id: Id;
   business: Id;
   definition: Id;
-  entity_type: CrmEntityType;
+  entity_type: CustomFieldEntityType;
   entity_id: string;
   value_json: { value?: unknown } & Record<string, unknown>;
   created_at: string;

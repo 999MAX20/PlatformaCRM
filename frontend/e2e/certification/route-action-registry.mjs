@@ -68,6 +68,79 @@ const platformRoute = (entry) => ({
 
 export const routeActionRegistry = [
   publicRoute({
+    id: "ACCOUNT-RECOVERY", route: "/recover-account", aliases: [], routerPaths: ["/recover-account"],
+    page: "AccountRecoveryPage", guard: "None", primaryActions: ["complete_account_recovery"],
+    apiEndpoints: ["GET/POST /api/auth/account-recovery/"], controls: ["form", "recovery"],
+    automatedTests: ["e2e/platform-recovery.spec.ts"],
+  }),
+  merchantRoute({
+    id: "EXEC-RECORDS", route: "/app/appointments", aliases: [], routerPaths: ["appointments"],
+    page: "RecordsPage", capabilities: ["appointments:view"],
+    primaryActions: ["create_appointment", "open_appointment"], secondaryActions: ["search", "filter", "paginate"],
+    apiEndpoints: ["GET /api/appointments/workspace/", "POST /api/appointments/"], entities: ["Appointment", "Client"],
+    controls: ["search", "filters", "table", "dialogs"], automatedTests: ["e2e/records-toolbar.spec.ts"],
+  }),
+  merchantRoute({
+    id: "IMPORT-WORKSPACE", route: "/app/integrations/import", aliases: [], routerPaths: ["integrations/import"],
+    page: "ImportWorkspacePage", capabilities: ["integrations:manage"], primaryActions: ["import"],
+    apiEndpoints: ["GET/POST /api/import-workspaces/", "POST /api/import-workspaces/:id/*"],
+    entities: ["ImportWorkspace"], controls: ["file_picker", "mapping", "preview", "confirmation"],
+    automatedTests: ["e2e/import-workspace.spec.cjs"],
+  }),
+  merchantRoute({
+    id: "PERSONAL-NOTIFICATIONS", route: "/app/notifications", aliases: [], routerPaths: ["notifications"],
+    page: "NotificationsPage", primaryActions: ["notifications"], secondaryActions: ["paginate", "retry"],
+    pageReadyMarker: '[data-testid="notifications-page"]',
+    apiEndpoints: ["GET /api/notifications/", "POST /api/notifications/mark-all-read/"],
+    entities: ["Notification", "Announcement"], controls: ["tabs", "pagination", "inspector"],
+    automatedTests: ["e2e/notification-refactor.spec.ts"],
+  }),
+  merchantRoute({
+    id: "VOICE-SETTINGS", route: "/app/settings/voice", aliases: [], routerPaths: ["settings/voice"],
+    page: "VoiceSettingsPage", capabilities: ["ai_assistant:suggest"], primaryActions: ["configure_voice"],
+    apiEndpoints: [], controls: ["local_preferences", "device_picker", "microphone_test"], automatedTests: [],
+  }),
+  merchantRoute({
+    id: "VOICE-HISTORY", route: "/app/voice/history", aliases: [], routerPaths: ["voice/history"],
+    page: "VoiceHistoryPage", capabilities: ["ai_assistant:suggest"], primaryActions: ["open_voice_history"], secondaryActions: ["paginate", "retry"],
+    apiEndpoints: ["GET /api/ai/conversations/"], entities: ["AgentConversation"], controls: ["list", "pagination"], automatedTests: [],
+  }),
+  merchantRoute({
+    id: "MERCHANT-SUPPORT", route: "/app/support", aliases: [], routerPaths: ["support"],
+    page: "SupportListPage", primaryActions: ["create_support_case"], secondaryActions: ["search", "filter", "paginate"],
+    apiEndpoints: ["GET/POST /api/support/cases/"], entities: ["SupportCase"], controls: ["search", "filters", "form"],
+    automatedTests: ["e2e/platform-support.spec.ts"],
+  }),
+  merchantRoute({
+    id: "MERCHANT-SUPPORT-DETAIL", route: "/app/support/:id", aliases: [], routerPaths: ["support/:id"],
+    page: "SupportDetailPage", primaryActions: ["reply_support_case"], secondaryActions: ["retry"],
+    apiEndpoints: ["GET /api/support/cases/:id/", "GET/POST /api/support/cases/:id/messages/"], entities: ["SupportCase"],
+    controls: ["messages", "form"], automatedTests: ["e2e/platform-support.spec.ts"],
+  }),
+  platformRoute({
+    id: "PLATFORM-ACCOUNT", route: "/platform/account", aliases: [], routerPaths: ["account"],
+    page: "AccountPage", primaryActions: ["update_profile", "change_password", "manage_mfa"],
+    apiEndpoints: ["GET/PATCH /api/auth/me/", "POST /api/auth/change-password/", "GET/POST /api/auth/mfa/*"], controls: ["forms", "dialogs"], automatedTests: ["e2e/account-user-settings.spec.ts", "e2e/account-mfa-qr.spec.ts"],
+  }),
+  platformRoute({
+    id: "PLATFORM-SUPPORT", route: "/platform/support", aliases: [], routerPaths: ["support"],
+    page: "SupportListPage", primaryActions: ["create_support_case"], secondaryActions: ["search", "filter", "paginate"],
+    apiEndpoints: ["GET/POST /api/platform/support-cases/"], entities: ["SupportCase"], controls: ["search", "filters", "form"],
+    automatedTests: ["e2e/platform-support.spec.ts"],
+  }),
+  platformRoute({
+    id: "PLATFORM-SUPPORT-DETAIL", route: "/platform/support/:id", aliases: [], routerPaths: ["support/:id"],
+    page: "SupportDetailPage", primaryActions: ["reply_support_case"], secondaryActions: ["retry"],
+    apiEndpoints: ["GET /api/platform/support-cases/:id/", "GET/POST /api/platform/support-cases/:id/messages/"],
+    entities: ["SupportCase"], controls: ["messages", "form"], automatedTests: ["e2e/platform-support.spec.ts"],
+  }),
+  platformRoute({
+    id: "PLATFORM-SUPPORT-INCIDENT", route: "/platform/merchants/:id/incidents/:component/:episode", aliases: [],
+    routerPaths: ["merchants/:id/incidents/:component/:episode"], page: "SupportIncidentPage", primaryActions: ["open_support_incident"],
+    apiEndpoints: ["GET /api/platform/support-incidents/"], entities: ["SupportIncident"], controls: ["list", "pagination"],
+    automatedTests: ["e2e/platform-support-incidents.spec.ts"],
+  }),
+  publicRoute({
     id: "PUBLIC-DOCUMENTS",
     route: "/documents",
     aliases: [],
@@ -207,7 +280,7 @@ export const routeActionRegistry = [
     primaryActions: ["update_profile", "change_password", "manage_mfa"],
     secondaryActions: ["update_notifications", "view_login_history"],
     controls: ["forms", "dialogs", "tabs"],
-    apiEndpoints: ["GET/PATCH /api/auth/profile/", "POST /api/auth/password/change/", "GET/POST /api/auth/mfa/*"],
+    apiEndpoints: ["GET/PATCH /api/auth/me/", "POST /api/auth/change-password/", "GET/POST /api/auth/mfa/*"],
     entities: ["User", "UserMfaConfiguration", "RefreshSession"],
   }),
   merchantRoute({
@@ -340,7 +413,7 @@ export const routeActionRegistry = [
     id: "EXEC-APPOINTMENT-WORKSPACE",
     route: "/app/calendar/:id",
     aliases: [],
-    routerPaths: ["calendar/:id"],
+    routerPaths: ["calendar/:id", "appointments/:id"],
     page: "AppointmentWorkspacePage",
     capabilities: ["appointments:view"],
     primaryActions: ["reschedule", "confirm", "complete", "cancel", "no_show"],

@@ -54,6 +54,7 @@ export const appErrorCodeRegistry: readonly AppErrorCodePolicy[] = [
   errorCode("module_disabled", "permission"),
   errorCode("not_found", "not_found"),
   errorCode("invalid_transition", "conflict"),
+  errorCode("last_active_branch", "conflict"),
   errorCode("schedule_conflict", "conflict"),
   errorCode("assignee_unavailable", "conflict"),
   errorCode("idempotency_conflict", "conflict"),
@@ -69,6 +70,10 @@ export const appErrorCodeRegistry: readonly AppErrorCodePolicy[] = [
   errorCode("temporary_service_failure", "temporary", {
     retryable: true,
     retryPolicy: "idempotent_or_keyed_only",
+  }),
+  errorCode("file_scan_unavailable", "temporary", {
+    retryable: true,
+    retryPolicy: "user_initiated_only",
   }),
   errorCode("database_unavailable", "temporary", {
     retryable: true,

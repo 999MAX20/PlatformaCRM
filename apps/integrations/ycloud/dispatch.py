@@ -33,6 +33,10 @@ def send_text(channel, recipient_id, text, payload):
                 conversation__channel="whatsapp", conversation__external_user_id=recipient_id, direction="outbound")
             if message.text != text or message.status != BotMessage.Statuses.DELIVERING:
                 raise client.YCloudError("message_changed")
+            if binding.onboarding_type == YCloudConnection.OnboardingTypes.APP and message.sender_type in {"bot", "ai"}:
+                from apps.bots.lifecycle import conversation_ai_block_reason
+                if conversation_ai_block_reason(message.conversation):
+                    raise client.YCloudError("staff_takeover")
             if message.sender_type == BotMessage.SenderTypes.MANAGER:
                 from django.contrib.auth import get_user_model
                 from apps.businesses.access import Actions, Resources, can
@@ -133,6 +137,10 @@ def apply_status(binding, data):
         raise client.YCloudError("invalid_message")
     attempts = YCloudDispatch.objects.select_for_update().filter(connection=binding)
     attempt = attempts.filter(provider_id=provider_id).first()
+    if attempt is None:
+        from apps.integrations.ycloud.coexistence import apply_app_status
+        if apply_app_status(binding, data):
+            return
     if attempt is None:
         try:
             correlation = UUID(str(data.get("externalId", "")))

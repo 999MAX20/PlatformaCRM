@@ -1,7 +1,7 @@
 import { Navigate } from "react-router";
 
-import { PageLoader, BusinessRouteRedirect } from "./routeGuards";
-import { AccountPage, LeadsPage, DealsPage, ClientsPage, TasksPage, CalendarPage, ConversationsPage, TimelinePage, BotsPage, IntegrationsPage, AIAgentsPage, AutomationsPage, AnalyticsPage, SettingsPage } from "./routeLoaders";
+import { PageLoader, BusinessRouteRedirect, IntegrationsSettingsRedirect } from "./routeGuards";
+import { AccountPage, LeadsPage, DealsPage, ClientsPage, TasksPage, CalendarPage, ConversationsPage, TimelinePage, BotsPage, AIAgentsPage, AutomationsPage, AnalyticsPage, SettingsPage } from "./routeLoaders";
 export const legacyMerchantRoutes = [
   {
     path: "/leads",
@@ -88,7 +88,7 @@ export const legacyMerchantRoutes = [
     resource: "integrations",
     element: (
       <PageLoader>
-        <IntegrationsPage />
+        <IntegrationsSettingsRedirect />
       </PageLoader>
     ),
   },

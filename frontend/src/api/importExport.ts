@@ -42,7 +42,7 @@ export const importExportApi = {
     const { data } = await apiClient.post<ImportJob>(`/api/import-jobs/${id}/confirm/`);
     return data;
   },
-  exportEntity: async ({ business, entity }: { business: Id; entity: "clients" | "leads" | "deals" | "sales" | "catalog" }) => {
+  exportEntity: async ({ business, entity }: { business: Id; entity: "clients" | "leads" | "deals" | "sales" | "catalog" | "appointments" | "services" | "specialists" }) => {
     const response = await apiClient.get<Blob>(`/api/export/${entity}/`, {
       params: { business },
       responseType: "blob",

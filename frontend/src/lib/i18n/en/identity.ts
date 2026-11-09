@@ -1,4 +1,5 @@
 export const identity: Record<string, string> = {
+  "auth.sessionRecoveryFailed": "Could not restore your session. Try again.",
   "auth.logoutFailed": "Sign-out could not be completed. Your session may still be active. Please retry.",
   "auth.loggingOut": "Signing out…",
   "employeeAccess.title": "Employee access",
@@ -183,6 +184,8 @@ export const identity: Record<string, string> = {
     "Social sign-in failed. Try again or use email and password.",
   "mfa.hero": "Two steps keep your business account protected",
   "mfa.title": "Verify your sign-in",
+  "mfa.confirmedTitle": "Sign-in verified",
+  "mfa.confirmedText": "Code accepted. Select Sign in to open your workspace.",
   "mfa.text": "Enter the code from your authenticator app or a recovery code.",
   "mfa.addAuthenticator": "Add PlatformaCRM to your authenticator",
   "mfa.addAuthenticatorText": "Open Google Authenticator, Microsoft Authenticator, 1Password, or another TOTP app and add the key below.",

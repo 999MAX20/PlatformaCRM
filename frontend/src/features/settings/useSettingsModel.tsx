@@ -215,7 +215,7 @@ export function useSettingsModel() {
     .filter((section) => section.id !== "roles")
     .map((section) => ({
       ...section,
-      label: t(`settings.section.${section.id}`),
+      label: t(section.id === "integrations" ? "nav.integrations" : `settings.section.${section.id}`),
       group:
         section.group || settingsSectionGroupFallback[section.id] || "advanced",
     }));

@@ -1,5 +1,9 @@
+from apps.core.client_projection import visible_client
+from apps.core.crm_read_scope import readable_link, readable_queryset
+from apps.businesses.access import Resources
 from datetime import timedelta
 from string import Formatter
+from urllib.parse import unquote, urlsplit
 
 from django.db import transaction
 from django.db.models import Count, Q
@@ -24,6 +28,8 @@ WHATSAPP_TEMPLATE_REQUIRED_REASON = "WhatsApp campaign requires an approved temp
 OPT_IN_REQUIRED_REASON = "Client has no opt-in for this channel."
 OPTED_OUT_REASON = "Client opted out from this channel."
 SUPPORTED_TEMPLATE_VARIABLES = {"client_name", "phone", "email", "business_name", "channel"}
+MAX_OUTREACH_TEMPLATE_CHARS = 16384
+MAX_OUTREACH_MESSAGE_CHARS = 65536
 APPOINTMENT_AUTOMATION_SCENARIOS = [
     {
         "key": "appointment_confirmation",
@@ -112,6 +118,9 @@ def _channel_filter(channel):
 
 
 def render_message(template, client):
+    parts = _template_parts(template)
+    if any(field is not None and field not in SUPPORTED_TEMPLATE_VARIABLES for _, field, _, _ in parts):
+        raise ValueError("Unsupported template variables.")
     values = {
         "client_name": client.full_name,
         "phone": client.phone,
@@ -119,16 +128,40 @@ def render_message(template, client):
         "business_name": client.business.name,
         "channel": client.source,
     }
-    return (template or "").format_map(_SafeTemplateValues(values))
+    rendered_parts = []
+    size = 0
+    for literal, field, _, _ in parts:
+        pieces = (literal,) if field is None else (literal, str(values[field]))
+        for piece in pieces:
+            size += len(piece)
+            if size > MAX_OUTREACH_MESSAGE_CHARS:
+                raise ValueError("Personalized message exceeds the size limit.")
+            rendered_parts.append(piece)
+    return "".join(rendered_parts)
+
+
+def _template_parts(text):
+    text = text or ""
+    if not isinstance(text, str) or len(text) > MAX_OUTREACH_TEMPLATE_CHARS:
+        raise ValueError("Template exceeds the size limit.")
+    try:
+        parts = list(Formatter().parse(text))
+    except ValueError:
+        raise ValueError("Invalid outreach template syntax.") from None
+    for _, field, specification, conversion in parts:
+        if field is not None and (not field or specification or conversion):
+            raise ValueError("Use named template variables without format specifications or conversions.")
+    return parts
+
+
+def validate_personalized_text(text):
+    if not isinstance(text, str) or len(text) > MAX_OUTREACH_MESSAGE_CHARS:
+        raise ValueError("Personalized message exceeds the size limit.")
+    return text
 
 
 def template_variables(text):
-    variables = set()
-    for _, field_name, _, _ in Formatter().parse(text or ""):
-        if not field_name:
-            continue
-        variables.add(field_name.split(".", 1)[0].split("[", 1)[0])
-    return variables
+    return {field for _, field, _, _ in _template_parts(text) if field is not None}
 
 
 def unsupported_template_variables(text):
@@ -136,23 +169,32 @@ def unsupported_template_variables(text):
 
 
 def record_explicit_consent(*, client, channel, source, note="", evidence=None):
+    """Record a public flag without overriding a prior channel refusal."""
     now = timezone.now()
-    return OutreachConsent.objects.update_or_create(
+    defaults = {
+        "status": OutreachConsent.Statuses.OPTED_IN,
+        "source": source,
+        "note": note,
+        "evidence_json": evidence or {},
+        "opted_in_at": now,
+        "opted_out_at": None,
+    }
+    consent, created = OutreachConsent.objects.get_or_create(
         business=client.business,
         client=client,
         channel=channel,
-        defaults={
-            "status": OutreachConsent.Statuses.OPTED_IN,
-            "source": source,
-            "note": note,
-            "evidence_json": evidence or {},
-            "opted_in_at": now,
-            "opted_out_at": None,
-        },
-    )[0]
+        defaults=defaults,
+    )
+    if not created:
+        # Evaluate refusal at the write boundary, including a STOP after the read.
+        OutreachConsent.objects.filter(pk=consent.pk).exclude(
+            status=OutreachConsent.Statuses.OPTED_OUT,
+        ).update(**defaults, updated_at=now)
+        consent.refresh_from_db()
+    return consent
 
 
-def preview_campaign_audience(campaign, limit=5):
+def preview_campaign_audience(campaign, limit=5, *, actor=None):
     if campaign.audience_type == OutreachCampaign.AudienceTypes.MANUAL:
         queryset = Client.objects.filter(
             business=campaign.business,
@@ -165,6 +207,7 @@ def preview_campaign_audience(campaign, limit=5):
     suppressed_count = 0
     clients = []
     for client in queryset[:limit]:
+        readable = visible_client(client, actor=actor, business=campaign.business) is not None
         allowed, reason = can_receive_campaign(client, campaign)
         if allowed:
             eligible_count += 1
@@ -172,12 +215,12 @@ def preview_campaign_audience(campaign, limit=5):
             suppressed_count += 1
         clients.append(
             {
-                "id": client.id,
-                "full_name": client.full_name,
-                "phone": client.phone,
-                "telegram_id": client.telegram_id,
-                "whatsapp_id": client.whatsapp_id,
-                "recipient_id": channel_recipient_id(client, campaign.channel),
+                "id": client.id if readable else None,
+                "full_name": client.full_name if readable else "",
+                "phone": client.phone if readable else "",
+                "telegram_id": client.telegram_id if readable else "",
+                "whatsapp_id": client.whatsapp_id if readable else "",
+                "recipient_id": channel_recipient_id(client, campaign.channel) if readable else "",
                 "eligible": allowed,
                 "suppression_reason": reason,
             }
@@ -201,6 +244,8 @@ def preview_campaign_audience(campaign, limit=5):
 def prepare_campaign_recipients(campaign, *, client_ids=None):
     if campaign.status not in {OutreachCampaign.Statuses.DRAFT, OutreachCampaign.Statuses.READY}:
         raise ValueError("Only draft or ready campaigns can be prepared.")
+    if unsupported_template_variables(campaign.message_text):
+        raise ValueError("Unsupported template variables.")
 
     if campaign.audience_type == OutreachCampaign.AudienceTypes.MANUAL:
         queryset = Client.objects.filter(business=campaign.business, id__in=client_ids or [], is_archived=False).filter(_channel_filter(campaign.channel))
@@ -283,7 +328,7 @@ def launch_campaign(campaign):
                 channel=campaign.channel,
                 category=Notification.Categories.OUTREACH,
                 priority=Notification.Priorities.NORMAL,
-                text=recipient.personalized_text or render_message(campaign.message_text, recipient.client),
+                text=validate_personalized_text(recipient.personalized_text or render_message(campaign.message_text, recipient.client)),
                 send_at=send_at + timedelta(seconds=stagger_seconds),
                 status=Notification.Statuses.PENDING,
                 action_url=f"/app/clients?client={recipient.client_id}",
@@ -467,8 +512,17 @@ def campaign_launch_checklist(campaign):
     }
 
 
-def appointment_automation_status(business):
+def appointment_automation_status(business, *, actor=None):
     labels = [scenario["label"] for scenario in APPOINTMENT_AUTOMATION_SCENARIOS]
+    notifications = readable_queryset(
+        Notification.objects.filter(category=Notification.Categories.SALES, action_label__in=labels),
+        actor=actor, business=business, resource=Resources.NOTIFICATIONS,
+    )
+    # Match the ordinary notification list's private conversation-recipient rule.
+    notifications = notifications.exclude(
+        Q(action_url__startswith="/app/conversations")
+        & Q(recipient__isnull=False) & ~Q(recipient=actor)
+    )
     counts = {
         label: {
             Notification.Statuses.PENDING: 0,
@@ -479,12 +533,7 @@ def appointment_automation_status(business):
         for label in labels
     }
     rows = (
-        Notification.objects.filter(
-            business=business,
-            category=Notification.Categories.SALES,
-            action_label__in=labels,
-        )
-        .values("action_label", "status")
+        notifications.order_by().values("action_label", "status")
         .annotate(total=Count("id"))
     )
     for row in rows:
@@ -507,26 +556,38 @@ def appointment_automation_status(business):
             }
         )
 
-    failed_notifications = [
-        {
+    failed_notifications = []
+    for notification in notifications.select_related("client", "appointment").filter(
+        status=Notification.Statuses.FAILED,
+    ).order_by("-updated_at", "-id")[:8]:
+        client = visible_client(notification.client, actor=actor, business=business)
+        appointment = readable_link(
+            notification.appointment, actor=actor, business=business, resource=Resources.APPOINTMENTS,
+        )
+        action_url = notification.action_url
+        # Saved navigation is a second Appointment identifier copy. A normal
+        # notification edit can detach the FK or leave a stale/mismatched URL.
+        try:
+            calendar_link = unquote(urlsplit(action_url).path).startswith("/app/calendar")
+        except ValueError:
+            action_url = ""
+            calendar_link = False
+        if calendar_link:
+            action_url = f"/app/calendar?appointment={appointment.pk}" if appointment is not None else ""
+        if (notification.appointment_id and appointment is None) or (
+            notification.client_id and client is None and action_url.startswith("/app/clients")
+        ):
+            action_url = ""
+        failed_notifications.append({
             "id": notification.id,
             "label": notification.action_label,
             "channel": notification.channel,
-            "client_name": notification.client.full_name if notification.client_id else "",
-            "client_phone": notification.client.phone if notification.client_id else "",
-            "appointment_id": notification.appointment_id,
+            "client_name": client.full_name if client is not None else "",
+            "client_phone": client.phone if client is not None else "",
+            "appointment_id": appointment.pk if appointment is not None else None,
             "send_at": notification.send_at,
-            "action_url": notification.action_url,
-        }
-        for notification in Notification.objects.select_related("client", "appointment")
-        .filter(
-            business=business,
-            category=Notification.Categories.SALES,
-            action_label__in=labels,
-            status=Notification.Statuses.FAILED,
-        )
-        .order_by("-updated_at", "-id")[:8]
-    ]
+            "action_url": action_url,
+        })
 
     return {
         "business": business.id,
@@ -694,8 +755,3 @@ def _write_campaign_activity(campaign, event_type, metadata, *, actor=None):
         text=f"Рассылка «{campaign.name}»: {event_type}",
         metadata=metadata,
     )
-
-
-class _SafeTemplateValues(dict):
-    def __missing__(self, key):
-        return ""

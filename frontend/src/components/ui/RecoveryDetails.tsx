@@ -1,18 +1,33 @@
 import { Check, Copy } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import type { AppError } from "../../api/appError";
 import { cn } from "../../lib/cn";
 import { useI18n } from "../../lib/i18n";
 import { canShowSupportDetails } from "../actions/actionFeedbackPolicy";
 
-export function RecoveryDetails({ error, className }: { error: AppError; className?: string }) {
+export function RecoveryDetails({ error, className, compact = false, copyLabel }: { error: AppError; className?: string; compact?: boolean; copyLabel?: string }) {
   const { t } = useI18n();
   const [copied, setCopied] = useState(false);
   const [copyFailed, setCopyFailed] = useState(false);
+  useEffect(() => { setCopied(false); setCopyFailed(false); }, [error.requestId]);
 
   if (!error.requestId) return null;
   if (!canShowSupportDetails(error)) return null;
+
+  if (compact) return <div className={className}>
+    <button type="button" className="platforma-focus-ring inline-flex min-h-8 items-center gap-1.5 rounded-control px-2 text-xs"
+      onClick={async () => {
+        try {
+          await navigator.clipboard.writeText(error.requestId!);
+          setCopied(true); setCopyFailed(false);
+        } catch { setCopied(false); setCopyFailed(true); }
+      }}>
+      {copied ? <Check aria-hidden="true" size={14} /> : <Copy aria-hidden="true" size={14} />}
+      {copied ? t("fallback.recovery.copied") : copyLabel || t("fallback.recovery.copy")}
+    </button>
+    {copyFailed && <p role="status" className="mt-1 break-all text-xs">{t("fallback.recovery.copyFailed")} {error.requestId}</p>}
+  </div>;
 
   return (
     <details

@@ -1,3 +1,10 @@
+## Исправления UI-аудита — 09.11.2026
+
+TaskEditor показывает даты связанных записей в timezone бизнеса и языке интерфейса.
+Save/Cancel закреплены вне прокрутки; кнопка сохраняет нативную связь с формой.
+Локальные desktop/mobile проверки: [evidence](../testing/evidence/crm-ui-fixes-20261109.md).
+Серверные правила, данные рабочей БД и deployment не изменены.
+
 # Задачи, напоминания и автоматизации
 
 Records workspace02.11: TaskEditor и общие карточки создают новые задачи на
@@ -6,7 +13,7 @@ appointment_ids в totals/list/create. Старые связи редактир�
 Новые automation формы default appointment_created; новые Lead/Deal triggers и
 шаблоны скрыты. Сохранённые правила/история и owner-run authority не изменены,
 перепривязки или автоматического выключения нет. Новые event links ведут к записи;
-follow-up/replay/lifecycle проверены. [Локальный evidence](../testing/evidence/records-publication-20261103.md)
+follow-up/replay/lifecycle проверены. [Локальный evidence](../testing/evidence/records-workspace-20261102.md)
 не означает live execution или publication.
 
 AUD-V01,31.10: по решению владельца конфигуратор owner-run действий должен иметь
@@ -17,6 +24,11 @@ branch недостаточно. Preview/save/замена состава/action
 не мигрировались и автоматически не выключались. Live execution не заявлен.
 [Evidence AUD-REMAINING](../testing/task-state/PRIMARY-SESSION.md#aud-remaining-20261031--aud-12c-and-aud-v01).
 
+
+AUD-08,30.10: реальный TaskEditor использует общий серверный ClientPicker для связи
+с клиентом; выбранное имя загружается по ID, доступны поиск/страницы/error/retry.
+Создание задачи и смена клиента проверены в изолированном browser-кандидате; прочие
+связи/автоматизации не менялись. Версия и проверки — AUD-08-20261030 в PRIMARY.
 
 Исторический аудит17.10 (`56dd124`) выявил неполную конфигурацию и историю UI;
 [методы проверки](../testing/project-audit-20261017.md) сохранены. AUD-06/04/05
@@ -130,8 +142,3 @@ Redis/PostgreSQL/recovery; local/eager тесты этого не доказыв
 Сверка 16.10: S04 уже подтвердил recovery на реальных, но изолированных
 PostgreSQL/Redis/Celery. Упоминание local/eager выше не означает отсутствие этого
 evidence; целевая production-среда, её task routes/alerts и R04 ещё не приняты.
-
-AUD-08,30.10: реальный TaskEditor использует общий серверный ClientPicker для связи
-с клиентом; выбранное имя загружается по ID, доступны поиск/страницы/error/retry.
-Создание задачи и смена клиента проверены в изолированном browser-кандидате; прочие
-связи/автоматизации не менялись. Версия и проверки — AUD-08-20261030 в PRIMARY.

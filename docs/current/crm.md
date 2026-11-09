@@ -7,6 +7,41 @@
 дубли автоматически: при них применение завершается ошибкой.
 [Проверки SQLite/PostgreSQL](../testing/evidence/db-maintenance-20261106.md).
 
+## Автоматическая основная точка — решение06.11.2026
+
+При обычном создании Business автоматически создаётся Branch с
+uses_business_defaults=true. Если у существующего Business нет ни одной строки
+Branch, миграция branches0003 создаёт такую точку; существующие явные/архивные
+филиалы не превращаются в автоматические и не восстанавливаются молча.
+Основная точка использует актуальные услуги, цены, длительности, специалистов,
+WorkingHours и персональные исключения Business без повторных привязок.
+Название/адрес/телефон следуют реквизитам Business, timezone остаётся общим.
+Уже созданный визит сохраняет снимок цены/длительности при переносе.
+
+При добавлении второй точки под блокировкой Business настройки первой
+материализуются в существующие BranchService/SpecialistBranch/ScheduleDay,
+сохраняя график, исключения, историю и доступ; uses_business_defaults выключается.
+Вторая точка требует явной настройки услуг, специалистов и графика.
+Архивирование запрещено, если не останется другого действующего неархивного
+филиала (409 last_active_branch), в том числе после предварительной паузы.
+Пауза и явное возобновление доступны; история и будущие визиты не удаляются.
+Проверка будущих визитов перед архивированием сохраняется.
+[Проверки и границы](../testing/evidence/single-location-20261106.md).
+
+## Годовая сводка календаря, 04.11.2026
+
+`GET /api/appointments/calendar-summary/`: обязательные business/start_from/start_to
+(даты, начало включено, конец исключён, диапазон1–366 дней), optional
+service/resource/branch/status. Даты группируются по start_at в timezone Business,
+не по пересечению длительности. Ответ: start_from/start_to/timezone, days с
+date/appointments и total; нулевые дни отсутствуют, данные клиентов не передаются.
+Архивные записи исключены; все остальные статусы учитываются, если нет фильтра.
+Существующие Business/APPOINTMENTS VIEW и OWN/TEAM/BUSINESS scope применяются до
+агрегации. CRM-MB01 branch write grants не меняют область просмотра истории;
+branch здесь фильтр внутри VIEW. Невалидный диапазон/ID/status возвращает400,
+нет права VIEW403. Сводка не изменяет записи, audit, BusinessEvent или уведомления.
+[Проверки и ограничения](../testing/evidence/calendar-overview-20261104.md).
+
 ## C10 — очистка записей повторных команд, 04.11.2026
 
 prune_expired_crm_commands повторно проверяет expires_at по исходному cutoff
@@ -51,6 +86,46 @@ lock ограничен строкой беседы. Проверены SQLite/A
 live model/channel/deploy не заявлены. C09 creation effects проверены отдельным последующим срезом выше.
 [Доказательства и границы C08](../testing/evidence/remediation-c08-20261104.md).
 
+## Одиночная ручная запись — реализованный контракт 31.10.2026
+
+`POST /api/appointments/create-record/` создаёт существующий Appointment через
+доменный сервис. Обязательны business/client/service/resource/start_at; optional
+branch/responsible_user/source_conversation/lead/notes. Ручной default ответственного
+— actor; другой ответственный должен быть активным разрешённым участником Business.
+Назначение не расширяет OWN/TEAM-доступ. Отключённый исторический ответственный
+сохраняется, уведомления/задачи не переназначаются автоматически другому сотруднику.
+Для источника нужны текущие Conversation VIEW/UPDATE и совпадающие Business/Client.
+Закрытые Lead/Deal не открываются заново; новая заявка не создаётся автоматически.
+Старые generic/Lead/Inbox endpoints сохраняют совместимость. С02.11 новая
+подтверждённая AI-команда создания визита также использует create_record;
+исторические Lead/Deal API не переименованы и не удалены.
+
+Сервис под блокировкой Business повторно проверяет права, активность, branch,
+специалиста, будущее время и overlap. Optional expected_price/expected_duration_minutes
+сравниваются с текущими условиями: изменение даёт409 до эффекта. UI отправляет их.
+Idempotency-Key закреплён за payload/actor/Business; replay проверяет текущие права
+и возвращает текущую запись, а без VIEW только read_restricted=true. Изменённый
+payload требует нового ключа. Audit/activity и существующие followups/automation
+участвуют в транзакции; ошибка откатывает запись и связанные эффекты.
+Confirm/cancel/no-show/complete/reschedule принимают optional expected_updated_at;
+новый UI передаёт версию, stale409 требует обновления. Старые клиенты без версии
+совместимы. План/денежный контракт не реализован этим пакетом; early completion
+добавлен02.11: до end_at нужны действующий actor и непустая причина, они вместе
+с временем сохраняются в activity/audit внутри транзакции перехода.
+AI-adapter переноса сохраняет текущего специалиста при отсутствии resource в
+команде и передаёт верхнеуровневую reason в существующий сервис/activity/audit.
+Явный resource, включая null, не заменяется; доменная проверка остаётся обязательной.
+Проверки этой дельты: [VOICE-HARDENING](../testing/evidence/voice-hardening-20261105.md).
+Решение05.11: обычная голосовая команда выполняется после явной отправки без
+повторного просмотра. Точный proposal/approval и доменный write одного шага
+атомарны; actor/Business/версии/replay и доменные права сохранены. Другие AI-пути
+сохраняют review. [Проверки](../testing/evidence/voice-direct-20261105.md).
+Nullable responsible_user/source_conversation добавлены scheduling0010 без backfill
+или удаления старых данных. Source conversation ID выдаётся только с текущим VIEW.
+[Версия, проверки и границы](../testing/task-state/PRIMARY-SESSION.md#crm-r01-record-first-20261031--single-appointment-package).
+
+# CRM: инварианты и технические границы
+
 ## Первый Records workspace — локальная реализация02.11.2026
 
 `GET /api/appointments/workspace/` применяет существующий readable Appointment
@@ -71,7 +146,58 @@ Primary Appointment card не выбирает последнюю Lead клие�
 не создаёт Lead/Deal. Метрики визитов используют start_at, реальные состояния,
 source и responsible_user; стоимость визита не становится фактическим receipt.
 Legacy rules/import/API сохраняют прежнюю семантику. Схема в этом цикле не менялась.
-[Точная матрица, проверки и граница публикации](../testing/evidence/records-publication-20261103.md).
+[Точная матрица, проверки и граница публикации](../testing/evidence/records-workspace-20261102.md).
+
+AUD-08: `/api/clients/?business=<id>&q=<query>&page=<n>&page_size=<n>` ограничивает
+поиск выбранным Business внутри текущей области VIEW. Необязательный business —
+положительный bigint; неверный ID даёт400, чужой недоступный бизнес — пустую выборку.
+Без business прежний контракт доступной совокупности сохраняется. Архив/field policy
+не меняются. ClientPicker использует list/detail, не новый endpoint; проверки и граница
+публикации — AUD-08-20261030 в PRIMARY.
+
+AUD-10: `Lead.add-note` принимает `Idempotency-Key`; заметка, audit/activity и receipt
+атомарны. Тот же ключ/payload не создаёт повтор, изменённый payload даёт409. Текущий
+доступ к Lead проверяется до replay; возвращается текущая проекция Note/Task, для
+Task replay требуется текущий VIEW. Browser-key `lead-offline:<first-attempt-ms>:<uuid>`
+имеет окно повтора1ч, сервер отклоняет просроченный/некорректный ключ до эффекта.
+Обычные ключи/retention/prune не изменены. Задачи карточки Lead используют тот же
+`create-task` domain flow online/offline; применяются его действующие назначения,
+права и история. Это не новый финансовый или автоматический повтор неизвестного
+результата. Версия/границы проверок — AUD-10-20261030 в PRIMARY.
+
+FU-HIST-02: public form success retains fresh submission/Lead receipt IDs but never
+reveals prior Client matching; duplicate_warning is a constant false compatibility
+placeholder. Website intake returns null Client/Lead links regardless of internal
+pipeline outcome, retaining its fresh conversation UUID. Matching, creation, duplicate
+staff evidence, consent, activity and BusinessEvents remain internal and unchanged.
+Authenticated staff projections retain their existing independent read rules.
+
+OFFICIAL-10 Inbox scope, 28.10.2026: Inbox create-command success and read permission
+are independent. Unreadable child result is a safe acknowledgement; readable keyed
+Task/Appointment retry is a current actor-aware read, not the stored receipt DTO.
+Original receipt/status and write/dedup semantics remain. Other generic replay callers
+are unchanged and not newly certified. See OFFICIAL-10-INBOX-20261028 evidence.
+
+
+AUD-20, 21.10: API create заявки и импорт заявок используют доменный create_lead.
+LOST требует непустую lost_reason; lost_at/lost_by выставляет сервер. Для остальных
+статусов причина потери запрещена; неизвестный статус импорта отклоняется, пустой
+сохраняет NEW. Создание атомарно с activity/audit и существующими create-effects.
+История фиксирует начальное состояние, без фиктивного перехода из NEW.
+Подтверждённый AI crm_create использует те же serializers/domain services, без
+дублирования create activity/audit; отдельный аудит подтверждённой команды сохранён.
+API create сделки и импорт сделок используют create_deal: стадия активна, относится
+к той же воронке/Business, определяет OPEN/WON/LOST; явный status должен совпадать.
+Проверяются required fields и роли стадии, LOST требует причину. Probability,
+stage_entered_at и won/lost metadata — серверные; initial DealStageHistory имеет
+пустой from-state. Previous state не выдумывается, reopen использует обычный fallback.
+Обычная UI-форма, импорт сделки и Inbox выбирают активную открытую стадию; при
+её отсутствии импорт/Inbox возвращают ошибку атомарно, форма блокирует сохранение.
+Миграции и исправление исторических данных не выполнялись. Версия, тесты и границы — [AUD-20 checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-20-20261021--initial-lead-and-deal-lifecycle-invariants).
+
+Статус: **действующий контракт**. Срез исходников 07.10.2026, `f01d226`.
+Объём задаёт [продукт](product.md); наличие метода в коде не является его новой
+сертификацией или разрешением обойти [доступ](access.md).
 
 ## Принятые правила Записи и плана — 29.10.2026
 
@@ -131,7 +257,7 @@ Lead/Deal; старый черновик заново проверяет дос�
 Срез: e02a28f5 + task diff и сохранённые prerequisites. `Appointment` сохраняет
 non-null service/start/end, nullable resource, booked_price/duration и
 responsible_user/source_conversation. Рабочая БД не мигрировалась.
-[Проверки и границы плана](../testing/evidence/records-publication-20261103.md). `Payment`
+[Проверки и границы плана](../testing/evidence/visit-plans-20261102.md). `Payment`
 уже содержит receipt/refund, original/refunded_amount и submission_id/hash.
 Новые таблицы ниже дополняют существующие слои, не заменяют их и не вводят ERP.
 Market exchange/кампании исключены из пилота02.11; native реализует второй
@@ -324,74 +450,11 @@ Lead/Deal данные/API/история сохраняются, но их ра
 не вводится. Точный состав страницы, consumer matrix и критерии —
 [первый результат R01](roadmap.md#первый-результат-r01--страница-записи-и-замена-рабочего-процесса).
 Статус02.11 — Records/pipeline и следующий цикл планов реализованы локально;
-[Records evidence](../testing/evidence/records-publication-20261103.md) и
-[plans evidence](../testing/evidence/records-publication-20261103.md) разделяют проверки.
+[Records evidence](../testing/evidence/records-workspace-20261102.md) и
+[plans evidence](../testing/evidence/visit-plans-20261102.md) разделяют проверки.
 Records/планы позднее опубликованы6349acdf; [квитанция03.11](../testing/evidence/records-publication-20261103.md)
 фиксирует точный scope. Целевая среда не принята. Новая денежная логика — следующий
 цикл; D01 обязателен, Market после пилота, native — второй разработчик.
-
-## Одиночная ручная запись — реализованный контракт 31.10.2026
-
-`POST /api/appointments/create-record/` создаёт существующий Appointment через
-доменный сервис. Обязательны business/client/service/resource/start_at; optional
-branch/responsible_user/source_conversation/lead/notes. Ручной default ответственного
-— actor; другой ответственный должен быть активным разрешённым участником Business.
-Назначение не расширяет OWN/TEAM-доступ. Отключённый исторический ответственный
-сохраняется, уведомления/задачи не переназначаются автоматически другому сотруднику.
-Для источника нужны текущие Conversation VIEW/UPDATE и совпадающие Business/Client.
-Закрытые Lead/Deal не открываются заново; новая заявка не создаётся автоматически.
-Старые generic/Lead/Inbox endpoints сохраняют совместимость. С02.11 новая
-подтверждённая AI-команда создания визита также использует create_record;
-исторические Lead/Deal API не переименованы и не удалены.
-
-Сервис под блокировкой Business повторно проверяет права, активность, branch,
-специалиста, будущее время и overlap. Optional expected_price/expected_duration_minutes
-сравниваются с текущими условиями: изменение даёт409 до эффекта. UI отправляет их.
-Idempotency-Key закреплён за payload/actor/Business; replay проверяет текущие права
-и возвращает текущую запись, а без VIEW только read_restricted=true. Изменённый
-payload требует нового ключа. Audit/activity и существующие followups/automation
-участвуют в транзакции; ошибка откатывает запись и связанные эффекты.
-Confirm/cancel/no-show/complete/reschedule принимают optional expected_updated_at;
-новый UI передаёт версию, stale409 требует обновления. Старые клиенты без версии
-совместимы. План/денежный контракт не реализован этим пакетом; early completion
-добавлен02.11: до end_at нужны действующий actor и непустая причина, они вместе
-с временем сохраняются в activity/audit внутри транзакции перехода.
-Nullable responsible_user/source_conversation добавлены scheduling0010 без backfill
-или удаления старых данных. Source conversation ID выдаётся только с текущим VIEW.
-[Версия, проверки и границы](../testing/task-state/PRIMARY-SESSION.md#crm-r01-record-first-20261031--single-appointment-package).
-
-# CRM: инварианты и технические границы
-
-AUD-10: `Lead.add-note` принимает `Idempotency-Key`; заметка, audit/activity и receipt
-атомарны. Тот же ключ/payload не создаёт повтор, изменённый payload даёт409. Текущий
-доступ к Lead проверяется до replay; возвращается текущая проекция Note/Task, для
-Task replay требуется текущий VIEW. Browser-key `lead-offline:<first-attempt-ms>:<uuid>`
-имеет окно повтора1ч, сервер отклоняет просроченный/некорректный ключ до эффекта.
-Обычные ключи/retention/prune не изменены. Задачи карточки Lead используют тот же
-`create-task` domain flow online/offline; применяются его действующие назначения,
-права и история. Это не новый финансовый или автоматический повтор неизвестного
-результата. Версия/границы проверок — AUD-10-20261030 в PRIMARY.
-
-
-AUD-20, 21.10: API create заявки и импорт заявок используют доменный create_lead.
-LOST требует непустую lost_reason; lost_at/lost_by выставляет сервер. Для остальных
-статусов причина потери запрещена; неизвестный статус импорта отклоняется, пустой
-сохраняет NEW. Создание атомарно с activity/audit и существующими create-effects.
-История фиксирует начальное состояние, без фиктивного перехода из NEW.
-Подтверждённый AI crm_create использует те же serializers/domain services, без
-дублирования create activity/audit; отдельный аудит подтверждённой команды сохранён.
-API create сделки и импорт сделок используют create_deal: стадия активна, относится
-к той же воронке/Business, определяет OPEN/WON/LOST; явный status должен совпадать.
-Проверяются required fields и роли стадии, LOST требует причину. Probability,
-stage_entered_at и won/lost metadata — серверные; initial DealStageHistory имеет
-пустой from-state. Previous state не выдумывается, reopen использует обычный fallback.
-Обычная UI-форма, импорт сделки и Inbox выбирают активную открытую стадию; при
-её отсутствии импорт/Inbox возвращают ошибку атомарно, форма блокирует сохранение.
-Миграции и исправление исторических данных не выполнялись. Версия, тесты и границы — [AUD-20 checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-20-20261021--initial-lead-and-deal-lifecycle-invariants).
-
-Статус: **действующий контракт**. Срез исходников 07.10.2026, `f01d226`.
-Объём задаёт [продукт](product.md); наличие метода в коде не является его новой
-сертификацией или разрешением обойти [доступ](access.md).
 
 ## Общие правила
 
@@ -608,7 +671,8 @@ CRM-аккаунт, приглашение и seat не создаются ав�
 Общие кабинеты/оборудование и глобальный аккаунт не удаляются вместе со специалистом.
 
 Услуга доступна для записи только при разрешённой связке филиал/услуга/специалист.
-Продолжительность и цена читаются из предложения филиала; визит сохраняет снимок
+В явном филиале продолжительность и цена читаются из его предложения; автоматическая
+основная точка использует Service Business. Визит сохраняет снимок
 условий, изменение каталога не переписывает прошлые визиты. Переезд задаётся явно
 между филиалами, проверяется глобально по специалисту вместе с overlap. Часы филиала
 ограничивают интервалы специалиста, исключения даты и отсутствие уточняют их.
@@ -621,8 +685,9 @@ CRM-аккаунт, приглашение и seat не создаются ав�
 Смена филиала отзывает прежний выбор; запись повторно проверяет актуальные условия.
 
 Разрешённое расширение по запросу владельца 12.10.2026; локальная реализация и проверка
-зафиксированы в CRM-MB01-IMPLEMENT-20261012. Для бизнеса без филиалов сохраняется
-совместимый путь прежнего расписания. Сценарий: один Business,
+зафиксированы в CRM-MB01-IMPLEMENT-20261012. Дельта06.11 создаёт основную точку
+для бизнеса без филиалов; прежний путь без Branch остаётся совместимостью
+legacy callers/fixtures, а не обязательным шагом настройки пользователем. Сценарий: один Business,
 одна CRM и пять филиалов. Разделение Business между независимыми клиентами CRM
 остаётся границей tenant isolation; филиал — подразделение внутри этого Business.
 
@@ -667,6 +732,28 @@ CRM-аккаунт, приглашение и seat не создаются ав�
 [roadmap](roadmap.md#crm-mb01-запрошенная-многофилиальная-работа).
 
 ## Задачи, уведомления и автоматизации
+
+Внутренние Notification имеют фиксированные NotificationRecipient с независимыми
+received_at/opened_at/read_at/acknowledged_at. Объявление публикуется для активных
+участников Business, включая владельца; рабочее уведомление сохраняет существующего
+адресата/маршрутизацию (recipient=null означает общую аудиторию). Новые участники
+не добавляются к старым публикациям. Повтор producer/save не расширяет аудиторию.
+Текущий доступ к рабочему источнику проверяется при каждом чтении и действии.
+
+Открытие полного текста отмечает opened/read; «Прочитать всё» отмечает только
+личное read на начало операции. Явное «Подтвердить ознакомление» доступно после
+открытия объявления и сохраняет первую отметку с audit. Возврат в непрочитанное
+очищает только текущий read_at, сохраняя opened_at и acknowledged_at. Мониторинг
+показывает текущую отметку прочтения отдельно от устойчивых открытия/ознакомления;
+это регистрация действия интерфейса, а не доказательство внимания человека.
+Публикация/отзыв/мониторинг — owner/admin с MANAGE. Ключ публикации защищает повтор,
+контент неизменяем, отзыв скрывает объявление из лент, но сохраняет аудиторию/историю.
+
+Перенос legacy read_at сохраняет только имевшееся общее состояние для текущих
+получателей, не выдумывает открытие/ознакомление и не запускает отправку/toast.
+Клиентская внешняя доставка остаётся отдельной. Решение NOTIFICATIONS-PERSONAL-20261028
+заменяет shared-read контракт OFFICIAL-21 / AUD-17 для внутренней ленты;
+прежнее evidence сохранено в PRIMARY-SESSION. Рабочая миграция отдельно.
 
 Task поддерживает start/done/cancel/reopen/undo-cancel, назначение, watchers,
 срок/напоминание/snooze и связи с CRM. Cancel требует причину; при undo
@@ -885,12 +972,37 @@ Same-client правила всех комбинаций связей, ранн�
 [payments](../../archive_docs/2026-10-07/docs/crm/client-payments.md).
 Они сохранены для проверки происхождения, не для выдачи задач или старых правил.
 
-AUD-08: `/api/clients/?business=<id>&q=<query>&page=<n>&page_size=<n>` ограничивает
-поиск выбранным Business внутри текущей области VIEW. Необязательный business —
-положительный bigint; неверный ID даёт400, чужой недоступный бизнес — пустую выборку.
-Без business прежний контракт доступной совокупности сохраняется. Архив/field policy
-не меняются. ClientPicker использует list/detail, не новый endpoint; проверки и граница
-публикации — AUD-08-20261030 в PRIMARY.
+
+## OFFICIAL-18 Lead follow-up Task assignment, 28.10.2026
+
+OFFICIAL-18, 28.10.2026: Lead follow-up Task creation now validates the
+resolved assignee with ordinary validate_assignment(creating=True) and checks TASKS
+CREATE on the final unsaved Task, not on the source Lead. Current source Lead VIEW,
+Business/module and archive/lock checks remain; direct service calls also enforce actor.
+Wrong source-based TASKS guards removed for this action only. No TASKS UPDATE required,
+default/null/unassigned behavior retained where normal creation policy permits.
+BEFORE20:8 security gaps,2 false denials,10 controls. AFTER28 new tests within113
+affected and combined1068 PASS, zero skips; syntax/system/drift/diff/reverse PASS.
+HEAD98925b67 + WIP/17 prior closed findings + patch. Evidence OFFICIAL-18-20261028
+checkpoint and output/security-remediation-20261028/lead-task-assignment/fix-report.md.
+Local assignment-boundary proof only; generic replay/production/PG not certified.
+This is OFFICIAL-18, unrelated to already-closed historical AUD18 export.
+
+
+## OFFICIAL-19 outreach action enforcement, 28.10.2026
+
+OFFICIAL-19, 28.10.2026: existing outreach role eligibility is now intersected
+with current NOTIFICATIONS action/object decisions at all12 role-helper callsites.
+CRUD uses CREATE/UPDATE and server-owned candidate; campaign actions and consent bulk
+use existing MANAGE map/actual campaign or consent candidate. Explicit overrides and
+OWN/TEAM/current membership apply before writes/domain calls. No new role eligibility
+or Client-derived consent owner. Capability helper reused; notifications currently has
+no module mapping/toggle, only injected disabled-boundary integration proof claimed.
+BEFORE22:14 failing methods/17 security assertions,8 controls PASS. AFTER27 new tests
+within98 affected and combined1095 PASS/no skips; syntax/system/drift/diff/reverse PASS.
+HEAD98925b67 + WIP/18 prior closed packets + patch. Evidence OFFICIAL-19-20261028 and
+output/security-remediation-20261028/outreach-mutation-permissions/fix-report.md.
+No real delivery or production/PG/full browser certification.
 
 ### AUD-09 — показатели услуг, 30.10.2026
 

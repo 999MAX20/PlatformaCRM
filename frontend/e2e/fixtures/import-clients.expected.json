@@ -1,0 +1,142 @@
+[
+  {
+    "external_id": "TEST-CLIENT-20261106-001",
+    "full_name": "Анна Смирнова",
+    "phone": "+12025550101",
+    "email": "test.client.01@example.com",
+    "notes": "Вымышленный клиент. Связь по email; удобно после 15:00."
+  },
+  {
+    "external_id": "TEST-CLIENT-20261106-002",
+    "full_name": "Данияр Ахметов",
+    "phone": "+12025550102",
+    "email": "test.client.02@example.com",
+    "notes": "Вымышленный клиент. Предпочитает утреннее время."
+  },
+  {
+    "external_id": "TEST-CLIENT-20261106-003",
+    "full_name": "Мария Ким",
+    "phone": "+12025550103",
+    "email": "test.client.03@example.com",
+    "notes": "Вымышленный клиент. Обращение с сайта; интересуется услугами."
+  },
+  {
+    "external_id": "TEST-CLIENT-20261106-004",
+    "full_name": "Алексей Волков",
+    "phone": "+12025550104",
+    "email": "test.client.04@example.com",
+    "notes": "Вымышленный клиент. Рекомендация знакомого; удобны будни."
+  },
+  {
+    "external_id": "TEST-CLIENT-20261106-005",
+    "full_name": "Алия Садыкова",
+    "phone": "+12025550105",
+    "email": "test.client.05@example.com",
+    "notes": "Вымышленный клиент. Предпочитает общение на казахском языке."
+  },
+  {
+    "external_id": "TEST-CLIENT-20261106-006",
+    "full_name": "Ирина Белова",
+    "phone": "+12025550106",
+    "email": "test.client.06@example.com",
+    "notes": "Вымышленный клиент. Связь по email; удобно после 15:00."
+  },
+  {
+    "external_id": "TEST-CLIENT-20261106-007",
+    "full_name": "Тимур Омаров",
+    "phone": "+12025550107",
+    "email": "test.client.07@example.com",
+    "notes": "Вымышленный клиент. Предпочитает утреннее время."
+  },
+  {
+    "external_id": "TEST-CLIENT-20261106-008",
+    "full_name": "Елена Петрова",
+    "phone": "+12025550108",
+    "email": "test.client.08@example.com",
+    "notes": "Вымышленный клиент. Обращение с сайта; интересуется услугами."
+  },
+  {
+    "external_id": "TEST-CLIENT-20261106-009",
+    "full_name": "Олег Соколов",
+    "phone": "+12025550109",
+    "email": "test.client.09@example.com",
+    "notes": "Вымышленный клиент. Рекомендация знакомого; удобны будни."
+  },
+  {
+    "external_id": "TEST-CLIENT-20261106-010",
+    "full_name": "София Ли",
+    "phone": "+12025550110",
+    "email": "test.client.10@example.com",
+    "notes": "Вымышленный клиент. Предпочитает общение на казахском языке."
+  },
+  {
+    "external_id": "TEST-CLIENT-20261106-011",
+    "full_name": "Ольга Николаева",
+    "phone": "+12025550111",
+    "email": "test.client.11@example.com",
+    "notes": "Вымышленный клиент. Связь по email; удобно после 15:00."
+  },
+  {
+    "external_id": "TEST-CLIENT-20261106-012",
+    "full_name": "Руслан Каримов",
+    "phone": "+12025550112",
+    "email": "test.client.12@example.com",
+    "notes": "Вымышленный клиент. Предпочитает утреннее время."
+  },
+  {
+    "external_id": "TEST-CLIENT-20261106-013",
+    "full_name": "Айгерім Нұрланқызы",
+    "phone": "+12025550113",
+    "email": "test.client.13@example.com",
+    "notes": "Вымышленный клиент. Обращение с сайта; интересуется услугами."
+  },
+  {
+    "external_id": "TEST-CLIENT-20261106-014",
+    "full_name": "Михаил Орлов",
+    "phone": "+12025550114",
+    "email": "test.client.14@example.com",
+    "notes": "Вымышленный клиент. Рекомендация знакомого; удобны будни."
+  },
+  {
+    "external_id": "TEST-CLIENT-20261106-015",
+    "full_name": "Дарья Кузнецова",
+    "phone": "+12025550115",
+    "email": "test.client.15@example.com",
+    "notes": "Вымышленный клиент. Предпочитает общение на казахском языке."
+  },
+  {
+    "external_id": "TEST-CLIENT-20261106-016",
+    "full_name": "Арман Серікұлы",
+    "phone": "+12025550116",
+    "email": "test.client.16@example.com",
+    "notes": "Вымышленный клиент. Связь по email; удобно после 15:00."
+  },
+  {
+    "external_id": "TEST-CLIENT-20261106-017",
+    "full_name": "Наталья Морозова",
+    "phone": "+12025550117",
+    "email": "test.client.17@example.com",
+    "notes": "Вымышленный клиент. Предпочитает утреннее время."
+  },
+  {
+    "external_id": "TEST-CLIENT-20261106-018",
+    "full_name": "Ерлан Әбдірахманов",
+    "phone": "+12025550118",
+    "email": "test.client.18@example.com",
+    "notes": "Вымышленный клиент. Обращение с сайта; интересуется услугами."
+  },
+  {
+    "external_id": "TEST-CLIENT-20261106-019",
+    "full_name": "Виктор Павлов",
+    "phone": "+12025550119",
+    "email": "test.client.19@example.com",
+    "notes": "Вымышленный клиент. Рекомендация знакомого; удобны будни."
+  },
+  {
+    "external_id": "TEST-CLIENT-20261106-020",
+    "full_name": "Аружан Қасымова",
+    "phone": "+12025550120",
+    "email": "test.client.20@example.com",
+    "notes": "Вымышленный клиент. Предпочитает общение на казахском языке."
+  }
+]

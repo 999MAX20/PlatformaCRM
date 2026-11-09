@@ -33,6 +33,8 @@ export type SettingsGroupKey = (typeof settingsGroupOrder)[number];
 export type SettingsSectionConfig = { id: string; group?: SettingsGroupKey; resource: string; action?: string };
 
 export const settingsSections: SettingsSectionConfig[] = [
+  { id: "integrations", group: "communication", resource: "integrations", action: "view" },
+  { id: "voice-input", group: "communication", resource: "ai_assistant", action: "suggest" },
   { id: "business-profile", group: "business", resource: "settings", action: "update" },
   { id: "team-access", group: "team", resource: "team", action: "view" },
   { id: "roles", group: "team", resource: "team", action: "manage" },

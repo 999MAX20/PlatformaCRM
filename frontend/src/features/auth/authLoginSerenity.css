@@ -432,6 +432,15 @@
   text-align: center;
 }
 
+.serenity-login--mfa .serenity-login__layout {
+  align-items: safe center;
+  overflow-y: auto;
+}
+
+.serenity-login--mfa .serenity-login__card-copy {
+  display: block;
+}
+
 .serenity-login__badge {
   display: inline-flex;
   width: fit-content;

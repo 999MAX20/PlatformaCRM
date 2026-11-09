@@ -1,0 +1,103 @@
+{
+  "task": "UI-ANTISLOP-20261102",
+  "date": "2026-11-02",
+  "head": "e02a28f550e94a543c3d88acac7c1b19ee48f90b",
+  "boundary": "working tree with pre-existing WIP; not a release certificate",
+  "sources": {
+    "frontend/src/app/merchantRoutes.tsx": "f223cd738a9827cb0565c7a1a9e39b55403114779b279e12b794c737b8984ef2",
+    "frontend/src/app/router.tsx": "77beb65688e19826a3c203d50d0478941697feede85433d9fb61a5536aebe34a",
+    "frontend/src/app/routeMetadata.ts": "2b7c504ad7117ddc3713d052968e9a847a6dce227d36d395ea67d8b4ce949605",
+    "frontend/src/theme/semantic-tokens.json": "db46acdb3fe42f32ec61486ff2922bbc3192d3771b47da64c7d3f1608ee0b012",
+    "frontend/src/features/leads/components/LeadQueueItem.tsx": "f98cb3768cd38411200dc2a3fde85dbf622e8d4f3926454da6ffd984d5427c91",
+    "frontend/src/features/leads/components/LeadsTable.tsx": "274e1817c11fc22ab4684c83071f844cb2e9108dfe096f910b264e272ccd793c",
+    "frontend/src/features/leads/components/LeadsWorkspaceTable.tsx": "3966715e5c5116eab3057b3d8aa2d31d7c2fcaee7bb975ff215e51a7d7f792c4",
+    "frontend/src/features/leads/utils/leadFormat.tsx": "a9c286a50abc84fe0a0a1aa23e129ce725cc9f057beeb9c0e63c3eba89c555ef",
+    "frontend/src/features/dashboard/DashboardPage.tsx": "840a70b328511aa7a0ebdc2d07b554f5b7967838431844c6ec7708dc4faa9215",
+    "frontend/src/features/dashboard/OwnerDashboard.tsx": "4d1303e3b50cc734f7ffa4ec1695941431092938528146e77551568b86db583c",
+    "frontend/src/features/dashboard/OperationalDashboard.tsx": "e2f5a7f8acb8b4bf4868a178a400666b2e33cc01f1b8e11b94531898d42e7029",
+    "frontend/src/features/integrations/IntegrationsPage.tsx": "1c3bfbdd1d61d803d53d967d24d03869acf7f06ca7bdacad0bd78c5bd8c04ea6",
+    "frontend/src/features/integrations/components/ProviderCard.tsx": "0810760505acd02be10f9e8f472ce5188f1099539792a5ccb93f78c15c0a7472",
+    "frontend/src/components/ui/StateViews.tsx": "f6ddf7ac0b85345d7b9ec5b04b4d6725bd7371c0533baa6a08aef494146070d7",
+    "frontend/src/components/ui/FallbackSurfaces.tsx": "cb2ace1eb06932825e2031dab49b672d235dfd5ae9808e150456c84c331c9441",
+    "frontend/src/components/ui/Overlay.tsx": "0f42f207aa2a50cabb0f3be00e8eef208ed4588bb3dae910b3477b31938bfb1d",
+    "frontend/src/components/ui/SearchableSelect.tsx": "7575c449a7fe444b55952ba9751df193384a499e9dc0a9924f4b93018d89ec45",
+    "frontend/src/components/ui/StatusNotice.tsx": "1d89e110ee63459efdf242f123f04a71c63bfbdc63d295830485955d8fa42db3",
+    "frontend/src/components/forms/ClientPicker.tsx": "bf3cdf6a1637eb8b9c8eb2404a1815899054ce881f0499e880daf2547d5daf45",
+    "frontend/src/components/crm/CrmDataTable.tsx": "d655b153f951986bdf707b37fc3052e7bb5246b6d95a65ccc4a6594866062cc7",
+    "frontend/src/components/crm/CrmTableSurface.tsx": "8b99ce988c54028f55c37458381b105185699d54e40f7340d433034f76d9992e",
+    "frontend/src/components/tables/DataTable.tsx": "9f35a70ba630f0f30a9aaef6f69def29a0660e234566d9d9554ff86640881de0",
+    "frontend/src/lib/format.ts": "fb09d894c81f634c0e8bdbd8f77d76ae6bef4d1998c86523ec10593f945941b3",
+    "frontend/src/lib/i18n.tsx": "107ca94e84d49e951e7a630c89e728b40b86334dc7024aa365a49301e3f3dda2",
+    "frontend/src/lib/i18n/ru/deals.ts": "8af3d53421afd6a4cf6925cfa6d8864517598bd8c1fd3f7d5368c8971a3e4fd5",
+    "frontend/src/features/deals/components/DealsList.tsx": "60e02439a416f0238a27a1e36c298a43fb3506206c81ebd8453339e2ecc34fd6",
+    "frontend/src/features/calendar/CalendarPage.tsx": "030a4d3a72787e79a5a73c376f2a502de1053a277d9a0f5797973e8afd30b53c",
+    "frontend/src/features/calendar/components/CalendarBoard.tsx": "be033b585136a9f25f2eedb6d2f5b192c7ba164b8e41df54ebbe9b7632ea1e86",
+    "frontend/src/features/clients/ClientsPage.tsx": "698c32b5a3d3c7fbf6c52b608d7b19d647abf343c63a09b9232249b620335e3b",
+    "frontend/src/features/services/ServicesPage.tsx": "06b900e247aa4da3e49087c8530a08373939db21760507ef6b85d7985c3d902b",
+    "frontend/src/features/tasks/TasksPage.tsx": "59acb1444658904f863c41b6801d15ae9892253797a163a3bc18c9d5b7b86a37",
+    "frontend/src/features/conversations/ConversationsPage.tsx": "b07436084a2d11fa4e0ba7144dade85e7823ec8ab3d3687395d3c0b1dbbff4d8",
+    "frontend/src/features/conversations/components/ConversationThreadPane.tsx": "20aa272760ef79b8985146161f168f375c71606d3d8fd299ea4d9364424cc582",
+    "frontend/src/features/settings/SettingsPage.tsx": "48de15ccf9d38b43af0c732b840cc06711caa0f6ba21cedbd3635eae30d70f32",
+    "frontend/src/features/analytics/AnalyticsPage.tsx": "eb6ca078aa9f7436a466c1d4f9f181e7420288fee1c798b8b3ba4330a193b1e8",
+    "frontend/src/features/notifications/NotificationsPage.tsx": "c5f3c3b85df84e7aced3d68d4399030cf6975ca19fd522d7bdedb09b21444129",
+    "frontend/src/components/notifications/ServiceStatusNotice.tsx": "a90508e8e005a73ebe220ea83edb2a9a22286d7339f491db0c45cd9b835eb788",
+    "frontend/src/lib/i18n/en/deals.ts": "f911ecace3b52710d384c872b4b3fec1210b27e56f82fc4419252e835e0f0eb8",
+    "frontend/src/lib/i18n/kk/deals.ts": "cb0427f237b7685f3734c0d2d2123f73ce3ab5d0314d917ae02c96a4a2db613f",
+    "frontend/src/lib/i18n/en/leads.ts": "7c18ed94469746db781c39c00d6168ee1beb68136df8bbbc483e82e86d198835",
+    "frontend/src/lib/i18n/kk/leads.ts": "9c53d2a029a2e668b39fa5669202670527e8b897c575bd836cb23e1d2367d953"
+  },
+  "upstream": {
+    "revision": "941b1532f9cc8ffde766bca5921d75257c9e5762",
+    "files": {
+      "LICENSE": "9fd83fb1fda52ca0094b96e2ed5a3d6c42a81b95a6c6326553f5bbe570f443de",
+      "antislop.md": "c2341728e54e12db4f969f748c3431c701bbbccf67f276efa585a01e99e400d8",
+      "skills/antislop/SKILL.md": "30bc532fb59d4c77a301dfdd5ab9f495f098f1085f31e09b3064078ba39a7b01",
+      "skills/antislop/VERSION": "edf92dc2d0b9266d3d0933afb0cab7f1fc820b847a53329b4d4475e63d478155",
+      "skills/antislop-ui/SKILL.md": "e8cb54f3d436de9253e0e66e0a31b18be80b6054d67b3ad50a4f61fb9f4557f2",
+      "skills/antislop-copywriting/SKILL.md": "2434a6fb0603dea1e62d4c1968382def47af779bd0e43b2130edd49df41ba444",
+      "skills/antislop-code/SKILL.md": "004933009d352710dcbea7817101d5c188474a442e3ece26a6e0c18d3223898f",
+      "skills/antislop-human/SKILL.md": "49421878e0c014fa03deea8dcfbfcfae526a8423a43bb517ebfa3ef2cb4a80ef",
+      "skills/antislop-layoutmobile/SKILL.md": "8613395a5109f637837f5c24f0ce5e58a96df1c2567a9f7666fcaecc47ff39cd",
+      "skills/antislop-human/LICENSE-web-quality-skills": "c122223ac43e86421958e18623979942c21b642951e2e3736dcb63eff13587c3",
+      "skills/antislop-human/references/WCAG.md": "409ac9e24007f09f3704f890585c880cdd66780e9f14274b1a0e0c4557672330",
+      "skills/antislop-human/references/A11Y-PATTERNS.md": "4cb6276a237fbe05616b53688075461732454365eb7674d732f7197dddb14fff"
+    }
+  },
+  "tokenContrast": [
+    {
+      "foreground": "text.primary",
+      "background": "surface.default",
+      "ratio": 16.643103365826605,
+      "normal_text_AA": true
+    },
+    {
+      "foreground": "text.secondary",
+      "background": "surface.default",
+      "ratio": 6.830488907564441,
+      "normal_text_AA": true
+    },
+    {
+      "foreground": "text.muted",
+      "background": "surface.subtle",
+      "ratio": 4.658048329250903,
+      "normal_text_AA": true
+    },
+    {
+      "foreground": "text.inverse",
+      "background": "brand.default",
+      "ratio": 5.346140703839029,
+      "normal_text_AA": true
+    },
+    {
+      "foreground": "warning.content",
+      "background": "warning.soft",
+      "ratio": 4.9215046437731536,
+      "normal_text_AA": true
+    }
+  ],
+  "localScreenshots": {
+    "calendar-mobile.png": "0a1069d4c3cbcc4ff361e2b725f882ec732c1f2cddc61d8df2740196fd9060e5",
+    "leads-desktop.png": "a16bc42f7c47a3cb8740606e790798a5dac1a12abeca8df362b20beedf6ebd65",
+    "leads-mobile.png": "35882400473858a55eccfdbb4ba9ee63879c048f05bc8dc1012f96dca957b6a3"
+  }
+}

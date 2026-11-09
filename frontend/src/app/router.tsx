@@ -4,14 +4,16 @@ import { merchantFeatureRoutes } from "./merchantRoutes";
 import { legacyMerchantRoutes } from "./legacyRoutes";
 import { publicRoutes } from "./publicRoutes";
 import { platformRoutes } from "./platformRoutes";
+import { lazy } from "react";
 import { RouterProvider, createBrowserRouter } from "react-router";
 
 import { RouteErrorBoundary } from "../components/ui/RouteErrorBoundary";
 
 import { NotFoundPage } from "../features/pilot/NotFoundPage";
 
+const NotificationsPage = lazy(() => import("../features/notifications/NotificationsPage").then(module => ({ default: module.NotificationsPage })));
 
-const merchantChildren: Array<(typeof merchantFeatureRoutes)[number] & { permissionAction?: string }> = [...merchantFeatureRoutes];
+const merchantChildren: Array<(typeof merchantFeatureRoutes)[number] & { permissionAction?: string }> = [{ path: "notifications", element: <PageLoader><NotificationsPage /></PageLoader> }, ...merchantFeatureRoutes];
 
 const router = createBrowserRouter([
 ...publicRoutes,

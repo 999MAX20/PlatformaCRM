@@ -81,6 +81,11 @@ export const support: Record<string, string> = {
   "pilot.smoke6":
     "6. Open Integrations and make sure there are no dead-end buttons.",
   "pilot.systemActionsTitle": "Next actions from system data",
+  "serviceStatus.title": "Background processing status",
+  "serviceStatus.openSupport": "Open support",
+  "serviceStatus.openConnections": "Check connections",
+  "serviceStatus.askAdmin": "Ask your business administrator to check the connections.",
+  "serviceStatus.countsUnavailable": "Notification counts are unavailable",
   "serviceStatus.degraded.title": "Background processing is delayed",
   "serviceStatus.degraded.text": "Affected: {components}. Do not repeat actions already submitted. Contact your business administrator.",
   "serviceStatus.unknown.title": "No fresh background processing data",

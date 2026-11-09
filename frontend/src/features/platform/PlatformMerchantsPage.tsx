@@ -30,7 +30,7 @@ export function PlatformMerchantsPage() {
   const filtered = Boolean(query || status || service);
   return <div className="space-y-4" data-testid="platform-merchants-ready">
     <div className="flex flex-wrap items-center gap-3">
-      <Input aria-label={t("platform.merchants.search")} placeholder={t("platform.merchants.search")} value={query} onChange={event => update({ search: event.target.value, page: "" })} className="w-full sm:w-80" />
+      <Input pageSearch aria-label={t("platform.merchants.search")} placeholder={t("platform.merchants.search")} value={query} onChange={event => update({ search: event.target.value, page: "" })} />
       <Select aria-label={t("platform.merchants.status")} value={status} onChange={event => update({ status: event.target.value, page: "" })} className="w-48" options={[
         { value: "", label: t("platform.workspace.allStatuses") },
         ...["active", "trial", "inactive", "blocked"].map(value => ({ value, label: t(`platform.workspace.status.${value}`) })),

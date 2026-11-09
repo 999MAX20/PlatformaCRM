@@ -54,9 +54,11 @@ def call(method, path, body=None):
         raise YCloudError("provider_unavailable", retryable=method == "GET", ambiguous=method == "POST") from None
 
 
-def create_link(customer_id):
+def create_link(customer_id, onboarding_type="WHATSAPP_BUSINESS_PLATFORM"):
+    if not isinstance(onboarding_type, str) or onboarding_type not in {"WHATSAPP_BUSINESS_PLATFORM", "WHATSAPP_BUSINESS_APP"}:
+        raise YCloudError("invalid_onboarding_type")
     result = call("POST", "/partner/embeddedSignup/links", {
-        "partnerCustomerId": str(customer_id), "onboardingType": "WHATSAPP_BUSINESS_PLATFORM", "locale": "ru_RU",
+        "partnerCustomerId": str(customer_id), "onboardingType": onboarding_type, "locale": "ru_RU",
     })
     url = parse.urlsplit(str(result.get("onboardingUrl", "")))
     if url.scheme != "https" or url.netloc != "connect.ycloud.com" or url.path != "/open/whatsapp/onboard":

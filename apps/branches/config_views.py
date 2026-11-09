@@ -25,6 +25,9 @@ class BranchConfigurationMixin:
     @action(detail=True, methods=["get"])
     def catalog(self, request, pk=None):
         branch = self.get_object()
+        if branch.uses_business_defaults:
+            from .catalog import automatic_catalog
+            return Response(automatic_catalog(branch))
         offers = branch.service_offers.filter(is_active=True, service__is_active=True, service__is_archived=False).select_related("service")
         assignments = branch.specialist_assignments.filter(is_active=True, resource__is_active=True, resource__retired_at__isnull=True).select_related("resource").prefetch_related("services")
         if not branch.is_active or branch.archived_at:

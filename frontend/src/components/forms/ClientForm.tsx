@@ -32,9 +32,17 @@ export function ClientForm({
   onSubmit,
   onOpenClient,
   onMergeDuplicate,
+  submitError,
+  disabled = false,
+  showSubmit = true,
+  onStateChange,
 }: {
   businessId: Id;
-  initial?: Client;
+  initial?: Partial<Client>;
+  disabled?: boolean;
+  showSubmit?: boolean;
+  onStateChange?: (state: { dirty: boolean; pending: boolean }) => void;
+  submitError?: unknown;
   onSubmit: (payload: Partial<Client>) => Promise<unknown>;
   onOpenClient?: (id: Id) => void;
   onMergeDuplicate?: (duplicateId: Id) => Promise<unknown>;
@@ -57,8 +65,13 @@ export function ClientForm({
   const email = form.watch("email");
 
   useEffect(() => {
+    onStateChange?.({ dirty: form.formState.isDirty, pending: form.formState.isSubmitting });
+    return () => onStateChange?.({ dirty: false, pending: false });
+  }, [form.formState.isDirty, form.formState.isSubmitting, onStateChange]);
+
+  useEffect(() => {
     const hasContact = Boolean(phone?.trim() || email?.trim());
-    if (!hasContact) {
+    if (disabled || !hasContact) {
       setDuplicates([]);
       return;
     }
@@ -77,13 +90,14 @@ export function ClientForm({
         .catch(() => setDuplicateError(t("clients.duplicateError")));
     }, 450);
     return () => window.clearTimeout(timeout);
-  }, [businessId, email, initial?.id, phone, t]);
+  }, [businessId, disabled, email, initial?.id, phone, t]);
 
   return (
     <form
       data-testid="client-action-form"
       className="grid gap-4"
       onSubmit={form.handleSubmit(async (values) => {
+        if (disabled) return;
         try {
           await onSubmit({ ...values, business: businessId } as Partial<Client>);
         } catch {
@@ -91,6 +105,7 @@ export function ClientForm({
         }
       })}
     >
+      <fieldset disabled={disabled || (Boolean(onStateChange) && form.formState.isSubmitting)} className="grid gap-4">
       <Input label={t("clients.name")} error={form.formState.errors.full_name?.message} {...form.register("full_name")} />
       <div className="grid gap-4 sm:grid-cols-2">
         <Input label={t("clients.phone")} {...form.register("phone")} />
@@ -102,7 +117,7 @@ export function ClientForm({
           title={t("clients.duplicateTitle")}
           description={t("clients.duplicateText")}
           details={<div className="space-y-2">
-            {duplicates.slice(0, 3).map((client) => (
+            {duplicates.filter((client): client is DuplicateClient & { id: Id } => client.id !== null).slice(0, 3).map((client) => (
               <div key={client.id} className="flex flex-wrap items-center justify-between gap-2 rounded-control border border-platforma-warning/[0.18] bg-surface-card p-3">
                 <span className="font-semibold">{client.full_name} · {client.phone || client.email || t("clients.noContact")}</span>
                 {onOpenClient ? (
@@ -137,7 +152,9 @@ export function ClientForm({
       />
       <Input label={t("clients.sourceDetail")} {...form.register("source_detail")} />
       <Textarea label={t("clients.notes")} {...form.register("notes")} />
-      <Button data-testid="client-action-submit" type="submit" isLoading={form.formState.isSubmitting}>{duplicates.length && !initial ? t("clients.createAnyway") : t("clients.save")}</Button>
+      {submitError ? <ErrorState error={submitError} /> : null}
+      {showSubmit && <Button data-testid="client-action-submit" type="submit" isLoading={form.formState.isSubmitting}>{duplicates.length && !initial ? t("clients.createAnyway") : t("clients.save")}</Button>}
+      </fieldset>
     </form>
   );
 }

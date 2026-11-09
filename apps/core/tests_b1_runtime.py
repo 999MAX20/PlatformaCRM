@@ -77,14 +77,15 @@ class B1RuntimeReliabilityTests(TestCase):
         return rule, run
 
     def test_notification_claim_prevents_duplicate_delivery(self):
-        notification = self._notification()
+        notification = self._notification(channel=Notification.Channels.EMAIL)
 
         first_claim = claim_notification(notification.id)
         second_claim = claim_notification(notification.id)
-        result = deliver_notification(first_claim, claimed=True)
-
         self.assertIsNotNone(first_claim)
         self.assertIsNone(second_claim)
+        with patch("apps.notifications.delivery.send_mail", return_value=1) as send_mail:
+            result = deliver_notification(first_claim, claimed=True)
+        send_mail.assert_called_once()
         self.assertEqual(result["status"], "sent")
         notification.refresh_from_db()
         self.assertEqual(notification.status, Notification.Statuses.SENT)

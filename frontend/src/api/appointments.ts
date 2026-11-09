@@ -42,6 +42,13 @@ export type AppointmentListParams = {
 
 export const appointmentsApi = {
   ...createCrudApi<Appointment, AppointmentCreatePayload, AppointmentUpdatePayload>("/api/appointments/"),
+  calendarSummary: async (params: AppointmentListParams & { business: Id; start_from: string; start_to: string }) => {
+    const { data } = await apiClient.get<{
+      start_from: string; start_to: string; timezone: string;
+      days: { date: string; appointments: number }[]; total: number;
+    }>("/api/appointments/calendar-summary/", { params });
+    return data;
+  },
   legacyLinks: async (params: { business: number; kind: "lead" | "deal"; object_id: number; page: number }) => {
     const { data } = await apiClient.get<PaginatedResponse<Appointment> & {
       source: { kind: "lead" | "deal"; id: number; client: number | null; card: CrmCardPayload };

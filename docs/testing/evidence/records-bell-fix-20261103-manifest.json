@@ -1,0 +1,13 @@
+{
+  "apps/notifications/service_messages.py": "3f044ff79c20f3a596ef4bd3a43f3a05f17a486aa190680ee97473f2740d9b37",
+  "apps/notifications/serializers.py": "2bebf5445eeedb8cea9c0624e93899119669cb69cfef58ea82a562f7a1c0b666",
+  "apps/notifications/tests_service_messages.py": "14f9f004cfa13be9f86fc3dd6e99609e28b5e69ff9edf460e0f99581bd0d8797",
+  "frontend/src/features/calendar/RecordsLoadError.tsx": "2d2a835542da4b2b88034e7c3934c0f80bd24a8e72084b627feebfc68c51ba6b",
+  "frontend/src/features/calendar/RecordsPage.tsx": "26da9a0be4ba2492721c6a1082b433834bceb736331e10f29b13fe48e2ca8b05",
+  "frontend/src/lib/i18n/ru.ts": "435b17a52d86412ce7de4af1c1e4bf82f202283917fbd332cb2d1b9e2bd2eb9b",
+  "frontend/src/lib/i18n/kk.ts": "d5eceb4367fe3d1c0053e3d0834c43f4aedbefdca0e19fad3c074b85971ebd6e",
+  "frontend/src/lib/i18n/en.ts": "fbd9df62c03efb4779c5a9dac8ea130f34d848e0d0bc102943f80763ee1d832c",
+  "frontend/e2e/service-s03.spec.ts": "c55b29fbe7a6a8ea6922ca37153cdbfec8602071469ea755211e731d677a1b1d",
+  "frontend/e2e/records-bell-recovery.spec.ts": "87d887afd846b7a48d20196806a6ef23b18146ba885405418ca9a44470ea5beb",
+  "frontend/playwright.records-bell.config.ts": "e3c9597f1c7d6e3acbb98161adc29e69a2f483641596a8612e7b553868b8e4a4"
+}

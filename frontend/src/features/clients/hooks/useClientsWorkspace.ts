@@ -1,3 +1,4 @@
+import { customFilterParams } from "../../../components/crm/CustomFieldColumns";
 import { useCrmFilters, crmFilterParams } from "../../../components/crm/useCrmFilters";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
@@ -58,7 +59,7 @@ export function useClientsWorkspace({
   const setSelectedSegment = (segment: string) => updateFilter({ segment });
   const setQuickFilter = (quick: ClientQuickFilter) => updateFilter({ quick });
   const debouncedSearch = useDebouncedValue(search, 350);
-  const filterParams = crmFilterParams("clients", { ...filterState, search: debouncedSearch });
+  const filterParams = { ...crmFilterParams("clients", { ...filterState, search: debouncedSearch }), ...customFilterParams(searchParams) };
   const [ordering, setOrdering] = useState("-created_at");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(DEFAULT_CLIENTS_PAGE_SIZE);
@@ -72,7 +73,7 @@ export function useClientsWorkspace({
     return new Set(["source", "manager"]);
   });
   useEffect(() => {
-    localStorage.setItem("platforma.clients.columns", JSON.stringify([...visibleClientColumns]));
+    try { localStorage.setItem("platforma.clients.columns", JSON.stringify([...visibleClientColumns])); } catch { /* Keep the current view usable when storage is blocked. */ }
   }, [visibleClientColumns]);
   const [tagDraft, setTagDraft] = useState("");
   const [segmentDraft, setSegmentDraft] = useState<SegmentDraft>({
@@ -87,6 +88,7 @@ export function useClientsWorkspace({
       "clients",
       "filtered",
       businessId,
+      currentUserId,
       filterParams,
       ordering,
       page,
@@ -100,10 +102,10 @@ export function useClientsWorkspace({
         page_size: pageSize,
       }),
     enabled: Boolean(businessId),
-    placeholderData: keepPreviousData,
+    placeholderData: (previous, previousQuery) => previousQuery?.queryKey[2] === businessId && previousQuery?.queryKey[3] === currentUserId ? previous : undefined,
   });
 
-  const clientList = filteredClients.data?.clients || [];
+  const clientList = filteredClients.isError ? [] : filteredClients.data?.clients || [];
   const clientIds = useMemo(
     () => clientList.map((client) => client.id),
     [clientList],

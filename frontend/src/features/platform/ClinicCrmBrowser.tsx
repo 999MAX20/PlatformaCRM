@@ -63,7 +63,7 @@ function ClinicRecordList({ business, timezone, kind, params, update, kindSelect
   return <div className="space-y-4">
     <div className="flex flex-wrap items-center gap-2 [&>label]:w-full sm:[&>label]:w-auto">
       {kindSelector}
-      <Input aria-label={t("clinicCrm.search")} placeholder={t("clinicCrm.search")} value={search} maxLength={200} onChange={event => update({ search: event.target.value, page: "" })} className="sm:w-72" />
+      <Input pageSearch aria-label={t("clinicCrm.search")} placeholder={t("clinicCrm.search")} value={search} maxLength={200} onChange={event => update({ search: event.target.value, page: "" })} />
       {clinicStatuses[kind].length > 0 && <Select aria-label={t("supportCases.statusLabel")} value={status} options={[{ value: "", label: t("supportCases.allStatuses") }, ...clinicStatuses[kind].map(value => ({ value, label: t(`clinicCrm.value.${value}`) }))]} onChange={event => update({ status: event.target.value, page: "" })} className="w-full sm:w-48" />}
       {!(["payments", "connectors", "channels"] as ClinicKind[]).includes(kind) && <Select aria-label={t("clinicCrm.archive")} value={archive} options={["active", "archived", "all"].map(value => ({ value, label: t(`clinicCrm.archive.${value}`) }))} onChange={event => update({ archive: event.target.value, page: "" })} className="w-full sm:w-36" />}
       <Button variant="secondary" onClick={() => list.refetch()} isLoading={list.isFetching}>{t("common.refresh")}</Button>

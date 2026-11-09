@@ -12,7 +12,7 @@ import { Navigate, Link, useNavigate, useParams, useSearchParams } from "react-r
 
 import { getApiErrorMessage, getApiFieldErrors } from "../../api/client";
 
-import { inboxApi, inboxQueryKeys, type InboxConversation, type InboxFilters, type InboxMessage, type PaginatedInboxMessageResponse, type PipelineAction, type PipelineConfirmation } from "../../api/inbox";
+import { inboxApi, inboxWriteNoticeKey, inboxQueryKeys, type InboxConversation, type InboxFilters, type InboxMessage, type PaginatedInboxMessageResponse, type PipelineAction, type PipelineConfirmation } from "../../api/inbox";
 import { ClientLinkConfirmation } from "./components/ClientLinkConfirmation";
 import { useActionFeedback } from "../../components/actions/useActionFeedback";
 import { usePageHeader } from "../../components/layout/PageHeaderContext";
@@ -90,6 +90,7 @@ export function ConversationsPage() {
   const [inspectorOpen, setInspectorOpen] = useState(true);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [mobileInspectorOpen, setMobileInspectorOpen] = useState(false);
+  const [priorityOpen, setPriorityOpen] = useState(false);
   const [automationOpen, setAutomationOpen] = useState(false);
   const desktopInspector = useMediaQuery("(min-width: 1440px)");
   const desktopThread = useMediaQuery("(min-width: 1024px)");
@@ -631,11 +632,14 @@ export function ConversationsPage() {
     onSuccess: async (result) => {
       if (result.requires_confirmation && result.duplicates.length) {
         setNotice(
-          t("conversations.duplicateClientShort", {
-            list: result.duplicates
-              .map((item) => `#${item.id} ${item.full_name}`)
-              .join(", "),
-          }),
+          result.duplicates.some((item) => item.id !== null)
+            ? t("conversations.duplicateClientShort", {
+                list: result.duplicates
+                  .filter((item) => item.id !== null)
+                  .map((item) => `#${item.id} ${item.full_name}`)
+                  .join(", "),
+              })
+            : t("clients.duplicateText"),
         );
         return;
       }
@@ -656,13 +660,25 @@ export function ConversationsPage() {
   const {clientLinkPreview, setClientLinkPreview, clientLinkRefreshed, setClientLinkRefreshed, crmLinkModal, setCrmLinkModal, crmLinkSearch, setCrmLinkSearch, linkCandidates, linkClientMutation, linkLeadMutation, linkDealMutation, linkClientToConversation, linkLeadToConversation, linkDealToConversation} = useInboxLinking({user, selected, context, currentConversationRef, setPipelineReview, t, setNotice, invalidateInbox, notifyError});
 
   const createTaskMutation = useMutation({
-    mutationFn: ({ timezone, ...payload }: Parameters<typeof inboxApi.createTask>[0] & { timezone: string }) =>
-      inboxApi.createTask({ ...payload, due_at: taskDateISO(payload.due_at || "", timezone) }),
-    onSuccess: async () => {
+    mutationFn: ({
+      timezone,
+      ...payload
+    }: Parameters<typeof inboxApi.createTask>[0] & { timezone: string }) =>
+      inboxApi.createTask({
+        ...payload,
+        due_at: taskDateISO(payload.due_at || "", timezone),
+      }),
+    onSuccess: async (result) => {
       taskIdempotencyRef.current = null;
-      setNotice(t("conversations.taskCreatedShort"), "success");
+      setNotice(
+        t(inboxWriteNoticeKey(result, "conversations.taskCreatedShort")),
+        "success",
+      );
       setTaskModalOpen(false);
-      await Promise.all([queryClient.invalidateQueries({ queryKey: ["tasks"] }), invalidateInbox()]);
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["tasks"] }),
+        invalidateInbox(),
+      ]);
     },
     onError: (error) => notifyError(error),
   });
@@ -1024,22 +1040,12 @@ export function ConversationsPage() {
             icon: BellDot,
             onSelect: () => selected && markUnreadMutation.mutate(selected.id),
           },
-          ...localizedPriorityOptions.map((option) => ({
-            key: `priority-${option.value}`,
-            label: `${t("conversations.priority")}: ${option.label}`,
+          {
+            key: "priority",
+            label: t("conversations.priority"),
             icon: BellDot,
-            disabled:
-              setPriorityMutation.isPending ||
-              selected?.priority === option.value,
-            onSelect: () =>
-              selected &&
-              setPriorityMutation.mutate({
-                conversationId: selected.id,
-                priority: option.value as NonNullable<
-                  InboxConversation["priority"]
-                >,
-              }),
-          })),
+            onSelect: () => setPriorityOpen(true),
+          },
         ]
       : []),
     ...(context.data?.actions.create_task
@@ -1540,6 +1546,12 @@ export function ConversationsPage() {
         )}
       </Dialog>
 
+      <Dialog open={priorityOpen && Boolean(selected) && canUpdate} title={t("conversations.priority")} onClose={() => setPriorityOpen(false)} size="sm">
+        <div className="space-y-2 p-4" role="group" aria-label={t("conversations.priority")}>
+          {(["urgent", "high", "normal", "low"] as const).map(priority => <Button key={priority} className="w-full justify-start" variant={selected?.priority === priority ? "primary" : "secondary"} aria-pressed={selected?.priority === priority} disabled={setPriorityMutation.isPending} onClick={() => selected && setPriorityMutation.mutate({ conversationId: selected.id, priority }, { onSuccess: () => setPriorityOpen(false) })}>{t(`taskWorkspace.priority.${priority}`)}</Button>)}
+          {setPriorityMutation.error ? <ErrorState error={setPriorityMutation.error} /> : null}
+        </div>
+      </Dialog>
       <InboxTaskDialog
         t={t}
         taskModalOpen={taskModalOpen}

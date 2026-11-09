@@ -1,4 +1,5 @@
 """Read model for the unified lead filter toolbar."""
+from apps.core.client_projection import client_search_q
 from django.db.models import BooleanField, Case, Count, Q, Value, When
 from django.utils import timezone
 
@@ -32,8 +33,7 @@ def lead_workspace_queryset(queryset, request, *, apply_quick=True):
         queryset = queryset.filter(source__in=sources)
     search = (params.get("search") or "").strip()
     if search:
-        queryset = queryset.filter(Q(client__full_name__icontains=search) | Q(client__phone__icontains=search)
-            | Q(client__email__icontains=search) | Q(message__icontains=search) | Q(service__name__icontains=search))
+        queryset = queryset.filter(client_search_q(request.user, search) | Q(message__icontains=search) | Q(service__name__icontains=search))
     selected_reasons = values(params, "attention_reason", choices=reasons)
     if selected_reasons:
         condition = Q(pk__in=[])

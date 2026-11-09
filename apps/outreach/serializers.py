@@ -1,10 +1,11 @@
 from rest_framework import serializers
+from apps.core.client_projection import ClientProjectionMixin, reader_actor
 
 from django.utils import timezone
 
 from apps.integrations.sanitization import sanitize_error_payload, sanitize_error_text
 from apps.outreach.models import OutreachCampaign, OutreachConsent, OutreachRecipient, OutreachTemplate
-from apps.outreach.services import preview_campaign_audience, unsupported_template_variables
+from apps.outreach.services import preview_campaign_audience, unsupported_template_variables, validate_personalized_text
 
 
 class OutreachTemplateSerializer(serializers.ModelSerializer):
@@ -30,7 +31,10 @@ class OutreachTemplateSerializer(serializers.ModelSerializer):
         business = attrs.get("business") or getattr(self.instance, "business", None)
         if not business:
             raise serializers.ValidationError("Business is required.")
-        unsupported = unsupported_template_variables(attrs.get("body") or getattr(self.instance, "body", ""))
+        try:
+            unsupported = unsupported_template_variables(attrs.get("body") or getattr(self.instance, "body", ""))
+        except ValueError as exc:
+            raise serializers.ValidationError({"body": str(exc)}) from None
         if unsupported:
             raise serializers.ValidationError({"body": f"Unsupported variables: {', '.join(unsupported)}."})
         return attrs
@@ -96,7 +100,7 @@ class OutreachCampaignSerializer(serializers.ModelSerializer):
         request = self.context.get("request")
         if not request or request.query_params.get("include_preview") not in {"1", "true", "yes"}:
             return None
-        return preview_campaign_audience(obj)
+        return preview_campaign_audience(obj, actor=reader_actor(self.context))
 
     def validate(self, attrs):
         attempted_state_fields = sorted(self.protected_state_fields.intersection((self.initial_data or {}).keys()))
@@ -117,7 +121,10 @@ class OutreachCampaignSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Template must belong to the selected business.")
         if not message_text.strip():
             raise serializers.ValidationError("Message text is required.")
-        unsupported = unsupported_template_variables(message_text)
+        try:
+            unsupported = unsupported_template_variables(message_text)
+        except ValueError as exc:
+            raise serializers.ValidationError({"message_text": str(exc)}) from None
         if unsupported:
             raise serializers.ValidationError({"message_text": f"Unsupported variables: {', '.join(unsupported)}."})
         channel = attrs.get("channel") or getattr(self.instance, "channel", None)
@@ -133,11 +140,18 @@ class OutreachCampaignSerializer(serializers.ModelSerializer):
         return attrs
 
 
-class OutreachRecipientSerializer(serializers.ModelSerializer):
+class OutreachRecipientSerializer(ClientProjectionMixin, serializers.ModelSerializer):
+    client_private_copies = ("recipient_id", "personalized_text", "error", "provider_result", "skipped_reason")
     client_name = serializers.CharField(source="client.full_name", read_only=True)
     client_phone = serializers.CharField(source="client.phone", read_only=True)
     notification_status = serializers.CharField(source="notification.status", read_only=True)
     protected_state_fields = {"status", "error", "error_code", "provider_result", "skipped_reason", "sent_at"}
+
+    def validate_personalized_text(self, value):
+        try:
+            return validate_personalized_text(value)
+        except ValueError as exc:
+            raise serializers.ValidationError(str(exc)) from None
 
     class Meta:
         model = OutreachRecipient
@@ -203,7 +217,8 @@ class OutreachRecipientSerializer(serializers.ModelSerializer):
         return data
 
 
-class OutreachConsentSerializer(serializers.ModelSerializer):
+class OutreachConsentSerializer(ClientProjectionMixin, serializers.ModelSerializer):
+    client_private_copies = ("note", "evidence_json")
     client_name = serializers.CharField(source="client.full_name", read_only=True)
     client_phone = serializers.CharField(source="client.phone", read_only=True)
 

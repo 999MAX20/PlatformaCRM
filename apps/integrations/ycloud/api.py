@@ -31,6 +31,8 @@ class YCloudSetupView(APIView):
             state = "expired"
         return Response({"available": client.configured(), "status": state,
             "channel_status": channel.status,
+            "onboarding_type": connection.onboarding_type if connection else YCloudConnection.OnboardingTypes.PLATFORM,
+            "expected_phone_number": connection.expected_phone_number if connection else "",
             "failed_events": connection.events.filter(status="failed").count() if connection else 0,
             "phone_number": connection.phone_number if connection else "",
             "expires_at": connection.expires_at if connection else None,
@@ -41,7 +43,9 @@ class YCloudSetupView(APIView):
         try:
             action = request.data.get("action", "start")
             if action == "start":
-                result = onboarding.start(channel, request.user)
+                result = onboarding.start(channel, request.user,
+                    onboarding_type=request.data.get("onboarding_type", YCloudConnection.OnboardingTypes.PLATFORM),
+                    expected_phone_number=request.data.get("expected_phone_number", ""))
             else:
                 onboarding.recover(channel, request.user, action)
                 result = {"ok": True}

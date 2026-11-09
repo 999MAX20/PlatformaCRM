@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from apps.core.client_projection import ClientProjectionMixin
 
 from apps.accounts.models import User
 from apps.bots.models import BotConversation
@@ -151,7 +152,7 @@ class WorkingHoursSerializer(serializers.ModelSerializer):
         return attrs
 
 
-class AppointmentSerializer(serializers.ModelSerializer):
+class AppointmentSerializer(ClientProjectionMixin, serializers.ModelSerializer):
     client_name = serializers.CharField(source="client.full_name", read_only=True)
     client_phone = serializers.CharField(source="client.phone", read_only=True)
     service_name = serializers.CharField(source="service.name", read_only=True)

@@ -1,11 +1,15 @@
-﻿import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { CalendarClock, CheckCircle2, ClipboardList, UserRound } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { CalendarClock, ClipboardList, MapPin, UserRound } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
-import { branchesApi } from "../../../api/branches";
-import { useAuth } from "../../../features/auth/AuthProvider";
+import { Link } from "react-router";
+import { useActiveBusiness } from "../../../hooks/useBusiness";
+import { AppointmentPlanPanel } from "../../../features/calendar/AppointmentPlanPanel";
+import { AppointmentRescheduleForm } from "../../forms/AppointmentRescheduleForm";
+import { Modal } from "../../ui/Modal";
+import { EntityTimeline } from "./EntityTimeline";
+import { EntityTasksPanel } from "./EntityTasksPanel";
 import { useEntityData } from "../../../hooks/useEntityData";
-import { canAccessAppointmentAction } from "../../../features/calendar/appointmentAccess";
 import { appointmentsApi } from "../../../api/appointments";
 import { formatDateTime } from "../../../lib/format";
 import { refreshAppointmentQueries } from "../../../lib/appointmentCache";
@@ -13,12 +17,12 @@ import { useI18n } from "../../../lib/i18n";
 import type { CrmCardPayload } from "../../../types";
 import { useNotification } from "../../notifications/NotificationProvider";
 import { Button } from "../../ui/Button";
-import { ErrorState } from "../../ui/StateViews";
+import { ErrorState, LoadingState } from "../../ui/StateViews";
 import { StatusBadge } from "../../ui/StatusBadge";
 import { Textarea } from "../../ui/Textarea";
 import { EntityAttachmentsPanel } from "./EntityAttachmentsPanel";
 import { EntityCustomFieldsPanel } from "./EntityCustomFieldsPanel";
-import { drawerPrimarySurfaceClass, drawerSurfaceClass, EmptyBlock, SummaryItem, getChannelLabel } from "./shared";
+import { drawerSurfaceClass, EmptyBlock, SummaryItem, getChannelLabel } from "./shared";
 import type { CrmDrawerEntity } from "./types";
 
 type AppointmentAction = "confirmed" | "cancelled" | "completed" | "no_show";
@@ -28,16 +32,18 @@ function sourceLabel(source: string, t: (key: string) => string) {
 }
 
 export function AppointmentDrawerContent({ data, entity }: { data: CrmCardPayload; entity: CrmDrawerEntity }) {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
+  const { business } = useActiveBusiness();
+  const timeZone = business?.timezone || "Asia/Qyzylorda";
   const showNotification = useNotification();
   const queryClient = useQueryClient();
   const appointment = data.appointment;
-  const { user } = useAuth();
   const { resources } = useEntityData({ resources: true });
-  const branches = useQuery({ queryKey: ["branches", appointment?.business], queryFn: () => branchesApi.listAll({ business: appointment!.business }), enabled: !!appointment });
-  const canUpdate = !!appointment && canAccessAppointmentAction({ appointment, user, businessId: appointment.business, resources: resources.data || [], branches: branches.data });
+  const canUpdate = !!appointment && !appointment.is_archived && data.available_action_details?.some(action => action.resource === "appointments" && action.action === "update" && action.allowed) === true;
+  const [rescheduleOpen, setRescheduleOpen] = useState(false);
+  const [reschedulePending, setReschedulePending] = useState(false);
+  const rescheduleInFlight = useRef(false);
   const client = data.client;
-  const lead = data.lead;
   const [notes, setNotes] = useState(appointment?.notes || "");
   const [statusReasonAction, setStatusReasonAction] = useState<AppointmentAction | null>(null);
   const [statusReason, setStatusReason] = useState("");
@@ -66,8 +72,8 @@ export function AppointmentDrawerContent({ data, entity }: { data: CrmCardPayloa
       if (action === "completed") return appointmentsApi.complete(appointment.id, expected_updated_at, reason);
       return appointmentsApi.noShow(appointment.id, { reason: reason || "", expected_updated_at });
     },
-    onSuccess: (updated, variables) => {
-      void refreshAppointmentQueries(queryClient, updated);
+    onSuccess: async (updated, variables) => {
+      await refreshAppointmentQueries(queryClient, updated);
       setStatusReasonAction(null);
       setStatusReason("");
       const labels: Record<AppointmentAction, string> = {
@@ -91,19 +97,20 @@ export function AppointmentDrawerContent({ data, entity }: { data: CrmCardPayloa
   return (
     <div className="space-y-4">
       <div className={drawerSurfaceClass}>
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="flex flex-col gap-3">
           <div className="min-w-0">
             <div className="mb-2 flex flex-wrap items-center gap-2">
               <StatusBadge status={appointment.status} />
               <span className="rounded-full bg-surface-muted px-3 py-1 text-xs font-semibold text-platforma-muted">{sourceLabel(appointment.source, t)}</span>
             </div>
-            <h3 className="truncate text-xl font-semibold text-platforma-ink">{clientName}</h3>
+            <h3 className="break-words text-xl font-semibold text-platforma-ink">{clientName}</h3>
             {appointment.branch_name && <p className="mt-1 text-sm text-platforma-subtle">{appointment.branch_name} · {appointment.branch_address}</p>}
             <p className="mt-1 text-sm font-semibold text-platforma-muted">
-              {serviceMeta} · {formatDateTime(appointment.start_at)} - {formatDateTime(appointment.end_at)}
+              {formatDateTime(appointment.start_at, timeZone, true, language)}
             </p>
           </div>
           {canUpdate && <div className="flex shrink-0 flex-wrap gap-2">
+            {!isTerminal && <Button size="sm" variant="secondary" disabled={lifecycleMutation.isPending} onClick={() => setRescheduleOpen(true)}>{t("appointments.reschedule")}</Button>}
             {appointment.status !== "confirmed" && !isTerminal ? (
               <Button size="sm" variant="secondary" isLoading={lifecycleMutation.isPending} onClick={() => lifecycleMutation.mutate({ action: "confirmed", expected_updated_at: appointment.updated_at })}>
                 {t("appointment.actionConfirm")}
@@ -157,44 +164,44 @@ export function AppointmentDrawerContent({ data, entity }: { data: CrmCardPayloa
         }}>{t("common.refresh")}</Button>} /></div> : null}
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <SummaryItem icon={UserRound} label={t("appointment.client")} value={clientName} />
+      <div className="grid gap-3 sm:grid-cols-2">
         <SummaryItem icon={ClipboardList} label={t("appointment.service")} value={serviceMeta} />
         <SummaryItem icon={CalendarClock} label={t("appointment.resource")} value={resourceName} />
         {appointment.responsible_user_name && <SummaryItem icon={UserRound} label={t("appointment.responsible")} value={appointment.responsible_user_name} />}
-        <SummaryItem icon={CheckCircle2} label={t("appointment.source")} value={sourceLabel(appointment.source, t)} />
+        {appointment.branch_name && <SummaryItem icon={MapPin} label={t("records.branch")} value={appointment.branch_name} />}
       </div>
 
-      <div className="grid gap-3 lg:grid-cols-3">
-        <div className={drawerPrimarySurfaceClass}>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-700">{t("nav.calendar")}</p>
-          <p className="mt-2 text-sm font-semibold leading-6 text-platforma-text">{formatDateTime(appointment.start_at)}</p>
-        </div>
-        <div className={drawerSurfaceClass}>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint">{t("nav.leads")}</p>
-          <p className="mt-2 text-sm font-semibold leading-6 text-platforma-text">{lead ? t("crmCard.leadNumber", { id: lead.id }) : t("appointment.noLead")}</p>
-        </div>
-        <div className={drawerSurfaceClass}>
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-platforma-faint">{t("nav.deals")}</p>
-          <p className="mt-2 text-sm font-semibold leading-6 text-platforma-text">{data.deals.length}</p>
-        </div>
-      </div>
+      {client && <Link className="platforma-focus-ring inline-flex rounded py-2 text-brand-700" to={`/app/clients/${client.id}`}>{t("leads.openClient")}</Link>}
 
       <div className={drawerSurfaceClass}>
         <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
           <div>
             <h3 className="font-semibold text-platforma-ink">{t("appointment.notes")}</h3>
-            <p className="mt-1 text-sm text-platforma-muted">{t("crmCard.quickEditText")}</p>
           </div>
           <Button type="button" variant="secondary" disabled={!canUpdate} isLoading={notesMutation.isPending} onClick={() => notesMutation.mutate()}>
             {t("clients.save")}
           </Button>
         </div>
-        <Textarea value={notes} onChange={(event) => setNotes(event.target.value)} placeholder={t("crmCard.commentPlaceholder")} />
+        <Textarea aria-label={t("appointment.notes")} readOnly={!canUpdate} value={notes} onChange={(event) => setNotes(event.target.value)} placeholder={t("crmCard.commentPlaceholder")} />
       </div>
-
+      <AppointmentPlanPanel appointment={appointment} timeZone={timeZone} />
+      <section className="space-y-3"><h3 className="font-semibold">{t("tasks.history")}</h3><EntityTimeline data={data} /></section>
+      <section className="space-y-3"><h3 className="font-semibold">{t("nav.tasks")}</h3><EntityTasksPanel data={data} entity={entity} /></section>
       <EntityCustomFieldsPanel data={data} entity={entity} />
-      <EntityAttachmentsPanel data={data} entity={entity} />
+      <EntityAttachmentsPanel data={data} entity={entity} readOnly={!canUpdate} />
+      <Modal open={rescheduleOpen} title={t("appointments.rescheduleTitle")} onClose={() => { if (!rescheduleInFlight.current) setRescheduleOpen(false); }}>
+        {resources.isPending ? <LoadingState /> : resources.error ? <ErrorState error={resources.error} action={<Button onClick={() => void resources.refetch()}>{t("common.retry")}</Button>} /> : <AppointmentRescheduleForm appointment={appointment} businessId={appointment.business} resources={resources.data || []} isSubmitting={reschedulePending} onCancel={() => { if (!rescheduleInFlight.current) setRescheduleOpen(false); }} onSubmit={async payload => {
+          if (rescheduleInFlight.current) return;
+          rescheduleInFlight.current = true;
+          setReschedulePending(true);
+          try {
+            const updated = await appointmentsApi.reschedule({ id: appointment.id, payload });
+            await refreshAppointmentQueries(queryClient, updated);
+            setRescheduleOpen(false);
+            showNotification({ message: t("appointments.rescheduledNotice"), tone: "success" });
+          } finally { rescheduleInFlight.current = false; setReschedulePending(false); }
+        }} />}
+      </Modal>
     </div>
   );
 }

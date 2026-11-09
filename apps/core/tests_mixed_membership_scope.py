@@ -3,7 +3,7 @@ from rest_framework.test import APITestCase
 
 from apps.accounts.models import User
 from apps.businesses.models import Business, BusinessMember
-from apps.notifications.models import Notification
+from apps.notifications.models import Notification, NotificationRecipient
 from apps.tasks.models import Task
 
 
@@ -36,7 +36,7 @@ class MixedMembershipScopeTests(APITestCase):
         self.assertEqual([row["id"] for row in response.data["results"]], [owned.pk])
         self.assertEqual(self.client.get(f"/api/tasks/{assigned.pk}/").status_code, 404)
 
-    def test_bell_combines_business_and_own_scope_and_counts_each_visible_notification_once(self):
+    def test_bell_requires_selected_business_and_keeps_recipient_state_private(self):
         def notification(business, recipient):
             return Notification.objects.create(business=business, recipient=recipient, text="Synthetic", send_at=timezone.now())
 
@@ -46,12 +46,27 @@ class MixedMembershipScopeTests(APITestCase):
         hidden = notification(self.joined, self.other)
         foreign = notification(self.foreign, self.user)
         response = self.client.get("/api/notifications/", {"surface": "bell"})
-        self.assertEqual(response.status_code, 200)
-        self.assertCountEqual([row["id"] for row in response.data["results"]], [owned.pk, assigned.pk, broadcast.pk])
-        summary = self.client.get("/api/notifications/summary/", {"surface": "bell"})
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(self.client.get("/api/notifications/summary/", {"surface": "bell"}).status_code, 400)
+        self.assertEqual(self.client.post("/api/notifications/mark-all-read/?surface=bell").status_code, 400)
+        for business, expected in ((self.owned, [owned.pk]), (self.joined, [assigned.pk, broadcast.pk])):
+            response = self.client.get("/api/notifications/", {"surface": "bell", "business": business.pk})
+            self.assertEqual(response.status_code, 200)
+            self.assertCountEqual([row["id"] for row in response.data["results"]], expected)
+        params = {"surface": "bell", "business": self.joined.pk}
+        summary = self.client.get("/api/notifications/summary/", params)
         self.assertEqual(summary.status_code, 200)
-        self.assertEqual(summary.data["unread"], 3)
-        self.assertEqual(self.client.post("/api/notifications/mark-all-read/?surface=bell").data["updated"], 3)
+        self.assertEqual(summary.data["unread"], 2)
+        read_url = f"/api/notifications/mark-all-read/?surface=bell&business={self.joined.pk}"
+        self.assertEqual(self.client.post(read_url).data["updated"], 2)
+        self.assertEqual(self.client.post(read_url).data["updated"], 0)
+        self.assertEqual(self.client.get("/api/notifications/summary/", params).data["unread"], 0)
+        self.assertIsNone(NotificationRecipient.objects.get(notification=owned, user=self.user).read_at)
+        self.assertIsNone(NotificationRecipient.objects.get(notification=broadcast, user=self.other).read_at)
         for excluded in (hidden, foreign):
             excluded.refresh_from_db()
             self.assertIsNone(excluded.read_at)
+        self.assertEqual(self.client.get("/api/notifications/", {"business": self.foreign.pk}).status_code, 403)
+        self.membership.is_active = False
+        self.membership.save(update_fields=["is_active"])
+        self.assertEqual(self.client.get("/api/notifications/", params).status_code, 403)

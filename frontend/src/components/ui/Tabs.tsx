@@ -1,4 +1,4 @@
-import type { KeyboardEvent } from "react";
+import { useLayoutEffect, useRef, type KeyboardEvent } from "react";
 
 import { cn } from "../../lib/cn";
 
@@ -21,6 +21,23 @@ export function Tabs<T extends string>({
   tone?: "brand" | "ai";
   appearance?: "pill" | "underline";
 }) {
+  const trackRef = useRef<HTMLDivElement>(null);
+  useLayoutEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    const reveal = () => {
+      const active = track.querySelector<HTMLElement>('[aria-selected="true"]');
+      if (!active) return;
+      const bounds = track.getBoundingClientRect();
+      const item = active.getBoundingClientRect();
+      if (item.left < bounds.left) track.scrollLeft -= bounds.left - item.left;
+      else if (item.right > bounds.right) track.scrollLeft += item.right - bounds.right;
+    };
+    reveal();
+    const observer = new ResizeObserver(reveal);
+    observer.observe(track);
+    return () => observer.disconnect();
+  }, [value, options]);
   const selectFromKeyboard = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
     let nextIndex: number | null = null;
     if (event.key === "ArrowRight") nextIndex = (index + 1) % options.length;
@@ -36,7 +53,7 @@ export function Tabs<T extends string>({
   };
 
   return (
-    <div className={cn("flex gap-1 overflow-x-auto no-scrollbar", appearance === "underline" ? "border-b border-platforma-border" : "rounded-control bg-surface-muted p-1", className)} role="tablist" aria-label={ariaLabel}>
+    <div ref={trackRef} className={cn("flex gap-1 overflow-x-auto no-scrollbar", appearance === "underline" ? "border-b border-platforma-border" : "rounded-control bg-surface-muted p-1", className)} role="tablist" aria-label={ariaLabel}>
       {options.map((option, index) => {
         const active = option.value === value;
         return (

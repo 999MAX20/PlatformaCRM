@@ -199,7 +199,7 @@ def _telegram_check(order):
             "telegram.base_api_url",
             "Telegram API base URL is public HTTPS",
             (not enabled) or _safe_https_url(getattr(settings, "TELEGRAM_BASE_API_URL", "")),
-            f"TELEGRAM_ENABLED={enabled}; TELEGRAM_BASE_API_URL={getattr(settings, 'TELEGRAM_BASE_API_URL', '')}",
+            f"TELEGRAM_ENABLED={enabled}; TELEGRAM_BASE_API_URL configured={bool(getattr(settings, 'TELEGRAM_BASE_API_URL', ''))}",
             "Set TELEGRAM_BASE_API_URL=https://api.telegram.org before real Telegram traffic.",
         ),
         _queue_gate("telegram", enabled),

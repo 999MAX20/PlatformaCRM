@@ -462,6 +462,7 @@ class ProductionReadinessTests(TestCase):
 
     @override_settings(
         ENVIRONMENT="production",
+        EMAIL_BACKEND="django.core.mail.backends.smtp.EmailBackend",
         EMAIL_HOST="smtp.example.net",
         DEFAULT_FROM_EMAIL="PlatformaCRM <no-reply@zani.local>",
         EMAIL_USE_TLS=True,
@@ -474,6 +475,7 @@ class ProductionReadinessTests(TestCase):
 
     @override_settings(
         ENVIRONMENT="production",
+        EMAIL_BACKEND="django.core.mail.backends.smtp.EmailBackend",
         EMAIL_HOST="smtp.example.net",
         DEFAULT_FROM_EMAIL="PlatformaCRM <no-reply@zani.example.net>",
         EMAIL_USE_TLS=False,
@@ -486,6 +488,7 @@ class ProductionReadinessTests(TestCase):
 
     @override_settings(
         ENVIRONMENT="production",
+        EMAIL_BACKEND="django.core.mail.backends.smtp.EmailBackend",
         EMAIL_HOST="smtp.example.net",
         DEFAULT_FROM_EMAIL="PlatformaCRM <no-reply@zani.example.net>",
         EMAIL_USE_TLS=True,

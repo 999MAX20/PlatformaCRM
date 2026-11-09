@@ -10,6 +10,7 @@ class Branch(TimeStampedModel):
     phone = models.CharField(max_length=32, blank=True)
     is_active = models.BooleanField(default=True)
     archived_at = models.DateTimeField(null=True, blank=True)
+    uses_business_defaults = models.BooleanField(default=False, editable=False)
 
     class Meta:
         ordering = ["name", "id"]

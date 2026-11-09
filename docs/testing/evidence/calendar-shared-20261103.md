@@ -97,7 +97,12 @@ Screenshots are explicit isolated component fixtures, not merchant production da
 No code or scoped verification remainder. Published source commit
 `44a9c92e5a2f575587920ba39b64feb5e60ff84c` by normal push to origin/main, remote SHA
 confirmed. [CI41656489506](https://github.com/999MAX20/PlatformaCRM/actions/runs/41656489506)
-was in progress at publication readback, not a green or deployed claim.
+completed with frontend success and backend failure. The failed test is
+`AICoreFoundationTests.test_ai_tool_suggest_logs_actions_without_execution`: expected
+at least3 suggested actions, received2 (2342 tests,1 failure,47 skipped). Backend
+code was not changed in this calendar commit; causality/baseline has not been proved.
+Full CI is not green. Final CI-status documentation is local, pending resolution;
+published documentation commit `0b3348e1` is confirmed at origin/main.
 This change does not close a roadmap release stage.
 Frontend contract and scheduling passport updated. Other business contracts,
 passports, roadmap and README need no change: their data, permission, setup and

@@ -12,7 +12,7 @@ export function savedRecordPeriod(value: string | null) {
 }
 
 export const recordAdvancedKeys = ["resource", "responsible_user", "confirmed", "branch"] as const;
-const recordFilterKeys = ["search", "from", "to", "workflow", "attention", "client", ...recordAdvancedKeys, "ordering", "page"];
+const recordFilterKeys = ["search", "from", "to", "workflow", "attention", "client", ...recordAdvancedKeys, "ordering", "page", "custom_field", "custom_operator", "custom_value"];
 
 export function patchRecordFilters(current: URLSearchParams, patch: Record<string, string>) {
   const next = new URLSearchParams(current);
@@ -41,6 +41,7 @@ export function recordWorkspaceParams(params: URLSearchParams, today: string, bu
   const from = params.get("from") || (attention || client ? undefined : today);
   const to = params.get("to") || from;
   return {
+    ...(params.has("custom_field") ? { custom_field: params.get("custom_field")!, custom_operator: params.get("custom_operator") || "equals", custom_value: params.get("custom_value") || "" } : {}),
     business, attention, client, start_from: from, start_to: to ? nextRecordDay(to) : undefined,
     q: params.get("search") || undefined,
     workflow: params.get("workflow") || undefined,

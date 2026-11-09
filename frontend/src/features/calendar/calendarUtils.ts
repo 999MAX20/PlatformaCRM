@@ -22,15 +22,16 @@ export function shiftDateValue(value: string, days: number) {
 }
 
 export function shiftCalendarPeriod(value: string, direction: number, viewMode: CalendarViewMode) {
-  if (viewMode !== "month") return shiftDateValue(value, direction * (viewMode === "week" ? 7 : 1));
+  if (viewMode === "week") return shiftDateValue(value, direction * 7);
   const current = parseDate(value);
-  const target = new Date(current.getFullYear(), current.getMonth() + direction, 1);
+  const target = new Date(current.getFullYear(), current.getMonth() + direction * (viewMode === "year" ? 12 : 1), 1);
   const lastDay = new Date(target.getFullYear(), target.getMonth() + 1, 0).getDate();
   target.setDate(Math.min(current.getDate(), lastDay));
   return toDateInputValue(target);
 }
 
 export function formatCalendarPeriod(value: string, locale: string, viewMode: CalendarViewMode) {
+  if (viewMode === "year") return new Intl.DateTimeFormat(locale, { year: "numeric" }).format(parseDate(value));
   if (viewMode === "month") {
     return new Intl.DateTimeFormat(locale, { month: "long", year: "numeric" }).format(parseDate(value));
   }
@@ -86,12 +87,8 @@ export function getMonthDates(value: string) {
   const firstDay = new Date(selected.getFullYear(), selected.getMonth(), 1);
   const firstWeekday = (firstDay.getDay() + 6) % 7;
   const daysInMonth = new Date(selected.getFullYear(), selected.getMonth() + 1, 0).getDate();
-  const cells = [
-    ...Array.from({ length: firstWeekday }, () => null),
-    ...Array.from({ length: daysInMonth }, (_, index) => new Date(selected.getFullYear(), selected.getMonth(), index + 1)),
-  ];
-  const tail = (7 - (cells.length % 7)) % 7;
-  return [...cells, ...Array.from({ length: tail }, () => null)];
+  const size = Math.ceil((firstWeekday + daysInMonth) / 7) * 7;
+  return Array.from({ length: size }, (_, index) => new Date(selected.getFullYear(), selected.getMonth(), index + 1 - firstWeekday));
 }
 
 export function getCalendarRange(value: string, viewMode: CalendarViewMode) {
@@ -100,10 +97,12 @@ export function getCalendarRange(value: string, viewMode: CalendarViewMode) {
     return { start: toDateInputValue(week[0]), end: shiftDateValue(toDateInputValue(week[6]), 1) };
   }
   if (viewMode === "month") {
-    const selected = parseDate(value);
-    const start = new Date(selected.getFullYear(), selected.getMonth(), 1);
-    const end = new Date(selected.getFullYear(), selected.getMonth() + 1, 1);
-    return { start: toDateInputValue(start), end: toDateInputValue(end) };
+    const cells = getMonthDates(value);
+    return { start: toDateInputValue(cells[0]), end: shiftDateValue(toDateInputValue(cells[cells.length - 1]), 1) };
+  }
+  if (viewMode === "year") {
+    const year = parseDate(value).getFullYear();
+    return { start: `${year}-01-01`, end: `${year + 1}-01-01` };
   }
   return { start: value, end: shiftDateValue(value, 1) };
 }

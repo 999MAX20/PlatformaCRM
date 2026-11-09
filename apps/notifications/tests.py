@@ -86,7 +86,7 @@ class NotificationCenterTests(APITestCase):
         self.assertEqual(summary.data["by_category"][Notification.Categories.SALES], 1)
         self.assertEqual(unread.data["count"], 1)
         self.assertEqual(unread.data["results"][0]["id"], self.notification.id)
-        self.assertEqual(unread.data["results"][0]["action_url"], "/leads")
+        self.assertEqual(unread.data["results"][0]["action_url"], "/app/leads")
 
     def test_delivery_failure_masks_secret_reason(self):
         notification = Notification.objects.create(
@@ -115,7 +115,8 @@ class NotificationCenterTests(APITestCase):
         mark_response = self.client.post(f"/api/notifications/{self.notification.id}/mark-read/")
         self.notification.refresh_from_db()
         self.assertEqual(mark_response.status_code, 200)
-        self.assertIsNotNone(self.notification.read_at)
+        self.assertIsNotNone(self.notification.recipient_states.get(user=self.owner).read_at)
+        self.assertIsNone(self.notification.read_at)
 
         second = Notification.objects.create(
             business=self.business,
@@ -128,9 +129,10 @@ class NotificationCenterTests(APITestCase):
         second.refresh_from_db()
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["updated"], 1)
-        self.assertIsNotNone(second.read_at)
+        self.assertIsNotNone(second.recipient_states.get(user=self.owner).read_at)
+        self.assertIsNone(second.read_at)
 
-    def test_targeted_notifications_are_visible_to_recipient_and_owner_only(self):
+    def test_personal_feed_does_not_expose_another_recipient_even_to_owner(self):
         operator_notification = Notification.objects.create(
             business=self.business,
             recipient=self.operator,
@@ -161,7 +163,7 @@ class NotificationCenterTests(APITestCase):
         self.assertEqual(operator_response.status_code, 200)
         self.assertIn(operator_notification.id, operator_ids)
         self.assertNotIn(staff_notification.id, operator_ids)
-        self.assertIn(operator_notification.id, owner_ids)
+        self.assertNotIn(operator_notification.id, owner_ids)
 
     def test_business_wide_notifications_are_visible_to_staff(self):
         business_wide = Notification.objects.create(
@@ -384,17 +386,21 @@ class NotificationCenterTests(APITestCase):
         self.assertTrue(Notification.objects.filter(business=self.business, recipient=manager, text__startswith="Не удалось отправить").exists())
 
     def test_failed_notification_can_be_retried(self):
+        self.client_obj.email = "retry@example.test"
+        self.client_obj.save(update_fields=["email"])
         notification = Notification.objects.create(
             business=self.business,
             client=self.client_obj,
-            channel=Notification.Channels.SYSTEM,
+            channel=Notification.Channels.EMAIL,
             category=Notification.Categories.SALES,
-            text="Retry system notification",
+            text="Retry email notification",
             send_at=timezone.now() - timezone.timedelta(minutes=1),
             status=Notification.Statuses.FAILED,
         )
 
-        response = self.client.post(f"/api/notifications/{notification.id}/retry/")
+        with patch("apps.notifications.delivery.send_mail", return_value=1) as send_mail:
+            response = self.client.post(f"/api/notifications/{notification.id}/retry/")
+        send_mail.assert_called_once()
 
         notification.refresh_from_db()
         self.assertEqual(response.status_code, 200)

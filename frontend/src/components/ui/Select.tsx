@@ -47,7 +47,11 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
     }, [value]);
 
     useEffect(() => {
-      if ((!expandedMenu && !portal) || !open) return;
+      setActiveIndex(selectedIndex >= 0 ? selectedIndex : 0);
+    }, [selectedIndex]);
+
+    useEffect(() => {
+      if (!open) return;
       const menu = listboxRef.current;
       const option = menu?.children[activeIndex] as HTMLElement | undefined;
       if (!menu || !option) return;
@@ -125,7 +129,9 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
       );
     }
 
-    const renderMenu = (content: ReactNode) => portal ? createPortal(content, document.body) : content;
+    // Keep nested options inside their dialog for outside-click and focus handling.
+    const portalRoot = triggerRef.current?.closest<HTMLElement>('[role="dialog"]') || document.body;
+    const renderMenu = (content: ReactNode) => portal ? createPortal(content, portalRoot) : content;
     return (
       <div ref={wrapperRef} className={expandedMenu ? "block" : "relative block"}>
         {label ? <span id={labelId} className="mb-2 block text-sm font-semibold text-platforma-subtle">{label}</span> : null}
@@ -258,10 +264,11 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
                         ? "bg-surface-muted text-platforma-text"
                         : "text-platforma-subtle hover:bg-surface-hover hover:text-platforma-text",
                   )}
+                  onMouseDown={event => event.preventDefault()}
                   onClick={() => selectValue(option.value)}
                   onMouseEnter={() => setActiveIndex(optionIndex)}
                 >
-                  <span className={cn("min-w-0 break-words leading-5", !expandedMenu && "overflow-hidden [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]")}>{option.label}</span>
+                  <span className={cn("min-w-0 break-words leading-5", !expandedMenu && !portal && "overflow-hidden [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]")}>{option.label}</span>
                   {isSelected ? <Check aria-hidden="true" size={16} className="shrink-0" /> : null}
                 </button>
               );

@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { CrmEntityDrawer, type CrmDrawerEntity } from "../../components/crm/CrmEntityDrawer";
 import { useNavigate, useSearchParams } from "react-router";
 import { normalizeAppError } from "../../api/appError";
 import { appointmentsApi, type AppointmentCreatePayload } from "../../api/appointments";
@@ -21,7 +22,8 @@ import { useI18n } from "../../lib/i18n";
 import { hasPermission } from "../../lib/permissions";
 import { useAuth } from "../auth/AuthProvider";
 import { RecordsToolbar } from "./RecordsToolbar";
-import { RecordsTable } from "./RecordsTable";
+import { RecordsTableView } from "./RecordsTable";
+import { useCustomColumns } from "../../components/crm/CustomFieldColumns";
 import { RecordsLoadError } from "./RecordsLoadError";
 import { recordWorkspaceParams, resetRecordFilters } from "./recordFilters";
 import { useCalendarCatalog } from "./useCalendarCatalog";
@@ -34,6 +36,7 @@ export function RecordsPage() {
 }
 
 function RecordsListPage() {
+  const [drawer, setDrawer] = useState<CrmDrawerEntity | null>(null);
   const { t } = useI18n();
   const { user } = useAuth();
   const { business } = useActiveBusiness();
@@ -66,6 +69,7 @@ function RecordsListPage() {
   const records = useQuery({ queryKey: ["appointments", "workspace", user?.id, filters], queryFn: () => appointmentsApi.workspace(filters), enabled: !!business && periodReady, refetchInterval: 30000,
     placeholderData: (previous, previousQuery) => previousQuery?.queryKey[2] === user?.id &&
       (previousQuery?.queryKey[3] as { business?: number } | undefined)?.business === business?.id ? previous : undefined });
+  const customTable = useCustomColumns(business?.id || 0, "appointment", (records.data?.results || []).map(record => record.id));
   const update = (key: string, value: string) => setParams(current => {
     const next = new URLSearchParams(current);
     if (value) next.set(key, value); else next.delete(key);
@@ -107,18 +111,20 @@ function RecordsListPage() {
   }, [records.isError, records.error, filters.page, setParams]);
   if (!business) return <EmptyState title={t("appointments.noBusiness")} />;
   const catalogError = catalog.services.error || catalog.resources.error || branches.error || members.error;
-  return <div className="space-y-4" data-testid="records-workspace" aria-busy={records.isFetching}>
+  return <div className="space-y-4 pt-2" data-testid="records-workspace" aria-busy={records.isFetching}>
     <RecordsToolbar params={params} setParams={setParams} today={today} filters={filters} summary={records.data?.summary}
       resources={(catalog.resources.data || []).map(item => ({ value: item.id, label: item.name }))}
       branches={(branches.data || []).map(item => ({ value: item.id, label: item.name }))}
       members={[{ value: user!.id, label: user!.full_name || user!.email }, ...(members.data || []).filter(item => item.user.id !== user?.id && item.is_active).map(item => ({ value: item.user.id, label: item.user.full_name || item.user.email }))]} />
     {catalogError ? <ErrorState error={catalogError} action={<Button onClick={() => { void catalog.services.refetch(); void catalog.resources.refetch(); void branches.refetch(); if (members.isEnabled) void members.refetch(); }}>{t("common.retry")}</Button>} /> : null}
+    {customTable.toolbar}
     {records.isError ? <RecordsLoadError error={records.error} retry={() => void records.refetch()} />
       : records.isPending ? <LoadingState />
       : records.data?.results.length ? <>{records.isPlaceholderData && <p role="status" className="text-sm text-platforma-subtle">{t("common.loading")}</p>}
-        <RecordsTable records={records.data.results} timeZone={timeZone} showBranch={(branches.data?.length || 0) > 0} />
+        <RecordsTableView records={records.data.results} customColumns={customTable.columns} timeZone={timeZone} showBranch={(branches.data?.length || 0) > 0} onOpen={id => setDrawer({ type: "appointment", id })} />
         <CrmPagination compact shown={records.data.results.length} total={records.data.count} page={Number(filters.page)} pageSize={Number(filters.page_size)} onPageChange={page => update("page", String(page))} onPageSizeChange={size => update("page_size", String(size))} previousLabel={t("pagination.previous")} nextLabel={t("pagination.next")} />
       </> : <EmptyState title={t("appointments.emptyFiltered")} action={<Button variant="secondary" onClick={() => setParams(current => resetRecordFilters(current, today))}>{t("records.reset")}</Button>} />}
+    <CrmEntityDrawer entity={drawer} onClose={() => setDrawer(null)} />
     <Modal open={params.get("create") === "1" && canCreate} onClose={() => { if (!createPending.current) closeCreate(); }} title={t("appointments.create")}>
       {sourceClientQuery.error ? <ErrorState error={sourceClientQuery.error} action={<Button onClick={() => void sourceClientQuery.refetch()}>{t("common.retry")}</Button>} /> : null}
       {catalog.services.isPending || catalog.resources.isPending ? <LoadingState /> : catalog.services.error || catalog.resources.error ? <ErrorState error={catalog.services.error || catalog.resources.error} /> :

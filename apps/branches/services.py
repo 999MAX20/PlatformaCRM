@@ -15,6 +15,10 @@ def create_branch(*, business, actor, **values):
     assert_can(actor, business, Resources.SETTINGS, Actions.UPDATE)
     assert_network_grant(actor, business)
     first = not Branch.objects.filter(business=business).exists()
+    from .single_location import materialize_initial_location
+    promoted = list(Branch.objects.filter(business=business, uses_business_defaults=True))
+    for initial in promoted:
+        materialize_initial_location(initial)
     branch = Branch.objects.create(business=business, **values)
     if first:
         from .compatibility import adopt_first_branch
@@ -24,7 +28,8 @@ def create_branch(*, business, actor, **values):
         for member in business.members.all():
             grant, _ = BranchAccess.objects.get_or_create(member=member)
             grant.branches.add(branch)
-    write_actor_audit_log(actor=actor, business=business, action=AuditLog.Actions.CREATE, instance=branch, metadata={"kind": "branch"})
+    write_actor_audit_log(actor=actor, business=business, action=AuditLog.Actions.CREATE, instance=branch,
+        metadata={"kind": "branch", "materialized_location_ids": [row.pk for row in promoted]})
     return branch
 
 
@@ -36,6 +41,8 @@ def update_branch(*, branch, actor, changes):
     assert_branch_access(actor, branch.business, branch)
     if branch.archived_at is not None:
         raise ValidationError({"branch": "Archived branches cannot be edited."})
+    if branch.uses_business_defaults:
+        raise ValidationError({"branch": "Edit the business details for the primary location."})
     for key, value in changes.items():
         if key not in {"name", "address", "phone"}:
             raise ValidationError({key: "Use the explicit branch lifecycle action."})

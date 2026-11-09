@@ -11,6 +11,7 @@ export function Modal({
   closeOnBackdrop,
   testId,
   focusReturnId,
+  footer,
 }: {
   title: string;
   open: boolean;
@@ -22,6 +23,7 @@ export function Modal({
   closeOnBackdrop?: boolean;
   testId?: string;
   focusReturnId?: string;
+  footer?: React.ReactNode;
 }) {
   return (
     <Dialog
@@ -34,6 +36,7 @@ export function Modal({
       closeOnBackdrop={closeOnBackdrop}
       testId={testId}
       focusReturnId={focusReturnId}
+      footer={footer}
     >
       {children}
     </Dialog>

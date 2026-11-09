@@ -32,6 +32,21 @@ const merchant = (permissionOwner, retryLocation = "owning_page") => ({
 });
 
 export const apiModulePolicies = {
+  aiConversations: merchant("ai_assistant or ai_analyst by mode + conversation_owner + current entity_scope", "agent_conversation_or_voice_history"),
+  analyticsExports: merchant("analytics:view + export_permissions", "analytics_export_history"),
+  billingCommerce: merchant("billing:view/manage or platform_admin + MFA for platform mutations", "billing_order_details"),
+  branches: merchant("settings:view/update + branch_access by operation", "branch_or_specialist_settings"),
+  connectivity: merchant("public_readiness", "connection_notice"),
+  employeeAccess: merchant("platform_admin + MFA + support_case for repair", "platform_employee_access"),
+  importWorkspace: merchant("integrations:manage + entity_import_and_write_permissions", "import_workspace"),
+  ownership: merchant("platform_admin + MFA + verified_transfer_scope", "platform_ownership_transfer"),
+  platformClinic: merchant("platform_admin + business_support_scope", "platform_crm_record"),
+  recovery: merchant("platform_admin + MFA for preparation; intended_account/token for confirmation", "account_recovery"),
+  serviceStatus: merchant("active_business_member", "service_status_notice"),
+  speech: merchant("ai_assistant:suggest + business_membership", "voice_capture"),
+  support: merchant("business_case_scope or platform_support_role by endpoint", "support_case"),
+  visitPlans: merchant("appointments permissions + current plan/client_scope", "client_visit_plan"),
+  ycloud: merchant("integrations:view/manage + business_scope", "ycloud_channel_setup"),
   activities: merchant("analytics:view"),
   ai: merchant("ai_assistant:view", "ai_action_or_job_details"),
   aiCRM: merchant("ai_assistant:view / ai_pipeline:suggest / ai_analyst:view by operation + entity_scope", "ai_assistant_or_history_report"),
@@ -116,6 +131,11 @@ export const idempotentMutationRules = [
 ];
 
 export const backgroundTaskPolicies = {
+  "accounts.flush_expired_tokens": { permissionOwner: "system", idempotency: "expired_records_only_delete", retryLocation: "scheduled_cleanup" },
+  "bots.resume_answered_handoffs": { permissionOwner: "system", idempotency: "locked_due_handoff_state_recheck", retryLocation: "conversation_handoff_state" },
+  "imports.process_workspace": { permissionOwner: "workspace_actor_current_permissions", idempotency: "operation_id_and_row_checkpoint", retryLocation: "import_workspace_operation" },
+  "integrations.process_ycloud_events": { permissionOwner: "system", idempotency: "provider_event_id_and_processing_claim", retryLocation: "ycloud_event_retry" },
+  "service.observe_status": { permissionOwner: "system", idempotency: "component_observation_and_episode_state", retryLocation: "next_service_observation" },
   "files.scan_due_attachments": { permissionOwner: "system", idempotency: "atomic_scan_token_lease_and_terminal_state", retryLocation: "automatic_due_scan_backoff_and_attachment_status" },
   "bots.process_outbound_message": { permissionOwner: "conversations:send", idempotency: "message_delivery_key", retryLocation: "conversation_delivery_details" },
   "bots.process_due_outbound_messages": { permissionOwner: "system", idempotency: "locked_due_message_claim", retryLocation: "conversation_delivery_details" },
@@ -151,6 +171,9 @@ export const providerStatusSources = [
 ];
 
 export const providerStatusPolicies = {
+  accepted: ["temporary", "status.accepted", "delivery_details"],
+  delivery_unknown: ["provider", "status.delivery_unknown", "reconcile_before_resend"],
+  deferred: ["none", "status.deferred", "review_deferred_operation"],
   active: ["none", "status.active", "none"],
   applied: ["none", "status.succeeded", "none"],
   approved: ["none", "status.approved", "none"],
@@ -204,3 +227,5 @@ export const defectPrecedents = [
   "ZR-006",
   "ZR-007",
 ];
+
+export const historicalDefectSource = "archive_docs/2026-10-07/actual_docs/DEFECT_KNOWLEDGE_BASE.md";

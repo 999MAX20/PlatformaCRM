@@ -57,7 +57,8 @@ def execute_transition(target, payload, actor, request):
     from apps.scheduling import services
     if action == "reschedule":
         from apps.scheduling.serializers import AppointmentRescheduleSerializer
-        serializer = AppointmentRescheduleSerializer(data=values, context={"appointment": target})
+        details = {"resource": target.resource_id, "reason": reason, **values}
+        serializer = AppointmentRescheduleSerializer(data=details, context={"appointment": target})
         serializer.is_valid(raise_exception=True)
         return services.reschedule_appointment(appointment=target, actor=actor, request=request, **serializer.validated_data)
     if action == "confirm":

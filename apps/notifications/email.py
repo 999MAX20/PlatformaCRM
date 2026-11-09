@@ -2,11 +2,19 @@ from django.conf import settings
 from django.core.mail import send_mail
 
 
+def email_is_local_capture():
+    return settings.EMAIL_BACKEND in {
+        "django.core.mail.backends.locmem.EmailBackend",
+        "django.core.mail.backends.console.EmailBackend",
+    }
+
+
 def email_is_configured():
-    backend = settings.EMAIL_BACKEND
-    if backend.endswith(".locmem.EmailBackend") or backend.endswith(".console.EmailBackend"):
-        return True
-    return bool(settings.EMAIL_HOST and settings.DEFAULT_FROM_EMAIL)
+    from apps.core.production_rules import has_transactional_email
+
+    if email_is_local_capture():
+        return settings.ENVIRONMENT in {"local", "development", "test"}
+    return has_transactional_email()
 
 
 def send_email_smoke(to_email):

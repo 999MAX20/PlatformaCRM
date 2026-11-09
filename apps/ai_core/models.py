@@ -41,10 +41,11 @@ class AgentConversation(TimeStampedModel):
     class Kinds(models.TextChoices):
         STAFF = "staff", "Employee"
         INBOX = "inbox", "Customer"
+        VOICE = "voice", "Interface voice"
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     business = models.ForeignKey(Business, on_delete=models.CASCADE, related_name="agent_conversations")
-    agent = models.ForeignKey("bots.Bot", on_delete=models.PROTECT, related_name="memory_conversations")
+    agent = models.ForeignKey("bots.Bot", on_delete=models.PROTECT, null=True, blank=True, related_name="memory_conversations")
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="agent_conversations")
     inbox_conversation = models.OneToOneField("bots.BotConversation", null=True, blank=True, on_delete=models.CASCADE, related_name="agent_memory")
     kind = models.CharField(max_length=16, choices=Kinds.choices)
@@ -59,8 +60,9 @@ class AgentConversation(TimeStampedModel):
         ordering = ["-updated_at", "-id"]
         indexes = [models.Index(fields=["business", "agent", "owner", "is_archived", "updated_at"], name="ai_thread_owner_recent")]
         constraints = [models.CheckConstraint(
-            condition=(models.Q(kind="staff", inbox_conversation__isnull=True)
-                       | models.Q(kind="inbox", owner__isnull=True, inbox_conversation__isnull=False)),
+            condition=(models.Q(kind="staff", agent__isnull=False, inbox_conversation__isnull=True)
+                       | models.Q(kind="inbox", agent__isnull=False, owner__isnull=True, inbox_conversation__isnull=False)
+                       | models.Q(kind="voice", agent__isnull=True, inbox_conversation__isnull=True)),
             name="ai_thread_scope_kind")]
 
 

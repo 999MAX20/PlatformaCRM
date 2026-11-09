@@ -6,6 +6,7 @@ import { ActionConfirmProvider } from "../components/actions/ActionConfirmProvid
 import { ConnectivityStatus } from "../components/ui/ConnectivityStatus";
 import { UndoToastProvider } from "../components/actions/UndoToastProvider";
 import { NotificationProvider } from "../components/notifications/NotificationProvider";
+import { NotificationHost } from "../components/notifications/NotificationHost";
 import { AuthProvider, useAuth } from "../features/auth/AuthProvider";
 import { I18nProvider } from "../lib/i18n";
 
@@ -76,9 +77,11 @@ function AuthenticatedProviders({ children }: { children: React.ReactNode }) {
 export function AppProviders({ children }: { children: React.ReactNode }) {
   return (
     <I18nProvider>
+      <NotificationHost>
       <AuthProvider>
         <AuthenticatedProviders>{children}</AuthenticatedProviders>
       </AuthProvider>
+      </NotificationHost>
     </I18nProvider>
   );
 }

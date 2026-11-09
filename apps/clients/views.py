@@ -1,4 +1,7 @@
+from apps.core.custom_field_filters import filter_custom_field
+from django.core.paginator import Paginator
 from django.db import transaction
+from django.utils.functional import cached_property
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
@@ -15,10 +18,27 @@ from apps.core.models import AuditLog
 from apps.core.viewsets import TenantModelViewSet
 
 
+class ClientPaginator(Paginator):
+    @cached_property
+    def count(self):
+        # List annotations enrich displayed rows; they are not needed to count
+        # distinct clients. Keep all scope/filter predicates in the query.
+        return self.object_list.order_by().values("pk").count()
+
+
 class ClientPagination(PageNumberPagination):
+    django_paginator_class = ClientPaginator
     page_size = 50
     page_size_query_param = "page_size"
     max_page_size = 100
+
+    def paginate_queryset(self, queryset, request, view=None):
+        identifiers = super().paginate_queryset(queryset.values_list("pk", flat=True), request, view)
+        if identifiers is None:
+            return None
+        # Select the scoped page before evaluating its display-only subqueries.
+        rows = {row.pk: row for row in queryset.filter(pk__in=identifiers)}
+        return [rows[pk] for pk in identifiers if pk in rows]
 
 
 class ClientViewSet(TenantModelViewSet):
@@ -56,6 +76,8 @@ class ClientViewSet(TenantModelViewSet):
         if self.action == "crm_card":
             # The card builds its own scoped annotations after resolving the parent.
             return queryset
+        if self.action == "list":
+            queryset = filter_custom_field(queryset, actor=self.request.user, entity_type="client", params=self.request.query_params)
         client_ids = self.parse_query_id_list("client_ids")
         return client_queryset_for_request(queryset, self.request, client_ids=client_ids, apply_quick_filter=apply_quick_filter)
 

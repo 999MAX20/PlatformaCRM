@@ -12,6 +12,7 @@ import { resourcesApi } from "../api/resources";
 import { servicesApi } from "../api/services";
 import { tasksApi } from "../api/tasks";
 import { workingHoursApi } from "../api/workingHours";
+import { useActiveBusiness } from "./useBusiness";
 import type {
   ActivityEvent,
   Appointment,
@@ -60,6 +61,7 @@ type EntityDataOptions = {
 };
 
 export function useEntityData(options?: EntityDataOptions) {
+  const { business } = useActiveBusiness();
   const defaultEnabled = options === undefined;
   const globalEnabled = options?.enabled ?? true;
   const shouldLoad = (key: keyof EntityDataOptions) => globalEnabled && (defaultEnabled || options?.[key] === true);
@@ -74,7 +76,7 @@ export function useEntityData(options?: EntityDataOptions) {
   const pipelineStages = useQuery<PipelineStage[]>({ queryKey: ["pipeline-stages"], queryFn: () => pipelineStagesApi.list(), enabled: shouldLoad("pipelineStages") });
   const deals = useQuery<Deal[]>({ queryKey: ["deals"], queryFn: () => dealsApi.list(), enabled: shouldLoad("deals") });
   const tasks = useQuery<Task[]>({ queryKey: ["tasks"], queryFn: () => tasksApi.list(), enabled: shouldLoad("tasks") });
-  const notifications = useQuery<Notification[]>({ queryKey: ["notifications"], queryFn: () => notificationsApi.list(), enabled: shouldLoad("notifications") });
+  const notifications = useQuery<Notification[]>({ queryKey: ["notifications", business?.id], queryFn: () => notificationsApi.list({ business: business?.id }), enabled: Boolean(business) && shouldLoad("notifications") });
   const activityEvents = useQuery<ActivityEvent[]>({ queryKey: ["activity-events"], queryFn: () => activityEventsApi.list(), enabled: shouldLoad("activityEvents") });
   const tags = useQuery<Tag[]>({ queryKey: ["tags"], queryFn: () => tagsApi.list(), enabled: shouldLoad("tags") });
   const taggedObjects = useQuery<TaggedObject[]>({ queryKey: ["tagged-objects"], queryFn: () => taggedObjectsApi.list(), enabled: shouldLoad("taggedObjects") });

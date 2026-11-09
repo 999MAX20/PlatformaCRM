@@ -7,10 +7,10 @@ from django.db.models import Avg, Count, DurationField, ExpressionWrapper, F, Q,
 from django.http import HttpResponse
 from django.utils import timezone
 
-from apps.analytics.crm_metrics import build_crm_operational_metrics
+from apps.analytics.crm_metrics import _scoped, build_crm_operational_metrics
 from apps.analytics.financial_metrics import financial_report
 from apps.analytics.models import ReportWidget
-from apps.businesses.access import Actions, Resources, scope_queryset
+from apps.businesses.access import Resources
 from apps.clients.models import Client
 from apps.core.csv_safety import safe_csv_cell
 from apps.core.date_ranges import parse_bounded_date_range
@@ -59,11 +59,10 @@ def build_report_summary(business, *, user=None, start_date=None, end_date=None)
     deals = Deal.objects.filter(business=business, is_archived=False)
     appointments = Appointment.objects.filter(business=business, is_archived=False)
     tasks = Task.objects.filter(business=business, is_archived=False)
-    if user is not None:
-        leads = scope_queryset(leads, user, business, Resources.LEADS, Actions.VIEW)
-        deals = scope_queryset(deals, user, business, Resources.DEALS, Actions.VIEW)
-        appointments = scope_queryset(appointments, user, business, Resources.APPOINTMENTS, Actions.VIEW)
-        tasks = scope_queryset(tasks, user, business, Resources.TASKS, Actions.VIEW)
+    leads = _scoped(leads, user, business, Resources.LEADS)
+    deals = _scoped(deals, user, business, Resources.DEALS)
+    appointments = _scoped(appointments, user, business, Resources.APPOINTMENTS)
+    tasks = _scoped(tasks, user, business, Resources.TASKS)
 
     leads = _date_filter(leads, "created_at", start_date, end_date)
     deals = _date_filter(deals, "created_at", start_date, end_date)

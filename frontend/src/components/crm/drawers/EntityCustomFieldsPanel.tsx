@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { getApiErrorMessage } from "../../../api/client";
 import { customFieldValuesApi } from "../../../api/customFields";
 import { useI18n } from "../../../lib/i18n";
-import type { CrmCardPayload } from "../../../types";
+import type { CrmCardPayload, CrmCardCustomField, CustomFieldEntityType, Id } from "../../../types";
 import { Button } from "../../ui/Button";
 import { Input } from "../../ui/Input";
 import { Select } from "../../ui/Select";
@@ -14,6 +14,15 @@ import { drawerSurfaceClass } from "./shared";
 import type { CrmDrawerEntity } from "./types";
 
 export function EntityCustomFieldsPanel({ data, entity }: { data: CrmCardPayload; entity: CrmDrawerEntity }) {
+  return <CustomFieldsEditor fields={data.custom_fields.filter(field => (field.definition.options_json.display as { in_card?: boolean } | undefined)?.in_card !== false)} entity={entity}
+    businessId={data.client?.business || data.lead?.business || data.deal?.business || data.appointment?.business || 0} />;
+}
+
+export function CustomFieldsEditor({ fields, entity, businessId, onDirtyChange, onPendingChange, readOnly = false }: {
+  fields: CrmCardCustomField[]; entity: { type: CustomFieldEntityType; id: Id }; businessId: Id;
+  onDirtyChange?: (dirty: boolean) => void; readOnly?: boolean;
+  onPendingChange?: (pending: boolean) => void;
+}) {
   const { t } = useI18n();
   const queryClient = useQueryClient();
   const [values, setValues] = useState<Record<number, unknown>>({});
@@ -21,13 +30,15 @@ export function EntityCustomFieldsPanel({ data, entity }: { data: CrmCardPayload
     setValues({});
   }, [entity.type, entity.id]);
 
+  useEffect(() => { onDirtyChange?.(Object.keys(values).length > 0); return () => onDirtyChange?.(false); }, [values, onDirtyChange]);
+
   const mutation = useMutation({
     mutationFn: () =>
       customFieldValuesApi.bulkUpsert({
-        business: data.client?.business || data.lead?.business || data.deal?.business || data.appointment?.business || 0,
+        business: businessId,
         entity_type: entity.type,
         entity_id: String(entity.id),
-        values: data.custom_fields.filter((field) => field.can_edit && field.definition.id in values).map((field) => ({
+        values: fields.filter((field) => field.can_edit && field.definition.id in values).map((field) => ({
           definition: field.definition.id,
           value_json: {
             value: values[field.definition.id],
@@ -35,12 +46,17 @@ export function EntityCustomFieldsPanel({ data, entity }: { data: CrmCardPayload
         })),
       }),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["crm-card", entity.type, entity.id] });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["crm-card", entity.type, entity.id] }),
+        queryClient.invalidateQueries({ queryKey: ["custom-field-context", businessId, entity.type] }),
+      ]);
       setValues({});
     },
   });
 
-  if (!data.custom_fields.length) return null;
+  useEffect(() => { onPendingChange?.(mutation.isPending); return () => onPendingChange?.(false); }, [mutation.isPending, onPendingChange]);
+
+  if (!fields.length) return null;
 
   return (
     <div className={drawerSurfaceClass}>
@@ -49,16 +65,16 @@ export function EntityCustomFieldsPanel({ data, entity }: { data: CrmCardPayload
           <h3 className="font-semibold text-platforma-ink">{t("crmCard.customFields")}</h3>
           <p className="mt-1 text-sm text-platforma-muted">{t("crmCard.customFieldsText")}</p>
         </div>
-        <Button type="button" variant="secondary" disabled={!Object.keys(values).length || !data.custom_fields.some((field) => field.can_edit)} isLoading={mutation.isPending} onClick={() => mutation.mutate()}>
+        <Button type="button" variant="secondary" disabled={readOnly || !Object.keys(values).length || !fields.some((field) => field.can_edit)} isLoading={mutation.isPending} onClick={() => mutation.mutate()}>
           {t("crmCard.saveFields")}
         </Button>
       </div>
       {mutation.error ? <ErrorState error={mutation.error} message={getApiErrorMessage(mutation.error)} /> : null}
       <div className="grid gap-3 sm:grid-cols-2">
-        {data.custom_fields.map((field) => {
+        {fields.map((field) => {
           const options = customFieldOptions(field.definition);
           const value = field.definition.id in values ? values[field.definition.id] : field.value?.value_json?.value;
-          const disabled = !field.can_edit || mutation.isPending;
+          const disabled = readOnly || !field.can_edit || mutation.isPending;
           const change = (next: unknown) => setValues((current) => ({ ...current, [field.definition.id]: next }));
           if (field.definition.field_type === "boolean") {
             return (

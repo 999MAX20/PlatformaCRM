@@ -5,7 +5,8 @@ from rest_framework.response import Response
 from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
 
-from apps.ai_core.conversation_access import create_staff_conversation, memory_access_fingerprint, references_visible, staff_conversation, staff_conversations
+from apps.ai_core.conversation_access import create_staff_conversation, create_voice_conversation, voice_access, memory_access_fingerprint, references_visible, staff_conversation, staff_conversations
+from apps.ai_core.models import AgentConversation
 from apps.ai_core.conversation_actions import confirm_turn
 from apps.ai_core.conversation_state import OPEN, cancel_turn, dispatch_conversation_job, locked_conversation, recover_interrupted, reset_memory, retry_turn, start_turn, stop_turn
 from apps.ai_core.serializers import AIToolCallLogSerializer
@@ -15,9 +16,18 @@ from apps.businesses.models import Business
 
 class ConversationScopeSerializer(serializers.Serializer):
     business = serializers.PrimaryKeyRelatedField(queryset=Business.objects.all())
-    agent = serializers.IntegerField(min_value=1)
+    agent = serializers.IntegerField(min_value=1, required=False)
+    kind = serializers.ChoiceField(choices=["staff", "voice"], default="staff")
     archived = serializers.BooleanField(default=False)
     mode = serializers.ChoiceField(choices=["work", "analytics"], default="work")
+
+    def validate(self, values):
+        if values["kind"] == "voice":
+            if "agent" in values or values["mode"] != "work":
+                raise serializers.ValidationError("Voice does not use an agent or agent mode.")
+        elif "agent" not in values:
+            raise serializers.ValidationError({"agent": "This field is required."})
+        return values
 
 
 class PeriodSerializer(serializers.Serializer):
@@ -30,11 +40,20 @@ class PeriodSerializer(serializers.Serializer):
         return values
 
 
+class VoiceReferenceSerializer(serializers.Serializer):
+    entity = serializers.ChoiceField(choices=["clients", "tasks", "appointments"])
+    id = serializers.IntegerField(min_value=1)
+
+
 class TurnSerializer(serializers.Serializer):
     message = serializers.CharField(max_length=4000, allow_blank=False)
     idempotency_key = serializers.CharField(max_length=128)
     mode = serializers.ChoiceField(choices=["work", "analytics"], default="work")
     period = PeriodSerializer(required=False)
+    origin = serializers.ChoiceField(choices=["text", "voice"], default="text")
+    current_entity = VoiceReferenceSerializer(required=False)
+    current_branch = serializers.IntegerField(min_value=1, required=False)
+    execution = serializers.ChoiceField(choices=["review", "direct"], default="review")
 
 
 class HistoryPageSerializer(serializers.Serializer):
@@ -84,9 +103,9 @@ def thread_payload(thread, user, *, fingerprint=None):
     title_turn = thread.turns.order_by("sequence").first()
     fingerprint = fingerprint or memory_access_fingerprint(business=thread.business, agent=thread.agent, user=user)
     visible = title_turn is None or (title_turn.access_fingerprint == fingerprint and references_visible(thread=thread, user=user, references=title_turn.references_json))
-    return {"id": str(thread.pk), "business": thread.business_id, "agent": thread.agent_id,
+    return {"id": str(thread.pk), "business": thread.business_id, "agent": thread.agent_id, "kind": thread.kind,
             "title": thread.title if visible else "", "is_archived": thread.is_archived,
-            "revision": thread.revision, "memory_enabled": thread.agent.settings_json.get("memory_enabled", True),
+            "revision": thread.revision, "memory_enabled": thread.agent.settings_json.get("memory_enabled", True) if thread.agent else True,
             "memory_epoch": thread.memory_epoch, "status": last.status if last else "empty", "updated_at": thread.updated_at}
 
 
@@ -98,7 +117,12 @@ class AgentConversationListView(APIView):
         page = ConversationPageSerializer(data=request.query_params)
         page.is_valid(raise_exception=True)
         offset = page.validated_data["offset"]
-        queryset = staff_conversations(business=values["business"], agent_id=values["agent"], user=request.user).filter(
+        if values["kind"] == "voice":
+            voice_access(business=values["business"], user=request.user)
+            queryset = AgentConversation.objects.filter(business=values["business"], owner=request.user, kind="voice")
+        else:
+            queryset = staff_conversations(business=values["business"], agent_id=values["agent"], user=request.user)
+        queryset = queryset.filter(
             is_archived=values["archived"]).select_related("business", "agent").order_by("-updated_at", "-pk")
         threads = list(queryset[offset:offset + 51])
         has_more = len(threads) > 50
@@ -111,7 +135,7 @@ class AgentConversationListView(APIView):
         serializer = ConversationScopeSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         values = serializer.validated_data
-        thread = create_staff_conversation(business=values["business"], agent_id=values["agent"], user=request.user, mode=values["mode"])
+        thread = create_voice_conversation(business=values["business"], user=request.user) if values["kind"] == "voice" else create_staff_conversation(business=values["business"], agent_id=values["agent"], user=request.user, mode=values["mode"])
         return Response(thread_payload(thread, request.user), status=201)
 
 
@@ -153,6 +177,18 @@ class AgentConversationTurnsView(APIView):
         values = dict(serializer.validated_data)
         period = values.pop("period", None)
         context = {"period": {key: value.isoformat() for key, value in period.items()}} if period else {}
+        execution = values.pop("execution")
+        if execution == "direct":
+            context["execution"] = "direct"
+        origin = values.pop("origin")
+        reference = values.pop("current_entity", None)
+        branch_id = values.pop("current_branch", None)
+        if origin == "voice":
+            context["origin"] = "voice"
+            if reference:
+                context["current_entity"] = reference
+            if branch_id:
+                context["current_branch"] = branch_id
         turn, job = start_turn(conversation_id=conversation_id, user=request.user, context=context, **values)
         if job is not None:
             dispatch_conversation_job(job)

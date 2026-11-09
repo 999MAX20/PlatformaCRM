@@ -1,4 +1,5 @@
 export const identity: Record<string, string> = {
+  "auth.sessionRecoveryFailed": "Сеансты қалпына келтіру мүмкін болмады. Қайталап көріңіз.",
   "auth.logoutFailed": "Шығу аяқталмады. Сеанс әлі белсенді болуы мүмкін. Қайталап көріңіз.",
   "auth.loggingOut": "Шығу аяқталуда…",
   "employeeAccess.title": "Қызметкерлердің қолжетімділігі",
@@ -183,6 +184,8 @@ export const identity: Record<string, string> = {
     "Провайдер арқылы кіру сәтсіз болды. Қайталап көріңіз немесе email мен құпиясөзді қолданыңыз.",
   "mfa.hero": "Екі қадам бизнес аккаунтыңызды қорғайды",
   "mfa.title": "Кіруді растау",
+  "mfa.confirmedTitle": "Кіру расталды",
+  "mfa.confirmedText": "Код қабылданды. Жұмыс кабинетіне өту үшін «Кіру» түймесін басыңыз.",
   "mfa.text": "Аутентификатор қолданбасындағы кодты немесе резервтік кодты енгізіңіз.",
   "mfa.addAuthenticator": "PlatformaCRM-ді аутентификаторға қосыңыз",
   "mfa.addAuthenticatorText": "Google Authenticator, Microsoft Authenticator, 1Password немесе басқа TOTP қолданбасын ашып, төмендегі кілтті қосыңыз.",

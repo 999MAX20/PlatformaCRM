@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Button } from "../../components/ui/Button";
 import { PaymentsJournal } from "../payments/PaymentsJournal";
 import { hasPermission } from "../../lib/permissions";
@@ -14,10 +14,6 @@ import {
   tagsApi,
 } from "../../api/activities";
 import { CrmEntityDrawer } from "../../components/crm/CrmEntityDrawer";
-import {
-  CrmTableSurface,
-  CrmWorkspacePage,
-} from "../../components/crm";
 import { useActionConfirm } from "../../components/actions/ActionConfirmProvider";
 import { useUndoToast } from "../../components/actions/UndoToastProvider";
 import { ErrorState, LoadingState } from "../../components/ui/StateViews";
@@ -28,7 +24,7 @@ import type { Client, Id } from "../../types";
 import { ClientsFilters } from "./components/ClientsFilters";
 import { ClientsModals } from "./components/ClientsModals";
 import { ClientsTable } from "./components/ClientsTable";
-import { MobileClientCards } from "./components/MobileClientCards";
+import { useCustomColumns } from "../../components/crm/CustomFieldColumns";
 import { useClientsPageHeader } from "./hooks/useClientsPageHeader";
 import { useClientsWorkspace } from "./hooks/useClientsWorkspace";
 export function ClientsPage() {
@@ -49,45 +45,32 @@ export function ClientsPage() {
     setOrdering,
     clearAllFilters,
     clearCreateParam,
-    clearSearchFilter,
     closeClientCard,
     createOpen,
     drawerEntity,
     editing,
     filteredClients,
     goToPage,
-    kpi,
     openClientCard,
     openCreateClient,
     openEditClient,
     page,
     pageLoading,
     pageSize,
-    quickFilter,
     rows,
-    search,
-    setSearch,
     segmentDraft,
     segmentOpen,
     segmentOptions,
     segments,
-    selectClient,
     selectedClient,
-    selectedClientId,
-    selectedSegment,
-    selectedTag,
     setActionClient,
     setCreateOpen,
     setEditing,
     setPage,
     setPageSize,
-    setQuickFilter,
     setSegmentDraft,
     setSegmentOpen,
     setSelectedClientId,
-    setSelectedSegment,
-    setSelectedTag,
-    setSource,
     setTagDraft,
     setTagOpen,
     source,
@@ -107,9 +90,11 @@ export function ClientsPage() {
     t,
   });
 
+  const canCreate = hasPermission(user, business?.id, "clients", "create");
+  const customTable = useCustomColumns(business?.id || 0, "client", rows.map(row => row.client.id));
   useClientsPageHeader({
     t,
-    onCreateClient: openCreateClient,
+    onCreateClient: canCreate ? openCreateClient : undefined,
     onCloseClientCard: closeClientCard,
     onPayments: hasPermission(user, business?.id, "payments") ? openPayments : undefined,
   });
@@ -130,6 +115,9 @@ export function ClientsPage() {
       clearCreateParam();
     },
   });
+
+  const resetClientMutation = saveClientMutation.reset;
+  useEffect(() => resetClientMutation(), [createOpen, editing?.id, resetClientMutation]);
 
   const mergeMutation = useMutation({
     mutationFn: ({
@@ -283,7 +271,6 @@ export function ClientsPage() {
     tagsQuery.error ||
     segments.error ||
     taggedObjects.error ||
-    saveClientMutation.error ||
     mergeDryRunMutation.error ||
     mergeMutation.error ||
     archiveMutation.error ||
@@ -293,73 +280,29 @@ export function ClientsPage() {
   if (!business) return <ErrorState message={t("clients.noBusiness")} />;
   if (pageLoading) return <LoadingState scope="page" />;
 
-
-
   return (
     <>
       {paymentsOpen && <PaymentsJournal key={business.id} onClose={() => setPaymentsOpen(false)} />}
-      <CrmWorkspacePage
-        edgeToEdge
-        heightClassName="h-[calc(100dvh-var(--app-header-height)-5.5rem-env(safe-area-inset-bottom))] min-h-[320px] lg:h-[calc(100dvh-var(--app-header-height))] lg:min-h-0"
-        maxWidthClassName="max-w-none"
-        testId={pageError ? undefined : "clients-workspace-ready"}
-      >
-        {pageError ? (
-          <div className="mb-3">
-            <ErrorState error={pageError} message={getApiErrorMessage(pageError)} action={<Button variant="secondary" onClick={() => { void Promise.all([filteredClients.refetch(), tagsQuery.refetch(), segments.refetch(), taggedObjects.refetch()]); }}>{t("common.retry")}</Button>} />
-          </div>
-        ) : null}
-
-        <main className="min-h-0 min-w-0 flex-1">
-            <CrmTableSurface
-              frameless
-              className="h-full"
-              filters={
-                <ClientsFilters
-                  tagOptions={tagOptions}
-                  segmentOptions={segmentOptions}
-                  sourceOptions={sourceOptions}
-                  counts={filteredClients.isError || filteredClients.isPlaceholderData ? undefined : filteredClients.data?.summary}
-                  visibleColumns={visibleClientColumns}
-                  onToggleColumn={toggleClientColumn}
-                  onOpenSegment={() => setSegmentOpen(true)}
-                  t={t}
-                />
-              }
-            >
-              <MobileClientCards
-                rows={rows}
-                selectedClientId={selectedClientId}
-                onSelectClient={selectClient}
-                onOpenClient={(id) => openClientCard(id)}
-                t={t}
-              />
-              <ClientsTable
-                rows={rows}
-                ordering={ordering}
-                onOrderingChange={setOrdering}
-                selectedClientId={selectedClientId}
-                onSelectClient={selectClient}
-                onOpenClient={(id) => openClientCard(id)}
-                totalClients={totalClients}
-                page={page}
-                pageSize={pageSize}
-                onPageChange={goToPage}
-                onPageSizeChange={(nextPageSize) => {
-                  setPageSize(nextPageSize);
-                  setPage(1);
-                }}
-                hasFilters={hasClientFilters}
-                visibleColumns={visibleClientColumns}
-                t={t}
-              />
-            </CrmTableSurface>
-        </main>
-      </CrmWorkspacePage>
+      <div className="space-y-4 pt-2" data-testid="clients-workspace-ready" aria-busy={filteredClients.isFetching}>
+        <ClientsFilters key={`${business.id}:${user?.id}`}
+          tagOptions={tagOptions} segmentOptions={segmentOptions} sourceOptions={sourceOptions}
+          counts={filteredClients.isError || filteredClients.isPlaceholderData ? undefined : filteredClients.data?.summary}
+          visibleColumns={visibleClientColumns} onToggleColumn={toggleClientColumn}
+          onOpenSegment={() => setSegmentOpen(true)} customTable={customTable} t={t} />
+        {pageError && <ErrorState error={pageError} message={getApiErrorMessage(pageError)} action={<Button variant="secondary" onClick={() => { void Promise.all([filteredClients.refetch(), tagsQuery.refetch(), segments.refetch(), taggedObjects.refetch()]); }}>{t("common.retry")}</Button>} />}
+        {customTable.error}
+        {!filteredClients.isError && <ClientsTable rows={rows} ordering={ordering} onOrderingChange={setOrdering}
+          onOpenClient={openClientCard} totalClients={totalClients} page={page} pageSize={pageSize}
+          onPageChange={goToPage} onPageSizeChange={size => { setPageSize(size); setPage(1); }}
+          hasFilters={hasClientFilters} onResetFilters={clearAllFilters} onCreateClient={canCreate ? openCreateClient : undefined}
+          visibleColumns={visibleClientColumns} customColumns={customTable.columns} t={t} />}
+      </div>
 
       <ClientsModals
+        protectDrafts={drawerEntity?.type === "client"}
+        saveError={saveClientMutation.error}
         businessId={business.id}
-        createOpen={createOpen}
+        createOpen={createOpen && canCreate}
         editing={editing}
         mergePreview={mergePreview}
         mergeMutation={mergeMutation}
@@ -374,6 +317,7 @@ export function ClientsPage() {
         createSegmentMutation={createSegmentMutation}
         t={t}
         onCloseCreate={() => {
+          saveClientMutation.reset();
           setCreateOpen(false);
           setEditing(undefined);
           clearCreateParam();

@@ -82,6 +82,11 @@ export const support: Record<string, string> = {
   "pilot.smoke6":
     "6. Открыть Integrations и убедиться, что нет тупиковых кнопок.",
   "pilot.systemActionsTitle": "Следующие действия по данным системы",
+  "serviceStatus.title": "Состояние фоновой обработки",
+  "serviceStatus.openSupport": "Открыть поддержку",
+  "serviceStatus.openConnections": "Проверить подключения",
+  "serviceStatus.askAdmin": "Для проверки подключений обратитесь к администратору бизнеса.",
+  "serviceStatus.countsUnavailable": "Счётчики уведомлений недоступны",
   "serviceStatus.degraded.title": "Фоновая обработка задерживается",
   "serviceStatus.degraded.text": "Затронуто: {components}. Повторять уже отправленные действия не нужно. Сообщите администратору бизнеса.",
   "serviceStatus.unknown.title": "Нет свежих данных о фоновой обработке",

@@ -64,7 +64,7 @@ export function ResourcesToolbar({
   return (
     <div data-testid="resources-table-toolbar" className="flex flex-col gap-3">
       <div className={cn("flex min-w-0 flex-col gap-2", !isSplitWorkspace && "xl:flex-row xl:items-center")}>
-        <div className={cn("w-full min-w-0", !isSplitWorkspace && "xl:w-[22rem]")}>
+        <div className="w-[var(--global-search-width,480px)] max-w-full min-w-0 shrink-0">
           <Input
             data-testid="resources-search"
             value={searchDraft}

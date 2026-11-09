@@ -104,7 +104,7 @@ export function ResourceForm({
         control={form.control}
         name="resource_type"
         render={({ field }) => (
-          <Select
+          <Select portal
             {...field}
             disabled={disabled}
             label={t("resources.type")}
@@ -123,7 +123,7 @@ export function ResourceForm({
         control={form.control}
         name="linked_user"
         render={({ field }) => (
-          <Select
+          <Select portal
             {...field}
             disabled={disabled}
             label={t("resources.linkedUser")}

@@ -97,10 +97,10 @@ class ImportJobBoundaryTests(TestCase):
     def test_confirm_failure_rolls_back_earlier_rows_and_history(self):
         job = self.job()
         from apps.core.import_export import import_client_row
-        def fail_second(current_job, payload, connector=None):
+        def fail_second(current_job, payload, connector=None, request=None):
             if payload["full_name"] == "Second":
                 raise RuntimeError("Injected row failure")
-            return import_client_row(current_job, payload, connector=connector)
+            return import_client_row(current_job, payload, connector=connector, request=request)
         with patch("apps.core.import_export.read_tabular_file", return_value=[{"full_name": "First", "phone": ""}, {"full_name": "Second", "phone": ""}]), patch("apps.core.import_export.import_client_row", side_effect=fail_second):
             with self.assertRaises(RuntimeError):
                 confirm_import(job, self.request)

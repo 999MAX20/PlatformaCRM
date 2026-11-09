@@ -45,6 +45,7 @@ export function appErrorNoticeTone(error: AppError): StatusNoticeTone {
 
 type StatusNoticeProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
   action?: ReactNode;
+  dismiss?: ReactNode;
   actionPlacement?: "center" | "corner";
   ariaLive?: "assertive" | "off" | "polite";
   compact?: boolean;
@@ -58,10 +59,11 @@ type StatusNoticeProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
 
 export function StatusNotice({
   action,
-  actionPlacement = "center",
+  dismiss,
+  actionPlacement: _actionPlacement,
   ariaLive,
   className,
-  compact = false,
+  compact: _compact,
   description,
   details,
   icon: IconOverride,
@@ -81,28 +83,27 @@ export function StatusNotice({
       {...props}
       role={resolvedRole}
       aria-live={resolvedLive}
+      aria-atomic="true"
+      data-notice-tone={tone}
       className={cn(
-        "rounded-card border text-platforma-text shadow-xs",
-        compact ? "p-3" : "p-4",
-        definition.container,
+        "platforma-status-notice",
         className,
       )}
     >
-      <div className={cn("flex gap-3", actionPlacement === "corner" ? "flex-row items-start justify-between" : "flex-col sm:flex-row sm:items-center sm:justify-between")}>
-        <div className="flex min-w-0 items-start gap-3">
+      <div className="platforma-notice-grid">
           <Icon
             aria-hidden="true"
-            className={cn("mt-0.5 shrink-0", definition.icon, iconClassName)}
-            size={18}
+            className={cn("platforma-notice-icon", iconClassName)}
+            size={20}
           />
           <div className="min-w-0">
-            <p className="text-sm font-semibold text-platforma-ink">{title}</p>
-            {description ? <div className="mt-1 text-sm leading-6 text-platforma-subtle">{description}</div> : null}
+            <p className="platforma-notice-title">{title}</p>
+            {description ? <div className="platforma-notice-description">{description}</div> : null}
           </div>
-        </div>
-        {action ? <div className={cn("flex shrink-0 flex-wrap items-center justify-center gap-2", actionPlacement === "center" && "sm:justify-end")}>{action}</div> : null}
+          {dismiss ? <div className="platforma-notice-dismiss">{dismiss}</div> : null}
       </div>
       {details ? <div className="mt-3">{details}</div> : null}
+      {action ? <div className="platforma-notice-actions">{action}</div> : null}
     </div>
   );
 }

@@ -16,8 +16,17 @@ from .access import accessible_branches, assert_branch_access
 from .models import Branch, SpecialistAbsence
 
 
+class LastActiveBranch(InvalidTransition):
+    error_code = "last_active_branch"
+    default_code = error_code
+    default_detail = "Activate another branch before archiving this one."
+
+
 def assert_staff_scope(actor, resource):
     assert_can(actor, resource.business, Resources.SETTINGS, Actions.UPDATE)
+    if Branch.objects.filter(business=resource.business, uses_business_defaults=True).exclude(
+            pk__in=accessible_branches(actor, resource.business)).exists():
+        raise PermissionDenied("This specialist works in branches outside your permitted scope.")
     assignments = resource.branch_assignments.filter(is_active=True)
     if assignments.exclude(branch__in=accessible_branches(actor, resource.business)).exists():
         raise PermissionDenied("This specialist works in branches outside your permitted scope.")
@@ -59,7 +68,7 @@ def add_absence(*, resource, actor, starts_on, ends_on, branch=None, reason="una
     if branch:
         assert_can(actor, resource.business, Resources.SETTINGS, Actions.UPDATE)
         assert_branch_access(actor, resource.business, branch)
-        if not resource.branch_assignments.filter(branch=branch, is_active=True).exists():
+        if not branch.uses_business_defaults and not resource.branch_assignments.filter(branch=branch, is_active=True).exists():
             raise ValidationError({"branch": "The specialist is not assigned to this branch."})
     else:
         assert_staff_scope(actor, resource)
@@ -124,6 +133,9 @@ def change_branch_state(*, branch, actor, state):
     assert_branch_access(actor, branch.business, branch)
     if state not in {"active", "paused", "archived"}:
         raise ValidationError({"state": "Choose active, paused or archived."})
+    if state == "archived" and branch.archived_at is None and not Branch.objects.filter(
+            business=branch.business, is_active=True, archived_at__isnull=True).exclude(pk=branch.pk).exists():
+        raise LastActiveBranch()
     if state == "archived" and branch.appointments.filter(is_archived=False, end_at__gt=timezone.now(), status__in=["created", "confirmed"]).exists():
         raise InvalidTransition("Review future appointments before archiving the branch.")
     branch.is_active = state == "active"

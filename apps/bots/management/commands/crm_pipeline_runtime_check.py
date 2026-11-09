@@ -15,6 +15,7 @@ from apps.businesses.models import Business, BusinessMember
 from apps.clients.models import Client
 from apps.notifications.delivery import deliver_notification, handle_appointment_followup_reply
 from apps.notifications.models import Notification
+from apps.notifications.personal_selectors import personal_states
 from apps.scheduling.models import Appointment, AppointmentMessageSetting, Resource, WorkingHours
 from apps.services.models import Service
 
@@ -198,11 +199,16 @@ class Command(BaseCommand):
             confirmation.save(update_fields=["send_at", "updated_at"])
             delivery_result = deliver_notification(confirmation)
             confirmation.refresh_from_db()
-            delivered = confirmation.status == Notification.Statuses.SENT
+            delivered = (
+                delivery_result.get("status") == "skipped"
+                and confirmation.channel == Notification.Channels.SYSTEM
+                and confirmation.attempts == 0
+                and personal_states(actor=owner, business=business).filter(notification=confirmation).exists()
+            )
         else:
             delivery_result = {}
             delivered = False
-        steps.append(self._step("due notification delivered", delivered, f"result={delivery_result}"))
+        steps.append(self._step("due internal notification visible in personal feed", delivered, f"result={delivery_result}"))
 
         if conversation.client_id:
             Client.objects.filter(id=conversation.client_id).update(telegram_id=f"runtime-tg-{suffix}")

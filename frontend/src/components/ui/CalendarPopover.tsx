@@ -12,6 +12,8 @@ export function CalendarPopover({ anchor, label, id, testId, onClose, children }
   children: ReactNode;
 }) {
   const panel = useRef<HTMLDivElement>(null);
+  const closeRef = useRef(onClose);
+  closeRef.current = onClose;
   const [position, setPosition] = useState({ left: 8, top: 8, maxHeight: 400 });
   // Keep nested calendars inside the owning dialog's focus boundary.
   const portalRoot = anchor.current?.closest<HTMLElement>('[role="dialog"][aria-modal="true"]') || document.body;
@@ -19,13 +21,20 @@ export function CalendarPopover({ anchor, label, id, testId, onClose, children }
     const place = () => {
       const rect = anchor.current?.getBoundingClientRect();
       if (!rect || !panel.current) return;
+      const headerBottom = portalRoot === document.body
+        ? document.querySelector('[data-app-header]')?.getBoundingClientRect().bottom || 0 : 0;
+      const minimumTop = Math.max(8, headerBottom + 8);
+      if (rect.bottom <= headerBottom || rect.top >= window.innerHeight) {
+        closeRef.current(false);
+        return;
+      }
       const width = panel.current.offsetWidth;
       const below = window.innerHeight - rect.bottom - 14;
-      const above = rect.top - 14;
+      const above = Math.max(0, rect.top - minimumTop - 6);
       const upward = below < panel.current.scrollHeight && above > below;
-      const maxHeight = Math.max(80, upward ? above : below);
+      const maxHeight = Math.max(0, upward ? above : window.innerHeight - Math.max(minimumTop, rect.bottom + 6) - 8);
       setPosition({ left: Math.max(8, Math.min(rect.left, window.innerWidth - width - 8)),
-        top: upward ? Math.max(8, rect.top - Math.min(panel.current.scrollHeight, maxHeight) - 6) : rect.bottom + 6, maxHeight });
+        top: upward ? Math.max(minimumTop, rect.top - Math.min(panel.current.scrollHeight, maxHeight) - 6) : Math.max(minimumTop, rect.bottom + 6), maxHeight });
     };
     place();
     (panel.current?.querySelector<HTMLButtonElement>('[data-date][tabindex="0"]:not([disabled])') || panel.current?.querySelector<HTMLButtonElement>('button:not([disabled])'))?.focus({ preventScroll: true });
@@ -34,7 +43,7 @@ export function CalendarPopover({ anchor, label, id, testId, onClose, children }
     window.addEventListener("resize", place);
     window.addEventListener("scroll", place, true);
     return () => { observer.disconnect(); window.removeEventListener("resize", place); window.removeEventListener("scroll", place, true); };
-  }, [anchor]);
+  }, [anchor, portalRoot]);
   useEffect(() => {
     const outside = (event: PointerEvent | FocusEvent) => {
       if (!panel.current?.contains(event.target as Node) && !anchor.current?.contains(event.target as Node)) onClose(false);

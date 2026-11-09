@@ -1,11 +1,43 @@
 ## Windows local-dev launcher
 
+Диагностика задержек CRM: `scripts/benchmark_crm.py --diagnostic` с теми же
+обязательными `--dump`, `--output`, `--dataset` профилирует реальные read endpoints
+на одноразовом PostgreSQL fixture, пишет SQL count/time, cProfile и EXPLAIN.
+Обычный режим повторяет HTTP-ступени и подтверждает проходящие уровни180с;
+изменения исходников во время теста отражаются в `source_drift`.
+[Причины задержек, исправления и результаты](evidence/performance-20261106.md).
+
+Локальный PostgreSQL и перенос SQLite: `.venv/Scripts/python.exe -m unittest
+scripts.tests.test_local_postgres scripts.tests.test_dev_local -q` проверяет
+границы локального профиля и нормализацию/контроль значений. Реальный перенос
+требует отдельной разрешённой операции с backup и полной field-level сверкой;
+unit tests не заменяют её. `scripts/benchmark_crm.py` запускает authenticated HTTP
+нагрузку только на одноразовых `crm_bench_small`/`crm_bench_large` с отдельными
+процессами/очередями. [Методика, команды и результаты](evidence/postgres-load-20261106.md).
+
 `.venv/Scripts/python.exe scripts/tests/test_dev_local.py -v` checks foreign-port
 rejection, source ancestry, PID reuse, sibling roots, bounded readiness, exited
 children and concurrent launcher locking without app/database mutations.
 Live `./dev.ps1` exercises the configured working runtime; it starts services,
 never migrates/seeds. Exit2 explicitly reports pending migrations. A frontend
 build or full application suite is not required for launcher-only changes.
+
+## Import workspace browser acceptance
+
+`.venv/Scripts/python.exe scripts/verify_import_workspace.py` runs only the import
+wizard and its affected consumers in an isolated DB with dedicated ports, synthetic
+fixtures, local file scanner and eager jobs. `--grep 'explicit overwrite'` narrows
+the scenario. `--grep 'new chooser|failed new upload'` checks file picker activation,
+cancel, XLSX selection, append and upload retry in RU/KK/EN using the synthetic
+`frontend/e2e/fixtures/import-clients.xlsx` fixture. It does not migrate the working database or certify live queue/provider
+readiness. Full original XLSX regression: `--grep 'complete original Excel'` checks all20 persisted
+clients, mapping/preview/confirm/list/card and duplicate protection. The standard
+runner retains its eager/fake-scanner boundary; real Redis/Celery/ClamAV evidence
+is recorded in [the full Excel check](evidence/import-upload-alert-20261106.md#полный-перенос-исходного-excel--06112026).
+Unit presentation checks: from `frontend`,
+`node --test scripts/tests/import-workspace-errors.test.mjs`.
+Backend boundaries, PostgreSQL races and exact completion commands are recorded in
+[IMPORT-WORKSPACE evidence](evidence/import-workspace-20261104.md).
 
 Archive helper regression (C04): run `python3 scripts/tests/test_clean_archive.py -v`
 in Linux/WSL with Bash, rsync and Python3. From Windows use

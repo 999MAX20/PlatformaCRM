@@ -21,6 +21,7 @@ export function AppointmentRescheduleForm({
   onCancel,
   isSubmitting,
   timeZone = "UTC",
+  onDirtyChange,
 }: {
   appointment: Appointment;
   businessId: Id;
@@ -29,6 +30,7 @@ export function AppointmentRescheduleForm({
   onCancel: () => void;
   isSubmitting?: boolean;
   timeZone?: string;
+  onDirtyChange?: (dirty: boolean) => void;
 }) {
   const { t, language } = useI18n();
   const { getRecoverableMessage } = useActionFeedback();
@@ -41,6 +43,10 @@ export function AppointmentRescheduleForm({
   const [slot, setSlot] = useState("");
   const [reason, setReason] = useState("");
   const [submitError, setSubmitError] = useState<string | null>(null);
+  useEffect(() => {
+    onDirtyChange?.(date !== dateInTimeZone(appointment.start_at, timeZone) || resource !== (appointment.resource ? String(appointment.resource) : "") || !!slot || !!reason || String(branch.branchId || "") !== String(appointment.branch || ""));
+    return () => onDirtyChange?.(false);
+  }, [date, resource, slot, reason, branch.branchId, appointment.start_at, appointment.resource, appointment.branch, timeZone, onDirtyChange]);
   const activeResources = resources.filter((item) => item.is_active && !item.retired_at && item.resource_type === "staff" && (!branch.enabled || branch.catalog?.assignments.some((assignment) => assignment.resource === item.id && assignment.service_ids.includes(appointment.service))));
   useEffect(() => { setSlot(""); }, [branch.branchId]);
   useEffect(() => {
@@ -95,7 +101,8 @@ export function AppointmentRescheduleForm({
       }}
     >
       {branch.error && <ErrorState error={branch.error} />}
-      {branch.enabled && <Select label={t("branches.branch")} value={branch.branchId} onChange={(event) => branch.setBranchId(event.target.value)} options={[{ value: "", label: t("branches.choose") }, ...branch.branches.map((item) => ({ value: item.id, label: `${item.name} · ${item.address}` }))]} />}
+      {branch.requiresSelection && <Select label={t("branches.branch")} value={branch.branchId} onChange={(event) => branch.setBranchId(event.target.value)} options={[{ value: "", label: t("branches.choose") }, ...branch.branches.map((item) => ({ value: item.id, label: `${item.name} · ${item.address}` }))]} />}
+      {!branch.loading && !branch.error && branch.enabled && !branch.branches.length && <ErrorState message={t("branches.noBookable")} />}
       <div className="rounded-card border border-platforma-border bg-surface-muted p-3 text-sm font-semibold text-platforma-subtle">
         {t("appointments.currentTime")}: {new Date(appointment.start_at).toLocaleString(locale, { dateStyle: "medium", timeStyle: "short", timeZone })}
       </div>

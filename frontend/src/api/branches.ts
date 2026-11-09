@@ -2,7 +2,7 @@ import { apiClient } from "./client";
 import { createCrudApi } from "./crud";
 import type { Appointment, Id, Resource } from "../types";
 
-export type Branch = { id: Id; business: Id; name: string; address: string; phone: string; is_active: boolean; archived_at: string | null; can_manage: boolean; can_book: boolean; can_work: boolean };
+export type Branch = { id: Id; business: Id; name: string; address: string; phone: string; is_active: boolean; archived_at: string | null; uses_business_defaults?: boolean; can_manage: boolean; can_book: boolean; can_work: boolean };
 export type BranchOffer = { id: Id; branch: Id; service: Id; service_name: string; duration_minutes: number; price_from: string | null; is_active: boolean };
 export type BranchAssignment = { id: Id; branch: Id; resource: Id; resource_name: string; service_ids: Id[]; is_active: boolean };
 export type Interval = { start: string; end: string };

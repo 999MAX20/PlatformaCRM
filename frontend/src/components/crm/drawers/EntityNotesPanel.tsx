@@ -2,7 +2,7 @@ import { useLeadCardQueue } from "../../../features/leads/hooks/useLeadCardQueue
 import { LeadOfflineQueueStatus } from "../../../features/leads/components/LeadOfflineQueueStatus";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { StickyNote } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { notesApi } from "../../../api/activities";
 import { appointmentsApi } from "../../../api/appointments";
 import { leadsApi } from "../../../api/leads";
@@ -15,7 +15,7 @@ import { Textarea } from "../../ui/Textarea";
 import { drawerSurfaceClass, EmptyBlock } from "./shared";
 import type { CrmDrawerEntity } from "./types";
 
-export function EntityNotesPanel({ data, entity }: { data: CrmCardPayload; entity: CrmDrawerEntity }) {
+export function EntityNotesPanel({ data, entity, readOnly = false, onDirtyChange, onPendingChange, locale, timeZone }: { data: CrmCardPayload; entity: CrmDrawerEntity; readOnly?: boolean; onDirtyChange?: (dirty: boolean) => void; onPendingChange?: (pending: boolean) => void; locale?: string; timeZone?: string }) {
   const { t } = useI18n();
   const queryClient = useQueryClient();
   const [text, setText] = useState("");
@@ -54,24 +54,27 @@ export function EntityNotesPanel({ data, entity }: { data: CrmCardPayload; entit
     },
   });
 
+  useEffect(() => { onDirtyChange?.(Boolean(text.trim())); return () => onDirtyChange?.(false); }, [text, onDirtyChange]);
+  useEffect(() => { onPendingChange?.(mutation.isPending); return () => onPendingChange?.(false); }, [mutation.isPending, onPendingChange]);
+
   return (
     <div className="space-y-3">
       <LeadOfflineQueueStatus queue={offline.offlineQueue} recover={offline.recoverOfflineAction} storageError={offline.storageError} syncing={offline.syncing} online={offline.isOnline} />
-      <div className={drawerSurfaceClass}>
+      {!readOnly ? <div className={drawerSurfaceClass}>
         <h3 className="font-semibold text-platforma-ink">{t("crmCard.comment")}</h3>
         <p className="mt-1 text-sm leading-6 text-platforma-muted">{t("crmCard.commentText")}</p>
-        <Textarea className="mt-3" value={text} onChange={(event) => setText(event.target.value)} placeholder={t("crmCard.commentPlaceholder")} />
+        <Textarea aria-label={t("crmCard.comment")} className="mt-3" value={text} disabled={mutation.isPending} onChange={(event) => setText(event.target.value)} placeholder={t("crmCard.commentPlaceholder")} />
         <div className="mt-3 flex justify-end">
-          <Button type="button" variant="secondary" isLoading={mutation.isPending} onClick={() => mutation.mutate()}>
+          <Button type="button" variant="secondary" disabled={!text.trim()} isLoading={mutation.isPending} onClick={() => mutation.mutate()}>
             {t("crmCard.addComment")}
           </Button>
         </div>
         {mutation.error ? <div className="mt-2"><ErrorState message={t("crmCard.commentError")} /></div> : null}
-      </div>
+      </div> : null}
       {data.notes.map((note) => (
         <div key={note.id} className={drawerSurfaceClass}>
           <div className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em] text-platforma-faint">
-            <StickyNote size={14} /> {t("crmCard.note")} · {formatDateTime(note.created_at)}
+            <StickyNote size={14} /> {t("crmCard.note")} · {formatDateTime(note.created_at, timeZone, false, locale)}
           </div>
           <p className="text-sm leading-6 text-platforma-text">{note.text}</p>
         </div>

@@ -9,7 +9,7 @@ from django.db.models import F
 from django.utils import timezone
 from rest_framework.exceptions import PermissionDenied, ValidationError
 
-from apps.ai_core.agent_runtime import bind_agent
+from apps.ai_core.agent_runtime import bind_thread
 from apps.ai_core.conversation_access import memory_access_fingerprint, staff_conversation
 from apps.ai_core.models import AgentConversation, AgentTurn, AIJob, AIToolCallLog, ApprovalRequest
 from apps.ai_core.workflows import assert_workflow_enabled, workflow_fingerprint
@@ -38,9 +38,11 @@ def locked_conversation(conversation_id, user, *, write=True):
 
 
 def assert_turn_access(thread, user, mode):
+    if thread.kind == AgentConversation.Kinds.VOICE and mode != "work":
+        raise ValidationError("Voice does not use an agent mode.")
     resource = Resources.AI_ANALYST if mode == "analytics" else Resources.AI_ASSISTANT
     assert_can(user, thread.business, resource, Actions.VIEW if mode == "analytics" else Actions.SUGGEST)
-    with bind_agent(thread.agent_id):
+    with bind_thread(thread):
         return assert_workflow_enabled(thread.business, "analyst" if mode == "analytics" else "employee")
 
 
@@ -75,7 +77,7 @@ def recover_interrupted(thread):
 
 def conversation_job(turn, *, key):
     thread = turn.conversation
-    with bind_agent(thread.agent_id):
+    with bind_thread(thread):
         from apps.ai_core.agent_runtime import agent_binding
         runtime = {"_agent": agent_binding(thread.business), "turn_id": turn.pk, "conversation_id": str(thread.pk)}
     job, created = AIJob.objects.get_or_create(business=thread.business, idempotency_key=key,
@@ -106,6 +108,15 @@ def start_turn(*, conversation_id, user, message, idempotency_key, mode="work", 
     request_hash = hashlib.sha256(json.dumps([message, mode, context], sort_keys=True).encode()).hexdigest()
     with locked_conversation(conversation_id, user) as thread:
         assert_turn_access(thread, user, mode)
+        if context.get("execution") == "direct":
+            if thread.kind != AgentConversation.Kinds.VOICE or mode != "work":
+                raise ValidationError("Direct submission is available only in private voice conversations.")
+        if thread.kind == AgentConversation.Kinds.VOICE:
+            context = {**context, "origin": "voice"}
+            request_hash = hashlib.sha256(json.dumps([message, mode, context], sort_keys=True).encode()).hexdigest()
+        if context.get("origin") == "voice":
+            from apps.ai_core.voice_policy import voice_reference
+            voice_reference(thread, user, context)
         existing = thread.turns.filter(idempotency_key=idempotency_key).first()
         if existing:
             if existing.request_hash != request_hash:
@@ -120,7 +131,7 @@ def start_turn(*, conversation_id, user, message, idempotency_key, mode="work", 
         if not thread.title:
             thread.title = " ".join(message.split())[:120]
         thread.save(update_fields=["revision", "title", "updated_at"])
-        with bind_agent(thread.agent_id):
+        with bind_thread(thread):
             version = workflow_fingerprint(thread.business, "analyst" if mode == "analytics" else "employee")
         turn = AgentTurn.objects.create(conversation=thread, sequence=thread.revision, idempotency_key=idempotency_key,
             request_hash=request_hash, message=message, mode=mode, context_json=context, memory_epoch=thread.memory_epoch,
@@ -165,7 +176,7 @@ def retry_turn(*, conversation_id, turn_id, user, idempotency_key):
         if turn.status != AgentTurn.Statuses.FAILED or turn.sequence != thread.revision or turn.memory_epoch != thread.memory_epoch:
             raise ValidationError("This request cannot be retried. Send a new message.")
         assert_turn_access(thread, user, turn.mode)
-        with bind_agent(thread.agent_id):
+        with bind_thread(thread):
             turn.runtime_fingerprint = workflow_fingerprint(thread.business, "analyst" if turn.mode == "analytics" else "employee")
         turn.access_fingerprint = memory_access_fingerprint(business=thread.business, agent=thread.agent, user=user)
         turn.status = AgentTurn.Statuses.PREPARING
@@ -185,7 +196,7 @@ def assert_current_turn(thread, turn, *, statuses=(AgentTurn.Statuses.PREPARING,
     if turn.status not in statuses or turn.memory_epoch != thread.memory_epoch or turn.sequence != thread.revision:
         raise PermissionDenied("This conversation request is no longer current.")
     assert_turn_access(thread, thread.owner, turn.mode)
-    with bind_agent(thread.agent_id):
+    with bind_thread(thread):
         version = workflow_fingerprint(thread.business, "analyst" if turn.mode == "analytics" else "employee")
     access = memory_access_fingerprint(business=thread.business, agent=thread.agent, user=thread.owner)
     if version != turn.runtime_fingerprint or access != turn.access_fingerprint:

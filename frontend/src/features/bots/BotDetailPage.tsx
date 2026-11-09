@@ -51,7 +51,7 @@ export function BotDetailPage() {
     mutationFn: (publicToken: string) => websiteChatApi.createConversation({ publicToken, payload: preview }),
     onSuccess: (data) => {
       setPreviewConversationId(data.conversation_id);
-      setPreviewResult(t("botDetail.previewCreated", { conversation: data.conversation_id, lead: data.lead_id || t("botDetail.leadNotCreated") }));
+      setPreviewResult(t("botDetail.previewCreated", { conversation: data.conversation_id }));
       queryClient.invalidateQueries({ queryKey: ["bot-conversations"] });
       queryClient.invalidateQueries({ queryKey: ["bot-messages"] });
       queryClient.invalidateQueries({ queryKey: ["clients"] });

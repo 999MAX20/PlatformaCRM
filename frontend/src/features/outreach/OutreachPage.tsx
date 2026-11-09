@@ -228,7 +228,7 @@ export function OutreachPage() {
     onSuccess: invalidateCampaigns,
   });
   const retryNotification = useMutation({
-    mutationFn: (id: number) => notificationsApi.retry(id),
+    mutationFn: (id: number) => notificationsApi.retry(id, business?.id),
     onSuccess: invalidateCampaigns,
   });
   const retryFailed = useMutation({

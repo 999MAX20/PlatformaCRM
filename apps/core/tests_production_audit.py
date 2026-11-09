@@ -270,6 +270,7 @@ class ProductionReadinessAuditTests(TestCase):
         self.assertEqual(database_item["status"], "pass")
 
     @override_settings(
+        EMAIL_BACKEND="django.core.mail.backends.smtp.EmailBackend",
         EMAIL_HOST="smtp.example.net",
         DEFAULT_FROM_EMAIL="PlatformaCRM <no-reply@zani.local>",
         EMAIL_USE_TLS=True,
@@ -282,6 +283,7 @@ class ProductionReadinessAuditTests(TestCase):
         self.assertEqual(email_item["status"], "warn")
 
     @override_settings(
+        EMAIL_BACKEND="django.core.mail.backends.smtp.EmailBackend",
         EMAIL_HOST="smtp.example.net",
         DEFAULT_FROM_EMAIL="PlatformaCRM <no-reply@zani.example.net>",
         EMAIL_USE_TLS=False,
@@ -294,6 +296,7 @@ class ProductionReadinessAuditTests(TestCase):
         self.assertEqual(email_item["status"], "warn")
 
     @override_settings(
+        EMAIL_BACKEND="django.core.mail.backends.smtp.EmailBackend",
         EMAIL_HOST="smtp.example.net",
         DEFAULT_FROM_EMAIL="PlatformaCRM <no-reply@zani.example.net>",
         EMAIL_USE_TLS=True,

@@ -116,7 +116,7 @@ class KaspiCompetitorOfferSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         rule = attrs.get("rule") or getattr(self.instance, "rule", None)
-        business = attrs.get("business")
+        business = attrs.get("business", getattr(self.instance, "business", None))
         if rule and business and rule.business_id != business.id:
             raise serializers.ValidationError("Offer business must match pricing rule business.")
         return attrs

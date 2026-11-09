@@ -3,6 +3,7 @@ import { Navigate } from "react-router";
 import { RouteErrorBoundary } from "../components/ui/RouteErrorBoundary";
 
 import { LoginPage } from "../features/auth/LoginPage";
+import { LandingHome } from "./LandingHome";
 
 import { PublicRoute, PageLoader } from "./routeGuards";
 import { InviteAcceptPage, SignupPage, DocumentsPage, ForgotPasswordPage, ResetPasswordPage, AccountRecoveryPage, MfaPage } from "./routeLoaders";
@@ -12,11 +13,7 @@ export const publicRoutes = [
 {
     path: "/",
     errorElement: <RouteErrorBoundary />,
-    element: (
-      <PublicRoute>
-        <LoginPage />
-      </PublicRoute>
-    ),
+    element: <LandingHome />,
   },
 {
     path: "/pricing",

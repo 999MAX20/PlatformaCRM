@@ -28,8 +28,10 @@ def resolve_branch(business, branch=None):
 
 def booking_terms(business, service, resource, branch=None, *, appointment=None):
     branch = resolve_branch(business, branch)
-    if branch is None:
-        return None, service.duration_minutes, service.price_from
+    if branch is None or branch.uses_business_defaults:
+        if branch and appointment and appointment.branch_id == branch.pk and appointment.booked_duration_minutes:
+            return branch, appointment.booked_duration_minutes, appointment.booked_price
+        return branch, service.duration_minutes, service.price_from
     offer = BranchService.objects.filter(business=business, branch=branch, service=service, is_active=True).first()
     if offer is None:
         raise ValidationError({"service": "This service is unavailable at the selected branch."})

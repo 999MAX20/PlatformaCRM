@@ -52,7 +52,8 @@ export const clientSourceOptions = [
   { value: "other", label: "clients.sourceOther" },
 ] as const;
 
-export function money(value: string | number, currency = "KZT") {
+export function money(value: string | number | null | undefined, currency = "KZT") {
+  if (value == null) return "-";
   return `${Number(value || 0).toLocaleString("ru-RU")} ${currency}`;
 }
 

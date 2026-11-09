@@ -1,3 +1,5 @@
+from apps.core.client_projection import client_label
+from apps.core.crm_read_scope import readable_queryset
 from apps.clients.models import Client
 from apps.businesses.access import Actions, Resources, can, scope_queryset
 from apps.core.permissions import user_can_access_business
@@ -68,7 +70,7 @@ def build_crm_context(business, user=None):
         "latest_leads": [
             {
                 "id": lead.id,
-                "client": lead.client.full_name,
+                "client": client_label(lead.client, actor=user, business=business),
                 "service": lead.service.name if lead.service else None,
                 "source": lead.source,
                 "status": lead.status,
@@ -80,7 +82,7 @@ def build_crm_context(business, user=None):
         "upcoming_appointments": [
             {
                 "id": appointment.id,
-                "client": appointment.client.full_name,
+                "client": client_label(appointment.client, actor=user, business=business),
                 "service": appointment.service.name,
                 "resource": appointment.resource.name if appointment.resource else None,
                 "status": appointment.status,
@@ -117,4 +119,6 @@ def assert_business_access(user, business):
 def _scoped_queryset(queryset, *, user, business, resource):
     if not user or not user.is_authenticated:
         return queryset.none()
+    if resource == Resources.CLIENTS:
+        return readable_queryset(queryset, actor=user, business=business, resource=resource)
     return scope_queryset(queryset, user, business, resource, Actions.VIEW)

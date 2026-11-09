@@ -6,6 +6,17 @@ from apps.core.file_scanning import scan_due_attachments
 from apps.core.service_status import observe_service_batch
 
 
+@shared_task(bind=True, name="imports.process_workspace", queue="reports_exports", acks_late=True, reject_on_worker_lost=True)
+def process_import_workspace_task(self, workspace_id, operation_id):
+    from apps.core.import_workspace.operations import process_operation
+    from apps.core.models import ImportWorkspace
+    process_operation(workspace_id, operation_id)
+    operation = ImportWorkspace.objects.get(pk=workspace_id).operation_json
+    if operation.get("id") == operation_id and operation.get("status") in {"pending", "running"}:
+        raise self.retry(countdown=60, max_retries=None)
+    return {"workspace_id": workspace_id, "status": operation.get("status")}
+
+
 @shared_task(name="service.observe_status", queue="default")
 def observe_service_status_task(limit=100):
     return {"observed": observe_service_batch(limit=limit)}

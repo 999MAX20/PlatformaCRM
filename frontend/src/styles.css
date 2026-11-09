@@ -285,10 +285,13 @@
     overflow-x: hidden;
   }
 
-  /* Settings save bars follow the viewport; clipping must not create a scroll container. */
+  /* Sticky controls follow the viewport; clipping must not create a scroll container. */
   html:has(.settings-workspace),
   body:has(.settings-workspace),
-  #root:has(.settings-workspace) {
+  #root:has(.settings-workspace),
+  html:has(.platforma-calendar-toolbar),
+  body:has(.platforma-calendar-toolbar),
+  #root:has(.platforma-calendar-toolbar) {
     overflow-x: clip;
   }
 
@@ -438,4 +441,92 @@
   .mobile-safe-bottom {
     padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem);
   }
+}
+
+
+:root {
+  --platforma-notice-success: #007a59;
+  --platforma-notice-danger: #a33b35;
+  --platforma-notice-warning: #f4c542;
+  --platforma-notice-info: #245e8a;
+  --platforma-notice-light: #ffffff;
+  --platforma-notice-dark: #17201e;
+}
+.platforma-status-notice {
+  --notice-background: var(--platforma-notice-info);
+  --notice-content: var(--platforma-notice-light);
+  border: 1px solid transparent;
+  border-radius: 12px;
+  padding: 16px;
+  background: var(--notice-background);
+  color: var(--notice-content);
+  box-shadow: 0 12px 28px rgb(23 32 30 / 16%);
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  line-height: 21px;
+}
+.platforma-status-notice[data-notice-tone="success"] { --notice-background: var(--platforma-notice-success); }
+.platforma-status-notice[data-notice-tone="danger"] { --notice-background: var(--platforma-notice-danger); }
+.platforma-status-notice[data-notice-tone="warning"] {
+  --notice-background: var(--platforma-notice-warning);
+  --notice-content: var(--platforma-notice-dark);
+}
+.platforma-notice-grid { display: grid; grid-template-columns: 20px minmax(0, 1fr) auto; gap: 12px; align-items: start; }
+.platforma-notice-icon { width: 20px; height: 20px; color: inherit; }
+.platforma-notice-title { font-size: 14px; font-weight: 600; line-height: 21px; }
+.platforma-notice-description { margin-top: 4px; font-size: 14px; font-weight: 400; line-height: 21px; }
+.platforma-notice-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.platforma-status-notice :is(button, a, summary) { color: inherit; }
+.platforma-status-notice button {
+  border: 1px solid currentColor;
+  background: transparent;
+  color: inherit;
+  box-shadow: none;
+  max-width: 100%;
+}
+.platforma-status-notice button:hover:not(:disabled) { background: color-mix(in srgb, currentColor 14%, transparent); }
+.platforma-status-notice button:disabled { opacity: .65; border-style: dashed; background: transparent; color: inherit; }
+.platforma-status-notice :is(button, a, summary):focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+  box-shadow: none;
+}
+.platforma-status-notice .platforma-notice-close { display: grid; place-items: center; width: 32px; height: 32px; border: 0; border-radius: 6px; }
+.platforma-status-notice [data-testid="recovery-details"],
+.platforma-status-notice [data-testid="recovery-details"] :is(summary, code, button, div) {
+  color: inherit;
+  border-color: color-mix(in srgb, currentColor 45%, transparent);
+  background: transparent;
+}
+.platforma-status-notice .platforma-notice-guidance { color: inherit; background: transparent; }
+.platforma-status-notice .platforma-retry-error { color: inherit; }
+.platforma-notification-host {
+  --notification-gap: 24px;
+  --notification-bottom: max(var(--notification-gap), env(safe-area-inset-bottom), calc(var(--notification-nav-clearance, 0px) + var(--notification-gap)));
+  position: fixed;
+  right: var(--notification-gap);
+  bottom: var(--notification-bottom);
+  z-index: var(--platforma-z-toast);
+  width: min(380px, calc(100vw - var(--notification-gap) * 2));
+  max-height: calc(100dvh - var(--notification-bottom) - var(--notification-gap));
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 8px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  pointer-events: none;
+  scrollbar-width: thin;
+}
+.platforma-notification-group { display: contents; }
+.platforma-notification-card { flex: 0 0 auto; min-width: 0; pointer-events: auto; animation: platforma-notice-enter 200ms ease-out both; }
+.platforma-notification-card[data-leaving] { animation: platforma-notice-exit 200ms ease-in both; pointer-events: none; }
+@keyframes platforma-notice-enter { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes platforma-notice-exit { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(24px); } }
+@media (max-width: 760px) { .platforma-notification-host { --notification-gap: 16px; } }
+@media (prefers-reduced-motion: reduce) { .platforma-notification-card, .platforma-notification-card[data-leaving] { animation: none; } }
+@media (forced-colors: active) {
+  .platforma-status-notice { background: Canvas; color: CanvasText; border-color: CanvasText; box-shadow: none; }
+  .platforma-status-notice button, .platforma-status-notice .platforma-notice-close { border: 1px solid ButtonText; color: ButtonText; }
+  .platforma-status-notice button:disabled { color: GrayText; opacity: 1; }
 }

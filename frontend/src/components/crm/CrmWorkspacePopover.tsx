@@ -4,13 +4,16 @@ import { Button } from "../ui/Button";
 import { PopoverSurface } from "../ui/Overlay";
 
 /** A bounded form popover that remains outside the workspace scroll container. */
-export function CrmWorkspacePopover({ label, icon, children, open: controlledOpen, onToggle, count = 0 }: {
+export function CrmWorkspacePopover({ label, icon, children, open: controlledOpen, onToggle, count = 0, iconOnly = false, keepMounted = false, focusReturnId }: {
   label: string;
   icon?: ReactNode;
   children: ReactNode;
   open?: boolean;
   onToggle?: () => void;
   count?: number;
+  iconOnly?: boolean;
+  keepMounted?: boolean;
+  focusReturnId?: string;
 }) {
   const [localOpen, setLocalOpen] = useState(false);
   const open = controlledOpen ?? localOpen;
@@ -61,10 +64,10 @@ export function CrmWorkspacePopover({ label, icon, children, open: controlledOpe
   }, [open, toggle]);
 
   return <>
-    <Button ref={trigger} variant="secondary" size="sm" className="h-10 shrink-0 gap-2 px-3" aria-expanded={open} aria-controls={open ? id : undefined} aria-haspopup="dialog" onClick={toggle}>
-      {icon}{label}{count > 0 ? <span className="rounded-sm bg-surface-muted px-1.5 tabular-nums">{count}</span> : null}
+    <Button data-focus-return-id={focusReturnId} ref={trigger} variant="secondary" size="sm" className="h-10 shrink-0 gap-2 px-3 max-sm:h-11" aria-label={label} title={iconOnly ? label : undefined} aria-expanded={open} aria-controls={open ? id : undefined} aria-haspopup="dialog" onClick={toggle}>
+      {icon}{!iconOnly && label}{count > 0 ? <span className="rounded-sm bg-surface-muted px-1.5 tabular-nums">{count}</span> : null}
     </Button>
-    {open ? createPortal(<PopoverSurface ref={panel} id={id} role="dialog" aria-label={label} tabIndex={-1}
+    {open || keepMounted ? createPortal(<PopoverSurface hidden={!open} ref={panel} id={id} role="dialog" aria-label={label} tabIndex={-1}
       className="fixed z-[80] w-[min(420px,calc(100vw-1rem))] overflow-y-auto p-4 outline-hidden" style={position}>
       {children}
     </PopoverSurface>, document.body) : null}

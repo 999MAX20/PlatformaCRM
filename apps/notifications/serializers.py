@@ -1,14 +1,18 @@
 from rest_framework import serializers
+from apps.core.client_projection import ClientProjectionMixin
 
-from apps.notifications.models import Notification, NotificationPreference
+from apps.notifications.models import Notification, NotificationPreference, NotificationRecipient
+from apps.notifications.personal_selectors import notification_subject
+from apps.notifications.service_messages import service_message_key
 
 
-class NotificationSerializer(serializers.ModelSerializer):
+class NotificationSerializer(ClientProjectionMixin, serializers.ModelSerializer):
+    client_private_copies = ("text", "last_error", "provider_reference")
     client_name = serializers.CharField(source="client.full_name", read_only=True)
     recipient_email = serializers.EmailField(source="recipient.email", read_only=True)
     recipient_name = serializers.CharField(source="recipient.full_name", read_only=True)
     is_read = serializers.BooleanField(read_only=True)
-    protected_state_fields = {"status", "read_at"}
+    protected_state_fields = {"status", "read_at", "opened_at", "acknowledged_at", "kind", "author", "revoked_at", "publication_key", "audience_fixed_at"}
 
     class Meta:
         model = Notification
@@ -57,6 +61,9 @@ class NotificationSerializer(serializers.ModelSerializer):
                     "fields": attempted_state_fields,
                 }
             )
+        channel = attrs.get("channel") or getattr(self.instance, "channel", Notification.Channels.SYSTEM)
+        if channel == Notification.Channels.SYSTEM or (self.instance and self.instance.channel == Notification.Channels.SYSTEM):
+            raise serializers.ValidationError("Publish internal announcements through the announcement action; work events are server-owned.")
         business = attrs.get("business") or getattr(self.instance, "business", None)
         client = attrs.get("client") or getattr(self.instance, "client", None)
         appointment = attrs.get("appointment") or getattr(self.instance, "appointment", None)
@@ -68,6 +75,39 @@ class NotificationSerializer(serializers.ModelSerializer):
         if recipient and business and not business.members.filter(user=recipient, is_active=True).exists():
             raise serializers.ValidationError("Recipient must be an active member of the selected business.")
         return attrs
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if instance.channel != Notification.Channels.SYSTEM or not self.context.get("personal_feed"):
+            return data
+        actor = getattr(self.context.get("request"), "user", None)
+        state = self.context.get("recipient_state")
+        if state is None and not hasattr(instance, "personal_read_at"):
+            state = NotificationRecipient.objects.filter(notification=instance, user=actor).first()
+            if state is None:
+                return {"id": None, "read_restricted": True}
+        date = serializers.DateTimeField()
+        for field in ("read_at", "opened_at", "acknowledged_at"):
+            value = getattr(state, field) if state else getattr(instance, "personal_" + field)
+            data[field] = date.to_representation(value) if value else None
+        data["is_read"] = data["read_at"] is not None
+        data["kind"] = instance.kind
+        data["author_name"] = instance.author.full_name if instance.author_id else ""
+        # Stored work text/labels may contain fields whose rights changed later.
+        # The personal feed identifies the accessible source without replaying a
+        # private historical snapshot. Full detail remains in its authorized UI.
+        subject = notification_subject(instance.action_url)
+        data["message_key"] = "" if instance.kind == Notification.Kinds.ANNOUNCEMENT else "notification.work." + (subject[0] if subject else "notifications")
+        safe_service_key = service_message_key(instance, self.context)
+        if safe_service_key:
+            data["message_key"] = safe_service_key
+        if instance.kind != Notification.Kinds.ANNOUNCEMENT:
+            data["text"] = ""
+        data["action_url"] = subject[2] if subject and instance.kind != Notification.Kinds.ANNOUNCEMENT else ""
+        data["action_label"] = ""
+        data["last_error"] = ""
+        data["provider_reference"] = ""
+        return data
 
 
 class NotificationPreferenceSerializer(serializers.ModelSerializer):

@@ -55,7 +55,7 @@ export function CalendarResourceFilters({
         searchPlaceholder={t("calendar.searchResources")}
         emptyLabel={t("calendar.noFilterResults")}
       />
-      <Select
+      <Select portal
         aria-label={t("calendar.allStatuses")}
         value={statusFilter}
         onChange={(event) => onStatusChange(event.target.value)}

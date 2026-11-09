@@ -772,7 +772,8 @@ class TasksAndNotificationsPolishTests(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertIn("ordering", response.data)
 
-    def test_task_bucket_filter_and_summary_are_tenant_scoped(self):
+    @patch("django.utils.timezone.now", return_value=datetime(2026, 10, 28, 7, tzinfo=ZoneInfo("UTC")))
+    def test_task_bucket_filter_and_summary_are_tenant_scoped(self, _clock):
         now = timezone.now()
         overdue = Task.objects.create(business=self.business, title="Overdue", client=self.client, due_at=now - timezone.timedelta(hours=1))
         today = Task.objects.create(business=self.business, title="Today", client=self.client, due_at=now + timezone.timedelta(hours=1))
@@ -1043,6 +1044,9 @@ class TasksAndNotificationsPolishTests(TestCase):
         snooze_response = self.api.post(f"/api/tasks/{task.id}/snooze/", {"snoozed_until": snoozed_until}, format="json")
 
         self.assertEqual(comment_response.status_code, 201)
+        self.assertEqual(ActivityEvent.objects.get(
+            entity_type="Task", entity_id=str(task.pk), event_type=ActivityEvents.TASK_COMMENT_ADDED,
+        ).text, f"Комментарий к задаче: {task.title}")
         self.assertEqual(watcher_response.status_code, 200)
         self.assertEqual(assign_response.status_code, 200)
         self.assertEqual(snooze_response.status_code, 200)
@@ -1109,6 +1113,7 @@ class TasksAndNotificationsPolishTests(TestCase):
                 event_type=ActivityEvents.TASK_COMMENT_DELETED,
                 metadata__kind="task_comment_deleted",
                 metadata__comment_id=comment.id,
+                text=f"Комментарий удалён из задачи: {task.title}",
             ).exists()
         )
 

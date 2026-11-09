@@ -3,6 +3,7 @@ import { createContext, useCallback, useContext, useRef, useState } from "react"
 import { normalizeAppError, type AppError } from "../../api/appError";
 import { useI18n } from "../../lib/i18n";
 import { ActionFeedbackToast } from "../notifications/NotificationProvider";
+import { NotificationPortal } from "../notifications/NotificationHost";
 
 type UndoToastOptions = {
   message: string;
@@ -32,9 +33,9 @@ export function UndoToastProvider({ children }: { children: React.ReactNode }) {
     try {
       if (current.error) await current.onRecover?.();
       else await current.onUndo();
-      dismiss(current.id);
     } catch (error) {
       setItem(latest => latest?.id === current.id ? { ...latest, error: normalizeAppError(error) } : latest);
+      throw error;
     } finally {
       if (pendingId.current === current.id) pendingId.current = null;
     }
@@ -42,8 +43,9 @@ export function UndoToastProvider({ children }: { children: React.ReactNode }) {
 
   return <UndoToastContext.Provider value={showUndoToast}>
     {children}
-    {item ? <div className="fixed bottom-5 right-5" style={{ zIndex: "var(--platforma-z-toast)" }}>
-      <ActionFeedbackToast key={item.id} dismissAfterAction={false} onDismiss={dismiss} item={{
+    <NotificationPortal group="undo">
+    {item ? <>
+      <ActionFeedbackToast key={item.id} onDismiss={dismiss} item={{
         id: item.id, createdAt: item.id,
         message: item.error ? t("fallback.undoFailed") : item.message,
         appError: item.error, tone: item.error ? "warning" : "success",
@@ -51,7 +53,8 @@ export function UndoToastProvider({ children }: { children: React.ReactNode }) {
         actionLabel: item.error ? (item.onRecover ? t("common.refresh") : undefined) : item.undoLabel || t("actions.undo"),
         onAction: !item.error || item.onRecover ? () => perform(item) : undefined,
       }} />
-    </div> : null}
+    </> : null}
+    </NotificationPortal>
   </UndoToastContext.Provider>;
 }
 

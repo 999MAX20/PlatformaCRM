@@ -93,7 +93,7 @@ def create_kaspi_recommendation(rule, competitor_price=None, competitor_name="",
                 payload_json=observed_payload or {},
             )
         elif competitor_price in (None, ""):
-            latest_offer = rule.competitor_offers.filter(available=True).order_by("price", "-observed_at").first()
+            latest_offer = rule.competitor_offers.filter(business=rule.business, available=True).order_by("price", "-observed_at").first()
             if latest_offer:
                 competitor_price = latest_offer.price
                 competitor_name = latest_offer.competitor_name

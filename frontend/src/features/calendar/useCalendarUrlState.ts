@@ -1,115 +1,51 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, type SetStateAction } from "react";
 import { useSearchParams } from "react-router";
-
 import { todayInTimeZone } from "../../lib/format";
-
 import { useActiveBusiness } from "../../hooks/useBusiness";
-
 import type { CalendarViewMode } from "./calendarTypes";
-import {
-  getCalendarRange,
-  getQueryDate,
-  getQueryView,
-  isDateValue,
-  normalizeTimeZone,
-} from "./calendarUtils";
+import { getCalendarRange, getQueryDate, getQueryView, normalizeTimeZone } from "./calendarUtils";
 
 type Args = { business: ReturnType<typeof useActiveBusiness>["business"] };
 export function useCalendarUrlState({ business }: Args) {
   const [searchParams, setSearchParams] = useSearchParams();
+  const businessTimeZone = normalizeTimeZone(business?.timezone || "Asia/Almaty");
+  const fallbackToday = todayInTimeZone(businessTimeZone);
+  const periodDate = getQueryDate(searchParams.get("date"), fallbackToday);
+  const date = getQueryDate(searchParams.get("day"), periodDate);
+  const viewMode = getQueryView(searchParams.get("view"));
   const branchFilter = searchParams.get("branch") || "";
-  const fallbackToday = todayInTimeZone(
-    normalizeTimeZone(business?.timezone || "Asia/Almaty"),
-  );
-  const [date, setDate] = useState(() =>
-    getQueryDate(searchParams.get("date"), fallbackToday),
-  );
-  const [viewMode, setViewMode] = useState<CalendarViewMode>(() =>
-    getQueryView(searchParams.get("view")),
-  );
-  const [serviceFilter, setServiceFilter] = useState(
-    searchParams.get("service") || "",
-  );
-  const [resourceFilter, setResourceFilter] = useState(
-    searchParams.get("resource") || "",
-  );
-  const [statusFilter, setStatusFilter] = useState(
-    searchParams.get("status") || "",
-  );
-  const [search, setSearch] = useState(searchParams.get("search") || "");
+  const serviceFilter = searchParams.get("service") || "";
+  const resourceFilter = searchParams.get("resource") || "";
+  const statusFilter = searchParams.get("status") || "";
   const appointmentIdFromUrl = Number(searchParams.get("appointment")) || null;
-  const searchParamsKey = searchParams.toString();
-  const calendarRange = useMemo(
-    () => getCalendarRange(date, viewMode),
-    [date, viewMode],
-  );
-  const businessTimeZone = normalizeTimeZone(
-    business?.timezone || "Asia/Almaty",
-  );
+  const calendarRange = useMemo(() => getCalendarRange(periodDate, viewMode), [periodDate, viewMode]);
+  const updateCalendar = useCallback((patch: Record<string, string>) => {
+    setSearchParams(current => {
+      const next = new URLSearchParams(current);
+      for (const [key, value] of Object.entries(patch)) {
+        if (value) next.set(key, value); else next.delete(key);
+      }
+      next.delete("search");
+      if ("date" in patch && !("day" in patch)) next.delete("day");
+      return next;
+    });
+  }, [setSearchParams]);
+  const setDate = useCallback((value: SetStateAction<string>) => {
+    const next = typeof value === "function" ? value(date) : value;
+    if (next !== periodDate || searchParams.has("day")) updateCalendar({ date: next });
+  }, [date, periodDate, searchParams, updateCalendar]);
+  const setViewMode = (value: CalendarViewMode) => updateCalendar({ view: value, day: "", appointment: "" });
   useEffect(() => {
-    const params = new URLSearchParams(searchParamsKey);
-    const nextDate = params.get("date");
-    const nextView = params.get("view");
-    const nextService = params.get("service") || "";
-    const nextResource = params.get("resource") || "";
-    const nextStatus = params.get("status") || "";
-    const nextSearch = params.get("search") || "";
-
-    if (isDateValue(nextDate)) setDate(nextDate!);
-    if (nextView) setViewMode(getQueryView(nextView));
-    setServiceFilter(nextService);
-    setResourceFilter(nextResource);
-    setStatusFilter(nextStatus);
-    setSearch(nextSearch);
-  }, [searchParamsKey]);
-  useEffect(() => {
-    setSearchParams(
-      (current) => {
-        const next = new URLSearchParams(current);
-        next.set("date", date);
-        next.set("view", viewMode);
-        if (serviceFilter) next.set("service", serviceFilter);
-        else next.delete("service");
-        if (resourceFilter) next.set("resource", resourceFilter);
-        else next.delete("resource");
-        if (statusFilter) next.set("status", statusFilter);
-        else next.delete("status");
-        if (search.trim()) next.set("search", search.trim());
-        else next.delete("search");
-        if (next.toString() === current.toString()) return current;
-        return next;
-      },
-      { replace: true },
-    );
-  }, [
-    date,
-    resourceFilter,
-    search,
-    serviceFilter,
-    setSearchParams,
-    statusFilter,
-    viewMode,
-  ]);
-  return {
-    searchParams,
-    setSearchParams,
-    branchFilter,
-    fallbackToday,
-    date,
-    setDate,
-    viewMode,
-    setViewMode,
-    serviceFilter,
-    setServiceFilter,
-    resourceFilter,
-    setResourceFilter,
-    statusFilter,
-    setStatusFilter,
-    search,
-    setSearch,
-    appointmentIdFromUrl,
-    searchParamsKey,
-    calendarRange,
-    businessTimeZone,
-  };
+    if (searchParams.get("date") === periodDate && searchParams.get("view") === viewMode && !searchParams.has("search")) return;
+    setSearchParams(current => {
+      const next = new URLSearchParams(current);
+      next.set("date", periodDate);
+      next.set("view", viewMode);
+      next.delete("search");
+      return next;
+    }, { replace: true });
+  }, [periodDate, viewMode, searchParams, setSearchParams]);
+  return { searchParams, setSearchParams, updateCalendar, branchFilter, fallbackToday,
+    date, periodDate, setDate, viewMode, setViewMode, serviceFilter, resourceFilter, statusFilter,
+    appointmentIdFromUrl, calendarRange, businessTimeZone };
 }

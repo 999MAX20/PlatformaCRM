@@ -1,4 +1,4 @@
-"""Run JWT maintenance only against this checkout's existing local SQLite DB."""
+"""Run JWT maintenance only against this checkout's verified local database."""
 import os
 from pathlib import Path
 import sys
@@ -11,8 +11,12 @@ ROOT = Path(__file__).resolve().parents[1]
 def check_local_database(database, environment):
     if environment not in {"local", "development"}:
         raise RuntimeError("Token maintenance requires a local/development environment")
+    if database["ENGINE"] == "django.db.backends.postgresql":
+        from scripts.local_postgres import validate_database
+        validate_database(database)
+        return
     if database["ENGINE"] != "django.db.backends.sqlite3":
-        raise RuntimeError("Local token maintenance requires SQLite")
+        raise RuntimeError("Unsupported local database")
     path = Path(database["NAME"])
     if not path.is_absolute():
         path = ROOT / path
@@ -27,6 +31,9 @@ def main():
     from django.conf import settings
 
     check_local_database(settings.DATABASES["default"], settings.ENVIRONMENT)
+    if settings.DATABASES["default"]["ENGINE"] == "django.db.backends.postgresql":
+        from scripts.local_postgres import ensure_running
+        ensure_running(settings.DATABASES["default"])
     import django
     django.setup()
     from apps.accounts.tasks import flush_expired_tokens

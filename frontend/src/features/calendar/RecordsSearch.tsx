@@ -15,7 +15,7 @@ export function RecordsSearch({ params, setParams }: { params: URLSearchParams; 
     const timer = window.setTimeout(() => setParams(current => patchRecordFilters(current, { search: draft }), { replace: true }), 300);
     return () => window.clearTimeout(timer);
   }, [draft, query, location.key, setParams]);
-  return <label className="relative w-60 min-w-48 flex-1">
+  return <label className="relative w-full lg:w-[var(--global-search-width,480px)] max-w-full min-w-0 shrink-0">
     <Search size={17} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-platforma-muted" />
     <input aria-label={t("records.search")} placeholder={t("records.search")} value={draft} onChange={event => setDraft(event.target.value)} className="platforma-focus-ring h-11 w-full rounded-control border border-platforma-control bg-platforma-card pl-9 pr-3 text-sm text-platforma-text placeholder:text-platforma-muted lg:h-10" />
   </label>;

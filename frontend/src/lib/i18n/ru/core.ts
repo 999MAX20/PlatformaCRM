@@ -213,10 +213,9 @@ export const core: Record<string, string> = {
   "language.ru": "Русский",
   "language.kk": "Қазақша",
   "language.en": "English",
-  "notFound.eyebrow": "Безопасный пилотный маршрут",
-  "notFound.title": "Страница пока не подключена",
-  "notFound.text":
-    "Мы не ведём пользователя в тупик: этот маршрут сохранён как безопасная пилотная заглушка. Вернитесь в рабочий кабинет и продолжайте проверку основных сценариев.",
+  "notFound.eyebrow": "404",
+  "notFound.title": "Страница не найдена",
+  "notFound.text": "Проверьте адрес или вернитесь в кабинет.",
   "notFound.backWorkspace": "Вернуться в кабинет",
   "table.emptyDescription": "Здесь появятся первые записи после создания.",
   "table.total": "Всего: {count}",

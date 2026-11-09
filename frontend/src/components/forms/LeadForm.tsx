@@ -48,6 +48,7 @@ export function LeadForm({
   const { t } = useI18n();
   const [duplicates, setDuplicates] = useState<DuplicateClient[]>([]);
   const [relatedLeadsCount, setRelatedLeadsCount] = useState(0);
+  const [hasRestrictedRelatedLeads, setHasRestrictedRelatedLeads] = useState(false);
   const selectableServices = services.filter(
     (service) => (service.is_active && !service.is_archived) || service.id === initial?.service,
   );
@@ -68,6 +69,7 @@ export function LeadForm({
     if (!clientId) {
       setDuplicates([]);
       setRelatedLeadsCount(0);
+      setHasRestrictedRelatedLeads(false);
       return;
     }
     const timeout = window.setTimeout(() => {
@@ -76,10 +78,12 @@ export function LeadForm({
         .then((result) => {
           setDuplicates(result.duplicates);
           setRelatedLeadsCount(result.related_leads.filter((lead) => lead.id !== initial?.id).length);
+          setHasRestrictedRelatedLeads(Boolean(result.has_restricted_related_leads));
         })
         .catch(() => {
           setDuplicates([]);
           setRelatedLeadsCount(0);
+          setHasRestrictedRelatedLeads(false);
         });
     }, 350);
     return () => window.clearTimeout(timeout);
@@ -97,19 +101,19 @@ export function LeadForm({
         onChange={(value) => form.setValue("client", Number(value), { shouldValidate: true })}
         error={form.formState.errors.client?.message}
         createAction={<Link className="platforma-focus-ring inline-flex rounded-control px-2 py-1 font-semibold text-brand-700 underline-offset-4 hover:underline" to="/app/clients?create=1">{t("clients.create")}</Link>} />
-      {duplicates.length || relatedLeadsCount ? (
+      {duplicates.length || relatedLeadsCount || hasRestrictedRelatedLeads ? (
         <StatusNotice
           tone="warning"
           title={t("leadForm.relatedTitle")}
           description={(
             <p>
-            {relatedLeadsCount ? `${t("leadForm.relatedCount").replace("{count}", String(relatedLeadsCount))} ` : ""}
+            {relatedLeadsCount && !hasRestrictedRelatedLeads ? `${t("leadForm.relatedCount").replace("{count}", String(relatedLeadsCount))} ` : ""}
             {t("leadForm.relatedText")}
             </p>
           )}
           details={<div className="flex flex-wrap gap-2">
-            {duplicates.slice(0, 2).map((client) => (
-              <Button key={client.id} type="button" variant="secondary" className="h-9 rounded-xl px-3 text-xs" onClick={() => onOpenClient?.(client.id)}>
+            {duplicates.filter((client) => client.id !== null).slice(0, 2).map((client) => (
+              <Button key={client.id} type="button" variant="secondary" className="h-9 rounded-xl px-3 text-xs" onClick={() => { if (client.id !== null) onOpenClient?.(client.id); }}>
                 {t("clients.openExisting")}
               </Button>
             ))}
@@ -153,7 +157,7 @@ export function LeadForm({
       </div>
       <Textarea label={t("leadForm.message")} rows={3} {...form.register("message")} />
       <div className="sticky bottom-0 flex justify-end border-t border-platforma-border bg-surface-card py-3">
-        <Button data-testid="lead-action-submit" type="submit" className="w-full sm:w-auto" isLoading={form.formState.isSubmitting} disabled={!clientId}>{duplicates.length || relatedLeadsCount ? t("clients.createAnyway") : t("clients.save")}</Button>
+        <Button data-testid="lead-action-submit" type="submit" className="w-full sm:w-auto" isLoading={form.formState.isSubmitting} disabled={!clientId}>{duplicates.length || relatedLeadsCount || hasRestrictedRelatedLeads ? t("clients.createAnyway") : t("clients.save")}</Button>
       </div>
     </form>
   );

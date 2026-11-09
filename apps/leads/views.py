@@ -1,3 +1,4 @@
+from apps.core.client_projection import client_relation_q, client_search_q
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.pagination import PageNumberPagination
@@ -93,7 +94,7 @@ class LeadViewSet(LockedCRMUpdateMixin, TenantModelViewSet):
             queryset = annotate_lead_next_task(queryset, actor=self.request.user)
         client_ids = self.parse_query_id_list("client_ids")
         if client_ids:
-            queryset = queryset.filter(client_id__in=client_ids)
+            queryset = queryset.filter(client_relation_q(self.request.user), client_id__in=client_ids)
         return self._apply_list_filters(queryset)
 
     def _apply_list_filters(self, queryset):
@@ -101,9 +102,7 @@ class LeadViewSet(LockedCRMUpdateMixin, TenantModelViewSet):
         search = (params.get("search") or "").strip()
         if search:
             queryset = queryset.filter(
-                Q(client__full_name__icontains=search)
-                | Q(client__phone__icontains=search)
-                | Q(client__email__icontains=search)
+                client_search_q(self.request.user, search)
                 | Q(message__icontains=search)
                 | Q(service__name__icontains=search)
             )
@@ -397,7 +396,7 @@ class LeadViewSet(LockedCRMUpdateMixin, TenantModelViewSet):
                 },
             )
             return CRMCommandResult(
-                data=AppointmentSerializer(appointment).data,
+                data=AppointmentSerializer(appointment, context={"request": request}).data,
                 status_code=201,
                 resource=appointment,
             )
@@ -431,7 +430,7 @@ class LeadViewSet(LockedCRMUpdateMixin, TenantModelViewSet):
                 request=request,
             )
             return CRMCommandResult(
-                data=TaskSerializer(task).data,
+                data=TaskSerializer(task, context={"request": request}).data,
                 status_code=201,
                 resource=task,
             )

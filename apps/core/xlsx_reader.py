@@ -107,7 +107,7 @@ def validate_xlsx_archive(content):
                         raise
 
 
-def read_xlsx_rows(content):
+def read_xlsx_rows(content, *, sheet_name=None):
     try:
         from openpyxl import load_workbook
     except ImportError:  # pragma: no cover
@@ -118,7 +118,7 @@ def read_xlsx_rows(content):
         with BytesIO(content) as source:
             workbook = load_workbook(source, read_only=True, data_only=True, keep_links=False)
             try:
-                sheet = workbook.active
+                sheet = workbook[sheet_name] if sheet_name is not None else workbook.active
                 if sheet is None or not hasattr(sheet, "iter_rows"):
                     raise ValidationError("XLSX has no active worksheet.")
                 # Dimensions can under-report actual data. Coordinates were bounded above.
@@ -128,6 +128,8 @@ def read_xlsx_rows(content):
                     headers = [str(value or "").strip() for value in next(rows, ())]
                     if not headers:
                         raise ValidationError("Import file is empty.")
+                    if sheet_name is not None and (any(not header for header in headers) or len(set(headers)) != len(headers)):
+                        raise ValidationError("Worksheet headers must be non-empty and unique.")
                     for index, values in enumerate(rows, start=1):
                         if index > settings.IMPORT_MAX_ROWS:
                             raise ValidationError("Import file has too many rows.")

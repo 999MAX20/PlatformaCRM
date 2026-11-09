@@ -1,3 +1,4 @@
+from apps.core.client_projection import client_label, visible_client
 from django.utils import timezone
 
 from apps.bots.models import BotConversation
@@ -131,7 +132,7 @@ def _stale_lead_actions(*, business, user, limit, now, sources_by_id, sections):
     _set_section(sections, "stale_leads", stale_leads.count(), [_source_id("LEAD", item.id) for item in items])
     actions = []
     for lead in items:
-        source = _lead_source(lead, now=now)
+        source = _lead_source(lead, now=now, user=user)
         sources_by_id[source["id"]] = source
         age_hours = source["metadata"].get("age_hours")
         priority = "high" if not lead.responsible_user_id or (age_hours is not None and age_hours >= 72) else "medium"
@@ -165,7 +166,7 @@ def _overdue_task_actions(*, business, user, limit, now, sources_by_id, sections
     _set_section(sections, "overdue_tasks", overdue_tasks.count(), [_source_id("TASK", item.id) for item in items])
     actions = []
     for task in items:
-        source = _task_source(task, now=now, include_deal=deals_enabled)
+        source = _task_source(task, now=now, include_deal=deals_enabled, user=user)
         sources_by_id[source["id"]] = source
         overdue_minutes = source["metadata"].get("overdue_minutes") or 0
         priority = "high" if task.priority in {Task.Priorities.HIGH, Task.Priorities.URGENT} or overdue_minutes >= 1440 else "medium"
@@ -199,7 +200,7 @@ def _unanswered_conversation_actions(*, business, user, limit, now, sources_by_i
     _set_section(sections, "unanswered_conversations", unread_count + handoff_count, [_source_id("CONV", item.id) for item in items])
     actions = []
     for conversation in items:
-        source = _conversation_source(conversation, now=now)
+        source = _conversation_source(conversation, now=now, user=user)
         sources_by_id[source["id"]] = source
         priority = "high" if conversation.handoff_required or source["metadata"].get("sla_overdue_minutes", 0) >= 60 else "medium"
         actions.append(
@@ -236,7 +237,7 @@ def _stalled_deal_actions(*, business, user, limit, now, sources_by_id, sections
     actions = []
     sla_ids = {deal.id for deal in sla_deals}
     for deal in items:
-        source = _deal_source(deal, reason="sla_overdue" if deal.id in sla_ids else "no_next_action", now=now)
+        source = _deal_source(deal, reason="sla_overdue" if deal.id in sla_ids else "no_next_action", now=now, user=user)
         sources_by_id[source["id"]] = source
         priority = "high" if deal.id in sla_ids else "medium"
         actions.append(
@@ -345,9 +346,9 @@ def _source(*, prefix, entity_type, entity_id, label, summary, href, occurred_at
     }
 
 
-def _lead_source(lead, *, now):
+def _lead_source(lead, *, now, user=None):
     age_hours = _hours_since(lead.updated_at or lead.created_at, now=now)
-    client_name = str(lead.client) if lead.client_id else f"Lead #{lead.id}"
+    client_name = client_label(lead.client, actor=user, business=lead.business, fallback=f"Lead #{lead.id}")
     return _source(
         prefix="LEAD",
         entity_type="lead",
@@ -359,20 +360,20 @@ def _lead_source(lead, *, now):
         metadata={
             "status": lead.status,
             "source": lead.source,
-            "client_id": lead.client_id,
+            "client_id": lead.client_id if visible_client(lead.client, actor=user, business=lead.business) is not None else None,
             "responsible_user_id": lead.responsible_user_id,
             "age_hours": age_hours,
         },
     )
 
 
-def _task_source(task, *, now, include_deal=True):
+def _task_source(task, *, now, include_deal=True, user=None):
     overdue_minutes = _minutes_since(task.due_at, now=now) if task.due_at else 0
     metadata = {
         "status": task.status,
         "priority": task.priority,
         "assignee_id": task.assignee_id,
-        "client_id": task.client_id,
+        "client_id": task.client_id if visible_client(task.client, actor=user, business=task.business) is not None else None,
         "lead_id": task.lead_id,
         "overdue_minutes": overdue_minutes,
     }
@@ -390,11 +391,11 @@ def _task_source(task, *, now, include_deal=True):
     )
 
 
-def _conversation_source(conversation, *, now):
+def _conversation_source(conversation, *, now, user=None):
     sla_minutes = 15 if conversation.handoff_required else 30
     sla_due_at = conversation.last_inbound_at + timezone.timedelta(minutes=sla_minutes) if conversation.last_inbound_at else None
     sla_overdue_minutes = max(0, _minutes_since(sla_due_at, now=now)) if sla_due_at else 0
-    title = str(conversation.client) if conversation.client_id else conversation.external_user_id or f"Conversation #{conversation.id}"
+    title = client_label(conversation.client, actor=user, business=conversation.business, fallback=f"Conversation #{conversation.id}") if conversation.client_id else conversation.external_user_id or f"Conversation #{conversation.id}"
     return _source(
         prefix="CONV",
         entity_type="conversation",
@@ -414,7 +415,9 @@ def _conversation_source(conversation, *, now):
     )
 
 
-def _deal_source(deal, *, reason, now):
+def _deal_source(deal, *, reason, now, user=None):
+    from apps.crm.field_policy import deal_amount_visible
+
     stage_entered_hours = _hours_since(deal.stage_entered_at, now=now) if deal.stage_entered_at else None
     return _source(
         prefix="DEAL",
@@ -429,7 +432,7 @@ def _deal_source(deal, *, reason, now):
             "stage_id": deal.stage_id,
             "stage_name": deal.stage.name if deal.stage else "",
             "owner_id": deal.owner_id,
-            "amount": str(deal.amount),
+            "amount": str(deal.amount) if deal_amount_visible(user, deal.business) else None,
             "reason": reason,
             "stage_entered_hours": stage_entered_hours,
         },

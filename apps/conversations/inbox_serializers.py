@@ -151,6 +151,7 @@ class InboxConversationSerializer(serializers.ModelSerializer):
         data = super().to_representation(instance)
         data["metadata_json"] = sanitize_config(data.get("metadata_json") or {})
         from apps.conversations.inbox_context import inbox_list_link_visibility, readable_inbox_links
+        from apps.conversations.read_results import METADATA_REFERENCES, project_inbox_metadata
 
         actor = getattr(self.context.get("request"), "user", None) or self.context.get("actor")
         parent_instances = getattr(self.parent, "instance", None)
@@ -169,6 +170,11 @@ class InboxConversationSerializer(serializers.ModelSerializer):
         if visible["client"] is None:
             data["client_name"] = ""
             data["client_phone"] = ""
+        if any(section in data["metadata_json"] for section in METADATA_REFERENCES):
+            visibility = self.context.get("inbox_link_visibility")
+            if visibility is None:
+                visibility = inbox_list_link_visibility([instance], actor=actor)
+            data["metadata_json"] = project_inbox_metadata(data["metadata_json"], business_id=instance.business_id, visibility=visibility)
         return data
 
 

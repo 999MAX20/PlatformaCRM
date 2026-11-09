@@ -52,7 +52,6 @@ export function OperationalDashboard({ data, error, loading, retry, access, onMo
   return <div className="space-y-4" data-testid="dashboard-operations">
     <div className="flex flex-wrap items-baseline justify-between gap-2">
       <h2 className="text-lg font-semibold text-platforma-text">{t("common.today")}, {todayLabel}</h2>
-      <p className="text-xs text-platforma-subtle">{data.timezone} · {t("dashboard.asOf", { at: formatTime(data.generated_at) })}</p>
     </div>
     <section className="grid grid-cols-2 gap-3 xl:grid-cols-4" aria-label={t("dashboard.operationalMetrics")}>
       {metrics.filter((metric) => canSee(metric.resource)).map((metric) => <Surface key={metric.key} as={Link} to={metric.href}

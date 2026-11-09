@@ -1,0 +1,4454 @@
+[
+  {
+    "path": "frontend/src/app/routeGuards.tsx",
+    "line": 79,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "<ForbiddenState"
+  },
+  {
+    "path": "frontend/src/components/actions/useActionFeedback.ts",
+    "line": 51,
+    "kinds": [
+      "feedbackHook"
+    ],
+    "source": "export function useActionFeedback() {"
+  },
+  {
+    "path": "frontend/src/components/actions/useActionFeedback.ts",
+    "line": 75,
+    "kinds": [
+      "toast"
+    ],
+    "source": "showNotification({"
+  },
+  {
+    "path": "frontend/src/components/actions/useActionFeedback.ts",
+    "line": 89,
+    "kinds": [
+      "toast"
+    ],
+    "source": "showNotification({ message, tone: \"success\" });"
+  },
+  {
+    "path": "frontend/src/components/auth/PermissionGate.tsx",
+    "line": 32,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "return <ForbiddenState message={permissionForbiddenMessage(resource, action, t)} />;"
+  },
+  {
+    "path": "frontend/src/components/crm/AttachmentScanStatus.tsx",
+    "line": 15,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "return <p role=\"status\" data-testid=\"attachment-scan-status\" data-scan-status={state}"
+  },
+  {
+    "path": "frontend/src/components/crm/CrmEntityDrawer.tsx",
+    "line": 111,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{query.error ? <ErrorState message={t(\"crmCard.loadError\")} /> : null}"
+  },
+  {
+    "path": "frontend/src/components/crm/CrmFilterControls.tsx",
+    "line": 102,
+    "kinds": [
+      "rawLive",
+      "rawMessage"
+    ],
+    "source": "{error ? <p role=\"alert\" className=\"text-sm text-platforma-danger\">{error}</p> : null}"
+  },
+  {
+    "path": "frontend/src/components/crm/drawers/appointment.tsx",
+    "line": 57,
+    "kinds": [
+      "toast"
+    ],
+    "source": "showNotification({ message: t(\"common.saved\"), tone: \"success\" });"
+  },
+  {
+    "path": "frontend/src/components/crm/drawers/appointment.tsx",
+    "line": 79,
+    "kinds": [
+      "toast"
+    ],
+    "source": "showNotification({ message: labels[variables.action], tone: \"success\" });"
+  },
+  {
+    "path": "frontend/src/components/crm/drawers/appointment.tsx",
+    "line": 154,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{notesMutation.error || lifecycleMutation.error ? <div className=\"mt-3\"><ErrorState error={notesMutation.error || lifecycleMutation.error} action={<Button type=\"button\" onClick={() => {"
+  },
+  {
+    "path": "frontend/src/components/crm/drawers/deal.tsx",
+    "line": 52,
+    "kinds": [
+      "toast"
+    ],
+    "source": "showNotification({ message: action === \"won\" ? t(\"crmCard.won\") : action === \"lost\" ? t(\"deals.lost\") : t(\"deals.reopen\"), tone: \"success\" });"
+  },
+  {
+    "path": "frontend/src/components/crm/drawers/deal.tsx",
+    "line": 76,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{mutation.error ? <div className=\"mt-3\"><ErrorState message={t(\"crmCard.saveError\")} /></div> : null}"
+  },
+  {
+    "path": "frontend/src/components/crm/drawers/EntityAttachmentsPanel.tsx",
+    "line": 236,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "<ErrorState message={uploadMutation.error ? getApiErrorMessage(uploadMutation.error) : attachmentActionError} />"
+  },
+  {
+    "path": "frontend/src/components/crm/drawers/EntityAttachmentsPanel.tsx",
+    "line": 400,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{renameMutation.error ? <ErrorState error={renameMutation.error} message={getApiErrorMessage(renameMutation.error)} /> : null}"
+  },
+  {
+    "path": "frontend/src/components/crm/drawers/EntityConversationsPanel.tsx",
+    "line": 18,
+    "kinds": [
+      "rawMessage"
+    ],
+    "source": "{conversation.last_message?.text ? <p className=\"mt-3 text-sm leading-6 text-platforma-subtle\">{conversation.last_message.text}</p> : null}"
+  },
+  {
+    "path": "frontend/src/components/crm/drawers/EntityCustomFieldsPanel.tsx",
+    "line": 56,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{mutation.error ? <ErrorState error={mutation.error} message={getApiErrorMessage(mutation.error)} /> : null}"
+  },
+  {
+    "path": "frontend/src/components/crm/drawers/EntityNotesPanel.tsx",
+    "line": 69,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{mutation.error ? <div className=\"mt-2\"><ErrorState message={t(\"crmCard.commentError\")} /></div> : null}"
+  },
+  {
+    "path": "frontend/src/components/crm/drawers/fallback.tsx",
+    "line": 204,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{mutation.error || lifecycleMutation.error ? <div className=\"mb-3\"><ErrorState message={t(\"crmCard.saveError\")} /></div> : null}"
+  },
+  {
+    "path": "frontend/src/components/crm/drawers/lead.tsx",
+    "line": 65,
+    "kinds": [
+      "toast"
+    ],
+    "source": "showNotification({ message: labels[action] || t(\"leads.actionDone\"), tone: \"success\" });"
+  },
+  {
+    "path": "frontend/src/components/crm/drawers/lead.tsx",
+    "line": 96,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{lifecycleMutation.error ? <div className=\"mt-3\"><ErrorState message={t(\"crmCard.saveError\")} /></div> : null}"
+  },
+  {
+    "path": "frontend/src/components/crm/EntityWorkspace.tsx",
+    "line": 196,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "<ErrorState message={message} />"
+  },
+  {
+    "path": "frontend/src/components/forms/AppointmentForm.tsx",
+    "line": 55,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "<StatusNotice"
+  },
+  {
+    "path": "frontend/src/components/forms/AppointmentForm.tsx",
+    "line": 131,
+    "kinds": [
+      "feedbackHook"
+    ],
+    "source": "const { getRecoverableMessage } = useActionFeedback();"
+  },
+  {
+    "path": "frontend/src/components/forms/AppointmentForm.tsx",
+    "line": 268,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{branch.error ? <ErrorState error={branch.error} /> : null}"
+  },
+  {
+    "path": "frontend/src/components/forms/AppointmentForm.tsx",
+    "line": 350,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "<ErrorState message={getRecoverableMessage(slots.error)} action={<Button type=\"button\" onClick={() => void slots.refetch()}>{t(\"common.retry\")}</Button>} />"
+  },
+  {
+    "path": "frontend/src/components/forms/AppointmentForm.tsx",
+    "line": 353,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "<StatusNotice"
+  },
+  {
+    "path": "frontend/src/components/forms/AppointmentForm.tsx",
+    "line": 377,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "<ErrorState message={submitError} action={recordFirst ? <Button type=\"button\" onClick={() => {"
+  },
+  {
+    "path": "frontend/src/components/forms/AppointmentForm.tsx",
+    "line": 383,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{recordFirst && members.error ? <ErrorState error={members.error} action={<Button type=\"button\" onClick={() => void members.refetch()}>{t(\"common.retry\")}</Button>} /> : null}"
+  },
+  {
+    "path": "frontend/src/components/forms/AppointmentRescheduleForm.tsx",
+    "line": 34,
+    "kinds": [
+      "feedbackHook"
+    ],
+    "source": "const { getRecoverableMessage } = useActionFeedback();"
+  },
+  {
+    "path": "frontend/src/components/forms/AppointmentRescheduleForm.tsx",
+    "line": 97,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{branch.error && <ErrorState error={branch.error} />}"
+  },
+  {
+    "path": "frontend/src/components/forms/AppointmentRescheduleForm.tsx",
+    "line": 136,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "<ErrorState"
+  },
+  {
+    "path": "frontend/src/components/forms/BusinessSettingsForm.tsx",
+    "line": 90,
+    "kinds": [
+      "rawMessage"
+    ],
+    "source": "<SettingsSaveBar feedback={saveError || saved ? <SettingsFeedback error={saveError} saved={saved} /> : form.formState.isDirty ? <p className=\"text-sm text-platforma-subtle\">{t(\"settings.redesign.unsaved\")}</p> : null}>"
+  },
+  {
+    "path": "frontend/src/components/forms/ClientForm.tsx",
+    "line": 100,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "<StatusNotice"
+  },
+  {
+    "path": "frontend/src/components/forms/ClientForm.tsx",
+    "line": 123,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{duplicateError ? <ErrorState message={duplicateError} /> : null}"
+  },
+  {
+    "path": "frontend/src/components/forms/ClientPicker.tsx",
+    "line": 34,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{value && selected.isPending && search.allowed ? <p role=\"status\">{t(\"common.loading\")}</p> : null}"
+  },
+  {
+    "path": "frontend/src/components/forms/ClientPicker.tsx",
+    "line": 35,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{selected.isError && search.allowed ? <ErrorState error={selected.error} action={<Button type=\"button\" onClick={() => void selected.refetch()}>{t(\"common.retry\")}</Button>} /> : null}"
+  },
+  {
+    "path": "frontend/src/components/forms/LeadForm.tsx",
+    "line": 105,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "<StatusNotice"
+  },
+  {
+    "path": "frontend/src/components/forms/WorkingHoursForm.tsx",
+    "line": 251,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{error ? <ErrorState message={error} /> : null}"
+  },
+  {
+    "path": "frontend/src/components/layout/CommandPalette.tsx",
+    "line": 165,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{recordSearch.loading ? <p role=\"status\">{t(\"common.loading\")}</p> : null}"
+  },
+  {
+    "path": "frontend/src/components/layout/CommandPalette.tsx",
+    "line": 166,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{recordSearch.error ? <ErrorState error={recordSearch.error} action={<Button onClick={() => void recordSearch.refetch()}>{t(\"common.retry\")}</Button>} /> : null}"
+  },
+  {
+    "path": "frontend/src/components/layout/CommandPalette.tsx",
+    "line": 168,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{clientSearch.loading ? <p role=\"status\">{t(\"common.loading\")}</p> : null}"
+  },
+  {
+    "path": "frontend/src/components/layout/CommandPalette.tsx",
+    "line": 169,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{clientSearch.error ? <ErrorState error={clientSearch.error} action={<Button onClick={() => void clientSearch.refetch()}>{t(\"common.retry\")}</Button>} /> : null}"
+  },
+  {
+    "path": "frontend/src/components/layout/GlobalSearch.tsx",
+    "line": 283,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{recordSearchEnabled && recordSearch.loading ? <p role=\"status\" className=\"p-3\">{t(\"common.loading\")}</p> : null}"
+  },
+  {
+    "path": "frontend/src/components/layout/GlobalSearch.tsx",
+    "line": 284,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{recordSearchEnabled && recordSearch.error ? <ErrorState error={recordSearch.error} action={<Button onClick={() => void recordSearch.refetch()}>{t(\"common.retry\")}</Button>} /> : null}"
+  },
+  {
+    "path": "frontend/src/components/layout/GlobalSearch.tsx",
+    "line": 286,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{clientSearchEnabled && clientSearch.loading ? <p role=\"status\" className=\"p-3\">{t(\"common.loading\")}</p> : null}"
+  },
+  {
+    "path": "frontend/src/components/layout/GlobalSearch.tsx",
+    "line": 287,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{clientSearchEnabled && clientSearch.error ? <ErrorState error={clientSearch.error} action={<Button onClick={() => void clientSearch.refetch()}>{t(\"common.retry\")}</Button>} /> : null}"
+  },
+  {
+    "path": "frontend/src/components/layout/GlobalSearch.tsx",
+    "line": 289,
+    "kinds": [
+      "rawMessage"
+    ],
+    "source": "{!results.length && !clientSearch.loading && !clientSearch.error && !recordSearch.loading && !recordSearch.error ? <p className=\"px-3 py-6 text-center text-sm text-platforma-faint\">{t(\"search.empty\")}</p> : null}"
+  },
+  {
+    "path": "frontend/src/components/layout/NotificationBell.tsx",
+    "line": 101,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "<ErrorState error={notifications.error} />"
+  },
+  {
+    "path": "frontend/src/components/layout/NotificationBell.tsx",
+    "line": 104,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "<ErrorState error={notificationSummary.error} />"
+  },
+  {
+    "path": "frontend/src/components/layout/NotificationBell.tsx",
+    "line": 107,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "<ErrorState"
+  },
+  {
+    "path": "frontend/src/components/notifications/NotificationProvider.tsx",
+    "line": 70,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "<StatusNotice"
+  },
+  {
+    "path": "frontend/src/components/notifications/ServiceStatusNotice.tsx",
+    "line": 23,
+    "kinds": [
+      "statusNotice",
+      "rawLive"
+    ],
+    "source": "return <StatusNotice data-testid=\"service-status-notice\" compact role=\"status\" ariaLive=\"polite\""
+  },
+  {
+    "path": "frontend/src/components/notifications/UnreadMessagesNotice.tsx",
+    "line": 27,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "onFocusCapture={() => setFocused(true)} onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setFocused(false); }}><StatusNotice"
+  },
+  {
+    "path": "frontend/src/components/notifications/UnreadMessagesNotice.tsx",
+    "line": 29,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "role=\"status\""
+  },
+  {
+    "path": "frontend/src/components/ui/ConnectivityBanner.tsx",
+    "line": 21,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "<StatusNotice"
+  },
+  {
+    "path": "frontend/src/components/ui/ConnectivityBanner.tsx",
+    "line": 24,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "role=\"status\""
+  },
+  {
+    "path": "frontend/src/components/ui/DateRangePicker.tsx",
+    "line": 88,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{range && <p role=\"status\" className=\"mb-2 text-xs text-platforma-subtle\">{t(choosingEnd ? \"crmFilters.chooseEnd\" : \"crmFilters.chooseStart\")}</p>}"
+  },
+  {
+    "path": "frontend/src/components/ui/FallbackSurfaces.tsx",
+    "line": 53,
+    "kinds": [
+      "rawLive",
+      "rawMessage"
+    ],
+    "source": "{retryError ? <p role=\"alert\" className=\"platforma-retry-error max-w-sm text-sm text-platforma-subtle\">{t(retryError.messageKey)}</p> : null}"
+  },
+  {
+    "path": "frontend/src/components/ui/FallbackSurfaces.tsx",
+    "line": 82,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "<StatusNotice"
+  },
+  {
+    "path": "frontend/src/components/ui/FallbackSurfaces.tsx",
+    "line": 119,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "role=\"alert\""
+  },
+  {
+    "path": "frontend/src/components/ui/FallbackSurfaces.tsx",
+    "line": 156,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "<StatusNotice"
+  },
+  {
+    "path": "frontend/src/components/ui/FieldErrorSummary.tsx",
+    "line": 26,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "<StatusNotice"
+  },
+  {
+    "path": "frontend/src/components/ui/Input.tsx",
+    "line": 38,
+    "kinds": [
+      "rawLive",
+      "rawMessage"
+    ],
+    "source": "{error ? <span id={errorId} role=\"alert\" className=\"mt-1.5 block text-xs font-semibold text-platforma-danger\">{error}</span> : null}"
+  },
+  {
+    "path": "frontend/src/components/ui/LoadingIndicator.tsx",
+    "line": 9,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "<div className={`platforma-loading platforma-loading--${scope}`} role=\"status\" aria-live=\"polite\" aria-busy=\"true\" aria-label={label}>"
+  },
+  {
+    "path": "frontend/src/components/ui/RecoveryDetails.tsx",
+    "line": 51,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{copyFailed ? <p role=\"status\" className=\"mt-2\">{t(\"fallback.recovery.copyFailed\")}</p> : null}"
+  },
+  {
+    "path": "frontend/src/components/ui/RouteErrorBoundary.tsx",
+    "line": 56,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "<PageFallback"
+  },
+  {
+    "path": "frontend/src/components/ui/SearchableSelect.tsx",
+    "line": 158,
+    "kinds": [
+      "rawLive",
+      "rawMessage"
+    ],
+    "source": "{error ? <p id={errorId} role=\"alert\" className=\"mt-1 text-sm text-platforma-danger\">{error}</p> : null}"
+  },
+  {
+    "path": "frontend/src/components/ui/SearchableSelect.tsx",
+    "line": 222,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{remote?.loading ? <p role=\"status\" className=\"px-3 py-4 text-sm\">{t(\"common.loading\")}</p> : null}"
+  },
+  {
+    "path": "frontend/src/components/ui/SearchableSelect.tsx",
+    "line": 223,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{remote?.error ? <ErrorState error={remote.error} action={<Button type=\"button\" onClick={remote.retry}>{t(\"common.retry\")}</Button>} /> : null}"
+  },
+  {
+    "path": "frontend/src/components/ui/SearchableSelect.tsx",
+    "line": 225,
+    "kinds": [
+      "rawMessage"
+    ],
+    "source": "{!filteredOptions.length && !remote?.loading && !remote?.error ? <div className=\"px-3 py-4\"><p className=\"text-sm font-semibold text-platforma-faint\">{t(\"common.noResults\")}</p>{emptyAction}</div> : null}"
+  },
+  {
+    "path": "frontend/src/components/ui/Select.tsx",
+    "line": 271,
+    "kinds": [
+      "rawLive",
+      "rawMessage"
+    ],
+    "source": "{error ? <span id={errorId} role=\"alert\" className=\"mt-1.5 block text-xs font-semibold text-platforma-danger\">{error}</span> : null}"
+  },
+  {
+    "path": "frontend/src/components/ui/StateViews.tsx",
+    "line": 18,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "return <InlineFallback error={appError} message={message} action={action} />;"
+  },
+  {
+    "path": "frontend/src/components/ui/StateViews.tsx",
+    "line": 36,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "return <PermissionFallback error={permissionError}"
+  },
+  {
+    "path": "frontend/src/components/ui/Textarea.tsx",
+    "line": 30,
+    "kinds": [
+      "rawLive",
+      "rawMessage"
+    ],
+    "source": "{error ? <span id={errorId} role=\"alert\" className=\"mt-1.5 block text-xs font-semibold text-platforma-danger\">{error}</span> : null}"
+  },
+  {
+    "path": "frontend/src/features/account/AccountPage.tsx",
+    "line": 107,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{profileMutation.error ? <ErrorState error={profileMutation.error} message={getApiErrorMessage(profileMutation.error)} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/account/AccountPage.tsx",
+    "line": 108,
+    "kinds": [
+      "rawLive",
+      "rawMessage"
+    ],
+    "source": "{profileSaved ? <p role=\"status\" className=\"mb-3 text-sm text-platforma-success\">{t(\"account.saved\")}</p> : null}"
+  },
+  {
+    "path": "frontend/src/features/account/AccountPage.tsx",
+    "line": 128,
+    "kinds": [
+      "rawLive",
+      "rawMessage"
+    ],
+    "source": "{passwordSaved ? <p role=\"status\" className=\"mb-3 text-sm text-platforma-success\">{t(\"account.passwordSaved\")}</p> : null}"
+  },
+  {
+    "path": "frontend/src/features/account/AccountPage.tsx",
+    "line": 142,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{loginHistory.isLoading ? <LoadingState /> : loginHistory.error ? <ErrorState error={loginHistory.error} message={getApiErrorMessage(loginHistory.error)} action={<Button size=\"sm\" variant=\"secondary\" onClick={() => void loginHistory.refetch()}>{t(\"common.retry\")}</Button>} /> : <div className=\"mt-2 divide-y divide-platforma-border\">"
+  },
+  {
+    "path": "frontend/src/features/account/AccountPage.tsx",
+    "line": 173,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{passwordMutation.error ? <div className=\"mb-4\"><ErrorState error={passwordMutation.error} message={getApiErrorMessage(passwordMutation.error)} /></div> : null}"
+  },
+  {
+    "path": "frontend/src/features/account/ActiveSessions.tsx",
+    "line": 45,
+    "kinds": [
+      "errorSurface",
+      "rawMessage"
+    ],
+    "source": "{sessions.isLoading ? <LoadingState /> : sessions.error ? <ErrorState error={sessions.error} message={getApiErrorMessage(sessions.error)} action={<Button size=\"sm\" variant=\"secondary\" onClick={() => void sessions.refetch()}>{t(\"common.retry\")}</Button>} /> : !sessions.data?.available ? <p className=\"py-2 text-sm text-platforma-subtle\">{t(\"account.sessionsUnavailable\")}</p> : <div className=\"divide-y divide-platforma-border\">"
+  },
+  {
+    "path": "frontend/src/features/account/ActiveSessions.tsx",
+    "line": 62,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{mfa.isLoading ? <LoadingState /> : mfa.error ? <ErrorState error={mfa.error} message={getApiErrorMessage(mfa.error)} action={<Button type=\"button\" variant=\"secondary\" onClick={() => void mfa.refetch()}>{t(\"common.retry\")}</Button>} /> : mfa.data?.enabled ? <Input label={t(\"mfa.codeLabel\")} autoComplete=\"one-time-code\" value={code} onChange={event => setCode(event.target.value)} required disabled={mutation.isPending} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/account/ActiveSessions.tsx",
+    "line": 63,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{mutation.error ? <ErrorState error={mutation.error} message={getApiErrorMessage(mutation.error)} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/account/AvatarEditor.tsx",
+    "line": 60,
+    "kinds": [
+      "rawLive",
+      "rawMessage"
+    ],
+    "source": "{fileError ? <p role=\"alert\" className=\"text-sm text-platforma-danger\">{t(\"account.avatarInvalid\")}</p> : null}"
+  },
+  {
+    "path": "frontend/src/features/account/AvatarEditor.tsx",
+    "line": 61,
+    "kinds": [
+      "rawLive",
+      "rawMessage"
+    ],
+    "source": "{mutation.error || avatar.error ? <p role=\"alert\" className=\"text-sm text-platforma-danger\">{getApiErrorMessage(mutation.error || avatar.error)}</p> : null}"
+  },
+  {
+    "path": "frontend/src/features/account/EmailSecurityRow.tsx",
+    "line": 30,
+    "kinds": [
+      "rawLive",
+      "rawMessage"
+    ],
+    "source": "{saved ? <p role=\"status\" className=\"mb-3 text-sm text-platforma-success\">{t(\"account.emailSaved\")}</p> : null}"
+  },
+  {
+    "path": "frontend/src/features/account/EmailSecurityRow.tsx",
+    "line": 42,
+    "kinds": [
+      "rawLive",
+      "rawMessage"
+    ],
+    "source": "{request.error || confirm.error ? <p role=\"alert\" className=\"text-sm text-platforma-danger\">{getApiErrorMessage(request.error || confirm.error)}</p> : null}"
+  },
+  {
+    "path": "frontend/src/features/account/EmployeeAccessConfirmations.tsx",
+    "line": 30,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{query.error && <ErrorState error={query.error} action={<Button onClick={() => query.refetch()}>{t(\"common.retry\")}</Button>} />}"
+  },
+  {
+    "path": "frontend/src/features/account/EmployeeAccessConfirmations.tsx",
+    "line": 31,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{mutation.error && <ErrorState error={mutation.error} action={<Button disabled={mutation.isPending} onClick={() => { mutation.reset(); void query.refetch(); }}>{t(\"common.refresh\")}</Button>} />}"
+  },
+  {
+    "path": "frontend/src/features/account/EmployeeAccessSummary.tsx",
+    "line": 22,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{item.action === \"reissue\" && item.status === \"completed\" && <p role=\"status\" className=\"text-sm\">{t(\"employeeAccess.linkReady\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/account/InterfaceSettingsCard.tsx",
+    "line": 60,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{mutation.error ? <ErrorState error={mutation.error} message={getApiErrorMessage(mutation.error)} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/account/InterfaceSettingsCard.tsx",
+    "line": 61,
+    "kinds": [
+      "rawLive",
+      "rawMessage"
+    ],
+    "source": "{mutation.isSuccess ? <p role=\"status\" className=\"mb-3 text-sm text-platforma-success\">{t(\"account.interfaceSaved\")}</p> : null}"
+  },
+  {
+    "path": "frontend/src/features/account/MfaSecurityCard.tsx",
+    "line": 103,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{statusQuery.error || startMutation.error ? <div className=\"mt-2\"><ErrorState error={statusQuery.error || startMutation.error} message={getApiErrorMessage(statusQuery.error || startMutation.error)} /></div> : null}"
+  },
+  {
+    "path": "frontend/src/features/account/MfaSecurityCard.tsx",
+    "line": 117,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "<StatusNotice tone=\"warning\" title={t(\"mfa.recoveryWarning\")} />"
+  },
+  {
+    "path": "frontend/src/features/account/MfaSecurityCard.tsx",
+    "line": 124,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{actionMutation.error ? <ErrorState error={actionMutation.error} message={getApiErrorMessage(actionMutation.error)} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/account/NotificationSoundControl.tsx",
+    "line": 43,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{error ? <div className=\"mt-3\"><ErrorState message={t(\"account.soundUnavailable\")} /></div> : null}"
+  },
+  {
+    "path": "frontend/src/features/account/OwnershipConfirmations.tsx",
+    "line": 37,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{list.error && <ErrorState error={list.error} action={<Button onClick={() => list.refetch()}>{t(\"common.retry\")}</Button>} />}"
+  },
+  {
+    "path": "frontend/src/features/account/OwnershipConfirmations.tsx",
+    "line": 38,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{mutation.error && <ErrorState error={mutation.error} />}"
+  },
+  {
+    "path": "frontend/src/features/account/OwnershipConfirmations.tsx",
+    "line": 39,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{conflict && <p role=\"alert\" className=\"text-sm text-platforma-warning\">{t(\"ownership.conflict\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/account/OwnershipTransferSummary.tsx",
+    "line": 10,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "<div className=\"flex flex-wrap items-center justify-between gap-2\"><h3 className=\"break-words font-semibold\">{item.business.name}</h3><span className=\"text-sm\" role=\"status\">{t(`ownership.status.${item.status}`)}</span></div>"
+  },
+  {
+    "path": "frontend/src/features/account/RecoveryConfirmations.tsx",
+    "line": 30,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{query.error && <ErrorState error={query.error} action={<Button onClick={() => query.refetch()}>{t(\"common.retry\")}</Button>} />}"
+  },
+  {
+    "path": "frontend/src/features/account/RecoveryConfirmations.tsx",
+    "line": 31,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{mutation.error && <ErrorState error={mutation.error} />}"
+  },
+  {
+    "path": "frontend/src/features/analytics/AnalyticsPage.tsx",
+    "line": 97,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{exportMutation.error || download.error ? <ErrorState error={exportMutation.error || download.error} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/analytics/AnalyticsPage.tsx",
+    "line": 98,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{receipt && !receipt.job ? <p role=\"status\" className=\"text-sm text-platforma-subtle\">{t(\"analyticsWorkspace.downloaded\")}</p> : null}"
+  },
+  {
+    "path": "frontend/src/features/analytics/AnalyticsPage.tsx",
+    "line": 99,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{currentJob ? <div role=\"status\" className=\"flex flex-wrap items-center gap-3 rounded-control border border-platforma-border bg-surface-muted p-3 text-sm\">"
+  },
+  {
+    "path": "frontend/src/features/analytics/AnalyticsPage.tsx",
+    "line": 103,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{job.error ? <ErrorState error={job.error} action={<Button variant=\"secondary\" onClick={() => void job.refetch()}>{t(\"analyticsWorkspace.refresh\")}</Button>} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/analytics/AnalyticsPage.tsx",
+    "line": 104,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{metrics.isPending ? <LoadingState scope=\"page\" /> : metrics.error ? <ErrorState error={metrics.error} action={<Button variant=\"secondary\" onClick={() => void metrics.refetch()}>{t(\"analyticsWorkspace.refresh\")}</Button>} /> : metrics.data ? <>"
+  },
+  {
+    "path": "frontend/src/features/analytics/ExportHistory.tsx",
+    "line": 46,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{download.error ? <ErrorState error={download.error} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/analytics/ExportHistory.tsx",
+    "line": 47,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{history.isPending ? <LoadingState /> : history.error ? <ErrorState error={history.error} action={<Button onClick={() => void history.refetch()}>{t(\"analyticsWorkspace.refresh\")}</Button>} /> : <>"
+  },
+  {
+    "path": "frontend/src/features/analytics/WorkspaceSections.tsx",
+    "line": 41,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "if (!data.availability.appointments) return <ForbiddenState />;"
+  },
+  {
+    "path": "frontend/src/features/analytics/WorkspaceSections.tsx",
+    "line": 49,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "if (!data.availability.appointments) return <ForbiddenState />;"
+  },
+  {
+    "path": "frontend/src/features/analytics/WorkspaceSections.tsx",
+    "line": 57,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "if (!data.team.available) return <ForbiddenState title={t(\"analytics.teamHidden\")} />;"
+  },
+  {
+    "path": "frontend/src/features/assistant/AIAgentsPage.tsx",
+    "line": 203,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "if (!business) return <ErrorState message={t(\"aiAgents.noBusiness\")} />;"
+  },
+  {
+    "path": "frontend/src/features/assistant/components/AgentBranchScope.tsx",
+    "line": 14,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "if (query.error) return <ErrorState error={query.error} />;"
+  },
+  {
+    "path": "frontend/src/features/assistant/components/AgentConversationPanel.tsx",
+    "line": 106,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{list.error && <ErrorState error={list.error} action={<Button variant=\"secondary\" onClick={() => list.refetch()}>{t(\"common.retry\")}</Button>} />}"
+  },
+  {
+    "path": "frontend/src/features/assistant/components/AgentConversationPanel.tsx",
+    "line": 119,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{history.error && <ErrorState error={history.error} action={<Button variant=\"secondary\" onClick={() => history.refetch()}>{t(\"common.retry\")}</Button>} />}"
+  },
+  {
+    "path": "frontend/src/features/assistant/components/AgentConversationPanel.tsx",
+    "line": 128,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{error && <ErrorState error={error} />}"
+  },
+  {
+    "path": "frontend/src/features/assistant/components/AgentConversationPanel.tsx",
+    "line": 129,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{status.error && <ErrorState error={status.error} action={<Button variant=\"secondary\" onClick={() => status.refetch()}>{t(\"common.retry\")}</Button>} />}"
+  },
+  {
+    "path": "frontend/src/features/assistant/components/AgentConversationPanel.tsx",
+    "line": 130,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{status.data?.mode === \"mock\" && <p role=\"status\" className=\"text-sm text-platforma-subtle\">{t(\"aiAssistant.mockModeText\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/assistant/components/AgentConversationPanel.tsx",
+    "line": 142,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{running(latest) && <><span role=\"status\" className=\"text-sm text-platforma-subtle\">{t(`agentChat.status.${latest!.status}`)}</span><Button type=\"button\" variant=\"secondary\" disabled={busy} onClick={() => action.mutate({ kind: \"cancel\", turn: latest! })}><Square size={14} aria-hidden=\"true\" />{t(\"agentChat.stop\")}</Button></>}"
+  },
+  {
+    "path": "frontend/src/features/assistant/components/AgentConversationPanel.tsx",
+    "line": 145,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{status.data && !status.data.ready && <p role=\"status\" className=\"text-sm text-platforma-subtle\">{t(\"aiScenario.unavailable\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/assistant/components/AgentDeleteControl.tsx",
+    "line": 24,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{deletion.error && <ErrorState error={deletion.error} message={getApiErrorMessage(deletion.error)} />}"
+  },
+  {
+    "path": "frontend/src/features/assistant/components/AgentNavigation.tsx",
+    "line": 136,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "<ErrorState error={error} message={getApiErrorMessage(error)} action={<Button variant=\"secondary\" onClick={onRetry}>{t(\"common.retry\")}</Button>} />"
+  },
+  {
+    "path": "frontend/src/features/assistant/components/AgentNavigation.tsx",
+    "line": 158,
+    "kinds": [
+      "rawLive",
+      "rawMessage"
+    ],
+    "source": "{!isLoading && !error && !options.length ? <p role=\"status\" className=\"px-4 py-5 text-sm text-platforma-subtle\">{t(bots.length ? \"common.noResults\" : \"aiAgents.emptyAgentsTitle\")}</p> : null}"
+  },
+  {
+    "path": "frontend/src/features/assistant/components/AgentTurnCard.tsx",
+    "line": 16,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "if (turn.redacted) return <p role=\"status\" className=\"rounded-xl border border-platforma-border p-4 text-sm text-platforma-subtle\">{t(\"agentChat.redacted\")}</p>;"
+  },
+  {
+    "path": "frontend/src/features/assistant/components/AgentTurnCard.tsx",
+    "line": 27,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "<div className=\"flex flex-wrap items-center gap-2 text-xs text-platforma-subtle\" role=\"status\">"
+  },
+  {
+    "path": "frontend/src/features/assistant/components/AIAgentKnowledgeSection.tsx",
+    "line": 94,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{disconnect.error && <ErrorState error={disconnect.error} />}"
+  },
+  {
+    "path": "frontend/src/features/assistant/components/AIAgentKnowledgeSection.tsx",
+    "line": 156,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{saveKnowledge.error ? <ErrorState error={saveKnowledge.error} message={getApiErrorMessage(saveKnowledge.error)} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/assistant/components/AIAgentModals.tsx",
+    "line": 55,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{error ? <ErrorState error={error} message={getApiErrorMessage(error)} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/assistant/components/AIAgentPreview.tsx",
+    "line": 27,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{!canTest ? <ErrorState message={t(\"aiSetup.previewForbidden\")} /> : blocked ? ("
+  },
+  {
+    "path": "frontend/src/features/assistant/components/AIAgentPreview.tsx",
+    "line": 28,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "<StatusNotice compact tone=\"warning\" title={t(\"aiSetup.saveBeforeTest\")} />"
+  },
+  {
+    "path": "frontend/src/features/assistant/components/AIAgentPreview.tsx",
+    "line": 46,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "<StatusNotice compact tone={preview.data.handoff_required ? \"warning\" : \"success\"}"
+  },
+  {
+    "path": "frontend/src/features/assistant/components/AIAgentPreview.tsx",
+    "line": 54,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{preview.error ? <ErrorState error={preview.error} message={getApiErrorMessage(preview.error)} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/assistant/components/AIAgentsWorkspace.tsx",
+    "line": 133,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "<ErrorState"
+  },
+  {
+    "path": "frontend/src/features/assistant/components/AIAgentsWorkspace.tsx",
+    "line": 189,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{mutationError ? <ErrorState error={mutationError} message={getApiErrorMessage(mutationError)} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/assistant/components/AIAgentsWorkspace.tsx",
+    "line": 191,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "<ErrorState message={t(\"aiAgents.channelsPermissionDenied\")} />"
+  },
+  {
+    "path": "frontend/src/features/assistant/components/AIAgentsWorkspace.tsx",
+    "line": 195,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "<ErrorState"
+  },
+  {
+    "path": "frontend/src/features/assistant/components/AIAgentsWorkspace.tsx",
+    "line": 243,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{mutationError ? <ErrorState error={mutationError} message={getApiErrorMessage(mutationError)} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/assistant/components/AIHistoryPanel.tsx",
+    "line": 34,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{history.error && <div role=\"alert\"><p>{getApiErrorMessage(history.error)}</p><Button variant=\"secondary\" onClick={() => history.refetch()}>{t(\"aiCRM.retry\")}</Button></div>}"
+  },
+  {
+    "path": "frontend/src/features/assistant/components/AIHistoryPanel.tsx",
+    "line": 51,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{report.state === \"no_data\" && <p role=\"status\">{t(\"finance.unavailable\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/assistant/components/AIHistoryPanel.tsx",
+    "line": 56,
+    "kinds": [
+      "rawLive",
+      "rawMessage"
+    ],
+    "source": "{explain.error && <p role=\"alert\" className=\"text-platforma-danger\">{getApiErrorMessage(explain.error)}</p>}"
+  },
+  {
+    "path": "frontend/src/features/assistant/components/AIHistoryPanel.tsx",
+    "line": 57,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{explain.data && <div role=\"status\" className=\"space-y-2 whitespace-pre-wrap text-sm\"><p>{explain.data.answer || t(\"finance.unavailable\")}</p>{explain.data.provider_state === \"mock\" && <p>{t(\"aiQuality.mock\")}</p>}{explain.data.sources.length > 0 && <p className=\"text-platforma-subtle\">{t(\"aiHistory.answerSource\", period)}</p>}</div>}"
+  },
+  {
+    "path": "frontend/src/features/assistant/components/CRMAgentRuntime.tsx",
+    "line": 20,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "if (!allowed) return <ErrorState message={t(\"aiScenario.noAccess\")} />;"
+  },
+  {
+    "path": "frontend/src/features/assistant/components/CRMAgentRuntime.tsx",
+    "line": 21,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "if (bot.status !== \"active\" || !bot.readiness?.is_ready) return <p role=\"status\" className=\"py-6 text-sm text-platforma-subtle\">{t(\"aiScenario.activateFirst\")}</p>;"
+  },
+  {
+    "path": "frontend/src/features/assistant/components/CRMAgentRuntime.tsx",
+    "line": 22,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "if (dirty) return <p role=\"status\" className=\"py-6 text-sm text-platforma-subtle\">{t(\"aiScenario.saveFirst\")}</p>;"
+  },
+  {
+    "path": "frontend/src/features/assistant/components/CRMAgentRuntime.tsx",
+    "line": 47,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{brief.error && <ErrorState error={brief.error} message={getApiErrorMessage(brief.error)} />}"
+  },
+  {
+    "path": "frontend/src/features/assistant/components/CRMAgentRuntime.tsx",
+    "line": 49,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{brief.data.provider_state !== \"live\" && <p role=\"status\" className=\"text-sm text-platforma-subtle\">{t(`aiScenario.brief.${brief.data.provider_state}`)}</p>}"
+  },
+  {
+    "path": "frontend/src/features/assistant/components/CRMCommandPanel.tsx",
+    "line": 67,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{records.error && <div role=\"alert\"><p>{getApiErrorMessage(records.error)}</p><Button variant=\"secondary\" onClick={() => records.refetch()}>{t(\"aiCRM.retry\")}</Button></div>}"
+  },
+  {
+    "path": "frontend/src/features/assistant/components/CRMCommandPanel.tsx",
+    "line": 74,
+    "kinds": [
+      "rawMessage"
+    ],
+    "source": "<dl className=\"mt-2 grid gap-2 sm:grid-cols-2\">{Object.entries(target).filter(([key, value]) => [\"phone\", \"email\", \"title\", \"message\", \"description\", \"start_at\", \"due_at\", \"amount\", \"notes\"].includes(key) && value !== null && value !== \"\").map(([key, value]) => <div key={key} className=\"min-w-0\"><dt className=\"text-platforma-subtle\">{t(`aiCRM.field.${key}`)}</dt><dd className=\"break-words\">{text(value)}</dd></div>)}</dl>"
+  },
+  {
+    "path": "frontend/src/features/assistant/components/CRMCommandPanel.tsx",
+    "line": 80,
+    "kinds": [
+      "rawLive",
+      "rawMessage"
+    ],
+    "source": "{(plan.error || execute.error) && <p role=\"alert\" className=\"text-sm text-platforma-danger\">{getApiErrorMessage(plan.error || execute.error)}</p>}"
+  },
+  {
+    "path": "frontend/src/features/assistant/components/CRMCommandPanel.tsx",
+    "line": 81,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{plan.data?.question && <p role=\"status\">{plan.data.question}</p>}"
+  },
+  {
+    "path": "frontend/src/features/assistant/components/CRMCommandPanel.tsx",
+    "line": 86,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{proposal.status === \"executed\" ? <p role=\"status\" className=\"text-platforma-success\">{t(\"aiCRM.executed\")}</p> : <div className=\"flex flex-wrap gap-2\">"
+  },
+  {
+    "path": "frontend/src/features/assistant/components/SharedKnowledgePicker.tsx",
+    "line": 26,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{shared.isLoading ? <LoadingState /> : shared.error ? <ErrorState error={shared.error}"
+  },
+  {
+    "path": "frontend/src/features/assistant/components/SharedKnowledgePicker.tsx",
+    "line": 40,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "</article>) : <p role=\"status\" className=\"text-sm text-platforma-subtle\">{t(\"aiAgents.knowledge.noShared\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/assistant/components/SharedKnowledgePicker.tsx",
+    "line": 41,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{connect.error && <ErrorState error={connect.error} />}"
+  },
+  {
+    "path": "frontend/src/features/assistant/CRMStaffAgentsPage.tsx",
+    "line": 30,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "if (!business || (!canWork && !canAnalyze)) return <ErrorState message={t(\"aiScenario.noAccess\")} />;"
+  },
+  {
+    "path": "frontend/src/features/assistant/CRMStaffAgentsPage.tsx",
+    "line": 31,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "if (agents.error) return <ErrorState error={agents.error} action={<Button onClick={() => agents.refetch()}>{t(\"common.retry\")}</Button>} />;"
+  },
+  {
+    "path": "frontend/src/features/auth/AccountRecoveryPage.tsx",
+    "line": 25,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{mutation.isSuccess ? <p role=\"status\">{t(\"recovery.done\")}</p> : hasLink ? <form className=\"space-y-4\" onSubmit={event => { event.preventDefault(); if (password === repeat && password.length >= 8 && !mutation.isPending) mutation.mutate(); }}>"
+  },
+  {
+    "path": "frontend/src/features/auth/AccountRecoveryPage.tsx",
+    "line": 29,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{repeat && password !== repeat && <p role=\"alert\">{t(\"passwordReset.passwordMismatch\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/auth/AccountRecoveryPage.tsx",
+    "line": 30,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{mutation.error && <ErrorState error={mutation.error} />}"
+  },
+  {
+    "path": "frontend/src/features/auth/AccountRecoveryPage.tsx",
+    "line": 35,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{contact.error && <ErrorState error={contact.error} action={<Button onClick={() => contact.refetch()}>{t(\"common.retry\")}</Button>} />}"
+  },
+  {
+    "path": "frontend/src/features/auth/AccountRecoveryPage.tsx",
+    "line": 36,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{contact.data?.support_email ? <a className=\"platforma-focus-ring inline-flex min-h-11 items-center break-all text-brand-700\" href={`mailto:${contact.data.support_email}`}>{contact.data.support_email}</a> : contact.isSuccess && <p role=\"status\">{t(\"recovery.contactUnavailable\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/auth/AuthProvider.tsx",
+    "line": 242,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{recoveryError && !isAuthenticated ? <div data-testid=\"session-recovery\" className=\"mx-auto max-w-xl p-6\"><ErrorState error={recoveryError} action={retry} /></div> : children}"
+  },
+  {
+    "path": "frontend/src/features/auth/AuthProvider.tsx",
+    "line": 244,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "<StatusNotice tone=\"warning\" title={message} action={retry} details={recoveryAppError ? <RecoveryDetails error={recoveryAppError} /> : undefined} />"
+  },
+  {
+    "path": "frontend/src/features/auth/ForgotPasswordPage.tsx",
+    "line": 54,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{error ? <div className=\"mb-5\"><ErrorState message={error} /></div> : null}"
+  },
+  {
+    "path": "frontend/src/features/auth/ForgotPasswordPage.tsx",
+    "line": 55,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "{requestMessage ? <StatusNotice className=\"mb-5\" tone=\"success\" title={requestMessage} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/auth/InviteAcceptPage.tsx",
+    "line": 88,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{preview.error ? <div className=\"mt-5\"><ErrorState error={preview.error} message={getApiErrorMessage(preview.error)} /></div> : null}"
+  },
+  {
+    "path": "frontend/src/features/auth/InviteAcceptPage.tsx",
+    "line": 90,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "<StatusNotice"
+  },
+  {
+    "path": "frontend/src/features/auth/InviteAcceptPage.tsx",
+    "line": 104,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{acceptMutation.error ? <div className=\"mt-5\"><ErrorState error={acceptMutation.error} message={getApiErrorMessage(acceptMutation.error)} /></div> : null}"
+  },
+  {
+    "path": "frontend/src/features/auth/InviteAcceptPage.tsx",
+    "line": 123,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "<ErrorState message={t(\"invite.wrongAccount\")} />"
+  },
+  {
+    "path": "frontend/src/features/auth/LoginPage.tsx",
+    "line": 231,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "<StatusNotice"
+  },
+  {
+    "path": "frontend/src/features/auth/LoginPage.tsx",
+    "line": 236,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "role=\"status\""
+  },
+  {
+    "path": "frontend/src/features/auth/LoginPage.tsx",
+    "line": 244,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "<StatusNotice"
+  },
+  {
+    "path": "frontend/src/features/auth/MfaPage.tsx",
+    "line": 132,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{error ? <div className=\"mb-3\"><ErrorState message={error} /></div> : null}"
+  },
+  {
+    "path": "frontend/src/features/auth/MfaPage.tsx",
+    "line": 136,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "<StatusNotice tone=\"warning\" title={t(\"mfa.recoveryWarning\")} />"
+  },
+  {
+    "path": "frontend/src/features/auth/ResetPasswordPage.tsx",
+    "line": 63,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{error ? <div className=\"mb-5\"><ErrorState message={error} /></div> : null}"
+  },
+  {
+    "path": "frontend/src/features/auth/SignupPage.tsx",
+    "line": 148,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "<div className=\"serenity-login__error\" role=\"alert\" aria-live=\"polite\">"
+  },
+  {
+    "path": "frontend/src/features/auth/SignupPage.tsx",
+    "line": 202,
+    "kinds": [
+      "rawLive",
+      "rawMessage"
+    ],
+    "source": "{errors.accepted_documents ? <p id=\"documents-error\" role=\"alert\" className=\"text-sm text-platforma-danger\">{errors.accepted_documents.message}</p> : null}"
+  },
+  {
+    "path": "frontend/src/features/automations/AutomationEditorDialog.tsx",
+    "line": 100,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "<ErrorState message={getApiErrorMessage(editorLoadError, t)} />"
+  },
+  {
+    "path": "frontend/src/features/automations/AutomationEditorDialog.tsx",
+    "line": 125,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{advancedError ? <ErrorState message={advancedError} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/automations/AutomationEditorDialog.tsx",
+    "line": 288,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "<div role=\"alert\">"
+  },
+  {
+    "path": "frontend/src/features/automations/AutomationEditorDialog.tsx",
+    "line": 289,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "<ErrorState message={getApiErrorMessage(members.error, t)} />"
+  },
+  {
+    "path": "frontend/src/features/automations/AutomationRunDetails.tsx",
+    "line": 118,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "<ErrorState message={t(\"automations.runFailureDetails\")} />"
+  },
+  {
+    "path": "frontend/src/features/automations/AutomationRunList.tsx",
+    "line": 63,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{retryRunMutation.error || cancelRunMutation.error ? <ErrorState error={retryRunMutation.error || cancelRunMutation.error} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/automations/AutomationRunList.tsx",
+    "line": 65,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{runs.isLoading ? <LoadingState /> : runs.isError ? <ErrorState error={runs.error}"
+  },
+  {
+    "path": "frontend/src/features/automations/AutomationsPage.tsx",
+    "line": 103,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "if (!business) return <ErrorState message={t(\"automations.noBusiness\")} />;"
+  },
+  {
+    "path": "frontend/src/features/automations/AutomationsPage.tsx",
+    "line": 131,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "<ErrorState message={t(\"automations.saveError\")} />"
+  },
+  {
+    "path": "frontend/src/features/automations/AutomationsPage.tsx",
+    "line": 162,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{automationRules.isError ? <ErrorState error={automationRules.error}"
+  },
+  {
+    "path": "frontend/src/features/billing/BillingOrderCard.tsx",
+    "line": 19,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{order.application_code && <p role=\"status\" className=\"text-sm\">{t(`commerce.code.${order.application_code}`)}</p>}"
+  },
+  {
+    "path": "frontend/src/features/billing/BillingOrderCard.tsx",
+    "line": 25,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "</dl> : <p role=\"status\">{t(\"commerce.unavailable\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/billing/BillingOrderCard.tsx",
+    "line": 27,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{order.attempts.map(attempt => <p key={attempt.id} className=\"text-sm\" role=\"status\">{t(\"commerce.card\")}: {t(`commerce.state.${attempt.status}`)}</p>)}"
+  },
+  {
+    "path": "frontend/src/features/billing/MerchantBilling.tsx",
+    "line": 32,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "if (query.isError || !query.data) return <ErrorState error={query.error} action={<Button onClick={() => void query.refetch()}>{t(\"common.refresh\")}</Button>} />;"
+  },
+  {
+    "path": "frontend/src/features/billing/MerchantBilling.tsx",
+    "line": 37,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{!data.enabled && <p role=\"status\">{t(\"commerce.unavailable\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/billing/MerchantBilling.tsx",
+    "line": 38,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{data.enabled && !data.offers.length && <p role=\"status\">{t(\"commerce.noOffers\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/billing/MerchantBilling.tsx",
+    "line": 48,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{mutation.isError && <ErrorState error={mutation.error} />}"
+  },
+  {
+    "path": "frontend/src/features/billing/MerchantBilling.tsx",
+    "line": 49,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{!data.orders.length && <p role=\"status\">{t(\"commerce.empty\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/billing/MerchantBilling.tsx",
+    "line": 55,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{!data.card_available && <p className=\"text-sm\" role=\"status\">{t(\"commerce.cardUnavailable\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/bots/BotDetailPage.tsx",
+    "line": 77,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "if (bot.error) return <ErrorState error={bot.error} message={getApiErrorMessage(bot.error)} />;"
+  },
+  {
+    "path": "frontend/src/features/bots/BotDetailPage.tsx",
+    "line": 78,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "if (!bot.data) return <ErrorState message={t(\"botDetail.notFound\")} />;"
+  },
+  {
+    "path": "frontend/src/features/bots/BotDetailPage.tsx",
+    "line": 122,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{addWebsiteChannel.error ? <div className=\"mb-4\"><ErrorState error={addWebsiteChannel.error} message={getApiErrorMessage(addWebsiteChannel.error)} /></div> : null}"
+  },
+  {
+    "path": "frontend/src/features/bots/BotDetailPage.tsx",
+    "line": 123,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{addWhatsAppChannel.error ? <div className=\"mb-4\"><ErrorState error={addWhatsAppChannel.error} message={getApiErrorMessage(addWhatsAppChannel.error)} /></div> : null}"
+  },
+  {
+    "path": "frontend/src/features/bots/BotDetailPage.tsx",
+    "line": 124,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{previewMutation.error ? <div className=\"mb-4\"><ErrorState error={previewMutation.error} message={getApiErrorMessage(previewMutation.error)} /></div> : null}"
+  },
+  {
+    "path": "frontend/src/features/bots/BotDetailPage.tsx",
+    "line": 125,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{followUpMutation.error ? <div className=\"mb-4\"><ErrorState error={followUpMutation.error} message={getApiErrorMessage(followUpMutation.error)} /></div> : null}"
+  },
+  {
+    "path": "frontend/src/features/bots/BotDetailPage.tsx",
+    "line": 126,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{suggestReplyMutation.error ? <div className=\"mb-4\"><ErrorState error={suggestReplyMutation.error} message={getApiErrorMessage(suggestReplyMutation.error)} /></div> : null}"
+  },
+  {
+    "path": "frontend/src/features/bots/BotsPage.tsx",
+    "line": 43,
+    "kinds": [
+      "toast"
+    ],
+    "source": "showNotification({ message: actionErrorMessage, tone: \"danger\" });"
+  },
+  {
+    "path": "frontend/src/features/bots/BotsPage.tsx",
+    "line": 52,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "if (!business) return <ErrorState message={t(\"bots.noBusiness\")} />;"
+  },
+  {
+    "path": "frontend/src/features/business/BranchesPage.tsx",
+    "line": 33,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{query.isLoading ? <LoadingState /> : query.error ? <ErrorState error={query.error} action={<Button onClick={() => query.refetch()}>{t(\"common.retry\")}</Button>} /> : <>"
+  },
+  {
+    "path": "frontend/src/features/business/BranchesPage.tsx",
+    "line": 39,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{save.error && <ErrorState error={save.error} />}"
+  },
+  {
+    "path": "frontend/src/features/business/components/BranchEditor.tsx",
+    "line": 33,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{mutation.error && <ErrorState error={mutation.error} />}"
+  },
+  {
+    "path": "frontend/src/features/business/components/BranchEditor.tsx",
+    "line": 39,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "</> : query.isLoading || services.isLoading || resources.isLoading ? <LoadingState /> : query.error || services.error || resources.error ? <ErrorState error={query.error || services.error || resources.error} /> : query.data && <>"
+  },
+  {
+    "path": "frontend/src/features/calendar/AppointmentWorkspacePage.tsx",
+    "line": 64,
+    "kinds": [
+      "feedbackHook"
+    ],
+    "source": "const { notifyError, notifySuccess } = useActionFeedback();"
+  },
+  {
+    "path": "frontend/src/features/calendar/AppointmentWorkspacePage.tsx",
+    "line": 126,
+    "kinds": [
+      "toast"
+    ],
+    "source": "notifySuccess(t(\"appointments.actionDone\"));"
+  },
+  {
+    "path": "frontend/src/features/calendar/AppointmentWorkspacePage.tsx",
+    "line": 129,
+    "kinds": [
+      "toast"
+    ],
+    "source": "onError: (error) => notifyError(error, { actionLabel: t(\"common.refresh\"), retry: () => invalidateAppointment() }),"
+  },
+  {
+    "path": "frontend/src/features/calendar/AppointmentWorkspacePage.tsx",
+    "line": 143,
+    "kinds": [
+      "toast"
+    ],
+    "source": "notifySuccess(t(\"appointments.rescheduledNotice\"));"
+  },
+  {
+    "path": "frontend/src/features/calendar/AppointmentWorkspacePage.tsx",
+    "line": 147,
+    "kinds": [
+      "toast"
+    ],
+    "source": "notifyError(error, {"
+  },
+  {
+    "path": "frontend/src/features/calendar/AppointmentWorkspacePage.tsx",
+    "line": 181,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "<EntityWorkspaceRoot><ErrorState error={pageError} action={<Button variant=\"secondary\" onClick={() => { void cardQuery.refetch(); void resources.refetch(); }}>{t(\"common.retry\")}</Button>} /></EntityWorkspaceRoot>"
+  },
+  {
+    "path": "frontend/src/features/calendar/CalendarPage.tsx",
+    "line": 56,
+    "kinds": [
+      "feedbackHook"
+    ],
+    "source": "const { notifyError } = useActionFeedback();"
+  },
+  {
+    "path": "frontend/src/features/calendar/CalendarPage.tsx",
+    "line": 211,
+    "kinds": [
+      "toast"
+    ],
+    "source": "showNotification({ message, tone });"
+  },
+  {
+    "path": "frontend/src/features/calendar/CalendarPage.tsx",
+    "line": 245,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "if (!business) return <ErrorState message={t(\"calendar.noBusiness\")} />;"
+  },
+  {
+    "path": "frontend/src/features/calendar/CalendarPage.tsx",
+    "line": 246,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "if (createContext.error) return <ErrorState message={createContext.error} />;"
+  },
+  {
+    "path": "frontend/src/features/calendar/CalendarPage.tsx",
+    "line": 280,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "<ErrorState"
+  },
+  {
+    "path": "frontend/src/features/calendar/LegacyAssignment.tsx",
+    "line": 37,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{save.error ? <ErrorState error={save.error} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/calendar/LegacyAssignment.tsx",
+    "line": 38,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{members.error ? <ErrorState error={members.error} action={<Button type=\"button\" onClick={() => void members.refetch()}>{t(\"common.retry\")}</Button>} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/calendar/LegacyRecordsPage.tsx",
+    "line": 44,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "if (query.isError) return <ErrorState error={query.error} action={<Button onClick={() => void query.refetch()}>{t(\"common.retry\")}</Button>} />;"
+  },
+  {
+    "path": "frontend/src/features/calendar/LegacyRecordsPage.tsx",
+    "line": 110,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "if (query.isError) return <ErrorState error={query.error} action={<Button onClick={() => void query.refetch()}>{t(\"common.retry\")}</Button>} />;"
+  },
+  {
+    "path": "frontend/src/features/calendar/LegacyRecordsPage.tsx",
+    "line": 121,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{exportRows.error ? <ErrorState error={exportRows.error} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/calendar/PlanHistory.tsx",
+    "line": 16,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{query.isPending ? <LoadingState /> : query.error ? <ErrorState action={<Button onClick={() => void query.refetch()}>{t(\"common.retry\")}</Button>} /> : query.data?.results.length ? <>"
+  },
+  {
+    "path": "frontend/src/features/calendar/RecordsPage.tsx",
+    "line": 41,
+    "kinds": [
+      "feedbackHook"
+    ],
+    "source": "const { notifyError, notifySuccess } = useActionFeedback();"
+  },
+  {
+    "path": "frontend/src/features/calendar/RecordsPage.tsx",
+    "line": 84,
+    "kinds": [
+      "toast"
+    ],
+    "source": "notifySuccess(t(\"common.saved\"));"
+  },
+  {
+    "path": "frontend/src/features/calendar/RecordsPage.tsx",
+    "line": 87,
+    "kinds": [
+      "toast"
+    ],
+    "source": "onError: error => notifyError(error),"
+  },
+  {
+    "path": "frontend/src/features/calendar/RecordsPage.tsx",
+    "line": 116,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{catalogError ? <ErrorState error={catalogError} action={<Button onClick={() => { void catalog.services.refetch(); void catalog.resources.refetch(); void branches.refetch(); if (members.isEnabled) void members.refetch(); }}>{t(\"common.retry\")}</Button>} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/calendar/RecordsPage.tsx",
+    "line": 117,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{records.isError ? <ErrorState error={records.error} action={<Button onClick={() => void records.refetch()}>{t(\"common.retry\")}</Button>} />"
+  },
+  {
+    "path": "frontend/src/features/calendar/RecordsPage.tsx",
+    "line": 123,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{sourceClientQuery.error ? <ErrorState error={sourceClientQuery.error} action={<Button onClick={() => void sourceClientQuery.refetch()}>{t(\"common.retry\")}</Button>} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/calendar/RecordsPage.tsx",
+    "line": 124,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{catalog.services.isPending || catalog.resources.isPending ? <LoadingState /> : catalog.services.error || catalog.resources.error ? <ErrorState error={catalog.services.error || catalog.resources.error} /> :"
+  },
+  {
+    "path": "frontend/src/features/calendar/useCalendarCommands.ts",
+    "line": 89,
+    "kinds": [
+      "toast"
+    ],
+    "source": "onError: (error) => notifyError(error),"
+  },
+  {
+    "path": "frontend/src/features/calendar/useCalendarCommands.ts",
+    "line": 117,
+    "kinds": [
+      "toast"
+    ],
+    "source": "onError: (error) => notifyError(error, { actionLabel: t(\"common.refresh\"), retry: () => {"
+  },
+  {
+    "path": "frontend/src/features/calendar/useCalendarCommands.ts",
+    "line": 138,
+    "kinds": [
+      "toast"
+    ],
+    "source": "notifyError(error, {"
+  },
+  {
+    "path": "frontend/src/features/calendar/useCalendarCommands.ts",
+    "line": 153,
+    "kinds": [
+      "toast"
+    ],
+    "source": "onError: (error) => notifyError(error),"
+  },
+  {
+    "path": "frontend/src/features/calendar/VisitPlansPage.tsx",
+    "line": 36,
+    "kinds": [
+      "feedbackHook"
+    ],
+    "source": "const { notifyError, notifySuccess, getRecoverableMessage } = useActionFeedback();"
+  },
+  {
+    "path": "frontend/src/features/calendar/VisitPlansPage.tsx",
+    "line": 88,
+    "kinds": [
+      "toast"
+    ],
+    "source": "notifySuccess(t(\"common.saved\"));"
+  },
+  {
+    "path": "frontend/src/features/calendar/VisitPlansPage.tsx",
+    "line": 93,
+    "kinds": [
+      "toast"
+    ],
+    "source": "setError(caught); notifyError(caught);"
+  },
+  {
+    "path": "frontend/src/features/calendar/VisitPlansPage.tsx",
+    "line": 112,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "const recovery = error ? <ErrorState message={getRecoverableMessage(error)} action={<Button variant=\"secondary\" onClick={refresh}>{t(\"common.refresh\")}</Button>} /> : null;"
+  },
+  {
+    "path": "frontend/src/features/calendar/VisitPlansPage.tsx",
+    "line": 116,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{id ? detail.isPending ? <LoadingState /> : detail.error ? <ErrorState message={getRecoverableMessage(detail.error)} action={<Button onClick={() => void detail.refetch()}>{t(\"common.retry\")}</Button>} /> : plan ? <>"
+  },
+  {
+    "path": "frontend/src/features/calendar/VisitPlansPage.tsx",
+    "line": 131,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{list.isPending ? <LoadingState /> : list.error ? <ErrorState message={getRecoverableMessage(list.error)} action={<Button onClick={() => void list.refetch()}>{t(\"common.retry\")}</Button>} /> : list.data?.results.length ? <>"
+  },
+  {
+    "path": "frontend/src/features/calendar/VisitPlansPage.tsx",
+    "line": 139,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{catalogError ? <ErrorState message={getRecoverableMessage(catalogError)} action={<Button onClick={() => { void catalog.services.refetch(); void catalog.resources.refetch(); void branches.refetch(); void members.refetch(); }}>{t(\"common.retry\")}</Button>} /> : catalog.services.isPending || catalog.resources.isPending || branches.isPending ? <LoadingState /> : creating || dialog?.kind === \"add\" || dialog?.kind === \"edit\" ? <PlanEditor"
+  },
+  {
+    "path": "frontend/src/features/calendar/VisitPlansPage.tsx",
+    "line": 144,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "/> : dialog?.kind === \"schedule\" && plan && dialog.step ? client.isPending ? <LoadingState /> : client.error ? <ErrorState message={getRecoverableMessage(client.error)} action={<Button onClick={() => void client.refetch()}>{t(\"common.retry\")}</Button>} /> : <AppointmentForm key={`${dialog.step.id}-${dialog.step.service}-${dialog.step.branch}-${dialog.step.resource}`} businessId={business.id} clients={client.data ? [client.data] : []} services={catalog.services.data || []} resources={catalog.resources.data || []} leads={[]} recordFirst fixedContext currency={business.currency} timeZone={business.timezone}"
+  },
+  {
+    "path": "frontend/src/features/clients/ClientsPage.tsx",
+    "line": 175,
+    "kinds": [
+      "toast"
+    ],
+    "source": "showUndoToast({"
+  },
+  {
+    "path": "frontend/src/features/clients/ClientsPage.tsx",
+    "line": 293,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "if (!business) return <ErrorState message={t(\"clients.noBusiness\")} />;"
+  },
+  {
+    "path": "frontend/src/features/clients/ClientsPage.tsx",
+    "line": 309,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "<ErrorState error={pageError} message={getApiErrorMessage(pageError)} action={<Button variant=\"secondary\" onClick={() => { void Promise.all([filteredClients.refetch(), tagsQuery.refetch(), segments.refetch(), taggedObjects.refetch()]); }}>{t(\"common.retry\")}</Button>} />"
+  },
+  {
+    "path": "frontend/src/features/clients/ClientWorkspacePage.tsx",
+    "line": 334,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "<ErrorState message={t(\"account.businessRequired\")} />"
+  },
+  {
+    "path": "frontend/src/features/clients/components/ClientsModals.tsx",
+    "line": 106,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "<StatusNotice"
+  },
+  {
+    "path": "frontend/src/features/clients/hooks/useClientWorkspaceActions.ts",
+    "line": 21,
+    "kinds": [
+      "feedbackHook"
+    ],
+    "source": "const { notifyError, notifySuccess } = useActionFeedback();"
+  },
+  {
+    "path": "frontend/src/features/clients/hooks/useClientWorkspaceActions.ts",
+    "line": 46,
+    "kinds": [
+      "toast"
+    ],
+    "source": "notifySuccess(t(\"common.saved\"));"
+  },
+  {
+    "path": "frontend/src/features/clients/hooks/useClientWorkspaceActions.ts",
+    "line": 49,
+    "kinds": [
+      "toast"
+    ],
+    "source": "notifyError(error, {"
+  },
+  {
+    "path": "frontend/src/features/clients/hooks/useClientWorkspaceActions.ts",
+    "line": 85,
+    "kinds": [
+      "toast"
+    ],
+    "source": "notifySuccess(t(\"clients.addTag\"));"
+  },
+  {
+    "path": "frontend/src/features/clients/hooks/useClientWorkspaceActions.ts",
+    "line": 87,
+    "kinds": [
+      "toast"
+    ],
+    "source": "onError: (error) => notifyError(error),"
+  },
+  {
+    "path": "frontend/src/features/clients/hooks/useClientWorkspaceActions.ts",
+    "line": 95,
+    "kinds": [
+      "toast"
+    ],
+    "source": "showUndoToast({"
+  },
+  {
+    "path": "frontend/src/features/clients/hooks/useClientWorkspaceActions.ts",
+    "line": 104,
+    "kinds": [
+      "toast"
+    ],
+    "source": "onError: (error) => notifyError(error),"
+  },
+  {
+    "path": "frontend/src/features/conversations/components/ClientLinkConfirmation.tsx",
+    "line": 22,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{refreshed ? <p role=\"status\" className=\"text-sm text-platforma-muted\">{t(\"conversations.clientReplacement.refreshed\")}</p> : null}"
+  },
+  {
+    "path": "frontend/src/features/conversations/components/ClientLinkConfirmation.tsx",
+    "line": 33,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{error ? <ErrorState error={error} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/conversations/components/ConversationComposer.tsx",
+    "line": 42,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "<StatusNotice"
+  },
+  {
+    "path": "frontend/src/features/conversations/components/ConversationListPane.tsx",
+    "line": 153,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "<StatusNotice"
+  },
+  {
+    "path": "frontend/src/features/conversations/components/ConversationListPane.tsx",
+    "line": 158,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "role=\"status\""
+  },
+  {
+    "path": "frontend/src/features/conversations/components/ConversationListPane.tsx",
+    "line": 175,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "<StatusNotice"
+  },
+  {
+    "path": "frontend/src/features/conversations/components/ConversationThreadPane.tsx",
+    "line": 121,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "<p role=\"status\" data-testid=\"inbox-ai-return\" className=\"shrink-0 border-b border-platforma-border bg-platforma-card px-4 py-2 text-xs text-platforma-subtle\">"
+  },
+  {
+    "path": "frontend/src/features/conversations/components/ConversationThreadPane.tsx",
+    "line": 127,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{selected.handoff_required && selected.handoff_reason && <p role=\"status\">{selected.handoff_reason}</p>}"
+  },
+  {
+    "path": "frontend/src/features/conversations/components/InboxCustomerContext.tsx",
+    "line": 55,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{loading ? <div className=\"py-5\"><LoadingState /></div> : error ? <div className=\"py-5\"><ErrorState error={error} message={t(\"conversations.contextLoadError\")} action={<Button variant=\"secondary\" size=\"sm\" onClick={onRetry} isLoading={retrying}>{t(\"common.retry\")}</Button>} /></div> : data ? <>"
+  },
+  {
+    "path": "frontend/src/features/conversations/components/InboxMemoryControl.tsx",
+    "line": 29,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{reset.error && <ErrorState error={reset.error} />}"
+  },
+  {
+    "path": "frontend/src/features/conversations/components/InboxMemoryControl.tsx",
+    "line": 30,
+    "kinds": [
+      "rawLive",
+      "rawMessage"
+    ],
+    "source": "{reset.isSuccess && <p role=\"status\" className=\"text-xs text-platforma-subtle\">{t(\"agentChat.memoryCleared\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/conversations/components/PipelineConfirmationDialog.tsx",
+    "line": 39,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{error ? <ErrorState message={error} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/conversations/ConversationsPage.tsx",
+    "line": 70,
+    "kinds": [
+      "feedbackHook"
+    ],
+    "source": "const { notifyError } = useActionFeedback();"
+  },
+  {
+    "path": "frontend/src/features/conversations/ConversationsPage.tsx",
+    "line": 157,
+    "kinds": [
+      "toast"
+    ],
+    "source": "showNotification({ message, tone });"
+  },
+  {
+    "path": "frontend/src/features/conversations/ConversationsPage.tsx",
+    "line": 472,
+    "kinds": [
+      "toast"
+    ],
+    "source": "onError: (error) => notifyError(error),"
+  },
+  {
+    "path": "frontend/src/features/conversations/ConversationsPage.tsx",
+    "line": 485,
+    "kinds": [
+      "toast"
+    ],
+    "source": "onError: (error) => notifyError(error),"
+  },
+  {
+    "path": "frontend/src/features/conversations/ConversationsPage.tsx",
+    "line": 493,
+    "kinds": [
+      "toast"
+    ],
+    "source": "onError: (error) => notifyError(error),"
+  },
+  {
+    "path": "frontend/src/features/conversations/ConversationsPage.tsx",
+    "line": 523,
+    "kinds": [
+      "toast"
+    ],
+    "source": "onError: (error) => notifyError(error),"
+  },
+  {
+    "path": "frontend/src/features/conversations/ConversationsPage.tsx",
+    "line": 532,
+    "kinds": [
+      "toast"
+    ],
+    "source": "onError: (error) => notifyError(error),"
+  },
+  {
+    "path": "frontend/src/features/conversations/ConversationsPage.tsx",
+    "line": 547,
+    "kinds": [
+      "toast"
+    ],
+    "source": "onError: (error) => notifyError(error),"
+  },
+  {
+    "path": "frontend/src/features/conversations/ConversationsPage.tsx",
+    "line": 560,
+    "kinds": [
+      "toast"
+    ],
+    "source": "onError: (error) => notifyError(error),"
+  },
+  {
+    "path": "frontend/src/features/conversations/ConversationsPage.tsx",
+    "line": 573,
+    "kinds": [
+      "toast"
+    ],
+    "source": "onError: (error) => notifyError(error),"
+  },
+  {
+    "path": "frontend/src/features/conversations/ConversationsPage.tsx",
+    "line": 587,
+    "kinds": [
+      "toast"
+    ],
+    "source": "notifyError(error, {"
+  },
+  {
+    "path": "frontend/src/features/conversations/ConversationsPage.tsx",
+    "line": 608,
+    "kinds": [
+      "toast"
+    ],
+    "source": "notifyError(error, {"
+  },
+  {
+    "path": "frontend/src/features/conversations/ConversationsPage.tsx",
+    "line": 656,
+    "kinds": [
+      "toast"
+    ],
+    "source": "onError: (error) => notifyError(error),"
+  },
+  {
+    "path": "frontend/src/features/conversations/ConversationsPage.tsx",
+    "line": 682,
+    "kinds": [
+      "toast"
+    ],
+    "source": "onError: (error) => notifyError(error),"
+  },
+  {
+    "path": "frontend/src/features/conversations/ConversationsPage.tsx",
+    "line": 720,
+    "kinds": [
+      "toast"
+    ],
+    "source": "notifyError(error, {"
+  },
+  {
+    "path": "frontend/src/features/conversations/ConversationsPage.tsx",
+    "line": 772,
+    "kinds": [
+      "toast"
+    ],
+    "source": "onError: (error) => notifyError(error),"
+  },
+  {
+    "path": "frontend/src/features/conversations/ConversationsPage.tsx",
+    "line": 956,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "<ErrorState"
+  },
+  {
+    "path": "frontend/src/features/conversations/ConversationsPage.tsx",
+    "line": 1221,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "<p role=\"alert\" className=\"text-xs text-platforma-danger\">"
+  },
+  {
+    "path": "frontend/src/features/conversations/ConversationsPage.tsx",
+    "line": 1360,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "<ErrorState error={qualifyMutation.error} />"
+  },
+  {
+    "path": "frontend/src/features/conversations/ConversationsPage.tsx",
+    "line": 1468,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "<ErrorState"
+  },
+  {
+    "path": "frontend/src/features/conversations/ConversationsPage.tsx",
+    "line": 1544,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "<ErrorState"
+  },
+  {
+    "path": "frontend/src/features/conversations/InboxQuickRepliesDialog.tsx",
+    "line": 73,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "<ErrorState"
+  },
+  {
+    "path": "frontend/src/features/conversations/useInboxLinking.ts",
+    "line": 68,
+    "kinds": [
+      "toast"
+    ],
+    "source": "onError: (error) => notifyError(error),"
+  },
+  {
+    "path": "frontend/src/features/conversations/useInboxLinking.ts",
+    "line": 77,
+    "kinds": [
+      "toast"
+    ],
+    "source": "onError: (error) => notifyError(error),"
+  },
+  {
+    "path": "frontend/src/features/conversations/useInboxSending.ts",
+    "line": 80,
+    "kinds": [
+      "toast"
+    ],
+    "source": "onError: (error) => notifyError(error, { focusTarget: composerRef }),"
+  },
+  {
+    "path": "frontend/src/features/conversations/useInboxSending.ts",
+    "line": 89,
+    "kinds": [
+      "toast"
+    ],
+    "source": "onError: (error) => notifyError(error),"
+  },
+  {
+    "path": "frontend/src/features/dashboard/DashboardPage.tsx",
+    "line": 38,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "if (!business) return <ErrorState message={t(\"dashboard.noBusiness\")} />;"
+  },
+  {
+    "path": "frontend/src/features/dashboard/OperationalDashboard.tsx",
+    "line": 26,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "return <div data-testid=\"dashboard-priority-error\"><ErrorState error={error}"
+  },
+  {
+    "path": "frontend/src/features/dashboard/OperationalDashboard.tsx",
+    "line": 65,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{!hasAccess ? <p role=\"status\" className=\"text-sm text-platforma-subtle\">{t(\"dashboard.operationsNoAccess\")}</p> :"
+  },
+  {
+    "path": "frontend/src/features/dashboard/OwnerDashboard.tsx",
+    "line": 57,
+    "kinds": [
+      "rawLive",
+      "rawMessage"
+    ],
+    "source": "{metricsError ? <p role=\"alert\" className=\"mt-3 text-sm text-platforma-warning\">{t(\"dashboard.ownerAnalyticsError\")}</p> : null}"
+  },
+  {
+    "path": "frontend/src/features/dashboard/OwnerDashboard.tsx",
+    "line": 67,
+    "kinds": [
+      "rawLive",
+      "rawMessage"
+    ],
+    "source": "{canViewAiAnalyst && ownerBriefError ? <p role=\"status\" className=\"text-xs text-platforma-subtle\">{t(\"dashboard.ownerBriefUnavailableText\")}</p> : null}"
+  },
+  {
+    "path": "frontend/src/features/deals/components/DealDetailPanel.tsx",
+    "line": 138,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "<StatusNotice className=\"mb-3\" compact tone=\"warning\" title={t(\"deals.noMoveWithoutNext\")} />"
+  },
+  {
+    "path": "frontend/src/features/deals/DealsPage.tsx",
+    "line": 52,
+    "kinds": [
+      "feedbackHook"
+    ],
+    "source": "const { notifyError } = useActionFeedback();"
+  },
+  {
+    "path": "frontend/src/features/deals/DealsPage.tsx",
+    "line": 133,
+    "kinds": [
+      "toast"
+    ],
+    "source": "showUndoToast({"
+  },
+  {
+    "path": "frontend/src/features/deals/DealsPage.tsx",
+    "line": 139,
+    "kinds": [
+      "toast"
+    ],
+    "source": "showNotification({"
+  },
+  {
+    "path": "frontend/src/features/deals/DealsPage.tsx",
+    "line": 147,
+    "kinds": [
+      "toast"
+    ],
+    "source": "notifyError(error, {"
+  },
+  {
+    "path": "frontend/src/features/deals/DealsPage.tsx",
+    "line": 235,
+    "kinds": [
+      "toast"
+    ],
+    "source": "showNotification({ message: actions.stageGuard, tone: \"warning\" });"
+  },
+  {
+    "path": "frontend/src/features/deals/DealsPage.tsx",
+    "line": 243,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "if (!business) return <ErrorState message={t(\"deals.noBusiness\")} />;"
+  },
+  {
+    "path": "frontend/src/features/deals/DealsPage.tsx",
+    "line": 244,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "if (createContext.error) return <ErrorState message={createContext.error} />;"
+  },
+  {
+    "path": "frontend/src/features/deals/DealsPage.tsx",
+    "line": 272,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{dealWorkspaceError ? <ErrorState error={dealWorkspaceError} message={getApiErrorMessage(dealWorkspaceError)} action={<Button variant=\"secondary\" onClick={() => {"
+  },
+  {
+    "path": "frontend/src/features/deals/DealsPage.tsx",
+    "line": 280,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "<ErrorState message={t(\"deals.noPipeline\")} />"
+  },
+  {
+    "path": "frontend/src/features/deals/DealWorkspacePage.tsx",
+    "line": 100,
+    "kinds": [
+      "toast"
+    ],
+    "source": "showNotification({ message: t(\"deals.actionDone\"), tone: \"success\" });"
+  },
+  {
+    "path": "frontend/src/features/deals/hooks/useDealActions.ts",
+    "line": 25,
+    "kinds": [
+      "feedbackHook"
+    ],
+    "source": "const { notifyError, notifySuccess } = useActionFeedback();"
+  },
+  {
+    "path": "frontend/src/features/deals/hooks/useDealActions.ts",
+    "line": 46,
+    "kinds": [
+      "toast"
+    ],
+    "source": "notifySuccess(t(\"deals.actionDone\"));"
+  },
+  {
+    "path": "frontend/src/features/deals/hooks/useDealActions.ts",
+    "line": 48,
+    "kinds": [
+      "toast"
+    ],
+    "source": "onError: (error) => notifyError(error),"
+  },
+  {
+    "path": "frontend/src/features/deals/hooks/useDealActions.ts",
+    "line": 56,
+    "kinds": [
+      "toast"
+    ],
+    "source": "notifySuccess(t(\"deals.actionDone\"));"
+  },
+  {
+    "path": "frontend/src/features/deals/hooks/useDealActions.ts",
+    "line": 58,
+    "kinds": [
+      "toast"
+    ],
+    "source": "onError: (error) => notifyError(error),"
+  },
+  {
+    "path": "frontend/src/features/deals/hooks/useDealActions.ts",
+    "line": 73,
+    "kinds": [
+      "toast"
+    ],
+    "source": "notifySuccess(t(\"deals.actionDone\"));"
+  },
+  {
+    "path": "frontend/src/features/deals/hooks/useDealActions.ts",
+    "line": 75,
+    "kinds": [
+      "toast"
+    ],
+    "source": "onError: (error) => notifyError(error),"
+  },
+  {
+    "path": "frontend/src/features/deals/hooks/useDealActions.ts",
+    "line": 85,
+    "kinds": [
+      "toast"
+    ],
+    "source": "notifySuccess(t(\"deals.actionDone\"));"
+  },
+  {
+    "path": "frontend/src/features/deals/hooks/useDealActions.ts",
+    "line": 87,
+    "kinds": [
+      "toast"
+    ],
+    "source": "onError: (error) => notifyError(error),"
+  },
+  {
+    "path": "frontend/src/features/deals/hooks/useDealActions.ts",
+    "line": 95,
+    "kinds": [
+      "toast"
+    ],
+    "source": "notifySuccess(t(\"common.saved\"));"
+  },
+  {
+    "path": "frontend/src/features/deals/hooks/useDealActions.ts",
+    "line": 98,
+    "kinds": [
+      "toast"
+    ],
+    "source": "notifyError(error, {"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/ConnectorCard.tsx",
+    "line": 165,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "<StatusNotice"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/ConnectorCard.tsx",
+    "line": 208,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "<StatusNotice compact tone=\"info\" title={t(\"integrations.card.requestNotice\")} />"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/ConnectorCard.tsx",
+    "line": 211,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "<StatusNotice compact tone=\"info\" title={t(\"integrations.card.roadmapNotice\")} />"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/ConnectorCard.tsx",
+    "line": 217,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "<StatusNotice compact tone=\"warning\" title={t(\"integrations.card.pendingNotice\")} />"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/ConnectorCard.tsx",
+    "line": 219,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "<StatusNotice compact tone=\"success\" title={t(\"integrations.card.connectedNotice\")} />"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/ConnectorCard.tsx",
+    "line": 231,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{error ? <ErrorState message={merchantSafeIntegrationError(getApiErrorMessage(error), t)} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/ConnectorCard.tsx",
+    "line": 234,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "<StatusNotice className=\"mt-5\" compact tone=\"info\" title={t(\"integrations.card.readOnly\")} />"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/ImportErrors.tsx",
+    "line": 19,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "if (query.isError) return <ErrorState error={query.error} action={<Button variant=\"secondary\" onClick={() => query.refetch()}>{t(\"common.retry\")}</Button>} />;"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/ImportJobReview.tsx",
+    "line": 32,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{mutationError ? <ErrorState error={mutationError} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/ImportJobReview.tsx",
+    "line": 43,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "{dirty ? <StatusNotice tone=\"warning\" title={t(\"integrations.import.recheckRequired\")} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/ImportPanel.tsx",
+    "line": 136,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{importError ? <ErrorState error={importError} message={getApiErrorMessage(importError)} action={jobsQuery.isError ? <Button variant=\"secondary\" onClick={() => jobsQuery.refetch()}>{t(\"common.retry\")}</Button> : undefined} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/ImportPanel.tsx",
+    "line": 139,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{history.detail.isError && !jobsQuery.isError ? <ErrorState error={history.detail.error} action={<Button variant=\"secondary\" onClick={() => history.detail.refetch()}>{t(\"common.retry\")}</Button>} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/ImportPanel.tsx",
+    "line": 201,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "<StatusNotice"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/ImportPanel.tsx",
+    "line": 231,
+    "kinds": [
+      "rawMessage"
+    ],
+    "source": "{!jobsQuery.isLoading && !jobsQuery.isError && !jobs.length ? <p className=\"text-sm text-platforma-muted\">{t(\"integrations.import.noImports\")}</p> : null}"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/ProviderCard.tsx",
+    "line": 190,
+    "kinds": [
+      "toast"
+    ],
+    "source": "showNotification({ message: t(\"integrations.card.connectionSaved\"), tone: \"success\" });"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/ProviderCard.tsx",
+    "line": 257,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "<StatusNotice"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/ProviderCard.tsx",
+    "line": 292,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "<StatusNotice"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/ProviderCard.tsx",
+    "line": 307,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{error ? <div className=\"mt-2\"><ErrorState message={merchantSafeIntegrationError(getApiErrorMessage(error), t)} /></div> : null}"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/setup/InstagramSetup.tsx",
+    "line": 42,
+    "kinds": [
+      "toast"
+    ],
+    "source": "showNotification({ message, tone });"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/setup/InstagramSetup.tsx",
+    "line": 152,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "return <ErrorState message={t(\"aiAgents.channelSetupUnavailable\")} />;"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/setup/InstagramSetup.tsx",
+    "line": 162,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "error={error ? <ErrorState message={merchantSafeIntegrationError(getApiErrorMessage(error), t)} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/setup/KaspiPricingSetup.tsx",
+    "line": 41,
+    "kinds": [
+      "toast"
+    ],
+    "source": "showNotification({ message, tone: \"warning\" });"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/setup/KaspiPricingSetup.tsx",
+    "line": 89,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{error ? <ErrorState message={merchantSafeIntegrationError(getApiErrorMessage(error), t)} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/setup/KaspiPricingSetup.tsx",
+    "line": 161,
+    "kinds": [
+      "rawMessage"
+    ],
+    "source": "{latestLog.error ? <p className=\"mt-1 text-xs font-semibold text-platforma-danger\">{merchantSafeIntegrationError(latestLog.error, t)}</p> : null}"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/setup/KaspiSetup.tsx",
+    "line": 39,
+    "kinds": [
+      "toast"
+    ],
+    "source": "showNotification({ message, tone });"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/setup/KaspiSetup.tsx",
+    "line": 91,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{error ? <ErrorState message={merchantSafeIntegrationError(getApiErrorMessage(error), t)} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/setup/KaspiSetup.tsx",
+    "line": 107,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "{runsInMockMode ? <StatusNotice compact tone=\"warning\" title={t(\"integrations.mock.providerDisabledNotice\")} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/setup/MoySkladSetup.tsx",
+    "line": 36,
+    "kinds": [
+      "toast"
+    ],
+    "source": "showNotification({ message, tone });"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/setup/MoySkladSetup.tsx",
+    "line": 90,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{error ? <ErrorState message={merchantSafeIntegrationError(getApiErrorMessage(error), t)} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/setup/MoySkladSetup.tsx",
+    "line": 106,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "{runsInMockMode ? <StatusNotice compact tone=\"warning\" title={t(\"integrations.mock.providerDisabledNotice\")} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/setup/OzonSetup.tsx",
+    "line": 38,
+    "kinds": [
+      "toast"
+    ],
+    "source": "showNotification({ message, tone });"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/setup/OzonSetup.tsx",
+    "line": 95,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{error ? <ErrorState message={merchantSafeIntegrationError(getApiErrorMessage(error), t)} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/setup/OzonSetup.tsx",
+    "line": 111,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "{runsInMockMode ? <StatusNotice compact tone=\"warning\" title={t(\"integrations.mock.providerDisabledNotice\")} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/setup/TelegramSetup.tsx",
+    "line": 30,
+    "kinds": [
+      "toast"
+    ],
+    "source": "showNotification({ message, tone });"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/setup/TelegramSetup.tsx",
+    "line": 98,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "return <ErrorState message={t(\"aiAgents.channelSetupUnavailable\")} />;"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/setup/TelegramSetup.tsx",
+    "line": 108,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "error={error ? <ErrorState message={merchantSafeIntegrationError(getApiErrorMessage(error), t)} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/setup/WhatsAppSetup.tsx",
+    "line": 47,
+    "kinds": [
+      "toast"
+    ],
+    "source": "showNotification({ message, tone });"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/setup/WhatsAppSetup.tsx",
+    "line": 195,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "return <ErrorState message={t(\"aiAgents.channelSetupUnavailable\")} />;"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/setup/WhatsAppSetup.tsx",
+    "line": 209,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "error={error ? <ErrorState message={merchantSafeIntegrationError(getApiErrorMessage(error), t)} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/setup/WildberriesSetup.tsx",
+    "line": 36,
+    "kinds": [
+      "toast"
+    ],
+    "source": "showNotification({ message, tone });"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/setup/WildberriesSetup.tsx",
+    "line": 90,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{error ? <ErrorState message={merchantSafeIntegrationError(getApiErrorMessage(error), t)} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/setup/WildberriesSetup.tsx",
+    "line": 106,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "{runsInMockMode ? <StatusNotice compact tone=\"warning\" title={t(\"integrations.mock.providerDisabledNotice\")} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/setup/YCloudSetup.tsx",
+    "line": 53,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "error={error ? <ErrorState message={t(\"integrations.ycloud.requestFailed\")} action={<Button onClick={refresh}>{t(\"common.retry\")}</Button>} /> : null}>"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/setup/YCloudSetup.tsx",
+    "line": 56,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{!data?.available ? <p role=\"status\" className=\"text-sm text-platforma-muted\">{t(\"integrations.ycloud.setupRequired\")}</p> : null}"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/setup/YCloudSetup.tsx",
+    "line": 57,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{pending ? <p role=\"status\" className=\"text-sm text-platforma-muted\">{t(\"integrations.ycloud.pending\")}</p> : null}"
+  },
+  {
+    "path": "frontend/src/features/integrations/components/setup/YCloudSetup.tsx",
+    "line": 58,
+    "kinds": [
+      "rawLive",
+      "rawMessage"
+    ],
+    "source": "{data?.error_code || data?.failed_events ? <p role=\"alert\" className=\"text-sm text-platforma-danger\">{t(\"integrations.ycloud.needsAttention\")}</p> : null}"
+  },
+  {
+    "path": "frontend/src/features/integrations/IntegrationsPage.tsx",
+    "line": 40,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{pageError ? <ErrorState error={pageError} message={getApiErrorMessage(pageError)} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/leads/components/LeadCaptureFieldsEditor.tsx",
+    "line": 57,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{save.isError && <ErrorState error={save.error} />}"
+  },
+  {
+    "path": "frontend/src/features/leads/components/LeadCaptureFormsModal.tsx",
+    "line": 43,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{forms.isPending ? <LoadingState /> : forms.isError ? <ErrorState error={forms.error} action={<Button onClick={() => void forms.refetch()}>{t(\"common.retry\")}</Button>} /> : <>"
+  },
+  {
+    "path": "frontend/src/features/leads/components/LeadCaptureFormsModal.tsx",
+    "line": 52,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{create.isError && <ErrorState error={create.error} />}"
+  },
+  {
+    "path": "frontend/src/features/leads/components/LeadCaptureFormsModal.tsx",
+    "line": 59,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{form.isPending ? <LoadingState /> : form.isError ? <ErrorState error={form.error} action={<Button onClick={() => void form.refetch()}>{t(\"common.retry\")}</Button>} /> : String(form.data.business) !== String(business) ? <ForbiddenState /> : <>"
+  },
+  {
+    "path": "frontend/src/features/leads/components/LeadCaptureFormsModal.tsx",
+    "line": 62,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": ": field.isPending ? <LoadingState /> : field.isError ? <ErrorState error={field.error} action={<Button onClick={() => void field.refetch()}>{t(\"common.retry\")}</Button>} />"
+  },
+  {
+    "path": "frontend/src/features/leads/components/LeadCaptureFormsModal.tsx",
+    "line": 63,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": ": String(field.data.form) === String(formId) ? <LeadCaptureFieldsEditor key={field.data.id} form={formId} initial={field.data} onSaved={saved} onCancel={() => setEditing(null)} onBusyChange={setSavingField} /> : <ForbiddenState />"
+  },
+  {
+    "path": "frontend/src/features/leads/components/LeadCaptureFormsModal.tsx",
+    "line": 66,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{remove.isError && <ErrorState error={remove.error} />}"
+  },
+  {
+    "path": "frontend/src/features/leads/components/LeadOfflineQueueStatus.tsx",
+    "line": 19,
+    "kinds": [
+      "rawLive",
+      "rawMessage"
+    ],
+    "source": "{storageError && <p role=\"alert\" className=\"text-sm text-platforma-danger\">{t(storageError)}</p>}"
+  },
+  {
+    "path": "frontend/src/features/leads/hooks/useLeadActionHistory.ts",
+    "line": 21,
+    "kinds": [
+      "toast"
+    ],
+    "source": "showUndoToast({"
+  },
+  {
+    "path": "frontend/src/features/leads/hooks/useLeadActions.ts",
+    "line": 49,
+    "kinds": [
+      "feedbackHook"
+    ],
+    "source": "const { notifyError } = useActionFeedback();"
+  },
+  {
+    "path": "frontend/src/features/leads/hooks/useLeadActions.ts",
+    "line": 60,
+    "kinds": [
+      "toast"
+    ],
+    "source": "onError: (error) => notifyError(error),"
+  },
+  {
+    "path": "frontend/src/features/leads/hooks/useLeadActions.ts",
+    "line": 103,
+    "kinds": [
+      "toast"
+    ],
+    "source": "onError: (error) => notifyError(error),"
+  },
+  {
+    "path": "frontend/src/features/leads/hooks/useLeadActions.ts",
+    "line": 125,
+    "kinds": [
+      "toast"
+    ],
+    "source": "onError: (error) => notifyError(error),"
+  },
+  {
+    "path": "frontend/src/features/leads/hooks/useLeadActions.ts",
+    "line": 153,
+    "kinds": [
+      "toast"
+    ],
+    "source": "onError: (error) => notifyError(error),"
+  },
+  {
+    "path": "frontend/src/features/leads/hooks/useLeadActions.ts",
+    "line": 174,
+    "kinds": [
+      "toast"
+    ],
+    "source": "onError: (error) => notifyError(error),"
+  },
+  {
+    "path": "frontend/src/features/leads/hooks/useLeadActions.ts",
+    "line": 218,
+    "kinds": [
+      "toast"
+    ],
+    "source": "onError: (error) => notifyError(error),"
+  },
+  {
+    "path": "frontend/src/features/leads/hooks/useLeadActions.ts",
+    "line": 255,
+    "kinds": [
+      "toast"
+    ],
+    "source": "onError: (error) => notifyError(error),"
+  },
+  {
+    "path": "frontend/src/features/leads/hooks/useLeadActions.ts",
+    "line": 274,
+    "kinds": [
+      "toast"
+    ],
+    "source": "onError: (error) => notifyError(error),"
+  },
+  {
+    "path": "frontend/src/features/leads/hooks/useLeadCardQueue.ts",
+    "line": 16,
+    "kinds": [
+      "toast"
+    ],
+    "source": "onNotice: message => { if (message) notify({ message, tone: \"info\" }); },"
+  },
+  {
+    "path": "frontend/src/features/leads/hooks/useLeadCardQueue.ts",
+    "line": 17,
+    "kinds": [
+      "toast"
+    ],
+    "source": "onWarning: message => notify({ message, tone: \"warning\" }),"
+  },
+  {
+    "path": "frontend/src/features/leads/LeadsPage.tsx",
+    "line": 81,
+    "kinds": [
+      "toast"
+    ],
+    "source": "showNotification({ message, tone });"
+  },
+  {
+    "path": "frontend/src/features/leads/LeadsPage.tsx",
+    "line": 147,
+    "kinds": [
+      "toast"
+    ],
+    "source": "showNotification({ message, tone: \"warning\", durationMs: 8_000 }),"
+  },
+  {
+    "path": "frontend/src/features/leads/LeadsPage.tsx",
+    "line": 222,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "if (!business) return <ErrorState message={t(\"leads.noBusiness\")} />;"
+  },
+  {
+    "path": "frontend/src/features/leads/LeadsPage.tsx",
+    "line": 223,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "if (createContext.error) return <ErrorState message={createContext.error} />;"
+  },
+  {
+    "path": "frontend/src/features/leads/LeadsPage.tsx",
+    "line": 238,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "error={pageError ? <ErrorState message={pageErrorMessage} action={<Button variant=\"secondary\" onClick={retryWorkspace}>{t(\"common.retry\")}</Button>} /> : undefined}"
+  },
+  {
+    "path": "frontend/src/features/leads/LeadWorkspacePage.tsx",
+    "line": 137,
+    "kinds": [
+      "toast"
+    ],
+    "source": "showNotification({ message: t(\"leads.actionDone\"), tone: \"success\" });"
+  },
+  {
+    "path": "frontend/src/features/notifications/AnnouncementManager.tsx",
+    "line": 33,
+    "kinds": [
+      "feedbackHook"
+    ],
+    "source": "const feedback = useActionFeedback();"
+  },
+  {
+    "path": "frontend/src/features/notifications/AnnouncementManager.tsx",
+    "line": 46,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{announcements.isPending ? <LoadingState /> : announcements.isError ? <ErrorState error={announcements.error}"
+  },
+  {
+    "path": "frontend/src/features/notifications/AnnouncementManager.tsx",
+    "line": 63,
+    "kinds": [
+      "toast"
+    ],
+    "source": "feedback.notifySuccess(t(\"notification.published\"));"
+  },
+  {
+    "path": "frontend/src/features/notifications/AnnouncementManager.tsx",
+    "line": 89,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{publish.isError ? <ErrorState error={publish.error} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/notifications/AnnouncementManager.tsx",
+    "line": 115,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{monitoring.isPending ? <LoadingState /> : monitoring.isError ? <ErrorState error={monitoring.error}"
+  },
+  {
+    "path": "frontend/src/features/notifications/AnnouncementManager.tsx",
+    "line": 118,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{monitoring.data.announcement.revoked_at ? <p role=\"status\" className=\"text-sm text-platforma-subtle\">{t(\"notification.revoked\")} · {formatDateTime(monitoring.data.announcement.revoked_at, undefined, false, language)}</p> : null}"
+  },
+  {
+    "path": "frontend/src/features/notifications/AnnouncementManager.tsx",
+    "line": 134,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{revoke.isError ? <ErrorState error={revoke.error} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/notifications/NotificationInspector.tsx",
+    "line": 48,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{accessLost ? <ErrorState error={mutationError} /> : detail.isPending ? <LoadingState /> : detail.isError ? <ErrorState error={detail.error}"
+  },
+  {
+    "path": "frontend/src/features/notifications/NotificationInspector.tsx",
+    "line": 53,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{mutationError ? <ErrorState error={mutationError} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/notifications/NotificationInspector.tsx",
+    "line": 55,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{notification.acknowledged_at ? <p role=\"status\" className=\"text-sm text-platforma-subtle\">{t(\"notification.acknowledged\")} · {formatDateTime(notification.acknowledged_at, undefined, false, language)}</p> : null}"
+  },
+  {
+    "path": "frontend/src/features/notifications/NotificationsPage.tsx",
+    "line": 22,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": ": isLoading ? <LoadingState /> : error ? <ErrorState error={error} /> : <ForbiddenState />;"
+  },
+  {
+    "path": "frontend/src/features/notifications/NotificationsPage.tsx",
+    "line": 45,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{summary.isError ? <ErrorState error={summary.error} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/notifications/NotificationsPage.tsx",
+    "line": 54,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{readAll.isError ? <ErrorState error={readAll.error} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/notifications/NotificationsPage.tsx",
+    "line": 55,
+    "kinds": [
+      "rawLive",
+      "rawMessage"
+    ],
+    "source": "{readAll.isSuccess ? <p role=\"status\" className=\"text-sm text-platforma-subtle\">{t(\"notification.readAllResult\", { count: readAll.data.updated })}</p> : null}"
+  },
+  {
+    "path": "frontend/src/features/notifications/NotificationsPage.tsx",
+    "line": 56,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{feed.isPending ? <LoadingState /> : feed.isError ? <ErrorState error={feed.error}"
+  },
+  {
+    "path": "frontend/src/features/outreach/OutreachPage.tsx",
+    "line": 290,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "if (!business) return <ErrorState message={t(\"outreach.noBusiness\")} />;"
+  },
+  {
+    "path": "frontend/src/features/outreach/OutreachPage.tsx",
+    "line": 326,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{pageError ? <div className=\"mb-4\"><ErrorState error={pageError} message={getApiErrorMessage(pageError)} /></div> : null}"
+  },
+  {
+    "path": "frontend/src/features/outreach/OutreachPage.tsx",
+    "line": 592,
+    "kinds": [
+      "rawMessage"
+    ],
+    "source": "{recipient.error_code ? <span className=\"text-xs font-semibold text-platforma-danger\">{t(\"outreach.recipientDeliveryFailed\")}</span> : null}"
+  },
+  {
+    "path": "frontend/src/features/payments/PaymentEntityPicker.tsx",
+    "line": 37,
+    "kinds": [
+      "rawLive",
+      "rawMessage"
+    ],
+    "source": "{error && <p role=\"alert\" className=\"text-sm text-platforma-danger\">{error}</p>}"
+  },
+  {
+    "path": "frontend/src/features/payments/PaymentEntityPicker.tsx",
+    "line": 42,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{options.error && <ErrorState error={options.error} message={getApiErrorMessage(options.error)} action={<Button type=\"button\" variant=\"secondary\" onClick={() => void options.refetch()}>{t(\"common.retry\")}</Button>} />}"
+  },
+  {
+    "path": "frontend/src/features/payments/PaymentEntityPicker.tsx",
+    "line": 43,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{!options.isFetching && options.data?.count === 0 && <p role=\"status\">{t(\"payments.noMatches\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/payments/PaymentForm.tsx",
+    "line": 109,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{mutation.error && <ErrorState error={mutation.error} message={getApiErrorMessage(mutation.error)} />}"
+  },
+  {
+    "path": "frontend/src/features/payments/PaymentForm.tsx",
+    "line": 110,
+    "kinds": [
+      "rawLive",
+      "rawMessage"
+    ],
+    "source": "{fieldErrors.form && <p role=\"alert\" className=\"text-platforma-danger\">{fieldErrors.form}</p>}"
+  },
+  {
+    "path": "frontend/src/features/payments/PaymentForm.tsx",
+    "line": 111,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{uncertain && <p role=\"alert\">{t(\"payments.uncertain\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/payments/PaymentsJournal.tsx",
+    "line": 50,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{!canView ? <ForbiddenState /> : <>"
+  },
+  {
+    "path": "frontend/src/features/payments/PaymentsJournal.tsx",
+    "line": 57,
+    "kinds": [
+      "rawLive",
+      "rawMessage"
+    ],
+    "source": "{saved && <p role=\"status\" className=\"text-sm text-platforma-success\">{t(\"payments.saved\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/payments/PaymentsJournal.tsx",
+    "line": 59,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{payments.error && <ErrorState error={payments.error} message={getApiErrorMessage(payments.error)} action={<Button variant=\"secondary\" onClick={() => void payments.refetch()}>{t(\"common.retry\")}</Button>} />}"
+  },
+  {
+    "path": "frontend/src/features/platform/BusinessBillingPanel.tsx",
+    "line": 52,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "if (query.isError || !query.data) return <ErrorState error={query.error} action={<Button onClick={() => void query.refetch()}>{t(\"common.refresh\")}</Button>} />;"
+  },
+  {
+    "path": "frontend/src/features/platform/BusinessBillingPanel.tsx",
+    "line": 56,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{!data.enabled && <p role=\"status\">{t(\"commerce.unavailable\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/platform/BusinessBillingPanel.tsx",
+    "line": 57,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{!data.commercial_expiry_enforced && <p role=\"status\" className=\"text-sm\">{t(\"commerce.rolloutPending\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/platform/BusinessBillingPanel.tsx",
+    "line": 63,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{!data.orders.length && <p role=\"status\">{t(\"commerce.empty\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/platform/BusinessBillingPanel.tsx",
+    "line": 83,
+    "kinds": [
+      "errorSurface",
+      "rawLive"
+    ],
+    "source": "{error && ([\"mfa_code_invalid\", \"mfa_step_up_required\"].includes(error.code) ? <p role=\"alert\">{t(\"businessDetails.mfaError\")}</p> : <ErrorState error={mutation.error} />)}"
+  },
+  {
+    "path": "frontend/src/features/platform/BusinessDetailsForm.tsx",
+    "line": 89,
+    "kinds": [
+      "errorSurface",
+      "rawLive",
+      "rawMessage"
+    ],
+    "source": "{mfaError ? <p role=\"alert\" className=\"text-sm text-platforma-danger\">{t(\"businessDetails.mfaError\")}</p> : save.isError && <ErrorState error={save.error} />}"
+  },
+  {
+    "path": "frontend/src/features/platform/BusinessDetailsForm.tsx",
+    "line": 90,
+    "kinds": [
+      "rawLive",
+      "rawMessage"
+    ],
+    "source": "{error?.category === \"conflict\" && <p role=\"status\" className=\"text-sm text-platforma-warning\">{t(\"businessDetails.conflict\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/platform/BusinessDetailsForm.tsx",
+    "line": 91,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{reloadError ? <ErrorState error={reloadError} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/platform/BusinessDetailsForm.tsx",
+    "line": 92,
+    "kinds": [
+      "rawLive",
+      "rawMessage"
+    ],
+    "source": "{save.isSuccess && <p role=\"status\" className=\"text-sm text-platforma-success\">{t(\"common.saved\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/platform/BusinessEmployeeAccessPanel.tsx",
+    "line": 80,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{query.isError && <ErrorState error={query.error} action={<Button disabled={pending} onClick={() => query.refetch()}>{t(\"common.retry\")}</Button>} />}"
+  },
+  {
+    "path": "frontend/src/features/platform/BusinessEmployeeAccessPanel.tsx",
+    "line": 89,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{!rows.length && <p className=\"p-4 text-sm\" role=\"status\">{t(\"employeeAccess.empty\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/platform/BusinessEmployeeAccessPanel.tsx",
+    "line": 105,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{action && <p className=\"text-sm sm:col-span-2\" role=\"status\">{t(\"employeeAccess.effects\")} {[\"restore\", \"role\", \"reissue\"].includes(action) && t(\"recovery.waitingOwner\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/platform/BusinessEmployeeAccessPanel.tsx",
+    "line": 113,
+    "kinds": [
+      "errorSurface",
+      "rawLive",
+      "rawMessage"
+    ],
+    "source": "{error && ([\"mfa_code_invalid\", \"mfa_step_up_required\"].includes(error.code) ? <p role=\"alert\" className=\"text-platforma-danger\">{t(\"businessDetails.mfaError\")}</p> : <ErrorState error={mutation.error} />)}"
+  },
+  {
+    "path": "frontend/src/features/platform/BusinessEmployeeAccessPanel.tsx",
+    "line": 114,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{error?.category === \"conflict\" && <p role=\"alert\">{t(\"employeeAccess.conflict\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/platform/BusinessEmployeeAccessPanel.tsx",
+    "line": 116,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{!data.requests.length && <p role=\"status\" className=\"text-sm text-platforma-subtle\">{t(\"employeeAccess.noRequests\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/platform/BusinessOwnershipPanel.tsx",
+    "line": 81,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{!hasPending && !data.candidates.length && <p role=\"status\" className=\"text-sm text-platforma-subtle\">{t(\"ownership.noCandidates\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/platform/BusinessOwnershipPanel.tsx",
+    "line": 86,
+    "kinds": [
+      "errorSurface",
+      "rawLive",
+      "rawMessage"
+    ],
+    "source": "{error && ([\"mfa_code_invalid\", \"mfa_step_up_required\"].includes(error.code) ? <p role=\"alert\" className=\"text-sm text-platforma-danger\">{t(\"businessDetails.mfaError\")}</p> : <ErrorState error={mutation.error} />)}"
+  },
+  {
+    "path": "frontend/src/features/platform/BusinessOwnershipPanel.tsx",
+    "line": 87,
+    "kinds": [
+      "rawLive",
+      "rawMessage"
+    ],
+    "source": "{error?.category === \"conflict\" && <p role=\"alert\" className=\"text-sm text-platforma-warning\">{t(\"ownership.conflict\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/platform/BusinessRecoveryPanel.tsx",
+    "line": 81,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{candidate && <div className=\"space-y-1 text-sm sm:col-span-2\" role=\"status\">"
+  },
+  {
+    "path": "frontend/src/features/platform/BusinessRecoveryPanel.tsx",
+    "line": 87,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{!data.candidates.length && <p role=\"status\">{t(\"recovery.noCandidates\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/platform/BusinessRecoveryPanel.tsx",
+    "line": 91,
+    "kinds": [
+      "errorSurface",
+      "rawLive",
+      "rawMessage"
+    ],
+    "source": "{error && ([\"mfa_code_invalid\", \"mfa_step_up_required\"].includes(error.code) ? <p role=\"alert\" className=\"text-platforma-danger\">{t(\"businessDetails.mfaError\")}</p> : <ErrorState error={mutation.error} />)}"
+  },
+  {
+    "path": "frontend/src/features/platform/BusinessRecoveryPanel.tsx",
+    "line": 92,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{error?.category === \"conflict\" && <p role=\"alert\">{t(\"recovery.conflict\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/platform/BusinessRecoveryPanel.tsx",
+    "line": 93,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{!data.requests.length && <p role=\"status\" className=\"text-sm text-platforma-subtle\">{t(\"recovery.empty\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/platform/EmployeeAccessDiagnostics.tsx",
+    "line": 14,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{target.row.protected && <p role=\"status\">{t(\"employeeAccess.protected\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/platform/EmployeeAccessDiagnostics.tsx",
+    "line": 22,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{!target.row.account_active && <p role=\"status\">{t(\"employeeAccess.globalDisabled\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/platform/OperationsInfrastructure.tsx",
+    "line": 31,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "{!!data.unavailable_sources?.length && <StatusNotice compact tone=\"warning\" title={t(\"platform.workspace.partial\")} />}"
+  },
+  {
+    "path": "frontend/src/features/platform/OperationsWorklist.tsx",
+    "line": 63,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "{!!data.unavailable_sources.length && <StatusNotice compact tone=\"warning\" title={t(\"platform.workspace.partial\")} />}"
+  },
+  {
+    "path": "frontend/src/features/platform/OverviewAttention.tsx",
+    "line": 17,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "{!!data.unavailable_sources.length && <StatusNotice compact tone=\"warning\" title={t(\"platform.workspace.partial\")} />}"
+  },
+  {
+    "path": "frontend/src/features/platform/OverviewAttention.tsx",
+    "line": 32,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "{!data.clinics.links_available && <div className=\"p-3\"><StatusNotice compact tone=\"warning\" title={t(\"platform.workspace.partial\")} /></div>}"
+  },
+  {
+    "path": "frontend/src/features/platform/PlatformData.tsx",
+    "line": 12,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "if (normalized.category === \"permission\") return <ForbiddenState error={normalized} />;"
+  },
+  {
+    "path": "frontend/src/features/platform/PlatformData.tsx",
+    "line": 13,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "return <ErrorState error={error} message={message} action={<Button variant=\"secondary\" onClick={onRetry}>{t(\"platform.merchantDetail.refresh\")}</Button>} />;"
+  },
+  {
+    "path": "frontend/src/features/platform/PlatformData.tsx",
+    "line": 51,
+    "kinds": [
+      "rawMessage"
+    ],
+    "source": "{!!operations?.form_errors && <p className=\"text-platforma-warning\">{t(\"platform.workspace.formErrors\", { count: operations.form_errors })}</p>}"
+  },
+  {
+    "path": "frontend/src/features/platform/PlatformMerchantDetailPage.tsx",
+    "line": 115,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{!data.service_status?.components.length && <p role=\"status\" className=\"text-sm text-platforma-subtle\">{t(\"serviceStatus.unknown.text\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/platform/PlatformMerchantDetailPage.tsx",
+    "line": 182,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{supportMutation.isError ? <ErrorState error={supportMutation.error} message={getApiErrorMessage(supportMutation.error)} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/platform/PlatformMerchantDetailPage.tsx",
+    "line": 190,
+    "kinds": [
+      "rawLive",
+      "rawMessage"
+    ],
+    "source": "{supportMutation.isSuccess && <p role=\"status\" className=\"my-3 text-sm text-platforma-success\">{t(\"common.saved\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/platform/PlatformMerchantDetailPage.tsx",
+    "line": 195,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{history.isPending ? <LoadingState /> : history.isError ? <ErrorState error={history.error} action={<Button variant=\"secondary\" onClick={() => history.refetch()}>{t(\"platform.merchantDetail.refresh\")}</Button>} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/platform/PlatformOverviewPage.tsx",
+    "line": 43,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{!!data.operations_summary.unavailable_sources?.length && <p role=\"status\" className=\"px-3 pb-2 text-sm text-platforma-subtle\">{t(\"platform.workspace.partial\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/pricing/PricingPage.tsx",
+    "line": 130,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "<ErrorState error={error} message={getApiErrorMessage(error)} />"
+  },
+  {
+    "path": "frontend/src/features/resources/components/ResourceCreateForm.tsx",
+    "line": 25,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "if (branches.error) return <ErrorState error={branches.error} />;"
+  },
+  {
+    "path": "frontend/src/features/resources/components/ResourceEditModal.tsx",
+    "line": 102,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{errorMessage ? <ErrorState message={errorMessage} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/resources/components/ResourceEditModal.tsx",
+    "line": 104,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "<StatusNotice tone=\"warning\" title={t(\"resources.readOnlyTitle\")} description={t(\"resources.readOnlyText\")} />"
+  },
+  {
+    "path": "frontend/src/features/resources/components/ResourceEditModal.tsx",
+    "line": 149,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "<div className=\"mt-3\"><ErrorState message={scheduleError} /></div>"
+  },
+  {
+    "path": "frontend/src/features/resources/components/SpecialistLifecycle.tsx",
+    "line": 37,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{mutation.error && <ErrorState error={mutation.error} />}"
+  },
+  {
+    "path": "frontend/src/features/resources/components/SpecialistLifecycle.tsx",
+    "line": 38,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{absences.isLoading ? <LoadingState /> : absences.error ? <ErrorState error={absences.error} /> : <div className=\"space-y-2\">"
+  },
+  {
+    "path": "frontend/src/features/resources/components/SpecialistLifecycle.tsx",
+    "line": 54,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{preview.isLoading ? <LoadingState /> : preview.error ? <ErrorState error={preview.error} /> : preview.data && <>"
+  },
+  {
+    "path": "frontend/src/features/resources/ResourcesPage.tsx",
+    "line": 149,
+    "kinds": [
+      "toast"
+    ],
+    "source": "showNotification({ message: t(\"resources.noticeSaved\"), tone: \"success\" });"
+  },
+  {
+    "path": "frontend/src/features/resources/ResourcesPage.tsx",
+    "line": 154,
+    "kinds": [
+      "toast"
+    ],
+    "source": "showNotification({ message: t(\"resources.noticeCreated\"), tone: \"success\" });"
+  },
+  {
+    "path": "frontend/src/features/resources/ResourcesPage.tsx",
+    "line": 163,
+    "kinds": [
+      "toast"
+    ],
+    "source": "showNotification({"
+  },
+  {
+    "path": "frontend/src/features/resources/ResourcesPage.tsx",
+    "line": 169,
+    "kinds": [
+      "toast"
+    ],
+    "source": "showNotification({ message: getApiErrorMessage(error), tone: \"danger\" });"
+  },
+  {
+    "path": "frontend/src/features/resources/ResourcesPage.tsx",
+    "line": 176,
+    "kinds": [
+      "toast"
+    ],
+    "source": "showNotification({ message: actionErrorMessage, tone: \"danger\" });"
+  },
+  {
+    "path": "frontend/src/features/resources/ResourcesPage.tsx",
+    "line": 273,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "if (!business) return <ErrorState message={t(\"resources.noBusiness\")} />;"
+  },
+  {
+    "path": "frontend/src/features/resources/ResourcesPage.tsx",
+    "line": 303,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "<ErrorState"
+  },
+  {
+    "path": "frontend/src/features/resources/ResourcesPage.tsx",
+    "line": 409,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{businessHoursQuery.error ? <ErrorState error={businessHoursQuery.error} message={getApiErrorMessage(businessHoursQuery.error)} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/services/components/ServiceEditModal.tsx",
+    "line": 78,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{error || errorMessage ? <ErrorState error={error} message={errorMessage} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/services/components/ServiceEditModal.tsx",
+    "line": 80,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "<StatusNotice"
+  },
+  {
+    "path": "frontend/src/features/services/ServicesPage.tsx",
+    "line": 107,
+    "kinds": [
+      "toast"
+    ],
+    "source": "showNotification({ message: t(\"services.noticeSaved\"), tone: \"success\" });"
+  },
+  {
+    "path": "frontend/src/features/services/ServicesPage.tsx",
+    "line": 110,
+    "kinds": [
+      "toast"
+    ],
+    "source": "showNotification({ message: t(\"services.noticeCreated\"), tone: \"success\" });"
+  },
+  {
+    "path": "frontend/src/features/services/ServicesPage.tsx",
+    "line": 115,
+    "kinds": [
+      "toast"
+    ],
+    "source": "if (!variables.id) showNotification({ message: getApiErrorMessage(error), tone: \"danger\" });"
+  },
+  {
+    "path": "frontend/src/features/services/ServicesPage.tsx",
+    "line": 151,
+    "kinds": [
+      "toast"
+    ],
+    "source": "showNotification({ message: t(noticeKey), tone: \"success\" });"
+  },
+  {
+    "path": "frontend/src/features/services/ServicesPage.tsx",
+    "line": 154,
+    "kinds": [
+      "toast"
+    ],
+    "source": "showNotification({ message: getApiErrorMessage(error), tone: \"danger\" });"
+  },
+  {
+    "path": "frontend/src/features/services/ServicesPage.tsx",
+    "line": 271,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "if (!business) return <ErrorState message={t(\"services.noBusiness\")} />;"
+  },
+  {
+    "path": "frontend/src/features/services/ServicesPage.tsx",
+    "line": 296,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "<ErrorState"
+  },
+  {
+    "path": "frontend/src/features/settings/components/AbsenceAppointmentsModal.tsx",
+    "line": 48,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{error || mutation.error || resources.error ? <ErrorState error={error || mutation.error || resources.error} message={getApiErrorMessage(error || mutation.error || resources.error)} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/settings/components/CustomFieldAccessMatrix.tsx",
+    "line": 35,
+    "kinds": [
+      "rawLive",
+      "rawMessage"
+    ],
+    "source": "{error && <p role=\"alert\" className=\"text-sm text-platforma-danger\">{error}</p>}"
+  },
+  {
+    "path": "frontend/src/features/settings/components/CustomFieldEditor.tsx",
+    "line": 83,
+    "kinds": [
+      "rawLive",
+      "rawMessage"
+    ],
+    "source": "{(optionsError || errors.options_json) && <p role=\"alert\" className=\"text-sm text-platforma-danger\">{optionsError || errors.options_json?.join(\" \")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/settings/components/CustomFieldEditor.tsx",
+    "line": 88,
+    "kinds": [
+      "rawLive",
+      "rawMessage"
+    ],
+    "source": "{errors.is_active && <p role=\"alert\" className=\"text-sm text-platforma-danger\">{errors.is_active.join(\" \")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/settings/components/ScheduleExceptionsPanel.tsx",
+    "line": 72,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{error ? <ErrorState error={error} message={getApiErrorMessage(error)} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/settings/components/ScheduleExceptionsPanel.tsx",
+    "line": 99,
+    "kinds": [
+      "rawMessage"
+    ],
+    "source": "{!appointments.isLoading && !appointments.error && !activeAppointments.length ? <p className=\"text-sm text-platforma-subtle\">{t(\"workingHours.noAppointmentsOnDate\")}</p> : null}"
+  },
+  {
+    "path": "frontend/src/features/settings/components/SettingsLayout.tsx",
+    "line": 30,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "if (error) return <ErrorState error={error} />;"
+  },
+  {
+    "path": "frontend/src/features/settings/components/SettingsLayout.tsx",
+    "line": 31,
+    "kinds": [
+      "rawLive",
+      "rawMessage"
+    ],
+    "source": "return saved ? <p role=\"status\" className=\"flex items-center gap-2 text-sm text-platforma-success\"><Check aria-hidden=\"true\" size={16} />{t(\"common.saved\")}</p> : null;"
+  },
+  {
+    "path": "frontend/src/features/settings/components/SettingsQueryState.tsx",
+    "line": 8,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "if (error) return <ErrorState error={error} message={getApiErrorMessage(error)} action={<Button type=\"button\" variant=\"secondary\" onClick={() => { void Promise.all(queries.map((query) => query.refetch())); }}>{t(\"common.retry\")}</Button>} />;"
+  },
+  {
+    "path": "frontend/src/features/settings/components/TeamAccessControl.tsx",
+    "line": 42,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{mutation.error && <ErrorState error={mutation.error} message={getApiErrorMessage(mutation.error)} />}"
+  },
+  {
+    "path": "frontend/src/features/settings/components/TeamAccessControl.tsx",
+    "line": 43,
+    "kinds": [
+      "rawLive",
+      "rawMessage"
+    ],
+    "source": "{mutation.isSuccess && <p role=\"status\" className=\"text-sm text-platforma-success\">{t(\"common.saved\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/settings/components/TeamBranchAccess.tsx",
+    "line": 19,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "if (branches.error) return <ErrorState error={branches.error} />;"
+  },
+  {
+    "path": "frontend/src/features/settings/components/TeamBranchAccess.tsx",
+    "line": 27,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{mutation.error && <ErrorState error={mutation.error} />}"
+  },
+  {
+    "path": "frontend/src/features/settings/components/TeamBranchAccess.tsx",
+    "line": 28,
+    "kinds": [
+      "rawLive",
+      "rawMessage"
+    ],
+    "source": "{mutation.isSuccess && <p role=\"status\" className=\"text-sm text-platforma-success\">{t(\"common.saved\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/settings/components/WorkingHoursEditModal.tsx",
+    "line": 80,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{errorMessage ? <ErrorState message={errorMessage} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/settings/components/WorkingHoursEditModal.tsx",
+    "line": 82,
+    "kinds": [
+      "statusNotice"
+    ],
+    "source": "<StatusNotice tone=\"warning\" title={t(\"workingHours.readOnlyTitle\")} description={t(\"workingHours.readOnlyText\")} />"
+  },
+  {
+    "path": "frontend/src/features/settings/DevelopersSection.tsx",
+    "line": 174,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "<ErrorState error={error} message={getApiErrorMessage(error)} />"
+  },
+  {
+    "path": "frontend/src/features/settings/sections/AppointmentMessagesSection.tsx",
+    "line": 60,
+    "kinds": [
+      "rawMessage"
+    ],
+    "source": "{appointmentMessageSettings.isSuccess && !appointmentMessages.length && <p className=\"px-5 pb-8 text-sm text-platforma-subtle\">{t(\"settings.redesign.noScenarios\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/settings/sections/AppointmentMessagesSection.tsx",
+    "line": 81,
+    "kinds": [
+      "rawLive",
+      "rawMessage"
+    ],
+    "source": "{fieldErrors.is_enabled && <p role=\"alert\" className=\"mb-3 text-sm text-platforma-danger\">{fieldErrors.is_enabled.join(\" \")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/settings/sections/AppointmentMessagesSection.tsx",
+    "line": 108,
+    "kinds": [
+      "rawMessage"
+    ],
+    "source": "<SettingsSaveBar feedback={error && !hasFieldError ? <SettingsFeedback error={error} /> : draft ? <p className=\"text-sm text-platforma-subtle\">{t(\"settings.redesign.unsaved\")}</p> : <SettingsFeedback saved={currentMutation && appointmentMessageMutation.isSuccess} />}>"
+  },
+  {
+    "path": "frontend/src/features/settings/sections/QuickRepliesSection.tsx",
+    "line": 71,
+    "kinds": [
+      "rawLive",
+      "rawMessage"
+    ],
+    "source": "{errors.is_active && <p role=\"alert\" className=\"text-sm text-platforma-danger\">{errors.is_active.join(\" \")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/settings/sections/RolesSection.tsx",
+    "line": 55,
+    "kinds": [
+      "rawMessage"
+    ],
+    "source": "{teamRoles.isSuccess && !visibleRoles.length && <p className=\"text-sm text-platforma-subtle\">{t(\"settings.noRoles\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/settings/sections/RolesSection.tsx",
+    "line": 115,
+    "kinds": [
+      "rawMessage"
+    ],
+    "source": "{!resources.length && catalog.isSuccess && <p className=\"py-4 text-sm text-platforma-subtle\">{t(\"settings.redesign.noMatches\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/settings/sections/TeamSection.tsx",
+    "line": 94,
+    "kinds": [
+      "rawMessage"
+    ],
+    "source": "{invitations.isSuccess && !invitations.data?.length && <p className=\"py-8 text-sm text-platforma-subtle\">{t(\"settings.noInvites\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/settings/sections/TeamSection.tsx",
+    "line": 106,
+    "kinds": [
+      "rawMessage"
+    ],
+    "source": "{!departments.isError && <div className=\"divide-y divide-platforma-border\">{(departments.data || []).map(department => <div key={department.id} className=\"flex items-center justify-between gap-3 py-4 text-sm\"><span className=\"font-semibold\">{department.name}</span><span className=\"text-platforma-subtle\">{department.members_count || 0} {t(\"settings.members\")}</span></div>)}</div>}"
+  },
+  {
+    "path": "frontend/src/features/settings/sections/TeamSection.tsx",
+    "line": 107,
+    "kinds": [
+      "rawMessage"
+    ],
+    "source": "{departments.isSuccess && !departments.data?.length && <p className=\"py-4 text-sm text-platforma-subtle\">{t(\"settings.noDepartments\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/settings/sections/TeamSection.tsx",
+    "line": 115,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{createdInvite ? <div className=\"space-y-4\"><p role=\"status\" className=\"text-base font-semibold text-platforma-success\">{t(\"settings.inviteCreatedTitle\")}</p><p className=\"break-all text-sm\">{createdInvite.email} · {t(`settings.role.${createdInvite.role}`)} · {t(`status.${createdInvite.status}`)}</p>{invitationActions(createdInvite)}</div> : <form id=\"settings-invitation-form\" onSubmit={event => { event.preventDefault(); inviteMutation.mutate(undefined, { onError: () => window.requestAnimationFrame(() => document.querySelector<HTMLElement>('#settings-invitation-form [aria-invalid=\"true\"]')?.focus()) }); }}>"
+  },
+  {
+    "path": "frontend/src/features/settings/sections/TeamSection.tsx",
+    "line": 150,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{memberChanged ? <p role=\"status\" className=\"text-sm text-platforma-subtle\">{t(\"settings.workflow.saveRoleFirst\")}</p>"
+  },
+  {
+    "path": "frontend/src/features/settings/SettingsPage.tsx",
+    "line": 43,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "if (!model.allowedSettingsSections.length) return <ForbiddenState />;"
+  },
+  {
+    "path": "frontend/src/features/settings/WorkingHoursPage.tsx",
+    "line": 58,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "if (branches.error) return <ErrorState error={branches.error} />;"
+  },
+  {
+    "path": "frontend/src/features/settings/WorkingHoursPage.tsx",
+    "line": 177,
+    "kinds": [
+      "toast"
+    ],
+    "source": "showNotification({ message: t(\"workingHours.savedNotice\"), tone: \"success\" });"
+  },
+  {
+    "path": "frontend/src/features/settings/WorkingHoursPage.tsx",
+    "line": 189,
+    "kinds": [
+      "toast"
+    ],
+    "source": "showNotification({ message: t(\"workingHours.presetNotice\").replace(\"{count}\", String(data.count)), tone: \"success\" });"
+  },
+  {
+    "path": "frontend/src/features/settings/WorkingHoursPage.tsx",
+    "line": 191,
+    "kinds": [
+      "toast"
+    ],
+    "source": "onError: (error) => showNotification({ message: getApiErrorMessage(error), tone: \"danger\" }),"
+  },
+  {
+    "path": "frontend/src/features/settings/WorkingHoursPage.tsx",
+    "line": 278,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "if (!business) return <ErrorState message={t(\"workingHours.noBusiness\")} />;"
+  },
+  {
+    "path": "frontend/src/features/settings/WorkingHoursPage.tsx",
+    "line": 294,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "<ErrorState error={pageError} message={getApiErrorMessage(pageError)} action={<Button type=\"button\" variant=\"secondary\" onClick={() => void Promise.all([workingHours.refetch(), resources.refetch()])}>{t(\"common.retry\")}</Button>} />"
+  },
+  {
+    "path": "frontend/src/features/support/SupportActionDialog.tsx",
+    "line": 73,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{!actionAllowed && <p role=\"alert\" className=\"text-sm text-platforma-warning\">{t(\"supportCases.actionUnavailable\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/support/SupportIncidentPage.tsx",
+    "line": 56,
+    "kinds": [
+      "rawLive"
+    ],
+    "source": "{link.isSuccess && <p role=\"status\" className=\"text-sm text-brand-700\">{t(\"supportIncidents.linked\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/support/SupportIncidents.tsx",
+    "line": 33,
+    "kinds": [
+      "rawMessage"
+    ],
+    "source": "{links.isPending ? <LoadingState /> : links.isError ? <SupportError error={links.error} retry={() => links.refetch()} /> : !links.data.count ? <p className=\"text-sm text-platforma-subtle\">{t(\"supportIncidents.empty\")}</p> : <>"
+  },
+  {
+    "path": "frontend/src/features/support/SupportThread.tsx",
+    "line": 67,
+    "kinds": [
+      "rawMessage"
+    ],
+    "source": "{thread.isPending ? <LoadingState /> : thread.isError ? <SupportError error={thread.error} retry={() => thread.refetch()} /> : !messages.length ? <p className=\"text-sm text-platforma-subtle\">{t(internal ? \"supportCases.noNotes\" : \"supportCases.noMessages\")}</p> : <div className=\"space-y-3\">"
+  },
+  {
+    "path": "frontend/src/features/support/SupportUI.tsx",
+    "line": 20,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "if (normalized.category === \"permission\") return <ForbiddenState error={normalized} />;"
+  },
+  {
+    "path": "frontend/src/features/support/SupportUI.tsx",
+    "line": 21,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "return <ErrorState error={error} action={retry && normalized.category !== \"not_found\" ? <Button variant=\"secondary\" onClick={retry}>{t(\"common.refresh\")}</Button> : undefined} />;"
+  },
+  {
+    "path": "frontend/src/features/tasks/components/TaskEditor.tsx",
+    "line": 84,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{assignees.error ? <ErrorState error={assignees.error} action={<Button type=\"button\" variant=\"secondary\" onClick={() => void assignees.refetch()}>{t(\"taskWorkspace.refresh\")}</Button>} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/tasks/components/TaskEditor.tsx",
+    "line": 100,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{save.error ? <ErrorState error={save.error} message={conflict ? t(\"taskWorkspace.conflict\") : undefined} action={conflict && task ? <Button type=\"button\" variant=\"secondary\" isLoading={refresh.isPending} onClick={() => refresh.mutate()}>{t(\"taskWorkspace.refresh\")}</Button> : undefined} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/tasks/components/TaskEditor.tsx",
+    "line": 101,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{refresh.error ? <ErrorState error={refresh.error} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/tasks/components/TaskEditor.tsx",
+    "line": 102,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{save.error ? <FieldErrorSummary error={normalizeAppError(save.error)} fieldLabels={Object.fromEntries(Object.keys(draft).map(field => [field, t(`taskWorkspace.${field === \"title\" ? \"name\" : field === \"due_at\" ? \"due\" : field === \"reminder_at\" ? \"reminder\" : links.includes(field as TaskRelationType) ? `link.${field}` : field}`)]))} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/tasks/components/TaskFormModal.tsx",
+    "line": 252,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{errorMessage ? <ErrorState message={errorMessage} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/tasks/components/TaskInspector.tsx",
+    "line": 115,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{taskQuery.isPending ? <LoadingState /> : taskQuery.error ? <ErrorState error={taskQuery.error} action={<Button variant=\"secondary\" onClick={() => void taskQuery.refetch()}>{t(\"taskWorkspace.refresh\")}</Button>} /> : task ? <>"
+  },
+  {
+    "path": "frontend/src/features/tasks/components/TaskInspector.tsx",
+    "line": 126,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{command.error && !dialog ? <ErrorState error={command.error} message={conflict ? t(\"taskWorkspace.conflict\") : undefined} action={conflict ? <Button variant=\"secondary\" onClick={async () => { await taskQuery.refetch(); attempt.current = { signature: \"\", key: \"\" }; command.reset(); }}>{t(\"taskWorkspace.refresh\")}</Button> : undefined} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/tasks/components/TaskInspector.tsx",
+    "line": 140,
+    "kinds": [
+      "errorSurface",
+      "rawMessage"
+    ],
+    "source": "{comments.isPending ? <LoadingState /> : comments.error ? <ErrorState error={comments.error} action={<Button variant=\"secondary\" onClick={() => void comments.refetch()}>{t(\"taskWorkspace.refresh\")}</Button>} /> : comments.data?.length ? comments.data.map(item => <article key={item.id} className=\"space-y-1 text-sm\"><div className=\"flex flex-wrap justify-between gap-1\"><strong>{item.author_name || item.author_email || \"—\"}</strong><time className=\"text-xs text-platforma-subtle\">{format(item.created_at)}</time></div><p className=\"whitespace-pre-wrap break-words leading-[22px]\">{item.text}</p></article>) : <p className=\"text-sm text-platforma-subtle\">{t(\"taskWorkspace.noComments\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/tasks/components/TaskInspector.tsx",
+    "line": 142,
+    "kinds": [
+      "errorSurface",
+      "rawMessage"
+    ],
+    "source": "</> : history.isPending ? <LoadingState /> : history.error ? <ErrorState error={history.error} action={<Button variant=\"secondary\" onClick={() => void history.refetch()}>{t(\"taskWorkspace.refresh\")}</Button>} /> : history.data?.length ? history.data.map(event => <article key={event.id} className=\"border-l border-platforma-border pl-3 text-sm\"><p className=\"whitespace-pre-wrap break-words\">{event.text}</p><time className=\"text-xs text-platforma-subtle\">{format(event.created_at)}</time></article>) : <p className=\"text-sm text-platforma-subtle\">{t(\"taskWorkspace.noHistory\")}</p>}"
+  },
+  {
+    "path": "frontend/src/features/tasks/components/TaskInspector.tsx",
+    "line": 150,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{command.error ? <ErrorState error={command.error} message={conflict ? t(\"taskWorkspace.conflict\") : undefined} action={conflict ? <Button type=\"button\" variant=\"secondary\" onClick={async () => { await taskQuery.refetch(); attempt.current = { signature: \"\", key: \"\" }; command.reset(); }}>{t(\"taskWorkspace.refresh\")}</Button> : undefined} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/tasks/components/TaskRelationPicker.tsx",
+    "line": 21,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{query.isPending ? <LoadingState /> : query.error ? <ErrorState error={query.error} action={<Button variant=\"secondary\" onClick={() => void query.refetch()}>{t(\"taskWorkspace.refresh\")}</Button>} /> : <Select"
+  },
+  {
+    "path": "frontend/src/features/tasks/TasksPage.tsx",
+    "line": 26,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "return business ? <TaskQueue key={business.id} business={business.id} zone={business.timezone || \"UTC\"} /> : isLoading ? <LoadingState /> : error ? <ErrorState error={error} /> : <ForbiddenState />;"
+  },
+  {
+    "path": "frontend/src/features/tasks/TasksPage.tsx",
+    "line": 85,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{summary.error ? <ErrorState error={summary.error} action={<Button variant=\"secondary\" onClick={() => void summary.refetch()}>{t(\"taskWorkspace.refresh\")}</Button>} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/tasks/TasksPage.tsx",
+    "line": 91,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{assignees.error ? <ErrorState error={assignees.error} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/tasks/TasksPage.tsx",
+    "line": 94,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "{context.error ? <ErrorState message={context.error} /> : null}"
+  },
+  {
+    "path": "frontend/src/features/tasks/TasksPage.tsx",
+    "line": 96,
+    "kinds": [
+      "errorSurface",
+      "rawMessage"
+    ],
+    "source": "{team.isPending ? <LoadingState /> : team.error ? <ErrorState error={team.error} action={<Button variant=\"secondary\" onClick={() => void team.refetch()}>{t(\"taskWorkspace.refresh\")}</Button>} /> : !team.data?.items.length ? <EmptyState title={t(\"taskWorkspace.empty\")} /> : <div className=\"overflow-x-auto\"><table className=\"w-full text-left text-sm\"><thead><tr className=\"border-b border-platforma-border text-xs text-platforma-subtle\">{[\"assignee\", \"active\", \"overdue\", \"today\"].map(key => <th key={key} className=\"px-3 py-3 font-medium\">{t(`taskWorkspace.${key}`)}</th>)}</tr></thead><tbody>{team.data.items.map(item => <tr key={item.user_id || \"unassigned\"} className=\"border-b border-platforma-border last:border-0\"><td className=\"px-3 py-3\"><button className=\"min-h-11 text-left font-semibold hover:text-brand-700\" onClick={() => { setParams(previous => { const next = new URLSearchParams(previous); next.set(\"view\", \"list\"); next.set(\"bucket\", \"active\"); next.delete(\"status\"); next.set(\"assignee\", String(item.user_id || \"unassigned\")); return next; }, { replace: true }); }}>{item.user_id ? item.name : t(\"taskWorkspace.unassigned\")}</button></td><td className=\"px-3 tabular-nums\">{item.total}</td><td className=\"px-3 tabular-nums\">{item.overdue}</td><td className=\"px-3 tabular-nums\">{item.due_today}</td></tr>)}</tbody></table></div>}"
+  },
+  {
+    "path": "frontend/src/features/tasks/TasksPage.tsx",
+    "line": 97,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "</div> : list.isPending ? <div className=\"p-6\"><LoadingState /></div> : list.error ? <ErrorState error={list.error} action={<Button variant=\"secondary\" onClick={() => void list.refetch()}>{t(\"taskWorkspace.refresh\")}</Button>} /> : !tasks.length ? <div className=\"p-6\"><EmptyState title={t(hasFilters ? \"taskWorkspace.noResults\" : \"taskWorkspace.empty\")} action={hasFilters ? <Button variant=\"secondary\" onClick={reset}>{t(\"taskWorkspace.reset\")}</Button> : undefined} /></div> : <div>"
+  },
+  {
+    "path": "frontend/src/features/tasks/TasksPage.tsx",
+    "line": 104,
+    "kinds": [
+      "rawMessage"
+    ],
+    "source": "<span className=\"min-w-0 flex-1 space-y-2\"><span className=\"block break-words text-sm font-semibold leading-5\">{task.title}</span><span className=\"flex flex-wrap items-center gap-x-3 gap-y-2\"><TaskStatus status={task.status} />{task.priority === \"high\" || task.priority === \"urgent\" ? <span className=\"text-xs font-medium text-platforma-warning\">{t(`taskWorkspace.priority.${task.priority}`)}</span> : null}<span className={`text-xs ${group === \"overdue\" ? \"text-platforma-danger\" : \"text-platforma-subtle\"}`}>{task.due_at ? taskDateLabel(task.due_at, zone, language) : t(\"taskWorkspace.noDue\")}</span>{task.comments_count ? <span className=\"flex items-center gap-1 text-xs text-platforma-subtle\"><MessageSquare size={13} />{task.comments_count}</span> : null}</span>{task.relations?.length ? <span className=\"block truncate text-xs text-platforma-subtle\">{task.relations.map(link => `${t(`taskWorkspace.link.${link.type}`)}: ${link.title}`).join(\" · \")}</span> : null}</span>"
+  },
+  {
+    "path": "frontend/src/features/tasks/TaskWorkspacePage.tsx",
+    "line": 17,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "if (!business) return isLoading ? <LoadingState /> : error ? <ErrorState error={error} /> : <ForbiddenState />;"
+  },
+  {
+    "path": "frontend/src/features/tasks/TaskWorkspacePage.tsx",
+    "line": 18,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "if (!id || !/^\\d+$/.test(id)) return <ErrorState message={t(\"actions.errorUnavailable\")} />;"
+  },
+  {
+    "path": "frontend/src/features/timeline/TimelineActorFilter.tsx",
+    "line": 101,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "<ErrorState"
+  },
+  {
+    "path": "frontend/src/features/timeline/TimelinePage.tsx",
+    "line": 115,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "if (!business) return <ErrorState message={t(\"timeline.noBusiness\")} />;"
+  },
+  {
+    "path": "frontend/src/features/timeline/TimelinePage.tsx",
+    "line": 120,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "return <ForbiddenState />;"
+  },
+  {
+    "path": "frontend/src/features/timeline/TimelinePage.tsx",
+    "line": 150,
+    "kinds": [
+      "errorSurface"
+    ],
+    "source": "<ErrorState"
+  }
+]

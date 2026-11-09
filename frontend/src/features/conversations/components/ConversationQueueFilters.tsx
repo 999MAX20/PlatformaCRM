@@ -72,7 +72,7 @@ export function ConversationQueueFilters({
 
   return (
     <div className="relative z-10 border-b border-platforma-border p-3">
-      <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_44px] gap-2">
+      <div className="grid grid-cols-[minmax(0,1fr)_44px] [&>div:first-child]:col-span-2 gap-2">
         <Select
           expandedMenu
           className="min-h-10 rounded-control px-2.5 text-xs font-bold text-platforma-text"

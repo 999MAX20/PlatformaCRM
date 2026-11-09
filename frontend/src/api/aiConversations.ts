@@ -4,7 +4,7 @@ import type { AIToolCallLog, Id } from "../types";
 export type ConversationMode = "work" | "analytics";
 export type TurnStatus = "preparing" | "clarifying" | "awaiting_confirmation" | "executing" | "completed" | "failed" | "cancelled" | "superseded";
 export type AgentConversation = {
-  id: string; business: Id; agent: Id; title: string; is_archived: boolean;
+  id: string; business: Id; agent: Id | null; kind: "staff" | "inbox" | "voice"; title: string; is_archived: boolean;
   revision: number; memory_enabled: boolean; memory_epoch: number; status: TurnStatus | "empty"; updated_at: string;
 };
 export type AgentTurn = {
@@ -16,16 +16,19 @@ export type AgentTurn = {
 export type ConversationPage = { conversation: AgentConversation; turns: AgentTurn[]; has_more: boolean; next_before: number | null };
 const root = "/api/ai/conversations/";
 export const aiConversationsApi = {
+  async listVoice(params: { business: Id; offset?: number }) {
+    return (await apiClient.get<{ results: AgentConversation[]; next_offset: number | null }>(root, { params: { ...params, kind: "voice" } })).data;
+  },
   async list(params: { business: Id; agent: Id; archived?: boolean; offset?: number }) {
     return (await apiClient.get<{ results: AgentConversation[]; next_offset: number | null }>(root, { params })).data;
   },
-  async create(value: { business: Id; agent: Id; mode: ConversationMode }) {
+  async create(value: { business: Id; agent: Id; mode: ConversationMode; kind?: "staff" } | { business: Id; kind: "voice"; mode?: "work" }) {
     return (await apiClient.post<AgentConversation>(root, value)).data;
   },
   async get(id: string, before?: number) {
     return (await apiClient.get<ConversationPage>(`${root}${id}/`, { params: { before } })).data;
   },
-  async send(id: string, value: { message: string; idempotency_key: string; mode: ConversationMode; period?: { start: string; end: string } }) {
+  async send(id: string, value: { message: string; idempotency_key: string; mode: ConversationMode; period?: { start: string; end: string }; origin?: "voice"; execution?: "review" | "direct"; current_branch?: number; current_entity?: { entity: "clients" | "tasks" | "appointments"; id: number } }) {
     return (await apiClient.post<AgentTurn>(`${root}${id}/turns/`, value)).data;
   },
   async cancel(id: string, turn: Id) {

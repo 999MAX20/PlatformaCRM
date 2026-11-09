@@ -1,8 +1,11 @@
 """Localized deterministic workflow messages; facts come from domain results."""
 COPY = {
+    "greeting": ("Привет! Чем помочь в CRM?", "Сәлем! CRM бойынша қалай көмектесе аламын?", "Hi! How can I help with the CRM?"),
     "analytics_read_only": ("В аналитике доступны вопросы и отчёты. Для изменения записей откройте «Работа с CRM».", "Аналитикада сұрақтар мен есептер қолжетімді. Жазбаларды өзгерту үшін «CRM-мен жұмыс» бөлімін ашыңыз.", "Analytics supports questions and reports. Open Work with CRM to change records."),
     "review": ("Проверьте предложенные действия и подтвердите выполнение.", "Ұсынылған әрекеттерді тексеріп, орындалуын растаңыз.", "Review the proposed actions and confirm execution."),
     "completed": ("Действия выполнены. Результаты показаны ниже.", "Әрекеттер орындалды. Нәтижелер төменде көрсетілген.", "The actions are complete. Results are shown below."),
+    "client_created": ("Клиент создан.", "Клиент құрылды.", "Client created."),
+    "visits_created": ("Создано записей: {count}.", "Құрылған жазбалар саны: {count}.", "Appointments created: {count}."),
     "cancelled": ("Ожидающие действия отменены. Уже выполненные изменения сохранены.", "Күтілген әрекеттер тоқтатылды. Орындалған өзгерістер сақталды.", "Pending actions were cancelled. Already completed changes were preserved."),
     "no_data": ("За выбранный период нет доступных данных для ответа.", "Таңдалған кезең бойынша жауап беруге қолжетімді деректер жоқ.", "No data is available for an answer for the selected period."),
     "choose_record": ("Уточните, какую запись нужно изменить: {choices}", "Қай жазбаны өзгерту қажет екенін нақтылаңыз: {choices}", "Clarify which record to change: {choices}"),

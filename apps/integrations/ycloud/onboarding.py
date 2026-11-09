@@ -1,5 +1,6 @@
 from datetime import datetime, timezone as datetime_timezone
 from uuid import uuid4
+import re
 
 from django.db import transaction
 from django.utils import timezone
@@ -27,9 +28,18 @@ def _current_actor(channel, actor):
 
 
 @transaction.atomic
-def start(channel, actor):
+def start(channel, actor, *, onboarding_type=YCloudConnection.OnboardingTypes.PLATFORM, expected_phone_number=""):
     channel = lock_channel_for_setup(channel)
     actor = _current_actor(channel, actor)
+    if onboarding_type not in YCloudConnection.OnboardingTypes.values:
+        raise ValidationError({"onboarding_type": "Choose a supported connection method."})
+    if not isinstance(expected_phone_number, str):
+        raise ValidationError({"expected_phone_number": "Use an international phone number."})
+    expected_phone_number = expected_phone_number.strip()
+    if (expected_phone_number and not re.fullmatch(r"\+[1-9][0-9]{7,14}", expected_phone_number)) or (
+        onboarding_type == YCloudConnection.OnboardingTypes.APP and not expected_phone_number
+    ):
+        raise ValidationError({"expected_phone_number": "Use an international phone number, for example +77010000000."})
     if channel.channel != "whatsapp" or channel.status == "active":
         raise ValidationError("Use an inactive WhatsApp channel for onboarding.")
     connection = YCloudConnection.objects.filter(channel=channel).first()
@@ -38,7 +48,7 @@ def start(channel, actor):
     # Stable for this attempt; rotate on expiry so an old link cannot bind a new attempt.
     revision = uuid4().hex
     customer_id = uuid4()
-    result = client.create_link(customer_id)
+    result = client.create_link(customer_id, onboarding_type)
     try:
         expiry = datetime.fromtimestamp(int(result["expiresAt"]) / 1000, tz=datetime_timezone.utc)
     except (KeyError, ValueError, TypeError, OSError, OverflowError):
@@ -52,6 +62,7 @@ def start(channel, actor):
     connection, _ = YCloudConnection.objects.update_or_create(channel=channel, defaults={
         "customer_id": customer_id, "initiated_by": actor, "setup_revision": revision,
         "expires_at": expiry, "status": "pending", "last_error": "",
+        "onboarding_type": onboarding_type, "expected_phone_number": expected_phone_number,
     })
     connector = get_whatsapp_connector(channel)
     connector.config_json = {"bot_channel_id": channel.id, "provider_mode": "ycloud"}
@@ -83,6 +94,8 @@ def confirm(connection, account):
     if not waba_id:
         raise client.YCloudError("invalid_provider_response")
     number = client.connected_number(waba_id)
+    if connection.expected_phone_number and number["phoneNumber"] != connection.expected_phone_number:
+        raise client.YCloudError("phone_number_mismatch")
     if not str(number["phoneNumber"]).startswith("+"):
         raise client.YCloudError("invalid_provider_response")
     connection.waba_id = waba_id

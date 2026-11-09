@@ -1,0 +1,2 @@
+external_id,client_ref,service_ref,specialist_ref,start_at,status,room
+A100,C100,S100,P100,2026-12-14T10:00:00+05:00,confirmed,Room A

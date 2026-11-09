@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router";
 import { useActiveBusiness } from "../../hooks/useBusiness";
 import { useAuth } from "../../features/auth/AuthProvider";
+import { VoiceAssistantTrigger } from "../../features/voice/VoiceAssistantTrigger";
 
 import { crmCardsApi } from "../../api/crmCards";
 import { cn } from "../../lib/cn";
@@ -21,7 +22,10 @@ import { CrmEntityHeader, CrmEntityTabs } from "./drawers/shell";
 import type { CrmCardTab, CrmDrawerEntity } from "./drawers/types";
 import { Drawer } from "../ui/Overlay";
 import { ErrorState, LoadingState } from "../ui/StateViews";
+import { Button } from "../ui/Button";
 import type { Client } from "../../types";
+import { ClientCardModal } from "./client-card/ClientCardModal";
+import { AppointmentCardModal } from "./appointment-card/AppointmentCardModal";
 
 export type { CrmCardTab, CrmDrawerEntity } from "./drawers/types";
 
@@ -32,7 +36,30 @@ export type ClientDrawerActions = {
   onArchive?: (client: Client) => void;
 };
 
-export function CrmEntityDrawer({
+export function CrmEntityDrawer(props: { entity: CrmDrawerEntity | null; onClose: () => void; clientActions?: ClientDrawerActions }) {
+  const { business } = useActiveBusiness();
+  const { user } = useAuth();
+  if (props.entity?.type === "client" || props.entity?.type === "appointment") return <EntityCardNavigation key={`${user?.id}:${business?.id}:${props.entity.type}:${props.entity.id}`} entity={props.entity} onClose={props.onClose} clientActions={props.clientActions} />;
+  return <LegacyEntityDrawer {...props} />;
+}
+
+function EntityCardNavigation({ entity, onClose, clientActions }: { entity: CrmDrawerEntity; onClose: () => void; clientActions?: ClientDrawerActions }) {
+  const [history, setHistory] = useState<CrmDrawerEntity[]>([entity]);
+  const opener = useRef(document.activeElement instanceof HTMLElement ? document.activeElement : null);
+  const focusReturnId = useRef(opener.current?.dataset.focusReturnId);
+  const close = () => { onClose(); requestAnimationFrame(() => {
+    const target = focusReturnId.current ? document.querySelector<HTMLElement>(`[data-focus-return-id="${CSS.escape(focusReturnId.current)}"]`) : opener.current;
+    if (target?.isConnected) target.focus({ preventScroll: true });
+  }); };
+  const current = history.at(-1)!;
+  const open = (next: CrmDrawerEntity) => setHistory(items => [...items, next]);
+  const back = history.length > 1 ? () => setHistory(items => items.slice(0, -1)) : undefined;
+  return current.type === "client"
+    ? <ClientCardModal key={`client:${current.id}`} entity={current} onClose={close} actions={clientActions} onOpenEntity={open} onBack={back} />
+    : <AppointmentCardModal key={`appointment:${current.id}`} entity={current} onClose={close} onOpenEntity={open} onBack={back} />;
+}
+
+function LegacyEntityDrawer({
   entity,
   onClose,
   clientActions,
@@ -83,7 +110,7 @@ export function CrmEntityDrawer({
     if (activeTab === "files") return <EntityAttachmentsPanel data={data} entity={entity!} />;
     if (activeTab === "messages") return <EntityConversationsPanel data={data} />;
     if (activeTab === "notes") return <EntityNotesPanel data={data} entity={entity!} />;
-    if (entity?.type === "appointment") return <AppointmentDrawerContent data={data} entity={entity} />;
+    if (entity?.type === "appointment") return <AppointmentDrawerContent key={entity.id} data={data} entity={entity} />;
     if (entity?.type === "client") return <ClientDrawerContent data={data} entity={entity} actions={clientActions} />;
     return <GenericDrawerContent data={data} entity={entity!} />;
   }, [activeTab, clientActions, data, entity, historical, onClose, t]);
@@ -101,14 +128,16 @@ export function CrmEntityDrawer({
         isOpen ? "translate-x-0" : "translate-x-full",
       )}
     >
-      <CrmEntityHeader data={data} entity={entity} titleId={titleId} onClose={onClose} />
+      <CrmEntityHeader data={data} entity={entity} titleId={titleId} onClose={onClose}
+        actions={entity.type === "appointment" && data?.appointment && !query.isError
+          ? <VoiceAssistantTrigger currentEntity={{ entity: "appointments", id: entity.id }} /> : undefined} />
       {!historical ? <CrmEntityTabs active={activeTab} onChange={setActiveTab} data={data} /> : null}
       <div
         className="min-h-0 flex-1 overflow-y-auto px-5 pb-8 sm:px-7"
         data-testid="crm-entity-drawer-content"
       >
         {query.isLoading ? <LoadingState /> : null}
-        {query.error ? <ErrorState message={t("crmCard.loadError")} /> : null}
+        {query.error ? <ErrorState error={query.error} action={<Button onClick={() => void query.refetch()}>{t("common.retry")}</Button>} /> : null}
         {tabContent}
       </div>
     </Drawer>

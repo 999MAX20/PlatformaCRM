@@ -1,3 +1,13 @@
+## Лендинг CRM
+
+Главная `/` показывает встроенный лендинг, «Войти» открывает существующий `/login`.
+Обычная frontend-сборка включает страницы и файлы лендинга; отдельная папка-источник
+не нужна. Для production требуется маршрутизация из `deploy/stand-access/Caddyfile`.
+Лендинг развёрнут на защищённом [стенде](https://platformacrm.kz/); пароль и
+действующая сборка CRM сохранены.
+[Обслуживание исходников](frontend/landing/README.md) ·
+[Проверки и схема одной VM](docs/testing/evidence/crm-landing-integration-20261106.md).
+
 ## Локальный dev в Windows
 
 Из корня `C:\Users\user\Desktop\PlatformaCRM`:
@@ -8,12 +18,40 @@
 
 Одна команда запускает Redis, ClamAV с обновлением баз, worker переноса,
 Django и Vite. Уже запущенные проверенные процессы переиспользуются.
+Текущая локальная CRM использует PostgreSQL на127.0.0.1:55432; launcher проверяет
+и запускает закреплённый кластер до API. Исходная SQLite и проверенные backup
+сохранены. [Перенос данных и измерения нагрузки](docs/testing/evidence/postgres-load-20261106.md).
 CRM: [http://127.0.0.1:5173](http://127.0.0.1:5173).
 Логи: `output/local-dev`. Нужны существующие `.venv`, frontend dependencies
 и локальные Redis/ClamAV; команда ничего не скачивает и не устанавливает.
 Миграции не применяются: если они ожидают применения, службы запускаются,
 но выводится предупреждение и код2. Порядок/ограничения —
 [локальный запуск](docs/current/operations.md#единая-команда-local-dev--06112026).
+
+Voice input: microphone in the authenticated header → Send → ordinary permitted
+action or clarification → result link, without an intermediate transcript or second
+confirmation. Backend permissions, version checks and idempotency remain mandatory.
+No created AI agent is required;
+voice history belongs to the employee and Business, independently of agent settings. Personal microphone settings:
+`/app/settings/voice`. OpenRouter STT uses `VOICE_TRANSCRIPTION_MODEL` separately
+from the text model; see `.env.example` and the [voice contract](docs/current/voice-assistant.md).
+Audio is transient, without TTS or continuous listening. Local synthetic checks
+do not certify broad recognition quality or deployment. The independent voice path requires
+`ai_core.0009_interface_voice_conversations`; verified in disposable databases,
+applied to the local working database with an owner-authorized backup on05.11.
+Default STT is `openai/whisper-large-v3-turbo` with ZDR/no-data-collection policy.
+Local dev uses `AI_QUEUE_LIVE_REQUESTS=False` without Redis/AI worker; production
+queue defaults are unchanged. Real synthetic-Russian audio→OpenRouter→direct Task
+passed browser checks; full language/noise acceptance remains open.
+[Verification](docs/testing/evidence/voice-direct-20261105.md).
+
+File transfer workspace: Connections → Data transfer (`/app/integrations/import`).
+CSV/XLSX staging supports clients, services, specialists and appointments, editable
+rows, custom fields, previews and explicit confirmation. Preview/confirm use the
+`reports_exports` worker queue; additive core0014–0017 migrations were tested only
+in disposable databases. Import does not send notifications or run automations;
+future appointments have a separate activation review. No working migration or
+rollout was performed by this task. [Scope and checks](docs/current/import-workspace.md).
 
 C09: для автоматической записи добавлена настройка ответственного в профиле
 компании (SETTINGS UPDATE). Миграция businesses0014 оставляет существующим бизнесам
@@ -66,6 +104,13 @@ Telegram/WhatsApp включены в подготовку пилота R02 ре
 [Настройки и границы](docs/current/operations.md), [контракт](docs/current/integrations.md).
 Прочие интеграции, gateway и коммерческий billing отложены. Реализация и локальные
 проверки есть; production-допуск и работа реальной клиники не объявлены.
+
+Локально реализованы персональная лента сотрудников и объявления бизнеса с мониторингом
+открытия, прочтения и ознакомления. Публикация/мониторинг — владелец и администратор.
+[Паспорт и границы проверки](docs/pre-production/settings-notifications.md). Рабочие
+миграции персональной ленты отдельно проверены локально. Для мониторинга добавлен
+опциональный SSE через Redis и отдельный ASGI: [запуск](docs/current/operations.md#sse-мониторинга-объявлений--локальная-реализация).
+SSE выключен по умолчанию; deployment и включение в рабочей среде не выполнены.
 
 ## С чего начать
 

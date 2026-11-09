@@ -1,4 +1,5 @@
 ﻿import { UserRound, X } from "lucide-react";
+import type { ReactNode } from "react";
 
 import type { CrmCardPayload } from "../../../types";
 import { cn } from "../../../lib/cn";
@@ -9,7 +10,7 @@ import { crmDrawerTabs } from "./config";
 import { getDrawerSubtitle, getDrawerTitle } from "./shared";
 import type { CrmCardTab, CrmDrawerEntity } from "./types";
 
-export function CrmEntityHeader({ data, entity, titleId, onClose }: { data?: CrmCardPayload; entity: CrmDrawerEntity; titleId: string; onClose: () => void }) {
+export function CrmEntityHeader({ data, entity, titleId, onClose, actions }: { data?: CrmCardPayload; entity: CrmDrawerEntity; titleId: string; onClose: () => void; actions?: ReactNode }) {
   const { t } = useI18n();
   const activeStatus = entity.type === "client" ? undefined : data?.[entity.type]?.status;
 
@@ -24,11 +25,11 @@ export function CrmEntityHeader({ data, entity, titleId, onClose }: { data?: Crm
             {activeStatus ? <StatusBadge status={activeStatus} /> : null}
           </div>
           <h2 id={titleId} className="truncate text-2xl font-semibold tracking-tight text-platforma-ink">{getDrawerTitle(data, t, entity)}</h2>
-          <p className="mt-1 text-sm text-platforma-muted">{getDrawerSubtitle(data, t)}</p>
+          {entity.type !== "appointment" && <p className="mt-1 text-sm text-platforma-muted">{getDrawerSubtitle(data, t)}</p>}
         </div>
-        <Button type="button" variant="ghost" className="h-12 w-12 shrink-0 rounded-full px-0" onClick={onClose} aria-label={t("crmCard.close")}>
+        <div className="flex shrink-0 items-center gap-2">{actions}<Button type="button" variant="ghost" className="h-12 w-12 shrink-0 rounded-full px-0" onClick={onClose} aria-label={t("crmCard.close")}>
           <X size={28} strokeWidth={2.4} />
-        </Button>
+        </Button></div>
       </div>
     </div>
   );

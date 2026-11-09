@@ -10,7 +10,6 @@ import {
   ListChecks,
   LifeBuoy,
   MessageSquareText,
-  PlugZap,
   Settings,
   Users,
 } from "lucide-react";
@@ -52,10 +51,8 @@ const desktopSections = [
       merchantNavigationItem("appointments", CalendarDays),
       merchantNavigationItem("clients", Users),
       merchantNavigationItem("tasks", ListChecks),
-      merchantNavigationItem("calendar", CalendarDays),
       merchantNavigationItem("conversations", MessageSquareText),
       merchantNavigationItem("aiAgents", Bot),
-      merchantNavigationItem("integrations", PlugZap),
       merchantNavigationItem("business", Building2),
       merchantNavigationItem("analytics", BarChart3),
       merchantNavigationItem("timeline", Clock3),
@@ -74,10 +71,8 @@ const mobileDrawerSections = [
       merchantNavigationItem("appointments", CalendarDays),
       merchantNavigationItem("clients", Users),
       merchantNavigationItem("tasks", ListChecks),
-      merchantNavigationItem("calendar", CalendarDays),
       merchantNavigationItem("conversations", MessageSquareText),
       merchantNavigationItem("aiAgents", Bot),
-      merchantNavigationItem("integrations", PlugZap),
       merchantNavigationItem("business", Building2),
       merchantNavigationItem("analytics", BarChart3),
       merchantNavigationItem("timeline", Clock3),
@@ -89,10 +84,12 @@ const mobileDrawerSections = [
 
 function isItemActive(pathname: string, to?: string) {
   if (!to) return false;
+  if (to === "/app/appointments" && (pathname === "/app/calendar" || pathname.startsWith("/app/calendar/"))) return true;
   return pathname === to || pathname.startsWith(`${to}/`);
 }
 
 function isSidebarItemVisible(item: SidebarItem, user: ReturnType<typeof useAuth>["user"], businessId?: number): boolean {
+  if (item.to === "/app/settings") return hasPermission(user, businessId, "settings", "update") || hasPermission(user, businessId, "integrations", "view");
   if (item.to === "/app/ai-agents") return ["ai_automation", "ai_assistant", "ai_analyst"].some(resource => hasPermission(user, businessId, resource, "view"));
   if (item.resource && !hasPermission(user, businessId, item.resource, item.action)) return false;
   if (!item.children?.length) return true;

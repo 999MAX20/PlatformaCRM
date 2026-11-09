@@ -35,7 +35,7 @@ function attachmentTypeLabel(attachment: FileAttachment) {
   return attachment.content_type || "File";
 }
 
-export function EntityAttachmentsPanel({ data, entity, readOnly = false }: { data: CrmCardPayload; entity: CrmDrawerEntity; readOnly?: boolean }) {
+export function EntityAttachmentsPanel({ data, entity, readOnly = false, onDirtyChange, onPendingChange }: { data: CrmCardPayload; entity: CrmDrawerEntity; readOnly?: boolean; onDirtyChange?: (dirty: boolean) => void; onPendingChange?: (pending: boolean) => void }) {
   const { t } = useI18n();
   const queryClient = useQueryClient();
   const awaitingScan = data.attachments.some((item) => !["clean", "infected"].includes(item.scan_status));
@@ -97,6 +97,11 @@ export function EntityAttachmentsPanel({ data, entity, readOnly = false }: { dat
       ]);
     },
   });
+
+  const dirty = selectedFiles.length > 0 || Boolean(renamingAttachment && renameValue !== renamingAttachment.original_name);
+  const pending = uploadMutation.isPending || renameMutation.isPending;
+  useEffect(() => { onDirtyChange?.(dirty); return () => onDirtyChange?.(false); }, [dirty, onDirtyChange]);
+  useEffect(() => { onPendingChange?.(pending); return () => onPendingChange?.(false); }, [pending, onPendingChange]);
 
   function appendFiles(files: FileList | File[]) {
     const nextFiles = Array.from(files);

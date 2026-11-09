@@ -11,7 +11,7 @@ from apps.bots.ai_settings import validate_ai_settings
 
 STRUCTURED_STAGES = frozenset({
     "conversation_qualification", "crm_action_plan", "agent_turn_plan",
-    "agent_memory_summary", "business_event_analyst",
+    "agent_memory_summary", "business_event_analyst", "voice_chat",
 })
 JSON_STAGES = STRUCTURED_STAGES | {"crm_assistant", "daily_summary", "business_history_analyst"}
 # These are the existing selectable profiles, not a promise about arbitrary

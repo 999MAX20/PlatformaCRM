@@ -90,7 +90,8 @@ test("AI tone is reserved for model-driven actions", () => {
     assert.doesNotMatch(read(relativePath), /variant="ai"/, relativePath);
   }
 
-  assert.match(read("src/features/assistant/components/CRMAgentRuntime.tsx"), /variant="ai"/);
+  assert.match(read("src/features/assistant/components/CRMAgentRuntime.tsx"), /<AgentConversationPanel/);
+  assert.match(read("src/features/assistant/components/AgentConversationPanel.tsx"), /variant="ai"/);
   assert.match(read("src/features/bots/BotDetailPage.tsx"), /variant="ai"/);
 });
 
@@ -111,13 +112,16 @@ test("representative reversible caution actions use warning", () => {
     ["src/features/resources/ResourcesPage.tsx", /tone: "warning"/],
     ["src/features/tasks/components/TaskInspector.tsx", /dialog === "cancel" \? "warning"/],
     ["src/features/calendar/AppointmentWorkspacePage.tsx", /\? "warning"/],
-    ["src/features/conversations/components/ConversationThreadPane.tsx", /selected\.bot_enabled \? "warning"/],
+    ["src/features/conversations/components/ConversationThreadHeader.tsx", /selected\.bot_enabled \? "warning"/],
     ["src/features/integrations/components/ConnectorCard.tsx", /variant="warning"[\s\S]{0,200}disconnect/],
-    ["src/features/settings/sections/BillingSection.tsx", /variant="warning"[\s\S]{0,300}pause/],
   ];
   for (const [relativePath, pattern] of expectations) {
     assert.match(read(relativePath), pattern, relativePath);
   }
+  assert.match(read("src/features/settings/sections/BillingSection.tsx"), /<MerchantBilling/);
+  const billing = read("src/features/billing/MerchantBilling.tsx");
+  assert.doesNotMatch(billing, /pauseSubscription|cancelSubscription|variant="danger"/);
+  assert.match(billing, /hasPermission\(user, Number\(business\), "billing", "manage"\)/);
   assert.match(read("src/features/services/components/ServiceActionsMenu.tsx"), /services\.actionArchive/);
   assert.doesNotMatch(read("src/features/services/components/ServiceActionsMenu.tsx"), /services\.actionDelete/);
 });

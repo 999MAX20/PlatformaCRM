@@ -19,6 +19,7 @@ from apps.services.models import Service
 
 
 class AppointmentSettingsDeliveryTests(TestCase):
+    @override_settings(EMAIL_BACKEND="django.core.mail.backends.smtp.EmailBackend", EMAIL_HOST="smtp.example.test")
     def test_reschedule_and_cancel_revoke_retry_and_inflight_jobs(self):
         from apps.scheduling.services import reschedule_appointment, cancel_appointment
 
@@ -63,8 +64,11 @@ class AppointmentSettingsDeliveryTests(TestCase):
             start_at=start, end_at=start + timezone.timedelta(minutes=30), **overrides)
 
     def due_claim(self, notification):
+        self.assertEqual(notification.channel, Notification.Channels.EMAIL)
         Notification.objects.filter(pk=notification.pk).update(send_at=timezone.now() - timezone.timedelta(seconds=1))
-        return claim_notification(notification.pk)
+        claimed = claim_notification(notification.pk)
+        self.assertIsNotNone(claimed)
+        return claimed
 
     @override_settings(TELEGRAM_ENABLED=True, WHATSAPP_ENABLED=True, EMAIL_BACKEND="django.core.mail.backends.smtp.EmailBackend", EMAIL_HOST="smtp.example.com")
     def test_auto_requires_contact_and_usable_active_channel(self):
@@ -122,6 +126,7 @@ class AppointmentSettingsDeliveryTests(TestCase):
         self.assertEqual(self.api.patch(self.url, payload, format="json").status_code, 200)
         self.assertEqual(Notification.objects.count(), count)
 
+    @override_settings(EMAIL_BACKEND="django.core.mail.backends.smtp.EmailBackend", EMAIL_HOST="smtp.example.test")
     def test_disabling_revokes_claim_before_provider_call(self):
         notification = schedule_appointment_followups(self.make_appointment())[0]
         claimed = self.due_claim(notification)
@@ -133,6 +138,7 @@ class AppointmentSettingsDeliveryTests(TestCase):
         notification.refresh_from_db()
         self.assertEqual(notification.status, "cancelled")
 
+    @override_settings(EMAIL_BACKEND="django.core.mail.backends.smtp.EmailBackend", EMAIL_HOST="smtp.example.test")
     def test_inflight_failure_or_ack_cannot_resurrect_revoked_job(self):
         appointment = self.make_appointment()
         for provider_result in ({"ok": False, "status_code": 503}, {"ok": True, "message_id": "ack"}):
@@ -172,6 +178,7 @@ class AppointmentSettingsDeliveryTests(TestCase):
         self.assertEqual(Notification.objects.filter(appointment=appointment, status="pending").count(), 1)
         self.assertFalse(Notification.objects.filter(appointment=historical).exists())
 
+    @override_settings(EMAIL_BACKEND="django.core.mail.backends.smtp.EmailBackend", EMAIL_HOST="smtp.example.test")
     def test_foreign_setting_denied_and_cancelled_appointment_skips_delivery(self):
         outsider = User.objects.create_user(username="settings-foreign", email="settings-foreign@example.com")
         self.api.force_authenticate(outsider)

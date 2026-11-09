@@ -1,0 +1,73 @@
+from django.db import migrations, models
+
+
+def create_initial_locations(apps, schema_editor):
+    Business = apps.get_model("businesses", "Business")
+    Branch = apps.get_model("branches", "Branch")
+    alias = schema_editor.connection.alias
+    for business in Business.objects.using(alias).filter(branches__isnull=True).iterator():
+        Branch.objects.using(alias).create(business_id=business.pk, name=business.name,
+            address=business.address, phone=business.phone, uses_business_defaults=True)
+
+
+def freeze_initial_locations(apps, schema_editor):
+    alias = schema_editor.connection.alias
+    def rows(app, name):
+        return apps.get_model(app, name).objects.using(alias)
+    def intervals(row):
+        return [] if row is None or row.is_day_off else [{"start": row.start_time.strftime("%H:%M"), "end": row.end_time.strftime("%H:%M")}]
+    def union(values):
+        result = []
+        for value in sorted(values, key=lambda item: item["start"]):
+            if result and value["start"] <= result[-1]["end"]:
+                result[-1]["end"] = max(result[-1]["end"], value["end"])
+            else:
+                result.append(dict(value))
+        return result
+    for branch in rows("branches", "Branch").filter(uses_business_defaults=True).iterator():
+        services = list(rows("services", "Service").filter(business_id=branch.business_id))
+        resources = list(rows("scheduling", "Resource").filter(business_id=branch.business_id, resource_type="staff"))
+        for service in services:
+            rows("branches", "BranchService").get_or_create(branch_id=branch.pk, service_id=service.pk, defaults={
+                "business_id": branch.business_id, "price_from": service.price_from,
+                "duration_minutes": service.duration_minutes, "is_active": service.is_active and not service.is_archived})
+        for resource in resources:
+            link, _ = rows("branches", "SpecialistBranch").get_or_create(branch_id=branch.pk, resource_id=resource.pk,
+                defaults={"business_id": branch.business_id, "is_active": resource.retired_at is None})
+            link.services.set([service.pk for service in services])
+        hours = {(row.resource_id, row.weekday): row for row in rows("scheduling", "WorkingHours").filter(business_id=branch.business_id)}
+        exceptions = {(row.resource_id, row.date): row for row in rows("scheduling", "ScheduleException").filter(business_id=branch.business_id)}
+        days = [(day, None) for day in range(7)] + [(day.weekday(), day) for day in sorted({date for _, date in exceptions})]
+        for weekday, date in days:
+            common = hours.get((None, weekday))
+            opening = intervals(common)
+            for resource in resources:
+                row = exceptions.get((resource.pk, date)) if date else None
+                row = row or hours.get((resource.pk, weekday), common)
+                values = intervals(row)
+                opening.extend(values)
+                rows("branches", "ScheduleDay").get_or_create(branch_id=branch.pk, resource_id=resource.pk,
+                    weekday=None if date else weekday, date=date, defaults={"business_id": branch.business_id, "intervals": values})
+            rows("branches", "ScheduleDay").get_or_create(branch_id=branch.pk, resource_id=None,
+                weekday=None if date else weekday, date=date, defaults={"business_id": branch.business_id, "intervals": union(opening)})
+        for member in rows("businesses", "BusinessMember").filter(business_id=branch.business_id):
+            grant, created = rows("branches", "BranchAccess").get_or_create(member_id=member.pk)
+            if created:
+                grant.branches.add(branch)
+        for visit in rows("scheduling", "Appointment").filter(business_id=branch.business_id, branch_id=None).select_related("service"):
+            visit.branch_id, visit.branch_name, visit.branch_address = branch.pk, branch.name, branch.address
+            if not visit.booked_duration_minutes:
+                visit.booked_price = visit.service.price_from
+                visit.booked_duration_minutes = max(1, round((visit.end_at - visit.start_at).total_seconds() / 60))
+            visit.save(using=alias, update_fields=["branch", "branch_name", "branch_address", "booked_price", "booked_duration_minutes"])
+
+
+class Migration(migrations.Migration):
+    dependencies = [("branches", "0002_branchservice_branchtraveltime_scheduleday_and_more"),
+        ("scheduling", "0009_appointment_booked_duration_minutes_and_more")]
+    operations = [
+        migrations.AddField(model_name="branch", name="uses_business_defaults",
+            field=models.BooleanField(default=False, editable=False)),
+        # Old code needs explicit branch configuration; retain all locations/history.
+        migrations.RunPython(create_initial_locations, freeze_initial_locations),
+    ]

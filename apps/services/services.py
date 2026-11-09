@@ -8,6 +8,32 @@ from apps.core.models import AuditLog
 
 
 @transaction.atomic
+def upsert_catalog_service(*, business, payload, actor):
+    """Catalog ingestion has the same authority as normal Service metadata writes."""
+    from apps.businesses.access import Actions, Resources, assert_can
+    from apps.businesses.capabilities import assert_resource_enabled
+    from apps.services.models import Service
+
+    # Authorize the actual object (or a new candidate), so shared branch and
+    # object-scope rules cannot be skipped by integration-level admission.
+    service = Service.objects.select_for_update().filter(business=business, name=payload["name"]).first()
+    candidate = service or Service(business=business, name=payload["name"])
+    assert_resource_enabled(business, Resources.SETTINGS)
+    assert_can(actor, business, Resources.SETTINGS, Actions.UPDATE, obj=candidate)
+    # Existing inactive/archive flags are intentional lifecycle state. Importing
+    # metadata must not activate or restore a service; use explicit actions.
+    return Service.objects.update_or_create(
+        business=business,
+        name=payload["name"],
+        defaults={
+            "description": payload.get("description", ""),
+            "duration_minutes": payload.get("duration_minutes") or 30,
+            "price_from": payload.get("price_from"),
+        },
+    )
+
+
+@transaction.atomic
 def set_service_active(*, request, service, is_active):
     if service.is_archived:
         raise InvalidTransition("Restore the service before changing its status.")

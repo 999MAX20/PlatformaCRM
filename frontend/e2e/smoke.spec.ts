@@ -112,7 +112,7 @@ test("mobile manager smoke: daily CRM routes are reachable", async ({
   await expect(page).toHaveURL(/\/app/);
   await expect(page.getByText("Unexpected Application Error")).toHaveCount(0);
 
-  const bottomNavRoutes = ["/app/leads", "/app/conversations", "/app/clients"];
+  const bottomNavRoutes = ["/app/dashboard", "/app/appointments", "/app/conversations", "/app/clients"];
   for (const route of bottomNavRoutes) {
     await page.locator(`nav a[href="${route}"]`).last().click();
     await expect(page).toHaveURL(routePattern(route));
@@ -120,11 +120,9 @@ test("mobile manager smoke: daily CRM routes are reachable", async ({
     await expect(page.getByText("Unexpected Application Error")).toHaveCount(0);
   }
 
-  const modules = await businessCapabilityModules(page, users.manager);
   const drawerRoutes = [
     "/app/tasks",
-    "/app/calendar",
-    ...(modules.deals === false ? [] : ["/app/deals"]),
+    "/app/business",
     "/app/analytics",
   ];
   for (const route of drawerRoutes) {
@@ -133,11 +131,6 @@ test("mobile manager smoke: daily CRM routes are reachable", async ({
     await expect(page).toHaveURL(routePattern(route));
     await expectNoHorizontalOverflow(page);
     await expect(page.getByText("Unexpected Application Error")).toHaveCount(0);
-  }
-  if (modules.deals === false) {
-    await page.getByTestId("bottom-mobile-menu-trigger").click();
-    await expect(page.locator('a[href="/app/deals"]')).toHaveCount(0);
-    await page.keyboard.press("Escape");
   }
 });
 
@@ -164,7 +157,7 @@ async function login(page: Page, email: string, target: RegExp) {
 }
 
 async function ensureAuthenticatedAppShell(page: Page, email: string) {
-  const appNavLink = page.locator('nav a[href="/app/leads"]:visible').first();
+  const appNavLink = page.locator('nav a[href="/app/dashboard"]:visible').first();
   if (await appNavLink.isVisible({ timeout: 5_000 }).catch(() => false)) {
     return;
   }
@@ -1727,8 +1720,8 @@ test("mobile owner smoke: dashboard, bottom nav and more drawer are reachable", 
   await expect(page.getByText("Unexpected Application Error")).toHaveCount(0);
   await expectNoHorizontalOverflow(page);
 
-  await page.locator('nav a[href="/app/leads"]').last().click();
-  await expect(page).toHaveURL(/\/app\/leads/);
+  await page.locator('nav a[href="/app/appointments"]').last().click();
+  await expect(page).toHaveURL(/\/app\/appointments/);
   await expectNoHorizontalOverflow(page);
   await expect(page.getByText("Unexpected Application Error")).toHaveCount(0);
 
@@ -1742,13 +1735,11 @@ test("mobile owner smoke: dashboard, bottom nav and more drawer are reachable", 
   await expectNoHorizontalOverflow(page);
   await expect(page.getByText("Unexpected Application Error")).toHaveCount(0);
 
-  const modules = await businessCapabilityModules(page, users.owner);
   const drawerRoutes = [
-    ...(modules.deals === false ? [] : ["/app/deals"]),
     "/app/tasks",
-    "/app/calendar",
+    "/app/appointments",
     "/app/ai-agents",
-    "/app/integrations",
+    "/app/business",
     "/app/analytics",
     "/app/settings",
   ];
@@ -1764,13 +1755,8 @@ test("mobile owner smoke: dashboard, bottom nav and more drawer are reachable", 
     await expect(page).toHaveURL(routePattern(route));
     await expectNoHorizontalOverflow(page);
     await expect(page.getByText("Unexpected Application Error")).toHaveCount(0);
-    if (route === "/app/calendar") {
-      await expect(
-        page.getByText(/AGENDA \u0414\u041d\u042f|Day agenda|\u041a\u04af\u043d agenda/i).first(),
-      ).toBeVisible();
-      const newBookingButton = page
-        .getByRole("button", { name: /\u041d\u043e\u0432\u0430\u044f \u0437\u0430\u043f\u0438\u0441\u044c|New booking|\u0416\u0430\u04a3\u0430 \u0436\u0430\u0437\u0431\u0430/ })
-        .first();
+    if (route === "/app/appointments") {
+      const newBookingButton = page.getByRole("button", { name: ru["appointments.create"], exact: true }).first();
       await expect(newBookingButton).toBeVisible();
       await newBookingButton.click();
       await expectFirstDialogFitsViewport(page);
@@ -1778,18 +1764,16 @@ test("mobile owner smoke: dashboard, bottom nav and more drawer are reachable", 
       await expect(page.getByRole("dialog")).toHaveCount(0);
     }
   }
-  if (modules.deals === false) {
-    await page.getByTestId("bottom-mobile-menu-trigger").click();
-    const drawer = page.getByTestId("mobile-navigation-drawer");
-    await expect(drawer).toBeVisible();
-    await expect(drawer.locator('a[href="/app/deals"]')).toHaveCount(0);
-    await page.keyboard.press("Escape");
-    await expect(drawer).toHaveCount(0);
+  await page.getByTestId("bottom-mobile-menu-trigger").click();
+  const drawer = page.getByTestId("mobile-navigation-drawer");
+  for (const route of ["/app/leads", "/app/deals", "/app/calendar", "/app/integrations"]) {
+    await expect(drawer.locator(`a[href="${route}"]`)).toHaveCount(0);
   }
+  await page.keyboard.press("Escape");
+  await expect(drawer).toHaveCount(0);
 
-  await expect(
-    page.getByRole("heading", { name: /\u041d\u0430\u0441\u0442\u0440\u043e\u0439\u043a\u0438|Settings|\u0411\u0430\u043f\u0442\u0430\u0443\u043b\u0430\u0440/ }),
-  ).toBeVisible();
+  await expect(page.getByTestId("settings-workspace-ready")).toBeVisible();
+  await expect(page.getByRole("heading", { name: ru["settings.section.business-profile"], exact: true })).toBeVisible();
 });
 
 test("tablet CRM workbench routes keep usable proportions", async ({

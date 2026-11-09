@@ -1,3 +1,18 @@
+## Мастер переноса — решение04.11.2026
+
+[Контракт переноса и адаптации представлений](import-workspace.md) фиксирует
+локально реализованное расширение: файлы → клиенты/специалисты/услуги/записи,
+дополнительные поля, редактируемый черновик и preview таблиц/карточек/календаря.
+Локальная целевая проверка завершена; публикация заблокирована, целевой rollout не выполнен. Существующий
+ограниченный importer ниже не считается этим расширением. AI в первый этап
+не входит; возможный помощник — отдельное будущее решение, не обязательство.
+Владелец подтвердил сценарий и референсы. В том же контракте записана сверка
+прежнего UI/API до реализации мастера: там доступна коррекция mapping, но не значений строк; preview показывает
+образец исходного файла, а не будущие карточки/календарь. AUD-12a/b сохраняют свой
+ранее проверенный scope, не означают реализацию нового мастера.
+Прямые подключения/синхронизация/денежные остатки отдельно. Не закрывает открытые
+acceptance и не разрешает рабочие миграции или deployment.
+
 ## C11 — владение попыткой экспорта, 04.11.2026
 
 Каждый claim/reclaim ExportJob получает новый внутренний UUID claim_token.
@@ -29,10 +44,12 @@ actor/Business и действующим VIEW/capability соответству�
 
 
 Действующие ограничения; уточнение 14.10.2026: Telegram и WhatsApp включены
-в подготовку пилота R02, клиники подключают собственные аккаунты. Для первого этапа
+в подготовку пилота R02, клиники подключают собственные аккаунты. Уточнение27–29.10:
+официальный временный BSP с переносимостью к Meta; GREEN-API QR не замена. Для первого этапа
 28.10 выбран YCloud TP Lite; локально реализованы подключение и текстовый Inbox.
 Реальная отправка/подключение не выполнены. Прочие внешние подключения,
-marketplace write-back, 1С/МойСклад и платёжный gateway остаются отложенными. Код сохраняется,
+полный marketplace write-back, 1С/МойСклад и платёжный gateway остаются отложенными.
+Принятый ограниченный CRM-Market exchange/кампании описаны отдельно ниже. Код сохраняется,
 но наличие adapter/endpoint не доказывает live-ready статус. Новые подключения
 требуют конкретного target и согласованного объёма. Пилот финансирует владелец;
 новые коммерческие лимиты/автоотключение по расходам не вводятся. Это не отменяет
@@ -56,8 +73,8 @@ INTEGRATIONS VIEW для чтения, MANAGE для начала, отмены 
 Приём сохраняет подписанное событие до ответа 204; worker/beat обрабатывает его
 с дедупликацией, транзакцией и ограниченными повторами. Business определяется
 серверной связью WABA/номера, а не переданным CRM ID. Текст идёт через существующий
-Inbox/CRM/AI pipeline. Один API-номер на подключение; media, templates, напоминания,
-история и Business App Coexistence в этот этап не входят.
+Inbox/CRM/AI pipeline. Один номер на подключение; media, templates, напоминания,
+история в этот этап не входят. Расширение Coexistence от 09.11 описано ниже.
 Подписанное сообщение без готовой привязки получает retryable503, а не успешный
 ответ: callback может опередить подтверждение номера. После привязки повтор
 сохраняется и обрабатывается один раз; чужой маршрут не создаёт CRM-эффектов.
@@ -74,6 +91,20 @@ Inbox/CRM/AI pipeline. Один API-номер на подключение; medi
 Это локальная реализация; TP Lite eligibility, целевой HTTPS webhook, доступ к номеру,
 финансирование, рабочая миграция и live delivery остаются отдельной приёмкой R02/R03.
 
+Coexistence (локальная подготовка 09.11.2026): форма позволяет выбрать сохранение
+WhatsApp Business App и обязательный ожидаемый номер E.164. Сервер запрашивает
+`WHATSAPP_BUSINESS_APP`; подтверждённый номер должен совпасть с ожидаемым.
+Существующие связи после integrations0010 сохраняют режим WhatsApp API.
+Подписанные `whatsapp.smb.message.echoes` и `whatsapp.smb.message.created` сохраняются
+как уже отправленный ответ сотрудника с дедупликацией по wamid. Они не запускают AI,
+не отправляются повторно, не увеличивают unread и не открывают 24-часовое окно.
+Ответ из приложения приостанавливает AI до ручного возобновления; ожидающие
+автоответы отменяются. Уже выполняющийся внешний HTTP-запрос отозвать невозможно.
+Вложения отображаются как сообщение о недоступном содержимом без загрузки файлов.
+История, шаблоны и напоминания не добавлены. При паузе CRM-канала ответы из приложения
+продолжают отражаться в Inbox: приложение работает независимо от паузы CRM.
+Допуск конкретного номера, включение TP Lite и обмен с провайдером требуют live-приёмки.
+
 ### Общие правила и подтверждённые исправления
 
 OFFICIAL-03: WhatsApp verification carries an explicit Meta/global-internal/channel
@@ -87,6 +118,14 @@ generic channel messages, deduplication and existing credential storage remain.
 Local102-test evidence: OFFICIAL-03-20261028 in PRIMARY-SESSION. No provider rollout,
 real delivery, working credentials or live readiness is implied.
 
+OFFICIAL-09: catalog ingestion of Service metadata uses the same SETTINGS UPDATE
+and all-current-branches boundary as ordinary Service changes, in addition to
+existing INTEGRATIONS admission. Existing inactive/archive flags remain unchanged;
+activation/restoration require their explicit actions. Manual Service/event/audit
+and imported Service/event writes are atomic; denied confirmation rolls back the
+whole import. Product-only events, aliases, exact-name matching and summary semantics
+are preserved. Local evidence: OFFICIAL-09-20261028 in PRIMARY-SESSION; no live-provider
+or PostgreSQL concurrency certification is implied.
 
 Provider-specific поведение живёт за service/provider adapter, не в views/UI.
 Существующие слои: [integrations](../../apps/integrations),
@@ -203,6 +242,62 @@ confirm, откат после записи строки и финального
 sync, audit или on_commit callbacks; ожидающий запрос перечитывает PREVIEWED.
 Runtime-изменений сверх AUD-16 не потребовалось. Evidence и версия —
 [AUD-21 checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-21-20261021--concurrent-import-rollback-and-recovery).
+OFFICIAL-10 Inbox scope, 28.10: child DTO replies require current independent
+VIEW. Write acknowledgements/status, Client duplicate confirmation and actual creation/
+dedup logic remain. Inbox Task/Appointment idempotent replies resolve stored model/id
+inside the same Business, apply current read scope and actor-aware serialization;
+receipt JSON is retained, with no cached-body fallback for missing/foreign/invalid
+resource. Generic other command callers keep their previous behavior and are not
+newly certified. Pipeline/booking typed metadata copies follow the same read policy;
+offered slot without saved Appointment remains parent workflow data. Checkpoint/report
+OFFICIAL-10-INBOX-20261028 provides synthetic evidence and exact scope.
+
+OFFICIAL-16, 28.10: Lead duplicate-check scopes related Lead DTOs before its
+existing five-row limit; hidden messages/status/IDs are not serialized. Generic warning
+is retained through an optional restricted-match boolean, without hidden count. Existing
+Client duplicate projection is reused; internal matcher, public form writes,
+legacy archived matching and provider behavior unchanged. Import Client writes follow
+OFFICIAL-17 per-row CREATE/UPDATE and private-field policy. OFFICIAL-16-20261028 evidence.
+
+FU-BE-03, 28.10: stored import duplicate DTOs are projected on every response using
+the current reader's Client visibility, not the job creator's earlier authority.
+Hidden/missing/foreign Client details become a generic warning; uploaded row payload,
+summary, file-local Duplicate row N warnings and stored evidence remain intact.
+Import matching and scanner behavior remain unchanged. Confirm Client writes now
+additionally enforce current per-row CREATE/UPDATE and private-field policy (OFFICIAL-17). Current VIEW revocation
+cannot re-release a stored duplicate contact. Form submission/activity copies use the
+same projection. See FU-BE-03-20261028 checkpoint and local synthetic packet report.
+
+FU-BE-02, 28.10: outreach preview/consent/recipient/failed appointment read
+projections require current Client visibility before returning contact IDs/values,
+personalized text or provider/evidence copies. Audience eligibility/counts, delivery,
+consent writes and W1 STOP remain unchanged. Parent Lead/Deal CSV masks hidden Client
+IDs and ready-export access includes Client policy/capability/scope in fingerprint;
+files made under the previous fingerprint require regeneration. Existing CSV headers
+and permitted values remain. Local synthetic checks in FU-BE-02-20261028 evidence.
+
+OFFICIAL-13: appointment automation status also checks NOTIFICATIONS VIEW/capability
+and current row scope before counts/top-eight failures. An unreadable linked Appointment
+returns no appointment ID/navigation URL. Calendar URLs use the current readable linked
+Appointment rather than saved identifier copies, including detached links. Client redaction remains independent. The
+three-scenario response and delivery/retry behavior are unchanged. Notifications has
+no module toggle in the current mapping; use of the shared guard does not add one.
+
+OFFICIAL-05, 28.10: public lead-form and website-chat capture continue accepting
+intake, but affirmative marketing flags cannot reset matched contact OPTED_OUT.
+Both use the common helper's conditional write. New/unknown/already-IN explicit
+consent behavior, aliases and channel independence remain. Existing Telegram/
+WhatsApp inbound START and authorized management paths are unchanged; no message/
+confirmation service or new re-consent standard added. W1 STOP remains separate.
+Evidence and local controls: OFFICIAL-05-20261028 checkpoint and packet report.
+
+OFFICIAL-11, 28.10: consent bulk-import-file XLSX delegates to the same bounded
+read_xlsx_rows used by tabular imports, after bounded actual-byte read. Reader errors
+are returned under file; no consent writes occur before complete valid normalization.
+Header aliases, cell normalization, statuses/evidence, authorized Business/role and
+CSV/JSON business flows unchanged. Resource-limit overflow is explicit, never silently
+trimmed. API/control evidence: OFFICIAL-11-20261028 checkpoint and packet report.
+
 AUD-22: XLSX проходит ZIP/XML preflight до openpyxl: размер разжатого архива,
 compression ratio, число записей, dimensions и фактические координаты/число
 строк/столбцов ограничены. Заниженные dimensions не обрезают данные. Превышение
@@ -250,6 +345,45 @@ CRM-MB01 сохраняется. Приватные Client.notes дополни�
 Локальная проверка и версия — [AUD-18 checkpoint](../testing/task-state/PRIMARY-SESSION.md#aud-18-20261027--current-export-download-authorization).
 Рабочая БД, схема, live worker/storage и deployment не менялись.
 
+## Принятые CRM-Market сценарии — 29.10.2026
+
+Будущая граница CRM-D02/CRM-C21 из ТЗ§23 не возвращает весь ERP/write-back.
+Решение владельца02.11: обмен CRM↔Market и кампании Market через CRM исключены
+из текущего пилота; реализация после отдельного возобновления. Требования ниже
+сохранены для дальнейшего развития, не являются gate пилотных каналов R03.
+Опциональная проверенная связь Market legal entity↔CRM Business допускает
+настроенный обмен заказами/статусами/документами и платёжными/возвратными фактами.
+Нужны object/direction/source/purpose/version/actor/idempotency/correlation и
+revoke/replay/reconciliation без sync-loop. Предлагаемые поля события — проект,
+не уже согласованный endpoint. Market хранит подписанный оригинал; назначенная
+CRM-роль получает разрешённый документ без обязательного Market-login через
+защищённую повторную авторизацию. Полученный факт не второй manual receipt и
+не команда подписи/refund; финансовая панель Market остаётся в Market.
+Критерий AC-CRM — обе стороны, tenant/role/revoke/duplicate/outage/version и
+история; готового нового транспорта/API/live evidence этим не объявлено.
+
+Команда ведёт кампании Market через CRM: сегменты потенциальных/новых/действующих
+участников, покупателей/поставщиков/агентов; invitation/onboarding/cart/repeat/
+reactivation. WhatsApp/email/Telegram обязательны в этом отдельном scope,
+Instagram желателен. Preview → малая стартовая группа → расширение по результатам;
+тексты/сегмент/размер/критерии/бюджет и канал выбираются явно, не 50/200 по примеру.
+Общий лимит — не более одного рекламного контакта человеку за семь суток по всем
+кампаниям; сервисные сообщения отдельно. Current versioned consent/STOP проверяется
+до launch/delivery; первый входящий и Market event не дают рекламного согласия.
+Нужны reachable UI/continuation/errors/recovery без дублей и controlled receipts
+AC-CAMPAIGN; W1/OFFICIAL/FU scoped guards не закрывают весь flow.
+После ограниченных retries важной service-недоставки создаётся задача
+ответственному; другой канал только разрешённый. Retry count/schedule, единый
+recipient key и in-flight STOP/unknown — подготовка CG-05, не обещание отмены
+уже отправленного HTTP. Telegram требует разрешённого контакта, email — своей
+настоящей доставки. Клинический R03 не превращается в массовую рекламу.
+
+Для BSP нужны capabilities и полный cost/eligibility/onboarding/WABA/number/
+ownership/webhook/migration-to-Meta receipt. GREEN-API QR не принят как замена;
+YCloud local text slice и подготовка Coexistence не подтверждают templates/reminders/media,
+live Coexistence,
+договорную/правовую пригодность или доставку двум клиникам. [Roadmap](roadmap.md#crm-d02--принятая-граница-связи-с-market-и-кампаний).
+
 ## Граница доказательств
 
 Mock/eager/SQLite подтверждают локальную логику. Реальный provider, подпись,
@@ -271,3 +405,19 @@ checkout запрещает вторую попытку до сверки; recei
 отдельно, повторы идемпотентны. Реальный adapter не выбран; FakeCard доступен только
 в изолированных тестах. Нет BusinessEvent/AI-trigger, отправки писем или реальных денег.
 Оставшиеся provider/live требования — [паспорт](../pre-production/subscription-usage.md).
+
+
+## OFFICIAL-17 Client mutation authority in import, 28.10.2026
+
+OFFICIAL-17, 28.10.2026: Client import writes now distinguish current UPDATE
+for existing matches (including archived/no-op) from CREATE for new Clients, under
+the existing object policy. Shared Client notes write rule is reused by API/import;
+proposed fields are validated before mutation. Client/Lead/Deal sheets use the same
+Client boundary/current request actor; legacy direct row calls use job.actor, no actor
+fails closed. Fill-only matching, duplicate warning, archive state and atomic rollback
+remain. Existing ImportJob CREATE admission remains, not an update-only upload feature.
+27 new tests within103 affected and combined1040 PASS/no skips; syntax/system/drift/
+diff/reverse PASS. HEAD98925b67 + previous WIP/16 closed findings + patch, local only.
+Evidence OFFICIAL-17-20261028 checkpoint and output/security-remediation-20261028/
+client-import-update-permission/fix-report.md. Current OWN/TEAM UPDATE semantics for
+unowned Client retained exactly; no new ownership rule or production certification.

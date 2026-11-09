@@ -1,154 +1,34 @@
-import { MoreHorizontal, UserX } from "lucide-react";
-import { memo } from "react";
+import { memo, type ReactNode } from "react";
+import { formatDateTime } from "../../../lib/format";
+import { useI18n } from "../../../lib/i18n";
+import { useActiveBusiness } from "../../../hooks/useBusiness";
+import type { ClientTableRow, ClientTableColumn, Translate } from "../types";
+import { sourceLabel } from "../utils";
+import { ClientStatusBadge } from "./ClientPrimitives";
 
-import { cn } from "../../../lib/cn";
-import { formatDate, formatDateTime } from "../../../lib/format";
-import type { ClientTableRow, Translate } from "../types";
-import { initials, sourceLabel } from "../utils";
-import {
-  ClientAvatar,
-  ClientStatusBadge,
-  SourceIcon,
-} from "./ClientPrimitives";
-
-export const ClientRow = memo(function ClientRow({
-  row,
-  selected,
-  checked,
-  visibleColumns,
-  onSelect,
-  onOpen,
-  onToggleCheck,
-  t,
-}: {
+export const ClientRow = memo(function ClientRow({ row, visibleColumns, customCells, onOpen, t }: {
   row: ClientTableRow;
-  selected: boolean;
-  checked: boolean;
-  visibleColumns: Set<"source" | "manager">;
-  onSelect: () => void;
+  customCells?: ReactNode;
+  visibleColumns: Set<ClientTableColumn>;
   onOpen: () => void;
-  onToggleCheck: () => void;
   t: Translate;
 }) {
-  function handleKeyDown(event: React.KeyboardEvent<HTMLTableRowElement>) {
-    if (event.target !== event.currentTarget) return;
-    if (event.key !== "Enter" && event.key !== " ") return;
-    event.preventDefault();
-    onSelect();
-  }
-
-  return (
-    <tr
-      role="row"
-      aria-selected={selected}
-      tabIndex={0}
-      className={cn(
-        "group cursor-pointer border-b border-platforma-border bg-surface-card transition-colors hover:bg-surface-hover focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-inset",
-        selected &&
-          "bg-brand-50/80 shadow-[inset_5px_0_0_var(--platforma-brand)] hover:bg-brand-50/80",
-      )}
-      onClick={onSelect}
-      onKeyDown={handleKeyDown}
-    >
-      <td role="gridcell" className="w-10 px-3 py-2 align-middle">
-        <input
-          type="checkbox"
-          checked={checked}
-          readOnly
-          aria-label={t("clients.selectClient", { name: row.client.full_name })}
-          className="h-4 w-4 rounded-sm border-platforma-border text-brand-600 focus-visible:ring-brand-500"
-          onClick={(event) => {
-            event.stopPropagation();
-            onToggleCheck();
-          }}
-        />
-      </td>
-      <td role="gridcell" className="overflow-hidden px-2 py-2">
-        <div className="flex items-center gap-3">
-          <ClientAvatar name={row.client.full_name} />
-          <div className="min-w-0">
-            <p
-              className={cn(
-                "truncate text-sm font-semibold text-platforma-text",
-                selected && "text-brand-700",
-              )}
-            >
-              {row.client.full_name}
-            </p>
-            <p className="mt-0.5 truncate text-xs font-medium text-platforma-muted">
-              {row.client.phone || row.client.email || t("clients.noContacts")}
-            </p>
-          </div>
-        </div>
-      </td>
-      {visibleColumns.has("source") ? (
-        <td role="gridcell" className="overflow-hidden px-2 py-2">
-          <div className="flex min-w-0 items-center gap-2 text-sm font-medium text-platforma-muted">
-            <SourceIcon source={row.client.source} />
-            <span className="truncate">
-              {sourceLabel(row.client.source, t)}
-            </span>
-          </div>
-        </td>
-      ) : null}
-      <td role="gridcell" className="overflow-hidden px-2 py-2">
-        <ClientStatusBadge status={row.status} t={t} />
-      </td>
-      <td role="gridcell" className="overflow-hidden px-2 py-2">
-        <p className="truncate text-sm font-medium text-platforma-text">
-          {row.lastContactAt
-            ? formatDateTime(row.lastContactAt)
-            : t("clients.noContact")}
-        </p>
-      </td>
-      <td role="gridcell" className="overflow-hidden px-2 py-2">
-        <p className="truncate text-sm font-medium text-platforma-text">
-          {row.nextStep.title}
-        </p>
-        <p className="mt-0.5 text-xs font-medium text-platforma-muted">
-          {row.nextStep.date
-            ? formatDate(row.nextStep.date)
-            : null}
-        </p>
-      </td>
-      {visibleColumns.has("manager") ? (
-        <td role="gridcell" className="overflow-hidden px-2 py-2">
-          {!row.managerUserId ? (
-            <div className="flex min-w-0 items-center gap-2 text-platforma-muted">
-              <UserX size={16} className="shrink-0" />
-              <span className="truncate text-sm font-medium">
-                {t("clients.unassigned")}
-              </span>
-            </div>
-          ) : (
-            <div className="flex min-w-0 items-center gap-2">
-              <div className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-surface-muted text-[10px] font-bold text-platforma-muted">
-                {initials(row.manager)}
-              </div>
-              <span className="truncate text-sm font-medium text-platforma-muted">
-                {row.manager}
-              </span>
-            </div>
-          )}
-        </td>
-      ) : null}
-      <td role="gridcell" className="w-14 px-2 py-2 text-right">
-        <div className="flex items-center justify-end gap-1">
-          <button
-            type="button"
-            data-testid="client-row-action-open"
-            data-client-id={row.client.id}
-            className="inline-grid h-8 w-8 place-items-center rounded-lg text-platforma-muted opacity-100 transition hover:bg-brand-50 hover:text-brand-700 md:opacity-0 md:group-hover:opacity-100"
-            onClick={(event) => {
-              event.stopPropagation();
-              onOpen();
-            }}
-            aria-label={t("clients.details")}
-          >
-            <MoreHorizontal size={17} />
-          </button>
-        </div>
-      </td>
-    </tr>
-  );
+  const { language } = useI18n();
+  const { business } = useActiveBusiness();
+  const timezone = business?.timezone || "Asia/Qyzylorda";
+  return <tr role="row" tabIndex={0} aria-label={`${t("clients.details")}: ${row.client.full_name}`}
+    className="platforma-focus-ring cursor-pointer border-b border-platforma-border last:border-0 hover:bg-surface-hover focus-visible:bg-surface-hover"
+    onClick={event => { if (!(event.target as Element).closest("button,a,input")) onOpen(); }}
+    onKeyDown={event => { if (event.target === event.currentTarget && (event.key === "Enter" || event.key === " ")) { event.preventDefault(); onOpen(); } }}>
+    <td role="gridcell" className="px-4 py-3">
+      <button type="button" data-testid="client-row-action-open" data-client-id={row.client.id} onClick={onOpen} className="platforma-focus-ring block max-w-full rounded text-left font-medium text-brand-700 underline-offset-4 hover:underline">{row.client.full_name}</button>
+      <p className="mt-0.5 text-xs text-platforma-subtle">{row.client.phone || row.client.email || t("clients.noContacts")}</p>
+    </td>
+    {visibleColumns.has("source") && <td role="gridcell" className="px-4 py-3">{sourceLabel(row.client.source, t)}</td>}
+    <td role="gridcell" className="px-4 py-3"><ClientStatusBadge status={row.status} t={t} /></td>
+    <td role="gridcell" className="whitespace-nowrap px-4 py-3">{row.lastContactAt ? formatDateTime(row.lastContactAt, timezone, true, language) : t("clients.noContact")}</td>
+    <td role="gridcell" className="px-4 py-3"><p>{row.nextStep.title}</p>{row.nextStep.date && <p className="mt-0.5 text-xs text-platforma-subtle">{new Intl.DateTimeFormat(language, { dateStyle: "medium", timeZone: timezone }).format(new Date(row.nextStep.date))}</p>}</td>
+    {visibleColumns.has("manager") && <td role="gridcell" className="px-4 py-3">{row.managerUserId ? row.manager : t("clients.unassigned")}</td>}
+    {customCells}
+  </tr>;
 });

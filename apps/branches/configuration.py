@@ -19,6 +19,8 @@ def _lock_and_authorize(branch, actor):
     Business.objects.select_for_update().get(pk=branch.business_id)
     assert_can(actor, branch.business, Resources.SETTINGS, Actions.UPDATE)
     assert_branch_access(actor, branch.business, branch, active=True)
+    if branch.uses_business_defaults:
+        raise ValidationError({"branch": "Use the business catalog and working hours for the primary location."})
 
 
 def _audit(actor, branch, instance, kind):

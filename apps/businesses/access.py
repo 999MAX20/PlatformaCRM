@@ -223,11 +223,25 @@ def normalize_role(role):
 def get_membership(user, business):
     if not user or not user.is_authenticated or business is None:
         return None
-    return (
+    cache = getattr(user, "_permission_read_memberships", None)
+    key = (business._state.db, business.pk)
+    if cache is not None and key in cache:
+        return cache[key]
+    membership = (
         BusinessMember.objects.select_related("business_role", "business", "user")
         .filter(user=user, business=business, is_active=True)
         .first()
     )
+    if cache is not None:
+        if membership is not None and membership.business_role_id:
+            membership.business_role._permission_read_rules = {
+                (resource, action): (allowed, scope)
+                for resource, action, allowed, scope in membership.business_role.permissions.values_list(
+                    "resource", "action", "is_allowed", "scope"
+                )
+            }
+        cache[key] = membership
+    return membership
 
 
 def user_is_business_owner(user, business: Business | None) -> bool:
@@ -295,15 +309,24 @@ def role_allows(role, resource, action):
 def role_permission_allows(business_role: BusinessRole | None, resource, action):
     if not business_role or not business_role.is_active:
         return None
+    rules = getattr(business_role, "_permission_read_rules", None)
+    if rules is not None:
+        permission = rules.get((resource, action))
+        if permission is None and action != Actions.MANAGE:
+            permission = rules.get((resource, Actions.MANAGE))
+        if permission is None:
+            return None
+        allowed, scope = permission
+        return scope if allowed else RolePermission.Scopes.NONE
     permission = (
         business_role.permissions.filter(resource=resource, action=action)
-        .only("is_allowed", "scope")
+        .only("business_role", "is_allowed", "scope")
         .first()
     )
     if not permission and action != Actions.MANAGE:
         permission = (
             business_role.permissions.filter(resource=resource, action=Actions.MANAGE)
-            .only("is_allowed", "scope")
+            .only("business_role", "is_allowed", "scope")
             .first()
         )
     if permission is None:

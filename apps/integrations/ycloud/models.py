@@ -5,7 +5,13 @@ from django.db import models
 
 
 class YCloudConnection(models.Model):
+    class OnboardingTypes(models.TextChoices):
+        PLATFORM = "WHATSAPP_BUSINESS_PLATFORM", "WhatsApp API"
+        APP = "WHATSAPP_BUSINESS_APP", "WhatsApp Business App"
+
     channel = models.OneToOneField("bots.BotChannel", on_delete=models.CASCADE, related_name="ycloud_connection")
+    onboarding_type = models.CharField(max_length=32, choices=OnboardingTypes.choices, default=OnboardingTypes.PLATFORM)
+    expected_phone_number = models.CharField(max_length=32, blank=True)
     customer_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     initiated_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
     setup_revision = models.CharField(max_length=64)

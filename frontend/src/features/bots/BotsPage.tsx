@@ -58,7 +58,6 @@ export function BotsPage() {
     <>
       <PageHeader
         title={t("bots.title")}
-        description={t("bots.description")}
         actions={<Button variant="primary" onClick={() => setOpen(true)}><Plus size={18} />{t("bots.create")}</Button>}
       />
 
@@ -134,7 +133,7 @@ export function BotsPage() {
           }}
         >
           <Input label={t("bots.name")} placeholder={t("bots.websiteAssistantPlaceholder")} value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} required />
-          <Select label={t("bots.defaultLanguage")} value={form.default_language} onChange={(event) => setForm({ ...form, default_language: event.target.value })} options={languageOptions} />
+          <Select portal label={t("bots.defaultLanguage")} value={form.default_language} onChange={(event) => setForm({ ...form, default_language: event.target.value })} options={languageOptions} />
           <Button type="submit" isLoading={mutation.isPending}>{t("common.save")}</Button>
         </form>
       </Modal>

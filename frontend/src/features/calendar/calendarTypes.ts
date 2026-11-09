@@ -1,4 +1,4 @@
-export type CalendarViewMode = "week" | "month";
+export type CalendarViewMode = "week" | "month" | "year";
 
 export type CalendarResource = {
   id: number | null;

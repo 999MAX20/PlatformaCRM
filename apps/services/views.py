@@ -1,3 +1,4 @@
+from apps.core.custom_field_filters import filter_custom_field
 from django.db.models import Q
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
@@ -26,6 +27,8 @@ class ServiceViewSet(TenantModelViewSet):
     def get_queryset(self):
         queryset = super().get_queryset()
         business_id = self.request.query_params.get("business")
+        if self.action == "list":
+            queryset = filter_custom_field(queryset, actor=self.request.user, entity_type="service", params=self.request.query_params)
         search = (self.request.query_params.get("search") or "").strip()
         status = self.request.query_params.get("status")
 

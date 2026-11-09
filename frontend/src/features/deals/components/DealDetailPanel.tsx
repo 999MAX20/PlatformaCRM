@@ -218,7 +218,7 @@ export function DealDetailPanel({
             <PanelBlock title={t("deals.messages")} icon={MessageSquareText}>
               <div className="space-y-2">
                 {conversations.map((conversation) => (
-                  <button key={conversation.id} type="button" className="w-full rounded-lg bg-surface-muted p-3 text-left transition hover:bg-brand-50" onClick={() => onClientCard(conversation.client || deal.client)}>
+                  <button key={conversation.id} type="button" className="w-full rounded-lg bg-surface-muted p-3 text-left transition hover:bg-brand-50" disabled={conversation.client == null && deal.client == null} onClick={() => { const clientId = conversation.client ?? deal.client; if (clientId !== null) onClientCard(clientId); }}>
                     <p className="font-black text-midnight">{sourceLabel(conversation.channel, t)} · {conversation.status}</p>
                     <p className="mt-1 line-clamp-2 text-sm text-platforma-faint">{conversation.last_message?.text || t("deals.lastMessageMissing")}</p>
                   </button>

@@ -65,7 +65,7 @@ test("scan QR, reject bad code, enroll and sign in with TOTP", async ({ page }) 
   const rejection = page.waitForResponse(r => r.url().endsWith("/mfa/enrollment/confirm/"));
   await dialog.getByRole("button", { name: "Подключить защиту" }).click();
   expect((await rejection).status()).toBe(401);
-  await expect(dialog.getByRole("alert")).toBeVisible();
+  await expect(dialog.getByText("Код неверен или уже использован. Введите новый код из приложения или неиспользованный резервный код.", { exact: true })).toBeVisible();
   await expect(qr).toBeVisible();
   await input.fill(totp(secret));
   const confirmation = page.waitForResponse(r => r.url().endsWith("/mfa/enrollment/confirm/"));
@@ -84,7 +84,7 @@ test("scan QR, reject bad code, enroll and sign in with TOTP", async ({ page }) 
     await page.locator('form button[type="submit"]').click();
     await expect(page).toHaveURL(/\/mfa/);
     await page.getByLabel("Код подтверждения").fill(totp(secret, 1));
-    await page.getByRole("button", { name: "Подтвердить вход" }).click();
+    await page.getByRole("button", { name: "Войти", exact: true }).click();
     await expect(page).toHaveURL(/\/app/);
     expect(external).toEqual([]);
   } finally {

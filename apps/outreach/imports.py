@@ -5,10 +5,7 @@ from pathlib import Path
 from django.conf import settings
 from rest_framework.exceptions import ValidationError
 
-try:
-    from openpyxl import load_workbook
-except ImportError:  # pragma: no cover
-    load_workbook = None
+from apps.core.xlsx_reader import read_xlsx_rows
 
 
 CONSENT_FIELD_ALIASES = {
@@ -57,17 +54,20 @@ def _read_csv(upload):
 
 
 def _read_xlsx(upload):
-    if load_workbook is None:
-        raise ValidationError({"file": "XLSX import requires openpyxl."})
     upload.seek(0)
-    workbook = load_workbook(upload, read_only=True, data_only=True)
-    sheet = workbook.active
-    rows = list(sheet.iter_rows(values_only=True))
-    workbook.close()
-    if not rows:
-        raise ValidationError({"file": "Import file is empty."})
-    headers = [_cell_to_string(value) for value in rows[0]]
-    return normalize_consent_rows([{headers[index]: value for index, value in enumerate(values) if index < len(headers)} for values in rows[1:]])
+    max_bytes = int(settings.MAX_UPLOAD_SIZE_MB * 1024 * 1024)
+    content = upload.read(max_bytes + 1)
+    if len(content) > max_bytes:
+        raise ValidationError({"file": "Import file exceeds the upload size limit."})
+    rows = read_xlsx_rows(content)
+    try:
+        return normalize_consent_rows(rows)
+    except ValidationError as exc:
+        if isinstance(exc.detail, dict):
+            raise
+        raise ValidationError({"file": exc.detail}) from None
+    finally:
+        rows.close()
 
 
 def _normalize_consent_row(row):

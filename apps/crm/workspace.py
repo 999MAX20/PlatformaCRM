@@ -1,14 +1,17 @@
 """Validated deal workspace filters over the existing scoped read model."""
+from apps.core.client_projection import client_search_q
 from django.db.models import Q
 
 from apps.core.crm_filters import amount_range, archive_filter, assignment_filter, business_date_range, choice, values
 from apps.core.work_queues import no_next_action_deals_queryset, sla_overdue_deals_queryset
 from apps.crm.models import Deal
+from apps.crm.field_policy import assert_amount_query_visible
 from apps.crm.selectors import stale_deals_queryset
 
 
 def deal_workspace_queryset(queryset, request):
     params = request.query_params
+    assert_amount_query_visible(queryset, request.user, params)
     queryset = archive_filter(queryset, params)
     queryset = assignment_filter(queryset, params, field="owner_id", user=request.user)
     pipelines = values(params, "pipeline", ids=True)
@@ -26,7 +29,7 @@ def deal_workspace_queryset(queryset, request):
     search = (params.get("search") or "").strip()
     if search:
         queryset = queryset.filter(Q(title__icontains=search) | Q(source__icontains=search)
-            | Q(client__full_name__icontains=search) | Q(client__phone__icontains=search) | Q(client__email__icontains=search))
+            | client_search_q(request.user, search))
     queryset = amount_range(queryset, params)
     queryset = business_date_range(queryset, params)
     queryset = business_date_range(queryset, params, prefix="expected_close", field="expected_close_at", date_field=True)

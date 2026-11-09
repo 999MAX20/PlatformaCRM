@@ -1,9 +1,10 @@
 import { NotificationBell } from "./NotificationBell";
-import { getRouteTitle } from "../../app/routeMetadata";
+import { VoiceAssistantTrigger } from "../../features/voice/VoiceAssistantTrigger";
 
 import { InboxNotificationEffects } from "./InboxNotificationEffects";
+import { getRouteTitle } from "../../app/routeMetadata";
 import { Menu, SlidersHorizontal, X } from "lucide-react";
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { useLocation } from "react-router";
 
 import { useAuth } from "../../features/auth/AuthProvider";
@@ -12,11 +13,14 @@ import { useI18n } from "../../lib/i18n";
 
 import { Button } from "../ui/Button";
 import { Drawer } from "../ui/Overlay";
-
 import { GlobalSearch } from "./GlobalSearch";
 import { HeaderAccountLink } from "./HeaderAccountLink";
 import { mobileNavigationDrawerId } from "./MobileNav";
 import type { PageHeaderConfig } from "./PageHeaderContext";
+
+import { NotificationInspector } from "../../features/notifications/NotificationInspector";
+
+import type { Id } from "../../types";
 
 export function Header({
   menuOpen,
@@ -27,6 +31,7 @@ export function Header({
   onMenuClick: () => void;
   pageHeader: PageHeaderConfig | null;
 }) {
+
   const location = useLocation();
 
   const { user } = useAuth();
@@ -34,55 +39,22 @@ export function Header({
   const { t } = useI18n();
 
   const [showNotifications, setShowNotifications] = useState(false);
+  const [selectedNotification, setSelectedNotification] = useState<Id | null>(null);
+  useEffect(() => { setSelectedNotification(null); setShowNotifications(false); }, [business?.id, user?.id]);
   const [showFilters, setShowFilters] = useState(false);
 
-  const [headerVisible, setHeaderVisible] = useState(true);
-
-  const lastScrollYRef = useRef(0);
   const filterDrawerId = useId();
   const filterDrawerTitleId = useId();
 
-  const activeMembership = user?.memberships?.find(
-    (membership) =>
-      String(membership.business) === String(business?.id) &&
-      membership.is_active,
-  );
+  const activeMembership = user?.memberships?.find((membership) => String(membership.business) === String(business?.id) && membership.is_active);
 
-  const currentPageTitle =
-    pageHeader?.title || getRouteTitle(location.pathname, t);
+  const currentPageTitle = pageHeader?.title || getRouteTitle(location.pathname, t);
 
-  useEffect(() => {
-    lastScrollYRef.current = window.scrollY;
-
-    function handleScroll() {
-      const currentY = window.scrollY;
-      const delta = currentY - lastScrollYRef.current;
-
-      if (currentY < 24 || showNotifications) {
-        setHeaderVisible(true);
-        lastScrollYRef.current = currentY;
-        return;
-      }
-
-      if (Math.abs(delta) < 8) return;
-      setHeaderVisible(delta < 0 || currentY < 80);
-      lastScrollYRef.current = currentY;
-    }
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [showNotifications]);
 
   return (
-    <header
-      className={`fixed left-0 right-0 top-0 z-50 border-b border-platforma-border bg-surface/[0.92] shadow-soft backdrop-blur-xl transition-transform duration-200 ease-out lg:left-16 ${headerVisible ? "translate-y-0" : "-translate-y-full"}`}
-    >
-      <InboxNotificationEffects
-        user={user}
-        business={business}
-        activeMembership={activeMembership}
-      />
-      <div className="grid h-14 grid-cols-[auto_1fr_auto] items-center gap-3 px-3 sm:px-5 lg:grid-cols-[220px_var(--global-search-width)_minmax(0,1fr)]">
+    <header data-app-header className="fixed left-0 right-0 top-0 z-50 lg:left-16 border-b border-platforma-border bg-surface/[0.92] shadow-soft backdrop-blur-xl">
+      <InboxNotificationEffects user={user} business={business} activeMembership={activeMembership} />
+      <div className="grid h-14 lg:h-12 grid-cols-[auto_1fr_auto] items-center gap-3 px-3 sm:px-5 lg:grid-cols-[220px_var(--global-search-width)_minmax(0,1fr)]">
         <div className="flex min-w-0 items-center gap-2 sm:gap-3">
           <Button
             className="h-10 w-10 min-h-10 min-w-10 px-0 text-platforma-ink lg:hidden"
@@ -96,13 +68,9 @@ export function Header({
             <Menu aria-hidden="true" size={22} strokeWidth={2.2} />
           </Button>
           <div className="hidden min-w-0 items-center gap-4 lg:flex">
-            <span className="max-w-[220px] truncate text-[21px] font-semibold leading-7 text-platforma-text">
-              {currentPageTitle}
-            </span>
+            <span className="max-w-[220px] truncate text-[21px] font-semibold leading-7 text-platforma-text">{currentPageTitle}</span>
           </div>
-          <div
-            className={pageHeader ? "min-w-0 flex-1 lg:hidden" : "lg:hidden"}
-          >
+          <div className={pageHeader ? "min-w-0 flex-1 lg:hidden" : "lg:hidden"}>
             <GlobalSearch />
           </div>
         </div>
@@ -117,9 +85,7 @@ export function Header({
               {pageHeader.filters ? (
                 <div className="relative">
                   <Button
-                    variant={
-                      pageHeader.activeFilterCount ? "primary" : "secondary"
-                    }
+                    variant={pageHeader.activeFilterCount ? "primary" : "secondary"}
                     className="relative h-9 shrink-0 px-3"
                     onClick={() => setShowFilters((current) => !current)}
                     aria-label={pageHeader.filterLabel || t("calendar.filters")}
@@ -128,9 +94,7 @@ export function Header({
                     data-testid="header-filter-trigger"
                   >
                     <SlidersHorizontal size={17} />
-                    <span className="hidden xl:inline">
-                      {pageHeader.filterLabel || t("calendar.filters")}
-                    </span>
+                    <span className="hidden xl:inline">{pageHeader.filterLabel || t("calendar.filters")}</span>
                     {pageHeader.activeFilterCount ? (
                       <span className="grid min-w-5 place-items-center rounded-full bg-surface-card px-1.5 py-0.5 text-[11px] font-semibold text-brand-700">
                         {pageHeader.activeFilterCount}
@@ -153,9 +117,7 @@ export function Header({
                         className="flex items-center gap-2 text-xs font-semibold text-platforma-subtle"
                       >
                         <SlidersHorizontal aria-hidden="true" size={15} />
-                        <span>
-                          {pageHeader.filterLabel || t("calendar.filters")}
-                        </span>
+                        <span>{pageHeader.filterLabel || t("calendar.filters")}</span>
                       </div>
                       <button
                         type="button"
@@ -180,9 +142,7 @@ export function Header({
                     key={action.label}
                     variant="secondary"
                     size={showsLabel ? "md" : "icon"}
-                    className={
-                      showsLabel ? "h-9 shrink-0 px-3" : "h-9 w-9 shrink-0"
-                    }
+                    className={showsLabel ? "h-9 shrink-0 px-3" : "h-9 w-9 shrink-0"}
                     onClick={action.onClick}
                     disabled={action.disabled}
                     title={action.title}
@@ -191,9 +151,7 @@ export function Header({
                     data-focus-return-id={action.focusReturnId}
                   >
                     {Icon ? <Icon size={17} /> : null}
-                    {showsLabel ? (
-                      <span className="hidden xl:inline">{action.label}</span>
-                    ) : null}
+                    {showsLabel ? <span className="hidden xl:inline">{action.label}</span> : null}
                   </Button>
                 );
               })}
@@ -221,23 +179,22 @@ export function Header({
           })}
           {pageHeader?.primaryAction ? (
             <div className="lg:hidden">
-              <PrimaryPageAction action={pageHeader.primaryAction} compact />
+              <PrimaryPageAction
+                action={pageHeader.primaryAction}
+                compact
+              />
             </div>
           ) : null}
-          <NotificationBell
-            user={user}
-            business={business}
-            showNotifications={showNotifications}
-            setShowNotifications={setShowNotifications}
-          />
+          <NotificationBell user={user} business={business} showNotifications={showNotifications} setShowNotifications={setShowNotifications} setSelectedNotification={setSelectedNotification} />
+          <VoiceAssistantTrigger />
           <HeaderAccountLink user={user} membership={activeMembership} />
+          {selectedNotification && business ? <NotificationInspector key={`${business.id}:${user?.id}:${selectedNotification}`} id={selectedNotification} business={business.id} onClose={() => setSelectedNotification(null)} /> : null}
+
         </div>
       </div>
       {pageHeader?.activeFilters ? (
         <div className="border-t border-platforma-border bg-surface/[0.92] px-4 py-1.5 sm:px-6">
-          <div className="flex min-w-0 items-center gap-2 overflow-x-auto pb-1">
-            {pageHeader.activeFilters}
-          </div>
+          <div className="flex min-w-0 items-center gap-2 overflow-x-auto pb-1">{pageHeader.activeFilters}</div>
         </div>
       ) : null}
     </header>
@@ -257,11 +214,7 @@ function PrimaryPageAction({
     <Button
       data-testid="page-primary-action"
       variant={action.variant || "primary"}
-      className={
-        compact
-          ? "h-10 w-10 shrink-0 px-0"
-          : "h-9 shrink-0 whitespace-nowrap px-4"
-      }
+      className={compact ? "h-10 w-10 shrink-0 px-0" : "h-9 shrink-0 whitespace-nowrap px-4"}
       onClick={action.onClick}
       disabled={action.disabled}
       title={action.title}

@@ -1,3 +1,4 @@
+from apps.core.client_projection import client_relation_q
 from django.db.models import Count, Q
 from django.utils import timezone
 from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
@@ -5,7 +6,8 @@ from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.response import Response
 
-from apps.businesses.access import Actions
+from apps.businesses.access import Actions, Resources, assert_can
+from apps.businesses.capabilities import assert_resource_enabled
 from apps.businesses.models import BusinessMember
 from apps.clients.models import Client
 from apps.core.file_validation import validate_file_upload
@@ -28,12 +30,14 @@ class OutreachTemplateViewSet(TenantModelViewSet):
     access_resource = "notifications"
 
     def perform_create(self, serializer):
-        _assert_outreach_role(self.request.user, serializer.validated_data.get("business"), OUTREACH_MANAGE_ROLES)
         serializer.validated_data["created_by"] = self.request.user
+        _assert_outreach_role(self.request.user, serializer.validated_data.get("business"), OUTREACH_MANAGE_ROLES,
+                              action=self.get_access_action(), obj=self._scope_candidate_from_serializer(serializer))
         serializer.save()
 
     def perform_update(self, serializer):
-        _assert_outreach_role(self.request.user, serializer.validated_data.get("business") or serializer.instance.business, OUTREACH_MANAGE_ROLES)
+        _assert_outreach_role(self.request.user, serializer.validated_data.get("business") or serializer.instance.business, OUTREACH_MANAGE_ROLES,
+                              action=self.get_access_action(), obj=self._scope_candidate_from_serializer(serializer))
         serializer.save()
 
 
@@ -61,23 +65,25 @@ class OutreachCampaignViewSet(TenantModelViewSet):
     }
 
     def perform_create(self, serializer):
-        _assert_outreach_role(self.request.user, serializer.validated_data.get("business"), OUTREACH_MANAGE_ROLES)
         serializer.validated_data["created_by"] = self.request.user
+        _assert_outreach_role(self.request.user, serializer.validated_data.get("business"), OUTREACH_MANAGE_ROLES,
+                              action=self.get_access_action(), obj=self._scope_candidate_from_serializer(serializer))
         serializer.save()
 
     def perform_update(self, serializer):
-        _assert_outreach_role(self.request.user, serializer.validated_data.get("business") or serializer.instance.business, OUTREACH_MANAGE_ROLES)
+        _assert_outreach_role(self.request.user, serializer.validated_data.get("business") or serializer.instance.business, OUTREACH_MANAGE_ROLES,
+                              action=self.get_access_action(), obj=self._scope_candidate_from_serializer(serializer))
         serializer.save()
 
     @action(detail=True, methods=["get"], url_path="preview-audience")
     def preview_audience(self, request, pk=None):
         campaign = self.get_object()
-        return Response(preview_campaign_audience(campaign))
+        return Response(preview_campaign_audience(campaign, actor=request.user))
 
     @action(detail=True, methods=["post"])
     def prepare(self, request, pk=None):
         campaign = self.get_object()
-        _assert_outreach_role(request.user, campaign.business, OUTREACH_MANAGE_ROLES)
+        _assert_outreach_role(request.user, campaign.business, OUTREACH_MANAGE_ROLES, obj=campaign)
         try:
             result = prepare_campaign_recipients(campaign, client_ids=request.data.get("client_ids"))
         except ValueError as exc:
@@ -87,7 +93,7 @@ class OutreachCampaignViewSet(TenantModelViewSet):
     @action(detail=True, methods=["post"])
     def launch(self, request, pk=None):
         campaign = self.get_object()
-        _assert_outreach_role(request.user, campaign.business, OUTREACH_LAUNCH_ROLES)
+        _assert_outreach_role(request.user, campaign.business, OUTREACH_LAUNCH_ROLES, obj=campaign)
         try:
             result = launch_campaign(campaign)
         except ValueError as exc:
@@ -113,12 +119,14 @@ class OutreachCampaignViewSet(TenantModelViewSet):
     @action(detail=False, methods=["get"], url_path="appointment-automation-status")
     def appointment_automation_status(self, request):
         business = _resolve_accessible_business(request)
-        return Response(appointment_automation_status(business))
+        assert_resource_enabled(business, Resources.NOTIFICATIONS)
+        assert_can(request.user, business, Resources.NOTIFICATIONS, Actions.VIEW)
+        return Response(appointment_automation_status(business, actor=request.user))
 
     @action(detail=True, methods=["post"], url_path="retry-failed")
     def retry_failed(self, request, pk=None):
         campaign = self.get_object()
-        _assert_outreach_role(request.user, campaign.business, OUTREACH_LAUNCH_ROLES)
+        _assert_outreach_role(request.user, campaign.business, OUTREACH_LAUNCH_ROLES, obj=campaign)
         try:
             result = retry_failed_recipients(
                 campaign,
@@ -132,7 +140,7 @@ class OutreachCampaignViewSet(TenantModelViewSet):
     @action(detail=True, methods=["post"])
     def cancel(self, request, pk=None):
         campaign = self.get_object()
-        _assert_outreach_role(request.user, campaign.business, OUTREACH_LAUNCH_ROLES)
+        _assert_outreach_role(request.user, campaign.business, OUTREACH_LAUNCH_ROLES, obj=campaign)
         try:
             result = cancel_campaign(campaign, request=request, reason=str(request.data.get("reason") or ""))
         except ValueError as exc:
@@ -172,7 +180,7 @@ class OutreachConsentViewSet(TenantModelViewSet):
         channel = self.request.query_params.get("channel")
         status_filter = self.request.query_params.get("status")
         if client_id:
-            queryset = queryset.filter(client_id=client_id)
+            queryset = queryset.filter(client_relation_q(self.request.user), client_id=client_id)
         if channel:
             queryset = queryset.filter(channel=channel)
         if status_filter:
@@ -185,11 +193,13 @@ class OutreachConsentViewSet(TenantModelViewSet):
         return [JSONParser]
 
     def perform_create(self, serializer):
-        _assert_outreach_role(self.request.user, serializer.validated_data.get("business"), OUTREACH_MANAGE_ROLES)
+        _assert_outreach_role(self.request.user, serializer.validated_data.get("business"), OUTREACH_MANAGE_ROLES,
+                              action=self.get_access_action(), obj=self._scope_candidate_from_serializer(serializer))
         serializer.save()
 
     def perform_update(self, serializer):
-        _assert_outreach_role(self.request.user, serializer.validated_data.get("business") or serializer.instance.business, OUTREACH_MANAGE_ROLES)
+        _assert_outreach_role(self.request.user, serializer.validated_data.get("business") or serializer.instance.business, OUTREACH_MANAGE_ROLES,
+                              action=self.get_access_action(), obj=self._scope_candidate_from_serializer(serializer))
         serializer.save()
 
     @action(detail=False, methods=["post"], url_path="bulk-import")
@@ -203,7 +213,7 @@ class OutreachConsentViewSet(TenantModelViewSet):
             raise ValidationError({"rows": "Rows must be a list."})
 
         business = self._resolve_business_for_import(business_id)
-        _assert_outreach_role(request.user, business, OUTREACH_MANAGE_ROLES)
+        _assert_outreach_role(request.user, business, OUTREACH_MANAGE_ROLES, obj=OutreachConsent(business=business))
         result = self._import_rows(business=business, rows=rows, default_channel=channel, default_status=status_value, default_source=source)
         return Response(result)
 
@@ -223,7 +233,7 @@ class OutreachConsentViewSet(TenantModelViewSet):
             ],
         )
         business = self._resolve_business_for_import(request.data.get("business"))
-        _assert_outreach_role(request.user, business, OUTREACH_MANAGE_ROLES)
+        _assert_outreach_role(request.user, business, OUTREACH_MANAGE_ROLES, obj=OutreachConsent(business=business))
         rows = read_consent_upload(upload)
         result = self._import_rows(
             business=business,
@@ -307,9 +317,11 @@ class OutreachConsentViewSet(TenantModelViewSet):
         return None
 
 
-def _assert_outreach_role(user, business, allowed_roles):
+def _assert_outreach_role(user, business, allowed_roles, *, obj, action=Actions.MANAGE):
     if business is None:
         raise ValidationError({"business": "Business is required."})
+    assert_resource_enabled(business, Resources.NOTIFICATIONS)
+    assert_can(user, business, Resources.NOTIFICATIONS, action, obj=obj)
     if business.owner_id == getattr(user, "id", None) and BusinessMember.Roles.OWNER in allowed_roles:
         return
     membership = BusinessMember.objects.filter(business=business, user=user, is_active=True).first()

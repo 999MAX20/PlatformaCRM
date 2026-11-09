@@ -1,6 +1,6 @@
 import { ClientPicker } from "../../../components/forms/ClientPicker";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useRef, useState } from "react";
+import { useId, useRef, useState } from "react";
 import { tasksApi, type TaskCreatePayload } from "../../../api/tasks";
 import { normalizeAppError } from "../../../api/appError";
 import type { TaskRelationType } from "../../../api/taskRelations";
@@ -27,6 +27,7 @@ export function TaskEditor({ task, business, zone, initialClient, initialAppoint
   task?: Task; business: Id; zone: string; initialClient?: Id; initialAppointment?: Id; parentDirty?: boolean; onClose: () => void; onSaved: (task: Task) => void;
 }) {
   const { t } = useI18n();
+  const formId = useId();
   const { user } = useAuth();
   const confirm = useActionConfirm();
   const [version, setVersion] = useState(task);
@@ -69,9 +70,12 @@ export function TaskEditor({ task, business, zone, initialClient, initialAppoint
   });
   const conflict = save.error && normalizeAppError(save.error).category === "conflict";
   const allowedLinks = links.filter(field => field !== "lead" && field !== "deal" && hasPermission(user, business, resources[field], "view"));
-  return <Modal open title={t(task ? "taskWorkspace.edit" : "taskWorkspace.create")} onClose={() => void close()} size="lg" testId="task-editor">
+  return <Modal open title={t(task ? "taskWorkspace.edit" : "taskWorkspace.create")} onClose={() => void close()} size="lg" testId="task-editor" footer={<div className="flex justify-end gap-2">
+      <Button type="button" variant="secondary" disabled={save.isPending} onClick={() => void close()}>{t("common.cancel")}</Button>
+      <Button type="submit" form={formId} isLoading={save.isPending} disabled={!draft.title.trim() || Boolean(task && !dirty)}>{t("taskWorkspace.save")}</Button>
+    </div>}>
     <TaskDraftGuard dirty={dirty || parentDirty} pending={save.isPending} saved={saved} />
-    <form className="space-y-4" onSubmit={e => { e.preventDefault(); save.mutate(); }}>
+    <form id={formId} className="space-y-4" onSubmit={e => { e.preventDefault(); save.mutate(); }}>
       <Input autoFocus required maxLength={255} label={t("taskWorkspace.name")} value={draft.title} onChange={e => change("title", e.target.value)} />
       <div className="grid gap-4 sm:grid-cols-2">
         <Select label={t("taskWorkspace.assignee")} value={draft.assignee} disabled={assignees.isPending || Boolean(assignees.error)} onChange={e => change("assignee", e.target.value)} options={[
@@ -93,17 +97,14 @@ export function TaskEditor({ task, business, zone, initialClient, initialAppoint
         {allowedLinks.length ? <fieldset className="space-y-3">
           <legend className="mb-2 text-sm font-semibold">{t("taskWorkspace.links")}</legend>
           <Select aria-label={t("taskWorkspace.links")} value={relation} onChange={e => setRelation(e.target.value as TaskRelationType)} options={allowedLinks.map(value => ({ value, label: t(`taskWorkspace.link.${value}`) }))} />
-          {allowedLinks.includes(relation) ? relation === "client" ? <ClientPicker businessId={business} value={draft.client} onChange={value => change("client", value)} placeholder={t("taskWorkspace.none")} /> : <TaskRelationPicker key={relation} type={relation} business={business} taskId={task?.id} value={draft[relation]} label={task?.relations?.find(v => v.type === relation)?.title} onChange={value => change(relation, value)} /> : null}
+          {allowedLinks.includes(relation) ? relation === "client" ? <ClientPicker businessId={business} value={draft.client} onChange={value => change("client", value)} placeholder={t("taskWorkspace.none")} /> : <TaskRelationPicker key={relation} type={relation} business={business} zone={zone} taskId={task?.id} value={draft[relation]} label={task?.relations?.find(v => v.type === relation)?.title} onChange={value => change(relation, value)} /> : null}
           <div className="flex flex-wrap gap-2">{links.filter(field => draft[field]).map(field => <span key={field} className="rounded-control bg-surface-muted px-2 py-1 text-xs">{t(`taskWorkspace.link.${field}`)} #{draft[field]}</span>)}</div>
         </fieldset> : null}
       </div> : null}
       {save.error ? <ErrorState error={save.error} message={conflict ? t("taskWorkspace.conflict") : undefined} action={conflict && task ? <Button type="button" variant="secondary" isLoading={refresh.isPending} onClick={() => refresh.mutate()}>{t("taskWorkspace.refresh")}</Button> : undefined} /> : null}
       {refresh.error ? <ErrorState error={refresh.error} /> : null}
       {save.error ? <FieldErrorSummary error={normalizeAppError(save.error)} fieldLabels={Object.fromEntries(Object.keys(draft).map(field => [field, t(`taskWorkspace.${field === "title" ? "name" : field === "due_at" ? "due" : field === "reminder_at" ? "reminder" : links.includes(field as TaskRelationType) ? `link.${field}` : field}`)]))} /> : null}
-      <div className="flex justify-end gap-2 border-t border-platforma-border pt-4">
-        <Button type="button" variant="secondary" disabled={save.isPending} onClick={() => void close()}>{t("common.cancel")}</Button>
-        <Button type="submit" isLoading={save.isPending} disabled={!draft.title.trim() || Boolean(task && !dirty)}>{t("taskWorkspace.save")}</Button>
-      </div>
+
     </form>
   </Modal>;
 }

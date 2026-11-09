@@ -1,3 +1,4 @@
+import { CustomEntityFields } from "../../../components/crm/CustomEntityFields";
 import { CalendarCheck2, CalendarClock } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -38,7 +39,7 @@ export function ResourceEditModal({
   scheduleError,
   canManage,
   isSaving,
-  errorMessage,
+  error,
   onSubmit,
   onClose,
   onDirtyChange,
@@ -52,7 +53,7 @@ export function ResourceEditModal({
   scheduleError?: string;
   canManage: boolean;
   isSaving: boolean;
-  errorMessage?: string;
+  error?: unknown;
   onSubmit: (payload: Partial<Resource>) => Promise<unknown>;
   onClose: () => void;
   onDirtyChange: (isDirty: boolean) => void;
@@ -62,18 +63,20 @@ export function ResourceEditModal({
   const branches = useQuery({ queryKey: ["branches", businessId], queryFn: () => branchesApi.listAll({ business: businessId }), enabled: !!resource });
   const [resetVersion, setResetVersion] = useState(0);
   const [isDirty, setIsDirty] = useState(false);
+  const [fieldsDirty, setFieldsDirty] = useState(false);
+  useEffect(() => { onDirtyChange(isDirty || fieldsDirty); }, [isDirty, fieldsDirty, onDirtyChange]);
 
   useEffect(() => {
     setResetVersion(0);
     setIsDirty(false);
-    onDirtyChange(false);
+    setFieldsDirty(false);
   }, [onDirtyChange, resource?.id]);
 
   if (!resource) return null;
 
   function handleDirtyChange(nextDirty: boolean) {
     setIsDirty(nextDirty);
-    onDirtyChange(nextDirty);
+
   }
 
   function resetForm() {
@@ -99,7 +102,7 @@ export function ResourceEditModal({
             <ResourceStatusBadge resource={resource} size="sm" />
             <p className="text-sm text-platforma-subtle">{t("resources.inspectorSubtitle")}</p>
           </div>
-          {errorMessage ? <ErrorState message={errorMessage} /> : null}
+          {error ? <ErrorState error={error} /> : null}
           {!canManage ? (
             <StatusNotice tone="warning" title={t("resources.readOnlyTitle")} description={t("resources.readOnlyText")} />
           ) : null}
@@ -115,6 +118,7 @@ export function ResourceEditModal({
             onDirtyChange={handleDirtyChange}
             onSubmit={onSubmit}
           />
+          {resource.resource_type === "staff" && <CustomEntityFields business={businessId} kind="specialist" id={resource.id} readOnly={!canManage || !!resource.retired_at} onDirtyChange={setFieldsDirty} />}
         </div>
 
         <div className="space-y-4">

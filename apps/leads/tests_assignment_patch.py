@@ -54,7 +54,7 @@ class LeadAssignmentPatchTests(TestCase):
         self.assertFalse(Notification.objects.exists())
 
     def test_shared_guard_rejects_notification_recipient_takeover(self):
-        notification = Notification.objects.create(business=self.business, recipient=self.peer, text="Private", send_at=timezone.now())
+        notification = Notification.objects.create(business=self.business, recipient=self.peer, channel="email", text="Private", send_at=timezone.now())
         response = self.api.patch(f"/api/notifications/{notification.pk}/", {"recipient": self.actor.pk}, format="json")
         self.assertEqual(response.status_code, 403, response.data)
         notification.refresh_from_db()

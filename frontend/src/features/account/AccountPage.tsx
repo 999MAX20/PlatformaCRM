@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 
 import { changePassword, getCurrentUserLoginHistory, getMfaStatus, updateCurrentUser } from "../../api/auth";
 import { getApiErrorMessage } from "../../api/client";
+import { useNotification } from "../../components/notifications/NotificationProvider";
 import { Button } from "../../components/ui/Button";
 import { Card } from "../../components/ui/Card";
 import { ErrorState, LoadingState } from "../../components/ui/StateViews";
@@ -36,6 +37,7 @@ export function AccountPage({ platform = false }: { platform?: boolean }) {
     return () => cancelAnimationFrame(frame);
   }, [platform, hash, key]);
   const { t } = useI18n();
+  const notify = useNotification();
   const queryClient = useQueryClient();
   const { user, refreshUser, logout } = useAuth();
   const [profileForm, setProfileForm] = useState({
@@ -49,8 +51,8 @@ export function AccountPage({ platform = false }: { platform?: boolean }) {
     mfa_code: "",
   });
   const profileDirty = profileForm.full_name !== (user?.full_name || "") || profileForm.phone !== (user?.phone || "");
-  const [profileSaved, setProfileSaved] = useState(false);
-  const [passwordSaved, setPasswordSaved] = useState(false);
+  const [passwordSubmitted, setPasswordSubmitted] = useState(false);
+  const passwordMismatch = passwordSubmitted && passwordForm.new_password !== passwordForm.confirm_password;
   const [passwordModalOpen, setPasswordModalOpen] = useState(false);
 
   const loginHistory = useQuery({
@@ -69,16 +71,12 @@ export function AccountPage({ platform = false }: { platform?: boolean }) {
   const profileMutation = useMutation({
     mutationFn: () => updateCurrentUser(profileForm),
     onSuccess: async () => {
-      setProfileSaved(true);
+      notify({ message: t("account.saved"), tone: "success" });
       await refreshUser();
-      window.setTimeout(() => setProfileSaved(false), 2600);
     },
   });
   const passwordMutation = useMutation({
     mutationFn: () => {
-      if (passwordForm.new_password !== passwordForm.confirm_password) {
-        throw new Error(t("account.passwordMismatch"));
-      }
       return changePassword({
         current_password: passwordForm.current_password,
         new_password: passwordForm.new_password,
@@ -87,10 +85,10 @@ export function AccountPage({ platform = false }: { platform?: boolean }) {
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["account-sessions"] });
-      setPasswordSaved(true);
+      notify({ message: t("account.passwordSaved"), tone: "success" });
+      setPasswordSubmitted(false);
       setPasswordModalOpen(false);
       setPasswordForm({ current_password: "", new_password: "", confirm_password: "", mfa_code: "" });
-      window.setTimeout(() => setPasswordSaved(false), 2600);
     },
   });
   return (
@@ -105,7 +103,6 @@ export function AccountPage({ platform = false }: { platform?: boolean }) {
           <Button size="sm" variant="ghost" data-testid="merchant-logout" onClick={logout}><LogOut size={16} />{t("header.logout")}</Button>
         </div>
         {profileMutation.error ? <ErrorState error={profileMutation.error} message={getApiErrorMessage(profileMutation.error)} /> : null}
-        {profileSaved ? <p role="status" className="mb-3 text-sm text-platforma-success">{t("account.saved")}</p> : null}
         <div className="grid gap-5 sm:grid-cols-[160px_minmax(0,1fr)]">
           <AvatarEditor user={user} />
         <form className="grid max-w-[560px] gap-3 sm:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]" onSubmit={(event) => { event.preventDefault(); profileMutation.mutate(); }}>
@@ -125,11 +122,10 @@ export function AccountPage({ platform = false }: { platform?: boolean }) {
 
       <Card id="security" padding="md" className="scroll-mt-36 lg:scroll-mt-24">
         <h2 className="mb-3 text-base font-bold">{t("account.loginHistoryEyebrow")}</h2>
-        {passwordSaved ? <p role="status" className="mb-3 text-sm text-platforma-success">{t("account.passwordSaved")}</p> : null}
         <div className="divide-y divide-platforma-border">
           <EmailSecurityRow />
           <SecuritySettingRow icon={<KeyRound size={18} />} title={t("account.passwordLabel")}
-            action={<Button size="sm" variant="secondary" aria-label={t("account.changePassword")} onClick={() => { passwordMutation.reset(); setPasswordModalOpen(true); }}>{t("account.securityEdit")}</Button>} />
+            action={<Button size="sm" variant="secondary" aria-label={t("account.changePassword")} onClick={() => { passwordMutation.reset(); setPasswordSubmitted(false); setPasswordModalOpen(true); }}>{t("account.securityEdit")}</Button>} />
           <MfaSecurityCard />
         </div>
         <ActiveSessions />
@@ -175,12 +171,18 @@ export function AccountPage({ platform = false }: { platform?: boolean }) {
             className="grid gap-4"
             onSubmit={(event) => {
               event.preventDefault();
+              setPasswordSubmitted(true);
+              if (passwordForm.new_password !== passwordForm.confirm_password) {
+                passwordMutation.reset();
+                event.currentTarget.querySelector<HTMLInputElement>('[name="confirm_password"]')?.focus();
+                return;
+              }
               passwordMutation.mutate();
             }}
           >
             <Input label={t("account.currentPassword")} type="password" value={passwordForm.current_password} onChange={(event) => setPasswordForm((current) => ({ ...current, current_password: event.target.value }))} required />
             <Input label={t("account.newPassword")} type="password" value={passwordForm.new_password} onChange={(event) => setPasswordForm((current) => ({ ...current, new_password: event.target.value }))} required />
-            <Input label={t("account.confirmPassword")} type="password" value={passwordForm.confirm_password} onChange={(event) => setPasswordForm((current) => ({ ...current, confirm_password: event.target.value }))} required />
+            <Input label={t("account.confirmPassword")} name="confirm_password" error={passwordMismatch ? t("account.passwordMismatch") : undefined} type="password" value={passwordForm.confirm_password} onChange={(event) => setPasswordForm((current) => ({ ...current, confirm_password: event.target.value }))} required />
             {mfaStatus.data?.enabled ? <Input label={t("mfa.codeLabel")} value={passwordForm.mfa_code} onChange={(event) => setPasswordForm((current) => ({ ...current, mfa_code: event.target.value }))} autoComplete="one-time-code" required /> : null}
             <div className="flex flex-wrap justify-end gap-2 pt-2">
               <Button type="button" variant="secondary" disabled={passwordMutation.isPending} onClick={() => setPasswordModalOpen(false)}>

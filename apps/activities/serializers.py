@@ -4,9 +4,13 @@ from apps.activities.models import ActivityEvent, Note, Segment, SegmentFilter, 
 from apps.activities.write_validation import CLIENT_LINK_ERROR, HistoryWriteValidationMixin
 from apps.activities.segments import assert_segment_filter_visible
 from apps.integrations.sanitization import sanitize_error_payload
+from apps.crm.field_policy import deal_amount_visible, redact_amount_metadata
+from apps.core.client_projection import ClientProjectionMixin, reader_actor, redact_client_metadata, visible_client
+from apps.activities.taxonomy import event_label
+from apps.clients.duplicate_visibility import project_duplicate_rows
 
 
-class ActivityEventSerializer(HistoryWriteValidationMixin, serializers.ModelSerializer):
+class ActivityEventSerializer(ClientProjectionMixin, HistoryWriteValidationMixin, serializers.ModelSerializer):
     attribution_field = "actor"
 
     class Meta:
@@ -31,6 +35,17 @@ class ActivityEventSerializer(HistoryWriteValidationMixin, serializers.ModelSeri
     def to_representation(self, instance):
         data = super().to_representation(instance)
         data["metadata"] = sanitize_error_payload(data.get("metadata") or {})
+        request = self.context.get("request")
+        actor = getattr(request, "user", None) or self.context.get("actor")
+        if instance.event_type == "form_submitted" and isinstance(data["metadata"].get("duplicates"), list):
+            data["metadata"] = {**data["metadata"], "duplicates": project_duplicate_rows(
+                data["metadata"]["duplicates"], actor=actor, business=instance.business,
+            )}
+        if (instance.entity_type.casefold() == "deal" or instance.event_type.casefold().startswith("deal.")) and not deal_amount_visible(actor, instance.business):
+            data["metadata"] = redact_amount_metadata(data["metadata"])
+        if instance.client_id and visible_client(instance.client, actor=actor, business=instance.business, context=self.context) is None:
+            data["metadata"] = redact_client_metadata(data["metadata"])
+            data["text"] = event_label(instance.event_type) or ""
         return data
 
 
@@ -48,10 +63,11 @@ class ActivityTimelineSerializer(ActivityEventSerializer):
         return event.actor.full_name or event.actor.get_full_name()
 
     def get_client_name(self, event):
-        return event.client.full_name if event.client and event.client.business_id == event.business_id else ""
+        client = visible_client(event.client, actor=reader_actor(self.context), business=event.business, context=self.context)
+        return client.full_name if client is not None else ""
 
 
-class NoteSerializer(HistoryWriteValidationMixin, serializers.ModelSerializer):
+class NoteSerializer(ClientProjectionMixin, HistoryWriteValidationMixin, serializers.ModelSerializer):
     attribution_field = "author"
 
     class Meta:

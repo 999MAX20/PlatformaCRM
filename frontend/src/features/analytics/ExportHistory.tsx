@@ -36,10 +36,10 @@ export function ExportHistory({ business, userId }: { business: Business; userId
   const download = useMutation({ mutationFn: (id: Id) => analyticsExports.download(id, business.id) });
   const rows = history.data?.results ?? [];
   return <div className="space-y-4" data-testid="export-history">
-    <div className="flex flex-wrap items-end gap-3">
-      <Select label={t("exportHistory.kind")} value={kind} onChange={event => { setKind(event.target.value); setPage(1); download.reset(); }}
+    <div className="grid grid-cols-1 items-end gap-3 sm:grid-cols-[minmax(220px,1fr)_minmax(180px,1fr)_auto]">
+      <Select portal className="h-auto min-h-11 py-2 [&>span]:whitespace-normal [&>span]:text-left" label={t("exportHistory.kind")} value={kind} onChange={event => { setKind(event.target.value); setPage(1); download.reset(); }}
         options={[{ value: "", label: t("common.all") }, ...kinds.map(value => ({ value, label: t(`exportHistory.kind.${value}`) }))]} />
-      <Select label={t("exportHistory.status")} value={status} onChange={event => { setStatus(event.target.value); setPage(1); download.reset(); }}
+      <Select portal className="h-auto min-h-11 py-2 [&>span]:whitespace-normal [&>span]:text-left" label={t("exportHistory.status")} value={status} onChange={event => { setStatus(event.target.value); setPage(1); download.reset(); }}
         options={[{ value: "", label: t("common.all") }, ...statuses.map(value => ({ value, label: t(`exportHistory.status.${value}`) }))]} />
       <Button variant="secondary" disabled={history.isFetching} onClick={() => void history.refetch()}>{t("analyticsWorkspace.refresh")}</Button>
     </div>

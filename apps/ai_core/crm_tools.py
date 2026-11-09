@@ -139,6 +139,13 @@ def permission_for_tool(tool):
 
 def assert_command_allowed(*, business, user, tool, payload, lock=False, replay=False):
     assert_employee_tool(business, tool)
+    if tool == "crm_schedule":
+        from apps.ai_core.agent_runtime import voice_runtime
+        from apps.ai_core.voice_schedule_commands import assert_schedule_allowed
+        if not voice_runtime() or payload.get("entity") != "appointments":
+            raise PermissionDenied("Scheduling requires the voice workflow.")
+        assert_schedule_allowed(business, user, payload.get("values"))
+        return ENTITIES["appointments"], None
     entity = payload.get("entity")
     spec = entity_spec(entity)
     # Source availability and VIEW are necessary even for a mutation preview.
@@ -197,17 +204,28 @@ def validated_details(*, business, user, spec, entity, tool, target, values):
 
 
 def prepare_command(*, business, user, tool, payload):
-    if tool not in MUTATIONS or not isinstance(payload, dict):
+    if tool not in MUTATIONS | {"crm_schedule"} or not isinstance(payload, dict):
         raise ValidationError("Unsupported CRM command.")
     if set(payload) - {"entity", "entity_id", "values", "action", "reason"}:
         raise ValidationError("Unsupported CRM command arguments.")
     spec, target = assert_command_allowed(business=business, user=user, tool=tool, payload=payload)
+    schedule_preview = None
+    if tool == "crm_schedule":
+        from apps.ai_core.voice_schedule_commands import validate_schedule
+        if set(payload) != {"entity", "values"}:
+            raise ValidationError("Unsupported scheduling arguments.")
+        client, _, visits = validate_schedule(business=business, user=user, values=payload["values"])
+        schedule_preview = {"client_name": client.full_name,
+            "visits": [{"service_name": visit["service"].name, "resource_name": visit["resource"].name,
+                "start_at": visit["start_at"], "branch_name": visit["branch"].name if visit["branch"] else ""} for visit in visits]}
     if tool in {"crm_create", "crm_update"}:
         validated_details(business=business, user=user, spec=spec, entity=payload["entity"], tool=tool, target=target, values=payload.get("values"))
     if tool == "crm_transition":
         from apps.ai_core.crm_transitions import validate_transition
         validate_transition(payload)
     prepared = {**payload, "requires_confirmation": True}
+    if schedule_preview is not None:
+        prepared["preview"] = schedule_preview
     if target:
         prepared["expected_version"] = target_fingerprint(target)
         record = serialize_record(spec, target, user)
@@ -221,6 +239,9 @@ def prepare_command(*, business, user, tool, payload):
 @transaction.atomic
 def execute_command(log, user):
     spec, target = assert_command_allowed(business=log.business, user=user, tool=log.tool_name, payload=log.input_json, lock=True)
+    if log.tool_name == "crm_schedule":
+        from apps.ai_core.voice_schedule_commands import execute_schedule
+        return execute_schedule(log, user)
     payload = log.input_json
     if target and payload.get("expected_version") != target_fingerprint(target):
         raise ValidationError("CRM record changed. Prepare and confirm a new proposal.")

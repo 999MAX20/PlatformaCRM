@@ -233,13 +233,14 @@ export function timelineDetails(event: ActivityEvent, t: Translate) {
   return details.slice(0, 8);
 }
 
-export function groupTimeline(events: ActivityEvent[], language: string) {
+export function groupTimeline(events: ActivityEvent[], language: string, timeZone?: string) {
   const locale = localeFor(language);
   return events.reduce<Record<string, ActivityEvent[]>>((acc, event) => {
     const key = new Intl.DateTimeFormat(locale, {
       day: "2-digit",
       month: "long",
       year: "numeric",
+      timeZone,
     }).format(new Date(event.created_at));
     acc[key] = acc[key] || [];
     acc[key].push(event);

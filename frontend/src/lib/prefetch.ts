@@ -75,6 +75,6 @@ export function prefetchRouteData(path: string, queryClient: QueryClient, busine
   }
 
   if (path.startsWith(routeMetadata.settings.path)) {
-    void queryClient.prefetchQuery({ queryKey: ["notifications"], queryFn: notificationsApi.list, ...prefetchOptions });
+    if (businessId) void queryClient.prefetchQuery({ queryKey: ["notifications", businessId], queryFn: () => notificationsApi.list({ business: businessId }), ...prefetchOptions });
   }
 }

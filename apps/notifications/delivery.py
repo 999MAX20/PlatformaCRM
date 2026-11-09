@@ -85,6 +85,29 @@ def deliver_notification(notification, *, claimed=False):
         claim.update(status=Notification.Statuses.CANCELLED, locked_at=None, next_retry_at=None, updated_at=timezone.now())
         return {"notification_id": notification.id, "status": "cancelled", "reason": "Appointment message is no longer applicable."}
 
+    # Prepared recipients are a snapshot, not continuing consent to send.
+    # Recheck on every claimed attempt, including delayed deliveries and retries.
+    if notification.category == Notification.Categories.OUTREACH and notification.channel != Notification.Channels.SYSTEM:
+        from apps.outreach.models import OutreachCampaign
+        from apps.outreach.services import can_receive_campaign
+        recipient = notification.outreach_recipients.select_related("campaign").filter(
+            business_id=notification.business_id,
+            client_id=notification.client_id,
+            campaign__business_id=notification.business_id,
+            campaign__channel=notification.channel,
+        ).first()
+        if recipient is None or notification.client_id is None or notification.client.business_id != notification.business_id:
+            allowed, reason = False, "Outreach delivery context is invalid."
+        elif recipient.campaign.status == OutreachCampaign.Statuses.CANCELLED:
+            allowed, reason = False, "Campaign cancelled."
+        else:
+            allowed, reason = can_receive_campaign(notification.client, recipient.campaign)
+        if not allowed:
+            claim.update(status=Notification.Statuses.CANCELLED, locked_at=None, next_retry_at=None,
+                last_error=reason, updated_at=timezone.now())
+            _write_delivery_activity(notification, status="cancelled", result={"reason": reason})
+            return {"notification_id": notification.id, "status": "cancelled", "reason": reason}
+
     try:
         result = _deliver(notification)
     except Exception as exc:

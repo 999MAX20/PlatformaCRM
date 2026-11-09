@@ -366,7 +366,7 @@ export const platform: Record<string, string> = {
   "platform.merchantDetail.saveAction": "Записать действие",
   "platform.merchantDetail.refresh": "Обновить",
   "platform.merchantDetail.noRecentActions":
-    "Support actions пока не записаны.",
+    "Действий поддержки пока нет.",
   "platform.placeholder.accessLayerActive": "Access layer активен",
   "platform.placeholder.internalOnly": "Внутренний platform-only route",
   "platform.placeholder.placeholderOnly": "Только placeholder",

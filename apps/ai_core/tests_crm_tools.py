@@ -222,6 +222,36 @@ class CRMCommandTests(TestCase):
         appointment.refresh_from_db()
         self.assertEqual(appointment.status, "cancelled")
 
+    @patch("django.utils.timezone.now", return_value=timezone.datetime(2026, 10, 4, 10, tzinfo=timezone.timezone.utc))
+    def test_time_only_reschedule_keeps_specialist_reason_and_rechecks_activity(self, _clock):
+        from datetime import time
+        from apps.services.models import Service
+        from apps.scheduling.models import Resource, WorkingHours, Appointment
+        service = Service.objects.create(business=self.business, name="Consultation", duration_minutes=30)
+        resource = Resource.objects.create(business=self.business, name="Specialist")
+        WorkingHours.objects.create(business=self.business, weekday=0, start_time=time(9), end_time=time(18))
+        create = self.proposal("crm_create", entity="appointments", values={"client": self.person.pk,
+            "service": service.pk, "resource": resource.pk, "start_at": "2026-10-05T10:00:00Z"})
+        self.assertEqual(self.execute(create).status_code, 200)
+        appointment = Appointment.objects.get()
+        move = self.proposal("crm_transition", entity="appointments", entity_id=appointment.pk,
+            action="reschedule", values={"start_at": "2026-10-05T11:00:00Z"}, reason="Requested new time")
+        approval = self.approval(move)
+        for _ in range(2):
+            response = self.api.post(f"/api/ai/tools/{move.pk}/execute/", {"approval_id": approval.pk})
+            self.assertEqual(response.status_code, 200, response.data)
+        appointment.refresh_from_db()
+        self.assertEqual(appointment.resource_id, resource.pk)
+        self.assertEqual(appointment.start_at.hour, 11)
+        self.assertEqual(AuditLog.objects.filter(metadata__reason="Requested new time").count(), 1)
+        denied = self.proposal("crm_transition", entity="appointments", entity_id=appointment.pk,
+            action="reschedule", values={"start_at": "2026-10-05T12:00:00Z"})
+        resource.is_active = False
+        resource.save(update_fields=["is_active"])
+        self.assertEqual(self.execute(denied).status_code, 400)
+        appointment.refresh_from_db()
+        self.assertEqual(appointment.start_at.hour, 11)
+
     def test_direct_execution_cannot_bypass_exact_approval(self):
         log = self.proposal("crm_update", entity_id=self.person.pk, values={"phone": "123"})
         with self.assertRaises(PermissionDenied):

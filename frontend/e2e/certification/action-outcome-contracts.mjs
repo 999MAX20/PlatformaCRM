@@ -7,6 +7,12 @@ function define(actions, expected) {
   }
 }
 
+define("complete_account_recovery", "Only a valid unused recovery token completes its intended account recovery; invalid or expired tokens preserve a safe recovery path without exposing account credentials.");
+define("configure_voice", "Voice visibility, language and microphone preference persist in user-keyed local storage; microphone test remains local and does not execute a CRM command.");
+define("open_voice_history", "Only the current user and business voice conversations are shown; selecting a result reveals its actual source/result without executing it again.");
+define("open_support_incident", "The selected business/component/episode resolves through platform authorization and displays actual incident and linked support records.");
+define("create_support_case reply_support_case", "The permitted case/message is persisted once under its business or platform support scope; retry retains the request key and cannot expose another business's messages.");
+
 define("configure_appointment_messages", "The three existing scenarios persist allowed channel/template/timing settings under settings:update; validation and recovery retain inputs. Saving is not evidence of external delivery.");
 define("manage_custom_fields", "Authorized definition changes preserve entity/type/options and existing values; the applicable full entity page can save and reload the configured field.");
 define("configure_role_permissions", "The employee's assigned role opens with its identity and return context; an unassigned or changed role must first be explicitly saved. Permission changes affect actual server access for assigned members only.");

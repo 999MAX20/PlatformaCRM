@@ -1,3 +1,4 @@
+import { useCustomColumns, customFilterParams } from "../../components/crm/CustomFieldColumns";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CalendarClock, Clock3, Plus, Search, Scissors, WalletCards } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
@@ -49,6 +50,7 @@ export function ServicesPage() {
   const canManage = hasPermission(user, business?.id, "settings", "update");
   const canViewSettings = hasPermission(user, business?.id, "settings", "view");
   const [searchParams, setSearchParams] = useSearchParams();
+  const customFilters = customFilterParams(searchParams);
   const [createOpen, setCreateOpen] = useState(false);
   const [inspectorDirty, setInspectorDirty] = useState(false);
 
@@ -85,9 +87,10 @@ export function ServicesPage() {
   }, [search, searchDraft, updateSearchParams]);
 
   const servicesQuery = useQuery({
-    queryKey: ["services", "workspace", business?.id, user?.id, search, status, page, pageSize],
+    queryKey: ["services", "workspace", business?.id, user?.id, search, status, page, pageSize, customFilters],
     queryFn: () => servicesApi.listPage({
       business: business!.id,
+      ...customFilters,
       search: search || undefined,
       status,
       page,
@@ -156,6 +159,7 @@ export function ServicesPage() {
   });
 
   const serviceRows = servicesQuery.data?.results || [];
+  const customTable = useCustomColumns(business?.id || 0, "service", serviceRows.map(item => item.id));
   const totalServices = servicesQuery.data?.count || 0;
   const totalPages = Math.max(1, Math.ceil(totalServices / pageSize));
   const selectedServiceOnPage = serviceRows.find((service) => service.id === selectedServiceId && service.business === business?.id) || null;
@@ -301,6 +305,7 @@ export function ServicesPage() {
         ) : null}
 
         <div data-testid="services-operational-workspace" aria-busy={servicesQuery.isFetching} className="min-h-[420px] flex-1">
+          {customTable.toolbar}
           {!servicesQuery.isError ? <DataTable
               isLoading={servicesQuery.isPlaceholderData}
               className="h-full"
@@ -333,7 +338,7 @@ export function ServicesPage() {
                   className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between"
                 >
                   <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
-                    <div className="w-full min-w-0 sm:w-80 xl:w-[22rem]">
+                    <div className="w-[var(--global-search-width,480px)] max-w-full min-w-0 shrink-0">
                       <Input
                         data-testid="services-search"
                         value={searchDraft}
@@ -380,6 +385,7 @@ export function ServicesPage() {
                 { header: t("services.priceFrom"), cell: (service) => formatMoney(service.price_from) },
                 { header: t("services.bookings"), cell: (service) => servicesQuery.isError ? "—" : service.appointment_count ?? "—" },
                 { header: t("appointment.status"), cell: (service) => <ServiceStatusBadge service={service} /> },
+                ...customTable.columns,
                 {
                   header: t("appointments.actions"),
                   className: "w-16 text-right",

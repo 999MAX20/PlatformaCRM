@@ -8,10 +8,11 @@ export type InputProps = InputHTMLAttributes<HTMLInputElement> & {
   error?: string;
   leftIcon?: ReactNode;
   rightIcon?: ReactNode;
+  pageSearch?: boolean;
 };
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ label, error, leftIcon, rightIcon, className, "aria-describedby": describedBy, ...props }, ref) => {
+  ({ label, error, leftIcon, rightIcon, pageSearch = false, className, "aria-describedby": describedBy, ...props }, ref) => {
     const errorId = useId();
     const resolvedDescribedBy = [describedBy, error ? errorId : null].filter(Boolean).join(" ") || undefined;
 
@@ -20,7 +21,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     }
 
     return (
-      <label className="block">
+      <label className={cn("block", pageSearch && "max-w-full min-w-0 shrink-0")} style={pageSearch ? { width: "var(--global-search-width,480px)" } : undefined}>
         {label ? <span className="mb-2 block text-sm font-semibold text-platforma-subtle">{label}</span> : null}
         <span className="relative block">
           {leftIcon ? <span aria-hidden="true" className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-platforma-faint">{leftIcon}</span> : null}

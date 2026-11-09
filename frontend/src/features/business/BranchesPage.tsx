@@ -28,11 +28,11 @@ export function BranchesPage() {
   const canManage = hasPermission(user, business?.id, "settings", "update");
   useEffect(() => { setPageHeader({ title: t("branches.title") }); return () => setPageHeader(null); }, [setPageHeader, t]);
   const save = useMutation({ mutationFn: (payload: Partial<Branch>) => branchesApi.create({ ...payload, business: business!.id }),
-    onSuccess: async (branch) => { await client.invalidateQueries({ queryKey: ["branches"] }); setParams({ branch: String(branch.id) }); setCreating(false); } });
+    onSuccess: async (branch) => { await Promise.all(["branches", "branch-catalog", "branch-configuration", "available-slots"].map(key => client.invalidateQueries({ queryKey: [key] }))); setParams({ branch: String(branch.id) }); setCreating(false); } });
   return <div className="space-y-4"><BusinessWorkspaceNav />
     {query.isLoading ? <LoadingState /> : query.error ? <ErrorState error={query.error} action={<Button onClick={() => query.refetch()}>{t("common.retry")}</Button>} /> : <>
       <div className="flex flex-wrap items-end gap-3">
-        {!!branches.length && <Select label={t("branches.branch")} value={selected?.id || ""} onChange={(event) => { setParams({ branch: event.target.value }); setCreating(false); }} options={branches.map((item) => ({ value: item.id, label: `${item.name}${item.archived_at ? ` · ${t("branches.archived")}` : !item.is_active ? ` · ${t("branches.paused")}` : ""}` }))} />}
+        {branches.length > 1 && <Select label={t("branches.branch")} value={selected?.id || ""} onChange={(event) => { setParams({ branch: event.target.value }); setCreating(false); }} options={branches.map((item) => ({ value: item.id, label: `${item.name}${item.archived_at ? ` · ${t("branches.archived")}` : !item.is_active ? ` · ${t("branches.paused")}` : ""}` }))} />}
         {canManage && <Button onClick={() => setCreating(true)}>{t("branches.add")}</Button>}
       </div>
       {creating && <BranchDetailsForm onSave={(payload) => save.mutateAsync(payload)} pending={save.isPending} onCancel={() => setCreating(false)} />}

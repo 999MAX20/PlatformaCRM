@@ -1,3 +1,4 @@
+import { useCustomColumns, customFilterParams } from "../../components/crm/CustomFieldColumns";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { BriefcaseBusiness, CalendarClock, Plus, UsersRound } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
@@ -56,6 +57,7 @@ export function ResourcesPage() {
   const canManage = hasPermission(user, business?.id, "settings", "update");
   const canViewSettings = hasPermission(user, business?.id, "settings", "view");
   const [searchParams, setSearchParams] = useSearchParams();
+  const customFilters = customFilterParams(searchParams);
   const [createOpen, setCreateOpen] = useState(false);
   const [createDraft, setCreateDraft] = useState<Partial<Resource> | undefined>();
   const [selectedTemplate, setSelectedTemplate] = useState("staff");
@@ -93,9 +95,10 @@ export function ResourcesPage() {
   }, [search, searchDraft, updateSearchParams]);
 
   const resourcesQuery = useQuery({
-    queryKey: ["resources", "workspace", business?.id, search, resourceType, status, page, pageSize],
+    queryKey: ["resources", "workspace", business?.id, search, resourceType, status, page, pageSize, customFilters],
     queryFn: () => resourcesApi.listPage({
       business: business!.id,
+      ...customFilters,
       search: search || undefined,
       resource_type: resourceType,
       status,
@@ -112,6 +115,7 @@ export function ResourcesPage() {
   });
 
   const resourceRows = resourcesQuery.data?.results || [];
+  const customTable = useCustomColumns(business?.id || 0, "specialist", resourceRows.filter(item => item.resource_type === "staff").map(item => item.id));
   const totalResources = resourcesQuery.data?.count || 0;
   const totalPages = Math.max(1, Math.ceil(totalResources / pageSize));
   const selectedResourceOnPage = resourceRows.find((resource) => resource.id === selectedResourceId && resource.business === business?.id) || null;
@@ -155,6 +159,9 @@ export function ResourcesPage() {
       }
     },
   });
+  const resetResourceMutation = mutation.reset;
+  useEffect(() => resetResourceMutation(), [selectedResource?.id, createOpen, resetResourceMutation]);
+
   const statusMutation = useMutation({
     mutationFn: ({ resource, isActive }: { resource: Resource; isActive: boolean }) =>
       resourcesApi.update({ id: resource.id, payload: { is_active: isActive } }),
@@ -169,13 +176,6 @@ export function ResourcesPage() {
       showNotification({ message: getApiErrorMessage(error), tone: "danger" });
     },
   });
-  const actionErrorMessage = mutation.error ? getApiErrorMessage(mutation.error) : "";
-
-  useEffect(() => {
-    if (!actionErrorMessage) return;
-    showNotification({ message: actionErrorMessage, tone: "danger" });
-  }, [actionErrorMessage, showNotification]);
-
   useEffect(() => {
     if (resourcesQuery.isLoading || resourcesQuery.isFetching) return;
     if (page > totalPages) {
@@ -308,6 +308,7 @@ export function ResourcesPage() {
         ) : null}
 
         <div data-testid="resources-operational-workspace" className="min-h-[420px] flex-1">
+            {customTable.toolbar}
             <DataTable
               className="h-full"
               contentClassName="overscroll-contain"
@@ -361,6 +362,7 @@ export function ResourcesPage() {
                 { header: t("resources.bookings"), cell: (resource) => resource.appointment_count || 0 },
                 { header: t("resources.scheduleState"), cell: (resource) => t(resource.has_individual_schedule ? "resources.individualSchedule" : "resources.businessSchedule") },
                 { header: t("appointment.status"), cell: (resource) => <ResourceStatusBadge resource={resource} /> },
+                ...customTable.columns,
                 {
                   header: t("appointments.actions"),
                   className: "w-16 text-right",
@@ -389,7 +391,7 @@ export function ResourcesPage() {
         scheduleError={workingHoursQuery.error ? getApiErrorMessage(workingHoursQuery.error) : undefined}
         canManage={canManage}
         isSaving={mutation.isPending || statusMutation.isPending}
-        errorMessage={mutation.error ? actionErrorMessage : undefined}
+        error={mutation.error}
         onDirtyChange={setInspectorDirty}
         onClose={() => { void closeInspector(); }}
         onOpenSchedule={() => { void openSelectedResourceSchedule(); }}
@@ -408,6 +410,7 @@ export function ResourcesPage() {
       >
         {businessHoursQuery.error ? <ErrorState error={businessHoursQuery.error} message={getApiErrorMessage(businessHoursQuery.error)} /> : null}
         <ResourceCreateForm
+          submitError={mutation.error}
           businessId={business.id}
           initial={createDraft}
           businessHours={businessHoursQuery.data || []}

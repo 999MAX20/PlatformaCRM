@@ -42,9 +42,9 @@ export function PricingHistory({
           {t("pricing.recordsCount", { count: changeLogs.length })}
         </span>
       </div>
-      <div className="mt-4 grid gap-3 md:grid-cols-2">
+      <div className="mt-4 grid gap-3 xl:grid-cols-[minmax(0,var(--global-search-width,480px))_minmax(0,1fr)]">
         <Input
-          data-testid="pricing-history-search-input"
+          pageSearch data-testid="pricing-history-search-input"
           label={t("common.search")}
           value={changeSearch}
           onChange={(event) => setChangeSearch(event.target.value)}

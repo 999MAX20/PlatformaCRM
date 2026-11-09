@@ -20,7 +20,7 @@ function setup() {
 }
 
 test("task hover warms the actual infinite workspace contract and supports the next page", async () => {
-  const h = setup(), client = new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: Infinity } } });
+  const h = setup(), client = new QueryClient({ defaultOptions: { queries: { staleTime: 5 * 60_000, retry: false, gcTime: Infinity } } });
   const pending = [];
   h.prefetchRouteData("/app/tasks?bucket=today&assignee=9", { prefetchInfiniteQuery: options => { const result = client.prefetchInfiniteQuery(options); pending.push(result); return result; } }, "7");
   await Promise.all(pending);
@@ -32,9 +32,23 @@ test("task hover warms the actual infinite workspace contract and supports the n
   assert.equal(h.requests[0].method, "listPage");
   assert.equal(h.requests[0].params.business, 7);
   assert.equal(h.requests[0].params.bucket, "today");
+  await client.fetchInfiniteQuery(options);
+  assert.equal(h.requests.length, 1, "opening the workspace consumes the prefetched cache without another request");
   const next = options.getNextPageParam(data.pages[0], data.pages);
   await options.queryFn({ pageParam: next });
   assert.equal(h.requests[1].params.page, 2);
+  client.clear();
+});
+
+test("task workspace cache stays distinct after a Business switch", async () => {
+  const h = setup(), client = new QueryClient({ defaultOptions: { queries: { staleTime: 5 * 60_000, retry: false, gcTime: Infinity } } });
+  const first = h.taskWorkspaceQuery(h.taskWorkspaceParams(7, new URLSearchParams()).list);
+  const second = h.taskWorkspaceQuery(h.taskWorkspaceParams(8, new URLSearchParams()).list);
+  await client.prefetchInfiniteQuery(first);
+  await client.fetchInfiniteQuery(second);
+  assert.deepEqual(h.requests.map(request => request.params.business), [7, 8]);
+  await client.fetchInfiniteQuery(first);
+  assert.equal(h.requests.length, 2);
   client.clear();
 });
 

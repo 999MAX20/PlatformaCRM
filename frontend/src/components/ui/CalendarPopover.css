@@ -14,3 +14,16 @@
 [data-calendar-trigger]:disabled {
   pointer-events: auto;
 }
+
+.platforma-calendar-year [role="listbox"] {
+  min-width: 112px;
+  left: auto;
+  right: 0;
+}
+
+.platforma-calendar-year [role="option"] > span {
+  display: block;
+  white-space: nowrap;
+  overflow: visible;
+  overflow-wrap: normal;
+}

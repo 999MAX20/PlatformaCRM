@@ -1,3 +1,4 @@
+import { CustomEntityFields } from "../../../components/crm/CustomEntityFields";
 import { CalendarCheck2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -38,11 +39,13 @@ export function ServiceEditModal({
   const { t } = useI18n();
   const [resetVersion, setResetVersion] = useState(0);
   const [isDirty, setIsDirty] = useState(false);
+  const [fieldsDirty, setFieldsDirty] = useState(false);
+  useEffect(() => { onDirtyChange(isDirty || fieldsDirty); }, [isDirty, fieldsDirty, onDirtyChange]);
 
   useEffect(() => {
     setResetVersion(0);
     setIsDirty(false);
-    onDirtyChange(false);
+    setFieldsDirty(false);
   }, [onDirtyChange, service?.id]);
 
   if (!service) return null;
@@ -51,7 +54,7 @@ export function ServiceEditModal({
 
   function handleDirtyChange(nextDirty: boolean) {
     setIsDirty(nextDirty);
-    onDirtyChange(nextDirty);
+
   }
 
   function resetForm() {
@@ -94,6 +97,7 @@ export function ServiceEditModal({
             onDirtyChange={handleDirtyChange}
             onSubmit={onSubmit}
           />
+          <CustomEntityFields business={businessId} kind="service" id={service.id} readOnly={!canEdit} onDirtyChange={setFieldsDirty} />
         </div>
 
         <aside className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-xs lg:self-start">

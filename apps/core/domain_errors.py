@@ -87,3 +87,9 @@ class TemporaryServiceFailure(DomainAPIException):
     default_detail = "The service is temporarily unavailable. Please try again."
     category = "temporary"
     retryable = True
+
+
+class FileScanUnavailable(TemporaryServiceFailure):
+    error_code = "file_scan_unavailable"
+    default_code = error_code
+    default_detail = "File security check is temporarily unavailable. The file was not uploaded."

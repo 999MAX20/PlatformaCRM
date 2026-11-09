@@ -12,13 +12,16 @@ import { taskDateISO } from "../tasks/workspaceUtils";
 
 import type { Appointment } from "../../types";
 
-import { getCalendarRange } from "./calendarUtils";
+import { getCalendarRange, shiftDateValue } from "./calendarUtils";
+import type { CalendarViewMode } from "./calendarTypes";
 
 type Args = {
   business: ReturnType<typeof useActiveBusiness>["business"];
   userId: number | undefined;
   canViewTasks: boolean;
   calendarRange: ReturnType<typeof getCalendarRange>;
+  viewMode: CalendarViewMode;
+  inspectorOpen: boolean;
   businessTimeZone: string;
   branchFilter: string;
   serviceFilter: string;
@@ -32,6 +35,8 @@ export function useCalendarQueries({
   userId,
   canViewTasks,
   calendarRange,
+  viewMode,
+  inspectorOpen,
   businessTimeZone,
   branchFilter,
   serviceFilter,
@@ -40,16 +45,20 @@ export function useCalendarQueries({
   date,
   appointmentIdFromUrl,
 }: Args) {
+  const detailRange = viewMode === "year" ? { start: date, end: shiftDateValue(date, 1) } : calendarRange;
+  const detailsEnabled = viewMode !== "year" || inspectorOpen || !!appointmentIdFromUrl;
   const branchesQuery = useQuery({
     queryKey: ["branches", business?.id],
     queryFn: () => branchesApi.listAll({ business: business!.id }),
     enabled: !!business,
   });
   const hasBranches = !!branchesQuery.data?.length;
+  const soleBranch = branchesQuery.data?.length === 1 ? branchesQuery.data[0] : undefined;
+  const scheduleBranch = branchFilter || (soleBranch ? String(soleBranch.id) : "");
   const branchCatalog = useQuery({
-    queryKey: ["branch-catalog", Number(branchFilter)],
-    queryFn: () => branchesApi.catalog(Number(branchFilter)),
-    enabled: !!branchFilter,
+    queryKey: ["branch-catalog", Number(scheduleBranch)],
+    queryFn: () => branchesApi.catalog(Number(scheduleBranch)),
+    enabled: !!scheduleBranch,
   });
   const tasks = useQuery({
     queryKey: [
@@ -57,22 +66,22 @@ export function useCalendarQueries({
       "calendar",
       business?.id,
       userId,
-      calendarRange.start,
-      calendarRange.end,
+      detailRange.start,
+      detailRange.end,
       businessTimeZone,
     ],
     queryFn: () =>
       tasksApi.listAll({
         business: business!.id,
         status: "active",
-        due_from: taskDateISO(`${calendarRange.start}T00:00`, businessTimeZone),
+        due_from: taskDateISO(`${detailRange.start}T00:00`, businessTimeZone),
         due_to: new Date(
           Date.parse(
-            taskDateISO(`${calendarRange.end}T00:00`, businessTimeZone)!,
+            taskDateISO(`${detailRange.end}T00:00`, businessTimeZone)!,
           ) - 1,
         ).toISOString(),
       }),
-    enabled: !!business?.id && canViewTasks,
+    enabled: !!business?.id && canViewTasks && detailsEnabled,
   });
   const appointments = useQuery({
     queryKey: [
@@ -80,8 +89,9 @@ export function useCalendarQueries({
       "calendar",
       business?.id,
       userId,
-      calendarRange.start,
-      calendarRange.end,
+      detailRange.start,
+      detailRange.end,
+      businessTimeZone,
       serviceFilter,
       resourceFilter,
       statusFilter,
@@ -90,14 +100,38 @@ export function useCalendarQueries({
     queryFn: () =>
       appointmentsApi.listAll({
         business: business!.id,
-        start_from: calendarRange.start,
-        start_to: calendarRange.end,
+        start_from: detailRange.start,
+        start_to: detailRange.end,
         service: serviceFilter ? Number(serviceFilter) : "",
         resource: resourceFilter ? Number(resourceFilter) : "",
         status: statusFilter as Appointment["status"] | "",
         branch: branchFilter ? Number(branchFilter) : "",
       }),
-    enabled: Boolean(business?.id),
+    enabled: Boolean(business?.id) && detailsEnabled,
+  });
+  const yearSummary = useQuery({
+    queryKey: ["appointments", "calendar-summary", business?.id, userId, businessTimeZone,
+      calendarRange.start, calendarRange.end, serviceFilter, resourceFilter, statusFilter, branchFilter],
+    queryFn: () => appointmentsApi.calendarSummary({
+      business: business!.id, start_from: calendarRange.start, start_to: calendarRange.end,
+      service: serviceFilter ? Number(serviceFilter) : "", resource: resourceFilter ? Number(resourceFilter) : "",
+      status: statusFilter as Appointment["status"] | "", branch: branchFilter ? Number(branchFilter) : "",
+    }),
+    enabled: !!business?.id && viewMode === "year",
+  });
+  const outsideDay = inspectorOpen && viewMode !== "year" && (date < calendarRange.start || date >= calendarRange.end);
+  const inspectorAppointments = useQuery({
+    queryKey: ["appointments", "inspector-day", business?.id, userId, date, businessTimeZone, serviceFilter, resourceFilter, statusFilter, branchFilter],
+    enabled: !!business?.id && outsideDay,
+    queryFn: () => appointmentsApi.listAll({ business: business!.id, start_from: date, start_to: shiftDateValue(date, 1),
+      service: serviceFilter, resource: resourceFilter, status: statusFilter, branch: branchFilter }),
+  });
+  const inspectorTasks = useQuery({
+    queryKey: ["tasks", "inspector-day", business?.id, userId, date, businessTimeZone],
+    enabled: !!business?.id && outsideDay && canViewTasks,
+    queryFn: () => tasksApi.listAll({ business: business!.id, status: "active",
+      due_from: taskDateISO(`${date}T00:00`, businessTimeZone),
+      due_to: new Date(Date.parse(taskDateISO(`${shiftDateValue(date, 1)}T00:00`, businessTimeZone)!) - 1).toISOString() }),
   });
   const deepLinkedAppointment = useQuery({
     queryKey: [
@@ -114,7 +148,7 @@ export function useCalendarQueries({
     queryKey: [
       "available-slots",
       "calendar-day",
-      branchFilter,
+      scheduleBranch,
       business?.id,
       serviceFilter,
       resourceFilter,
@@ -124,13 +158,13 @@ export function useCalendarQueries({
       appointmentsApi.availableSlots({
         business_id: business!.id,
         service_id: Number(serviceFilter),
-        branch_id: branchFilter ? Number(branchFilter) : "",
+        branch_id: scheduleBranch ? Number(scheduleBranch) : "",
         resource_id: resourceFilter ? Number(resourceFilter) : "",
         date,
       }),
     enabled: Boolean(
       !branchesQuery.isLoading &&
-      (!hasBranches || branchFilter) &&
+      (!hasBranches || scheduleBranch) &&
       business?.id &&
       serviceFilter &&
       resourceFilter &&
@@ -150,9 +184,14 @@ export function useCalendarQueries({
   return {
     branchesQuery,
     hasBranches,
+    scheduleBranch,
     branchCatalog,
     tasks,
     appointments,
+    yearSummary,
+    outsideDay,
+    inspectorAppointments,
+    inspectorTasks,
     deepLinkedAppointment,
     dayAvailableSlots,
     dateExceptions,

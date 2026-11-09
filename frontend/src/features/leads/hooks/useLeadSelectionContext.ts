@@ -43,9 +43,9 @@ export function useLeadSelectionContext({
         .sort((a, b) => String(a.due_at || "9999").localeCompare(String(b.due_at || "9999")))
     : [];
   const selectedNextTask = selectedTasks[0];
-  const selectedDeals = selected ? deals.filter((deal) => deal.lead === selected.id || deal.client === selected.client) : [];
-  const selectedAppointments = selected ? appointments.filter((appointment) => appointment.lead === selected.id || appointment.client === selected.client) : [];
-  const selectedConversations = selected ? conversations.filter((conversation) => conversation.lead === selected.id || conversation.client === selected.client) : [];
+  const selectedDeals = selected ? deals.filter((deal) => deal.lead === selected.id || (selected.client !== null && deal.client === selected.client)) : [];
+  const selectedAppointments = selected ? appointments.filter((appointment) => appointment.lead === selected.id || (selected.client !== null && appointment.client === selected.client)) : [];
+  const selectedConversations = selected ? conversations.filter((conversation) => conversation.lead === selected.id || (selected.client !== null && conversation.client === selected.client)) : [];
 
   const duplicateCheck = useQuery({
     queryKey: ["lead-duplicates", businessId, selected?.id, selectedClient?.phone, selectedClient?.email],
@@ -84,7 +84,7 @@ export function useLeadSelectionContext({
       };
     });
     const duplicateMap = new Map<Id, Client>();
-    [...base.duplicateClients, ...serverDuplicates].forEach((client) => duplicateMap.set(client.id, client));
+    [...base.duplicateClients, ...serverDuplicates].forEach((client) => { if (client.id !== null) duplicateMap.set(client.id, { ...client, id: client.id }); });
     return {
       ...base,
       duplicateClients: Array.from(duplicateMap.values()).filter((client) => client.id !== selected.client),

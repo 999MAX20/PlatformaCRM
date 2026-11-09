@@ -50,7 +50,7 @@ function FallbackAction({ error, onRetry }: FallbackActionProps) {
       <RefreshCw aria-hidden="true" size={16} />
       {delay > 0 ? t("fallback.retryAfter", { seconds: delay }) : t("common.retry")}
     </Button>
-    {retryError ? <p role="alert" className="max-w-sm text-sm text-platforma-subtle">{t(retryError.messageKey)}</p> : null}
+    {retryError ? <p role="alert" className="platforma-retry-error max-w-sm text-sm text-platforma-subtle">{t(retryError.messageKey)}</p> : null}
     </div>
   );
 }
@@ -161,7 +161,7 @@ export function PermissionFallback({ error, title, message, guidance, testId = "
       description={message || t(error.messageKey)}
       details={(
         <>
-          <p className="rounded-control bg-surface-card px-3 py-2 text-xs font-semibold text-platforma-warning">
+          <p className="platforma-notice-guidance rounded-control px-3 py-2 text-xs font-semibold">
             {guidance || t("fallback.permission.guidance")}
           </p>
           <RecoveryDetails error={error} className="mt-3" />

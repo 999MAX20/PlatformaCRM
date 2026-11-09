@@ -48,6 +48,7 @@ class PaidBetaGateTests(TestCase):
         STORAGES={"default": {"BACKEND": "storages.backends.s3.S3Storage"}},
         SENTRY_DSN="https://public@sentry.example.net/1",
         SENTRY_TRACES_SAMPLE_RATE=0.05,
+        EMAIL_BACKEND="django.core.mail.backends.smtp.EmailBackend",
         EMAIL_HOST="smtp.zani.example.net",
         DEFAULT_FROM_EMAIL="PlatformaCRM <no-reply@zani.example.net>",
         EMAIL_USE_TLS=True,

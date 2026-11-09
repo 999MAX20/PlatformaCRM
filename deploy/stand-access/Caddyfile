@@ -35,6 +35,16 @@
     handle /media/* {
       respond 404
     }
+    @landingHome path / /index.html
+    handle @landingHome {
+      root * /srv
+      rewrite * /landing/index.html
+      file_server
+    }
+    handle /landing/* {
+      root * /srv
+      file_server
+    }
     handle {
       root * /srv
       try_files {path} /index.html

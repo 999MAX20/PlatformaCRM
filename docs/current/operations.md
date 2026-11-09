@@ -1,4 +1,35 @@
+## Маршрутизация лендинга CRM — 06.11.2026
+
+В `deploy/stand-access/Caddyfile` точные `/` и `/index.html` выдают
+`/srv/landing/index.html`; `/landing/*` обслуживает статические файлы с404
+для отсутствующего файла. Остальные UI-маршруты используют SPA fallback.
+Все обработчики расположены после существующего stand forward_auth:
+публичное назначение лендинга не отключает защиту стенда. Конфигурация проверена
+локально настоящим Caddy и затем развёрнута на защищённом platformacrm.kz.
+Добавлены только файлы лендинга и маршруты; действующая SPA-сборка, SSE,
+пароль и конфигурация CRM сохранены. HTTPS/browser/backup PASS; подробности —
+`output/crm-landing-deploy-20261106/RESULT.md`.
+[Проверки и предложение трёх доменов на одной VM](../testing/evidence/crm-landing-integration-20261106.md).
+
+## Явное возобновление филиала — 06.11.2026
+
+По поручению владельца существующий архивный Branch1 активирован доменным сервисом;
+изменение отражено в audit. Каталог и график сохранены, повторная настройка не нужна.
+Рабочая конфигурация/14визитов не менялись при тесте голоса: тест выполнялся на её
+изолированной копии с реальными ASR/model. Первоначальный неуспешный голосовой прогон
+не скрыт последующим PASS. [Подробности](../testing/evidence/single-location-20261106.md#явная-активация-и-проверка-голоса--reactivate-branch-20261106).
+
 ## Локальная БД и очистка токенов, 06.11.2026
+
+Позднее в тот же день локальная CRM переведена на PostgreSQL17.10,
+`127.0.0.1:55432/platformacrm`, отдельная роль без superuser. SQLite сохранена
+как исходный срез; текущие записи идут в PostgreSQL. Перед переключением сделаны
+финальный SQLite backup, полная сверка152таблиц/10117строк, pg_dump и проверенное
+восстановление. [Доказательства, rollback и нагрузка](../testing/evidence/postgres-load-20261106.md).
+Windows `PlatformaCRM-Local-PostgreSQL` запускает закреплённый кластер при входе
+пользователя; `dev.ps1` также проверяет его до миграционного preflight.
+Существующий PostgreSQL5432 не менялся. Секреты и backup находятся только в
+игнорируемом локальном output. Это локальная операция, не production deployment.
 
 По поручению владельца создана и проверена SQLite-копия, применены branches0003
 и scheduling0012 к локальной db.sqlite3. После миграций данные вне филиалов/журнала
@@ -11,14 +42,16 @@ Windows PlatformaCRM-Local-ExpiredTokens выполняется ежедневн
 Windows, с ограниченными правами текущего пользователя и StartWhenAvailable.
 Компьютер должен быть включён, пользователь должен войти в Windows. Задание
 запускает pythonw.exe scripts/cleanup_local_tokens.py из канонического checkout;
-скрипт допускает только существующую db.sqlite3 в local/development. Лог без
+скрипт допускает существующую db.sqlite3 либо закреплённый локальный PostgreSQL
+профиль в local/development; чужой host/database/user/port отклоняется. Лог без
 токенов: output/local-db-maintenance/tokens.log. Два запуска завершились с кодом0.
 Это обслуживание БД, не автозапуск dev-сервисов. Production не менялся.
 
 ## Единая команда local dev — 06.11.2026
 
 `./dev.ps1` из корня канонической папки запускает в скрытых окнах:
-Redis6379 (только127.0.0.1/::1, AOF в `output/local-import-runtime`), ClamAV3310,
+закреплённый PostgreSQL при его выборе в `.env`, Redis6379
+(только127.0.0.1/::1, AOF в `output/local-import-runtime`), ClamAV3310,
 freshclam, Celery solo `reports_exports`, Django8000 и Vite5173. Скрипт не запускает
 beat/другие очереди, не меняет `.env`, не устанавливает зависимости, не применяет
 миграции и не создаёт Windows автозапуск. Процессы продолжают работать после
@@ -46,6 +79,84 @@ PID+creation time; совпадения только PID недостаточн�
 Код0 не означает прохождения всей бизнес-приёмки CRM.
 
 Проверки реализации и live запуск: `output/dev-command-20261106/CHECKPOINT.md`.
+
+## Миграция автоматической основной точки — 06.11.2026
+
+branches0003 добавляет uses_business_defaults и создаёт точку только Business
+без любых строк Branch; не восстанавливает архивные филиалы. Зависимость:
+scheduling0009. Forward/reverse проверяются в изолированной БД. Reverse сохраняет
+точки и историю, материализуя их каталог/график/доступ перед удалением флага;
+это совместимый откат схемы, а не удаление созданных записей.
+Рабочая branches0003 к завершению проверки уже применена вне этой задачи;
+read-only preflight подтвердил 15 автоматических точек и SQLite quick_check=ok.
+Этот срез не сертифицирует чужую backup/migrate процедуру и не означает deployment.
+Для других сред branches0003 требует отдельного разрешения целевой базы с backup.
+Все ранее архивированные точки требуют явного возобновления владельцем.
+[Проверки и границы](../testing/evidence/single-location-20261106.md).
+
+## Локальный runtime переноса — 06.11.2026
+
+Scanner/updater и Redis/import worker восстановлены после остановки. Redis доступен
+только на loopback IPv4/IPv6 localhost6379; AOF — `output/local-import-runtime`.
+Worker канонического checkout слушает `reports_exports`. Перед стартом очередь
+была пустой; beat/AIworker не запускались. Scanner VERSION, Redis PING и worker PONG
+подтверждены; PID/logs — `output/import-full-excel-20261106`. Процессы оставлены
+для локальной работы, Windows автозапуск отсутствует. После перезапуска компьютера
+требуется запуск этих служб, health-check до загрузки/preview/confirm.
+Полный XLSX→20 Client проверен в отдельной БД с отдельными Redis/Celery процессами;
+рабочие клиенты не добавлялись. [Evidence](../testing/evidence/import-upload-alert-20261106.md#полный-перенос-исходного-excel--06112026).
+
+## Локальная схема мастера переноса — 06.11.2026
+
+По прямому разрешению владельца без резервной копии применены core0014–0017
+к локальной `db.sqlite3`. Создание черновика API201, история200 и SQLite quick_check
+прошли; количество записей существующих бизнес-таблиц сохранено. Тестовый
+черновик откатан. Это закрывает локальный schema gap кнопки «Новый перенос»;
+production rollout, broker/antivirus и полный перенос этим не подтверждены.
+Срез: `output/import-create-20261106/working-migration.log`.
+
+## Голосовой ввод — 05.11.2026
+
+STT использует серверные OPENROUTER_API_KEY/BASE_URL и отдельные
+VOICE_INPUT_ENABLED (default true), VOICE_TRANSCRIPTION_MODEL
+(default openai/whisper-large-v3-turbo), VOICE_HTTP_TIMEOUT_SECONDS (default60).
+Маршрут `/audio/transcriptions` получает `zdr:true`/`data_collection:deny`;
+несовместимость обрабатывается отказом без ослабления политики и без автоматического
+платного повтора. Ключи не передаются браузеру. Audio upload до2MB проходит только
+через ограниченный memory handler; API возвращает no-store. Для независимых
+голосовых диалогов требуется ai_core0009; она применена к локальной db.sqlite3
+05.11 с резервной копией и явным разрешением владельца. Браузеру требуется secure context/localhost и разрешение микрофона.
+Наличие ключа не доказывает доступность модели: gpt-4o-transcribe реально
+отклонён ZDR-фильтром. Whisper Large V3 прошёл реальную проверку русской записи
+с неизменными privacy flags. HTTP-ошибки логируют только status/error code; body
+и аудио не сохраняются. Постоянный отказ отличается от retryable сбоя.
+На локальном dev установлен AI_QUEUE_LIVE_REQUESTS=False; AI-worker не запущен
+(06.11 восстановлены Redis и отдельный import worker);
+существующий inline путь обрабатывает запрос синхронно. Production default=True
+с очередью ai не изменён. При возвращении local queue=True нужен работающий
+broker/worker. [Реальная проверка и граница](../testing/evidence/voice-live-20261105.md).
+[Контракт и остаток](voice-assistant.md).
+
+После STT текст проходит GPT-4o mini для пунктуации с теми же ZDR/no-data-collection
+ограничениями. Этот дополнительный запрос увеличивает время обработки; при ошибке
+возвращается исходная расшифровка. Неотправленный текст не записывается этим шагом
+в историю/AIRequestLog; отправленные разговорные ходы используют обычный учёт
+AI-запросов. [Текущая проверка](../testing/evidence/voice-natural-20261105.md).
+
+## IMPORT-WORKSPACE — локальная основа 04.11.2026
+
+Новый мастер `/app/integrations/import` требует core0014–0017 и worker очереди
+`reports_exports` с задачей `imports.process_workspace`. UI ставит preview/confirm
+в очередь; отказ broker виден как ошибка, повторная публикация использует operation id.
+Claim token и транзакция результата защищают от повторного worker; зависшая попытка
+может быть перехвачена после5мин. Это управляемое восстановление, не обещание live-SLA.
+Черновик хранит разобранные строки, corrections и результат в БД; cancel очищает
+источники, completed history остаётся. Новый мастер не хранит исходный бинарный файл
+после scanner. Автоматический retention/очистка завершённой истории не вводятся.
+Миграции/очередь проверены локально в изоляции; core0014–0017 дополнительно
+применены к локальной рабочей базе06.11 (см. выше). Deployment и живой
+broker/antivirus не выполнены. [Контракт](import-workspace.md),
+[evidence](../testing/evidence/import-workspace-20261104.md).
 
 ## C11 — владение попыткой экспорта, 04.11.2026
 
@@ -144,13 +255,61 @@ Readiness WhatsApp учитывает включение YCloud и отдель�
 Ни аккаунты, ни secrets, ни настройки провайдера в этой задаче не менялись.
 Подробности и остаток — YCLOUD-TPLITE-20261028 в PRIMARY-SESSION.
 
+Coexistence 09.11: перед активацией нового кода требуется integrations0010
+(`onboarding_type`, `expected_phone_number`), проверенная только в изоляции.
+Для сохранения Business App нужны события `whatsapp.smb.message.echoes` и
+`whatsapp.smb.message.created`; точные подписки и eligibility подтверждает YCloud.
+Историю не подписывать для этого этапа. Внешний webhook должен проходить HTTPS
+до обработчика подписи без stand-login, с исключением только точного POST-пути
+`/api/integrations/ycloud/webhook/`. Текущий шаблон stand-access такого исключения
+не содержит. Его изменение, миграция рабочей БД, секреты и worker/beat являются
+отдельной активацией целевой среды. Локальные тесты не подтверждают её готовность.
+
+NOTIFICATIONS-PERSONAL-20261028: новые миграции notifications0006/0007 добавляют
+персональные состояния и фиксированную аудиторию, переносят legacy read_at без
+повторной доставки. Сначала проверены на одноразовых БД;29.10 по отдельному
+поручению применены к локальной рабочей БД после backup вместе с зависимостями
+core0012, support0002 и businesses0012/0013. Проверены integrity, legacy state,
+backfill и текущий UI; evidence — NOTIFICATIONS-PERSONAL-20261028 в PRIMARY.
+Это историческая локальная операция, не новая миграция в аудите04.11 и не deployment.
+Другие целевые среды требуют отдельной согласованной активации и release-проверки.
+После обновления кода до миграции старой рабочей БД новый API ленты использовать
+нельзя. Новых env-переменных, внешних каналов сотрудникам или worker-процессов нет.
+Тестовый UI использует канонические исходники с отдельной синтетической базой;
+live-приёмка этим не подтверждается. Подробности — PRIMARY-SESSION.
 
 Действующие ограничения и недоказанный допуск, 07.10.2026.
 Публикация Git и локальная приёмка не означают deployment/production readiness.
-Решение владельца 14.10: выбрать инфраструктуру на территории Казахстана,
-Yandex Cloud больше не выбранное направление. Технический оператор — владелец;
-провайдер, параметры среды и запуск ещё не назначены. Решения и исследование —
-[CRM-R02](../testing/task-state/PRIMARY-SESSION.md#crm-r02-20261014--pilot-decisions-and-provider-research).
+Последнее поручение владельца на комплексный аудит03.11 задаёт целевое направление
+Yandex Cloud. Оно заменяет прежний выбор направления14.10; регион, состав сервисов,
+ресурсы, операционные роли и запуск ещё не согласованы. Размеры Hoster.kz не критерий.
+Ранее принятое требование размещения в Казахстане сохраняется как ограничение
+для сверки с выбранной конфигурацией; выбор Yandex Cloud сам по себе не выбирает
+регион и не отменяет требования к данным. Противоречие решает владелец до запуска;
+новая облачная среда этим решением не развёрнута и не допущена к production.
+Историческое исследование14.10 — [CRM-R02](../testing/task-state/PRIMARY-SESSION.md#crm-r02-20261014--pilot-decisions-and-provider-research).
+
+## Принятый target восстановления — 29.10.2026
+
+По §0.8/28.1 объединённого ТЗ для CRM приняты цели RPO обычных данных≤15 минут
+и RTO основных операций≤4 часов. Они заменяют прежние цели5мин/2ч и старые
+неутверждённые варианты; это не измеренный результат или клиентский SLA.
+Платежи и подписанные документы сверяются с внешними фактами без тихих потерь/
+дублей; RPO=0 не обещается. Требуются проверенная конфигурация Yandex Cloud, БД/PITR,
+private files/keys/config/queues/inbox/outbox и согласованное restore/rollback.
+Manifest нагрузки отдельно описывает две независимые клиники и подготовку до
+пяти: пользователей/визиты/сообщения/файлы/базу/очереди, не только число tenants.
+
+Принято техническое дежурство24/7 для серьёзных сбоев, обычная поддержка по
+опубликованному графику. Люди/замещение, severity/response/runbooks/стоимость и
+измерения ещё нужны; один ответственный не доказывает 24/7. Restore фиксирует
+момент аварии/последний восстановленный факт/полезное восстановление, hashes и
+external reconciliation; повтор очереди не дублирует бизнес-операцию.
+Release manifest отделяет TEST/DEMO/UNCLASSIFIED, версии schema/config/артефактов
+и provider capabilities. При угрозе данным/деньгам изолируется опасный путь с
+уведомлением владельца; весь продукт останавливается, если изолировать нельзя.
+Ни cleanup/seed, ни deployment/рабочие миграции этим документом не разрешены.
+[CRM-R04/CG-04 и AC-RESTORE/AC-RELEASE](roadmap.md#зависимости-cg-и-оставшиеся-решения).
 
 ## Лимиты XLSX импорта
 
@@ -233,6 +392,46 @@ PLATFORM-REBUILD-01: platform read APIs отделяют записанные о
 Миграции и запуск collector не выполняются как побочный эффект чтения.
 Vite направляет /ready/ в тот же backend, что /api; HTML оболочки не является readiness.
 
+OFFICIAL-11, 28.10.2026: consent XLSX now uses existing bounded core reader
+after actual upload max+1 byte check. ZIP expansion/entries/ratio and XML/worksheet
+bounds run before openpyxl; rows stream to unchanged consent normalizer, with explicit
+file errors and iterator/workbook cleanup. No eager worksheet list or silent trim.
+Existing aliases, values, active sheet/cached formulas, CSV and consent rules retained.
+BEFORE18:14 failing assertions across10 methods, one old underreported-dimension
+error,7 controls PASS. AFTER52/combined551 PASS without skips; syntax/system/drift
+PASS. HEAD98925b67 + WIP/nine previous fixes + patch. OFFICIAL-11-20261028 in PRIMARY;
+output/security-remediation-20261028/consent-xlsx-limits/fix-report.md.
+Only synthetic tiny fixtures/mocks; no stress/production or publication claim.
+
+Consent XLSX shares the existing IMPORT_MAX_ROWS/IMPORT_MAX_COLUMNS and archive
+settings below. Worksheet resource bounds count physical rows/coordinates, including
+blank/unknown cells and inactive-sheet XML; they are not a change to consent meaning.
+Oversized/invalid input fails clearly instead of being truncated. Static parser caps
+are not an OS memory quota; no hostile-size production experiment was performed.
+
+OFFICIAL-12, 28.10: Deal entity-export fingerprint now includes current sensitive
+amount access in addition to existing AUD-18 resource/scope/capability checks. A
+previously generated file cannot be downloaded after field access changes. Older
+Deal export fingerprints require a new request; files are not migrated or deleted.
+Generation itself renders denied amounts empty. Evidence: OFFICIAL-12-20261028.
+
+OFFICIAL-06, 28.10: техническая граница outreach template — 16384 символа до parse,
+personalized result/plain recipient text — 65536 символов до join/launch. Это
+внутренние resource bounds, не лимиты провайдера. Поддержаны client_name, phone,
+email, business_name, channel и escaped braces; непустые format specs, conversions,
+attribute/index/positional fields не исполняются. Invalid/oversized input даёт
+field error API либо отказ prepare/render/launch, без silent truncation. Stored
+plain text не парсится повторно. Legacy unsupported templates требуют явной правки;
+автоматической миграции/проверки рабочей БД нет. Версия/проверки — OFFICIAL-06-20261028.
+
+OFFICIAL-20, 28.10: production readiness и Telegram rollout не возвращают значения
+URL конфигурации broker/origins/providers. Detail показывает configured flags,
+для broker также TLS; ключи/status/severity/action сохраняются для API/UI/CLI.
+Malformed broker — failed-check без исходного значения. Реальные параметры изучают
+в разрешённом канале настройки, а не в диагностическом ответе. Scoped9/совместно135
+и system/drift PASS; версия/границы — OFFICIAL-20-20261028 в текущем checkpoint.
+Это redaction, не изменение настроек доступа или запуск provider/production checks.
+
 PLATFORM-OPERATIONS-20261015 добавляет read-only `operations-worklist` с источниками
 incidents/connectors/automations/integrations/webhooks, строгими bounded filters,
 стабильной пагинацией и safe projections без payload/error text/credentials.
@@ -293,13 +492,15 @@ CRM-S04: для локальной изолированной проверки �
 ключа. Отчёт хранит проверки и отказы доступа; временные данные и процессы удаляются.
 Это не настройка рабочих служб или production backup: Windows solo/локальные
 файлы не заменяют приёмку Linux workers, object storage и восстановления на другом
-хосте. Испытание не назначает RPO/RTO и не выставляет PAID_BETA_* flags.
+хосте. Само историческое испытание не назначало RPO/RTO и не выставляло
+PAID_BETA_* flags; поздние принятые цели29.10 указаны ниже, их достижимость открыта.
 
 Backup покрывает БД, закрытые файлы и доступность ключей для восстановления.
 Проверить восстановление в отдельной цели, целостность tenant-связей, приватные
-download и выбранные RPO/RTO, затем документировать rollback приложения/миграций.
+download и принятые цели RPO обычных данных≤15мин / RTO основных операций≤4ч,
+затем документировать rollback приложения/миграций.
 Не откатывать схему с потерей данных без согласованного плана. Из старых предложений
-35 дней backup, RPO 1ч, RTO 4ч, retention 90 дней и 5/25/100GB нельзя делать
+35 дней backup, RPO 1ч, retention 90 дней и 5/25/100GB нельзя делать
 утверждённые нормы. Облачный общий cap 3GB и retention ещё требуют исполнения/
 проверки в выбранной среде. Текущий upload limit 10MB не заменяется предложением 25MB.
 
@@ -326,12 +527,27 @@ Avatar: исходник до 5MiB JPEG/PNG/WebP, до 16M pixels и один fr
 процессов. Автозапуск при входе в Windows не подтверждён. Не удалять runtime
 при housekeeping документации и не заявлять local service как cloud deployment.
 
+06.11 local scanner был недоступен. В рамках исправления upload обновлены signatures
+и скрыто запущены прежние clamd/freshclam (daemon) с прежними конфигурациями;
+worker/beat не запускались и не останавливались. Health и реальная загрузка Excel
+прошли. PID и журналы: output/import-upload-alert-20261106/{scanner,updater}.pid,
+scanner.out.log/updater.out.log. Сервисы оставлены для рабочего local upload;
+автозапуск ОС не добавлялся. [Срез](../testing/evidence/import-upload-alert-20261106.md).
+
 ## Допуск и инциденты
 
-CRM-S03 (решение владельца 14.10.2026): сотрудники видят баннер влияния на
-работу, владелец и активные администраторы — персональные SYSTEM-уведомления
+CRM-S03 (решение владельца 14.10.2026, размещение уточнено03.11): по последующему
+решению HEADER-CLEANUP индикатор фоновой обработки из merchant-шапки убран;
+общая полоса также не отображается. Владелец и активные администраторы получают персональные SYSTEM-уведомления
 о начале и устранении задержки. Учитываются настройки категории system;
 повторное наблюдение не создаёт новый колокольчик. Неактивные аккаунты исключены.
+RECORDS-BELL-FIX03.11: персональная проекция распознаёт серверный service-status
+reference и выдаёт локализованный тип компонента/перехода вместо общего текста.
+Произвольный исторический text/provider_reference не раскрываются; принадлежность
+состояния Business проверяется, текущие recipient/access-фильтры сохранены.
+Service-status API сохранён без индикатора в шапке. Прежний дефект конкретного
+текста закрыт локальными API/browser-проверками; live не сертифицирован.
+[Новый срез](../testing/evidence/records-bell-fix-20261103.md).
 Сохранение перехода и уведомлений атомарно; in-app доставка не зависит от
 очереди уведомлений. В колокольчике каждый получает только своё такое сообщение.
 
@@ -343,8 +559,9 @@ beat раз в 60 секунд, обрабатывает до 100 бизнесо
 При росте числа бизнесов требуется проверить пропускную способность сборщика.
 Устранение задержки не подтверждает успех каждой операции: результат доступен
 в её истории. Полный отказ CRM требует будущего независимого внешнего мониторинга.
-Миграция core0012 проверена в изоляции; её применение в рабочей среде и запуск
-целевого worker/beat требуют отдельного согласованного окружения.
+Миграция core0012 проверена в изоляции и29.10 применена к локальной рабочей БД
+как зависимость notifications0007 по отдельному поручению (см. выше). Запуск
+целевого worker/beat и применение в других средах требуют согласованного окружения.
 
 PAID_BETA_* flags выставляются после реальных доказательств соответствующего
 gate, не ради зелёного health. Проверить точный candidate, tenant/roles, целевой
@@ -371,8 +588,9 @@ SQLite online backup и проверки восстановления/целос
 Backup и отчёт находятся в `output/local-support/` и не публикуются в Git.
 
 PLATFORM-INCIDENT-LINK-20261015 добавляет миграцию `support0002` с зависимостью
-от `core0012`. Она проверяется в изолированных БД; к рабочей БД в этом scope
-не применяется. Локальная активация support0001 не означает активацию связей.
+от `core0012`. Она проверена в изолированных БД и первоначально не применялась в scope15.10.
+Позднее29.10 support0002/core0012 применены локально как зависимости notifications0007
+после backup; это не подтверждение целевой облачной активации связей.
 Поддержке не нужен отдельный worker; существующие процессы оставлены без изменений.
 Это локальная активация, не deployment или приёмка облачной среды.
 
@@ -384,6 +602,30 @@ BILLING_COMMERCE_ENABLED=False, BILLING_CARD_ADAPTER=None. Нет рабочих
 условий и реальный adapter требуют отдельного scope после коммерческих решений.
 Тестовый адаптер включается только изолированным browser runner с проверкой disposable DB.
 Рабочий rollout и expiry enforcement остаются открыты — [паспорт](../pre-production/subscription-usage.md).
+
+
+## SSE мониторинга объявлений — локальная реализация
+
+NOTIFICATIONS-SSE-20261029: выключен по умолчанию. Для выбранной среды API и
+отдельный ASGI-процесс должны использовать одинаковые `NOTIFICATION_EVENTS_ENABLED=True`,
+`NOTIFICATION_EVENTS_REDIS_URL` (по умолчанию REDIS_URL), `NOTIFICATION_EVENTS_NAMESPACE`,
+настройки БД и JWT. Namespace разделяет среды. Redis не публикуется в браузер.
+Запуск из канонической папки: `.venv/Scripts/python.exe -m uvicorn config.notification_asgi:application --host 127.0.0.1 --port 8001 --no-access-log`.
+WSGI API остаётся отдельным. Vite направляет только `/api/notifications/events/`
+в `NOTIFICATION_EVENTS_PROXY_TARGET` (по умолчанию http://127.0.0.1:8001).
+Для будущей целевой среды необходим same-origin reverse proxy без buffering/cache,
+с передачей Authorization и тайм-аутом больше heartbeat15с; deployment не выполнен.
+Не передавать токены в query string и не логировать Authorization/Redis URL.
+
+Поток доступен текущему owner/admin с MANAGE выбранного Business. Сессия, срок JWT,
+активность и права перепроверяются при каждом событии и heartbeat. Максимум256
+соединений на процесс,3 на пользователя; срок потока300с. В браузере backoff0.5–30с,
+idle timeout40с, refresh JWT и resync после подключения. Потеря Redis не откатывает
+сохранённую отметку: on-commit публикует лишь сигнал, API/БД — источник истины.
+Опрос60с сохраняется; Redis Pub/Sub не гарантирует историю событий.
+Локальная проверка: две независимые сессии, реальный Redis и отдельный ASGI,
+остановка/запуск и пропущенное изменение восстановлены. При разрыве Vite защитное
+восстановление заняло около40с; обычные изменения около1с. Точные проверки — PRIMARY.
 
 ## STAND-ACCESS-20261029 — пароль доступа к сетевому стенду
 
@@ -501,3 +743,16 @@ For an existing checkout, stop its own frontend, inspect/remove only ignored
 generated `frontend/vite.config.js` and `frontend/vite.config.d.ts` if present,
 then restart frontend and reload the browser. Do not delete source configs or
 stop unrelated servers. Backend and working database changes are not required.
+
+
+### Приватное хранилище защищённого стенда — 06.11.2026
+
+Стенд использует существующий приватный бакет `platforma-crm-private-kz-20261106`
+в регионе `kz1`. Аккаунт приложения имеет ACL READ+WRITE только этого бакета;
+политика ограничивает операции объектами и просмотром их списка. Анонимное чтение
+и доступ к резервному бакету запрещены; подписанные ссылки включены.
+Пятиминутная резервная копия сначала синхронизирует S3 в закрытый локальный кэш
+с манифестом SHA256, затем сохраняет его существующим зашифрованным restic-процессом.
+Восстановление проверено на синтетическом объекте. Пароль стенда сохранён.
+Для проверки свежести антивирусных баз на локальном ClamAV включена команда VERSION.
+Доказательства, границы проверок и пути отката: `output/observability-storage-20261106/STORAGE-RESULT.txt`.

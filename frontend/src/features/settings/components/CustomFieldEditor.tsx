@@ -8,15 +8,15 @@ import { Input } from "../../../components/ui/Input";
 import { Select } from "../../../components/ui/Select";
 import { customFieldOptions } from "../../../lib/customFields";
 import { useI18n } from "../../../lib/i18n";
-import type { CrmEntityType, CustomFieldDefinition, Id } from "../../../types";
+import type { CustomFieldEntityType, CustomFieldDefinition, Id } from "../../../types";
 import { slugify } from "../settingsUtils";
 import { CustomFieldAccessMatrix, type FieldAccess } from "./CustomFieldAccessMatrix";
 import { SettingsDrawer, SettingsFeedback, SettingsSaveBar } from "./SettingsLayout";
 
 const types: CustomFieldDefinition["field_type"][] = ["text", "textarea", "number", "money", "date", "datetime", "select", "multiselect", "boolean", "phone", "email", "url"];
-export const fieldEntities: CrmEntityType[] = ["client", "lead", "deal", "appointment"];
+export const fieldEntities: CustomFieldEntityType[] = ["client", "lead", "deal", "appointment", "service", "specialist"];
 
-export function CustomFieldEditor({ initial, entity, businessId, open, onClose, onSaved }: { initial?: CustomFieldDefinition; entity: CrmEntityType; businessId: Id; open: boolean; onClose: () => void; onSaved: (field: CustomFieldDefinition) => void; }) {
+export function CustomFieldEditor({ initial, entity, businessId, open, onClose, onSaved }: { initial?: CustomFieldDefinition; entity: CustomFieldEntityType; businessId: Id; open: boolean; onClose: () => void; onSaved: (field: CustomFieldDefinition) => void; }) {
   const { t } = useI18n();
   const cache = useQueryClient();
   const [draft, setDraft] = useState({ label: initial?.label || "", entity_type: initial?.entity_type || entity, field_type: initial?.field_type || "text", key: initial?.key || "", sort_order: initial?.sort_order || 0, is_active: initial?.is_active ?? true });
@@ -26,11 +26,15 @@ export function CustomFieldEditor({ initial, entity, businessId, open, onClose, 
     const edit = initial?.permissions_json.edit_roles || [];
     return { view, edit, allView: !view.length, allEdit: !edit.length };
   });
+  const [display, setDisplay] = useState(() => {
+    const saved = initial?.options_json.display as { in_card?: boolean; in_table?: boolean; in_filters?: boolean; in_calendar?: boolean } | undefined;
+    return { in_card: saved?.in_card ?? true, in_table: saved?.in_table ?? false, in_filters: saved?.in_filters ?? false, in_calendar: saved?.in_calendar ?? false };
+  });
   const [roleError, setRoleError] = useState("");
   const [optionsError, setOptionsError] = useState("");
   const save = useMutation({
     mutationFn: (payload: Partial<CustomFieldDefinition>) => initial ? customFieldsApi.update({ id: initial.id, payload }) : customFieldsApi.create({ ...payload, business: businessId }),
-    onSuccess: field => { void cache.invalidateQueries({ queryKey: ["custom-fields"] }); onSaved(field); },
+    onSuccess: field => { void cache.invalidateQueries({ queryKey: ["custom-fields"] }); void cache.invalidateQueries({ queryKey: ["custom-field-context"] }); void cache.invalidateQueries({ queryKey: ["crm-card"] }); onSaved(field); },
   });
   const errors = getApiFieldErrors(save.error);
   const hasFieldError = ["label", "entity_type", "field_type", "permissions_json", ...(initial ? ["key", "sort_order", "is_active"] : []), ...(["select", "multiselect"].includes(draft.field_type) ? ["options_json"] : [])].some(key => errors[key]?.length);
@@ -55,7 +59,7 @@ export function CustomFieldEditor({ initial, entity, businessId, open, onClose, 
       ...draft,
       key: draft.key || slugify(draft.label).replace(/[^a-z0-9_-]/g, "").replace(/^[-_]+|[-_]+$/g, "").slice(0, 64) || "field_" + Date.now().toString(36),
       permissions_json: { view_roles: access.allView ? [] : access.view, edit_roles: access.allEdit ? [] : access.edit },
-      ...(!initial || changedOptions && hasOptions ? { options_json: { ...initial?.options_json, options: optionValues } } : {}),
+      options_json: { ...initial?.options_json, ...(!initial || changedOptions && hasOptions ? { options: optionValues } : {}), display },
     };
     save.mutate(payload, { onError: () => window.requestAnimationFrame(() => document.querySelector<HTMLElement>('#settings-custom-field-form [aria-invalid="true"]')?.focus()) });
   }
@@ -69,7 +73,7 @@ export function CustomFieldEditor({ initial, entity, businessId, open, onClose, 
         <p className="text-sm leading-6 text-platforma-subtle">{t(`settings.workflow.fieldPlacement.${draft.entity_type}`)}</p>
         <Input label={t("settings.redesign.name")} required value={draft.label} error={errors.label?.join(" ")} onChange={event => change({ label: event.target.value })} />
         <div className="grid gap-3 sm:grid-cols-2">
-          <Select label={t("settings.entity")} value={draft.entity_type} error={errors.entity_type?.join(" ")} options={fieldEntities.map(value => ({ value, label: t(`settings.customFieldEntity.${value}`) }))} onChange={event => change({ entity_type: event.target.value as CrmEntityType })} />
+          <Select label={t("settings.entity")} value={draft.entity_type} error={errors.entity_type?.join(" ")} options={fieldEntities.map(value => ({ value, label: t(`settings.customFieldEntity.${value}`) }))} onChange={event => change({ entity_type: event.target.value as CustomFieldEntityType })} />
           <Select label={t("settings.type")} value={draft.field_type} error={errors.field_type?.join(" ")} options={types.map(value => ({ value, label: t(`settings.customFieldType.${value}`) }))} onChange={event => change({ field_type: event.target.value as CustomFieldDefinition["field_type"] })} />
         </div>
         {hasOptions && <div className="space-y-2">
@@ -82,6 +86,7 @@ export function CustomFieldEditor({ initial, entity, businessId, open, onClose, 
           <Button type="button" variant="secondary" onClick={() => setOptions(current => [...current, ""])}><Plus size={16} />{t("settings.redesign.addOption")}</Button>
           {(optionsError || errors.options_json) && <p role="alert" className="text-sm text-platforma-danger">{optionsError || errors.options_json?.join(" ")}</p>}
         </div>}
+        <div className="flex flex-wrap gap-3">{(["in_card", "in_table", "in_filters", ...(draft.entity_type === "appointment" ? ["in_calendar"] : [])] as ("in_card" | "in_table" | "in_filters" | "in_calendar")[]).map(key => <label key={key} className="flex items-center gap-2 text-sm"><input type="checkbox" checked={display[key]} onChange={event => { setDisplay({ ...display, [key]: event.target.checked }); save.reset(); }} />{t(`importWorkspace.${key}`)}</label>)}</div>
         <div className="border-t border-platforma-border pt-4"><CustomFieldAccessMatrix value={access} onChange={next => { setAccess(next); setRoleError(""); save.reset(); }} error={roleError || errors.permissions_json?.join(" ")} /></div>
         {initial && <>
           <label className="flex min-h-11 items-center gap-3 text-sm"><input type="checkbox" className="h-5 w-5 accent-brand-500" checked={draft.is_active} onChange={event => change({ is_active: event.target.checked })} />{t("settings.customFieldActive")}</label>

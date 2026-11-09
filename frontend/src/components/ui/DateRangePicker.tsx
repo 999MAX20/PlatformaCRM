@@ -5,6 +5,7 @@ import { cn } from "../../lib/cn";
 import { Button } from "./Button";
 import { Select } from "./Select";
 import { CalendarPopover } from "./CalendarPopover";
+import { calendarYears, type CalendarYearRange } from "./calendarYears";
 
 export type DateRangeValue = { from: string; to: string };
 const asDate = (value: string) => new Date(`${value}T12:00:00Z`);
@@ -21,7 +22,7 @@ function shift(value: string, days: number) {
 }
 
 /** Date-only control. API boundaries are resolved in the business timezone, not the browser's. */
-export function DateRangePicker({ label, value, onChange, today, range = true, inline = false, allowClear = true, compact = true, showHint = false, showPresets = false, min, max }: {
+export function DateRangePicker({ label, value, onChange, today, range = true, inline = false, allowClear = true, compact = true, showHint = false, showPresets = false, min, max, yearRange }: {
   label: string;
   value: DateRangeValue;
   onChange: (value: DateRangeValue) => void;
@@ -34,6 +35,7 @@ export function DateRangePicker({ label, value, onChange, today, range = true, i
   showPresets?: boolean;
   min?: string;
   max?: string;
+  yearRange?: CalendarYearRange;
 }) {
   const { t, language } = useI18n();
   const locale = language === "kk" ? "kk-KZ" : language === "en" ? "en-GB" : "ru-RU";
@@ -55,7 +57,7 @@ export function DateRangePicker({ label, value, onChange, today, range = true, i
   const days = new Date(Date.UTC(first.getUTCFullYear(), first.getUTCMonth() + 1, 0)).getUTCDate();
   const cells = Array.from({ length: Math.ceil((offset + days) / 7) * 7 }, (_, index) => shift(`${month}-01`, index - offset));
   const year = first.getUTCFullYear();
-  const years = Array.from({ length: Math.max(2100, year + 1) - Math.min(1900, year) + 1 }, (_, index) => Math.min(1900, year) + index);
+  const years = calendarYears(today, year, [value.from, value.to], yearRange, min, max);
   const months = Array.from({ length: 12 }, (_, index) => ({ value: String(index + 1).padStart(2, "0"), label: t(`calendar.month.${index + 1}`) }));
   function close() { setOpen(false); trigger.current?.focus(); }
   function moveMonth(delta: number) {
@@ -79,7 +81,7 @@ export function DateRangePicker({ label, value, onChange, today, range = true, i
       className="min-h-11 w-full justify-between gap-2 text-left" onClick={() => setOpen(current => !current)}>
       <span id={`${id}-value`} className="min-w-0 whitespace-normal text-sm">{display}</span><CalendarDays size={17} className="shrink-0 text-platforma-subtle" />
     </Button>
-    {open && <DatePickerPanel id={id} anchor={trigger} label={label} value={value} today={today} range={range} allowClear={allowClear} min={min} max={max}
+    {open && <DatePickerPanel id={id} anchor={trigger} label={label} value={value} today={today} range={range} allowClear={allowClear} min={min} max={max} yearRange={yearRange}
       onApply={next => { onChange(next); close(); }} onClose={restore => { setOpen(false); if (restore !== false) trigger.current?.focus(); }} />}
   </div>;
   return <div className="min-w-0 space-y-1.5" onKeyDown={event => {
@@ -92,7 +94,7 @@ export function DateRangePicker({ label, value, onChange, today, range = true, i
       <div className="mb-2 flex items-center gap-0 min-[360px]:gap-1">
         <Button type="button" size="icon" variant="ghost" className="h-11 w-11 shrink-0" aria-label={t("crmFilters.previousMonth")} onClick={() => moveMonth(-1)}><ChevronLeft size={17} /></Button>
         <div className="min-w-0 flex-1"><Select className={compact ? "gap-1! px-2!" : undefined} aria-label={t("crmFilters.month")} value={month.slice(5)} options={months} onChange={event => { setMonth(`${year}-${event.target.value}`); setFocusDay(`${year}-${event.target.value}-01`); }} /></div>
-        <div className={cn("shrink-0", compact ? "w-18 min-[360px]:w-20" : "w-24")}><Select className={compact ? "gap-1! px-1! min-[360px]:px-2!" : undefined} aria-label={t("crmFilters.year")} value={year} options={years.map(item => ({ value: item, label: String(item) }))} onChange={event => { setMonth(`${event.target.value}-${month.slice(5)}`); setFocusDay(`${event.target.value}-${month.slice(5)}-01`); }} /></div>
+        <div className={cn("platforma-calendar-year shrink-0", compact ? "w-18 min-[360px]:w-20" : "w-24")}><Select className={compact ? "gap-1! px-1! min-[360px]:px-2!" : undefined} aria-label={t("crmFilters.year")} value={year} options={years.map(item => ({ value: item, label: String(item) }))} onChange={event => { const nextYear = event.target.value.padStart(4, "0"); setMonth(`${nextYear}-${month.slice(5)}`); setFocusDay(`${nextYear}-${month.slice(5)}-01`); }} /></div>
         <Button type="button" size="icon" variant="ghost" className="h-11 w-11 shrink-0" aria-label={t("crmFilters.nextMonth")} onClick={() => moveMonth(1)}><ChevronRight size={17} /></Button>
       </div>
       {range && <p role="status" className={showHint ? "mb-2 text-xs text-platforma-subtle" : "sr-only"}>{t(choosingEnd ? "crmFilters.chooseEnd" : "crmFilters.chooseStart")}</p>}
@@ -121,11 +123,12 @@ export function DateRangePicker({ label, value, onChange, today, range = true, i
   </div>;
 }
 
-export function DatePickerPanel({ anchor, label, value, today, onApply, onClose, range = true, allowClear = false, validate, min, max, id, testId }: {
+export function DatePickerPanel({ anchor, label, value, today, onApply, onClose, range = true, allowClear = false, validate, min, max, yearRange, id, testId }: {
   anchor: RefObject<HTMLElement | null>; label: string; value: DateRangeValue; today: string;
   onApply: (value: DateRangeValue) => void; onClose: (restoreFocus?: boolean) => void;
   range?: boolean; allowClear?: boolean; validate?: (value: DateRangeValue) => boolean;
   min?: string; max?: string; id?: string; testId?: string;
+  yearRange?: CalendarYearRange;
 }) {
   const { t } = useI18n();
   const [draft, setDraft] = useState(value);
@@ -133,7 +136,7 @@ export function DatePickerPanel({ anchor, label, value, today, onApply, onClose,
   const valid = ((allowClear && empty) || (isCalendarDate(draft.from) && isCalendarDate(draft.to) && draft.from <= draft.to
     && (!min || draft.from >= min) && (!max || draft.to <= max))) && (!validate || validate(draft));
   return <CalendarPopover anchor={anchor} label={label} id={id} testId={testId} onClose={onClose}>
-    <DateRangePicker inline compact range={range} allowClear={false} label={label} value={draft} today={today} min={min} max={max}
+    <DateRangePicker inline compact range={range} allowClear={false} label={label} value={draft} today={today} min={min} max={max} yearRange={yearRange}
       onChange={next => { setDraft(next); if (!range) onApply(next); }} />
     <div className="mt-3 flex flex-wrap justify-end gap-2 border-t border-platforma-border pt-3">
       {allowClear && <Button type="button" variant="ghost" className="mr-auto min-h-11" onClick={() => range ? setDraft({ from: "", to: "" }) : onApply({ from: "", to: "" })}>{t("common.clear")}</Button>}

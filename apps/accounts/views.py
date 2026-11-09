@@ -53,6 +53,8 @@ class CurrentUserView(APIView):
 
 class ChangePasswordView(APIView):
     permission_classes = [IsAuthenticated]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "auth_password_change"
 
     def post(self, request):
         serializer = ChangePasswordSerializer(data=request.data, context={"request": request})
@@ -246,6 +248,8 @@ class OwnerSignupView(AuthCookieCsrfMixin, APIView):
         )
         ensure_default_roles(business)
         apply_business_type_defaults(business, configured_by=user)
+        from apps.branches.single_location import ensure_initial_location
+        ensure_initial_location(business)
         ensure_default_pipeline(business)
         owner_role = BusinessRole.objects.filter(
             business=business,

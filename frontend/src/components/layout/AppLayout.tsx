@@ -14,7 +14,6 @@ import { Header } from "./Header";
 import { MobileNav } from "./MobileNav";
 import { PageHeaderContext, type PageHeaderConfig } from "./PageHeaderContext";
 import { Sidebar } from "./Sidebar";
-import { ServiceStatusNotice } from "../notifications/ServiceStatusNotice";
 
 const CommandPalette = lazy(() => import("./CommandPalette").then((module) => ({ default: module.CommandPalette })));
 
@@ -104,16 +103,16 @@ export function AppLayout() {
   const location = useLocation();
   const isInboxWorkspace = /^\/app\/conversations(?:\/|$)/.test(location.pathname);
   const pageHeaderActions = useMemo(() => ({ setPageHeader }), []);
-  const usesWideCrmWorkspace = /^\/app\/(leads|clients|deals|ai-agents)(?:\/|$)/.test(
+  const usesWideCrmWorkspace = /^\/app\/(leads|deals|ai-agents)(?:\/|$)/.test(
     location.pathname,
   );
   const isAgentWorkspace = /^\/app\/ai-agents(?:\/|$)/.test(location.pathname);
-  const usesEdgeToEdgeCrm = /^\/app\/(leads|clients|deals)\/?$/.test(location.pathname) || isAgentWorkspace;
+  const usesEdgeToEdgeCrm = /^\/app\/(leads|deals)\/?$/.test(location.pathname) || isAgentWorkspace;
   const aiAgentWorkspaceKey = location.pathname.match(/^\/app\/ai-agents(?:\/[^/]+)?/)?.[0];
   const workspaceAnimationKey = aiAgentWorkspaceKey || location.pathname;
 
   return (
-    <div className="min-h-screen bg-surface text-ink [--app-header-height:57px] [--account-content-width:min(960px,calc(100vw_-_2rem))] [--global-search-width:calc(var(--account-content-width)*0.5)] sm:[--account-content-width:min(960px,calc(100vw_-_3rem))] lg:[--account-content-width:min(960px,calc(100vw_-_7rem))]">
+    <div className="min-h-screen bg-surface text-ink [--app-header-height:57px] lg:[--app-header-height:49px] [--account-content-width:min(960px,calc(100vw_-_2rem))] [--global-search-width:calc(var(--account-content-width)*0.5)] sm:[--account-content-width:min(960px,calc(100vw_-_3rem))] lg:[--account-content-width:min(960px,calc(100vw_-_7rem))]">
       <PageHeaderContext.Provider value={pageHeaderActions}>
         <div className="relative flex min-h-screen">
           <DesktopSidebar />
@@ -122,9 +121,8 @@ export function AppLayout() {
             <main
               data-workspace-content
               key={workspaceAnimationKey}
-              className={`animate-fade-in mx-auto w-full flex-1 ${isInboxWorkspace ? "[--inbox-mobile-nav:calc(4.375rem_+_max(0.25rem,env(safe-area-inset-bottom)))] lg:[--inbox-mobile-nav:0px] min-h-0 overflow-hidden pb-[var(--inbox-mobile-nav)] pt-[var(--app-header-height)] max-w-none" : `${usesEdgeToEdgeCrm ? "pt-[var(--app-header-height)]" : `px-4 pb-4 sm:px-6 sm:pb-6 lg:px-6 ${pageHeader?.activeFilters ? "pt-24" : "pt-16"}`} ${usesWideCrmWorkspace ? "max-w-none" : "max-w-[1440px]"}`}`}
+              className={`animate-fade-in mx-auto w-full flex-1 ${isInboxWorkspace ? "[--inbox-mobile-nav:calc(4.375rem_+_max(0.25rem,env(safe-area-inset-bottom)))] lg:[--inbox-mobile-nav:0px] min-h-0 overflow-hidden pb-[var(--inbox-mobile-nav)] pt-[var(--app-header-height)] max-w-none" : `${usesEdgeToEdgeCrm ? "pt-[var(--app-header-height)]" : `px-4 pb-4 sm:px-6 sm:pb-6 lg:px-6 ${pageHeader?.activeFilters ? "pt-[calc(var(--app-header-height)+2.5rem)]" : "pt-[calc(var(--app-header-height)+0.5rem)]"}`} ${usesWideCrmWorkspace ? "max-w-none" : "max-w-[1440px]"}`}`}
             >
-              <ServiceStatusNotice />
               <MeasuredWorkspaceOutlet />
             </main>
           </div>

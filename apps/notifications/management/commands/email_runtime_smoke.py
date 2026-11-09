@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 
-from apps.notifications.email import email_is_configured, send_email_smoke
+from apps.notifications.email import email_is_configured, email_is_local_capture, send_email_smoke
 
 
 class Command(BaseCommand):
@@ -31,6 +31,11 @@ class Command(BaseCommand):
             if not options.get("to"):
                 raise CommandError("--to is required when --send is used.")
             sent = send_email_smoke(options["to"])
-            self.stdout.write(self.style.SUCCESS(f"Email smoke sent: {sent} message(s)."))
+            if sent != 1:
+                raise CommandError("Email backend did not accept the smoke message.")
+            if email_is_local_capture():
+                self.stdout.write("Email smoke captured locally; no external delivery.")
+            else:
+                self.stdout.write(self.style.SUCCESS("Email smoke accepted by SMTP; recipient delivery must be verified."))
         else:
-            self.stdout.write(self.style.SUCCESS("Email configuration is present."))
+            self.stdout.write(self.style.SUCCESS("Email configuration is present; external delivery is not verified."))

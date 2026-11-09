@@ -39,8 +39,8 @@ export function useDealMetrics(
             ? { riskLevel: deal.risk_level, riskPercent: deal.risk_percent }
             : dealRisk(deal, tasks);
         const clientEntity =
-          data.clientMap.get(deal.client) ||
-          (deal.client_name
+          (deal.client !== null ? data.clientMap.get(deal.client) : undefined) ||
+          (deal.client !== null && deal.client_name
             ? ({
                 id: deal.client,
                 business: deal.business,
@@ -148,7 +148,7 @@ export function useDealMetrics(
             : dealRisk(deal, tasks);
         return {
           ...deal,
-          clientEntity: data.clientMap.get(deal.client),
+          clientEntity: deal.client !== null ? data.clientMap.get(deal.client) : undefined,
           stageEntity: data.stageMap.get(deal.stage),
           nextTask: nextOpenTask(tasks),
           ...risk,

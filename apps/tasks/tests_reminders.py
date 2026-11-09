@@ -7,6 +7,7 @@ from django.utils import timezone
 from apps.accounts.models import User
 from apps.businesses.models import Business, BusinessCapability, BusinessMember
 from apps.notifications.models import Notification, NotificationPreference
+from apps.notifications.personal_selectors import personal_states
 from apps.notifications.tasks import process_due_notifications_task
 from apps.tasks.models import Task, TaskReminderDelivery
 from apps.tasks.reminders import enqueue_due_task_reminders
@@ -23,7 +24,7 @@ class ScheduledTaskReminderTests(TestCase):
             reminder_at=timezone.now() - timedelta(minutes=1),
         )
 
-    def test_notification_tick_delivers_due_task_reminder_once(self):
+    def test_notification_tick_publishes_due_task_reminder_once(self):
         process_due_notifications_task.run()
         process_due_notifications_task.run()
         reminders = Notification.objects.filter(
@@ -32,7 +33,11 @@ class ScheduledTaskReminderTests(TestCase):
         )
         self.assertEqual(reminders.count(), 1)
         self.assertEqual(reminders.get().recipient_id, self.owner.pk)
-        self.assertEqual(reminders.get().status, Notification.Statuses.SENT)
+        reminder = reminders.get()
+        self.assertEqual(reminder.status, Notification.Statuses.PENDING)
+        self.assertEqual(reminder.attempts, 0)
+        self.assertIsNone(reminder.delivered_at)
+        self.assertEqual(personal_states(actor=self.owner, business=self.business).filter(notification=reminder).count(), 1)
 
     def test_future_missing_closed_archived_and_snoozed_reminders_are_not_sent(self):
         now = timezone.now()

@@ -127,9 +127,9 @@ export function PricingCatalog({
           </Button>
         </div>
       </div>
-      <div className="mt-4 grid gap-3 md:grid-cols-3">
+      <div className="mt-4 grid gap-3 xl:grid-cols-[minmax(0,var(--global-search-width,480px))_minmax(0,1fr)_minmax(0,1fr)]">
         <Input
-          data-testid="pricing-catalog-search-input"
+          pageSearch data-testid="pricing-catalog-search-input"
           label={t("common.search")}
           value={catalogSearch}
           onChange={(event) => setCatalogSearch(event.target.value)}

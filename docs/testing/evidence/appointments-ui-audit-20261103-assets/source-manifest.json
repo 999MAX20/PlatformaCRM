@@ -1,0 +1,12 @@
+{
+  "frontend/src/features/calendar/RecordsPage.tsx": "26da9a0be4ba2492721c6a1082b433834bceb736331e10f29b13fe48e2ca8b05",
+  "frontend/src/features/calendar/recordFilters.ts": "70626c8b61a8accc398fec9686d01e4df136895ece1852aff39f14bff887e50c",
+  "frontend/src/features/calendar/RecordsTable.tsx": "66c0cbf438810f27f96c958e448c34b1f45305d7c1ea2c02ed04f0fe1f8fcc9e",
+  "frontend/src/components/layout/Header.tsx": "340d857f4b02be9e2f2dd40a5a9860240cb659590afa9897fab8cd13581e1e25",
+  "frontend/src/components/layout/PageHeaderContext.tsx": "1c1b2a837c33e3f6cf74734b8afa2bde0043e75f9bb737dfc59aa08540e9f5a5",
+  "frontend/src/components/crm/CrmWorkspaceToolbar.tsx": "baf292aedf579c6f3a1de46ed6b430df5baa87096cd94648507e081f2aa296c1",
+  "frontend/src/components/crm/CrmFilterControls.tsx": "af3cc1d340ff3a1bd5d331fe649c6f18bdbbe3bd908ac2163ee25b0227de8688",
+  "frontend/src/features/calendar/components/CalendarToolbar.tsx": "6a3c92cde6aac34631068ee8c81b32b7c03a32eb0e404d35a700f5dc977b614b",
+  "frontend/src/features/tasks/TasksPage.tsx": "8319b1785730282ca78b7bc8b4b69f6ec3f4fdd8606edc27d1c6fa62ff8b5bc8",
+  "frontend/src/features/clients/components/ClientsFilters.tsx": "96b8d95e8b9391527ca04bbd32613a55df61bd4ba6e318c0dde13696be08106f"
+}

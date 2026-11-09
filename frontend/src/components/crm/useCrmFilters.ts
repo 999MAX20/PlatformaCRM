@@ -4,8 +4,10 @@ import { useSearchParams } from "react-router";
 export type CrmFilterKind = "clients" | "leads" | "deals";
 export type CrmFilterValues = Record<string, string>;
 export const crmFilterKeys = ["search", "quick", "scope", "statuses", "source", "assignees", "tag", "tag_mode", "segment", "created_from", "created_to", "expected_close_from", "expected_close_to", "amount_min", "amount_max", "attention_reason", "archive", "handoff", "stage", "pipeline"] as const;
+const clientCustomFilterKeys = ["custom_field", "custom_operator", "custom_value"] as const;
+export const crmFilterKeysFor = (kind: CrmFilterKind): readonly string[] => kind === "clients" ? [...crmFilterKeys, ...clientCustomFilterKeys] : crmFilterKeys;
 export function crmFilterDefaults(kind: CrmFilterKind): CrmFilterValues {
-  return { ...Object.fromEntries(crmFilterKeys.map(key => [key, ""])), quick: "all", scope: "all", archive: "active", tag_mode: "any", statuses: kind === "leads" ? "new,contacted,in_progress" : kind === "deals" ? "open" : "" };
+  return { ...Object.fromEntries(crmFilterKeysFor(kind).map(key => [key, ""])), quick: "all", scope: "all", archive: "active", tag_mode: "any", statuses: kind === "leads" ? "new,contacted,in_progress" : kind === "deals" ? "open" : "" };
 }
 function normalize(kind: CrmFilterKind, next: CrmFilterValues, patch: CrmFilterValues): CrmFilterValues {
   if (kind === "clients") { next.scope = "all"; next.quick = ["all", "no_reply"].includes(next.quick) ? next.quick : "all"; }
@@ -18,6 +20,10 @@ function normalize(kind: CrmFilterKind, next: CrmFilterValues, patch: CrmFilterV
   if ((patch.statuses !== undefined && patch.statuses !== crmFilterDefaults(kind).statuses) || (patch.archive && patch.archive !== "active")) next.quick = "all";
   if (patch.scope === "mine") next.assignees = "";
   if (patch.assignees) next.scope = "all";
+  if (kind === "clients" && !next.custom_field) {
+    next.custom_operator = "";
+    next.custom_value = "";
+  }
   return next;
 }
 
@@ -28,7 +34,7 @@ export function useCrmFilters(kind: CrmFilterKind) {
   const state = useMemo(() => {
     const query = new URLSearchParams(serialized);
     const result = crmFilterDefaults(kind);
-    for (const key of crmFilterKeys) if (query.has(key)) result[key] = query.get(key) || "";
+    for (const key of crmFilterKeysFor(kind)) if (query.has(key)) result[key] = query.get(key) || "";
     // Keep existing deep links useful while dropping misleading legacy quick labels.
     if (!query.has("quick") && kind === "leads") result.quick = query.get("filter") || "all";
     if (query.get("filter") === "mine" || query.get("quick") === "mine") { result.scope = "mine"; result.quick = "all"; }
@@ -45,7 +51,7 @@ export function useCrmFilters(kind: CrmFilterKind) {
     setParams(current => {
       const query = new URLSearchParams(current);
       for (const key of ["filter", "status", "owner", "from", "to", "min", "max"]) query.delete(key);
-      for (const key of crmFilterKeys) {
+      for (const key of crmFilterKeysFor(kind)) {
         if (next[key] && next[key] !== defaults[key]) query.set(key, next[key]); else query.delete(key);
       }
       query.delete("page");
@@ -54,13 +60,13 @@ export function useCrmFilters(kind: CrmFilterKind) {
   }, [kind, state, setParams]);
   const reset = () => update({ ...crmFilterDefaults(kind), pipeline: state.pipeline });
   const defaults = crmFilterDefaults(kind);
-  const hasFilters = crmFilterKeys.some(key => key !== "pipeline" && Boolean(state[key]) && state[key] !== defaults[key]);
+  const hasFilters = crmFilterKeysFor(kind).some(key => key !== "pipeline" && Boolean(state[key]) && state[key] !== defaults[key]);
   return { state, update, reset, hasFilters };
 }
 
 export function crmFilterParams(kind: CrmFilterKind, state: CrmFilterValues) {
   const params: Record<string, string> = { workspace: "true" };
-  for (const key of crmFilterKeys) if (state[key]) params[key] = state[key];
+  for (const key of crmFilterKeysFor(kind)) if (state[key]) params[key] = state[key];
   if (kind === "clients") { params.q = state.search; params.quick_filter = state.quick; delete params.quick; }
   if (state.archive !== "active") params.include_archived = "true";
   return params;

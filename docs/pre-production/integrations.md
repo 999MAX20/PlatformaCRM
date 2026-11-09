@@ -1,3 +1,33 @@
+## Исправления UI-аудита — 09.11.2026
+
+Предпросмотр импорта сохраняет будущие подписи; завершённый перенос показывает
+«Создано»/«Обновлено» по фактическому result, включая строки и сводку.
+Локальные desktop/mobile проверки: [evidence](../testing/evidence/crm-ui-fixes-20261109.md).
+Серверные правила, данные рабочей БД и deployment не изменены.
+
+06.11: полный сценарий исходного XLSX с20 клиентами проверен через реальный
+ClamAV/Redis/Celery в изолированной БД: mapping→preview→confirm→CRM, все поля,
+страница/список и повторный перенос без дублей. Локальные службы восстановлены;
+production/Windows autostart не заявлены. [Проверки](../testing/evidence/import-upload-alert-20261106.md#полный-перенос-исходного-excel--06112026).
+
+## IMPORT-WORKSPACE — новый файловый перенос 04.11.2026
+
+Локально реализован отдельный четырёхсущностный мастер: CSV/XLSX multi-sheet,
+исправляемый staging, новые/существующие поля, связи, явные duplicate decisions,
+профили, preview таблицы/карточки/календаря, фоновые preview/confirm и safe replay.
+Это расширение сверх прежнего AUD-12; старые описания mapping-only ниже относятся
+к ImportJob и его прежнему evidence, а не к новому мастеру.
+Импорт не создаёт оплаты и не запускает сообщения/автоматизации. Активация будущих
+записей отдельная, с просмотром списка. AI не входит. Каналы не менялись.
+По последующему отдельному разрешению06.11 core0014–0017 применены к локальной
+рабочей БД; восстановлен local ClamAV и проверена загрузка20 клиентов без confirm.
+[Новый срез upload/alert](../testing/evidence/import-upload-alert-20261106.md).
+06.11 исправлен старт: «Новый перенос» открывает выбор файла, а черновик создаётся
+после выбора. Отмена не создаёт пустой перенос; добавление/повторная загрузка
+используют текущий черновик. Проверки записаны в том же evidence.
+Текущие проверки, ограничения и публикация:
+[IMPORT-WORKSPACE evidence](../testing/evidence/import-workspace-20261104.md).
+
 ## C11 — владение попыткой экспорта, 04.11.2026
 
 Каждый claim/reclaim ExportJob получает новый внутренний UUID claim_token.
@@ -48,9 +78,12 @@ payload и логи содержат только свою часть пакет
 выполнены29.10 (b6de2956); результат — YCLOUD-PUBLICATION-20261029 в PRIMARY-SESSION. Реальные
 каналы и R02/live приёмка остаются открытыми границами; этот PASS их не закрывает.
 
-
 AUD-12a локально закрыт31.10: ручной mapping, повторный preview, полный список
-ошибок с пагинацией и исправление/повтор доступны в существующем импорте заявок.
+ошибок с пагинацией доступны в существующем импорте заявок. Коррекция означает
+смену mapping либо исправление исходного файла с новой загрузкой; редактора
+значений строк, новых полей и preview рабочих карточек/календаря здесь нет.
+[Сверка реализации и согласованное расширение 04.11](../current/import-workspace.md)
+отделяют прежний scope от будущего мастера; AI в первый этап расширения не входит.
 Общий ImportPanel переиспользован; API metadata проверены для всех5 entity.
 Backend50/Node5/system/drift/build/types/i18n и RU/KK/EN browser PASS на кандидате
 от4c6587c6; опубликовано f9a7a6c8, remote SHA подтверждён, CI выполняется; [evidence AUD12a](../testing/task-state/PRIMARY-SESSION.md#aud-12a-20261030--import-mapping-and-error-recovery-verified).
@@ -175,7 +208,11 @@ External financial readers пока не зарегистрированы, пр�
 [providers](../../apps/integrations/providers), [bots](../../apps/bots),
 [API](../../frontend/src/api/connectors.ts),
 [UI](../../frontend/src/features/integrations/IntegrationsPage.tsx).
-UI `/app/integrations`; API business-connectors/connector-credentials/connector-sync-runs
+UI `/app/settings#integrations` (вкладка настроек с05.11; старые
+`/app/integrations` и `/integrations` перенаправляются с сохранением query).
+[Проверка переноса](../testing/evidence/connections-settings-20261105.md):
+навигация/роль/ошибка и RU/KK/EN локально проверены; это не live provider acceptance.
+API business-connectors/connector-credentials/connector-sync-runs
 и профильные webhooks в [router](../../config/urls.py).
 [Аудит 08.10](../testing/integrations-functional-review-20261008.md) — анализ и предложение,
 не исправление всех замечаний и не live-сертификация. Изолированные mocks не target evidence.

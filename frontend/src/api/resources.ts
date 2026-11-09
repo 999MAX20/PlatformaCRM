@@ -5,6 +5,9 @@ import type { Id, Resource } from "../types";
 export type ResourceListParams = {
   business?: Id;
   search?: string;
+  custom_field?: string;
+  custom_operator?: string;
+  custom_value?: string;
   resource_type?: Resource["resource_type"] | "";
   status?: "active" | "inactive" | "";
   page?: number;

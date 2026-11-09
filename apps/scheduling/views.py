@@ -1,3 +1,5 @@
+from apps.core.custom_field_filters import filter_custom_field
+from apps.core.client_projection import client_relation_q
 from datetime import datetime, time, timedelta
 
 from django.db import transaction
@@ -122,6 +124,8 @@ class ResourceViewSet(ResourceLifecycleMixin, TenantModelViewSet):
         business_id = params.get("business")
         if business_id:
             queryset = queryset.filter(business_id=business_id)
+        if self.action == "list":
+            queryset = filter_custom_field(queryset, actor=self.request.user, entity_type="specialist", params=self.request.query_params)
         if not apply_filters:
             return queryset
 
@@ -323,6 +327,19 @@ class AppointmentViewSet(IdempotentCRMCreateMixin, TenantModelViewSet):
     queryset = Appointment.objects.select_related("business", "client", "lead", "lead__responsible_user", "service", "resource", "resource__linked_user", "responsible_user", "source_conversation")
     serializer_class = AppointmentSerializer
 
+    @action(detail=False, methods=["get"], url_path="calendar-summary")
+    def calendar_summary(self, request):
+        from apps.businesses.capabilities import assert_resource_enabled
+        from apps.scheduling.calendar_summary import CalendarSummaryQuery, calendar_summary
+
+        query = CalendarSummaryQuery(data={key: value for key, value in request.query_params.items() if value != ""})
+        query.is_valid(raise_exception=True)
+        queryset = self.get_queryset()
+        business = Business.objects.get(pk=query.validated_data["business"])
+        assert_resource_enabled(business, Resources.APPOINTMENTS)
+        assert_can(request.user, business, Resources.APPOINTMENTS, Actions.VIEW)
+        return Response(calendar_summary(queryset, filters=query.validated_data, zone=_business_zone(business)))
+
     @action(detail=False, methods=["get"], url_path="legacy-links")
     def legacy_links(self, request):
         from apps.scheduling.legacy_record_links import LegacyRecordQuery, legacy_record_links
@@ -393,6 +410,8 @@ class AppointmentViewSet(IdempotentCRMCreateMixin, TenantModelViewSet):
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        if self.action in {"list", "workspace"}:
+            queryset = filter_custom_field(queryset, actor=self.request.user, entity_type="appointment", params=self.request.query_params)
         business_id = self.request.query_params.get("business")
         business = None
         if business_id:
@@ -428,7 +447,7 @@ class AppointmentViewSet(IdempotentCRMCreateMixin, TenantModelViewSet):
 
         client_ids = self.parse_query_id_list("client_ids")
         if client_ids:
-            queryset = queryset.filter(client_id__in=client_ids)
+            queryset = queryset.filter(client_relation_q(self.request.user), client_id__in=client_ids)
         lead_ids = self.parse_query_id_list("lead_ids")
         if lead_ids:
             queryset = queryset.filter(lead_id__in=lead_ids)

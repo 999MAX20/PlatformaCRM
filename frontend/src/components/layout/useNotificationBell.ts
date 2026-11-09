@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { invalidateNotificationReceipts } from "../../lib/notificationCache";
 import { notificationsApi } from "../../api/notifications";
 
 import { useAuth } from "../../features/auth/AuthProvider";
@@ -9,6 +10,7 @@ import { useI18n } from "../../lib/i18n";
 
 import { realtimeIntervals, realtimeQueryOptions } from "../../lib/realtime";
 
+import type { Id } from "../../types";
 import type { Dispatch, SetStateAction } from "react";
 type Args = {
   user: ReturnType<typeof useAuth>["user"];
@@ -30,32 +32,32 @@ export function useNotificationBell({
     queryKey: ["notifications", "bell", business?.id, user?.id],
     queryFn: () =>
       notificationsApi.list({ surface: "bell", business: business?.id }),
-    enabled: Boolean(user) && showNotifications,
+    enabled: Boolean(user && business) && showNotifications,
     ...realtimeQueryOptions,
   });
   const notificationSummary = useQuery({
-    queryKey: ["notifications-summary", "bell"],
-    queryFn: () => notificationsApi.summary({ surface: "bell" }),
-    enabled: Boolean(user),
+    queryKey: ["notifications-summary", "bell", business?.id, user?.id],
+    queryFn: () =>
+      notificationsApi.summary({ surface: "bell", business: business?.id }),
+    enabled: Boolean(user && business),
     refetchInterval: realtimeIntervals.notificationsMs,
     ...realtimeQueryOptions,
   });
   const markReadMutation = useMutation({
-    mutationFn: notificationsApi.markRead,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notifications"] });
-      queryClient.invalidateQueries({ queryKey: ["notifications-summary"] });
-    },
+    mutationFn: (id: Id) => notificationsApi.markRead(id, business?.id),
+    onSuccess: () => invalidateNotificationReceipts(queryClient),
   });
   const markAllReadMutation = useMutation({
-    mutationFn: () => notificationsApi.markAllRead({ surface: "bell" }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notifications"] });
-      queryClient.invalidateQueries({ queryKey: ["notifications-summary"] });
-    },
+    mutationFn: () =>
+      notificationsApi.markAllRead({ surface: "bell", business: business?.id }),
+    onSuccess: () => invalidateNotificationReceipts(queryClient),
   });
-  const unreadCount = notificationSummary.data?.unread ?? 0;
-  const latestNotifications = [...(notifications.data || [])]
+  const unreadCount = notificationSummary.isError
+    ? 0
+    : (notificationSummary.data?.unread ?? 0);
+  const latestNotifications = [
+    ...(!notifications.isError ? notifications.data || [] : []),
+  ]
     .sort(
       (a, b) =>
         Number(!b.read_at) - Number(!a.read_at) ||

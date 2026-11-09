@@ -44,7 +44,7 @@ export function ServiceForm({
   onDirtyChange,
 }: {
   businessId: Id;
-  initial?: Service;
+  initial?: Partial<Service>;
   onSubmit: (payload: Partial<Service>) => Promise<unknown>;
   formId?: string;
   showSubmit?: boolean;

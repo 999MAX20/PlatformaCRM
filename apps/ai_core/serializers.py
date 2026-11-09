@@ -171,6 +171,14 @@ class ApprovalRequestSerializer(serializers.ModelSerializer):
         ]
 
     def validate(self, attrs):
+        if self.instance is not None:
+            changed = {
+                field: "Approval details are immutable. Create a new request for a different action."
+                for field, value in attrs.items()
+                if field != "reason" and value != getattr(self.instance, field)
+            }
+            if changed:
+                raise serializers.ValidationError(changed)
         business = attrs.get("business") or getattr(self.instance, "business", None)
         ai_request_log = attrs.get("ai_request_log") if "ai_request_log" in attrs else getattr(self.instance, "ai_request_log", None)
         ai_tool_call_log = attrs.get("ai_tool_call_log") if "ai_tool_call_log" in attrs else getattr(self.instance, "ai_tool_call_log", None)
@@ -179,6 +187,15 @@ class ApprovalRequestSerializer(serializers.ModelSerializer):
         if ai_tool_call_log and business and ai_tool_call_log.business_id != business.id:
             raise serializers.ValidationError({"ai_tool_call_log": "AI tool call must belong to the selected business."})
         return attrs
+
+    def update(self, instance, validated_data):
+        # Decision evidence is immutable even while pending. A full model save
+        # could also restore a stale approval/status after concurrent execution.
+        if "reason" in validated_data:
+            instance.reason = validated_data["reason"]
+            instance.save(update_fields=["reason", "updated_at"])
+        instance.refresh_from_db()
+        return instance
 
     def to_representation(self, instance):
         data = super().to_representation(instance)

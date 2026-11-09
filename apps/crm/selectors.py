@@ -5,6 +5,7 @@ from django.utils import timezone
 
 from apps.core.work_queues import no_next_action_deals_queryset, sla_overdue_deals_queryset
 from apps.crm.models import Deal
+from apps.crm.field_policy import queryset_amount_visible
 
 
 MONEY_QUANT = Decimal("0.01")
@@ -34,6 +35,7 @@ def build_deal_summary(queryset, *, user=None, now=None):
     overdue_deals = sla_overdue_deals_queryset(open_deals, now=now)
     no_task_deals = no_next_action_deals_queryset(open_deals)
     stale_deals = stale_deals_queryset(queryset, now=now)
+    amounts_visible = queryset_amount_visible(queryset, user)
 
     total_count = queryset.count()
     open_count = open_deals.count()
@@ -41,9 +43,9 @@ def build_deal_summary(queryset, *, user=None, now=None):
     lost_count = lost_deals.count()
     closed_count = won_count + lost_count
 
-    open_value = _money(open_deals.aggregate(value=Sum("amount"))["value"])
-    won_value = _money(won_deals.aggregate(value=Sum("amount"))["value"])
-    lost_value = _money(lost_deals.aggregate(value=Sum("amount"))["value"])
+    open_value = _money(open_deals.aggregate(value=Sum("amount"))["value"]) if amounts_visible else None
+    won_value = _money(won_deals.aggregate(value=Sum("amount"))["value"]) if amounts_visible else None
+    lost_value = _money(lost_deals.aggregate(value=Sum("amount"))["value"]) if amounts_visible else None
 
     aggregate_queryset = queryset.order_by()
     by_status = {status: 0 for status, _label in Deal.Statuses.choices}
@@ -61,7 +63,7 @@ def build_deal_summary(queryset, *, user=None, now=None):
         "conversion_rate": _rate(won_count, closed_count),
         "stale_deals": stale_deals.count(),
         "pipeline_value": open_value,
-        "expected_revenue": _expected_revenue(open_deals),
+        "expected_revenue": _expected_revenue(open_deals) if amounts_visible else None,
         "overdue": overdue_deals.count(),
         "no_tasks": no_task_deals.distinct().count(),
         "hot": stale_deals.count(),

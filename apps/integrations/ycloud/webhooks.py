@@ -18,6 +18,8 @@ KINDS = {
     "whatsapp.business_account.updated": "whatsappBusinessAccount",
     "whatsapp.inbound_message.received": "whatsappInboundMessage",
     "whatsapp.message.updated": "whatsappMessage",
+    "whatsapp.smb.message.echoes": "whatsappMessage",
+    "whatsapp.smb.message.created": "whatsappMessage",
 }
 
 

@@ -1,12 +1,14 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { randomUUID } from "node:crypto";
+import { crmLanding } from "./landing/plugin";
 
 const apiProxyTarget =
   process.env.E2E_API_BASE_URL || "http://localhost:8000";
 
 export default defineConfig({
   plugins: [
+    crmLanding(),
     {
       name: "app-cache-isolation",
       config(config, { command, mode }) {
@@ -51,6 +53,17 @@ export default defineConfig({
   server: {
     port: 5173,
     proxy: {
+      "/api/notifications/events/": {
+        target: process.env.NOTIFICATION_EVENTS_PROXY_TARGET || "http://127.0.0.1:8001",
+        changeOrigin: true,
+        configure(proxy) {
+          proxy.on("error", (_error, _request, response) => {
+            // An upstream reset after SSE headers must close the downstream
+            // stream too, so the client reconnects instead of waiting for idle.
+            if ("headersSent" in response && response.headersSent) response.destroy();
+          });
+        },
+      },
       "/ready/": {
         target: apiProxyTarget,
         changeOrigin: true,

@@ -51,7 +51,7 @@ test("MFA enrollment, recovery-code login and authorized disable persist through
   await expect(page).toHaveURL(/\/mfa$/);
   await page.getByLabel("Код подтверждения", { exact: true }).fill(codes[0]);
   const verified = page.waitForResponse(response => response.request().method() === "POST" && response.url().endsWith("/api/auth/mfa/verify/"));
-  await page.getByRole("button", { name: "Подтвердить вход", exact: true }).click();
+  await page.getByRole("button", { name: "Войти", exact: true }).click();
   expect((await verified).ok()).toBeTruthy();
   await expect(page).toHaveURL(/\/app/);
   await page.goto("/app/account");
@@ -106,7 +106,7 @@ test("existing MFA account returns to its invitation and accepts the intended bu
   await expect(page).toHaveURL(/\/mfa$/);
   await page.getByLabel("Код подтверждения", { exact: true }).fill(codes[0]);
   const verified = page.waitForResponse(response => response.request().method() === "POST" && response.url().endsWith("/api/auth/mfa/verify/"));
-  await page.getByRole("button", { name: "Подтвердить вход", exact: true }).click();
+  await page.getByRole("button", { name: "Войти", exact: true }).click();
   const session = await (await verified).json();
   await expect(page).toHaveURL(new RegExp(`${invitation.invite_path}$`));
   const accepted = page.waitForResponse(response => response.request().method() === "POST" && response.url().endsWith("/api/team/invitations/accept/"));

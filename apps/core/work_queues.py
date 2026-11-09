@@ -1,4 +1,4 @@
-from django.db.models import Count, Q
+from django.db.models import BooleanField, Count, Exists, OuterRef, Q, Value
 from django.utils import timezone
 
 from apps.bots.models import BotConversation
@@ -11,6 +11,9 @@ from apps.scheduling.models import Appointment
 from apps.tasks.escalation import task_overdue_escalation
 from apps.tasks.models import Task
 from apps.core.operational_dashboard import operational_summary, attention_preview
+from apps.core.crm_read_scope import readable_queryset
+from apps.clients.models import Client
+from apps.crm.field_policy import deal_amount_visible
 
 
 OPEN_TASK_STATUSES = [Task.Statuses.OPEN, Task.Statuses.IN_PROGRESS, Task.Statuses.WAITING]
@@ -45,6 +48,17 @@ def build_work_queues(*, business, user=None, limit=10, now=None, workflow="lega
         business=business,
         user=user,
     )
+    # Evaluate linked-client visibility in SQL, using the same current read policy.
+    readable_clients = readable_queryset(Client.objects.all(), actor=user, business=business, resource=Resources.CLIENTS)
+    def with_client_visibility(queryset):
+        return queryset.select_related("client").annotate(
+            _queue_client_visible=Exists(readable_clients.filter(pk=OuterRef("client_id"))),
+        )
+    task_scope, lead_scope, deal_scope, appointment_scope, conversation_scope = (
+        with_client_visibility(queryset)
+        for queryset in (task_scope, lead_scope, deal_scope, appointment_scope, conversation_scope)
+    )
+    deal_scope = deal_scope.annotate(_queue_amount_visible=Value(deal_amount_visible(user, business), output_field=BooleanField()))
     record_first = workflow == "appointments"
     if record_first:
         lead_scope, deal_scope = lead_scope.none(), deal_scope.none()
@@ -88,37 +102,37 @@ def build_work_queues(*, business, user=None, limit=10, now=None, workflow="lega
     ).exclude(assigned_to=user).order_by("-last_message_at", "-updated_at") if user else conversation_scope.none()
 
     queues = {
-        "overdue_tasks": [_task_item(task, now=now) for task in overdue_tasks.order_by("due_at", "pk")[:limit]],
-        "stale_leads": [_lead_item(lead, now=now) for lead in stale_leads.order_by("updated_at", "pk")[:limit]],
-        "sla_overdue_deals": [_deal_item(deal, now=now, reason="sla_overdue") for deal in sla_overdue_deals.order_by("stage_entered_at", "pk")[:limit]],
-        "no_next_action_deals": [_deal_item(deal, now=now, reason="no_next_action") for deal in no_next_action_deals.order_by("updated_at", "pk")[:limit]],
-        "upcoming_appointments": [_appointment_item(appointment) for appointment in upcoming_appointments[:limit]],
-        "appointment_confirmations": [_appointment_item(appointment) for appointment in appointment_confirmations.order_by("start_at", "pk")[:limit]],
-        "unread_conversations": [_conversation_item(conversation, reason="unread", now=now) for conversation in unread_conversations[:limit]],
-        "handoff_conversations": [_conversation_item(conversation, reason="handoff_required", now=now) for conversation in handoff_conversations[:limit]],
+        "overdue_tasks": [_task_item(task, now=now, user=user) for task in overdue_tasks.order_by("due_at", "pk")[:limit]],
+        "stale_leads": [_lead_item(lead, now=now, user=user) for lead in stale_leads.order_by("updated_at", "pk")[:limit]],
+        "sla_overdue_deals": [_deal_item(deal, now=now, reason="sla_overdue", user=user) for deal in sla_overdue_deals.order_by("stage_entered_at", "pk")[:limit]],
+        "no_next_action_deals": [_deal_item(deal, now=now, reason="no_next_action", user=user) for deal in no_next_action_deals.order_by("updated_at", "pk")[:limit]],
+        "upcoming_appointments": [_appointment_item(appointment, user=user) for appointment in upcoming_appointments[:limit]],
+        "appointment_confirmations": [_appointment_item(appointment, user=user) for appointment in appointment_confirmations.order_by("start_at", "pk")[:limit]],
+        "unread_conversations": [_conversation_item(conversation, reason="unread", now=now, user=user) for conversation in unread_conversations[:limit]],
+        "handoff_conversations": [_conversation_item(conversation, reason="handoff_required", now=now, user=user) for conversation in handoff_conversations[:limit]],
         "unread_sla_overdue_conversations": [
-            _conversation_item(conversation, reason="unread_sla_overdue", now=now) for conversation in unread_sla_overdue_conversations[:limit]
+            _conversation_item(conversation, reason="unread_sla_overdue", now=now, user=user) for conversation in unread_sla_overdue_conversations[:limit]
         ],
         "handoff_sla_overdue_conversations": [
-            _conversation_item(conversation, reason="handoff_sla_overdue", now=now) for conversation in handoff_sla_overdue_conversations[:limit]
+            _conversation_item(conversation, reason="handoff_sla_overdue", now=now, user=user) for conversation in handoff_sla_overdue_conversations[:limit]
         ],
-        "unassigned_tasks": [_task_item(task, now=now) for task in unassigned_tasks[:limit]],
-        "own_tasks": [_task_item(task, now=now) for task in own_tasks[:limit]],
-        "team_tasks": [_task_item(task, now=now) for task in team_tasks[:limit]],
-        "unassigned_leads": [_lead_item(lead, now=now) for lead in unassigned_leads[:limit]],
-        "own_leads": [_lead_item(lead, now=now) for lead in own_leads[:limit]],
-        "team_leads": [_lead_item(lead, now=now) for lead in team_leads[:limit]],
-        "unassigned_deals": [_deal_item(deal, now=now, reason="unassigned") for deal in unassigned_deals[:limit]],
-        "own_deals": [_deal_item(deal, now=now, reason="assigned_to_me") for deal in own_deals[:limit]],
-        "team_deals": [_deal_item(deal, now=now, reason="team") for deal in team_deals[:limit]],
+        "unassigned_tasks": [_task_item(task, now=now, user=user) for task in unassigned_tasks[:limit]],
+        "own_tasks": [_task_item(task, now=now, user=user) for task in own_tasks[:limit]],
+        "team_tasks": [_task_item(task, now=now, user=user) for task in team_tasks[:limit]],
+        "unassigned_leads": [_lead_item(lead, now=now, user=user) for lead in unassigned_leads[:limit]],
+        "own_leads": [_lead_item(lead, now=now, user=user) for lead in own_leads[:limit]],
+        "team_leads": [_lead_item(lead, now=now, user=user) for lead in team_leads[:limit]],
+        "unassigned_deals": [_deal_item(deal, now=now, reason="unassigned", user=user) for deal in unassigned_deals[:limit]],
+        "own_deals": [_deal_item(deal, now=now, reason="assigned_to_me", user=user) for deal in own_deals[:limit]],
+        "team_deals": [_deal_item(deal, now=now, reason="team", user=user) for deal in team_deals[:limit]],
         "unassigned_conversations": [
-            _conversation_item(conversation, reason="unassigned", now=now) for conversation in unassigned_conversations[:limit]
+            _conversation_item(conversation, reason="unassigned", now=now, user=user) for conversation in unassigned_conversations[:limit]
         ],
         "own_conversations": [
-            _conversation_item(conversation, reason="assigned_to_me", now=now) for conversation in own_conversations[:limit]
+            _conversation_item(conversation, reason="assigned_to_me", now=now, user=user) for conversation in own_conversations[:limit]
         ],
         "team_conversations": [
-            _conversation_item(conversation, reason="team", now=now) for conversation in team_conversations[:limit]
+            _conversation_item(conversation, reason="team", now=now, user=user) for conversation in team_conversations[:limit]
         ],
     }
     summary = _work_queue_summary(
@@ -142,7 +156,7 @@ def build_work_queues(*, business, user=None, limit=10, now=None, workflow="lega
         summary["upcoming_appointments"] = upcoming_appointments.count()
         summary["appointment_confirmations"] = appointment_confirmations.count()
         summary["pending_results"] = pending_results.count()
-        queues["pending_results"] = [{**_appointment_item(item), "reason": "pending_result"} for item in pending_results[:limit]]
+        queues["pending_results"] = [{**_appointment_item(item, user=user), "reason": "pending_result"} for item in pending_results[:limit]]
     summary["total_attention"] = (
         summary["overdue_tasks"]
         + summary["stale_leads"]
@@ -157,7 +171,7 @@ def build_work_queues(*, business, user=None, limit=10, now=None, workflow="lega
         *queues["overdue_tasks"], *queues["stale_leads"], *queues["sla_overdue_deals"],
         *queues["no_next_action_deals"], *queues["appointment_confirmations"],
         *queues.get("pending_results", []),
-        *[_conversation_item(item, reason="handoff_required" if item.handoff_required else "unread", now=now)
+        *[_conversation_item(item, reason="handoff_required" if item.handoff_required else "unread", now=now, user=user)
           for item in operational["waiting"].select_related("client").order_by("last_inbound_at", "pk")[:limit]],
     ]
     return {
@@ -490,7 +504,7 @@ def missed_chat_handoffs_queryset(*, business=None, queryset=None):
     )
 
 
-def _task_item(task, *, now):
+def _task_item(task, *, now, user=None):
     escalation = task_overdue_escalation(task, now=now)
     return {
         "type": "task",
@@ -498,7 +512,7 @@ def _task_item(task, *, now):
         "title": task.title,
         "priority": task.priority,
         "due_at": task.due_at.isoformat() if task.due_at else None,
-        "client_id": task.client_id,
+        "client_id": task.client_id if task._queue_client_visible else None,
         "lead_id": task.lead_id,
         "deal_id": task.deal_id,
         "appointment_id": task.appointment_id,
@@ -511,14 +525,14 @@ def _task_item(task, *, now):
     }
 
 
-def _lead_item(lead, *, now):
+def _lead_item(lead, *, now, user=None):
     return {
         "type": "lead",
         "id": lead.id,
-        "title": str(lead.client),
+        "title": lead.client.full_name if lead._queue_client_visible else f"Lead #{lead.id}",
         "status": lead.status,
         "source": lead.source,
-        "client_id": lead.client_id,
+        "client_id": lead.client_id if lead._queue_client_visible else None,
         "responsible_user_id": lead.responsible_user_id,
         "age_hours": _hours_since(lead.updated_at, now=now),
         "attention_at": lead.updated_at.isoformat(),
@@ -526,8 +540,9 @@ def _lead_item(lead, *, now):
     }
 
 
-def _deal_item(deal, *, now, reason):
+def _deal_item(deal, *, now, reason, user=None):
     risk_level, risk_percent = deal_risk(deal, now=now)
+    amounts_visible = deal._queue_amount_visible
     return {
         "type": "deal",
         "id": deal.id,
@@ -536,10 +551,10 @@ def _deal_item(deal, *, now, reason):
         "status": deal.status,
         "stage_id": deal.stage_id,
         "stage_name": deal.stage.name if deal.stage else "",
-        "client_id": deal.client_id,
+        "client_id": deal.client_id if deal._queue_client_visible else None,
         "owner_id": deal.owner_id,
-        "amount": str(deal.amount),
-        "currency": deal.currency,
+        "amount": str(deal.amount) if amounts_visible else None,
+        "currency": deal.currency if amounts_visible else "",
         "risk_level": risk_level,
         "risk_percent": risk_percent,
         "attention_at": (deal.stage_entered_at if reason == "sla_overdue" and deal.stage_entered_at else deal.updated_at).isoformat(),
@@ -547,13 +562,13 @@ def _deal_item(deal, *, now, reason):
     }
 
 
-def _appointment_item(appointment):
+def _appointment_item(appointment, *, user=None):
     return {
         "type": "appointment",
         "id": appointment.id,
-        "title": str(appointment.client),
+        "title": appointment.client.full_name if appointment._queue_client_visible else f"Appointment #{appointment.id}",
         "status": appointment.status,
-        "client_id": appointment.client_id,
+        "client_id": appointment.client_id if appointment._queue_client_visible else None,
         "lead_id": appointment.lead_id,
         "service_id": appointment.service_id,
         "resource_id": appointment.resource_id,
@@ -564,7 +579,7 @@ def _appointment_item(appointment):
     }
 
 
-def _conversation_item(conversation, *, reason, now=None):
+def _conversation_item(conversation, *, reason, now=None, user=None):
     now = now or timezone.now()
     sla_minutes = HANDOFF_RESPONSE_SLA_MINUTES if reason in {"handoff_required", "handoff_sla_overdue"} else UNREAD_RESPONSE_SLA_MINUTES
     sla_due_at = conversation.last_inbound_at + timezone.timedelta(minutes=sla_minutes) if conversation.last_inbound_at else None
@@ -572,14 +587,14 @@ def _conversation_item(conversation, *, reason, now=None):
     return {
         "type": "conversation",
         "id": conversation.id,
-        "title": str(conversation.client) if conversation.client else conversation.external_user_id or f"Conversation #{conversation.id}",
+        "title": (conversation.client.full_name if conversation._queue_client_visible else f"Conversation #{conversation.id}") if conversation.client_id else conversation.external_user_id or f"Conversation #{conversation.id}",
         "reason": reason,
         "channel": conversation.channel,
         "priority": conversation.priority,
         "unread_count": conversation.unread_count,
         "handoff_required": conversation.handoff_required,
         "handoff_reason": conversation.handoff_reason,
-        "client_id": conversation.client_id,
+        "client_id": conversation.client_id if conversation._queue_client_visible else None,
         "lead_id": conversation.lead_id,
         "deal_id": conversation.deal_id,
         "assigned_to_id": conversation.assigned_to_id,

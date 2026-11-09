@@ -703,3 +703,82 @@ class OutreachCampaignTests(APITestCase):
         self.assertEqual(payload["template"]["name"], "appointment_recall_ru")
         self.assertEqual(payload["template"]["language"]["code"], "ru")
         self.assertEqual(payload["template"]["components"][0]["parameters"][0]["text"], "Айгерим")
+
+
+    def test_wave1_stop_after_prepare_blocks_delivery(self):
+        from unittest.mock import patch
+        from apps.notifications.delivery import deliver_notification
+        from apps.outreach.services import prepare_campaign_recipients, launch_campaign
+        campaign = OutreachCampaign.objects.create(
+            business=self.business, name="Revocation regression", channel="telegram",
+            audience_type="all_clients", message_text="Hello", require_opt_in=True,
+        )
+        prepare_campaign_recipients(campaign)
+        record_inbound_consent(business=self.business, channel="telegram", external_user_id="1001", text="STOP")
+        launch_campaign(campaign)
+        notification = campaign.recipients.get(client=self.telegram_client).notification
+        with patch("apps.notifications.delivery._deliver", return_value={"ok": True}) as provider:
+            result = deliver_notification(notification)
+        provider.assert_not_called()
+        self.assertEqual(result["status"], "cancelled")
+        notification.refresh_from_db()
+        self.assertEqual(notification.status, Notification.Statuses.CANCELLED)
+        self.assertIsNone(notification.next_retry_at)
+
+    def test_wave1_stop_after_launch_blocks_claim_and_retry(self):
+        from unittest.mock import patch
+        from apps.notifications.delivery import claim_notification, deliver_notification
+        from apps.outreach.services import prepare_campaign_recipients, launch_campaign
+        for retry in (False, True):
+            with self.subTest(retry=retry):
+                OutreachConsent.objects.filter(client=self.telegram_client).update(status="opted_in")
+                campaign = OutreachCampaign.objects.create(
+                    business=self.business, name="Late STOP", channel="telegram",
+                    audience_type="all_clients", message_text="Hello", require_opt_in=True,
+                )
+                prepare_campaign_recipients(campaign)
+                launch_campaign(campaign)
+                notification = campaign.recipients.get(client=self.telegram_client).notification
+                if retry:
+                    notification.status = Notification.Statuses.RETRY_SCHEDULED
+                    notification.next_retry_at = timezone.now()
+                    notification.save(update_fields=["status", "next_retry_at"])
+                claimed = claim_notification(notification.id)
+                record_inbound_consent(business=self.business, channel="telegram", external_user_id="1001", text="STOP")
+                with patch("apps.notifications.delivery._deliver", return_value={"ok": True}) as provider:
+                    result = deliver_notification(claimed, claimed=True)
+                provider.assert_not_called()
+                self.assertEqual(result["status"], "cancelled")
+                with patch("apps.notifications.delivery._deliver") as provider:
+                    replay = deliver_notification(notification)
+                provider.assert_not_called()
+                self.assertEqual(replay["status"], "skipped")
+
+
+    def test_wave1_delivery_requires_current_consent_and_matching_tenant(self):
+        from unittest.mock import patch
+        from apps.notifications.delivery import deliver_notification
+        from apps.outreach.services import prepare_campaign_recipients, launch_campaign
+        for scenario in ("allowed", "missing_consent", "foreign_tenant", "missing_recipient"):
+            with self.subTest(scenario=scenario):
+                OutreachConsent.objects.update_or_create(business=self.business, client=self.telegram_client, channel="telegram", defaults={"status": "opted_in"})
+                campaign = OutreachCampaign.objects.create(business=self.business, name=scenario, channel="telegram", audience_type="all_clients", message_text="Hello", require_opt_in=True)
+                prepare_campaign_recipients(campaign)
+                launch_campaign(campaign)
+                recipient = campaign.recipients.get(client=self.telegram_client)
+                notification = recipient.notification
+                if scenario == "missing_consent":
+                    OutreachConsent.objects.filter(client=self.telegram_client).delete()
+                elif scenario == "foreign_tenant":
+                    other = Business.objects.create(owner=self.owner, name="Other", slug="wave-other")
+                    Notification.objects.filter(pk=notification.pk).update(business=other)
+                elif scenario == "missing_recipient":
+                    recipient.delete()
+                with patch("apps.notifications.delivery._deliver", return_value={"ok": True}) as provider:
+                    result = deliver_notification(notification)
+                if scenario == "allowed":
+                    provider.assert_called_once()
+                    self.assertEqual(result["status"], "sent")
+                else:
+                    provider.assert_not_called()
+                    self.assertEqual(result["status"], "cancelled")

@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router";
 
 import { businessConnectorsApi } from "../../api/connectors";
 import { getApiErrorMessage } from "../../api/client";
@@ -10,7 +11,7 @@ import { useAuth } from "../auth/AuthProvider";
 import { ProviderCard } from "./components/ProviderCard";
 import { integrationProviderCatalog } from "./config/providerCatalog";
 
-export function IntegrationsPage() {
+export function IntegrationsPage({ embedded = false }: { embedded?: boolean }) {
   const { t } = useI18n();
   const { user } = useAuth();
   const { business, isLoading: isBusinessLoading } = useActiveBusiness();
@@ -36,8 +37,9 @@ export function IntegrationsPage() {
   const pageError = capabilities.error || connectors.error;
 
   return (
-    <div className="mx-auto flex min-h-[calc(100dvh-12rem)] w-full max-w-2xl flex-col justify-center gap-4 py-4 lg:min-h-[calc(100dvh-6rem)]">
+    <div className={embedded ? "flex w-full min-w-0 flex-col gap-4 p-4 sm:p-5" : "mx-auto flex min-h-[calc(100dvh-12rem)] w-full max-w-2xl flex-col justify-center gap-4 py-4 lg:min-h-[calc(100dvh-6rem)]"}>
       {pageError ? <ErrorState error={pageError} message={getApiErrorMessage(pageError)} /> : null}
+      {canManage && <Link to="/app/integrations/import" className="rounded-control border border-platforma-border bg-surface-card px-4 py-3 text-sm font-semibold text-brand-700 hover:bg-surface-hover">{t("importWorkspace.title")}</Link>}
       <div className="grid items-stretch gap-3 sm:grid-cols-2">
         {integrationProviderCatalog.map((provider) => (
           <ProviderCard

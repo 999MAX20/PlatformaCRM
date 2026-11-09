@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from apps.core.client_projection import ClientProjectionMixin, client_label, reader_actor, visible_client
 
 from apps.tasks.models import Task, TaskComment
 from apps.tasks.policy import LINK_RESOURCES, can_view_link, task_available_actions, validate_assignment, validate_task_links
@@ -68,7 +69,7 @@ class TaskDetailsUpdateSerializer(serializers.ModelSerializer):
         return attrs
 
 
-class TaskSerializer(serializers.ModelSerializer):
+class TaskSerializer(ClientProjectionMixin, serializers.ModelSerializer):
     available_actions = serializers.SerializerMethodField()
     relations = serializers.SerializerMethodField()
     comments_count = serializers.IntegerField(read_only=True)
@@ -160,8 +161,8 @@ class TaskSerializer(serializers.ModelSerializer):
     def get_lead_title(self, obj):
         if not obj.lead_id:
             return ""
-        client_name = getattr(getattr(obj, "lead", None), "client_name", "") or getattr(getattr(getattr(obj, "lead", None), "client", None), "full_name", "")
-        return client_name or f"Lead #{obj.lead_id}"
+        return client_label(obj.lead.client, actor=reader_actor(self.context), business=obj.business,
+                            fallback=f"Lead #{obj.lead_id}", context=self.context)
 
     def get_conversation_label(self, obj):
         if not obj.conversation_id:
@@ -170,6 +171,8 @@ class TaskSerializer(serializers.ModelSerializer):
         if conversation is None:
             return f"Conversation #{obj.conversation_id}"
         client = getattr(conversation, "client", None)
+        if client is not None and visible_client(client, actor=reader_actor(self.context), business=obj.business, context=self.context) is None:
+            return f"Conversation #{obj.conversation_id}"
         if client is not None and getattr(client, "full_name", ""):
             return client.full_name
         return conversation.external_user_id or f"{conversation.channel} #{obj.conversation_id}"
@@ -239,10 +242,10 @@ class TaskSerializer(serializers.ModelSerializer):
 
 
     def get_available_actions(self, obj):
-        return task_available_actions(obj, getattr(self.context.get("request"), "user", None))
+        return task_available_actions(obj, reader_actor(self.context))
 
     def get_relations(self, obj):
-        actor = getattr(self.context.get("request"), "user", None)
+        actor = reader_actor(self.context)
         if actor is None:
             return []
         routes = {"client": "clients", "lead": "leads", "deal": "deals", "appointment": "calendar",
@@ -251,6 +254,8 @@ class TaskSerializer(serializers.ModelSerializer):
         for field in LINK_RESOURCES:
             target = getattr(obj, field, None)
             if not can_view_link(actor, obj.business, field, target):
+                continue
+            if field == "client" and visible_client(target, actor=actor, business=obj.business, context=self.context) is None:
                 continue
             title = (getattr(target, "full_name", None) or getattr(target, "title", None)
                      or getattr(target, "name", None) or f"#{target.pk}")
@@ -265,13 +270,16 @@ class TaskSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
-        actor = getattr(self.context.get("request"), "user", None)
-        if actor is not None:
-            for field in LINK_RESOURCES:
-                obj = getattr(instance, field, None)
-                if obj is not None and not can_view_link(actor, instance.business, field, obj):
-                    data[field] = None
-                    for key in list(data):
-                        if key.startswith(field + "_"):
-                            data[key] = ""
+        actor = reader_actor(self.context)
+        for field in LINK_RESOURCES:
+            obj = getattr(instance, field, None)
+            if obj is not None and not can_view_link(actor, instance.business, field, obj):
+                data[field] = None
+                for key in list(data):
+                    if key.startswith(field + "_"):
+                        data[key] = ""
+        if instance.conversation_id and instance.conversation.client_id and visible_client(
+            instance.conversation.client, actor=actor, business=instance.business, context=self.context,
+        ) is None:
+            data["conversation_external_user_id"] = ""
         return data

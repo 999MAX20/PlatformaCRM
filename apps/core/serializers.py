@@ -15,6 +15,8 @@ from apps.core.models import (
     safe_original_filename,
 )
 from apps.integrations.sanitization import sanitize_error_payload, sanitize_error_text
+from apps.clients.duplicate_visibility import project_duplicate_rows
+from apps.core.client_projection import reader_actor
 
 
 class CustomFieldDefinitionSerializer(serializers.ModelSerializer):
@@ -54,6 +56,11 @@ class CustomFieldDefinitionSerializer(serializers.ModelSerializer):
     def validate_options_json(self, value):
         if not isinstance(value, dict) or not isinstance(value.get("options", []), list):
             raise serializers.ValidationError("Options must be an object containing an options list.")
+        if "display" in value:
+            display = value["display"]
+            allowed = {"in_card", "in_table", "in_filters", "in_calendar"}
+            if not isinstance(display, dict) or set(display) - allowed or any(type(item) is not bool for item in display.values()):
+                raise serializers.ValidationError("Display settings must contain supported boolean flags.")
         seen = set()
         for option in value.get("options", []):
             key = option.get("value", option.get("key", option.get("label"))) if isinstance(option, dict) else option
@@ -136,6 +143,17 @@ class ImportJobSerializer(serializers.ModelSerializer):
         rows = (obj.errors_json or {}).get("rows") or []
         return {"rows": rows[:50], "count": len(rows)}
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        duplicates = data.get("duplicates_json") or {}
+        # Project a new structure; never rewrite stored duplicate/audit evidence.
+        data["duplicates_json"] = {
+            **duplicates,
+            "rows": [{**row, "duplicates": project_duplicate_rows(
+                row.get("duplicates", []), actor=reader_actor(self.context), business=instance.business,
+            )} for row in duplicates.get("rows", [])],
+        }
+        return data
 
     def to_internal_value(self, data):
         if not isinstance(data, dict):

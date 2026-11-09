@@ -41,6 +41,9 @@ def process(event_id):
                     onboarding.confirm(connection, account)
             elif event.kind == "whatsapp.inbound_message.received":
                 inbound(connection, event.payload["whatsappInboundMessage"])
+            elif event.kind in {"whatsapp.smb.message.echoes", "whatsapp.smb.message.created"}:
+                from apps.integrations.ycloud.coexistence import record_app_message
+                record_app_message(connection, event.payload["whatsappMessage"])
             else:
                 from apps.integrations.ycloud.dispatch import apply_status
                 apply_status(connection, event.payload["whatsappMessage"])

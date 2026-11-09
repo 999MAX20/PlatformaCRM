@@ -45,7 +45,7 @@ export function OperationsWorklist({ section, params, update }: {
   return <div className="space-y-4">
     <div className="flex flex-wrap items-center gap-3 [&>label]:w-full sm:[&>label]:w-auto">
       {params.get("business") && <p className="text-sm">{t("platform.merchants.merchant")} #{params.get("business")}</p>}
-      <Input aria-label={t("operationsWorkspace.search")} placeholder={t("operationsWorkspace.search")} value={search} onChange={event => update({ search: event.target.value, business: "", page: "" })} className="w-full sm:w-80" />
+      <Input pageSearch aria-label={t("operationsWorkspace.search")} placeholder={t("operationsWorkspace.search")} value={search} onChange={event => update({ search: event.target.value, business: "", page: "" })} />
       {incidents && <>
         <Select aria-label={t("supportIncidents.source")} value={params.get("component") || ""} onChange={event => update({ component: event.target.value, page: "" })} options={[{ value: "", label: t("operationsWorkspace.allComponents") }, ...["automations", "notifications", "exports", "files"].map(value => ({ value, label: t(`serviceStatus.component.${value}`) }))]} />
         <Select aria-label={t("operationsWorkspace.freshness")} value={params.get("freshness") || ""} onChange={event => update({ freshness: event.target.value, page: "" })} options={["", "fresh", "unknown"].map(value => ({ value, label: t(`operationsWorkspace.${value || "allObservations"}`) }))} />

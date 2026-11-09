@@ -13,6 +13,8 @@ import { realtimeIntervals, realtimeQueryOptions } from "../../lib/realtime";
 import { useNotificationSoundPreference } from "../../lib/notificationSound";
 import { NotificationSoundWatcher } from "../notifications/NotificationSoundWatcher";
 import { UnreadMessagesNotice } from "../notifications/UnreadMessagesNotice";
+import { NotificationPortal, NotificationPresence } from "../notifications/NotificationHost";
+
 type Props = {
   user: ReturnType<typeof useAuth>["user"];
   business: ReturnType<typeof useActiveBusiness>["business"];
@@ -30,6 +32,7 @@ export function InboxNotificationEffects({
   const navigate = useNavigate();
   const soundEnabled = useNotificationSoundPreference(user?.id);
   const [chatToastOpen, setChatToastOpen] = useState(false);
+  const [chatToastPaused, setChatToastPaused] = useState(false);
   const previousUnreadMessagesRef = useRef<number | null>(null);
   const inboxSummary = useQuery({
     queryKey: ["inbox-summary", business?.id],
@@ -59,34 +62,30 @@ export function InboxNotificationEffects({
       setChatToastOpen(true);
   }, [receivesChatToasts, unreadChatMessages]);
   useEffect(() => {
-    if (!chatToastOpen) return;
+    if (!chatToastOpen || chatToastPaused) return;
     const timer = window.setTimeout(() => setChatToastOpen(false), 6500);
     return () => window.clearTimeout(timer);
-  }, [chatToastOpen, unreadChatMessages]);
+  }, [chatToastOpen, chatToastPaused, unreadChatMessages]);
   return (
     <>
-      {soundEnabled &&
-      user &&
-      business &&
-      hasPermission(user, business.id, "notifications") ? (
+      {soundEnabled && user && business ? (
         <NotificationSoundWatcher
           key={`${user.id}:${business.id}`}
           userId={user.id}
           businessId={business.id}
         />
       ) : null}
-      {chatToastOpen ? (
-        <div className="fixed right-4 top-20 z-[90] w-[min(360px,calc(100vw-2rem))]">
+      <NotificationPortal group="messages"><NotificationPresence>{chatToastOpen ? (
           <UnreadMessagesNotice
             count={unreadChatMessages}
+            onPauseChange={setChatToastPaused}
             onDismiss={() => setChatToastOpen(false)}
             onOpen={() => {
               setChatToastOpen(false);
               navigate("/app/conversations?unread=true");
             }}
           />
-        </div>
-      ) : null}
+      ) : null}</NotificationPresence></NotificationPortal>
     </>
   );
 }

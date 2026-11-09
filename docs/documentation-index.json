@@ -3,7 +3,38 @@
   "asOf": "2026-10-21",
   "archivePolicy": "Historical evidence only; excluded from default search. No task or requirement authority.",
   "documents": [
+    {"path": "docs/testing/evidence/push-fixes-20261109.md", "role": "evidence"},
+    {"path": "docs/testing/evidence/crm-ui-fixes-20261109.md", "role": "evidence"},
+    {"path": "docs/testing/evidence/performance-20261106.md", "role": "evidence"},
+    {"path": "docs/testing/evidence/postgres-load-20261106.md", "role": "evidence"},
+    {"path": "docs/testing/evidence/crm-landing-integration-20261106.md", "role": "evidence"},
     {"path": "docs/testing/evidence/db-maintenance-20261106.md", "role": "evidence"},
+    {"path": "docs/testing/evidence/single-location-20261106.md", "role": "evidence"},
+    {"path": "docs/testing/evidence/import-upload-alert-20261106.md", "role": "evidence"},
+    {"path": "docs/testing/evidence/voice-workflows-20261106.md", "role": "evidence"},
+    {"path": "docs/testing/evidence/voice-direct-20261105.md", "role": "evidence"},
+    {"path": "docs/testing/evidence/connections-settings-20261105.md", "role": "evidence"},
+    {"path": "docs/testing/evidence/voice-rebuild-20261105.md", "role": "evidence"},
+    {"path": "docs/testing/evidence/voice-natural-20261105.md", "role": "evidence"},
+    {"path": "docs/testing/evidence/voice-hardening-20261105.md", "role": "evidence"},
+    {"path": "docs/testing/evidence/appointment-card-20261105.md", "role": "evidence"},
+    {"path": "docs/testing/evidence/voice-language-20261105.md", "role": "evidence"},
+    {"path": "docs/testing/evidence/records-calendar-fixes-20261105.md", "role": "evidence"},
+    {"path": "docs/testing/evidence/session-notices-20261105.md", "role": "evidence"},
+    {"path": "docs/current/entity-cards.md", "role": "contract"},
+    {"path": "docs/testing/evidence/entity-cards-20261105.md", "role": "evidence"},
+    {"path": "docs/testing/evidence/voice-live-20261105.md", "role": "evidence"},
+    {"path": "docs/testing/evidence/voice-interface-20261105.md", "role": "evidence"},
+    {"path": "docs/testing/evidence/clients-records-20261105.md", "role": "evidence"},
+    {"path": "docs/testing/entity-prerequisites-20261104.md", "role": "evidence"},
+    {"path": "docs/current/voice-assistant.md", "role": "contract"},
+    {"path": "docs/testing/evidence/voice-assistant-20261104.md", "role": "evidence"},
+    {"path": "docs/testing/evidence/calendar-review-20261104.md", "role": "evidence"},
+    {"path": "docs/testing/evidence/import-workspace-20261104.md", "role": "evidence"},
+    {"path": "docs/testing/evidence/calendar-overview-20261104.md", "role": "evidence"},
+    {"path": "docs/testing/evidence/calendar-bare-20261104.md", "role": "evidence"},
+    {"path": "docs/testing/evidence/records-drawer-20261104.md", "role": "evidence"},
+    {"path": "docs/current/import-workspace.md", "role": "contract"},
     {"path": "docs/testing/evidence/remediation-c11-20261104.md", "role": "evidence"},
     {"path": "docs/testing/evidence/remediation-c10-20261104.md", "role": "evidence"},
     {"path": "docs/testing/evidence/remediation-c09-20261104.md", "role": "evidence"},
@@ -56,6 +87,24 @@
     {"path": "anti-slop/audit-001-20261103.md", "role": "evidence"},
     {"path": "docs/testing/evidence/records-publication-20261103-manifest.json", "role": "generated-evidence"},
     {"path": "docs/testing/evidence/records-publication-20261103.md", "role": "evidence"},
+    {"path": "docs/testing/evidence/records-remediation-20261103.md", "role": "evidence"},
+    {"path": "docs/testing/evidence/records-full-audit-20261103.md", "role": "evidence"},
+    {"path": "docs/testing/evidence/records-single-row-20261103.md", "role": "evidence"},
+    {"path": "docs/testing/evidence/records-toolbar-20261103.md", "role": "evidence"},
+    {"path": "docs/testing/evidence/appointments-ui-audit-20261103.md", "role": "evidence"},
+    {"path": "docs/testing/evidence/records-bell-fix-20261103.md", "role": "evidence"},
+    {"path": "docs/testing/evidence/records-bell-fix-20261103-manifest.json", "role": "generated-evidence"},
+    {"path": "docs/testing/evidence/alert-remediation-20261103.md", "role": "evidence"},
+    {"path": "docs/testing/evidence/alert-remediation-20261103-manifest.json", "role": "generated-evidence"},
+    {"path": "docs/testing/evidence/alert-audit-20261103.md", "role": "evidence"},
+    {"path": "docs/testing/evidence/alert-components-20261102.md", "role": "evidence"},
+    {"path": "docs/testing/evidence/alert-components-20261102-manifest.json", "role": "generated-evidence"},
+    {"path": "docs/testing/evidence/visit-plans-20261102.md", "role": "evidence"},
+    {"path": "docs/testing/evidence/visit-plans-20261102-manifest.json", "role": "generated-evidence"},
+    {"path": "docs/testing/evidence/records-workspace-20261102.md", "role": "evidence"},
+    {"path": "docs/testing/evidence/records-workspace-20261102-manifest.json", "role": "evidence"},
+    {"path": "docs/testing/uiux-full-20261102.md", "role": "evidence"},
+    {"path": "docs/testing/uiux-full-20261102-manifest.json", "role": "evidence"},
     {
       "path": "docs/testing/security-audit-20261019-partial/preservation.json",
       "role": "evidence"
@@ -399,6 +448,26 @@
     {
       "path": "docs/pre-production/operations.md",
       "role": "passport"
+    },
+    {
+      "path": ".agents/skills/zani-audit-ui-purpose/SKILL.md",
+      "role": "agent-skill"
+    },
+    {
+      "path": ".agents/skills/zani-audit-ui-purpose/references/provenance.md",
+      "role": "agent-skill"
+    },
+    {
+      "path": ".agents/skills/zani-audit-ui-purpose/LICENSE-upstream",
+      "role": "agent-skill"
+    },
+    {
+      "path": "docs/testing/ui-purpose-audit-20261102.md",
+      "role": "evidence"
+    },
+    {
+      "path": "docs/testing/ui-purpose-audit-20261102-manifest.json",
+      "role": "generated-evidence"
     }
   ]
 }

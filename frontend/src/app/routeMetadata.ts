@@ -18,6 +18,8 @@ export const routeMetadata = {
   calendar: { path: "/app/calendar", segment: "calendar", label: "nav.calendar", resource: "appointments" },
   conversations: { path: "/app/conversations", segment: "conversations", label: "nav.conversations", resource: "conversations" },
   aiAgents: { path: "/app/ai-agents", segment: "ai-agents", label: "nav.aiAgents", menuResource: "ai_automation" },
+  bots: { path: "/app/bots", segment: "bots", label: "bots.title" },
+  automations: { path: "/app/automations", segment: "automations", label: "automations.title" },
   integrations: { path: "/app/integrations", segment: "integrations", label: "nav.integrations", resource: "integrations" },
   business: { path: "/app/business", segment: "business", label: "nav.business", resource: "settings" },
   services: { path: "/app/business/services", segment: "business/services", label: "nav.services", resource: "settings" },
@@ -43,7 +45,7 @@ export function merchantNavigationItem<Icon>(id: MerchantRouteId, icon: Icon) {
 }
 
 // Preserve the existing title precedence and legacy display aliases.
-const headerIds: MerchantRouteId[] = ["appointments", "clients", "deals", "leads", "tasks", "calendar", "conversations", "services", "resources", "workingHours", "analytics", "timeline", "aiAgents", "integrations", "settings", "account", "support"];
+const headerIds: MerchantRouteId[] = ["appointments", "clients", "deals", "leads", "tasks", "calendar", "conversations", "services", "resources", "workingHours", "analytics", "timeline", "aiAgents", "bots", "automations", "integrations", "settings", "account", "support"];
 const legacyHeaderAliases: Array<[string, MerchantRouteId]> = [["/app/services", "services"], ["/app/resources", "resources"], ["/app/working-hours", "workingHours"]];
 export function getRouteTitle(pathname: string, t: (key: string) => string) {
   const match = headerIds.find(id => pathname === routeMetadata[id].path || pathname.startsWith(`${routeMetadata[id].path}/`));

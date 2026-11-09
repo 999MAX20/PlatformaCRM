@@ -216,6 +216,8 @@ class CustomFieldDefinition(models.Model):
         LEAD = "lead", "Lead"
         DEAL = "deal", "Deal"
         APPOINTMENT = "appointment", "Appointment"
+        SERVICE = "service", "Service"
+        SPECIALIST = "specialist", "Specialist"
 
     class FieldTypes(models.TextChoices):
         TEXT = "text", "Text"
@@ -277,6 +279,73 @@ class CustomFieldValue(models.Model):
 
     def __str__(self):
         return f"{self.definition.key}={self.value_json}"
+
+
+class ImportWorkspace(models.Model):
+    class States(models.TextChoices):
+        DRAFT = "draft", "Draft"
+        READY = "ready", "Ready"
+        IMPORTED = "imported", "Imported"
+        CANCELLED = "cancelled", "Cancelled"
+
+    business = models.ForeignKey(Business, on_delete=models.CASCADE, related_name="import_workspaces")
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="import_workspaces")
+    state = models.CharField(max_length=16, choices=States.choices, default=States.DRAFT)
+    version = models.PositiveIntegerField(default=1)
+    validated_version = models.PositiveIntegerField(null=True, blank=True)
+    report_json = models.JSONField(default=dict, blank=True)
+    result_json = models.JSONField(default=dict, blank=True)
+    operation_json = models.JSONField(default=dict, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-updated_at", "-pk"]
+
+
+class ImportMappingProfile(models.Model):
+    business = models.ForeignKey(Business, on_delete=models.CASCADE, related_name="import_mapping_profiles")
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
+    name = models.CharField(max_length=128)
+    entity_type = models.CharField(max_length=32)
+    configuration = models.JSONField(default=dict)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+class ImportSourceBinding(models.Model):
+    business = models.ForeignKey(Business, on_delete=models.CASCADE, related_name="import_source_bindings")
+    namespace = models.CharField(max_length=80)
+    entity_type = models.CharField(max_length=32)
+    source_identifier = models.CharField(max_length=255)
+    entity_id = models.PositiveBigIntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["business", "namespace", "entity_type", "source_identifier"], name="unique_import_source_binding")]
+
+
+class ImportWorkspaceSource(models.Model):
+    class Entities(models.TextChoices):
+        CLIENTS = "clients", "Clients"
+        SPECIALISTS = "specialists", "Specialists"
+        SERVICES = "services", "Services"
+        APPOINTMENTS = "appointments", "Appointments"
+
+    workspace = models.ForeignKey(ImportWorkspace, on_delete=models.CASCADE, related_name="sources")
+    profile = models.ForeignKey(ImportMappingProfile, on_delete=models.PROTECT, null=True, blank=True)
+    original_filename = models.CharField(max_length=255)
+    sheet_name = models.CharField(max_length=255, blank=True)
+    entity_type = models.CharField(max_length=32, choices=Entities.choices)
+    # The bounded parsed snapshot is immutable; edits retain the original cell values.
+    rows_json = models.JSONField(default=list)
+    digest = models.CharField(max_length=64)
+    mapping_json = models.JSONField(default=dict, blank=True)
+    corrections_json = models.JSONField(default=dict, blank=True)
+    excluded_json = models.JSONField(default=list, blank=True)
+    fields_json = models.JSONField(default=list, blank=True)
+    columns_json = models.JSONField(default=list, blank=True)
+    resolutions_json = models.JSONField(default=dict, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
 
 class ImportJob(SanitizedErrorFieldsMixin, models.Model):

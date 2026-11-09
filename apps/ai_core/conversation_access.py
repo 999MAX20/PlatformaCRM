@@ -5,7 +5,7 @@ import json
 from django.contrib.auth import get_user_model
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
 
-from apps.ai_core.agent_runtime import bind_agent
+from apps.ai_core.agent_runtime import bind_agent, bind_thread
 from apps.ai_core.knowledge import agent_knowledge, available_agent
 from apps.ai_core.models import AgentConversation
 from apps.ai_core.workflows import assert_workflow_enabled
@@ -36,13 +36,30 @@ def staff_conversation(*, conversation_id, user, lock=False, write=False):
     query = AgentConversation.objects.select_related("business", "agent", "owner")
     if lock:
         query = query.select_for_update(of=("self",))
-    thread = query.filter(pk=conversation_id, owner=user, kind=AgentConversation.Kinds.STAFF).first()
+    thread = query.filter(pk=conversation_id, owner=user, kind__in=[AgentConversation.Kinds.STAFF, AgentConversation.Kinds.VOICE]).first()
     if thread is None:
         raise NotFound("Conversation is unavailable.")
-    staff_agent(business=thread.business, agent_id=thread.agent_id, user=user, write=write)
+    if thread.kind == AgentConversation.Kinds.VOICE:
+        voice_access(business=thread.business, user=user)
+    else:
+        staff_agent(business=thread.business, agent_id=thread.agent_id, user=user, write=write)
     if write and thread.is_archived:
         raise ValidationError("Start a new conversation or restore this one.")
     return thread
+
+
+def voice_access(*, business, user):
+    if not user or not get_user_model().objects.filter(pk=user.pk, is_active=True).exists():
+        raise PermissionDenied("Your account is unavailable.")
+    assert_can(user, business, Resources.AI_ASSISTANT, Actions.SUGGEST)
+
+
+def create_voice_conversation(*, business, user):
+    from apps.ai_core.agent_runtime import VOICE_RUNTIME
+    voice_access(business=business, user=user)
+    with bind_agent(VOICE_RUNTIME):
+        assert_workflow_enabled(business, "employee")
+    return AgentConversation.objects.create(business=business, owner=user, kind=AgentConversation.Kinds.VOICE)
 
 
 def create_staff_conversation(*, business, agent_id, user, title="", mode="work"):
@@ -70,9 +87,9 @@ def inbox_memory_conversation(conversation):
 def memory_access_fingerprint(*, business, agent, user=None):
     """Only access/source changes invalidate memory; tone edits preserve continuity."""
     from apps.ai_core.models import AgentProfile
-    profile = AgentProfile.objects.filter(business=business, bot=agent, is_active=True).order_by("-updated_at", "-id").first()
-    knowledge = list(agent_knowledge(business=business, agent=agent).filter(is_active=True).order_by("pk").values("id", "title", "content", "category"))
-    payload = {"business": business.pk, "agent": agent.pk, "user": getattr(user, "pk", None),
+    profile = AgentProfile.objects.filter(business=business, bot=agent, is_active=True).order_by("-updated_at", "-id").first() if agent else None
+    knowledge = list(agent_knowledge(business=business, agent=agent).filter(is_active=True).order_by("pk").values("id", "title", "content", "category")) if agent else []
+    payload = {"business": business.pk, "agent": agent.pk if agent else "interface_voice", "user": getattr(user, "pk", None),
                "knowledge": knowledge, "sources": (profile.rules_json or {}).get("sources") if profile else [],
                "active_profile": profile.pk if profile else None,
                "analyst_enabled": (profile.rules_json or {}).get("analyst_enabled", True) if profile else False}
@@ -94,7 +111,7 @@ def memory_access_fingerprint(*, business, agent, user=None):
 
 def references_visible(*, thread, user, references):
     from apps.ai_core.crm_tools import ENTITIES, scoped_entities
-    with bind_agent(thread.agent_id):
+    with bind_thread(thread):
         for reference in references:
             entity, entity_id = reference.get("entity"), reference.get("id")
             if entity not in ENTITIES or type(entity_id) is not int:

@@ -1,3 +1,93 @@
+PUSH-FIXES-20261109: all original findings fixed; applicable local checks PASS.
+Numeric/multiselect filters, task history, frontend harness/registries corrected.
+Backend3106:3038PASS/68PG-only skips/0FAIL; PG35actual+62dependentPASS.
+Card fixture148383/150000bytes,maxSQL12181/15000; relations and limits retained.
+Node288+focused6/build-types-i18n/bundle/filter12browser/cardbrowserPASS.
+Candidate842paths and9conflict+Vite-import resolution prepared in temporary indexes;
+merged preview equals tested tree. Mainindex/lock/branch preserved pending owner decision.
+No commit/push/newCI/workingDB/deploy. Evidence: docs/testing/evidence/push-fixes-20261109.md.
+Details/plan: output/push-fixes-20261109/CHECKPOINT.md and PUBLICATION-PLAN.md.
+
+PUSH-PREPARATION-20261109: all-change review and verification completed with blockers.
+1184-path reviewed snapshot; explicit829-path staging proposal; source unchanged.
+Confirmed: numeric blank filter500, multiselect filter400, task-history encoding.
+Backend3081:3003PASS/3FAIL/11ERROR/64PG-only skips;13mixed-versionYCloud failures
+fresh-reproduced13PASS. PG45:43PASS/2card-budget FAIL; Node8failures confirmed.
+Build/types/i18n/bundle/mobile2/dependency audits/tooling checks PASS; separate
+YCloud82+4PG/10browser evidence reused after22source hashes verified.
+Not push-ready: findings/tests/budgets plus Git20local/3remote and existing lock.
+No product edits/stage/commit/push/newCI/workingDB/deploy. Report and exact scope:
+output/push-preparation-20261109/REPORT.md; RESULT.json and CHECKPOINT.md.
+
+YCLOUD-COEXISTENCE-20261109: local CRM preparation and TP Lite support draft complete.
+Explicit Business App mode + expected-number binding; signed app replies deduplicated,
+recorded as sent staff messages, pause AI, no resend/unread/24h-window extension.
+82 PostgreSQL affected/dependent +4 concurrency PASS; schema/system PASS.
+10 targeted browser tests RU/KK/EN desktop/mobile +build/i18n/types/bundle PASS.
+Migration0010 isolated only; no live provider/account/server changes or message sent.
+No commit/push/CI: existing index.lock and divergent foreign history remain blockers.
+Evidence: docs/testing/evidence/ycloud-coexistence-20261109.md.
+Draft/artifacts: output/ycloud-coexistence-20261109.
+
+CRM-UI-FIXES-20261109: all15 audit findings fixed and locally verified.
+Existing design retained; menus/plan confirmations/mobile controls/client tabs,
+task date+footer/import results/priority actions/localized labels/public wrap.
+Desktop1440/mobile390 plus320 public; real isolated API saves/import and503recovery PASS.
+RU/KK/EN representative screens,13navigation tests/build-types-i18n/bundle PASS.
+No scoped code/UI-evidence remainder; no backend/workingDB/migration/deploy changes.
+Own publication blocked by existing index.lock and3remote-only/20foreignlocal commits.
+No own stage/commit/push/newCI. Evidence: docs/testing/evidence/crm-ui-fixes-20261109.md.
+
+LOCAL-RELEASE-20261108: owner-approved relations restoration and local candidate archive.
+Task/card/access focused12 PASS; PostgreSQL combined76 =74PASS/2performance FAIL.
+Card payload152195>150000; SQL15068>15000. Same-fixture before/restored36queries,
+SQL15011unchanged; requiredrelations add11434bytes. Limits unchanged; not deploy-ready.
+Earlier notification145PG, otherPG29+53, mobile2, builds/audits PASS reused.
+Archive includes exact manifest+acceptance gaps; SHA/member verification recorded.
+Foreign source/index preserved; no staging/commit/push/CI/workingDB/deploy changes.
+Evidence: docs/testing/evidence/local-release-20261108.md;
+artifacts: output/local-release-20261108.
+
+PERFORMANCE-20261106: measured SQL/auth bottlenecks fixed locally; load repeated.
+Request-local permissions; client counts/facets/page enrichment. No API/schema change.
+Large clients median2053→336ms; auth281→11SQL, tasks623→13SQL.
+PG75/51/72 +SQLite18/system-drift PASS. Small5users180s p95822ms PASS;
+large1user180s p951196ms FAIL; later no-think1stream180s2.88rps/p95599ms PASS.
+Real system paging observed; shared-host capacity not certified. All HTTP/writes PASS.
+No workingDB/env/deploy changes; benchmark DBs removed. Gitlock/20foreignoutgoing/
+3remote-only block own commit/push/newCI. Evidence:
+docs/testing/evidence/performance-20261106.md; details output/performance-20261106.
+
+CRM-SCREENSHOTS-20261106: browser catalog delivered locally.
+656 unique PNGs (790 captures;134 exact duplicates);97 routes accounted incl aliases.
+Desktop/mobile, merchant/platform/public, dialogs/shared components; synthetic isolated data.
+PNG/ZIP/gallery search+filters PASS;434TSX source hashes unchanged during capture.
+All task-owned runtimes stopped; no product/workingDB/deploy changes or full-state certification.
+Gallery and scope: output/crm-screenshots-20261106/index.html and README.md.
+
+EMAIL-READINESS-20261106: Resend Free SMTP deployed; mail blocker closed.
+Verified notify.platformacrm.kz; sending-only domain key, enforced TLS, tracking off.
+One synthetic mail Delivered and owner-confirmed Inbox;74 isolated checks and runtime SMTP/HTTPS PASS.
+Only approved test Notification630/632/635 cancelled with audit;pending email0.
+Stand password/protected hashes and foreign source preserved; encrypted backupPASS.
+General gate remains7PASS/5FAIL; no full release certification/newCI/source push.
+Evidence/rollback/limits: output/email-readiness-20261106/RESULT.txt.
+
+CRM-LANDING-INTEGRATION-20261106: scoped landing deployed to protected platformacrm.kz.
+Published1dc5a6c8 main/fullCI+standCI PASS;112 static files and exact Caddy routes activated.
+Existing1342 release files/SPA, password/env and SSE preserved; HTTPS and live browser RU/KK/EN/mobile PASS.
+Home opens landing; login opens existing CRM form. Real account authentication not exercised.
+Encrypted backup/health PASS. No backend/DB changes or whole-release certification.
+Deployment: output/crm-landing-deploy-20261106/RESULT.md.
+Evidence: docs/testing/evidence/crm-landing-integration-20261106.md.
+
+REACTIVATE-BRANCH-20261106: existing archived Branch1 activated through domain service/audit.
+Catalog/staff/hours unchanged; existing slot available. Real audio+model booking PASS
+on disposable exact-config copy; replay no duplicate; working14appointments unchanged.
+First audio completed without Appointment remains an OPEN D01 reliability finding;
+text replay and explicit Create booking audio PASS do not erase it. No product edits/deploy.
+Evidence: docs/testing/evidence/single-location-20261106.md (explicit activation follow-up).
+
 DEV-MIGRATION-CHECK-20261106: fresh local SQLite backup verified; dev exits0/no warnings.
 branches0003 was already applied by DB-MAINTENANCE; independently confirmed,
 no rollback/reapply. Original pre-migration backup hash/integrity verified too.
@@ -22,6 +112,438 @@ Current run exits2 honestly: branches0003 remains pending from another task.
 Dev services retained; launcher scope complete, database migration requires separate approval.
 Canonical branch codex/ui-testing-toolkit; publication blocked by foreign outgoing range.
 Checkpoint: output/dev-command-20261106/CHECKPOINT.md.
+
+SINGLE-LOCATION-20261106: automatic single point/multi-branch and voice fixes locally verified.
+Shared catalog/hours, explicit second-point setup, last-active archive guard and retained visit terms;
+voice branch/date/mapping/slot reasons and calendar context including text fallback.
+Affected205, final dependent102, reschedule77 across corrected runs; PG17+21 and browser5 distinct,
+final shared-hours delta46/build/types/i18n/bundle PASS. Working branches0003 applied externally;
+read-only schema/counts/quick_check verified15automatic+1archived, no own workingDB writes.
+No scoped code/local-evidence remainder. Publication blocked by divergent remote/16foreign outgoing.
+Evidence: docs/testing/evidence/single-location-20261106.md; detailed checkpoint in output/single-location-20261106/CHECKPOINT.md.
+
+PILOT-BOUNDARIES-FIX-20261106: all three security findings fixed and verified locally.
+Admin MFA/session proof, password-change throttle, shared Redis quotas; focused/dependent tests and real browser PASS.
+Published security fixes as b96a69514b47a7211899e745b94b1109a36bb4e6 on origin/main; stale empty lock archived. Current branch/index and 592 local files preserved; 15 foreign commits remain local. CI 42198771978 success. Security runtime delta deployed to protected stand 2026-11-06; external HTTPS, admin MFA proof denial, shared Redis, password throttle, services/backups PASS. Stand password unchanged. Details: output/security-deploy-20261106/RESULT.md.
+Evidence and exact limits: [C:/Users/user/.codex/state/plugins/codex-security/scans/PlatformaCRM/artifacts-5c104f7eb8ffeb335f0ca5772aabb0cf2c88c0a722d9ac17d6bb18e0f3934604/artifacts/security-fixes-20261106/report.md](C:/Users/user/.codex/state/plugins/codex-security/scans/PlatformaCRM/artifacts-5c104f7eb8ffeb335f0ca5772aabb0cf2c88c0a722d9ac17d6bb18e0f3934604/artifacts/security-fixes-20261106/report.md).
+
+MFA-LOGIN-20261106: login-styled MFA and simple Sign in completion saved locally.
+Recovery-code reveal removed from login enrollment; backend/account recovery unchanged.
+New browser10 + existing recovery1/TOTP1 + Node15/build-types-i18n/bundle PASS.
+Existing invitation notification400 and prior3 full-gate failures remain visible.
+Owner paused deployment: Yandex balance exhausted, VM STOPPED; new artifact not uploaded.
+Existing Gitlock/17foreign outgoing prevent commit/push. Resume checkpoint:
+output/mfa-login-20261106/CHECKPOINT.md (patch/artifact/tests/deploy procedure).
+
+IMPORT-FULL-EXCEL-20261106: original XLSX fully verified through CRM clients.
+Real chooser/ClamAV/mapping/reload/preview/confirm + all20 persisted fields/list rows PASS.
+Real Redis/Celery4 tasks; confirm replay and full reimport retain20/no duplicates.
+Restored local scanner/updater/loopbackRedis/import worker; health/PONG PASS.
+WorkingDB contains0 test-file emails; no product/.env/migration changes or deployment.
+No scoped remainder; local services retained, Windows autostart outside scope.
+Existing Gitlock/17foreign outgoing block commit/push/newCI. Evidence:
+docs/testing/evidence/import-upload-alert-20261106.md (full Excel follow-up).
+
+VOICE-WORKFLOWS-20261106: connected voice booking/visit plans and history locally verified.
+Atomic client+visits; full scoped lookup, retained clarifications, server timezone;
+linked results/history, matched 20px bell and labeled recording controls.
+Affected165 + final64 + PostgreSQL58, real-model7, browser/build/types/i18n/bundle PASS.
+No scoped code remainder; human/fullD01/production acceptance remains open.
+Existing lock/17foreign outgoing block own commit/push/newCI; no workingDB/env/deploy.
+Evidence: docs/testing/evidence/voice-workflows-20261106.md.
+
+
+IMPORT-NEW-PICKER-20261106: New transfer opens file chooser before creating draft.
+Cancel creates nothing; selected XLSX uploads immediately; append/retry reuse draft.
+Browser4 RU/KK/EN+existing recovery1, Node3/build-types-i18n-bundle PASS.
+No scoped code/evidence remainder; backend/workingDB/env unchanged.
+Existing lock/17foreign outgoing block own commit/push/newCI; no deployment.
+Evidence: docs/testing/evidence/import-upload-alert-20261106.md (file-picker follow-up).
+
+IMPORT-UPLOAD-ALERT-20261106: local Excel upload and compact error notices fixed.
+Existing ClamAV/updater restored; real Excel20 rows API200 PASS, user draft rolled back.
+Import errors use bottom-right host/no layout shift, compact real request-code copy,
+clear read-only refresh and localized scanner reason. No AV bypass/DB migration.
+Backend25/system-drift/Node10/browser5+shared1/build-types-i18n-bundle PASS.
+Scanner/updater intentionally retained; Windows autostart/production not asserted.
+No scoped code/evidence remainder; existing lock/17foreign outgoing block publication.
+Evidence: docs/testing/evidence/import-upload-alert-20261106.md.
+
+VOICE-DIRECT-20261105: ordinary voice actions locally verified (completion06.11).
+Record→Send→action/clarification→result; no transcript or second confirmation.
+Original task wording retained; empty-title clarification, RU/EN/KK values checked.
+Backend113/system-drift/concurrency, browser8+realRU audio, queued7, build/types/bundle PASS.
+No scoped code/local-evidence remainder. Human/fullD01/production acceptance open.
+Existing lock/17foreign outgoing block own commit/push/newCI; no DB/env/deploy change.
+Evidence: docs/testing/evidence/voice-direct-20261105.md.
+
+IMPORT-CREATE-20261106: local New transfer schema issue resolved.
+Owner explicitly authorized working migration without backup; core0014-0017 applied.
+Existing business table counts/integrity PASS; API create201/history200 PASS with
+smoke draft rolled back. No backup created in application step, no source change.
+Worker/scanner/full import acceptance unchanged; no deploy/commit/push/newCI.
+Checkpoint: output/import-create-20261106/CHECKPOINT.md (includes prior temp blocker).
+
+CONNECTIONS-SETTINGS-20261105: Connections moved to Settings tab locally complete.
+Desktop/mobile sidebar entry removed; legacy routes/query redirect preserved.
+Settings entry supports integrations.view; sections/manage retain own permissions.
+Six distinct scoped browser cases across runs, RU/KK/EN, dialogs/keyboard/error,
+final build/types/i18n/bundle PASS. No scoped code/evidence remainder.
+Existing index.lock/17foreign outgoing block commit/push/newCI; no deploy/workingDB.
+Evidence: docs/testing/evidence/connections-settings-20261105.md.
+
+VOICE-REBUILD-20261105: capture/panel and task interpretation locally verified.
+Real waveform, complete PCM checks, visible interruption; original request retained.
+Final backend98/system-drift/Node7/browser10 distinct/build-types/bundle PASS.
+Real task clarification3 + RU/EN/KK3 + long21s browser-to-Task PASS.
+Human microphone/noise and production acceptance remain open; publication blocked.
+Evidence: docs/testing/evidence/voice-rebuild-20261105.md.
+Existing lock/17foreign outgoing preserved; no workingDB/env/deploy change.
+
+ENTITY-FIXED-SIZE-20261105: Client and Appointment fixed viewport size complete locally.
+Max width1080, height90dvh (mobile viewport−24px), stable across tabs/loading/error.
+Desktop header/tabs fixed, sidebar/panel scroll independently; mobile one body scroll.
+Six Client +five Appointment scoped cases across runs/build-types-i18n-bundle PASS.
+No scoped remainder; existing lock/17foreign outgoing block own commit/push/newCI.
+Evidence: docs/testing/evidence/entity-cards-20261105.md (fixed-size follow-up).
+
+## VOICE-NATURAL-20261105 — locally verified, publication blocked
+
+VOICE-NATURAL-20261105: full capture and natural GPT-4o mini replies locally verified.
+Recorder preload/drain; punctuation preserves recognized words/numbers; natural chat.
+Affected84/Node5/browser6/live syntheticRU browser-to-Task/build-types/bundle PASS.
+Human RU/KK/mixed/noise and production acceptance remain open; no scoped code remainder.
+Evidence: docs/testing/evidence/voice-natural-20261105.md.
+Existing lock/17foreign outgoing block publication; no workingDB/env/deployment change.
+
+CLIENT-LAYOUT-TABS-20261105: owner follow-up locally complete.
+Client actions above/name left; Client+Appointment single scrollable tab strip,
+no More selector/scrollbar, overflow arrows+keyboard. Client deals tab removed.
+Tablet nearest-record wrapping and mobile action row corrected.11 distinct client
+cases across scoped runs +4 appointment cases; final locale6/build/types PASS.
+No scoped remainder; existing lock/17foreign outgoing block own commit/push/newCI.
+Evidence: docs/testing/evidence/entity-cards-20261105.md (layout/tabs follow-up).
+
+APPOINTMENT-LAYOUT-20261105: reference rearrangement locally complete.
+Actions in fixed top header/mobile second row; name/date/status in sidebar;
+tabs at body top, text-first activity markers. Contacts/source/plan/guards retained.
+Eight scoped interaction cases + final locale3/build/types/i18n/bundle PASS.
+No scoped remainder; existing lock/17foreign outgoing block commit/push/newCI.
+Evidence: docs/testing/evidence/appointment-card-20261105.md (reference follow-up).
+
+ENTITY-CARD-FOOTER-20261105: owner follow-up locally complete.
+Removed redundant bottom Close/divider in Client and Appointment modals;
+content reclaims height, top close/Escape and draft/pending guards retained.
+Four scoped RU/KK/EN desktop/mobile browser cases and build/types/bundle PASS.
+Initial stale footer-based test waits failed; corrected field/save wait rerun PASS.
+No scoped remainder; existing lock/17foreign outgoing block commit/push/CI.
+Evidence: docs/testing/evidence/appointment-card-20261105.md (footer follow-up).
+
+## VOICE-HARDENING-20261105 — command reliability and current model
+
+VOICE-HARDENING-20261105: false text-command rejections fixed; Turbo synthetic RU API Task/replay PASS.
+Live command checks exposed planner schema/cancel routing and time-only reschedule defects;
+fixed prompt/shape and preserved specialist/reason in existing domain adapter.
+Final affected98/system/drift PASS; live seven-command queue matrix PASS.
+Human RU/KK/mixed/noise and production broker/worker acceptance remain open.
+Existing lock/17foreign outgoing block publication; no workingDB/env/deploy change.
+Evidence: docs/testing/evidence/voice-hardening-20261105.md.
+
+Plan/baseline/owned patch/hashes/runners in output/voice-hardening-20261105.
+Explicit follow-up to voice analysis; user authorized fixes and current provider/command checks.
+Canonical codex/ui-testing-toolkit/66101d50 with preserved shared WIP; no other source tree.
+No frontend changes; scoped API and backend verification, not full D01/release/browser certification.
+
+## APPOINTMENT-CARD-20261105 — locally verified, publication blocked
+
+APPOINTMENT-CARD-20261105: next entity-card stage locally complete.
+Centered/no-blur Appointment, sections/actions/reasons/version recovery, draft guards;
+Client↔Appointment back, Calendar inspector restoration, context voice preserved.
+Node13/browser17 distinct scoped cases across runs/final build-types-i18n6895/bundle PASS.
+Real related note/field/file, status actions, role/foreign denial and RU/KK/EN checked.
+No scoped code/evidence remainder; workingDB/dev retained. Existing lock/17foreign
+outgoing block publication; no own commit/push/newCI/deploy. Task/Plan not started.
+Evidence: docs/testing/evidence/appointment-card-20261105.md.
+
+Owner asked to resume modal entities and review latest implementation. Client
+phase and later voice context preserved; only next Appointment stage implemented.
+Canonical codex/ui-testing-toolkit/66101d50. Plan, originals, owned source patch/hash,
+exact test receipts and failures: output/appointment-card-20261105. No new backend/
+permission/model/DB or money behavior. Source and scoped docs hygiene PASS; index
+empty, existing04.11 lock preserved, remote main0b3348e1 verified. No publication.
+
+## RECORDS-CALENDAR-FIXES-20261105
+
+RECORDS-CALENDAR-FIXES-20261105: two Records filters and Calendar interactions fixed locally.
+Retained inaccessible values show #ID; custom filter survives empty/error and follows URL.
+Sticky Calendar toolbar/panels remain below header; booking harness corrected.
+Node17/Calendar9+14/Records7/audit8 distinct scoped cases PASS across final runs;
+final build and mobile separator recheck recorded in evidence. WorkingDB/dev retained.
+Existing lock/17foreign outgoing block publication; no own commit/push/newCI/deploy.
+Evidence: docs/testing/evidence/records-calendar-fixes-20261105.md.
+
+Plan, baseline, owned delta/hashes and exact runners/logs: output/records-calendar-fixes-20261105.
+No backend/domain change; no remaining authorized code work. Publication blocked by
+existing lock and foreign outgoing history; no history/lock modification.
+
+## SESSION-NOTICES-20261105 — locally verified, publication blocked
+
+Owner approved repair of simultaneous centre/right recovery warnings. Common host
+now includes auth/session/logout; connection outage suppresses only related warnings,
+including dismissed/reconnecting state. Specific session recovery copy in RU/KK/EN.
+Existing restoration/expiry/retry-after/account identity and startup behavior retained.
+Canonical codex/ui-testing-toolkit/66101d50 + preserved foreign WIP. Own baseline,
+plan/patch/hashes/logs/screenshots in output/session-notices-20261105.
+Node9PASS; initial browser14PASS/6 login429FAIL; fresh focused5PASS+3PASS, final
+locale3PASS after correcting account-language fixture.20 distinct browser scenarios
+passed across runs; no claim of clean full rerun. Final build/types/i18n6895/bundle PASS.
+[Exact checks/evidence](../evidence/session-notices-20261105.md). Contract/passport
+and registration synchronized; roadmap/domain/access/setup unchanged. Owned isolated
+runtimes stopped; no workingDB/backend/provider changes. No scoped code/check remainder.
+Underlying intermittent server outage was not diagnosed/fixed by this UI task.
+Existing index.lock/17 foreign outgoing block publication; index empty, remote main
+0b3348e1 readback. No own commit/push/newCI/deploy; lock/history preserved.
+
+## ENTITY-CARDS-20261105 — Client locally complete, publication blocked
+
+Explicit side-chat instruction05.11: document the entire reference discussion,
+proposals and implementation sequence, then begin with Client. Discussion and
+reference registered at docs/current/entity-cards.md. Other implementations remain
+proposals; Appointment is next, not started or authorized by this closure.
+Canonical codex/ui-testing-toolkit HEAD66101d50 + preserved shared WIP. Starting
+snapshot/affected originals, own delta and final hashes: output/entity-cards-20261105.
+Client uses centered Dialog entity presentation/no blur; other types retain Drawer.
+Real card/workspace APIs, nearest sorted/paged planned visit, main/secondary tabs,
+existing actions, per-role gating, actor/Business cache identity; no domain/API change.
+Nested edit/tag and note/field/file drafts protected; pending blocks close.403 hides
+cached data; transient refresh503 preserves drafts/retry. Locale and Business-zone
+formatting/grouping passed; existing Appointment drawer retained.
+Checks: Node12;14 distinct scoped browser cases across exact receipts/focused reruns;
+final safe build/types/i18n6894/bundle PASS. Docs/links/registration/working-index
+hygiene checked separately. Initial failures and their source/harness diagnosis
+retained at docs/testing/evidence/entity-cards-20261105.md; no blanket release PASS.
+Reference and inspected final desktop/mobile assets linked from evidence. All own
+test runners exited; workingDB unused, no shared dev restart or dependency install.
+Frontend contract/clients passport/status synchronized. Other contracts/root README/
+existing roadmap need no domain/setup/acceptance change; rationale in evidence.
+No remaining Client code or local evidence item. Publication blocked by existing
+.git/index.lock, absent upstream and17 foreign outgoing relative to local origin/main.
+No lock deletion/stage/commit/push/newCI/deploy/history change. Do not publish foreign
+work. Next user-visible stage is Appointment only after its own instruction.
+
+## VOICE-LIVE-20261105 — реальная связка OpenRouter
+
+VOICE-LIVE-20261105: real OpenRouter audio→text→proposal→confirmed Task PASS.
+Fixed STT404 data-policy route with Whisper Large V3, preserving ZDR/no-data-collection.
+Local ai_core0009 applied with SQLite backup/quick_check; local no-worker inline mode.
+Named-task optional deadline prompt corrected; focused19+35/system/drift PASS.
+Real RU synthetic API/replay and Chromium mic→Task PASS; KK/noise/full D01/live-worker open.
+Existing lock/17foreign outgoing: no own commit/push/newCI/deploy.
+Evidence: docs/testing/evidence/voice-live-20261105.md.
+
+Working migration authorized/applied; backup remains local. Detailed checkpoint: `output/voice-interface-20261105/CHECKPOINT.md`.
+
+## VOICE-INTERFACE-20261105 — independent voice interface
+
+VOICE-INTERFACE-20261105: voice is independent CRM interface, no created Bot.
+Private user/Business voice threads + built-in runtime; permissions/approval/replay retained.
+Backend92/Node4/browser6 RU KK EN/build-types-i18n6883/system-drift/migration PASS.
+Code/local evidence complete; working ai_core0009 migration needs owner target approval.
+Live STT/full D01 open; existing lock/17foreign outgoing block publication.
+No own commit/push/CI/deploy/workingDB writes. Evidence:
+docs/testing/evidence/voice-interface-20261105.md.
+
+Detailed current checkpoint: `output/voice-interface-20261105/CHECKPOINT.md`.
+
+## CLIENTS-RECORDS follow-up05.11 — locally verified
+
+Owner requested common global-header search width, Manual accounting back in
+global header and Clients export removal. Implemented, preserving foreign WIP.
+Node12PASS, initial browser7PASS plus corrected focused2PASS, final build/types/
+i18n6883/bundle PASS. Measurement harness failures retained, not claimed green.
+Representative lists1440/768/390; Clients RU/KK/EN, rights/recovery/keyboard and
+Records checked. Pricing/platform static/build coverage only. Own runtimes stopped.
+Scope/commands/hashes/patch in output/clients-records-20261105/followup;
+[evidence](../evidence/clients-records-20261105.md). Contract/passport synchronized.
+No scoped code/check remainder; existing lock/mixed outgoing blocks publication.
+Canonical codex/ui-testing-toolkit/66101d50; no own commit/push/newCI/deploy.
+
+## CLIENTS-RECORDS-20261105 — locally complete, publication blocked
+
+Owner approved Clients reference implementation, Records spacing and control audit.
+Canonical codex/ui-testing-toolkit HEAD66101d50 + captured foreign WIP. Single toolbar,
+no nonfunctional row selection, direct drawer, merged ordinary/custom filter drafts,
+column controls and export/manual-accounting menu; role-aware create/shortcut.
+Node12/eight distinct scoped browser scenarios/final build-types-i18n6883/bundle PASS.
+Exact commands, corrected harness failures, own delta/source hashes, spacing and
+screenshots under output/clients-records-20261105; [evidence](../evidence/clients-records-20261105.md).
+Records matching24px desktop sides,16px gaps,40px toolbar; RU/KK/EN desktop/mobile.
+Frontend contract+clients passport synchronized; domain/setup/roadmap unchanged.
+No scoped code/evidence remainder. WorkingDB unused, owned test runtimes stopped.
+Existing index.lock/17 foreign outgoing block publication; no own commit/push/newCI/
+deploy, no lock/history changes. Shared docs preserved with additive sections only.
+
+## ENTITY-PREREQUISITES-20261104 — analysis documentation
+
+Explicit side-chat request: document the completed entity-dependency analysis and
+user-facing creation prerequisites. Docs-only; no implementation of proposed gates.
+Canonical PlatformaCRM, codex/ui-testing-toolkit, HEAD66101d50 plus pre-existing
+mixed WIP. Starting docs delta: STATUS502/29, registry45/0, PRIMARY2937/90;
+docs/README clean. Preserved foreign content; only additive task-owned sections.
+Scope: docs/testing/entity-prerequisites-20261104.md, its README/registry entry,
+this checkpoint and compact STATUS note. Risk: confusing proposals with current
+requirements; report explicitly separates these and states static-review limits.
+Verification plan: local link existence, unique evidence registration/JSON parsing,
+new-file review and working/index whitespace. No app install/build/DB/E2E for docs.
+The matrix includes creation vs activation, zero/single/multi-branch behavior,
+staff vs login accounts, schedule semantics, missing access/data/setup and recovery.
+Seven observed consistency gaps remain unimplemented; report is not a new backlog.
+Contracts/passports/roadmap/README at repository root need no behavior/status edits:
+no product behavior, release acceptance or runtime evidence changed.
+Publication blocked: pre-existing .git/index.lock and no configured upstream on
+current branch. No staging/commit/push/new CI; do not alter lock or foreign history.
+Initial check used unavailable PATH python alias; rerun with repository .venv Python.
+Verification PASS: inline .venv/Scripts/python.exe checker resolved all41 report
+links, parsed registry JSON, confirmed one evidence entry and README link, and
+checked new-file whitespace; matrix56 rows. `git diff --check -- docs/README.md
+docs/documentation-index.json STATUS.md docs/testing/task-state/PRIMARY-SESSION.md`
+and `git diff --cached --check` PASS. Reviewed new report for scope/proposals and
+private data. No task committed range exists, so range check skipped. Documentation
+complete locally; publication remains blocked as above, no product fixes claimed.
+
+## VOICE-ASSISTANT-20261104 — locally verified05.11, live/publication open
+
+Owner approved header voice panel, editable transcript, button-only action approval,
+minimal personal settings, no TTS/persistent listening, external STT via OpenRouter.
+Canonical codex/ui-testing-toolkit HEAD66101d50 + shared dirty tree; foreign WIP retained.
+Header audio capture/edit/send/private history/exact button confirmation/result,
+personal settings/account recovery and server voice scope checks implemented.
+Linked client→appointment uses separate sequential confirmations, not atomic pair.
+Audio7 then affected86, later policy/execution/API22 and final language1 PASS;
+Node4, six scoped browser scenarios (focused reruns), build/types/i18n6879/bundle PASS.
+Exact logs/commands, corrected failures and source hashes in output/voice-assistant-20261104.
+No code/local-evidence remainder in agreed voice scope. Live RU/KK/mixed/noise/model
+quality and route privacy compatibility remain unverified; key presence only checked.
+No paid call/workingDB migration/own commit/push/newCI/deploy. Existing index.lock,
+empty index,17 foreign outgoing; remote main0b3348e1 readback. Lock/history preserved.
+Contract docs/current/voice-assistant.md; [evidence](../evidence/voice-assistant-20261104.md).
+
+## IMPORT-DEMO-20261104 — CSV and XLSX local demonstrations complete
+
+Owner asked agent to generate files and import through CRM UI. Both formats PASS
+in separate isolated DBs: four linked entities per run, correction/customfields/
+preview/confirm/native clients/service/calendar/filter/export/activation; no JS errors.
+Real8files+ZIP under outputs/import-demo-20261104; script/logs/screenshots/plan/source
+hashes under output/import-demo-20261104. Product unchanged, workingDB untouched,
+owned runtimes stopped. Fake scanner/eager boundary, not live/release certification.
+[Evidence](../evidence/import-workspace-20261104.md#import-demo-20261104--real-csvxlsx-upload-demonstration).
+No scoped remainder; no own commit/push/newCI/deploy, prior publication block retained.
+
+## IMPORT-WORKSPACE-20261104 implementation — locally verified, publication blocked
+
+Owner authorized whole first phase and no import-triggered messages/automations;
+future-only activation is explicit with preview. Four entities, versioned edits,
+profiles, stable source bindings, native previews/custom fields/filter/export and
+background recovery implemented. AI excluded. Foreign Records/Calendar work retained.
+Canonical PlatformaCRM/codex/ui-testing-toolkit/66101d50 + shared dirty tree.
+[Evidence](../evidence/import-workspace-20261104.md) gives exact boundary/results;
+commands/logs/contract/checkpoint: output/import-workspace-20261104/implementation.
+Backend137 discovered135PASS/2PGSKIP, extra access2PASS; affected PG races/locks,
+field-filter/display and dependent checks PASS (earlier failure receipts retained).
+Node15/browser7/final safe build/types/i18n6850/bundle PASS. System/drift PASS.
+Tests use isolated SQLite/PostgreSQL, eager/scanner fixtures, synthetic data and
+owned ports. Screenshots/antislop gate recorded; own runtimes stopped58908/58909.
+WorkingDB never migrated; core0014–0017 applied only in disposable DBs. No real
+provider/broker/live rollout claim. Fullproject/release gates not required for scope.
+Contracts/passports/README/testing updated, evidence registered; roadmap/open IDs
+unchanged. No remaining code/local verification in accepted firstphase.
+Publication preflight: existing empty index.lock, empty stage,17 foreign outgoing;
+remote main0b3348e1 readback, HEAD66101d50. No own stage/commit/push/newCI/deploy.
+Lock and shared history require separate resolution; do not publish others' work.
+
+## RECORDS-DRAWER-20261104 — implementation verified locally, publication blocked
+
+Owner annotation1 explicitly approved table/client/drawer/plans/calendar/filter changes.
+Canonical PlatformaCRM, branch codex/ui-testing-toolkit, base66101d50 + foreign WIP.
+Starting status/diff and compact plan: output/records-drawer-20261104. No ownership
+transfer or other-chat task executed. Records/CRM drawer components were initially clean;
+dirty CalendarPage/AppointmentDrawerPanel/ClientsPage/styles retained untouched.
+Existing APIs/domain/capabilities reused; no backend/migration/workingDB/provider writes.
+Scoped frontend checks use isolated_runtime/guarded fixture setup, synthetic plans/
+appointments/read-only role, dedicated ports, external services disabled.
+Final run1793804779924363300: Node8/browser7/types/i18n6685/app/widget PASS.
+Bundle PASS app-shell343.0kB; advisory RU/KK dictionary >500kB warnings remain.
+Browser proves real note save, read-only role,503 recovery, confirmation/early completion,
+pending reschedule then immediate cancellation, client/plan links, drafts/reset/Escape,
+no table shift, page-size selection, RU/KK/EN/mobile and calendar/client regression.
+Nested modal Escape incorrectly closed parent drawer; handler now respects defaultPrevented.
+Reschedule previously exposed old card version before refetch; dialog now waits for
+refresh before closing. Both defects reproduced then passed in final flow. Initial harness
+dictionary loader/exact accessible-name failures retained in earlier logs, not a PASS.
+Final visual adjustment prevents client heading truncation/hides raw source subtitle;
+KK reset label corrected, screenshots inspected. Source/diff/new-file/docs checks PASS.
+Final manifest/own patch and logs in output/records-drawer-20261104. Own test servers
+stopped and dedicated ports have no listeners. WorkingDB and foreign work untouched.
+No code/local-verification remainder within approved scope; publication alone blocked.
+Existing index.lock and foreign outgoing commits block own-only publication; no staging,
+commit/push/deploy/newCI. [Evidence](../evidence/records-drawer-20261104.md).
+README/domain/access/AI/integrations/operations/roadmap requirements unchanged; frontend
+contract and scheduling passport updated, evidence registered. No broader release claim.
+
+## IMPORT-WORKSPACE-20261104 follow-up — approved direction and current implementation review
+
+Owner accepted direction/references and requested current import/preview/correction
+review. Docs + static source audit only; no new product implementation authorized.
+Canonical checkout, codex/ui-testing-toolkit, HEAD66101d50 + preserved foreign WIP.
+Contract/start snapshot/source hashes: output/import-workspace-20261104/current-review.
+Existing import traced UI→API→service→parser/model/tests: one type/file, active XLSX
+sheet, fixed mapping, source sample default10, full row validation but sampled duplicate
+preview; no row-value correction/custom-field creation/table-card-calendar preview.
+Existing confirm re-reads source, rechecks rights/validation and writes transactionally.
+Current mapping/history and AUD12 closure reused; new wizard not marked implemented.
+
+Contract records owner approval, current-vs-target matrix, sources, limits and required
+reuse/gaps. Integration contract links it; passport clarifies file correction vs row
+editor. No new roadmap/backlog or acceptance closure. README/product/CRM/AI/access/
+frontend/operations unchanged: no implemented workflow, setup, API, rights or release
+status change; import-specific AI exclusion already recorded in owning contract.
+
+Command in frontend: node --test scripts/tests/import-review.test.mjs scripts/tests/import-history.test.mjs
+12 PASS/0FAIL/0SKIP, mocked component/model/API-argument scope only. Backend tests
+inspected, not executed. No build/browser/full suites needed for docs + static review;
+no current backend/concurrency/live/deployment certification. Docs links, own before/after
+diff/new-file hygiene, unchanged inspected source hashes checked at close.
+No servers/processes started, credentials or workingDB writes. Index empty; existing
+index.lock remains, foreign outgoing commits/WIP cannot be included in this task.
+No own commit/push/newCI/deploy. Own docs delta retained under current-review.
+No scoped documentation/review remainder. Implementation/technical plan and dynamic
+acceptance remain future scope; this follow-up does not start product code.
+
+## IMPORT-WORKSPACE-20261104 — documentation and visual references
+
+Owner requested to record agreed migration scope/AI decision and generate preview
+references. Mode docs/design; gap contract. Canonical PlatformaCRM, branch
+codex/ui-testing-toolkit, base66101d509cb7642b2928275e48c4b64354abf07b + foreign WIP.
+Before snapshots/status in output/import-workspace-20261104. Verification plan:
+docs diff/new-file/links/JSON/consistency; image inspection/style/synthetic data.
+No app installs/builds/backend/browser suites for docs/raster ideation.
+Contract docs/current/import-workspace.md registered, owner integrations.md linked.
+AI NOT implemented in first phase; future optional assistant requires separate scope.
+Full four-entity file transfer/custom fields/staging/real-component preview described;
+implementation and runtime gates remain future. Roadmap/acceptance IDs unchanged;
+passports/README need no implementation/setup change from this specification.
+Built-in Image Gen3 independent screens, actual Records screenshot attached to each:
+01-fields.png,02-table-card.png,03-calendar.png, prompts.json under output folder.
+Images visually inspected: coherent style, mapping/custom fields, hide-vs-delete,
+table/card, conflict calendar and disabled confirm. Synthetic rows/counts only.
+Raster specifics are proposals: calendar conflict card geometry approximate; header
+create-record inherited from reference would be suppressed in actual import workspace.
+PNG labels/spacing do not certify behavior/accessibility or approved final layout.
+No product edits, user data import, working DB migration, external sends/deployment.
+Publication preflight: index empty, index.lock existing; origin main read-back
+0b3348e1 while local66101d50 includes foreign outgoing remediation commits. Shared
+docs also contain prior WIP. No staging/commit/push of foreign work, no new CI.
+Next: owner visual refinement and technical plan; implementation not begun.
 
 ## REMEDIATION-C11-20261104 — export attempt ownership locally verified
 
@@ -403,6 +925,633 @@ preserved. No further executable audit work remains; remediation is a separate p
 External target/device/provider/security-profile proof and four direct-document
 integration constraints remain explicit. No push-triggered CI or deployment.
 
+## RECORDS-REMEDIATION-20261103 — local implementation verified
+
+Owner authorized9 audit fixes and styled calendar/period without modal. Calendar
+interpreted as date-picker; optional full-page clarification unanswered, no full-page
+redesign claimed. [Report](../evidence/records-remediation-20261103.md) closesRF01–09
+locally: server action capabilities, return context, pending/ref guard, invalid-page
+recovery, debounce/replace/scoped placeholder, role-aware hours/plan create, branch
+column, single-main. Inline reused DateRangePicker with draft/apply/cancel, shared
+palette/footer and readable320px month/year. Shared Calendar/Client verified.
+Unexpected rapid-reset persistence race traced to URL navigation before save; common
+setter saves synchronously, repeat3 PASS. Initial layout-effect-only fix insufficient;
+failures retained. TS optional-query and test selectors corrected; synchronous pending
+ref fixes rapidEscape race; late reply cannot hijack page. All scoped failures resolved.
+Node8 PASS;11 unique remediation browser cases plus6 existing read/bell and4 toolbar/
+remembered cases PASS on applicable final inputs. Final build/types/i18n6667/app/widget
+PASS. Logs/before/plan/owned.patch in output/records-remediation-20261103; fresh3-row
+regression environment in output/records-remediation-regression-20261103. Source hashes
+in evidence assets; no backend/API/schema/AI/BusinessEvent/provider/workingDB change.
+No new backend/fullproject/PG release gate; prior unchanged56 remain audit-scoped.
+Frontend/passport/STATUS/registry updated; other contracts/roadmap need no change per
+report. Canonical root/codex/ui-testing-toolkit/e02a28f5 WIP preserved. Existing index.lock
+and mixed prerequisites block own-only publication; no stage/commit/push/newCI/deploy.
+No code/local-evidence remainder in scope; publication blocker remains.
+
+## RECORDS-FULL-AUDIT-20261103 — audit complete, findings open
+
+Owner requested full audit of all Records page components; audit-only, no fixes.
+[Report](../evidence/records-full-audit-20261103.md):9 confirmed findings(7P2/2P3):
+TEAM actions hidden; explicit Back loses filters/page; close during create permits
+late navigation; invalid page Retry repeats404; search history per character;
+unauthorized working-hours shortcut; readonly plan create URL; empty branch column;
+nested main landmarks. Backend denies forbidden commands; no bypass claimed.
+56 isolated Django tests PASS,19 unique browser audit scenarios completed; successful
+reproductions include defects, not product acceptance. RU/KK/EN1440/390/320, owner/
+TEAM/viewer/creator; plans create/revise/archive/restore/schedule and recovery covered.
+Exact commands/logs/fixture/scripts/starting status in output/records-full-audit-20261103;
+audit harness selector errors preserved and corrected, product source untouched.
+34 before/after source hashes match; synthetic mutations only audit.sqlite3 with
+blocked outbound network/mockAI/eager; working DB untouched. No fresh build/fullE2E/
+PG concurrency/deploy; previous unchanged scoped evidence linked, limits in report.
+Canonical root/codex/ui-testing-toolkit/e02a28f5 + WIP preserved. Registry/STATUS/
+PRIMARY/evidence only. No contract/passport/roadmap requirement change warranted:
+findings document existing gaps, no new business policy or R01 closure. Existing
+index.lock/mixed prerequisites block publication; no stage/commit/push/newCI.
+Own isolated60451/60452 stopped after PID/command identity checks; dev preserved.
+Next separate task: owner selects remediation scope; no remaining audit work.
+
+## RECORDS-SINGLE-ROW-20261103 — implementation and empty-page investigation complete
+
+Owner explicitly requested one-row filters and investigation of missing records.
+Real Chrome plain route selected Today03.11;10 authorized demos existed04.11. No data
+loss/recreation/move. One row now contains search/period/status dropdown/filter count/
+sort toggle/reset/navigation; mobile horizontal toolbar scroll without page overflow.
+Advanced/client/attention conditions use dialog draft/apply/cancel; no second chips row.
+useRecordsPeriod remembers valid explicit dates per actor/Business in sessionStorage,
+restores only plain list URL (including repeated same-route menu click), gates first
+workspace query during restore; explicit URLs/drilldowns unaffected, reset writes
+Today explicitly. New tab/no storage retains Today default. No API/domain/schema/
+permission/notification/AI changes, working DB writes or deployment this cycle.
+Canonical root/codex/ui-testing-toolkit/e02a28f5 WIP preserved; before/plan/Git snapshot/
+owned.patch/logs in output/records-single-row-20261103. [Evidence](../evidence/records-single-row-20261103.md).
+Node7 + final browser7 RU/KK/EN + final build/types/i18n6666/app/widget PASS. Initial
+scoped3+4 and first build also PASS; final repeated after same-route/reset refinement.
+Real dev table10 plus header, row48px/scrollWidth=clientWidth1392; Clients->Records and
+same-route menu both retain04.11. Screenshot full-page timeout then viewport success;
+actual dev screenshot persisted. No functional test failures. Browser left on04.11.
+Frontend contract/scheduling passport updated, other docs need no change per evidence;
+full R01 remains separate. Existing index.lock and prerequisite untracked/dirty code
+block own-only publication; no staging/commit/push/new CI. No code/evidence remainder.
+Own isolated58034/58035 stopped after command/port identity checks; dev preserved.
+
+## RECORDS-COMPACT-DEMO-20261103 — proposal and authorized data complete
+
+Owner asked for more compact one-row Records header proposal plus10 mocks, then
+explicitly selected adding test records to current business instead of demo mode.
+Proposal: search/period/status dropdown/filter count/icon sort/calendar/plans in one
+local desktop row. Built-in image_gen reference and exact prompt in
+output/records-compact-demo-20261103/{reference.png,PROMPT.md}. No new UI code change.
+Browser confirmed current Business Zani E2E Demo and actor Nikita Galuza; local DB
+Business2/owner2 verified. Existing service81/resource114; available-slots200 gave
+nonoverlapping04.11.2026 slots. User-authorized ordinary db.sqlite3 data writes only:
+10 contact-free Demo clients153–162 and appointments87–96,09:00–14:00 Asia/Almaty,
+all created/planned. Existing4 appointments preserved. APIRequestFactory invokes
+actual ClientViewSet.create and AppointmentViewSet.create_record with current actor,
+permission validation, stable idempotency keys, outer atomic transaction; no direct
+lifecycle model writes. SQLite consistent backup before-demo.sqlite3 retained in
+ignored output; never stage database/backup. Script create_demo.py prevents duplicate
+batch by marker. Active automations0. Normal audit/activity/follow-up behavior ran;
+20 notifications only system channel, no external messages. No provider config or
+schedule changes. Evidence create.log/created.json/actual-records.jpg; browser table
+has10 rows and total10. User tab left on from/to04.11.2026 and marked deliverable.
+Initial read-only automation preflight used wrong field action_type; corrected to
+actions__action_type before any writes. No failed write attempt. Backend application
+code unchanged; no builds/full tests/migrations necessary for proposal/data operation.
+Canonical root/codex/ui-testing-toolkit/e02a28f5 + preserved WIP. Own doc hygiene
+checked; publication blocked by existing index.lock and mixed prerequisites; no
+staging/commit/push/new CI/deploy. No remaining requested proposal/data work. One-row
+header implementation remains a proposed choice, not an implicitly authorized rewrite.
+
+## RECORDS-TOOLBAR-20261103 — local implementation verified
+
+Owner approved references then implementation. Compact Records toolbar, atomic dates,
+draft/apply/cancel advanced filters, active chips/reset, horizontal mobile statuses and
+separate navigation. Existing API/query scope/default dates retained. Canonical root,
+codex/ui-testing-toolkit/e02a28f5 + preserved WIP; plan/before/status/owned.patch/logs
+in output/records-toolbar-20261103. [Evidence](../evidence/records-toolbar-20261103.md).
+Node5, browser3 toolbar +3 recovery RU/KK/EN, build/types/i18n PASS. Source hashes
+and screenshots in evidence assets. First fixture slug/bootstrap and build wrapper
+argument errors corrected, no product-test failure. No backend/schema/provider/AI
+change, working DB writes or full release gate. Existing index.lock and untracked
+prerequisite sources block own-only publication; no staging/commit/push/new CI/deploy.
+Own isolated49669/49671 stopped after command/port identity verification; dev preserved.
+No code/evidence remainder in approved UI scope; full R01 remains separate.
+
+## APPOINTMENTS-UI-AUDIT-20261103 — screenshot/audit/proposal complete
+
+Owner requested screenshot of /appointments, UI/UX audit of filter/header placement,
+comparison to other pages, proposed corrections. Actual route /app/appointments.
+Audit only; canonical root/codex/ui-testing-toolkit/e02a28f5 + preserved WIP.
+[Report](../evidence/appointments-ui-audit-20261103.md); assets include desktop1440x1000,
+mobile390x844 full-page, measurements and source hashes. Output plan under
+output/appointments-ui-audit-20261103. Role owner, RU, read-only current dev; empty
+Records state, Clients/Calendar/Tasks filter open/close and source review. No entity
+mutations/settings/account preferences or backend faults injected. No new runtime.
+Four findings: P2 density/mobile fold, P2 active summary/reset, P3 mixed navigation,
+P3 full-width sort. Mobile filter grid576px at y261, result text at y934; viewport844.
+Recommendation compact local toolbar under existing fixed global header; visible
+period/search/statuses, separate navigation, advanced filter dialog and active chips.
+Clients draft/apply pattern preferred; calendar period/filters reused; task expanding
+form is comparison, not recommended for this page. Header.filters is desktop-only,
+so simply moving fields there would omit mobile access. No implementation authorized
+by audit; no product contracts/roadmap/passport change required. Scope limitations:
+no fresh filled table/error/other roles/KK/EN/screen-reader/full WCAG certification.
+Source/links/JSON/new docs hygiene checked; no app installs/build/backend/full E2E
+for this audit. One screenshot timeout retained; saved images succeeded/inspected.
+Docs publication blocked by existing index.lock/mixed prerequisites; no stage/commit/
+push/CI/deploy. Product source hashes unchanged. Browser returned to Records and
+viewport override cleared after inspection. No pending work in audit scope; next
+step requires owner selection of proposed implementation, not automatic redesign.
+
+## RECORDS-BELL-FIX-20261103 — both fixes locally verified
+
+Owner authorized one cycle for Records404/read feedback and concrete service events
+in Bell. Canonical root/codex/ui-testing-toolkit/e02a28f5 + preserved WIP; plan,
+starting snapshot, before files and owned.patch in output/records-bell-fix-20261103.
+[Evidence](../evidence/records-bell-fix-20261103.md) and source manifest document exact
+checks and limitations. Old own dev backend --noreload had stale router; authorized
+restart restored actual workspace200/count0/results0 and correct empty UI. Final
+ordinary dev8000 uses autoreload (StatReloader confirmed); frontend5173 preserved.
+No working DB migrate/seed/reset. Runtime: same output/dev-runtime.json.
+RecordsLoadError contextualizes read failures/filter400 and keeps permission reason;
+service_messages projects only allowlisted component/transition from validated
+same-Business reference/episode, never historical text. Recipient/access filtering
+and announcements preserved; no migration, provider/delivery/BusinessEvent/AI changes.
+Focused backend6 PASS before UI; completion82 tests:81 PASS/1 unchanged PostgreSQL-only
+concurrency test skipped on SQLite. System/drift PASS; Node14 PASS. Browser initial6
+RU/KK/EN PASS; updated actual-producer S03 event scenario1 PASS; extended Records3
+with403/keyboard recovery PASS after fixing a malformed403 test fixture. The three
+failed fixture runs remain in logs/traces; no product assertion weakened. Final
+build/types/i18n6666/app/widget PASS, bundle PASS with existing RU/KK size warnings.
+No full release, PostgreSQL or live-delivery certification from this slice.
+Frontend/access/operations/notification passport/S03 roadmap updated. README/CRM/AI/
+integrations/schema no changes required; explanation in evidence. Historical alert
+remediation failure not rewritten; new S03 message assertion supersedes its open code
+finding, while explicit removal of the header indicator supersedes obsolete UI steps.
+Own isolated backend6864(wrapper7944)/frontend9644 stopped after exact command/port
+checks, ordinary dev remains. No code/evidence/policy remainder in approved two-fix
+scope. Publication remains blocked by pre-existing index.lock and mixed prerequisites;
+no staging/commit/push/new CI/deploy. Final diff/links/registry/source hashes reviewed.
+
+## HEADER-CLEANUP-20261103 — local UI verified, publication blocked
+
+Owner requested removal of background-processing header button/details and technical
+timezone/update captions on Dashboard/Calendar, persistent compact header. Canonical
+root/codex/ui-testing-toolkit/e02a28f5; preserved all prior WIP. Own baseline, plan,
+4-file delta and hashes: output/header-cleanup-20261103/{before,PLAN.md,owned.patch,manifest.json}.
+Header now fixed without scroll hiding, row48px desktop/56px mobile plus border;
+main offsets share49/57px variable. Removed ServiceStatusNotice mount/polling from
+header and two technical captions only; timezone calculations/settings preserved.
+Initial sticky trial failed due existing root overflow container; retained fixed
+position instead, then browser proved top0 after scroll104 desktop/330px mobile.
+Chrome real dev5173: Dashboard/Calendar/Inbox rendered; no technical timezone caption
+on Dashboard/Calendar; no service button. Calendar390px no horizontal overflow, main
+buttons fit; desktop height48.8px/mobile56.8px. Bell opens, mobile search opens/Escape
+closes. Inbox main padding49px clears48.8px header. RU inspected; KK/EN dictionaries
+unchanged, no new translated copy; full locale/role E2E not run for this removal.
+Final npm run build via scripts.codex_verify.safe_environment PASS (types/i18n/app/widget),
+log output/header-cleanup-20261103/build-final.log. Earlier build itself exit0 but log
+printing wrapper failed cp1251; final UTF8 wrapper exit0 after fixed-header revision.
+No new CSS-mirroring tests/backend suite/install/migration/seed/provider actions.
+Frontend/operations/notification passport/roadmap updated; README/CRM/access/AI need
+no update because API/domain/permissions/setup unchanged. React review removed unused
+scroll state/effect and no new fetch/state dependency. Diff hygiene PASS.
+Publication blocked by existing index.lock and mixed prerequisite WIP; no stage,
+commit/push/new CI/deploy. This does not close existing S03 bell projection failure.
+Records GET workspace404 is separate stale-dev endpoint failure; empty records should
+return200/results[]. Prior restart was rejected by automatic approval review; no restart
+or repair claimed here. No remaining code change in this approved header/caption scope.
+
+## CRM-R01-PLANS-20261102 — local implementation verified, publication blocked
+
+Completion02.11: VisitPlan/VisitPlanStep + migration0011, scoped list/detail/history,
+versioned/idempotent plan commands, existing slot scheduling and Client lifecycle
+integration; reachable Records/Client UI and guarded Appointment return.128 final
+backend,23 PostgreSQL, cache1, final build/types/i18n6650, synthetic RU/KK/EN
+mobile/keyboard/409/503/retry/archive/restore/add/remove PASS within evidence.
+Evidence and exact commands: docs/testing/evidence/visit-plans-20261102.md;
+source hashes: same -manifest.json; logs/starting snapshot/owned delta in
+output/visit-plans-20261102. Initial fixture/audit/payload/localization failures
+fixed and retained; no outstanding acceptance defect in this bounded cycle.
+No working DB migrate, provider actions, deployment or money/D01 implementation.
+Fresh preflight: origin/main = HEAD e02a28f5, index empty; index.lock remains.
+Dirty prerequisite Records/projections/notifications prevent own-only publication;
+no staging/commit/push/new CI. Earlier foreign outgoing commit blocker resolved.
+Roadmap/CRM/frontend/acceptance and clients/scheduling/capabilities updated;
+README/access/AI/integrations/operations unchanged for reasons in evidence.
+Own runtime56863/56864 stopped (wrapper exit0, PID16036/5844 absent), tab closed;
+other dev servers preserved. Next code criterion price versions/allocation; full R01/live and monetary policy
+remain open. Original implementation contract follows for scope/provenance.
+
+
+Owner «Продолжаем» after first Records delivery authorizes next R01 cycle.
+Mode implementation; gap code/evidence. Observable result: client visit plan with
+undated steps, scheduling each through existing Appointment commands, reachable
+Records/Client UI and current scoped visibility. No money/allocation/advance/D01
+expansion, working database migrations, provider actions or deployment.
+Canonical PlatformaCRM, codex/ui-testing-toolkit, HEAD e02a28f5 + preserved WIP;
+starting snapshot output/visit-plans-20261102. Existing index lock/foreign outgoing
+commit and dirty prerequisites remain publication blockers; no foreign staging.
+Reuse Appointment/create_record/booking/status, current appointment and client
+permissions/branch scopes, command idempotency, audit/activity and shared UI.
+New VisitPlan/VisitPlanStep tables + isolated migration required; no empty Appointment.
+Stable step identity, one-to-one scheduled Appointment, versioned mutations,
+responsible inheritance/override, archive/history and Client merge compatibility.
+Risk: hidden-step leaks/assignment grants, duplicate booking, stale version/lost
+response, status divergence, client merge/archive and legacy bypass.
+Focused checks after each service/API slice: valid/invalid/role/tenant/OWN/TEAM/
+branch/revoke; no calendar effects for undated; replay/rollback/stale/cancelled
+history; archive/merge/standalone regressions. Completion: affected/dependent
+suites, isolated migration/system/drift, PostgreSQL scheduling races, frontend
+build/types/i18n, reachable RU/KK/EN desktop/mobile/keyboard/error/recovery flow.
+No full release certification. No new BusinessEvent without consumer; schedule
+uses existing effects once, plan activity exposes safe IDs only. AI receives no
+new autonomous commands. Finish docs/contracts/passports/evidence and publication
+preflight; do not close full R01 or monetary acceptance from this phase.
+
+## ALERT-COMPONENTS-20261102 — local implementation verified, publication blocked
+
+Owner02.11 approved implementation per Market specification/references, including
+bottom-right placement and replacement of the sticky network band. Completed03.11:
+solid four-tone shared StatusNotice, compatible title/description/dedupe; stable
+common host for ordinary toast/undo/network and existing unread-chat notice.
+Inline form/business-service notices retain their context. Existing recipients,
+realtime, bell/sound rules and foreign WIP preserved. No backend/domain/API changes.
+Canonical PlatformaCRM/codex/ui-testing-toolkit, HEAD e02a28f5; initial snapshot and
+22-file own source patch in output/alert-components-20261102. Model/permission/
+notification delivery/BusinessEvent/AI/migration/env product impacts: none.
+
+[Evidence and exact checks](../evidence/alert-components-20261102.md), source hashes
+and five synthetic screenshots in same evidence family. Node24, browser29,
+isolated real-form3 (RU/KK/EN), build/types/i18n6650/app/widget PASS. Covers queue,
+timers/delay/retry/undo/late-result, colors/reflow320/390/768/1440, keyboard/modal/
+drawer/nested/opener, network dismissal/reconnect/read-refresh, chat and forced colors.
+Initial source-test path/clock/selector failures retained and resolved; no remaining
+in-scope acceptance failure. Docs links/JSON/hygiene and owned new-file review PASS.
+No full E2E/backend suite/Storybook/live gate: selected affected frontend boundary.
+
+Isolated safe_environment, fresh SQLite, outbound backend blocked; runtime58234/
+58235. Task PIDs1744/15648/15872 stopped and absent; fixture56930 stopped by runner.
+Other servers and working DB preserved. No live provider/action or deployment.
+Frontend contract/passport/registry updated. Roadmap/CRM/access/AI/integrations/
+operations/README/capabilities unchanged for reasons in evidence; no R01/live closure.
+
+Code and local evidence have no remaining item in this approved scope. Publication
+remains blocked by pre-existing .git/index.lock (02.11 17:52:21); index empty, lock
+not removed. Actual remote main via FETCH_HEAD + ls-remote equals HEAD e02a28f5;
+local origin/main is stale (fetch refspec excludes main), not an outgoing blocker.
+No own staging/commit/push/new CI/deploy. Next publication step: resolve lock cause,
+refresh own diff/remote preflight, then commit/push only the authorized verified delta.
+Original pre-implementation contract retained in output/alert-components-20261102/PLAN.md.
+
+## ALERT-REFERENCES-20261102 — specification review and visual approval
+
+Owner asks to analyse Market output/CRM_ALERT_COMPONENTS_SPEC_2026-11-02.md and
+prepare several CRM references BEFORE implementation; code work requires subsequent
+explicit visual approval. This supersedes audit follow-up for the active request,
+without cancelling or silently implementing previous UX findings.
+Mode analysis/ideation; observable result: source-backed assessment and3 mockups of
+the same solid-card-v1 style. Canonical CRM, branch codex/ui-testing-toolkit, HEAD
+e02a28f5 plus foreign WIP; Market read-only, current HEAD0abc588f. No app edits.
+Reuse StatusNotice/notification/undo/connectivity and existing CRM screenshots;
+no backend/realtime/bell redesign, no working DB/provider action or deployment.
+Verification boundary: source/spec comparison, base color contrast calculations,
+visual review of references, local artifact links and diff hygiene. No app builds/
+test runs/servers for raster ideation. Shared-host/focus/timer tests belong to a
+future approved implementation, not proof claimed from images.
+Result: output/crm-alert-references-20261102/{ANALYSIS.md,GENERATION-BRIEF.md,
+01-desktop.png,02-mobile.png,03-form.png}. Built-in Image Gen, actual Market screenshot
+and relevant CRM screenshot attached to each of3 independent generations; displayed
+in that order. Synthetic example data only. Global original generated files retained.
+Key proposed additions: mobile host above actual bottom navigation (including tablet
+below lg), host actions compatible with active modal focus scope, hide network issue
+across background checking of same episode. Preserve business ServiceStatusNotice.
+FieldErrorSummary/recovery/permission nested colors need caller checks, not global
+brand repaint. Base contrast success5.346/danger6.493/warning10.233/info6.901.
+Raster geometry/colors approximate; first toast visually enlarged; exact implementation
+must use spec380px/14px/16px/12px, not copy image pixels. No runtime PASS claimed.
+Original TЗ unchanged; no source implementation, staging, commit or push for this phase.
+Next: owner selects/approves/refines references and proposed mobile positioning;
+only then refresh affected Git/diff and implement the approved scope.
+
+## UIUX-FULL-20261102 — audit and original installation completed
+
+Owner requested original upstream anti-slop installation and comprehensive UI/UX
+audit (defects, omissions, weaknesses, opportunities); no product implementation.
+Canonical PlatformaCRM, branch codex/ui-testing-toolkit, starting HEAD e02a28f5 plus
+preserved foreign WIP. Contract/starting snapshot: output/uiux-full-20261102/plan.txt,
+starting.patch, source-manifest.json; detailed local WORKING-CHECKPOINT.md retained.
+Original six skills installed user-global at941b1532f9cc8ffde766bca5921d75257c9e5762;
+all10 upstream skill files match SHA256. No app dependency reinstall.
+Report: [UI/UX audit](../uiux-full-20261102.md), manifest and four synthetic screenshots.
+14 findings:1P1/9P2/4P3. Highest: provider-dependent crash fallback, incomplete task
+search, hidden header keyboard focus, false empty state after client API failure.
+302 component/page import inventory entries,97 raw scans; NOT97 passed checks or
+all component-state certification. Report distinguishes loading artifacts, static
+findings, measured behavior and recommendations. Inbox transient contrast excluded;
+hours scroll warning not misattributed to focusable KPI section.
+Browser: owner/operator/platform-admin synthetic fixtures; desktop1440/mobile390/
+tablet768/reflow320; RU broad and KK/EN sampled; forms/overlays/date picker/tab/menu/
+recovery/empty/denial. No screen-reader/live/production-performance certification,
+no browser400% zoom claim.25 frontend files changed concurrently at capture; new
+R01/legacy route replacement not certified. No product changes made by this audit.
+Environment: isolated SQLite and safe_environment, .env read bypassed, mock AI,
+outbound sockets blocked, ports56680/56681. No working DB/provider/permission/payment
+actions. Own runtime PID roots17628/11140 and verified descendants stopped; dev left.
+Focused proof: node output/uiux-full-20261102/boundary-repro-build.mjs then
+node output/uiux-full-20261102/boundary-repro.cjs reproduces useI18n fallback failure.
+Search fixture/API/page-vs-global proof; CDP client-network failure/retry; normal Tab
+focus geometry; settled DOM/axe/screens. These prove findings, not app all-green.
+Docs checks: .venv/Scripts/python.exe output/uiux-full-20261102/package_audit.py
+(10 hashes match; source/import/scan manifest), close_docs.py (JSON/links/evidence),
+working/empty-index diff hygiene and new-file whitespace. Committed-range check
+skipped because no own commit exists. No build/types/full E2E just for report.
+Initial generic python command hit Windows Store alias; used existing .venv Python.
+One outdated path lookup and transient HMR blank were diagnosed, not hidden PASS.
+Contracts/passports/README/roadmap require no behavior/status edits: audit does not
+implement findings or close R01/live acceptance. Registry identifies report as evidence.
+Publication preflight: origin/main c74e0fa0, current ancestor e02a28f5 belongs to other
+task and is unpushed. Normal push would include it; owner rules prohibit publishing
+other writers' work. First own-only update-index failed on pre-existing index.lock;
+index remained empty. Lock not removed (unknown ownership); no commit/push/CI/deploy.
+No reset, rebase, worktree or foreign staging used. Audit/install scope has no remaining
+work; publication needs index lock and preceding foreign commit resolved. Product
+fixes need new scope. Stage candidates in output are drafts only, never committed.
+
+> Решение владельца 14.10.2026: межчатовая координация, роли primary/UI,
+> назначения writer, ожидание других чатов, автоматическая передача и связанные
+> ограничения отменены. Применять актуальный AGENTS.md. Ниже сохранены сведения
+> о задачах и evidence; прежние межчатовые назначения являются историей, а не
+> действующими инструкциями. Продуктовый scope, результаты и блокеры сохраняются.
+
+# PRIMARY-SESSION — PlatformaCRM
+
+## RECORDS-WORKSPACE-20261102 — implementation in progress
+
+FINAL LOCAL UPDATE02.11 supersedes open-code/next-step notes below.
+Owner recheck/record/continue request fulfilled for first Records cycle; unrelated
+alert-reference final was incorrect and explicitly corrected in this chat.
+[Consumer matrix and exact checks](../evidence/records-workspace-20261102.md).
+[Candidate hashes](../evidence/records-workspace-20261102-manifest.json).
+Local implementation/scoped verification complete; publication blocked.
+record-card-scope21, completion5, final-card-automation43, dependent-ai-metrics85,
+PG21 PASS. scheduling-dependent119 originally116 PASS/3 early-reason fixture FAIL;
+all3 corrected and covered by followups-corrected7/final-card-automation43.
+System/drift PASS unchanged schema/env. Node final21 PASS. Final npm run build
+frontend-build-verified.log exit0: i18n/types/app/widget PASS, chunk warning retained.
+Browser RU/KK/EN,390px, keyboard,3 create entrypoints, lost-response replay sameID,
+stale reschedule refresh, early reason, cancel/no-show/repeat, exact task binding,
+Inbox provenance, legacy views/import/forms, analytics5=3+1+1 and20%, global search,
+new automation triggers, specialist own1 vs owner5/no CREATE/foreign404 PASS.
+Last UI fixes: planned label/card/search, historical timeline canonical link,
+404 unavailable instead of validation, card read retry, automation empty copy.
+CSV API200+Node sync/202 PASS; downloaded file not independently read: browser-event
+timeout and blocked service downloads page. No bypass; no browser-file receipt.
+No full release/live/model/template-localization certification. No new DB schema,
+working DB or provider action; current docs/passports aligned, README/access/
+integration/operations need no change because setup/grants/channel contracts unchanged.
+Canonical root/branch/HEADe02a28f5 unchanged. Fresh origin/main=c74e0fa0; foreign
+outgoing e02a28f5, existing unknown-owner index.lock and dirty prerequisites block
+publication. Index empty; no stage/commit/push/new CI/deploy/worktree/reset/rebase.
+Own runtime63134/63135 stopped through stop-runtime; cleanup receipt in output.
+Next separate R01 cycle: plan/unscheduled steps, then money; no full AC01–14 closure.
+
+Earlier iteration record (historical; superseded where noted):
+
+
+02.11 owner requested recheck, recording actual implementation and continuation.
+This is the active task in this chat; UIUX audit belongs to another task and is
+not this implementation's result. Recovery source: output/records-workspace-20261102/CONTINUATION.md.
+Source recheck confirms RecordsPage/RecordsTable, Appointment workspace API and
+summary, legacy resolver, server record search, client/Inbox entrypoint replacement,
+early-completion reason/audit, record queues and additive analytics are present.
+Earlier focused receipts exist; current dirty snapshot is being rechecked, not
+declared PASS from old results. Open code: pending-result/client filter propagation,
+shared drawer legacy actions/task binding, remaining AI/automation consumers and
+record recovery/history details. Completion types/build/browser/dependent backend
+checks and contract/passport/roadmap alignment remain required. No completion,
+commit/push/deployment claim. Existing foreign WIP and index lock preserved.
+Next coherent slice: fix query propagation and primary-entity task binding; risk
+is wrong scope/date restriction or linking a new task to historical Lead. Focused
+query/API and interaction tests precede dependent changes; final checks retain
+the original first-R01 acceptance. No new model/migration or working-DB changes.
+
+Owner "приступай" authorizes first R01 result: Records page, Appointment pipeline,
+all merchant Lead/Deal entrypoints and dependent consumers safely replaced. Preserve
+old backend/data/history; no plan/payment expansion, native, Market or live target.
+Canonical PlatformaCRM, codex/ui-testing-toolkit, HEAD e02a28f5 plus starting WIP.
+Snapshot output/records-workspace-20261102 includes dirty/untracked hashes and before
+copies. No other source tree; preserve others' changes and do not stop dev processes.
+Reuse Appointment/create-record/status, shared tables/forms/cards/calendar, permission,
+branch and event services. First coherent backend slice: scoped paged filters/search/
+ordering/summary and safe legacy resolution as needed, focused tests before UI.
+Risk: tenant/field leaks through search/counts, stale states and accidental legacy
+logic conversion. Checks: happy/invalid/denial/tenant/revoke, event/replay regressions,
+system/drift, affected/dependent suites; UI build/types/i18n, targeted desktop/mobile
+RU/KK/EN routes/forms/error/recovery and old URL behavior on synthetic isolated DB.
+No full-project gate by default; PG for changed concurrency. Working DB/deploy excluded.
+Source inventory will map each old consumer to replacement and proof; unresolved
+business semantics block only affected behavior, not new speculative grants.
+
+## RECORDS-ROADMAP-20261102 — first Records delivery and pipeline scope
+
+Owner requests roadmap specification/update only: Records page, hide Lead/Deal
+merchant entrypoints, pipeline operates on Appointment and correct replacement of
+related logic. Canonical root PlatformaCRM, codex/ui-testing-toolkit, HEAD e02a28f5.
+Docs-only gap; no product code, runtime, working DB, migration, deployment or native.
+Snapshot Temp/crm-records-roadmap-20261102 preserves pre-existing dirty docs and source.
+Reuse published single-Appointment services and existing R01/AC IDs. Risk: rename
+without semantic replacement, loss of history, pretending future work is implemented.
+Checks: changed links/anchors, scope/status/cross-contract consistency, own diff and
+foreign WIP preservation; index/publication preflight. No app build/install/DB suite.
+Do not silently stage prerequisite unpublished docs. Detailed first result must include
+page/API/pipeline/history/navigation/automations/metrics compatibility and acceptance.
+
+Local completion: added detailed first R01 Records delivery specification in roadmap.
+Defines server list/search/filter/pagination, card/actions/states, shared Appointment
+identity, pipeline transitions, consumer inventory, safe legacy URL resolution and
+acceptance. Pipeline is Appointment, not renamed Deal stages. No arbitrary stage
+constructor, deleted history, auto-conversion or implicit room/table/hotel scope.
+New page+workflow comes BEFORE plans/payment. Old standalone hide-Lead/Deal cycle is
+part of first result; lead UI findings feed replacement UI rather than redesigning a
+retiring page. Corrected obsolete next-AUD wording; unknown CI remains historical,
+not guessed green. Supersedes earlier plan-first next-code suggestion in this chat.
+Aligned current CRM/frontend/acceptance with reference to single roadmap scope.
+Checks: four changed local links/anchors PASS; page-before-plan, Appointment pipeline,
+status consistency and working/index diff hygiene PASS. No app installs/build/tests/
+DB/browser suite: docs only, no executable examples introduced. No new files in repo.
+Own cached patch preflight FAIL on prerequisite dirty roadmap/crm/acceptance sections
+absent from HEAD; publication not possible without including pre-existing work.
+Index remains empty; no commit/push/new CI/deploy/working DB change. Foreign source
+and unrelated tracked docs preserved by before/after patch comparison. Evidence:
+Temp/crm-records-roadmap-20261102/{before,starting.patch,owned.patch,
+publication-preflight.txt,owned-final.patch}. Existing passports/README need no change:
+no implemented behavior/readiness changed. Local documentation scope complete;
+publication blocked, product implementation and all listed acceptance remain open.
+
+## PILOT-R01-CONTRACT-20261102 — scope correction and first bounded cycle
+
+Owner authorized start of listed cycles. Current cycle: remaining R01 technical
+contract before dependent implementation; mode specification, gap contract/roadmap.
+Owner02.11 removes D02 exchange and C21 campaigns from pilot (future development),
+assigns native implementation to second developer, requires staff assistant D01 in
+pilot. No task/message to that developer; preserve backend compatibility only.
+Canonical root PlatformaCRM, codex/ui-testing-toolkit, HEAD e02a28f5. Snapshot of all
+affected pre-existing dirty docs/source diff in Temp/crm-pilot-r01-contract-20261102.
+Reuse Appointment/create_record/status services, Payment ledger, current permission,
+branch, idempotency and audit boundaries. No product/runtime/migration/env change in
+this first contract cycle; no publication of other writers' prerequisite WIP.
+Risk: inventing financial/permission policy, duplicating a ledger or claiming new
+runtime PASS. Read current code and owner decisions; define transactions/API/state/
+compatibility, identify only unresolved edge cases. Focused/completion checks: own
+diff, changed links/examples and roadmap/product/acceptance/AI/integration consistency.
+No app install/build/database/browser suite for specification-only changes.
+Zero-baseline positive package policy asked separately; recommendation is not approval.
+
+Local result: owner scope synchronized in roadmap/product/acceptance/AI/integrations.
+D02 detailed requirements moved to future section, execution rows removed from our
+pilot cycles; native execution assigned to second developer without contacting them.
+D01 text/voice remains mandatory (ordinary CRM fallback is not waiver). Stale generic
+AI pause/R01-unimplemented/AUD12/offline claims in product aligned to named receipts.
+R01 draft in existing current/crm.md covers proposed plan/steps/immutable terms,
+commands/versions, shared Business lock, existing receipt/refund plus allocation/
+reversal, permission projections, legacy/merge, events and verification order.
+Read code: scheduling models/record_commands/status services, payments models/services/
+selectors/views, central access object/query ownership, client merge and config router.
+Important observed constraint: Appointment responsible_user is excluded from OWN/TEAM;
+new Plan cannot infer extra access from assignment. Payment refund guard must account
+for consumed allocations before any future money flow is enabled.
+No models/API/UI/migrations implemented in this preparation cycle; proposed routes
+are explicitly future API. Full R01, D01 and pilot implementation remain open.
+Zero-baseline positive package: owner twice asked for recommendation, not approval.
+Recommended reject until bases supplied; neither equal split nor manual shares chosen.
+Dependent special-case money acceptance stays open; independent plan/slot work is next.
+Additional arbitrary terminal corrections require exact existing policy; do not infer
+permission merely from existence of a compensating ledger entry. No general reopen.
+Verification via zani-run-verification docs boundary: changed link+anchor, status
+consistency and four exact arithmetic specification examples PASS. Working/index
+scoped diff hygiene PASS; no app install/build/DB/browser suite for docs-only work.
+Initial reconnaissance requested absent scheduling/urls.py and verify_record_first.py;
+correct router located config/urls.py; no claims based on missing helper.
+Own patch against starting dirty docs reviewed. Own-only cached-apply check FAIL on
+roadmap/acceptance/product/integrations/crm prerequisite WIP absent from HEAD; no index
+write/commit/push/new CI. Preserve failure in publication-preflight.txt, not whole-file
+stage. Previous docs publication blocker remains; this request does not authorize
+publishing other writers' product/doc changes. Runtime/process/working DB untouched.
+Contracts updated only for scope/specification; implemented-capability passports,
+README and runtime evidence unchanged because no implementation/verification changed.
+First technical draft prepared, remaining policy/evidence stated; next code cycle is
+plan/undated steps/reachable UI, then monetary cycles after dependent policy is settled.
+
+## ROADMAP-STATUS-20261102 — status reconciliation and bounded cycles
+
+Owner request: correct stale AUD/R01/dev-migration/publication statuses and group
+remaining work into bounded completion cycles. Docs-only roadmap gap; canonical
+PlatformaCRM, codex/ui-testing-toolkit, base e02a28f550e94a543c3d88acac7c1b19ee48f90b.
+Starting dirty docs/source snapshot: Temp/crm-roadmap-status-20261102. Preserve all
+pre-existing WIP; no product implementation, migration, deployment or other writers'
+publication. Reuse named R01/AUD/UI-REFRESH/notification receipts, not new runtime PASS.
+Risk: treating local completion as delivery or new planning as implementation rights.
+Checks: exact own diff, links/anchors, cross-document status consistency, index and
+committed-range hygiene if safely publishable. No application build/install/DB tests.
+Completion: corrected main assertions, existing-ID cycle grouping, explicit external
+and deferred gates; no new backlog/acceptance IDs or owner business decisions.
+
+Completion: main R01 assertions now partial (published single-Appointment package,
+full plan/money/legacy acceptance open); exhausted AUD queue removed; scheduling0010
+is applied only to local dev per UI-REFRESH receipt; personal notifications distinguish
+local implementation/evidence from unpublished WIP. Acceptance summary aligned.
+Existing roadmap contains bounded code, evidence/publication, target/legal/live and
+deferred cycle tables with dependencies and completion criteria; no new IDs/promises.
+UI audit findings linked as proposals, not newly authorized product implementation.
+No behavior/API/schema/permissions/AI/event changes; technical contracts/passports/
+README need no rewrite because this task corrects roadmap status only.
+Checks: own before→after patch reviewed; changed local links and whitespace PASS;
+working/index git diff --check PASS. Initial link checker treated Markdown angle
+brackets as path characters and failed; corrected parsing and limited checks to
+changed links. No app tests/build/install/DB checks (docs-only); no committed range.
+Publication preflight git apply --cached --check <temp>/owned.patch FAIL: roadmap
+line84 and acceptance line17 depend on pre-existing uncommitted source sections
+absent from HEAD. This is a concrete prerequisite conflict, not permission to stage
+other writers' roadmap/WIP. Index remains empty, no commit/push/new CI/deploy.
+Complete local requested docs/list; publication remains blocked until those existing
+sections are published in their own scope or their inclusion is explicitly authorized.
+Evidence: Temp/crm-roadmap-status-20261102/{owned.patch,publication-preflight.txt,
+starting.patch,starting-status.txt,before/}. Required publication failure retained.
+
+## UI-ANTISLOP-20261102 — project skill adaptation and interface audit (complete locally)
+
+Owner-delegated scope: inspect pinned anti-slop upstream, adapt as a local project
+skill and audit the CRM interface using source and safe browser evidence. Only
+skill/audit documentation edits; no product-code fixes, working data mutations,
+installer/global installation, commit/push/deployment or other-chat messages.
+Canonical root PlatformaCRM, branch codex/ui-testing-toolkit, base e02a28f550e94a543c3d88acac7c1b19ee48f90b.
+Starting WIP diff/status and affected docs copied to Temp/crm-antislop-20261102.
+Unrelated WIP remains preserved; no separate source checkout.
+Plan: pin upstream revision/license and compare project contracts, then write a
+focused supplementary skill in .agents/skills/zani-audit-ui-purpose; apply it to
+route/workflow inventory and representative shared surfaces. Prioritize readability,
+density, predictability, RU/KK/EN, keyboard/focus and recovery. Separate browser
+observations, source findings and untested scope. Report concrete impact/severity
+and minimal proposals, retain existing good patterns; no finding quota/redesign.
+Risk: importing conflicting upstream mandates or claiming more visual/functional
+coverage than observed. Checks: skill validator, provenance/license/links/registry,
+meaningful behavioral dry runs, source/hash evidence and targeted safe browser
+inspection; no full backend/DB/E2E/build gate for documentation changes.
+Upstream main pinned941b1532f9cc8ffde766bca5921d75257c9e5762 (01.11.2026);
+read-only raw sources and SHA256 manifest in task temp. Existing project docs,
+skill-creator/development-toolkit/web-interface-guidelines govern adaptation.
+
+
+Completion02.11: created .agents/skills/zani-audit-ui-purpose/{SKILL.md,
+references/provenance.md,LICENSE-upstream}; pinned MIT attribution retained. Removed
+upstream mode/approval loops, aesthetic mandates, comment-length/version deletion
+rules and corrected 18px large-text error against W3C SC1.4.3. No global install.
+Report: [UI audit](../ui-purpose-audit-20261102.md); registered evidence + SHA256
+manifest. Findings UIP01 mobile next task, UIP02 lead table semantics, UIP03 locale
+formatting, UIP04 integration retry, UIP05 RU plural;4P2/1P3. Recommendations only.
+
+Source + current browser:10 merchant screens RU desktop; leads/calendar390x844;
+client no-results search and reset, unsaved Lead form Tab/Enter/nested Escape/focus
+return. DOM confirms no table/grid roles in leads; clients/services have table roles.
+Existing dev runtime.json root and live PIDs13800/17792 confirmed; Vite5173/Django8000.
+No domain saves, provider actions, message read/ack or preference changes. Own tab
+closed, viewport reset, shared servers untouched. Inbox source-only because automatic
+selection can mark messages read. EN/KK source/probe only; other roles, screen reader,
+zoom, touch, full fault recovery and performance not certified. No reused old PASS.
+
+Checks:
+- .venv/Scripts/python.exe C:/Users/user/.codex/skills/.system/skill-creator/scripts/quick_validate.py
+  .agents/skills/zani-audit-ui-purpose: initial missing yaml; both existing Python
+  environments lacked it. Cached PyYAML6.0.3 installed only into task Temp/validator-deps
+  using pip --no-deps --target; with PYTHONPATH and PYTHONUTF8=1 validator PASS.
+  No app lock/dependency changes. Scope is validator support, not application install.
+- Pure node --experimental-strip-types import of frontend/src/lib/format.ts confirms
+  legacy ru output vs explicit en/kk for same timestamp. First inline command had an
+  extra parenthesis; corrected command PASS. No product code adjustment.
+- Python contrast calculation on5 selected token pairs: all>=4.5, raw ratios retained
+  in manifest; not all computed CSS states. Manual behavioral dry runs: useful repeat
+  table/demo data retained, read-only Inbox side effect avoided,18px/3.2 FAIL,
+  business invariant comment and issue/version retained. Not independent subagent test.
+- Documentation link/registry/license/manifest checks and scoped diff hygiene PASS
+  after final updates (script in task Temp); new/untracked content reviewed.
+- Initial report helper encountered Windows cp1251 read failure after registry/manifest
+  creation; resumed with explicit UTF8, no duplicate registration or content loss.
+
+Source diff sections frontend/apps/config/requirements equal starting.patch; this task
+wrote no product source or existing untracked product files. Pre-existing STATUS and
+PRIMARY text outside this task matched before copies. Real index empty; HEAD unchanged.
+No commit/push/deploy requested. Source scans had bounded shell glob/brace errors;
+corrected exact-path scans used for findings, not interpreted as absent matches.
+No build/types/backend/database/full E2E: docs-only change; required focused docs gate.
+Roadmap/contracts/passports/README require no behavior/status rewrite: no product
+change or acceptance closure. Registry and this task's STATUS are updated; evidence
+is not a competing backlog or authorization to implement the findings. Code/evidence/
+environment/owner-decision remainder in the agreed bounded skill+audit scope: none.
+Broader UI certification and fixing findings remain separate proposed work.
+
 ## UI-REFRESH-20261102 — dev schema and refresh inspection
 
 Owner reported /leads list blinking every5–10s and requested other-page inspection.
@@ -441,14 +1590,6 @@ checks passed. Code,contracts,passports and roadmap need no changes for this loc
 schema correction. Other WIP preserved. Scoped investigation/environment work complete;
 if blinking recurs, capture the affected session/network timing for a reproducer.
 Publication covers only this receipt and STATUS, never dev data or foreign changes.
-
-> Решение владельца 14.10.2026: межчатовая координация, роли primary/UI,
-> назначения writer, ожидание других чатов, автоматическая передача и связанные
-> ограничения отменены. Применять актуальный AGENTS.md. Ниже сохранены сведения
-> о задачах и evidence; прежние межчатовые назначения являются историей, а не
-> действующими инструкциями. Продуктовый scope, результаты и блокеры сохраняются.
-
-# PRIMARY-SESSION — PlatformaCRM
 
 ## CRM-R01-RECORD-FIRST-20261031 — single Appointment package
 
@@ -895,8 +2036,6 @@ foreign file is excluded. No unrelated formatting correction or stage performed.
 public privacy integration remains another task's WIP, target/live/release evidence
 remains open. Owned publication and actual CI receipt recorded after push below.
 
-
-
 ## AUD-12b-20261031 — complete import history verified
 
 Publication31.10: 1b25694a4b266191491493935b0d181ab7431bad normal-pushed to
@@ -1175,7 +2314,6 @@ without recertifying that task. No new authority document or duplicate backlog.
 Code/evidence/owner-decision/publication remainder: none in AUD07.
 CI in progress; deployment/live outside scope. Next AUD12 not started.
 
-
 ## AUD-09-20261030 — complete service metrics published
 
 Publication30.10: 1ac7702300f8ea1436ffe75687eeb07ba0c53031 normal-pushed to
@@ -1235,7 +2373,6 @@ product, AI, integrations, operations, capabilities and acceptance need no chang
 no setup/module/permission/lifecycle/schema/provider or acceptance-ID change.
 Historical audit unchanged. Code/evidence/owner-decision remainder in scope: none.
 Publication complete; CI queued; live/deployment outside scope. Next unresolved AUD07 not started.
-
 
 ## AUD-08-20261030 — Client search and selection published
 
@@ -1318,6 +2455,27 @@ lifecycle/schema/provider/new acceptance-ID change. Historical risk report retai
 Remaining code/evidence/owner decisions in AUD08: none. Publication complete; actual CI pending;
 deployment/live outside scope. Next AUD09 requires next instruction.
 Prior AUD10 CI40957243699 and OFFICIAL18 CI40956811723 both completed success30.10.
+
+## OFFICIAL18-PUBLICATION-20261030 — approved prerequisite for AUD10
+
+Owner explicitly approves minimal OFFICIAL18 then AUD10 publication and all five
+existing outgoing commits7b9543d4/3de47b53/70d5d2e0/caa0eed4/dcd5b141.
+Canonical PlatformaCRM, codex/ui-testing-toolkit, base dcd5b141; origin/main e9c1681b.
+Reviewed3 paths: apps/leads/services.py, create-task source guard in apps/leads/views.py,
+apps/leads/tests_task_assignment.py. Ordinary assignment validation/current CREATE on
+final Task replace Lead-based ownership checks; current Lead VIEW, tenant/archive/lock,
+audit/activity/notification behavior retained. No new permission policy, AI effect,
+BusinessEvent, schema/env/deployment/working migration or external provider operation.
+Exact prerequisite-only28 PASS/no skips and combined AUD10+OFFICIAL18 candidate65 PASS;
+Git-blob import overlays at canonical paths, disposable SQLite, external network denied.
+Commands/results: output/aud10-20261030/prerequisite-only.json, dependency-candidate.json.
+System checks pass on exact candidate; drift reused for unchanged schema/config.
+No new PostgreSQL concurrency certification. AUD10-only OWN-assignment failure retained.
+Real index empty before explicit staging; no unrelated projection/security/notification
+WIP included. Initial index operation failed on stale empty index.lock; no git process,
+file unchanged for hours. Empty lock moved to task artifact, then preparation retried.
+Remote SHA/CI will be recorded in following publication receipt; no deployment implied.
+
 
 ## AUD-10-20261030 — reliable offline Lead commands (in progress)
 
@@ -1432,29 +2590,64 @@ Only reviewed task delta may be committed/pushed; other dirty source/docs exclud
 No permission model, notification policy, AI or BusinessEvent redesign.
 
 
+## ROADMAP-SPEC-SYNC-20261029 — accepted CRM requirements and roadmap
 
-## OFFICIAL18-PUBLICATION-20261030 — approved prerequisite for AUD10
+Owner requests synchronize unified technical specification into current CRM roadmap.
+Docs-only requirements/evidence reconciliation, not runtime implementation or release.
+Canonical root C:/Users/user/Desktop/PlatformaCRM; branch codex/ui-testing-toolkit;
+starting HEAD7b9543d4753a56ae154c218225396aba5d195eef. Existing broad code/docs WIP
+belongs to other tasks and must be preserved. Snapshot/hashes/status captured in
+output/roadmap-sync-20261029/manifest.json and before/ (ignored evidence, not authority).
+Source C:/Users/user/Desktop/PLATFORMA_CRM_MARKET_UNIFIED_TECHNICAL_SPEC.md,
+UNIFIED-SPEC-20261028, actual edition29.10; SHA256
+ a4e1449d1aadfde70346a56033fd28affa3e7edaa54183e1558e45e7bce39659.
+Scope: existing roadmap IDs, accepted CRM pilot/Record/plan/payment/assignment,
+BSP/native/Market exchange/campaign requirements, operations/legal/release boundaries;
+minimal corresponding product/domain/UI/AI/integration/operations/acceptance alignment.
+Keep closed historic scopes, local-only and uncommitted evidence explicit; do not
+copy old OPEN over newer AUD11/19 or YCloud records; no speculative owner decisions.
+Risk: requirements silently becoming implementation PASS, old policy contradicting
+accepted choices, accidental publication of other writers' changes. Focused/completion
+checks: source-ID coverage CRM-C01..22/PK0..7/AC-CRM-PILOT01..14/OP-RECORD/CG,
+unchanged existing IDs/closures, local links/anchors/registry, source hash/version,
+work/index/real committed range hygiene and exact task-only publication candidate.
+No app tests/builds/install/DB/browser/live calls for Markdown. Technical API/schema,
+permissions implementation, migrations, notification/BusinessEvent/AI execution unchanged.
+Standing normal push applies only to reviewed own doc delta; foreign WIP excluded.
 
-Owner explicitly approves minimal OFFICIAL18 then AUD10 publication and all five
-existing outgoing commits7b9543d4/3de47b53/70d5d2e0/caa0eed4/dcd5b141.
-Canonical PlatformaCRM, codex/ui-testing-toolkit, base dcd5b141; origin/main e9c1681b.
-Reviewed3 paths: apps/leads/services.py, create-task source guard in apps/leads/views.py,
-apps/leads/tests_task_assignment.py. Ordinary assignment validation/current CREATE on
-final Task replace Lead-based ownership checks; current Lead VIEW, tenant/archive/lock,
-audit/activity/notification behavior retained. No new permission policy, AI effect,
-BusinessEvent, schema/env/deployment/working migration or external provider operation.
-Exact prerequisite-only28 PASS/no skips and combined AUD10+OFFICIAL18 candidate65 PASS;
-Git-blob import overlays at canonical paths, disposable SQLite, external network denied.
-Commands/results: output/aud10-20261030/prerequisite-only.json, dependency-candidate.json.
-System checks pass on exact candidate; drift reused for unchanged schema/config.
-No new PostgreSQL concurrency certification. AUD10-only OWN-assignment failure retained.
-Real index empty before explicit staging; no unrelated projection/security/notification
-WIP included. Initial index operation failed on stale empty index.lock; no git process,
-file unchanged for hours. Empty lock moved to task artifact, then preparation retried.
-Remote SHA/CI will be recorded in following publication receipt; no deployment implied.
+Owner explicitly resumed synchronization after confirming all other CRM tasks stopped.
+Adopt the existing ROADMAP-SPEC-SYNC draft as authorized task work; original before/
+snapshot still separates unrelated pre-task WIP. resumed-before/ and resumed-manifest.json
+capture the inherited draft and other files. Finish full requirement mapping, reconcile
+contradictory main text and validate documents only. No runtime changes or other-task
+publication; inspect exact doc delta against the original snapshot before staging.
 
 
+## AUD19-PUBLICATION-20261029 — separate CI repair then AUD19 (in progress)
 
+Owner says proceed with the stated separate-publication sequence. Canonical root,
+branch codex/ui-testing-toolkit, HEAD8ee55d75; real index empty; all pre-existing
+WIP preserved. Starting diff/status and independent candidate index captured in
+Temp/aud19-publication-20261029. No other chat messaged or task assigned.
+Plan: review existing9-file CI repair candidate and unchanged evidence; close
+Python dependency audit remainder (DRF3.17.2 advisories) with minimal lock update,
+then isolated affected API/migration checks and audit; frontend candidate checks.
+Shared DRF affects API validation/authentication, so full backend CI is required.
+Commit/push only reviewed CI packet first; subsequently rebase the AUD19 candidate
+index on published HEAD without changing branch/history or unrelated working files,
+verify affected code/docs, normal-push and inspect CI. No deployment or working DB.
+Previously passed checks reused only for identical candidate/dependency inputs.
+
+CI-repair published as acb8687ed99f6a1882b1b74f1708f340debd1559; normal main
+push and remote SHA confirmed.13-file commit contains11 code/test/lock and2 docs.
+CI40832440547 in progress. Original WIP preserved, real index empty. AUD19 candidate
+now based on that commit; affected/backend and frontend candidate checks running.
+
+Candidate browser at1036x703 reproduced inaccessible new header button: global
+search intercepted pointer clicks. Minimal acceptance repair: move form entry to
+existing Leads More ActionMenu; reuse labels/rights/modal. No shared header changes.
+Focused checks: real mouse/keyboard opening, field CRUD, desktop/mobile RU/KK/EN;
+completion updated frontend build/types. Backend80 PASS remains unchanged.
 
 ## AUD-19-20261029 — lead form field tenant resolution and editor (verified)
 
@@ -1646,6 +2839,59 @@ Initial automatic temp cleanup hit Windows file lock; explicit cleanup was rejec
 by automatic policy review (no more specific reason supplied). Disposable runtime
 folder retained; no retry/bypass. No task-owned processes left running.
 
+## AUD-11-20261029 — atomic client merge and request audit (verified)
+
+Owner authorized merge rollback repair and roadmap update. Canonical root
+C:/Users/user/Desktop/PlatformaCRM, branch codex/ui-testing-toolkit,
+base692e46f01934a946233a01181f24f6589bccea43. Prior WIP preserved; starting status
+and file copies in Temp/aud11-20261029. No concurrent affected source edits observed.
+Mode implementation/code gap. Existing merge service committed before request audit.
+Minimal fix: outer transaction.atomic around merge action, retaining nested domain
+service, request audit metadata/IP/actor, permissions, response and error contracts.
+Business lock now remains held until audit completes. No new lifecycle policy,
+permissions, notification, BusinessEvent/AI/provider behavior, schema or env changes.
+
+Plan/checks: reproduce HTTP failure and persisted rows; prove atomic rollback of
+ledger/client/archive/history/relations and retry, then owning clients/payment and
+archive-dependent suites plus isolated system/drift. Existing merge API/UI reused.
+Before: fixture failed on missing Payment.submission_id (UUID added); second attempt
+wrongly expected propagated exception, but established handler returns sanitized500.
+After inspecting handler corrected tests to assert500 plus database snapshot; before-http
+then reproduced two rollback failures, activity failure control PASS. Logs retained.
+No acceptance weakened: required rollback assertions remained unchanged.
+After patch focused3 PASS. Added self-merge/no-writes and single activity assertions.
+Final candidate54 PASS/no skips: apps.clients.tests, apps.clients.tests_merge_atomicity,
+apps.clients.tests_archive_dependencies, apps.payments.tests. Includes4 new true
+TransactionTestCase tests (no outer TestCase transaction), audit before/after insert,
+activity failure, full row snapshot equality including conflicting deleted tags/custom
+fields, payment125KZT, successful retry with one merge log/audit/activity; existing
+happy path, foreign duplicate, permission denial, preview and ledger/refund controls.
+
+Exact command: `.venv/Scripts/python.exe <Temp/aud11-20261029>/run_candidate.py
+ candidate-affected test apps.clients.tests apps.clients.tests_merge_atomicity
+ apps.clients.tests_archive_dependencies apps.payments.tests -v1 --noinput --keepdb`.
+Same runner `system check` and `drift makemigrations --check --dry-run`: PASS.
+First3 focused tests ran via run_checks.py after test ...ClientMergeAtomicityTests.
+Runner reuses scripts.codex_verify.isolated_runtime, disposable SQLite, synthetic
+fixtures, no .env load/external network. Candidate imports reviewed Python blobs
+from a separate Git index based on HEAD, not another source checkout; excludes
+unrelated WIP. All source remains in canonical folder. Tested source hashes and
+candidate logs/manifests retained in task temp. No dependency installation.
+
+Frontend inspection: clientsApi.merge rejects failed request; ClientsPage clears
+preview and invalidates cache only onSuccess, existing pageError surfaces failure.
+No UI/API shape change: browser/build/i18n/full E2E skipped as disproportionate.
+PostgreSQL concurrency not rerun: no lock-order/ledger algorithm change; only commit
+boundary extended. Live readiness/working data/deployment excluded. Historical audit
+report untouched; clients passport and CRM contract correct the old failure assertion.
+README/access/AI/operations unchanged: no setup, rights or policy change.
+Code/evidence/owner decision remainder: none in scope. Roadmap AUD-11 closed;
+next local audit item AUD-19 remains unstarted. Normal task-only publication selected;
+prior notification/security/CI WIP excluded. Actual publication/CI reported separately.
+
+Publication29.10: db0a4d9c normal-pushed to origin/main; remote SHA readback matches.
+CI40822054259 in_progress when checked, no green-CI claim. Real index empty after
+source commit; unrelated WIP preserved. Committed-range diff hygiene PASS.
 
 ## CI-REPAIR-20261029 — migration isolation and dependency advisories (verified)
 
@@ -1703,61 +2949,6 @@ backend CI40832440547 for acb8687e completed success, including both audits.
 Candidate diff hygiene/new-file/dependency review PASS; no secrets. Main push runs
 only ci.yml checks, no deployment job. Published acb8687e; remote SHA confirmed;
 full CI40832440547 success. Other WIP preserved.
-
-
-## AUD-11-20261029 — atomic client merge and request audit (verified)
-
-Owner authorized merge rollback repair and roadmap update. Canonical root
-C:/Users/user/Desktop/PlatformaCRM, branch codex/ui-testing-toolkit,
-base692e46f01934a946233a01181f24f6589bccea43. Prior WIP preserved; starting status
-and file copies in Temp/aud11-20261029. No concurrent affected source edits observed.
-Mode implementation/code gap. Existing merge service committed before request audit.
-Minimal fix: outer transaction.atomic around merge action, retaining nested domain
-service, request audit metadata/IP/actor, permissions, response and error contracts.
-Business lock now remains held until audit completes. No new lifecycle policy,
-permissions, notification, BusinessEvent/AI/provider behavior, schema or env changes.
-
-Plan/checks: reproduce HTTP failure and persisted rows; prove atomic rollback of
-ledger/client/archive/history/relations and retry, then owning clients/payment and
-archive-dependent suites plus isolated system/drift. Existing merge API/UI reused.
-Before: fixture failed on missing Payment.submission_id (UUID added); second attempt
-wrongly expected propagated exception, but established handler returns sanitized500.
-After inspecting handler corrected tests to assert500 plus database snapshot; before-http
-then reproduced two rollback failures, activity failure control PASS. Logs retained.
-No acceptance weakened: required rollback assertions remained unchanged.
-After patch focused3 PASS. Added self-merge/no-writes and single activity assertions.
-Final candidate54 PASS/no skips: apps.clients.tests, apps.clients.tests_merge_atomicity,
-apps.clients.tests_archive_dependencies, apps.payments.tests. Includes4 new true
-TransactionTestCase tests (no outer TestCase transaction), audit before/after insert,
-activity failure, full row snapshot equality including conflicting deleted tags/custom
-fields, payment125KZT, successful retry with one merge log/audit/activity; existing
-happy path, foreign duplicate, permission denial, preview and ledger/refund controls.
-
-Exact command: `.venv/Scripts/python.exe <Temp/aud11-20261029>/run_candidate.py
- candidate-affected test apps.clients.tests apps.clients.tests_merge_atomicity
- apps.clients.tests_archive_dependencies apps.payments.tests -v1 --noinput --keepdb`.
-Same runner `system check` and `drift makemigrations --check --dry-run`: PASS.
-First3 focused tests ran via run_checks.py after test ...ClientMergeAtomicityTests.
-Runner reuses scripts.codex_verify.isolated_runtime, disposable SQLite, synthetic
-fixtures, no .env load/external network. Candidate imports reviewed Python blobs
-from a separate Git index based on HEAD, not another source checkout; excludes
-unrelated WIP. All source remains in canonical folder. Tested source hashes and
-candidate logs/manifests retained in task temp. No dependency installation.
-
-Frontend inspection: clientsApi.merge rejects failed request; ClientsPage clears
-preview and invalidates cache only onSuccess, existing pageError surfaces failure.
-No UI/API shape change: browser/build/i18n/full E2E skipped as disproportionate.
-PostgreSQL concurrency not rerun: no lock-order/ledger algorithm change; only commit
-boundary extended. Live readiness/working data/deployment excluded. Historical audit
-report untouched; clients passport and CRM contract correct the old failure assertion.
-README/access/AI/operations unchanged: no setup, rights or policy change.
-Code/evidence/owner decision remainder: none in scope. Roadmap AUD-11 closed;
-next local audit item AUD-19 remains unstarted. Normal task-only publication selected;
-prior notification/security/CI WIP excluded. Actual publication/CI reported separately.
-
-Publication29.10: db0a4d9c normal-pushed to origin/main; remote SHA readback matches.
-CI40822054259 in_progress when checked, no green-CI claim. Real index empty after
-source commit; unrelated WIP preserved. Committed-range diff hygiene PASS.
 
 ## YCLOUD-PUBLICATION-20261029 — combined publication verification (published)
 
@@ -1846,7 +3037,6 @@ CI or deployment claim. Link: https://github.com/999MAX20/PlatformaCRM/actions/r
 Publication docs follow-up records this result; it changes no application code.
 Code/review/local-check/publication remainder: none. CI outcome and live/environment
 acceptance remain separate. Existing other-task WIP and working services preserved.
-
 
 ## YCLOUD-TPLITE-20261028 — TP Lite and Inbox text (local scope complete)
 
@@ -1978,6 +3168,504 @@ worker/beat/HTTPS, owner access needs enabled TP Lite and number/account permiss
 server secrets and authorization of a real test. Media/templates/reminders/history/
 Coexistence outside this stage. R02/R03 live acceptance explicitly open.
 
+## NOTIFICATIONS-SSE-20261029 — cross-session announcement monitoring (locally verified)
+
+Owner explicitly approves SSE through Redis and a separate ASGI process; implement
+locally and verify two sessions plus reconnect, no deployment. This extends the
+closed same-session cache fix; no other roadmap phase. Root canonical PlatformaCRM,
+branch codex/ui-testing-toolkit HEAD98925b67, prior WIP preserved, index empty.
+Baseline hashes/files/status: Temp/notification-sse-20261029. Mode implementation,
+code/environment gap. Reuse personal state services, manager permission boundary,
+SessionEpochJWTAuthentication, Redis dependency, current monitoring API/query keys.
+New lightweight invalidation stream scoped to Business; no employee payload in events.
+Separate ASGI process, same-origin proxy, bearer header (never URL), auth/role recheck,
+on-commit signals, reconnect resync; ordinary CRM/polling survives unavailable Redis.
+No new receipt model/migration, working DB change, real announcements, deployment,
+permission policy, BusinessEvent or AI action. Risk high: long-lived auth/tenant scope,
+rollback/missed events, credential handling, process cleanup and disconnect recovery.
+Checks per slice: isolated publication/rollback/no-op/broker failure; stream auth,
+role/tenant denial and revocation, disconnect cleanup, reconnect after missed changes;
+then affected notification suites/system/drift, frontend parser/reconnect tests,
+build/types/i18n, real Redis + separate ASGI/API + two browser sessions in isolated DB.
+Only approved extra ASGI dependency/lock update; existing dependency pins preserved.
+Publication still cannot silently include prior unpublished writers' packets.
+
+Completion29.10: bounded code/evidence complete at HEAD98925b67 + preserved WIP.
+No deployment or working configuration/DB change. Dedicated config.notification_asgi,
+payload-free Redis Pub/Sub signals after commit for publish/revoke/open/read/unread/
+ack/read-all. Flags default off; manager list exposes events_enabled. Current token,
+device session, role/MANAGE and Business are checked initially and every signal/15s
+heartbeat. Limits256/process,3/actor,300s stream. Subscription ACK precedes ready;
+ready always resyncs current API, including missed signals. Client uses header auth,
+refresh/reconnect/backoff,40s stalled-stream cancellation and unmount/session guard.
+API remains authority; broker outage retains ordinary CRM and60s polling. Uvicorn
+added with hashed lock; existing pins preserved. Dependency additions audit PASS.
+
+Exact checks in Temp/platforma-personal-notifications-66wwg8tz/sse-check:
+`.venv/Scripts/python.exe <sse-check>/run_checks.py sse-affected test
+ apps.notifications.tests_realtime apps.notifications.tests_event_stream
+ apps.notifications.tests_personal_api apps.notifications.tests_personal_services
+ apps.notifications.tests_personal_recipients apps.notifications.tests_mark_all_access
+ apps.notifications.tests_bell apps.notifications.tests apps.notifications.tests_settings_preferences
+ apps.accounts.tests_device_sessions -v1 --noinput --keepdb`:105 PASS, no skips.
+Services first8 PASS; stream-fixed11 and supplemental device1 PASS before affected105.
+Same runner `system-final check` and `drift-final makemigrations --check --dry-run` PASS.
+`run_pg.py`: apps.notifications.tests_personal_concurrency3 PASS on disposable PG17,
+cluster stopped. No concurrency algorithm/schema changed by SSE.
+From frontend: `node --test scripts/tests/announcement-events.test.mjs
+ scripts/tests/notification-cache.test.mjs`:10 PASS, including reconnect resync,
+401 refresh, forbidden stop, stalled-stream cancel, backoff/unmount and cache behavior.
+`npm.cmd run build`: frontend-final.log PASS (types/i18n/app/widget), existing chunk
+advisory retained. Final source review against before copies and diff hygiene PASS.
+
+Browser CUA: separate owner IAB and staff Chrome sessions on canonical59971/59970,
+separate ASGI59969, real loopback Redis59593, disposable SQLite, synthetic4 recipients.
+Read-all update ~1.4s and ack ~1s in first pass. Final unread update1138ms; owner window
+untouched. Stopped only owned SSE, staff read-all succeeded while stream offline.
+After restart, Redis subscription restored0->1 and monitoring resynced at20:32:09UTC,
+41s after preceding fetch20:31:28 (not60s poll). New unread afterward1089ms confirms
+restored event delivery. No manual refresh/navigation in owner monitoring. Screenshot:
+output/playwright/notification-sse/reconnected-monitor.png. Source/UI layout/i18n copy
+unchanged; full viewport/locale/E2E suite not justified by this transport-only delta.
+
+Retained attempts: first pip-tools/current pip incompatibility; isolated lock-tools
+with pip<26 resolved it. WSL apt/download availability attempts retained. Initial
+stream runner's network-denial socket stub broke Windows asyncio loop; safe runner
+uses real local socket support while denying external connects; tests then PASS.
+Initial browser disconnect exposed Vite leaving downstream open after ECONNRESET;
+proxy close handler plus client40s idle safeguard added, tested. Final browser proves
+bounded recovery (~40s), not instantaneous reconnect. No failed result relabeled PASS.
+Logs/synthetic fixtures in task temp; no real credentials, accounts or announcements.
+
+Docs: README, operations/frontend contracts, notification passport, roadmap and STATUS
+updated. Access/CRM/AI/integration contracts need no change: same permission, lifecycle,
+BusinessEvent/AI/provider policy; this is invalidation transport only. No new doc role.
+No further code/evidence/owner decision remainder in scope. Environment/publication
+remain separate: prior unpublished personal/security foundation and outgoing commits
+cannot be included silently. Index empty; no commit/push/CI triggered. Existing branch
+kept. Test browser tabs closed; owned runtime stopped; external working processes kept.
+
+## NOTIFICATIONS-REFRESH-20261029 — immediate receipt monitoring (locally verified)
+
+Owner requests immediate monitoring after read-all and other receipt changes.
+Mode implementation; frontend cache gap reproduced in working UI above. Canonical
+root, branch codex/ui-testing-toolkit HEAD98925b67 + preserved prior WIP; index empty.
+Baseline files/hashes/status retained in Temp/notification-refresh-20261029.
+Small delta: shared receipt cache invalidation for Header read/read-all, page read-all,
+inspector open/ack/unread; refresh announcement aggregates/recipients and detail.
+No backend, permissions, messages, migrations, translations or layout changes.
+Risk: stale independent query families; verify active and inactive cache behavior,
+await successful invalidation, targeted isolated browser flow with same60s polling,
+frontend build/types/i18n once, diff hygiene and source review at completion.
+Use disposable fixture DB for new browser verification; no new working publication.
+Publication remains subject to existing unpublished parent/WIP dependency boundary.
+Implementation: lib/notificationCache.ts invalidates notifications, summary, detail,
+announcements (including recipients) in parallel and awaits active refetch. Three
+existing components reuse it; all six receipt mutation success handlers covered.
+Node QueryClient tests2 PASS: active refresh, inactive stale/refetch, unrelated cache
+unchanged, and pending completion until monitoring response. `npm.cmd run build`
+PASS (types/i18n6494/app/widget; existing large-chunk advisory). No source change
+since build except test addition. Logs in Temp/notification-refresh-20261029.
+Browser fixture attempts1/2 failed on invalid publication_key; after two identical
+failures inspected publish_announcement UUID contract and locally parsed valid UUID.
+Retained logs in personal-notifications-66wwg8tz/refresh-check; third attempt succeeds.
+No production assertion weakened, no working data changed by these attempts.
+Completion: scoped code/evidence complete. CUA on canonical source62268/62269 with
+isolated fixture DB, synthetic owner and5 recipients. Cached initial0/0/0 monitoring,
+page read-all -> read1/open0/ack0 in924ms including navigation. Open+ack+unread ->
+open1/read0/ack1 in1954ms; bell read-all -> read1 in1708ms, bell single read -> read1
+in1702ms. Same60s interval retained; no reload or polling wait used. Other four rows
+untouched. Screenshot output/playwright/personal-notifications-working/immediate-monitor.png.
+One rapid unread attempt failed500 with sqlite3.OperationalError(database is locked)
+during concurrent local requests/token refresh; retained backend log, repeated unread
+succeeded before final single-read verification. SQLite contention not certified fixed;
+no backend/concurrency claim from this frontend patch. Original failure stays visible.
+Fixture tab closed, owned backend/frontend stopped; runner exit0. Working tab/data untouched.
+Final source review against starting copies: only common success invalidation changed;
+layout/i18n/API/rights unchanged. React review: parallel awaited invalidation, no new
+hooks/effects, errors retain existing UI, inactive keys only marked stale. Prior role/
+tenant/backend/migration tests not rerun because contracts/source unchanged; full E2E,
+locale/viewport sweep unnecessary for cache-only delta. Node2 and build PASS above.
+Docs: frontend contract, notification passport, roadmap and STATUS reconciled; access,
+CRM/AI/integration contracts and README need no change (no policy/setup/API change).
+Known other-session updates still use60s polling; immediate invalidation is for successful
+mutations in this browser cache. No new cross-session realtime transport in this scope.
+No commit/push: files depend on prior uncommitted personal-notification/security packets
+and shared WIP excluded from publication; standing authority does not publish those.
+Branch/HEAD unchanged, index empty, CI not triggered. No task acceptance remainder;
+publication/environment integration remain separate. Final hashes in task temp.
+
+
+
+## NOTIFICATIONS-PERSONAL-20261028 — personal feed and announcement monitoring (locally verified)
+
+Working-environment extension authorized29.10.2026: apply notification migrations to
+local working DB and check the current UI. No new product scope or publication.
+Risk: preserving legacy notification state/audience and current working data. Confirmed
+backend PID25736 cwd canonical root, config.settings/local/sqlite:///db.sqlite3 port8000;
+frontend PID15556 canonical frontend Vite port5173, default proxy8000. Root/branch/HEAD
+unchanged. SQLite online backup with integrity_check PASS saved in existing task temp
+working-db-20261029/before-notification-migrations.sqlite3; git/context snapshot alongside.
+Exact target notifications0007 needs core0012, support0002, businesses0012/0013,
+notifications0006/0007; dependencies add tables only, no role repair is executed.
+Checks: plan allowlist, backup, targeted migration, DB integrity/legacy state/backfill,
+Django system check, current authenticated UI feed and announcement monitoring.
+No seed/reset, unrelated migration, external delivery or credential/account changes.
+
+
+Working migration applied: `manage.py migrate notifications 0007 --noinput` PASS,
+exact six planned migrations. working-db-20261029/migrate.log retained. Read-only
+comparison to backup proves all27 legacy notification rows/columns unchanged and
+exact21 recipient backfill with preserved read_at/no invented opened/acknowledged;
+SQLite integrity PASS (db-verification.json). `manage.py check` PASS (system.log).
+No Celery worker/beat process found; no external delivery invoked. Existing servers
+left running. Current UI opened in IAB at http://127.0.0.1:5173/app/notifications and
+redirected to login (no session). User asked asynchronously to sign in as owner/admin;
+no password requested, no auth bypass/account changes. Browser tab2 marked handoff.
+Working UI acceptance completed29.10 after explicit owner approval to publish the
+prepared test to all current Business members, verify receipts and revoke. CUA used
+existing signed-in owner tab127.0.0.1:5173, canonical working backend8000/SQLite.
+Published one ordinary announcement to6 recipients; initial counters0/0/0. Read-all
+updated exactly1; full open and explicit acknowledgement tested; mark-unread retained
+open/ack, then read-all restored read. Monitoring showed owner timestamps and five
+untouched recipients. Revoked via UI; history retained and announcement absent from
+personal feed, original15 work items remain. Read-only ORM assertions confirm6 rows,
+exactly one opened/read/acknowledged and revoked_at. ui-final-proof.json retained in
+working-db-20261029 task temp; screenshot output/playwright/personal-notifications-working/
+revoked-monitor.png. No impersonation, password change, seed/reset or external delivery.
+Observed limitation: read-all invalidates feed/summary but not announcement cache;
+monitoring initially shows old counts until configured60s poll. Final counts correct;
+no immediate-refresh claim. No product code changed in this verification-only extension.
+Earlier isolated role/tenant/concurrency/build evidence not rerun: unchanged inputs;
+working-owner flow is supplementary, not full production certification. Docs diff check
+PASS. Branch codex/ui-testing-toolkit HEAD98925b67 plus preserved WIP; no commit/push/CI.
+Working migration and requested publication/receipt/revoke flow now complete; no active
+test announcement remains. Background worker heartbeat still unavailable, unrelated
+to synchronous receipt flow; no worker readiness claim.
+
+
+Owner approved implementation after discussion of OFFICIAL21: personal staff read
+state; announcements to all active business members; publication and recipient-level
+monitoring only business owner/admin. Audience fixed at publication; no automatic
+historical subscription for new/rejoined members. Existing shared legacy read_at is
+initial state for current recipients, no historical resend/toasts. Owner explicitly
+adds monitoring to first scope: opened (full content), read and explicit acknowledged
+are distinct; read-all never acknowledges. Addressed groups/new external staff
+delivery channels are deferred. Working DB migration remains unauthorized.
+
+Mode implementation, code/model gap; canonical root, branch codex/ui-testing-toolkit,
+HEAD98925b6796d4995e80af9d9a040ec5bbcfcab348 plus large prior security WIP. Preserve
+all previous packets; OFFICIAL21 closure remains evidence for former shared model,
+this approved requirement supersedes personal read UPDATE policy only when implemented.
+Reuse Notification, routing, services, business permissions, existing bell/API, i18n,
+audit and isolated verification. Add recipient persistence with fixed audience and
+personal timestamps; leave client delivery semantics separate. Reachable publish,
+read/open/acknowledge, revoke and owner/admin monitoring UI included.
+
+Risk high: tenant/actor isolation, permission widening, historical audience/read data,
+event retry/atomicity, private subject snapshots and concurrent read-all. Focused tests
+immediately after each coherent backend slice. Completion: affected notification,
+producer/privacy/automation suites, schema/system checks, migration forward/backfill
+in disposable DB, PostgreSQL concurrency for new arrivals, targeted UI/API flow and
+frontend types/build. No dependency reinstall, full-project suite, live send or working
+DB migration. Before edits retain Git dirty/hash snapshot; no unrelated staging.
+Progress checkpoint (same authorized task, not a handoff): models/services/API and
+initial UI implemented; final completion NOT yet claimed. Baseline hashes/status of
+canonical source retained at C:/Users/user/AppData/Local/Temp/platforma-personal-notifications-66wwg8tz/baseline.json.
+All test helpers/logs below are in that same disposable task directory; no working
+DB/env/provider use. Python `.venv/Scripts/python.exe`, existing dependencies reused.
+
+Backend: NotificationRecipient fixed audience with user+Notification uniqueness;
+received/opened/read/acknowledged timestamps; Notification kind/author/revoked/key/
+audience_fixed_at. Notification.save and custom bulk manager call recipients.py
+inside their transaction (conflict-mode bulk writes fail explicitly). Intentional
+0006 schema +0007 backfill; legacy shared read_at initializes each active recipient,
+no external-client recipients, send scheduling or invented opens/acks. Fixed marker
+prevents late membership from being added by retries/backfill. Personal selectors
+recheck active user/membership and fresh capabilities, batch current source checks
+from existing canonical action URLs before pagination/count. Announcements bypass
+work-section/category preferences; work snapshots are replaced with localized source
+labels and canonical readable links (full details remain in authorized source UI).
+Personal services lock state, open marks that one row read, explicit ack requires
+open and writes one audit. Read-all freezes start time/IDs, updates500-row chunks,
+ignores display filters, never opens/acks; no NOTIFICATIONS UPDATE needed.
+Announcement publish/revoke and monitoring require actual owner or active admin plus
+existing MANAGE decision; other roles incl marketer cannot use MANAGE to publish.
+Publish key replay returns same row/audience; content immutable; generic system writes,
+delete and announcement delivery actions denied. Legacy external delivery retains its
+existing authority/state. List/detail/summary now use personal internal rows; selecting
+Business is required when membership is ambiguous. No cross-business bulk action.
+
+Files: notifications/models, recipients, personal_selectors, personal_services,
+announcements, announcement_api, views, serializers, migrations0006/0007; new tests
+personal_recipients/services/api/concurrency/migration. tests_mark_all_access now tests
+the new approved contract (prior AUD17 tests/evidence retained in its artifact packet).
+Existing notifications tests/bell assertions adapted for personal states and normalized
+links. Outreach detached-link regression now asserts old PATCH is denied, then seeds
+historical detached data and retains projection check. Prior security WIP preserved.
+
+Checks executed with `<temp>/run_checks.py <phase> test <labels> -v1 --noinput`:
+- recipients-first:7 errors from duplicate empty Business slug fixture; fixture fixed.
+- recipients-fixture and recipients-fixed-audience:7 PASS each after coherent model changes.
+- personal-services-first:24 PASS (persistence7+services17), --keepdb.
+- personal-api-first:43 PASS, but included duplicate inherited service tests. Refactored
+  common fixture mixin afterwards so counts no longer duplicate the imported TestCase.
+- compatibility-first:61 tests/18 failures reflecting old shared-read/UPDATE policy and
+  former PATCH path; retained log. Replaced expectations only for approved changes.
+- compatibility-personal-contract:95 PASS (notifications.tests_mark_all_access,
+  notifications.tests, notifications.tests_bell, notifications.tests_settings_preferences,
+  outreach.tests_automation_status_access, notifications.tests_personal_recipients,
+  notifications.tests_personal_services, notifications.tests_personal_api), --keepdb.
+- current-access-controls:28 PASS (personal_services + personal_api) after stale actor/
+  capability guards. Final affected suites should include latest source plus producers.
+- migration-forward:failed test harness used historical accounts state lacking current
+  auth_epoch while DB retained later account migrations. Fixed state extraction to all
+  applied migrations, no app/migration weakening. migration-state-corrected:1 PASS.
+- `<temp>/run_pg.py`:3 PostgreSQL17 concurrency tests PASS, zero skips. Owned temporary
+  cluster, port49704, stopped successfully. Tests prove arrival during read-all stays
+  unread; two concurrent publishes create one row/audience/audit; two acknowledgements
+  retain first timestamp and one audit. No working Postgres or Redis used.
+- frontend `node scripts/check-i18n.mjs`: first failed because new translations preceded
+  ...ru fallback. Moved fallback first, then PASS6478 keys. No build/types/browser yet.
+
+Frontend implemented but NOT yet fully verified: new features/notifications/
+NotificationsPage, AnnouncementManager, NotificationInspector; /app/notifications
+route without notification permission gate (all active members). Header summary keys/
+API include business+user, errors surfaced, announcement full-text modal, link to new
+center, technical delivery badge replaced with work/announcement label. Sound watcher
+can mount for all active users, prefs no longer hide announcements. API/types/i18n updated;
+useEntityData/prefetch scope notification calls to Business; Outreach retry sends Business.
+Monitor shows per-person opened/read/ack time, retained after revoke. Read-all does not
+record open; inspector records open then allows explicit ack. Generic historical work
+text is not replayed into a field-permission leak. Publication form keeps key on retry.
+
+Completion 29.10.2026 (same scope): implemented and locally verified. No remaining
+code/evidence/owner-decision criterion in this packet. Environment/publication remain:
+working DB migration0006/0007, commit/push/CI/deployment were not performed. Baseline
+large WIP and simultaneous YCloud changes are preserved, never staged. No next phase.
+
+Final verification commands (canonical root, existing .venv; helper directory above):
+- `run_checks.py completion-affected test` with exact17 labels in
+  completion-affected.json:255 tests,4 failures. No production bug: old shared/internal
+  expectations in leads assignment and Client PII fixture; tasks today fixture used
+  now+1h across local date boundary. Explicit external email fixtures preserve prior
+  takeover/allowed-contact/parent-masking assertions; fixed7UTC clock preserves task
+  bucket/tenant assertions. Original3 test files saved under compatibility-baseline/.
+- `run_checks.py compatibility-corrected test` with exact4 methods in JSON:4 PASS.
+  Source unchanged;251 unaffected PASS reused. Failed original log retained, not renamed
+  green. Additional personal API/service tests already prove stricter internal policy.
+- `run_dependent.py` → completion-dependent49 PASS, zero skips: scheduling message
+  settings + outreach suites and15 selected appointment/Inbox/pricing producer methods.
+  Labels/command/results in dependent-labels.json and completion-dependent.json.
+  Total affected/dependent304 methods proven across these runs, not one304 rerun.
+- `run_checks.py system-final check` and `drift-final makemigrations --check --dry-run`:
+  PASS. migration-state-corrected1 and run_pg3 PASS from unchanged backend/migrations
+  reused; no redundant PG restart. Source is canonical, disposable DB/network-denied.
+- frontend `npm run build`: initial PASS (types/i18n/app/widget), second PASS after
+  optional formatter locale. Final `node node_modules/vite/bin/vite.js build` PASS
+  after KK numeric-month correction. Logs frontend-build[-final].log and
+  frontend-app-final.log. Existing large-chunk advisory remains, not an error.
+- `node <temp>/notification-date-check.mjs` PASS: legacy default/year/timezone and
+  RU/KK/EN locale behavior. Optional fourth formatDateTime arg keeps existing callers.
+  Browser engine KK short-month fallback produced M10; numeric month fixes new callers.
+- `capture_final.py`: Python AST syntax, source hashes and built locale branch PASS.
+  Initial artifact checker assumed double-quoted strings; minifier uses backticks;
+  checker corrected without another source/build change. artifact-check.json retained.
+- git working/index diff hygiene PASS; no task committed range (HEAD unchanged),
+  explicit new-file/source review and changed document links checked at completion.
+
+Browser: built-in local browser against canonical Vite127.0.0.1:57877 and Django57876,
+owned temporary DB under zani-quality-gate-z3icxj6d. ui_runtime.py uses isolated_runtime,
+.env disabled/network-denied backend, synthetic owner/admin/staff/peer/marketer only.
+Actual API/UI: empty feed → owner publication5 recipients → staff read-all only own
+read (ui-read-all-proof.json) → open → keyboard Enter acknowledge → unread keeps open/
+ack → admin named monitoring → revoke keeps history and removes feed/count → marketer
+empty feed without publish/monitor controls. Initial management empty/loading, success,
+read disabled/confirmation, Escape focus return tested. List request deliberately
+blocked in this tab: visible error/Retry; unblocked+Retry restores actual server data.
+RU/EN desktop1280, RU/KK mobile390: inspector/monitor/table scroll checked; new date
+labels localized. Captures under output/playwright/personal-notifications/ (ignored).
+ui-final-proof.json proves one changed staff row, four untouched rows, retained receipt
+and revoke. Browser override/block removed and created tab closed. ui-stop cleanly
+terminated owned backend/frontend; runner exit0. PostgreSQL owned cluster already stopped.
+
+Harness limitations retained: initial Vite/HMR bootstrap briefly hit an outer
+error-boundary/I18n error, recovered by reload without product patch. Its underlying
+cause was not established; it did not recur in the verified flows. Some hard reloads
+lost synthetic refresh session and showed login; normal login/SPA flow completed.
+This packet does not certify auth/session refresh or background worker readiness;
+service-status correctly showed no worker heartbeat in this worker-free fixture.
+No real notifications/credentials/provider/working DB or external account settings used.
+
+Final self-review (no independent agent): fixed audience/current access, actor/Business
+isolation, source snapshot protection, immutable publication/audit/idempotency, external
+channel compatibility; UI API-layer/keys/retry/labels/viewport/role controls reviewed.
+No remaining in-scope issue identified. Full project/E2E and live deployment intentionally
+not run by proportional gate. No new env/BusinessEvent/AI action contract. Audit records
+publication, acknowledgement and revoke; personal read/open are receipt timestamps.
+
+Docs reconciled: access/CRM/frontend/operations contracts, roadmap, capabilities,
+settings-notifications passport, README, STATUS and this checkpoint. Existing primary
+old OFFICIAL21 claims replaced/qualified where describing current behavior; historical
+reports untouched. integrations/AI/product/other passports unchanged: no provider/AI/
+vertical/product-scope change. Artifact report and source manifest in helper directory.
+
+## OFFICIAL-21-20261028 — authorized mark-all-read subset (fixed locally)
+
+Owner decision in this chat 28.10: when visible unread Notifications mix allowed
+and forbidden UPDATE objects, mark only the allowed subset and return actual count;
+forbidden rows stay unread. Resolves D-AUD17; prior view-only403, tenant isolation,
+owner behavior, Inbox/bell filters and global read-state model remain. No new grants.
+Mode security implementation/verification; code gap at mark_all_read bulk update.
+Canonical root/branch unchanged, HEAD98925b67 + prior WIP. Existing untracked
+tests_mark_all_access.py and views.py serializer context WIP must be preserved.
+
+Reuse get_queryset VIEW/filter boundary, current can UPDATE/object policy and
+ordinary Notification mark-read semantics. Risk: mutation outside scope, incorrect
+shared-row/TEAM policy, stale recipient and count/replay regressions. BEFORE existing
+five tests plus targeted mixed/explicit-deny/empty/revoked/TEAM/multibusiness cases;
+focused immediately after service/view change, then notifications/bell/preferences/
+automation read-boundary suites, isolated system/drift/syntax/diff. Independent boundary
+investigator and fresh candidate reviewer per fix-finding. No schema, sending,
+provider, working DB, account/auth/reset, publication or unrelated policy change.
+
+Progress: independent mark_all_boundary confirmed action map does not guard this
+collection endpoint. Generic scope_queryset UPDATE would incorrectly drop TEAM
+shared notifications; use exact current can(obj) decisions, as detail mark-read does.
+Implemented new notifications/read_state.py service and view delegation. Admission
+requires enabled accessible Business with VIEW+UPDATE independently of unread count;
+otherwise403. Original VIEW/query filters remain. Plain Notification rows are selected
+via visible PK subquery and locked (PostgreSQL OF self avoids DISTINCT/nullable joins),
+then current VIEW+UPDATE object decisions collect allowed IDs. Update through original
+visible/unread query in500-row batches in one transaction; returns actual DB row count.
+No shared permission/schema/UI/delivery change. Prior serializer-context WIP preserved.
+
+BEFORE15:11 failures,4 controls. AFTER33 (mark_all + owning notifications + bell):
+32 PASS, one test fixture failed because it called mark_unread on a stale instance
+after bulk update. Added refresh_from_db, no source change. Added3 controls for MANAGE
+fallback, recipient reassignment/timestamps and rollback across501 synthetic rows.
+after-fixture18:17 PASS; new rollback test expected Python exception, but established
+API exception handler returns HTTP500. Corrected test to assert500 then no read rows;
+no application source change. Initial results retained, not relabeled green. Parent
+prematurely said rollback passed, then explicitly corrected the commentary.
+
+Completed: corrected rollback regression PASS; final62 affected/dependent tests PASS,
+zero skips. All18 mark-all tests pass, including13 added to the five prior regressions.
+Original bypass no longer reproduces: mixed sets update exact allowed subset;
+VIEW-only/explicit deny/revocation/foreign Business leave prohibited timestamps intact.
+Owner/shared/TEAM/MANAGE fallback, empty/replay, recipient changes, Inbox/bell/query
+filters and rollback across501 rows preserve legitimate behavior. Candidate reviewer
+mark_all_review completed one independent static cycle with no concrete findings.
+
+Exact commands (Python `.venv/Scripts/python.exe`, canonical root):
+- `<temp>/run_checks.py rollback-corrected apps.notifications.tests_mark_all_access.MarkAllReadAccessTests.test_bulk_chunks_roll_back_when_later_database_write_fails`: PASS1.
+- `<temp>/run_checks.py completion apps.notifications.tests_mark_all_access apps.notifications.tests apps.notifications.tests_bell apps.notifications.tests_settings_preferences apps.outreach.tests_automation_status_access apps.businesses.tests_access.TeamAccessTests.test_team_scope_filters_deals_queryset_to_team_members`: PASS62; wrapper first runs `check` and `makemigrations --check --dry-run`, both PASS.
+- `<temp>/candidate.py`: syntax PASS for views/read_state/tests; scoped patch and hashes.
+- `<temp>/integrity.py`: source/baseline hashes, branch/HEAD/index, diff hygiene,
+  reverse patch and local document links PASS. Initial reverse check failed because
+  Windows text output converted patch LF to CRLF; diagnostic ignore-space-change
+  passed, helper switched patch output to UTF-8 bytes, strict reverse check then PASS.
+  Application code unchanged; this was an artifact-format failure, not a test PASS.
+
+Temp: C:/Users/user/AppData/Local/Temp/codex-security-artifacts-1d95dca3a3a214defe40ef89cc9676be3b5622a5abafcb39d5da4e18155bd64b/artifacts/mark-all-read.
+Helpers authored via save_codex_security_artifact; isolated_runtime, synthetic keys,
+disposable SQLite, no .env/network/working DB, dependencies reused. Retained collection:
+C:/Users/user/.codex/state/plugins/codex-security/scans/PlatformaCRM/artifacts-5c104f7eb8ffeb335f0ca5772aabb0cf2c88c0a722d9ac17d6bb18e0f3934604/artifacts/mark-all-read.
+Includes actual failed/success logs, results, baseline, patch, source hashes, helpers,
+independent-review summary and fix-report. Prior canonical/historical scans unchanged.
+
+Header/API consumers inspected: Header invalidates list+summary, no optimistic all-read
+assumption; API `{updated}` unchanged. No frontend edits/build/browser suite warranted.
+PostgreSQL runtime concurrency, real delivery and deployment not exercised; SQLite
+rollback is not PG concurrency proof. No schema/env/BusinessEvent/AI change.
+STATUS, access/CRM, roadmap AUD17/current-next, capabilities and notification passport
+updated together; D-AUD17 resolved by owner decision. README/setup and unrelated
+contracts need no change. Code/evidence/decision remainder: none in agreed local scope.
+Environment remainder: publication/live/PG proof outside this packet. No own running
+processes; original WIP preserved, index empty, branch codex/ui-testing-toolkit,
+HEAD98925b6796d4995e80af9d9a040ec5bbcfcab348 unchanged. No commit/push/CI/deploy.
+No next finding started; audit queue next AUD11 is context, not new authorization.
+
+## FU-HIST-02-20261028 — public intake response privacy (fixed locally)
+
+Owner continuation after OFFICIAL03 authorizes the next bounded non-auth finding.
+Mode implementation/verification, gap code: public Lead form exposes prior Client
+membership via duplicate_warning; website intake returns matched internal client_id.
+Canonical root/branch unchanged, HEAD98925b67 + prior WIP/closed findings, no publication.
+Reuse existing intake, duplicate matching, staff evidence, CRM mapping and fresh public
+conversation capability. Scope response projection only, plus relevant tests/contract docs.
+No change to internal matching, consent, pipeline/AI behavior, roles, schema, accounts,
+provider settings or working DB. Existing independent staff-read masking stays intact.
+
+Risk: private contact enumeration and widget compatibility. Before patch: synthetic
+HTTP known/new contacts, phone/email/aliases, and valid intake controls. After coherent
+view changes: focused regressions plus owning form/widget tests. Completion affected
+pipeline/opt-out/duplicate privacy suites, system/drift/syntax/diff/source integrity;
+inspect actual frontend consumers and build only if frontend source needs changes.
+Independent fresh boundary investigator and candidate review per fix-finding. No live
+provider requests, real data, account/reset work, new scan or policy-dependent finding.
+
+Completed: two public response projections changed. Form duplicate_warning is always
+false (compatibility placeholder, not a statement about stored matches). Website
+client_id/lead_id are always null, including after automatic pipeline. Internal matching,
+Client reuse/archive state, staff duplicate_json/activity, consent/opt-out and CRM events
+unchanged. Fresh submission/Lead IDs belong to this new submission; fresh website UUID
+retains follow-up capability, no existing conversation capability is disclosed.
+
+Independent investigator recommended omitting private response keys; parent retained
+constant placeholders for existing response-shape compatibility, withholding all values
+universally. BotDetail used lead_id to claim a Lead was/was not created: changed its actual
+success handler and RU/KK/EN copy to confirm only conversation creation. API type declares
+the two fields null. Existing controls/state/layout unchanged, widget only uses UUID.
+Scope includes that necessary consumer adaptation; no new UI block or inferred CRM result.
+
+BEFORE9:6 failing privacy tests,3 controls PASS. AFTER47 PASS (nine new + owning form,
+Bot foundation and controlled creation). Added3 archived/precedence/foreign controls;
+completion106 PASS,12 new, zero skips. Existing tests that asserted public disclosure
+now assert withheld values AND preserved internal matching/guarded creation/consent.
+No weakened domain checks or failed post-patch run. Independent fresh candidate review:
+no concrete surviving bypass/regression; read-only source review, no duplicate testing.
+
+Exact command wrapper: .venv/Scripts/python.exe <temp>/run_checks.py <phase> <labels>.
+Temp is C:/Users/user/AppData/Local/Temp/codex-security-artifacts-1d95dca3a3a214defe40ef89cc9676be3b5622a5abafcb39d5da4e18155bd64b/artifacts/public-intake-privacy.
+before: apps.leads.tests_public_intake_privacy (expected6/9 failures).
+after: same plus apps.leads.tests_forms apps.bots.tests.BotsFoundationTests
+apps.bots.tests_controlled_creation (47 PASS).
+completion: apps.leads.tests_public_intake_privacy apps.leads.tests_forms
+apps.leads.tests_form_write_boundaries apps.bots.tests.BotsFoundationTests
+apps.bots.tests_controlled_creation apps.bots.tests_pause_inbound
+apps.outreach.tests_public_intake_optout apps.clients.tests_duplicate_visibility
+(106 PASS); wrapper also runs manage.py check and makemigrations --check --dry-run,
+both PASS. Uses scripts.codex_verify.isolated_runtime, disposable SQLite/media,
+synthetic credential keys, no dotenv/network/provider calls or working DB mutation.
+
+frontend_verify.py: actual preview/follow-up mutation handlers for RU/KK/EN, invalidations,
+actual widget send/create/follow-up/error recovery with null IDs PASS; check-i18n,
+tsc --noEmit --project tsconfig.app.json, Vite app and widget builds PASS. Existing node
+dependencies reused, envDir false, network denied, all build outputs temporary. Main
+build has chunk-size warning, no build error; no bundle optimization added to scope.
+Unchanged responsive containers, typography and keyboard controls inspected in source;
+copy is shorter and removes only unsupported CRM outcome. No browser screenshot/E2E or
+full visual certification claimed; meaningful changed consumer behavior executed.
+
+Source: apps/leads/views.py, apps/bots/views.py; tests_forms.py, bots/tests.py and
+tests_controlled_creation.py updated; new leads/tests_public_intake_privacy.py.
+Frontend api/bots.ts, BotDetailPage.tsx, three locale files. Scoped patch/baseline hashes
+isolate this delta from previous changes to leads/views.py. Syntax/diff/index/reverse/
+source integrity and docs link checks in retained integrity.json. Index empty, HEAD and
+branch unchanged; no commit/push/CI/deploy. Prior closed finding packets remain intact.
+
+Persistent evidence under C:/Users/user/.codex/state/plugins/codex-security/scans/PlatformaCRM/
+artifacts-5c104f7eb8ffeb335f0ca5772aabb0cf2c88c0a722d9ac17d6bb18e0f3934604/artifacts/public-intake-privacy:
+task.patch, baseline/source hashes, actual logs/results/scripts, independent review,
+integrity and fix-report.md. Original canonical scan/reconciliation snapshots unchanged.
+STATUS/roadmap/access/CRM/frontend/capabilities and Leads/Inbox passports synchronized.
+README/AI/integrations/operations unchanged: no setup/provider/pipeline or env behavior.
+
+No bounded code/evidence/owner-policy remainder. Publication/live acceptance remain
+separate; no real customer data, external sends or production/PG certification. Timing
+and resource side channels, public-intake write policy and other auth/policy findings
+are outside this response-privacy fix. No next finding started.
 
 ## OFFICIAL-03-20261028 — WhatsApp authenticated tenant binding (fixed locally)
 
@@ -2055,6 +3743,182 @@ No full-project gate: provider-specific boundary only. STATUS/roadmap/integratio
 capabilities/integrations passport updated; README/frontend/access/AI/operations contracts
 need no change to setup, UI, role policy or operational settings. Next finding not started.
 
+## OFFICIAL-22-20261028 — immutable AI approval binding (fixed locally)
+
+Owner continuation authorizes this bounded finding. Canonical root/branch unchanged,
+HEAD98925b67 plus prior WIP saved in plugin artifacts/approval-binding baseline snapshot.
+Generic ApprovalRequest PUT/PATCH can rebind tool/payload/expiry while preserving approval.
+Make decision evidence immutable from creation in every state, retaining reason editing
+for API compatibility. Save only reason/updated_at so stale updates cannot overwrite
+approval/execution state. Existing create/approve/reject and exact locked execution/replay
+checks remain. No new approval policy, schema, provider, working DB or account/auth changes.
+Risk: approval bypass and stale-save regression. Focused BEFORE/AFTER HTTP exploit,
+PUT/PATCH/all-state fields, expired/executed replay, tenant/role/current approver/underlying
+permission, unchanged approval success, stale reason saves. Completion AI/CRM/conversation
+and capability suites, isolated system/drift/syntax/diff, one independent candidate review.
+
+Result: BEFORE12 reproduced52 failing assertions including real synthetic second-command
+write and stale decision restoration; AFTER31 PASS. Serializer now rejects changed material
+fields in every state and saves only reason/updated_at, then refreshes. Independent candidate
+review found no issues. Completion95 had94 PASS and one new-test expectation error: revoked
+approver returns403, not400. Only that test expectation corrected; final-focused17 PASS.
+System/migration drift/syntax/diff PASS;97 unrelated dirty-path hashes unchanged. No publication.
+
+The completion95 run remains recorded as failed, not relabeled green. Its78 unchanged
+dependent tests and final17 new regressions cover95 unique applicable tests on identical
+production code; no broad rerun after a test-only HTTP expectation correction. Final checks
+have no skips. One independent investigator and one candidate reviewer; no candidate findings.
+Stale-save tests deliberately interleave fresh DB status changes with an old serializer;
+this proves limited writes, not a new PostgreSQL concurrency certification.
+
+One production file apps/ai_core/serializers.py: generic changes to any validated field except
+reason are rejected when different from the created request, regardless of status. No-op
+identity fields remain accepted. update writes only reason/updated_at and refreshes current
+state. Exact create/approve/reject, legacy non-CRM fingerprints, worker transaction/replay,
+requester/approver/domain permissions remain unchanged. Internal trusted model paths retained;
+no new permission model, schema, provider, logging payload or live-data grounding changes.
+Frontend api/ai.ts uses create/approve/read/execute, no material edit path; DTO unchanged.
+
+Exact commands/results/logs, initial failure and final correction, baseline, isolated runner,
+integrity/source hashes and task-only patch retained in plugin artifacts/approval-binding
+under the persistent collection root documented in OFFICIAL-09. Execution staged helpers to
+C:/Users/user/AppData/Local/Temp/codex-security-artifacts-1d95dca3a3a214defe40ef89cc9676be3b5622a5abafcb39d5da4e18155bd64b/artifacts/approval-binding.
+Runner: .venv/Scripts/python.exe <temporary directory>/run_checks.py completion
+apps.ai_core.tests_approval_binding apps.ai_core.tests apps.ai_core.tests_crm_tools
+apps.ai_core.tests_conversation_state apps.ai_core.tests_conversation_execution
+apps.core.tests_b1_runtime apps.core.tests_b4_capabilities. Completion also runs manage.py
+check and makemigrations --check --dry-run. final-focused uses tests_approval_binding only.
+Syntax via compile; git diff --check and reverse task.patch --ignore-space-change PASS.
+
+Synthetic isolated SQLite/media/config; network denied and providers mocked/disabled. No
+working DB, credentials/accounts, dependency install, source-copy or live external changes.
+Final runtime slowed while preparing DB, then completed; no other process stopped. No full
+project/browser/production/PG gate: unchanged frontend and underlying lock/schema boundary.
+API create/deny/approve/reject/execution/replay and existing provider-fallback checks covered.
+STATUS/AI/access/roadmap/capabilities synchronized; README/CRM/frontend/integrations/operations
+unchanged because setup/domain/UI/provider/storage contracts unchanged. Existing passports
+remain scoped to their historical evidence; capabilities links current delta.
+
+No bounded code/evidence/owner-decision remainder. Canonical branch codex/ui-testing-toolkit,
+HEAD98925b67 plus102 starting dirty paths and patch. No staging/commit/push/deploy/CI; preceding
+accumulated fixes remain outside this publication scope. Owned checks finished; no claim of
+standalone committed-candidate acceptance. Next independent OFFICIAL03 connector tenant binding
+needs its own local masked-source investigation, not started. Auth/reset and pending-policy
+findings remain excluded; no retrospective repair of existing approval data was attempted.
+
+## OFFICIAL-13-20261028 — appointment automation status authorization (fixed locally)
+
+Owner continuation authorizes this bounded finding. Canonical root/branch unchanged,
+HEAD98925b67 plus prior WIP; starting hashes saved in plugin artifacts/automation-status.
+Gap: collection action resolves membership but bypasses NOTIFICATIONS VIEW/object scope.
+Reuse current capability/readable_queryset before counts and LIMIT8; preserve Client
+redaction and independently protect Appointment links. Keep existing OWN/TEAM/unassigned
+notification semantics, scenario shape/delivery behavior. Risk: read disclosure and false
+denials. Focused regression BEFORE/AFTER, legitimate scope/tenant/no-data/revocation controls;
+completion outreach/notification/projection suites, isolated system/drift, independent review.
+No schema, provider, working DB, permission-model rewrite or unrelated finding.
+
+Result: endpoint explicitly enforces NOTIFICATIONS VIEW/capability. A single existing
+readable_queryset base feeds counts and failed top8; private conversation-recipient
+restriction matches ordinary Notification list. Existing OWN shared-recipient and TEAM
+semantics preserved. Independent Client projection retained; unreadable Appointment ID
+and URL masked. Calendar target URLs are reconstructed from the readable linked object,
+so detached/mismatched/encoded-path/absolute URL identifier copies cannot bypass it.
+Stored notifications/URLs, delivery, retry and scenario definitions are not mutated.
+Direct unauthorized/no-actor service reads return empty counts/rows, HTTP deny returns403.
+
+BEFORE14:10 failing security assertions plus one TeamMember fixture error (wrong user
+field); corrected team-only BEFORE reproduces3 vs2 count. Initial AFTER86 exposed three
+count regressions: DISTINCT scope plus model ordering split aggregate groups. Clearing
+ordering before grouping fixed them; focused18 PASS. Completion113 PASS with system and
+migration-drift checks PASS. One independent read-only reviewer then found nullable-FK
+stale URL bypass. New normal Notification PATCH repro and four URL forms failed5 assertions
+across2 tests; repaired by canonical visible Appointment URL projection. Final116 PASS
+(21 new regressions), zero skips,87.880s. No second review cycle or broadened audit.
+Syntax compile/diff/reverse-patch checks PASS;93 unrelated dirty-path hashes unchanged.
+
+Commands use existing .venv/Scripts/python.exe and retained run_checks.py, staged through
+plugin temporary storage under C:/Users/user/AppData/Local/Temp/
+codex-security-artifacts-1d95dca3a3a214defe40ef89cc9676be3b5622a5abafcb39d5da4e18155bd64b/
+artifacts/automation-status. Phases before/after-count-fix use
+apps.outreach.tests_automation_status_access. Final phase runs that label plus
+apps.outreach.tests apps.notifications.tests apps.core.tests_client_pii_projections
+apps.outreach.tests_mutation_permissions; completion includes manage.py check and
+makemigrations --check --dry-run. Final projection-only repair changes no model/config;
+system/drift evidence reused under proportional rule. All failed/initial/final logs,
+exact command JSON, baseline snapshot, hashes, isolated scripts, task.patch and report
+retained in plugin collection artifacts/automation-status at the same persistent
+collection root documented for OFFICIAL-09 below. No original sealed scan mutation.
+
+Isolated disposable SQLite/media, synthetic fixtures and network-denying runner only.
+No working DB/server/provider/account/credential change. NOTIFICATIONS has no module
+mapping; injected guard test proves integration, not a real toggle. Real Appointment
+module-off masking tested. No lock/schema changes; PG/full-project/live not certified.
+Frontend accepts nullable appointment_id/blank URL and routes endpoint errors to existing
+ErrorState; no frontend edits/build/browser needed for unchanged DTO/backend read boundary.
+
+STATUS/access/integrations/roadmap/capabilities synchronized. README/CRM/frontend/operations
+unchanged: no setup/domain/lifecycle/UI/storage contract change. No bounded code/evidence
+or owner-policy remainder. Two production files services.py/views.py and new focused test;
+prior outreach/template/consent/Client fixes preserved. Canonical branch codex/ui-testing-toolkit,
+HEAD98925b67 plus101 starting dirty paths and patch; index empty, no commit/push/deploy/CI.
+Publication is not performed over accumulated preceding work outside this finding; no
+standalone committed-candidate claim. Owned check processes finished. Next independent
+candidate OFFICIAL22 approved AI command binding is not started; auth/reset and pending
+policy findings remain excluded.
+
+## OFFICIAL-09-20261028 — catalog Service write authorization (fixed locally)
+
+Owner asks this chat to continue security fixes; bounded next OFFICIAL-09 only.
+Root C:/Users/user/Desktop/PlatformaCRM, branch codex/ui-testing-toolkit,
+HEAD98925b67 +99 pre-existing dirty paths preserved. Catalog import/manual Service
+upserts bypass SETTINGS UPDATE/shared branch authority. Reuse normal Service
+object/candidate authorization; retain product events/integration admission and
+explicit lifecycle actions. Current confirm actor, legacy job.actor fallback;
+deny before writes, preserve inactive/archive state and atomic rollback.
+Focused BEFORE/AFTER covers role/branch/tenant/revoked rights, allowed writes,
+product-only input and lifecycle; completion import/service/branch suites plus
+system/drift and independent read-only candidate review. No working DB/providers,
+permission-model/schema changes or unrelated finding. Plugin-managed derived
+artifact collection, snapshot/contract saved; original sealed scan unchanged.
+
+Result: upsert_catalog_service applies existing SETTINGS UPDATE/capability to actual
+Service or new candidate, thereby enforcing all-current-branch access. Both callers
+reuse it; confirm passes current request actor, direct legacy rows fall back to job.actor.
+No actor fails closed. Metadata leaves inactive/archive state intact; explicit lifecycle
+actions remain required. Atomic Service/event and manual audit boundaries preserve rollback.
+Product-only input, aliases, exact-name matching, integration admission and job ownership
+unchanged. Two production files plus tests_catalog_permissions.py; no schema/config/UI change.
+
+BEFORE12 tests:12 failing assertions including subtests; AFTER12 PASS. Completion83 PASS
+across core catalog/import/import-samples/import-job/tenant and branch access/scheduling/
+services suites; system check and migration drift PASS. Supplementary19 initially had four
+incorrect expectations: other-user jobs return404 even for owner; malformed manual duration
+uses existing30 default; injected audit error returns500. Tests corrected to those contracts,
+invalid-name denial added; final19 PASS/no skips. Source unchanged after initial AFTER.
+Direct current-actor precedence, inactive member, job ownership, audit/event rollback covered.
+Independent read-only investigator and one reviewer completed; no candidate findings.
+
+Exact commands/logs, starting dirty snapshot, isolated runner, source hashes, task-only patch
+and report are retained in plugin-derived artifacts/catalog-access at:
+C:/Users/user/.codex/state/plugins/codex-security/scans/PlatformaCRM/artifacts-5c104f7eb8ffeb335f0ca5772aabb0cf2c88c0a722d9ac17d6bb18e0f3934604.
+Runner: .venv/Scripts/python.exe <artifact>/run_checks.py completion
+apps.core.tests_catalog_permissions apps.core.tests_import_export apps.core.tests_import_samples
+apps.core.tests_import_job_boundaries apps.core.tests_tenant_isolation apps.branches.tests_access
+apps.branches.tests_scheduling apps.services.tests. Final focused phase after-review-corrected
+uses only apps.core.tests_catalog_permissions. Synthetic isolated SQLite/media, network denied;
+working DB/providers/accounts/credentials unchanged. No full-project/PG/live readiness claim.
+Syntax compile and git diff --check PASS. Reverse patch check requires --ignore-space-change
+for Windows line endings; initial strict mismatch retained in report. Integrity script initially
+hit Windows decoding default, then passed with python -X utf8;92 unrelated dirty hashes unchanged.
+
+ImportPanel existing ErrorState handles denied confirm; endpoint happy/denial tested. No frontend
+build/browser needed for unchanged response shape. STATUS/access/integrations/roadmap/capabilities
+synchronized. README/CRM/frontend/operations unchanged: no new setup/domain/UI/storage contract.
+No remaining code/evidence/owner-decision item in bounded local fix. Publication remains separate:
+99 preceding dirty paths and shared import dependencies are outside this finding; no staging,
+commit/push/deploy or CI claim. Index empty, owned check processes completed. Next independent
+candidate OFFICIAL13 automation-status visibility not started; policy/auth/reset exclusions remain.
 
 ## AUD-18-20261027 — current export download authorization
 
@@ -8913,6 +10777,1224 @@ source archived native readback. Latest safety CI 37653976762 / 37654213713 и
 CRM/Analytics development paused; существующий runtime не удалён/не выключен.
 HookActivationStatus REQUIRES_REVIEW_AND_TRUST; новой проверки runtime hook нет.
 
+
+## WAVE1-SECURITY-20261027
+
+Explicit delegated implementation: residual access/consent/STOP only; AUD-18 stays closed.
+Base 98925b6796d4995e80af9d9a040ec5bbcfcab348, codex/ui-testing-toolkit, clean starting tree.
+One sequential author/integrator in canonical checkout; no source worktrees or copies.
+Ownership: apps/notifications/delivery.py, apps/outreach/tests.py; related consent/access
+paths only for confirmed regressions. Shared auth/schema/migrations/lockfiles remain
+with this sole author and are not planned. No push/merge/deploy or shared DB changes.
+DoD: reproduce late consent revocation, prevent provider call and retry/replay,
+preserve allowed delivery, existing role/tenant tests, isolated system/drift and
+affected outreach/notification tests. Focused PASS is not production acceptance.
+Integration order: CRM focused proof/fix/checks, then Market ledger/signing; review
+explicit diffs and retained test evidence. No financial-model changes.
+
+Checkpoint requested by parent at safe handoff. Runtime rechecks current consent
+and matching recipient/business/channel before each external outreach attempt;
+cancelled without retry/provider call on denial. AUD-18 remains closed.
+BEFORE: 2 added tests / 3 failing assertions (provider called after STOP).
+AFTER: system/drift + 47 outreach/notification tests PASS. Added third regression
+with allowed/missing-consent/foreign-tenant/missing-recipient cases; rerun pending
+session10028, task-5/crm-after.log. Isolated runner + disposable key path used;
+no real local key read. No commit/push/merge/deploy or shared DB mutation.
+Exact race between final consent read and outbound invocation not certified.
+Parent handoff stops new work; preserve pending run, inspect log, finish evidence.
+Task-5/checkpoint.json records files, sessions, commands/scripts and limitations.
+Read-only pilot: docs/current/product.md167-220 describes administrative pilot,
+independent Business isolation, Telegram/WhatsApp, Kazakhstan target environment,
+real channel/operations/legal acceptance. WhatsApp provider remains undecided.
+Large canon merge not completed; separate document executor/output recommended.
+
+
+## OFFICIAL-01-20261028 — generic Business DELETE
+
+Explicit owner/delegated scope: first bounded High remediation after the static
+audit. Canonical root C:/Users/user/Desktop/PlatformaCRM; branch
+codex/ui-testing-toolkit, HEAD 98925b6796d4995e80af9d9a040ec5bbcfcab348 + existing
+W1/AUD-17 WIP. No commit/push/deploy or working DB/provider changes authorized.
+
+Closed locally: BusinessViewSet uses existing http_method_names convention to
+disable generic DELETE for every actor (405); no deletion permission/lifecycle,
+Business.status or AUD-17 policy is invented. GET/POST/PUT/PATCH/HEAD/OPTIONS retain
+their permission, tenant, serializer and audit behavior. Eight regression tests
+cover plain/flagged/body DELETE, data preservation, privileged actors and controls.
+
+BEFORE: after correcting unique-email fixtures, member DELETE returned 204 and
+deleted synthetic Business/member/Client; 3 control tests passed, 7 failing
+assertions across 5 tests. The earlier 8 fixture errors are not exploit evidence.
+AFTER: syntax/diff PASS; focused8 PASS; separate self-review (not independent);
+system check and migration drift PASS; affected163 PASS + 3 unrelated PostgreSQL ownership-concurrency skips on the
+current combined dirty checkout, including existing outreach STOP/consent tests.
+
+Commands and exact labels: output/security-remediation-20261028/completion-results.json.
+Run entry: .venv/Scripts/python.exe -B output/security-remediation-20261028/run_checks.py
+with before-fixture-fixed / after / completion phases and explicit Django labels.
+Existing isolated_runtime, disposable SQLite, no .env load or real keyring,
+synthetic connector mapping, provider-safe environment and network-connect guard.
+No frontend build/browser or PostgreSQL/live checks: HTTP method boundary only,
+no UI/schema/locking/deployment change. This is scoped local remediation, not full
+project/runtime/production certification. All tests ran against canonical sources.
+
+Evidence/report/task-only patch: output/security-remediation-20261028/.
+Managed MCP unavailable; owner explicitly approved this local artifact destination.
+Canonical scan artifacts untouched. Original three source WIP files stay byte-equal;
+this checkpoint preserves its entire original dirty prefix and appends only this
+section. STATUS/access/roadmap/capability notes synchronized; no new backlog or
+product scope. README/operations/integrations/CRM contracts unchanged because no
+setup/environment/domain lifecycle/integration behavior changed.
+
+No code/evidence remainder in this bounded generic-DELETE fix. Publication and
+deployment intentionally excluded. A future Business deletion lifecycle would
+require its own approved contract; none was built. Other findings remain separate;
+AUD-17 mixed-access choice and Business.status policy remain owner decisions.
+
+
+## FU-BE-01-20261028 — invitation bearer projection
+
+Authorized next bounded security remediation; user approved project-local artifacts.
+Root C:/Users/user/Desktop/PlatformaCRM; codex/ui-testing-toolkit, HEAD
+98925b6796d4995e80af9d9a040ec5bbcfcab348 + existing WIP/OFFICIAL-01 and this patch.
+No index/commit/push/deploy, production DB, real provider sends or permanent keys.
+
+BEFORE: TEAM VIEW reader obtained token/invite_path for a pending invitation with
+an unregistered recipient and assigned admin role. Anonymous accept created that
+account with the caller-selected password and admin membership (all four attack
+assertions true). This is conditional new-account claim, not universal existing-
+account takeover, cross-tenant access or proof of bypassing login MFA. Before11:
+10 failing assertions across 6 tests, 5 legitimate controls PASS, no fixture errors.
+
+Fix: per-instance BusinessInvitationSerializer.to_representation checks existing
+can(user, instance.business, TEAM, MANAGE). Otherwise token and invite_path are
+empty strings, also when request/user context is absent. Field names/string shape,
+metadata and manager sharing remain. Common list/detail/create/update/revoke output
+is protected; preview/accept and consented reissue logic are unchanged. No new
+permission, role-delegation policy, status or lifecycle. No frontend source change:
+sharing UI already requires canManageTeam, and authorized response shape is intact.
+
+Ordered checks: compile/diff PASS before focused execution; focused11 PASS after;
+one separate self-review (not independent); system/migration drift PASS; joint177
+discovered:174 PASS,3 PostgreSQL-only OwnershipConcurrencyTests skipped. Those
+unchanged transfer POST/profile-repair row-lock scenarios are not an applicable
+gate for this serialization permission boundary. OFFICIAL-01 eight regressions,
+employee reissue/identity/consent and existing WIP outreach STOP tests included.
+
+Exact commands, labels, logs and source hashes:
+output/security-remediation-20261028/invitation-token/*-results.json and final-integrity.json.
+Run entry: .venv/Scripts/python.exe -B
+output/security-remediation-20261028/invitation-token/run_checks.py <phase> <labels>.
+Existing isolated_runtime, disposable SQLite, no dotenv/real keyring, synthetic
+connector mapping and network-connect guard. No UI build/browser or live/PG tests:
+no frontend/schema/locking/deployment behavior changed. Scoped PASS, not full project.
+
+Original code/WIP/OFFICIAL-01 source and tests byte-identical; prior docs content
+retained with these notes and this original checkpoint prefix preserved verbatim.
+Prior packet artifacts/canonical scan artifacts untouched. Access/STATUS/roadmap/
+capability notes synchronized. README/integrations/operations/CRM unchanged: no
+setup, provider, environment, domain lifecycle or new UI contract changed.
+
+No code/evidence remainder for preventing new disclosure through this serializer.
+Previously copied bearer values are not invalidated: real rotation/revocation and
+incident response require their own scope; existing expiry/revoke/reissue remain.
+Other findings, AUD-17 mixed-access choice and Business.status remain separate.
+
+
+## OFFICIAL-20-20261028 — readiness redaction
+
+Authorized independent security fix; auth/reset investigation/reproduction/source
+changes/dedicated suites explicitly excluded. Root C:/Users/user/Desktop/PlatformaCRM,
+codex/ui-testing-toolkit, HEAD98925b6796d4995e80af9d9a040ec5bbcfcab348 + existing
+WIP, OFFICIAL-01, FU-BE-01 and this patch. No index/commit/push/deploy or real settings.
+
+Trace: raw CELERY_BROKER_URL in ProductionAuditItem.detail reached platform manager
+response and CLI. Sibling origins/provider URL details and Telegram rollout shared
+the same configuration-echo pattern. Source producers now expose only configured
+booleans (broker additionally TLS), preserving keys/title/status/severity/action.
+Broker parser ValueError returns False, so malformed input produces failed-check
+without raw fallback or crash. No access rule/default/URL setting/provider changed.
+Existing display-URL helper is unchanged: it retains paths and malformed fallback,
+so it is intentionally not used for secret-bearing configuration diagnostics.
+
+BEFORE9:12 failing assertions and1 malformed-URL parser error,2 controls PASS;
+platform response contained synthetic credential/URL markers. A broad URL-host
+assertion was narrowed to the actual four hosts, then rerun before patch and still
+failed on intended markers. No real config/secret was read or printed.
+AFTER: compile/diff first, focused9 PASS; separate self-review (not independent);
+system/migration drift PASS; joint135 PASS without skip, including readiness/rules/
+platform/rollout/paid-beta, DELETE8, invitation11 and existing outreach/notification
+WIP. No auth/reset suite or OTP/reset reproduction. Prior fixes and WIP retained.
+
+Exact commands/labels/results: output/security-remediation-20261028/readiness-redaction/
+*-results.json. Entry: .venv/Scripts/python.exe -B
+output/security-remediation-20261028/readiness-redaction/run_checks.py <phase> <labels>.
+Existing isolated_runtime, disposable SQLite, dotenv disabled, synthetic connector
+mapping and network-connect guard. No real provider calls, production DB/keyring,
+permanent credentials or working configuration. No UI build/browser/PostgreSQL:
+no frontend/schema/locking change; API/CLI payload contracts covered directly.
+
+Task-only patch/report/integrity: same output folder. Previous packet artifacts and
+canonical scan artifacts untouched; prior code/WIP byte-identical, original dirty
+checkpoint prefix preserved verbatim, shared docs extended only with this result.
+STATUS/operations/roadmap/capability notes synchronized. Access/CRM/integrations/
+README unchanged: no permission/domain/connector/setup behavior changed.
+
+No code/evidence remainder in this redaction scope. Not a generic scrubber for
+arbitrary misplaced secrets in every metadata field; no inspection/rotation of
+previously disclosed credentials. Production acceptance/publication excluded.
+Other findings, excluded auth/reset, AUD-17/Business.status remain outside scope.
+
+
+## OFFICIAL-08-20261028 — pricing linked Business validation
+
+Authorized next independent bounded security fix; auth/reset investigation,
+reproduction/source changes/dedicated suites excluded. Canonical root
+C:/Users/user/Desktop/PlatformaCRM, codex/ui-testing-toolkit, HEAD
+98925b6796d4995e80af9d9a040ec5bbcfcab348 + existing WIP, OFFICIAL-01/FU-BE-01/
+OFFICIAL-20 and this patch. No index/commit/push/deploy, external or real DB effects.
+
+BEFORE13:7 failing assertions across7 tests,6 controls PASS. PATCH omitting business
+accepted a foreign rule while retaining offer.business; synthetic legacy bad offers
+affected another Business recommendation and satisfied the autopilot observation
+gate. Source/controls use two disposable businesses only; no actual price writes.
+
+Fix: shared KaspiCompetitorOfferSerializer compares effective saved/incoming
+business with effective rule. Creation without business still derives it from
+rule in the existing view; same-Business PUT/PATCH/relink remain allowed. Generic
+Business reparent denial and VIEW/UPDATE/audit conventions unchanged. A price-only
+PATCH cannot silently preserve an inconsistent relation; explicit valid repair
+works. Recommendation selection and autopilot observation gate now also filter
+offers by rule.business, preserving available/order and all other controls.
+
+Trusted service offer creators already use business=rule.business. No new model,
+permission, pricing formula, provider adapter, DB constraint or migration. Trusted
+ORM/admin writes are not redefined; old inconsistent rows are not auto-cleaned.
+No working row was inspected, counted, migrated, repaired or deleted.
+
+Ordered checks: compile/diff before execution PASS; focused13 PASS for integer/string/
+multipart PATCH, explicit/omitted/null fields, owner of both businesses, corrupt/
+unchanged links, explicit repair, create/PUT/relink, foreign/role denial and both
+readers. Separate self-review, not independent. System/migration drift PASS;
+joint171 PASS without skip: pricing23 + new13, previous three fix suites/readiness/
+platform/rollout/paid-beta and existing outreach/notification WIP. No auth/reset
+suite or OTP/reset reproduction. No failures/errors. No PostgreSQL/browser/build:
+no schema/locking/frontend change; affected API/domain paths tested directly.
+
+Exact commands/labels/results: output/security-remediation-20261028/
+pricing-business-validation/*-results.json. Run entry: .venv/Scripts/python.exe -B
+output/security-remediation-20261028/pricing-business-validation/run_checks.py
+<phase> <explicit labels>. Existing isolated_runtime, disposable SQLite, dotenv/
+actual keyring disabled, synthetic connector mapping and network-connect guard.
+No live provider calls, real repricing, credentials/access-setting changes or working DB.
+
+Prior source/WIP/fixes byte-identical; original dirty checkpoint prefix preserved
+verbatim, prior docs content retained with this note. Previous/canonical packet
+artifacts untouched. STATUS/access/roadmap/capability notes synchronized. Operations/
+integrations/CRM/README unchanged: no environment/provider/financial formula/setup
+contract changed. Task-only patch, report and final-integrity in the folder above.
+
+No code/evidence remainder in this serializer/two-reader scope. Not a global DB
+constraint or legacy-data cleanup and not full project/production acceptance.
+Other findings, excluded auth/reset, AUD-17 and Business.status remain separate.
+
+
+## OFFICIAL-06-20261028 — bounded outreach template rendering
+
+Explicit owner approval received; prior approval-pending restriction resolved for
+this packet only. OFFICIAL-14/auth-reset safety exclusion remains untouched, no
+retry/workaround or dedicated auth/reset suite. Root C:/Users/user/Desktop/PlatformaCRM,
+codex/ui-testing-toolkit, HEAD98925b6796d4995e80af9d9a040ec5bbcfcab348 + WIP/four
+previous fixes and this patch. One writer, no worktree/index/commit/push/deploy.
+
+Source: unrestricted format_map after root-name-only validation. Replaced with
+bounded Formatter.parse and exact named substitutions, cumulative length checks
+before join. Five public variables, Unicode, escaped braces, literal values preserved;
+unknown/navigation/positional fields, conversions and nonempty format specs fail.
+Input16384/output65536 character caps are internal resource bounds, not provider
+quotas or commercial limits; never silently truncate/reinterpret invalid template.
+Serializer errors field-specific; prepare revalidates legacy/empty audiences; launch
+guards cached/plain text and fallback, recipient writes enforce output bound. Stored
+plain text/braces are not parsed again. Existing atomic rollback/state/consent/STOP/
+permission/rate/provider behavior unchanged; no working data migrated or inspected.
+
+BEFORE authoritative before-route-fixed13:20 failing assertions across10 tests,
+3 control tests PASS. Baseline renders width65537 only, extreme widths parse-only;
+no unbounded-memory experiment or provider send. Initial before log used wrong URL
+separators, corrected/rerun before source patch. Post-patch preliminary13 passed,
+but wrapper continued after trailing-EOF hygiene failure. EOF fixed, compile/diff
+PASS, then after-ordered13 PASS on exact candidate. Separate self-review, not
+independent. Completion system/migration drift PASS; combined184 PASS without skip,
+including previous four fixes/pricing/readiness/platform/rollout and outreach/
+notification WIP. No failures/errors. Capacity interruption was technical, restored
+candidate/result hashes and continued without repeating completed baseline.
+
+Exact commands/labels/exit codes: output/security-remediation-20261028/
+outreach-template-safety/*-results.json. Entry: .venv/Scripts/python.exe -B
+output/security-remediation-20261028/outreach-template-safety/run_checks.py <phase> <labels>.
+Existing isolated_runtime, disposable SQLite, no dotenv/actual keyring, synthetic
+connector mapping and network-connect guard. Local pending notification rows only;
+no external sends, real recipients, production DB, permanent credentials or access
+settings changes. No frontend/browser/PG: no frontend/schema/locking changes; API,
+domain/rollback and grammar controls directly verified on canonical dirty sources.
+
+Prior four-fix source/WIP byte-identical, all old artifacts and canonical scan
+artifacts unchanged, original dirty checkpoint prefix preserved verbatim. STATUS/
+operations/roadmap/capability notes synchronized. Access/CRM/integrations/README
+unchanged: no permission, lifecycle, connector protocol or setup contract changed.
+Task-only patch, report and final-integrity in the output folder above.
+
+No code/evidence remainder in bounded new rendering/recipient-write/launch scope.
+Existing advanced templates may need explicit edit; no working content inventory,
+legacy/pending-notification migration, provider quota certification or production
+PASS claimed. AUD-17/Business.status/legacy draft decisions not chosen.
+Next independent confirmed finding: OFFICIAL-04 linked-entity VIEW for Notes reads,
+not started in this packet. Excluded auth/reset remains excluded.
+
+
+## OFFICIAL-04-20261028 - linked-object VIEW for Notes reads
+
+Mode: implementation/evidence gap, explicitly authorized security remediation.
+Root C:/Users/user/Desktop/PlatformaCRM; codex/ui-testing-toolkit;
+HEAD98925b6796d4995e80af9d9a040ec5bbcfcab348 + existing WIP/five prior fixes.
+No worktree, other writer, index/commit/push/deploy. Auth/reset safety-blocked scope
+not read/reproduced/modified; AUD-17/Business.status/legacy draft policy not chosen.
+
+Source: NoteViewSet inherited only tenant/Clients filtering before serialization.
+Invariant: a recognized linked entity must also be currently readable by actor.
+Reused scope_entity_history in common get_queryset; SQL filtering before count/limit
+and get_object covers list/detail/HEAD and inherited object actions. Archive was an
+extra read alias (no archive fields on Note); hidden content now404. Existing visible
+write permission403/validation and ownership attribution unchanged. Updated one
+existing Notes expectation to exact404; ActivityEvent remains403. Added14 tests.
+No helper/serializer/model/schema/new permission/notification/BusinessEvent/AI change.
+Existing CRM cards already scope before slice; Lead/Appointment add-note callers
+guard their source and serialize newly created notes. Trusted raw ORM/serialization
+is not claimed safe for arbitrary inconsistent data. Unknown/non-CRM/system policy
+is preserved; recognized foreign/missing/malformed references hidden. Archived and
+unlinked history, owner access and ordinary CRUD controls remain.
+
+Ordered checks: BEFORE13 had21 failing assertions across9 methods and4 controls PASS;
+additional archive baseline1 failed with200 instead of404. Compile/diff PASS before
+AFTER23 PASS (new14+existing write9). Separate sequential self-investigator/reviewer
+passes, not independent assurance. Completion system check/migration drift PASS;
+combined270 PASS, no skips/errors. Tests cover ten target families, resource deny,
+OWN/TEAM, message-parent/bot aliases, permission/capability changes, pagination,
+owner/archived/unlinked, invalid links, CRUD and CRM-card projection/serialization.
+Exact commands/labels/exits in *-results.json and logs under
+output/security-remediation-20261028/notes-linked-object-access. Entry:
+.venv/Scripts/python.exe -B <folder>/run_checks.py <phase> <labels>.
+Existing isolated_runtime/disposable SQLite, dotenv disabled, synthetic connector
+mapping, network-connect guard. No production/working DB, actual secrets/keyring,
+real messages/providers, persistent credentials or access-setting changes.
+Frontend/browser/PG omitted: no UI/schema/locking change; existing SQL helper and
+affected API/scope behavior directly tested. This is scoped local evidence, not
+full-project, deployment or production acceptance.
+
+All prior source/WIP bytes preserved; shared doc additions only and original dirty
+checkpoint prefix retained. Five prior artifact manifests verified, canonical scan
+artifacts untouched. STATUS/access/roadmap/capabilities synchronized. README, CRM,
+operations/integrations unchanged: no setup, lifecycle, provider or storage change.
+Task-only diff, report, source hashes and final-integrity in packet folder.
+No code/evidence remainder in recognized linked Note visibility boundary. No legacy
+data cleanup, global integrity constraint or standalone serializer policy claim.
+Next independent candidate: OFFICIAL-07 onboarding role-preset overwrite, not started;
+must re-investigate current evidence before any patch. Auth/reset remains excluded.
+
+
+## OFFICIAL-07-20261028 - preserve role presets during onboarding
+
+Explicit owner-authorized security code/evidence packet, existing canonical checkout
+C:/Users/user/Desktop/PlatformaCRM; codex/ui-testing-toolkit;
+HEAD98925b6796d4995e80af9d9a040ec5bbcfcab348 + WIP/six prior fixes + this patch.
+One writer, no worktree/index/commit/push/deploy. OFFICIAL-14/auth-reset not investigated,
+reproduced or modified; no dedicated auth/reset tests. AUD-17/Business.status and
+legacy draft policy untouched. No actual account/role/security settings changes.
+
+Boundary: Settings UPDATE onboarding called ensure_default_roles, which reset saved
+permissions/scopes/activation even without TEAM MANAGE. Common initializer now seeds
+only absent BusinessRole presets; existing role and permission rows remain unchanged,
+including inactive/system=false/renamed/empty/deleted-permission customizations.
+Atomic initialization prevents a failed permission insertion leaving a partially
+seeded new role. Existing wildcard/catalog/named defaults still initialize fully.
+Explicit audited TEAM MANAGE edit/visibility APIs unchanged; no reset endpoint/flag
+or new permission. No unresolved product choice blocks preserving existing rights.
+Caller inspection: onboarding apply, Business create, activation initializer call
+site (not its auth flow); no reset request found. No schema/notification/BusinessEvent/
+AI/provider changes. No data migration or automatic correction of actual roles.
+
+Original baseline errored on duplicate empty fixture emails; corrected emails,
+permission-edit URL and explicit Settings grant before source patch. Retained logs.
+Authoritative corrected BEFORE12:11 failing assertions across10 methods and2 controls
+PASS. Syntax compile/diff PASS before AFTER23 PASS (new12 + existing onboarding11).
+Separate self-investigator and reviewer passes, not independent review. Completion:
+system check/migration drift PASS, combined316 PASS, no skips/errors. Includes
+six earlier fixes, existing consent/STOP WIP, canonical role profiles, audited role
+visibility, pagination and selected non-auth effective-permission/tenant tests.
+Exact command arrays, labels, exit codes and logs are in output/security-remediation-
+20261028/onboarding-preset-preservation/*-results.json. Runner entry:
+.venv/Scripts/python.exe -B <folder>/run_checks.py <phase> <labels>.
+
+Synthetic disposable SQLite only, existing isolated_runtime, no dotenv/actual keyring,
+synthetic connector mapping, network-connect guard. No working/production DB, actual
+secrets, real sends/providers, persistent credentials or access-setting changes.
+No UI/browser gate: backend initializer and API scope only. No schema/locking change
+requiring PostgreSQL: atomic rollback verified here, concurrent first initialization
+not claimed/certified; existing get_or_create/name uniqueness semantics unchanged.
+No full-project, release or production PASS claimed. Root SECURITY.md absent.
+
+Preserved all starting source/WIP bytes and original dirty checkpoint prefix; shared
+docs only receive this packet's additions. Verified six prior artifact manifests;
+canonical scan artifacts untouched. STATUS/access/roadmap/capabilities synchronized.
+README, CRM, operations/integrations unchanged: no setup/lifecycle/provider change.
+Task-only patch reverse-applicability and Git diff hygiene PASS; tested source hashes,
+integrity report and manifests retained in packet folder. No code/evidence remainder
+in this create-only initialization scope. Existing incomplete/corrupt/duplicate preset
+rows not repaired; access-resolution fallback unchanged. Explicit reset/repair needs
+separate scope rather than implicit onboarding. Next independent candidate is
+OFFICIAL-02 legacy analytics resource visibility; not started. Auth/reset excluded.
+
+
+## OFFICIAL-02-20261028 - legacy analytics source-resource visibility
+
+Explicit owner-authorized security code/evidence packet, canonical checkout only
+C:/Users/user/Desktop/PlatformaCRM; codex/ui-testing-toolkit;
+HEAD98925b6796d4995e80af9d9a040ec5bbcfcab348 + WIP/seven prior fixes + this patch.
+One writer/no worktree/index/commit/push/deploy. OFFICIAL-14/auth-reset not investigated,
+reproduced or modified; no dedicated auth/reset tests. AUD-17/Business.status and
+legacy draft policy untouched. No actual roles/account/security settings changed.
+
+Boundary: legacy manager queries rebuilt raw Business/member datasets, bypassing
+resource VIEW/capability/object scope; dashboard and legacy summary omitted capability.
+Existing _scoped helper reused before dates/grouping/counts/sums in crm_metrics,
+views and reports. No helper/permission/member-report policy or business formula
+redesign. Availability includes capability. Joint conversion inputs require both
+readable Lead and Deal; authorized Lead IDs independent of date/archive cohort retain
+old formula for conversions involving older visible Leads. Independently permitted
+Deal/Appointment counts remain even with Lead VIEW denied. Modern workspace already
+scoped and unmodified. Legacy CSV/queued export render through same report builder.
+No schema/notification/BusinessEvent/AI/provider changes or new aggregate policy.
+
+New apps/analytics/tests_resource_visibility.py15 tests. Initial invalid fixtures
+used Service.price then base_price instead of price_from; later unsupported
+Appointment.created_by replaced with actual Resource.linked_user. These three invalid
+setup attempts retained, not counted as security evidence; actual models inspected
+and corrected before source patch. Authoritative BEFORE15:13 failing assertions
+across10 methods,5 controls PASS. Syntax/diff PASS then AFTER38 PASS (new15+existing
+legacy/workspace23). Separate investigator/reviewer self-passes, not independent.
+Completion system/migration drift PASS; combined375 PASS, no skips/errors, owning
+analytics package plus prior combined316 labels and seven previous fixes/WIP.
+Exact commands/labels/exits in output/security-remediation-20261028/
+analytics-resource-visibility/*-results.json. Entry: .venv/Scripts/python.exe -B
+<folder>/run_checks.py <phase> <labels>. No source edits after tested source hashes.
+
+Tests prove per-resource deny, OWN/TEAM, unchanged member boundary, capabilities across
+dashboard/nested/summary/CSV, availability, next-read permission changes, mixed rights,
+owner/full-access/formula, old-Lead conversion period, date/archive/foreign isolation,
+Analytics VIEW denial. Owning suites include financial/workspace/queued exports.
+Synthetic disposable SQLite, existing isolated_runtime, dotenv/actual keyring disabled,
+synthetic connector mapping and network-connect guard; no working/production DB,
+external sends/provider calls, actual secrets or credentials/access-setting changes.
+No browser/frontend/PG gate: no UI/schema/locking change, ORM scope and API/CSV checked
+directly here. No full-project/release/production PASS; root SECURITY.md absent.
+
+Previous source/WIP byte-identical and all seven prior artifact manifests verified.
+Original dirty checkpoint prefix retained; shared docs only receive this packet's
+additions. Canonical scan artifacts untouched. STATUS/access/roadmap/capabilities
+synchronized; README, CRM, operations/integrations unchanged because no setup/domain/
+provider contract change. Task-only diff reverse-applicability, diff hygiene and
+integrity evidence retained. No code/evidence remainder in this bounded source-record
+visibility path. Field-level amount masking on readable Deals remains OFFICIAL-12;
+Client retention denominator/connector/setup reporting not silently certified here.
+Next independent candidate OFFICIAL-12 alternate-reader amount masking, not started.
+Auth/reset remains excluded; no pending business decision selected.
+
+
+## OFFICIAL-12-20261028 - sensitive Deal amount alternate projections
+
+Explicitly authorized security code/evidence packet, one writer/canonical checkout
+C:/Users/user/Desktop/PlatformaCRM, codex/ui-testing-toolkit,
+HEAD98925b6796d4995e80af9d9a040ec5bbcfcab348 + WIP/eight prior fixes + this patch.
+No worktree/index/commit/push/deploy or actual roles/account/settings changes.
+OFFICIAL-14/auth-reset not investigated/reproduced/modified; no dedicated auth/reset
+suite. AUD-17/Business.status/legacy draft policy untouched. No permanent credentials.
+
+Invariant: a readable Deal does not imply sensitive amount visibility. Common
+apps/crm/field_policy.py delegates existing can_view_sensitive_field without changing
+role/BILLING semantics; no actor fails closed. Applied to standard serializer, CSV,
+every queue Deal item, direct/weighted summary aggregates, analytics Deal values,
+typed activity amount/currency metadata recursively, CRM-card timeline actor and AI
+rule source metadata. Counts/status/time-based risk/record scope and legitimate
+monetary formulas retained. Mixed contributing businesses mask whole money aggregate
+if any denies it; no partial sum posing as original total. Amount range/order query
+aliases denied before applying hidden predicate, including legacy/board/summary/
+workspace. Existing explicit field policy only, no new permission/product model.
+Entity Deal export fingerprint includes current amount policy so saved allowed files
+cannot survive field-right change; old Deal fingerprints require re-request, no
+file deletion/migration. Existing AUD18 checks and analytics sensitive context retained.
+
+Original BEFORE18:28 failing assertions across13 methods and2 export diagnostic
+errors (wrong job.error_message; corrected to actual job.error). Targeted corrected
+export2 failed as expected on unchanged source. Combined baseline security evidence
+30 assertions across15 methods,3 controls PASS; no baseline setup failure counted as
+exploit proof. AFTER18 PASS; later3 supplemental owner/history/mixed-Business controls
+PASS,19 unique methods. Final syntax/diff/hash gate PASS. Separate self-investigator/
+reviewer passes, not independent assurance. Completion system/drift PASS; combined
+523 PASS without skips, owning CRM and dependent queues/import-export/AUD18/AI
+rules/tools/analytics/activities plus all previous combined375 labels and eight fixes.
+
+Frontend contract inspection: nullable amount types were inaccurate and two helpers
+rendered null as0currency. Synthetic before demonstrated0USD vs '-'; numeric and zero
+controls preserved after guard. Updated only Deal-related nullable contracts and
+two helper null branches. Initial tsc failed on old signatures, retained/corrected;
+ordered formatter controls/i18n/types/main Vite build PASS. No new UI/copy/layout.
+envDir=false, sanitized inherited environment and Node network-connect guard; build
+outputs/cache in packet folder. Widget unaffected, no widget/browser/live build claim.
+No auth/reset implementation touched by shared type monetary hunks.
+
+Exact commands/labels/exits: output/security-remediation-20261028/
+deal-amount-projections/*-results.json. Backend entry .venv/Scripts/python.exe -B
+<folder>/run_checks.py <phase> <labels>; frontend entry .venv/Scripts/python.exe -B
+<folder>/frontend_verify.py frontend-ordered. Existing isolated_runtime, disposable
+SQLite/media/temp, dotenv/actual keyring disabled, synthetic connector mapping and
+network guards. No working/production DB, actual secrets, providers/AI calls/sends,
+credentials/security-setting change or publication. PG not run: no schema/locking or
+concurrency behavior change; actor/ORM/API/CSV/worker/download/formatter paths verified.
+No full-project/release/production PASS. Root SECURITY.md remains absent.
+
+Prior task source changes are retained in recorded dirty source baseline; only
+necessary additional hunks in shared analytics/CRM-card paths. Unrelated WIP and
+previous tests byte-identical. All eight prior artifact manifests and original dirty
+checkpoint prefix verified; canonical scan artifacts untouched. Task-only patch uses
+captured dirty source baseline (not HEAD) and per-document pre-addition bytes;
+reverse applicability/diff hygiene PASS. STATUS/access/frontend/operations/roadmap/
+capabilities synchronized. README/CRM unchanged: no setup/lifecycle/formula change.
+
+No code/evidence remainder in bounded typed Deal amount projection scope. Stored
+activity/audit/value history remains immutable; no arbitrary free-text DLP, working
+role migration or unrelated receipts/service-price/financial policy rewrite claimed.
+Next independent candidate OFFICIAL-11 bounded consent-XLSX processing, not started.
+Auth/reset and pending owner decisions remain excluded.
+
+
+## OFFICIAL-11-20261028 - bounded consent XLSX parser integration
+
+Explicit owner-authorized security code/evidence packet, canonical checkout only:
+C:/Users/user/Desktop/PlatformaCRM, codex/ui-testing-toolkit,
+HEAD98925b6796d4995e80af9d9a040ec5bbcfcab348 + existing WIP/nine previous fixes + patch.
+One writer/no worktree/index/commit/push/deploy. OFFICIAL-14/auth-reset not investigated,
+reproduced or modified; no dedicated auth/reset suite. AUD-17/Business.status/legacy
+draft policy untouched. No actual roles/settings/credentials/customer files changed.
+
+Before: outreach.imports._read_xlsx loaded workbook directly and made a complete
+worksheet list before consent row validation; accepted compressed bytes could expand
+outside shared reader limits. Direct helper also lacked bounded actual-byte read.
+After: read max upload bytes+1 (regardless of declared size), reject overflow, pass
+content to existing core read_xlsx_rows and stream its bounded rows into unchanged
+consent normalizer. File-key ValidationError preserved/wrapped consistently, generator
+closed in finally. Core reader/limits unchanged: ZIP entries/duplicates/encryption,
+expanded-size/ratio and streaming all-part XML/DOCTYPE/geometry preflight before
+openpyxl; runtime physical row/column caps, underreported dimensions reset and reader
+cleanup. New ordinary importer policy/permission/format not invented.
+
+Single public consumer bulk-import-file still validates upload type and authorized
+Business/role before parsing, and writes consents only after complete normalization.
+Statuses/evidence/aliases/date/number/bool/strings/cached formula/active sheet semantics
+preserved within existing caps. Blank/unknown/inactive-sheet XML count toward parser
+resource bounds; no silent truncation. CSV/JSON business flows untouched; not a blanket
+CSV/JSON resource audit. No AV/provider call, lifecycle/permission, notification,
+BusinessEvent, AI, schema or environment change.
+
+New tests_consent_xlsx_limits.py18. BEFORE18:14 failing assertions across10 methods,
+one underreported-dimension old compatibility error (header-only result instead of
+actual valid row),7 controls PASS. No fixture setup errors or large allocation/stress
+test: tiny ZIPs/lowered limits, both old/shared loaders mocked for hostile geometry,
+finite three-data-row fallback and actual13-byte upload with8-byte cap. AFTER52 PASS
+(new18 + existing core reader/outreach34). Separate self-investigator/reviewer passes,
+not independent. Completion system/migration drift PASS; combined551 PASS without
+skips, including shared XLSX reader and previous523 labels/nine fixes/consent-STOP WIP.
+No source changes after ordered syntax/diff gate and tested hashes.
+
+Exact commands/labels/exits in output/security-remediation-20261028/consent-xlsx-limits/
+*-results.json. Entry .venv/Scripts/python.exe -B <folder>/run_checks.py <phase> <labels>.
+Existing isolated_runtime, disposable SQLite/media/temp, dotenv/actual keyring disabled,
+synthetic connector mapping, network-connect guard. No real files/working/production
+DB, external services/sends, credentials/security settings or publication. No frontend/
+browser/PG gate: parser/API-only, no UI/schema/locking change; malformed/normal/limit/
+role/tenant/no-partial-write paths directly checked. No full-project/production or
+hostile-size memory certification; static parser bounds are not an OS memory quota.
+Root SECURITY.md absent.
+
+All starting50 dirty/untracked source/docs unchanged before scoped documentation
+additions; prior source/WIP/tests byte-identical after. All nine prior artifact manifests
+and original dirty checkpoint prefix verified; canonical scan artifacts untouched.
+Task-only diff against own clean source plus recorded per-document pre-addition bytes,
+reverse-applicability/diff hygiene PASS. STATUS/operations/integrations/roadmap/
+capabilities synchronized; access/CRM/frontend/README unchanged (no access/domain/UI/
+setup contract change). Final-integrity/report/manifest retained in packet folder.
+
+No code/evidence remainder in bounded consent-XLSX integration. No data/consent-policy
+rewrite, new limits, parser hard-OS-quota claim or unrelated reader redesign. Next
+independent candidate OFFICIAL-05 preserving marketing opt-out on public intake,
+not started; pending owner decisions and auth/reset remain excluded.
+
+
+## OFFICIAL-05-20261028 - public intake preserves existing marketing opt-out
+
+Explicitly authorized security code/evidence packet, one writer/canonical checkout
+C:/Users/user/Desktop/PlatformaCRM, codex/ui-testing-toolkit,
+HEAD98925b6796d4995e80af9d9a040ec5bbcfcab348 + WIP/ten prior fixes + this patch.
+No worktree/index/commit/push/deploy, real consents/roles/account/security settings,
+credentials or customer data. OFFICIAL-14/auth-reset not investigated/reproduced/
+modified; no dedicated auth/reset suite. AUD-17/Business.status/legacy draft policy
+untouched. Original W1 STOP/delivery and outreach/tests.py preserved byte-for-byte.
+
+Source: two public callers (lead forms and website chat) match anonymous phone/email,
+then call record_explicit_consent if an affirmative checkbox is present. Old helper
+unconditionally changed OUT to IN and cleared prior refusal evidence/timestamps.
+Common helper now uses existing unique Business/client/channel get_or_create for
+absent rows, conditional UPDATE excluding OPTED_OUT for existing rows and refreshes
+result. Guard is evaluated at SQL write boundary, not only a stale Python pre-check.
+Allowed existing UNKNOWN/IN updates explicitly retain auto_now timestamp behavior.
+No model save override/known consent post_save consumer in inspected signal modules.
+No new lock service, permission, public override flag, schema or actual migration.
+
+Callers/routes, contact capture and payload flag parsing unchanged; successful intake
+still creates Lead/submission or website conversation/client with existing response.
+No raw refusal state added to public response. Existing flags/new/UNKNOWN/already-IN,
+Business/channel independence preserved. Prior OUT source/note/evidence/opt-in/out/
+updated timestamps remain exactly intact. Existing inbound START helper (Telegram/
+WhatsApp ingress callers traced) and authorized consent management/import remain
+separate lawful re-consent paths; no new evidence/identity policy chosen. STOP before
+SQL update and STOP after initial create/public replay protected in deterministic
+synthetic orders. W1 dynamic delivery/consent.py source unchanged, not recounted as new.
+
+New tests_public_intake_optout.py16. Original BEFORE16:15 expected security failing
+assertions across7 methods plus one negative-control expectation403 vs existing404.
+Source notification OWN scope hides that row; changed test to exact404, reran only
+that control before source change: PASS, including owner re-consent. Thus16 unique
+baseline methods:7 broken,9 controls. No setup errors or external exploit performed.
+Syntax/diff then AFTER106 PASS (new16+existing outreach/forms/bots90). Separate
+self-investigator/reviewer passes, not independent. Completion system/drift PASS;
+combined654 PASS without skips, public forms/chat/controlled/pause cases and all
+previous551 labels/ten fixes/WIP. No source changes after candidate hashes.
+
+Tests: full refusal preservation, both helper channels, all public checkbox aliases/
+replays, email/contact-match alternative, false flag, new/unknown/IN records, tenant/
+channel independence, legitimate START/owner management, role denial. SQL execute-
+wrapper simulates UNKNOWN/IN -> STOP -> public UPDATE without real threads/providers;
+not multi-connection PostgreSQL concurrency certification. Conditional SQL predicate
+and existing uniqueness are the selected repository-native write boundary.
+No schema/notification/BusinessEvent/AI/env changes; normal public intake events and
+existing inbound notification semantics unchanged. No new process or sends.
+
+Exact commands/labels/exits in output/security-remediation-20261028/public-intake-
+optout/*-results.json. Entry .venv/Scripts/python.exe -B <folder>/run_checks.py
+<phase> <labels>. Existing isolated_runtime, disposable SQLite/media/temp, dotenv/
+actual keyring disabled, synthetic connector mapping and network guard. No working/
+production DB, actual contacts/consents/settings/credentials or providers. No frontend/
+browser gate: public API/response shape unchanged. PG not run: deterministic ordering
+and SQL guard verified locally, no production concurrent-send certification. No full-
+project/release/production PASS; root SECURITY.md absent.
+
+Prior changes retained in dirty source baseline for services.py; only consent-helper
+hunks added, earlier template fix retained. Other starting source/tests/WIP unchanged,
+ten prior artifact manifests and original dirty checkpoint prefix verified; canonical
+scan untouched. Task-only patch uses captured dirty baseline and per-document bytes,
+reverse-applicability/diff hygiene PASS. STATUS/access/integrations/roadmap/capabilities
+synchronized; README/operations/frontend/CRM unchanged (no setup/resource/UI/domain-
+lifecycle change). Final report/integrity/manifest retained in packet folder.
+
+No code/evidence remainder in bounded public opt-out preservation. No generalized
+consent/identity verification redesign or new lawful re-consent standard; existing
+authorized pathways remain. Next independent candidate FU-BE-02 linked Client PII
+visibility in Deal/Lead/Appointment projections, not started. Auth/reset and pending
+owner decisions remain excluded.
+
+
+## FU-BE-02-20261028 - independent Client PII visibility in parent projections
+
+Explicitly authorized code/evidence correction, canonical C:/Users/user/Desktop/
+PlatformaCRM, codex/ui-testing-toolkit, HEAD98925b6796d4995e80af9d9a040ec5bbcfcab348
++ existing dirty WIP and eleven prior local fixes. One writer; self-investigator and
+self-review are separate passes, not independent agents. Patch contract and source
+matrix in packet folder. codex-security:fix-finding applied; managed storage absent,
+owner explicitly approved this output path per artifact-storage user override.
+
+Invariant: readable parent is not Client authority. Shared projection mixin/helper
+delegates to existing readable_link/queryset policy, requiring actor, CLIENTS VIEW,
+capability/object scope and same Business. No ownership inferred through Lead; Client
+has no assignee fields and OWN/TEAM currently does not grant such records. Parent
+record authorization remains unchanged. Explicit actor in nested CRM-card and legacy
+action serializers; no context masks contacts. Batch/list cache is request-local.
+
+Closure: Deal/Lead/Appointment/Task serializers; Task nested Lead/Conversation labels,
+external ID and Client relation; Notes Client link (parent text preserved); activity
+generated text/typed metadata/name/search; CRM-card; work queue labels/client IDs;
+AI assistant Client source and Lead/Appointment names plus rule metadata/labels;
+Outreach consent/recipient typed cached contact/evidence/personalization/provider
+fields, preview and failed appointment notices; Notification client-derived fields
+and all direct action response contexts; Lead/Deal CSV Client links and saved-export
+fingerprint. Existing files with old fingerprint must regenerate, never re-release
+old visible IDs after Client denial. Parent messages/titles/notes remain parent data.
+Not arbitrary free-text DLP; no actual provider/audience eligibility/consent changes.
+
+BEFORE22 after correcting missing synthetic Notification.send_at:61 expected failing
+assertions across18 methods,4 legitimate methods PASS; first run22 fixture setup
+errors retained, never counted as vulnerability proof. First after21/22 passed and
+one ExportJob nonexistent attribute failure; corrected to actual kind/export_key.
+After22 PASS, supplemental review controls focused25 PASS; first history review105
+had one prior equality-control mismatch: HTTP actor versus direct missing actor.
+Expected serialization now receives the same actor, with full response equality
+retained; no denial assertion weakened. Corrected26+history/cards
+105 PASS. Combined 894 PASS without skips. Final exact Client-ID filter guards deny reconstruction through existing aliases
+and retain allowed filters. Six-route deny/allow controls PASS in final27; complete
+combined suite rerun on final candidate hashes after all source/test corrections. Full command arrays/exits/logs
+in *-results.json; isolated runner .venv/Scripts/python.exe
+output/security-remediation-20261028/client-pii-projections/run_checks.py phase labels.
+System check/migration drift PASS. Final syntax/dirty-diff/reverse patch PASS.
+
+Controls: owner and explicit Client read, DENY/OWN/TEAM, module disabled even owner,
+parent OWN/TEAM/denial, same actor next-read revocation, foreign linked Client even
+owner of both, direct/list/detail/board/CRM-card/search, typed copies, nested Task
+without direct Client, provider alias and permitted parent search, stored export
+revocation, permitted notification mark-read without sending, parent note text.
+Frontend nullable DTOs and map/cache fallback, null relation joins and disabled absent
+contact action. Actual calendar component static render/selection/open and Lead helper
+controls, i18n/tsc/main Vite build PASS with no dotenv/network. No full browser gate:
+bounded change is nullable representation/guard, unchanged layout/flow; API plus actual
+component evidence retained, no authenticated full-flow or production UI claim.
+
+Execution diagnostic: bare python resolved LibreOffice; subprocess launch failed
+WinError5 before test execution. Existing saved evidence identified canonical .venv;
+using that supported interpreter succeeded, no escalation/ACL or permission changes.
+Read-only caller-name search inadvertently loaded unrelated app Python text while
+selecting serializer calls; it produced no auth/reset matches, and auth/reset was not
+semantically investigated, reproduced, executed as a finding or changed. Subsequent
+reads scoped to affected modules. OFFICIAL14 remains excluded/safety-blocked.
+
+All54 original dirty files checked against captured source baseline or exact bytes;
+original PRIMARY prefix retained,11 previous artifact manifests verified, canonical
+scan untouched. Existing W1 delivery/outreach tests/STOP and pending AUD17 test retained.
+No stage/commit/push/deploy, worktrees, real account/role/consent/settings changes,
+provider calls, actual customer files/production or working DB. Disposable SQLite,
+synthetic contacts only. No new schema/migration, PG/threaded/load claim. Concurrency
+and live-provider suites not relevant to read projection-only boundary; no changes
+to writes/delivery/locks. No full project/release PASS. Root SECURITY.md absent.
+
+Docs access/frontend/integrations/roadmap/capabilities/STATUS synchronized; README,
+operations/CRM contracts unchanged (no setup/storage/lifecycle change). Source and
+test file list in fix-report/task.patch. FU-BE-03 duplicate_payload remains independent
+and unmodified; OFFICIAL10 only dependent Client-return projection component improved,
+not closed. AUD17/Business.status/legacy draft policies untouched. No remaining code/
+evidence criterion in this bounded linked Client projection scope, subject to stated
+free-text/non-linked-data and live/full-E2E limits. Next finding requires its own
+bounded investigation; no new finding started here.
+
+
+## FU-BE-03-20261028 - Client duplicate DTO visibility
+
+Authorized security code/evidence packet; canonical C:/Users/user/Desktop/PlatformaCRM,
+codex/ui-testing-toolkit, HEAD98925b6796d4995e80af9d9a040ec5bbcfcab348 + initial78 dirty
+paths/twelve completed fixes + this patch. No worktree or extra writer; separate
+self-investigator/reviewer, not independent. Patch contract/source baseline and all
+commands/logs retained in output/security-remediation-20261028/client-duplicate-visibility.
+Managed artifacts unavailable; owner storage override reused, no canonical scan rewrite.
+
+Boundary: clients check-duplicates was CREATE-only and emitted raw duplicate_payload;
+Inbox create-client warning same sink; import preview persisted raw contact DTO and
+ImportJobSerializer returned it. Common duplicate_visibility read projection uses
+canonical readable_queryset(CLIENTS) for current reader, scope/capability/Business.
+Visible DTO fields unchanged; one id-null/blank-contact marker for any hidden group
+retains warning/confirmation without exposing identity or private match count.
+Exclude-client respects current readable IDs to prevent guessing a hidden ID from
+removing warning. Matching and raw duplicate_payload internal helper unchanged.
+
+Self-review found same raw payload copied by forms_service into duplicate_json and
+form_submitted metadata. Two supplemental BEFORE tests reproduced it; their read
+serializers use same projection, matched Client FK also guarded in submission.
+Payload/UTM from user submission and actual stored evidence unchanged, no writes or
+permission expansion. Actual file-local duplicate labels preserved; forged markers,
+malformed/bool/oversized/foreign/missing IDs fail closed. Stored archived snapshots
+follow existing Client read policy while new matching excludes archived as before.
+
+ClientForm generic banner/create-anyway persists for restricted rows, no open/merge;
+permitted details/target handlers and normal no-match submission preserved. Inbox
+warning remains requires_confirmation with generic existing copy when hidden. LeadForm
+and selection hook changes are nullable shared DTO compatibility only, no OFFICIAL16
+authorization fix. ImportPanel existing row/summary warnings unchanged. Raw duplicate
+detection/public form capture/import confirm and actual scanner unchanged; no new right.
+
+Baseline: first16 setup errors unique empty email; corrected fixture emails. Next
+scanner dependency hit network guard (no connection) and Bot nonexistent channel;
+mock scanner per existing import tests, remove invalid field. Final16 baseline:
+18 expected security assertions across11 methods,4 controls plus one request META
+fixture error. Corrected META and reran that legitimate import-confirm control on
+unchanged production source: PASS, giving five baseline controls. Logs retained and
+fixture failures not counted as vulnerability evidence. Supplemental2 stored-copy
+BEFORE failures; two defensive malformed/group controls added after patch.
+AFTER20 new methods within136 affected PASS; combined942 PASS, zero skips.
+Original disclosure no longer reproduces for CREATE-only, alias inputs, exclusion,
+current-role revocation, saved import/submission/activity copies, no actor, capability,
+OWN/TEAM or foreign snapshots. Permitted VIEW/owner/archived-history/input/file-local
+warning/ordinary import match controls pass. No threaded/PG race claim needed for
+read projection-only change; no write or locking change, no schema/migration created.
+
+Ordered syntax/import/system check, migration drift, focused/security alternate inputs,
+legitimate/nearest suites and prior894-label combined regression PASS. Command arrays
+in *-results.json, runner .venv/Scripts/python.exe
+output/security-remediation-20261028/client-duplicate-visibility/run_checks.py phase labels.
+Frontend actual ClientForm isolated render/submit/open/merge controls, i18n/tsc/main
+Vite build PASS with network guard/envDir false; initial nullable type errors retained,
+fixed with two Lead consumer guards. No changed layout/new copy or full browser/E2E
+claim; reachable API plus actual component evidence is the bounded mixed-flow proof.
+
+Initial transport disconnected before new packet creation; no command executed then.
+Safe read after the 10:21UTC reconnect confirmed the same canonical Windows cwd,
+branch/HEAD. Transport restored, not a replacement environment; FU-BE-02 source/doc
+hashes and manifest verified
+before resume. All78 starting WIP paths checked against baseline or unchanged bytes,
+twelve previous manifests verified, original PRIMARY prefix retained. W1 STOP/delivery,
+AUD17 tests and canonical scan artifacts untouched; no secrets/customer data extracted.
+No auth/reset/OFFICIAL14 remediation, real accounts/roles/credentials/security settings,
+providers/AI/sends/production or working DB, index/commit/push/deploy. Only disposable
+synthetic SQLite/files and local mocked scanner. Root SECURITY.md remains absent.
+
+STATUS/access/frontend/integrations/roadmap/capabilities/checkpoint synchronized.
+README/operations/CRM contracts unchanged: no setup/file-storage/lifecycle/domain
+write change. Task-only diff against dirty source baseline, reverse check/diff hygiene,
+source hashes and runtime cleanup PASS. No remaining bounded code/evidence criterion;
+OFFICIAL16 Lead duplicate-check and OFFICIAL10 other child access not closed/count
+merged. AUD17/Business.status/legacy draft decisions excluded. No new finding started.
+
+
+## OFFICIAL-16-20261028 - Lead duplicate-check independent read scope
+
+Explicitly authorized security code/evidence packet; canonical C:/Users/user/Desktop/
+PlatformaCRM, codex/ui-testing-toolkit, HEAD98925b6796d4995e80af9d9a040ec5bbcfcab348
++85 starting dirty paths/thirteen earlier local fixes + patch. One writer; read-only
+mobile analysis may inspect but does not change this snapshot. No agents/worktrees;
+separate self-investigator/reviewer, not independent. codex-security:fix-finding used;
+explicit owner output-folder storage override reused, canonical scan not rewritten.
+
+Source: LeadDuplicateCheckSerializer resolved same-Business Client, fetched related
+Lead directly, applied LIMIT5 before any Lead read scope and emitted id/client/status/
+source/message. View only validates accessible Business; no explicit CREATE assertion
+in current endpoint. Do not invent new workflow permission. Common serializer now
+uses canonical readable_queryset(LEADS) before limit, including scope/capability/
+Business. Inaccessible rows produce only optional has_restricted_related_leads=true,
+without IDs/fields/exact count. Allowed responses omit flag, preserving default shape.
+Current Client visibility independently masks DTO FK and supplies phone/email/exclusion
+only if readable; explicit contact lookup uses existing BE03 project_duplicate_rows.
+These dependencies are not a second BE02/03 closure. OFFICIAL10 stays separate/open.
+
+Self-review: scopes before limit; no global cache; default/no actor and disabled Lead
+capability fail closed for details. Same Business enforced even owner of both; readable
+Lead remains readable when Client is hidden. Existing Business-member endpoint gate,
+ordinary ordering/max5, matcher, role defaults, archived-match behavior and writes
+unchanged. Match-presence warning deliberately retained; no new anti-enumeration,
+identity/permission or lifecycle policy. Next-request revocation tested; no claim of
+serializable mid-request revocation or threaded/PG proof for this read-only change.
+
+Frontend only related_leads consumer LeadForm uses IDs/count (not messages). A generic
+has_related flag would falsely warn when editing the sole visible self; restricted-only
+flag plus existing self exclusion preserves that control. Numeric prefix hidden when
+restricted subset exists; existing generic relatedText/create-anyway retained. State
+clears on missing selection/error/default allowed reply. Selection-context consumer
+reads Client duplicates only; existing BE03 null guards sufficient, not rewritten.
+DTO Client becomes nullable consistently with BE02; readable details otherwise same.
+
+BEFORE15:10 expected security failures; two ordering controls initially failed because
+synthetic created_at values tied. Set explicit fixture dates, rerun both on unchanged
+production source: PASS; remaining3 controls already PASS, five controls total. No
+setup errors or external exploitation. New15 cover VIEW denial/OWN/TEAM/Business,
+owner, scope before limit with8 hidden newer rows, no private count, Client independent
+read/FK and derived-contact/exclusion path, foreign Business, no actor, capability,
+next-read revocation, legacy archive/no-match, readable self-only behavior.
+AFTER86 affected (including new15) and combined957 PASS without skips.
+System check/migration drift, syntax/import, task-only diff/reverse and relevant
+client/Lead/previous942 suites PASS. Exact command arrays/exits in *-results.json;
+runner .venv/Scripts/python.exe
+output/security-remediation-20261028/lead-duplicate-visibility/run_checks.py phase labels.
+
+Actual LeadForm isolated render/effect/timer/submit controls cover restricted warning
+without count, readable count, mixed visibility, sole-self edit, hidden-other edit,
+no data, failure/reset and ordinary submit; i18n/tsc/main Vite build PASS. No new
+copy/layout or actual provider calls, no full authenticated browser E2E claim. This
+is bounded reachable API + actual component proof, not production/release readiness.
+
+All85 starting dirty paths retained against baseline/unchanged bytes, thirteen earlier
+artifact manifests verified, original PRIMARY prefix retained. W1 STOP/delivery and
+pending AUD17 tests preserved. No schema/migration/notification/BusinessEvent/AI or
+domain-write changes, no real account/role/consent/security settings/credentials or
+customer data, no working/production DB, external calls, stage/commit/push/deploy.
+Only disposable synthetic SQLite; no PG concurrency need introduced. No auth/reset/
+OFFICIAL14 investigation or retry; AUD17/Business.status/legacy draft decisions
+untouched. Root SECURITY.md absent. Source hashes stable after gates, runtime cleaned.
+
+STATUS/access/frontend/integrations/roadmap/capabilities/checkpoint synchronized.
+README/operations/CRM contracts unchanged: no setup/storage/lifecycle change. No
+remaining bounded code/evidence criterion under stated warning/caching/runtime limits.
+Next independent candidate OFFICIAL10 child read paths requires its own investigation;
+not started here. No new policy selected or new product functionality introduced.
+
+
+## OFFICIAL-10-INBOX-20261028 - Inbox create and repeated-response read visibility
+
+Explicitly authorized security code/evidence scope: Inbox create-actions/repeated
+answers, current VIEW/object scope/actor serialization. Canonical checkout C:/Users/
+user/Desktop/PlatformaCRM, codex/ui-testing-toolkit HEAD98925b6796d4995e80af9d9a040ec5bbcfcab348
++86 starting dirty paths/fourteen previous local fixes + patch. One writer, separate
+self-investigator/reviewer, not independent; no worktrees/agents. Read-only mobile
+analysis does not write here. Existing artifact-storage owner output-folder override
+reused; canonical scan untouched. Full patch contract/candidate review in packet.
+
+Sources: create-lead/deal linked fast paths and reused pipeline entities returned child
+DTO under CREATE without current VIEW. Task/Appointment keyed retries returned stored
+response_json. Conversation pipeline metadata copied child IDs even when linked fields
+were hidden. Shared read_results helper applies existing readable_link (VIEW/scope/
+capability/Business) before actor-aware serialization. Direct unreadable results return
+read_restricted acknowledgement at SAME HTTP status; pipeline children null with real
+created flags retained. This includes fresh CREATE without VIEW: write succeeds, read
+is not granted. Existing Client warning/confirmation/force flow unchanged from BE03.
+
+Core result gains internal resource_type/id on replay, compare/repr excluded, no DB
+schema change. Only Inbox Task/Appointment replies use it: resolve explicit expected
+model and same Business, no cached body fallback for missing/foreign/malformed refs.
+Live current data/field policy returned when permitted, so rights and current content
+can change between responses; original receipt JSON never rewritten and operation not
+rerun. Original key/hash/locking/expiry/status/default other callers untouched. Generic
+default-contract test confirms cached .data/status and one operation outside scoped
+Inbox projection. Existing CRM contract already says stored response is not access
+proof. Other generic/non-create readers outside this packet remain unmodified and
+not newly certified; no global replay-safety closure claim.
+
+Known typed metadata copies: conversation_pipeline Client/Lead/Deal/Task IDs and
+auto_booking saved Appointment ID/slot/reason. Existing page batching extended for
+these references, no per-row model lookup on list; source metadata remains intact so
+dedup/booking state retained. Single self-review found candidate regression: pending
+booking with appointment_id=None is an offered slot, not existing-resource read. New
+control reproduced it; preserve pending slot/reason, redact only actual unreadable
+saved target. No free-text/qualification reinterpretation, new branch/lifecycle rule
+or product policy. Generic parent workflow/confirmation state remains available.
+
+BEFORE17 valid tests:15 expected failures,2 controls, no fixture errors. First after
+16/17 with one500 from missing Appointment model import; corrected and reran57 PASS.
+Self-review booking pair: one regression/one protected control; fixed. Final20 new
+methods within75 affected PASS, including real isolated booking and pipeline AI/
+confirmation boundary suites with no provider calls. Combined992 PASS, zero skips.
+System check/migration drift, final syntax/import/diff/reverse PASS. Current source
+hashes captured before combined and unchanged after. Exact commands/labels/exits in
+completion/after-review/frontend-results.json, runner .venv/Scripts/python.exe
+output/security-remediation-20261028/inbox-create-read-visibility/run_checks.py phase labels.
+
+Controls: CREATE without VIEW still writes once and safe ack; current Business/OWN/
+TEAM and team membership removal, narrowing between unkeyed/keyed responses, view
+gain, current Client field policy and current title, foreign child even owner of both,
+deleted/foreign/invalid receipt target, payload409/create403, no repeated Task/
+notification or mocked booking, pipeline reuse/model counts/created flags, metadata
+no actor/owner/current scope and immutable original state, pending slot compatibility.
+Fresh writes/dedup services not changed; real booking suites prove owning compatibility,
+one narrow booking mock isolates replay read projection. No production/provider call.
+
+Frontend API unions and actual three Inbox onSuccess consumers support safe ack via
+existing common.saved, ordinary DTO notice unchanged, modal/idempotency-key reset and
+cache invalidation retained. Nullable pipeline envelope/created flags tested. i18n,
+TypeScript/main Vite build PASS with no dotenv/network. Actual handler/effect substitute
+is bounded UI/API evidence, not full authenticated browser E2E or deployed readiness.
+
+All86 starting dirty paths retained against exact dirty baseline or unchanged bytes;
+14 previous artifact manifests and original PRIMARY prefix verified. W1 STOP/delivery,
+pending AUD17 tests and previous fixes preserved. No real DB/customer files/accounts/
+credentials/role/security settings, external sends, migrations to working DB, stage/
+commit/push/deploy. Only disposable synthetic SQLite; no locking/concurrency algorithm
+change, no PG/threaded or serializable mid-request revocation claim. OFFICIAL14/auth-
+reset not investigated/retried; AUD17/Business.status/legacy policy untouched. Root
+SECURITY.md absent. Runtime cleanup and final manifest verify completion.
+
+STATUS/access/frontend/integrations/CRM/roadmap/capabilities/current checkpoint updated;
+README/operations unchanged (no setup/storage/operational change). No remaining bounded
+Inbox code/evidence blocker under stated scope. Generic replay/non-create readers not
+certified; a separate assigned follow-up may assess them. No next finding started.
+
+
+## OFFICIAL-15-20261028 - CRM-card Task preview actor context
+
+Authorized bounded verification/fix-if-needed; outcome no_change to production code.
+Canonical C:/Users/user/Desktop/PlatformaCRM codex/ui-testing-toolkit HEAD98925b67
++92 starting dirty paths/fifteen completed local fixes. Single writer, separate self-
+investigator and self-review (not independent), no worktree/subagents. Current source
+is already safe through FU-BE-02, not a newly implemented fix. Original official15
+reported nested context omitted + no-actor masking skipped: both changes are present
+in current FU-BE02 diff. OFFICIAL12 amount policy is separate, not counted as this fix.
+
+Source: clients/leads/crm/scheduling views request.user -> four card wrappers -> shared
+build_crm_card_payload -> TaskSerializer(list, context actor) -> reader_actor and
+existing can_view_link/ClientProjectionMixin. Current scope/Business/capability filters
+Task rows before limit/count. Current actor used for linked FK/label copies, relations
+and available_actions. No actor masks links and parent card rejects. Client aliases in
+readable Lead/Conversation follow independent Client read. Parent Task text remains
+authorized Task content, no generic DLP/policy invented. EntityTasksPanel consumes
+Task title/status/priority/due/description; no hidden link reconstructed. Four frontend
+routes unchanged, no shape/code change; prior frontend build proof retained, no new
+build/browser suite required for tests/evidence-only packet. No new UI/role policy.
+
+Added apps/core/tests_task_preview_context.py (12 tests). Current baseline initial11
+PASS, then added alternate parent-task/specialist control. Final owning131 PASS (all12
++ card, projection, Task/workspace, Client-policy suites); combined1004 PASS/no skips
+with previous fifteen fix/WIP suites. No historical vulnerable checkout executed, so
+initial current-tree PASS is proof of already-safe state, not claimed new before/after
+failure. Controls: all four HTTP cards, four direct wrappers, scalar/list and request/
+actor equivalence, absent actor, field aliases/relations/actions, linked OWN/reassign,
+TEAM membership removal, VIEW revoke/direct Task parity, hidden Task count and denied
+VIEW, capability off and cross-Business backref/foreign parent 404, ordinary allowed
+links/labels/actions. Syntax AST, system check, migration drift and diff/reverse PASS.
+Commands/exits/logs: task-preview-context/run_checks.py focused/owning/completion;
+exact labels/results in corresponding JSON/combined-labels.json. isolated_runtime,
+network-denying django_isolated wrapper, synthetic disposable SQLite only, no providers.
+
+All starting source/WIP byte hashes preserved, fifteen prior artifact manifests
+verified, original checkpoint prefix retained. Canonical scan artifacts untouched;
+owner-authorized output subtree storage override only. Index empty; no commit/push/
+deploy/working migration, real customer/credential/account/security changes, production
+DB, external sends or provider calls. OFFICIAL14/auth-reset not read/retried; AUD17,
+Business.status and legacy draft policy untouched. Generic replay remains outside scope.
+Root SECURITY.md absent. Runtime cleaned. Final report/patch/integrity/manifest in
+output/security-remediation-20261028/task-preview-context. No remaining bounded code/
+evidence criterion after gates; no production/full browser/PG concurrency certification.
+STATUS/access/roadmap/capabilities/checkpoint evidence synchronized. CRM/frontend/
+integrations/operations/README unchanged: no new behavior/API/setup/storage/lifecycle.
+
+
+## OFFICIAL-17-20261028 - Client import update/private-field authority
+
+Authorized bounded security implementation+verification, fixed locally. Canonical
+C:/Users/user/Desktop/PlatformaCRM codex/ui-testing-toolkit HEAD98925b67 +93 starting
+dirty paths/15 patches + separately verified O15 no_change (16 closed findings).
+One writer; distinct self-investigator/reviewer, not independent. No agents/worktrees.
+Owner-authorized output storage override only; canonical scan unchanged.
+
+Source route: ImportJob perform_create/_locked job CREATE admission -> atomic confirm
+-> Client/Lead/Deal rows -> archive-inclusive same-Business find_import_client ->
+fill_missing_client_fields. Old fill lacked actor/UPDATE/private-note validation. Now
+common fill requires capability + current UPDATE(obj), including archived/no-op match;
+new Client helper requires CREATE on unsaved candidate (normal API convention), then
+same notes rule as ClientSerializer. Current request.user forwarded, legacy internal
+row calls use job.actor; no actor denied. Shared private-field validator extracted
+without changing existing API behavior: forbidden nonempty note403, masked empty
+roundtrip removed. Proposed fill-only changes validated BEFORE in-memory/save mutation.
+All three sheets share boundary, no duplicate fallback insert after denial. Matching,
+existing nonempty fields, source fallback, archive flags, parent creation, events/job
+counts/status, atomic rollback remain. No new VIEW requirement or ownership rule.
+ImportJob upload/preview/confirm existing CREATE admission remains (AUD16); row UPDATE
+does not introduce update-only job admission. Direct row mutation distinguishes actions.
+
+Scope investigation correction: Client has no ownership IDs. Existing can UPDATE(obj)
+explicitly permits unowned records under OWN/TEAM; VIEW scope differs. Initial tests
+incorrectly expected read-like denial. Confirmed current rule against source and normal
+PATCH200; final controls preserve it, no new mutation policy selected. New CREATE uses
+unsaved candidate like API and denies unowned OWN/TEAM. No global permissions rewrite.
+
+Evidence: initial BEFORE18 had14 failures:11 actual gaps,2 incorrect scope expectations,
+1 source fixture mismatch (manual source correctly retained). Corrected fixture BEFORE18:
+13 failures (11 gaps +2 invalid scope tests),5 controls PASS, no setup errors. AFTER61
+had only2 incorrect scope expectations; source/API-calibrated AFTER61 PASS. Review added
+alternate current/stored actor cases, new Client candidate-scope guard and nine further
+methods: final27 new tests within103 affected PASS; combined1040 PASS, zero skips.
+Original CREATE-only/UPDATEdeny/private-field gaps no longer reproduce; allowed new,
+existing/archived fill-only, owner notes and masked empty controls remain. No historic
+tree reset/source copy. Existing fault-injector signature forwards new optional request,
+all prior rollback assertions retained. Exact commands/labels/exits/logs in packet
+run_checks.py before/before-corrected/after/after-scope-contract/after-review/completion
+and results JSON/combined-labels.json. Syntax/import, system, migration drift, diff/index/
+reverse PASS. New source/fixture inputs hashed before completion and stable after.
+
+Controls: Client CREATE-only, explicit UPDATEdeny/revoke after preview, notes role
+narrowing, OWN/TEAM same as API, case-insensitive email identity, archived match/no
+restore/no duplicate, new Client own/team CREATE denial, mixed new+denied row rollback,
+three sibling row paths/current request vs stored creator, direct legacy update-only,
+no actor/no-op, in-memory note-denial integrity, cross-Business identity collision.
+Local synthetic files/antivirus stub/disposable SQLite + network-denying wrapper only.
+No production, real client data/providers/credentials/account/security settings or
+working DB migration. Existing locking/concurrency algorithm unchanged; no new PG or
+serializable mid-request permission-revocation certification. OFFICIAL14/auth-reset,
+AUD17/Business.status/legacy draft policies and generic replay untouched.
+
+Frontend importExportApi rejects403; ImportPanel existing confirm.error -> ErrorState
+without success callbacks/invalidation. Shape/strings/UI unchanged; no new build/full
+browser suite required for backend authorization change, reachable synthetic API tested.
+Root SECURITY.md absent. Sixteen prior artifact manifests and starting WIP retained;
+changed shared files compared to dirty baseline, old duplicate/export WIP sections
+unchanged. Original PRIMARY prefix retained. Index empty; no commit/push/deploy.
+STATUS/access/integrations/roadmap/capabilities/checkpoint synchronized; current import
+write claims corrected. README/CRM/frontend/operations unchanged: no setup/schema/
+lifecycle/storage/UI contract change. Final task patch/report/integrity/manifest in
+output/security-remediation-20261028/client-import-update-permission. No remaining
+bounded code/evidence blocker under current established scope rules; not full production
+or release certification. No next finding started.
+
+
+## OFFICIAL-18-20261028 - Lead follow-up final Task/assignee policy
+
+Authorized bounded implementation+verification, fixed locally. Canonical C:/Users/user/
+Desktop/PlatformaCRM codex/ui-testing-toolkit HEAD98925b67 +96 starting dirty paths/
+17 closed finding packets (O15 no_change distinct). Separate self-investigator/reviewer,
+not independent, one writer, no agents/worktree. Owner output artifact-storage override
+only; canonical scan unchanged. This finding is not historic AUD18 export.
+
+Source: LeadViewSet.create_task and locked service checked TASKS CREATE on source Lead,
+then active member lookup/default and Task.objects.create skipped ordinary assignee
+scope/eligibility/availability. Source Lead ownership could satisfy OWN/TEAM while final
+Task went outside allowed assignee set. Direct no-request service skipped old decorator
+auth; wrong source guard also rejected legitimate self/team Tasks on readable peer Lead.
+
+Minimal boundary: view keeps TASKS CREATE admission without obj Lead. Service retains
+same Business/Lead locks and archive gate, checks current actor LEADS VIEW and Lead/Task
+capability, resolves assignee exactly as before, calls unchanged tasks.policy
+validate_assignment(creating=True), builds unsaved Task then assert_can TASKS CREATE(obj
+Task) before save/effects. No Task helper/global permission framework change or UPDATE
+requirement. Source access and Task creation independent; direct service actor guarded.
+No new Client VIEW/link rule, default transfer, lifecycle/assignment business rule chosen.
+Explicit/null/omitted/default responsible/actor and Business unassigned fallback remain
+subject to normal policy. Existing field values/links/audit/activity/system notifications
+and idempotent key/hash/receipt implementation unchanged. General cached-read replay is
+outside scope; unchanged-rights replay/no-double-write control only, not global closure.
+
+BEFORE20:8 security gap failures +2 false-denial compatibility failures,10 controls PASS,
+no setup errors. AFTER105 PASS (20 new + owning Lead CRM-light/Task/workspace). Single
+self-review challenged equivalent ID/default/stale source/direct caller/module/archive/
+availability/candidate paths; added8 controls, no further source revision. Final28 new
+within113 affected PASS; combined1068 PASS, zero skips. Syntax/import, system check,
+migration drift, diff/index/reverse PASS; tested source hashes stable before/after combined.
+Exact commands/labels/exits/logs in lead-task-assignment/run_checks.py before/after/
+after-review/completion, *-results.json and combined-labels.json. Source errors do not
+reproduce; ordinary self/team/Business controls and corrected false denials pass.
+
+Coverage: OWN peer and TEAM outside denial; explicit deny; ordinary Task API parity;
+active/inactive/foreign/ineligible/unavailable assignee; expired availability; optional/
+null/unassigned defaults; new Task fields/context and audit/activity/notifications;
+source Lead denial, foreign actor/direct call, stale source reload, disabled Task module,
+archived source; equivalent numeric/string IDs and invalid input; same-key same-rights
+one creation/one set of effects. Denials preserve Task/history/notification/receipt counts.
+Direct-service probes are defensive tests, not claims of an external unauthenticated API.
+
+Only disposable synthetic SQLite/network-denying runner, no providers/real clients or
+account/credential/security changes. Lock/concurrency algorithm unchanged; historical
+PG behavior not newly certified, no full browser or production readiness. Frontend
+leadsApi.createTask unchanged shape; useLeadActions onError keeps modal and shows existing
+error, success callback only on success; offline queue behavior unchanged and server
+policy applied on sync. No frontend source/build needed for backend-only authorization
+delta; synthetic reachable HTTP happy/denial evidence retained.
+
+Two production files (leads/services.py, leads/views.py), new tests_task_assignment.py;
+task.patch isolates delta against dirty baseline. Existing views WIP exactly retained
+except one guard argument, all other original dirty paths unchanged except intentional
+evidence docs;17 prior artifact manifests and PRIMARY prefix preserved. Root SECURITY.md
+absent. Runtime cleaned, index empty; no commit/push/deploy/working migrations. OFFICIAL14/
+auth-reset, AUD17/Business.status/legacy draft decisions and historical AUD18 export
+untouched. STATUS/access/CRM/roadmap/capabilities/checkpoint evidence synchronized;
+README/frontend/integrations/operations unchanged (no setup/schema/UI/provider/storage
+contract change). No remaining bounded code/evidence blocker; no next finding started.
+
+
+## OFFICIAL-19-20261028 - Effective outreach mutation guards
+
+Authorized bounded security implementation+verification, fixed locally. Canonical
+C:/Users/user/Desktop/PlatformaCRM codex/ui-testing-toolkit HEAD98925b67 +98 starting
+dirty paths/18 prior closed finding packets. Single executor, separate self-investigator/
+reviewer, not independent; no agents/worktree. Owner output storage override reused,
+canonical scan unchanged. No auth/reset/O14, pending policy, production/real provider/
+credentials/account/security settings or index/commit/push/deploy work.
+
+Source: _assert_outreach_role returned success by owner/admin/marketer name without
+effective action/capability/object check. CRUD overrides bypassed standard candidate
+enforcement, custom prepare/launch/retry/cancel and bulk lacked current MANAGE decision.
+Existing get_object VIEW and stored UPDATE still applied but did not cover these gaps.
+Now same role helper first uses assert_resource_enabled(NOTIFICATIONS) and assert_can
+for current action/required obj. Six CRUD use ordinary CREATE/UPDATE + standard candidate
+(server-created_by set first); four campaign actions actual campaign/MANAGE; two bulk
+routes unsaved consent/MANAGE before parse/import writes. All12 callsites accounted.
+Role eligibility owner/admin/marketer retained, no new base-role grant. Custom explicit
+action overrides preserve central precedence over MANAGE fallback; business owner's
+fundamental policy unchanged. No global presets/actions/resource/ownership rewrite.
+
+OWN/TEAM on campaign uses existing created_by/current teams. Consent has no ownership
+fields: CREATE/MANAGE OWN/TEAM denied, no inferred Client owner. Existing unowned-record
+UPDATE exception retained (normal can policy); UPDATE allow not silently replaced by
+MANAGE requirement. Stored object guards, tenant immutability, readonly creator preserved.
+Business/foreign permissions separated. Bulk invalid-row partial-success/format/status/
+consent semantics unchanged; guard denied before first consent write. Generic recipient/
+delete use existing Tenant controls; refresh-status explicit VIEW map unchanged, no new
+policy selected or certification of every outreach/background mutation. Trusted services/
+workers unchanged, caller auth at API guard; no dispatch call introduced.
+
+Capability boundary is exact current contract: RESOURCE_MODULES has no notifications
+mapping, no real notifications disable toggle. Common helper invoked; test injects
+ModuleDisabled for create/custom action as integration proof, not a real capability-
+toggle runtime PASS. No new mapping or settings/permissions selected by this patch.
+
+BEFORE22:14 failing methods/17 security assertions (four action subtests),8 controls
+PASS; no setup errors. AFTER93 PASS (22 new + owning outreach/bounded template/XLSX/
+public optout). Single self-review added5 controls, no source revision: final27 within98
+affected PASS. Combined1095 PASS/zero skips, syntax/import/system/migration drift/diff/
+index/reverse PASS; tested source hashes stable before/after completion. Exact commands/
+labels/exits/logs in outreach-mutation-permissions/run_checks.py before/after/after-review/
+completion, corresponding results JSON and combined-labels.json. Explicit deny/current
+scope bypasses no longer reproduce; owner/admin/marketer presets and permitted custom
+action overrides remain. No skipped required gate or remaining bounded code blocker.
+
+Controls: campaign/template/consent create; all four custom campaign actions denied
+before domain callback; JSON/file bulk, override precedence, revoke between requests,
+OWN/TEAM creator/legacy unowned campaign/current team removal, creator spoof resistance,
+admin-role deny, consent unowned UPDATE policy, own real prepare/cancel, multibusiness
+allow/deny separation/foreign target. Real synthetic domain queues tested, actual sends
+forbidden; network-denying isolated_runtime/disposable SQLite/antivirus stub, no delivery
+worker/provider/AI call or real client files. Existing W1 STOP/O6 template/O11 XLSX/O5
+public optout/BE02 PII behavior retained by owning+combined tests and source preservation.
+
+One production file views.py + new tests_mutation_permissions.py. Guard-only task.patch
+against dirty baseline; original _import_rows/_find_client/resolve helpers and Client
+privacy filter unchanged, unrelated WIP hashes stable,18 prior manifests and PRIMARY
+prefix preserved. Root SECURITY.md absent. Runtime cleaned, index empty, no publication.
+Frontend outreachApi promises propagate403, OutreachPage pageError uses existing
+ErrorState; onSuccess not invoked for denial. No API shape/UI source/build change or
+full browser claim. Lock/concurrency algorithms unchanged, no renewed PG/live readiness.
+STATUS/access/CRM/roadmap/capabilities/checkpoint synchronized. README/frontend/
+integrations/operations unchanged: no setup/schema/provider/storage/UI contract change.
+
+Next independent candidates only (not started): OFFICIAL09 service settings/branch
+guards in catalog/manual imports; OFFICIAL13 appointment automation status read policy;
+OFFICIAL22 approved AI command binding; OFFICIAL03 connector tenant binding requires
+its own masked-source investigation and no real provider/secret use. OFFICIAL21 relates
+to pending AUD17 policy, legacy draft needs owner decision, account/reset/auth-related
+findings remain excluded; no further execution inferred from this queue.
+
+## YCLOUD-TPLITE-20261028 — stage 1, implementation in progress
+
+Historical first-slice progress recorded below; superseded by the current
+YCLOUD-TPLITE-20261028 section at the top of this checkpoint. Its pending list and
+test counts describe that earlier snapshot, not the current remaining work.
+
+Owner authorizes TP Lite onboarding and text exchange in existing Inbox only.
+Canonical root C:/Users/user/Desktop/PlatformaCRM; branch codex/ui-testing-toolkit;
+base/HEAD 98925b6796d4995e80af9d9a040ec5bbcfcab348 plus unrelated security/notification
+WIP. Starting diff/status retained in $TEMP/ycloud-tplite-20261028; do not stage WIP.
+Reuse BusinessConnector, BotChannel, BotMessage, Inbox/domain effects, outbound queue,
+credential protection and existing permission/setup boundaries. Add YCloud transport,
+server-confirmed onboarding, signed durable ingress, delivery correlation and UI.
+No account connection, real sends, live credentials, working migration or deployment.
+Risks: tenant binding, duplicate external effects, stale setup, accepted vs delivered.
+Checks per slice: isolated API/client/onboarding tests, then signed ingress/outbox
+regressions before UI; completion affected/dependent suites, system/migration drift,
+PostgreSQL concurrency where available, targeted browser flow and frontend build/types.
+Existing pilot owner-funded policy remains: no new commercial caps/automatic cutoff.
+Live access/activation/number/domain/balance acceptance remains explicitly separate.
+First slice: client/onboarding7 tests PASS via .venv/Scripts/python.exe
+scripts/verify_ycloud.py; isolated SQLite migration/check/drift PASS. API eighth
+regression added afterward and not yet run. No external calls; client mocked.
+Implementation incomplete: signed ingress/worker, outbound statuses, UI and final
+verification still required. Intentional integration0007 generated in isolation.
+
 ## STAND-ACCESS-20261029 — implementation in progress
 User requests password-only access pages for CRM and Market in each product style.
 Scope: isolated Node entry authentication service + Caddy/Compose stand integration;
@@ -9000,6 +12082,64 @@ Changed gate-only checks replace unrelated full-project suites; existing Compose
 checks reused unchanged. Server still needs real HTTPS domain and secret provisioning
 with compose.stand.yaml. No roadmap acceptance or production readiness implied.
 
+## REFACTOR-20261030 — implementation in progress
+
+Owner authorized the complete technical remediation plan in the audit chat, one
+continuous cycle with proportional checks. No Security scan, product-scope expansion,
+legacy retirement, deployment or working DB changes. Plan/report are in
+C:/Users/user/Documents/Codex/2026-10-30/crm-market-security/outputs/.
+P00: preserve all pre-existing WIP; current snapshot recorded in that chat's work/implementation.
+Behavior/risk: fix stale integration reads, mismatched prefetch, legacy admin return;
+then verified cleanup and extraction. Shared routes/state/contracts need affected consumers.
+Focused checks before dependent changes; completion requires affected types/build and
+reachable flow/browser evidence where required. No claims from aggregate old PASS.
+This is a progress checkpoint, not publication or acceptance. Other work is preserved.
+
+### REFACTOR-20261030 — verified local state, open acceptance gates
+
+CRM: Inbox/Calendar/Header, Settings, entity panels, Automations/Pricing,
+routes, types and dictionaries decomposed. Final isolated frontend build PASS;
+focused query/send/retry/permission/navigation/browser checks PASS. Exact route
+execution and 6513 dictionary keys per language preserved. 13 unused CRM files
+removed; roadmap/uncertain/foreign-edited candidates retained. Existing security
+and notification changes remain owned by their original task.
+Market: integrations, documents/order/import/corrections, route screens, core
+schemas and CSS decomposed. 375 schema tests and isolated core-contract PASS;
+document upload retry/mobile, component, integration stale-read, public/auth/product
+route and unified/legacy logout browser checks PASS. 7 unused Market files removed.
+Final admin build/budget PASS (1045737 raw /318842 gzip); landing build PASS.
+Unified compiles but public bundle FAIL:2234288 raw/604613 gzip,29 files.
+Buyer bundle FAIL:2217994 raw/606005 gzip,28 files; supplier FAIL:2075782 raw/
+569603 gzip,23 files. Budgets unchanged; failures not classified as baseline.
+Shared schemas/index.ts and api-client/index.ts decomposition and landing login
+route move deferred where active B2C changes overlap. Additional order/conversation
+browser checks remain unverified: production server start was rejected by automatic
+approval review including loopback retry, with no detailed reason supplied.
+Historical CRM daily-workspaces CommandPalette and old entity/appearance selectors
+remain failed; current targeted flows do not erase those results. Market historical
+catalog-reference/product-detail fixtures remain failed; focused route fixtures pass.
+Both working-tree git diff --check: no whitespace errors (CRLF warnings only).
+No commit, push, deploy or working DB changes. Mixed WIP not staged/published.
+Overall plan is NOT accepted/complete. Next: remaining bundle dependency graphs,
+missing browser evidence, resolve concrete B2C overlaps, then scoped publication.
+Authoritative detailed evidence/report:
+C:/Users/user/Documents/Codex/2026-10-30/crm-market-security/outputs/implementation-status.json
+C:/Users/user/Documents/Codex/2026-10-30/crm-market-security/outputs/implementation-report.html
+Logs: same task work/implementation/. This entry does not transfer other task ownership.
+
+### REFACTOR-20261030 — latest continuation checkpoint
+CRM refactor build/affected flows remain accepted; daily-workspaces6 PASS now closes
+the old CommandPalette/hook-selector policy failure. Historical entity/appearance
+browser failures retained; no full release claim. Market remaining bundles and
+schema/client/login extraction and final selected browsers now PASS; see latest report.
+Publication remains blocked by preserved foreign prerequisites: CRM Header imports
+untracked features/notifications; Market moved login and shared schema/client facades
+include existing B2C work. Do not publish those owners' changes from this task.
+No commit/push/deploy. Next publication step: isolate our diff after prerequisites
+are published by their owners, then validate only affected inputs. Both diff checks PASS.
+Current detailed report: C:/Users/user/Documents/Codex/2026-10-30/crm-market-security/outputs/implementation-report.html
+Current status: same outputs/implementation-status.json and publication-review.json.
+
 ### REFACTOR-20261030 — итоговая проверка и публикация
 
 Supersedes earlier REFACTOR publication blockers. All owned P01–P18 product code
@@ -9010,6 +12150,78 @@ Roadmap updated without closing live/product gates; P19 mapping only.
 Evidence: [final audit](../evidence/refactor-20261030.md).
 Foreign working source and documentation preserved; only own docs added to index.
 No deployment, production DB change or foreign WIP publication.
+
+
+## ALERT-AUDIT-20261103 — completed local audit
+
+Owner asked where/how alerts are used and whether system feedback is correct.
+Audit contract and starting dirty snapshot: output/alert-audit-20261103/PLAN.md,
+starting-status.txt, starting.patch. Canonical root, codex/ui-testing-toolkit,
+HEAD e02a28f5; no product edits. Registered evidence: ../evidence/alert-audit-20261103.md.
+Five Chromium RU synthetic owner flows (1440/390) reproduced five defects;
+ServiceStatusNotice placement differs from all-global-notices-bottom-right expectation.
+Inventory/source hashes/screenshots/results retained with report. Exact command:
+node output/alert-audit-20261103/browser-audit.cjs. No build/full backend/E2E:
+audit docs only; KK/EN/admin/auth and live delivery not newly certified.
+Required fixes are recommendations, not authorized implementation in this audit.
+Roadmap/contracts/passports/README need no behavior change: no implementation or
+acceptance closure. Existing index.lock blocks own publication; no foreign staging.
+No own commit/push/CI/deploy or working DB mutation.
+Completion: links/registry JSON and scoped diff hygiene PASS; source hash comparison
+shows no frontend drift since inventory. Own runtime21120/12528 stopped after
+checking exact audit script/Vite port. Working dev servers left intact.
+
+
+## ALERT-REMEDIATION-20261103 — local implementation and scoped verification
+
+Owner approved audit A01–A05 fixes/no global shifting banners, then clarified that
+persistent data prerequisites need contextual reasons and navigation, not timed toast.
+Contract/snapshot: output/alert-remediation-20261103/PLAN.md, starting-status.txt,
+starting.patch, before/, owned-source.patch. Canonical root, codex/ui-testing-toolkit,
+HEAD e02a28f5 plus preserved WIP; no backend/source copy/worktree/working DB changes.
+Implemented fixed header service indicator/details/support, persistent finance reasons
+with permission-aware connection links, Client/Resource form feedback, local password
+validation/profile toast and Bell unknown counters/retry. RU/KK/EN maintained.
+Evidence: ../evidence/alert-remediation-20261103.md + source/asset manifest.
+Node19 PASS; final safe-env npm run build/types/i18n6655 and check:bundle PASS,
+ru/kk chunk warnings retained. Browser targeted suite22 unique: completion20 PASS/2
+login HTTP429; unchanged-code focused recheck2 PASS. Exact commands/log boundaries and
+failed iterations in evidence. Never describe the original completion run as22 PASS.
+Additional existing service-s03 exact-text browser FAIL remains: event/recipient/API
+exist, but unchanged backend serializer maps work event to generic message_key.
+The status API/header indication is correct. Do not weaken the legacy expectation or
+expose unfiltered private work text. No full S03/backend/live closure.
+Frontend/operations/passport/roadmap/docs registry aligned; unrelated contracts and
+README need no change. Existing index.lock blocks staging/publication; no foreign WIP
+staged, own commit/push/CI/deploy absent. Own isolated runtime IDs22164/3588 stopped after exact root/port verification.
+Source hashes/links/registry/new files/scoped diff/index checks PASS; index empty. Next unresolved item: safe service-event
+projection and publication prerequisites; no implicit new backend phase authorization.
+
+RECORDS-REMEDIATION final cleanup: source-manifest unchanged; owned isolated runtime
+8708/7296/12652/9648 stopped after root/command/port verification. Ordinary dev retained.
+Index empty; existing index.lock preserved; publication blocker unchanged.
+
+## GIT-LOCK-20261103 — stale lock removed
+Owner requested index.lock analysis/removal of blocker. Canonical root and branch
+codex/ui-testing-toolkit, HEAD e02a28f5 unchanged. Empty lock last written02.11 17:52:21;
+two inspections found no git/git-*/ssh/gpg/scalar processes; exclusive file open succeeded.
+Removed only canonical .git/index.lock. Index SHA256 before/after identical, index empty;
+git --no-optional-locks status succeeds (354 dirty/untracked paths). No merge/rebase
+markers observed. Existing mixed prerequisites remain; no staging/commit/push or product
+changes. Branch has no upstream; standing origin/main target remains owner-authorized.
+This supersedes earlier index.lock blocker claims; no app checks needed for lock/docs.
+
+## RECORDS-REMEDIATION-20261103 — publication preflight after owner push request
+Fetched origin/main=c74e0fa0d536a71eac7e7f0c4a79a385e19c9994; HEAD=e02a28f5, ahead1/behind0.
+Outgoing existing e02a28f5 is docs-only dev repair evidence,2 files. Current own source
+manifest hashes all match verified evidence. git apply --cached --check of normalized
+own patch fails on absent RecordsPage/RecordsTable/RecordsToolbar/VisitPlansPage and
+other prerequisite hunks. No staging occurred. Local Records depends on unpublished
+workspace API, route replacement and VisitPlan backend/schema migration0011. A latest
+fixes-only commit cannot deliver the verified flow. Need owner scope decision to include
+prior Records/visit-plan implementation plus existing outgoing docs commit; unrelated
+notification/security WIP remains excluded. No push, CI or deployment claimed.
+No app tests repeated for unchanged code; this is publication dependency verification.
 
 ## RECORDS-PUBLICATION-20261103 — verified selected package
 
@@ -9194,3 +12406,68 @@ review PASS. Stale empty18:48 index.lock removed after repeated no-Git-process c
 exclusive open and unchanged index hash. First docs-only patch check exposed Windows
 CRLF and foreign registry context; corrected serialization/context before staging,
 no foreign content staged. Test runtimes managed/stopped by Playwright; dev retained.
+
+CALENDAR-SHARED final CI readback: source run41656489506 completed failure;
+Frontend build success, Backend tests failed test_ai_tool_suggest_logs_actions_without_execution
+(apps.ai_core.tests.AICoreFoundationTests): expected >=3 suggested_actions, got2.
+2342 backend tests ran,1 failure,47 skipped. Log retained in
+output/calendar-shared-20261103/ci-backend-failure.log. Backend was not changed by
+calendar commit; causal diagnosis/baseline reproduction not performed. Do not claim
+full CI green. Docs commit0b3348e1 is confirmed at origin/main; its run41656670948
+also failed. This CI-status correction remains local; no additional publication
+while the CI failure is unresolved. Calendar focused gates remain as recorded.
+
+## CALENDAR-REVIEW-20261104 — local picker fix and bounded audit
+
+Explicit side-chat request: fix1900 year list/wrapped digits using available record
+history, audit implemented Records/Calendar. No continuation of other tasks.
+Canonical PlatformaCRM/codex/ui-testing-toolkit/HEAD66101d50 plus mixed foreign WIP.
+Plan/starting diff/status/final hashes/runners/logs: output/calendar-review-20261104.
+Uses existing workspace API first/last readable nonarchived record by Business TZ;
+quick range includes current/current+5 and selected years.112px year menu, nowrap,
+active scrolling and delayed-option focus fixed. No backend/migration/workingDB writes.
+Node17 + Calendar12 + Records7 + API40 + audit3 (2 open-defect reproductions and1
+focus regression) PASS. Final build1793811412380154500 types/i18n/app/widget PASS.
+Own test servers exited via isolated runners. No full-project gate required.
+Open audit findings: Records responsible filter displays All for retained IDs outside
+visible team options; empty custom-field result unmounts filter/selective reset.
+Both proven on real isolated API and intentionally reported, not silently fixed.
+No picker implementation/verification remainder. Existing index.lock and foreign
+outgoing prevent own-only publication; no staging/commit/push/newCI/deploy.
+Frontend contract/passport/evidence/registry updated; other contracts/README/roadmap
+unchanged because API/domain/permission/setup/roadmap requirements are reused.
+Details and next actionable findings: ../evidence/calendar-review-20261104.md.
+
+
+## VOICE-RELIABILITY-20261106
+
+VOICE-RELIABILITY-20261106: original audio failure reproduced and fixed locally.
+Router had created only Client; explicit booking retains atomic client+visit workflow.
+Persisted same-Business Appointment/count required before success; factual RU/KK/EN replies.
+Focused11/final dependent102/system-drift + real ASR/model4 audio cases PASS; replay safe.
+Working14visits/config unchanged. No scoped code/local-evidence remainder; human/fullD01/production open.
+No commit/push/CI/deploy: origin2ahead/18foreignoutgoing. Evidence: docs/testing/evidence/single-location-20261106.md#voice-reliability-20261106.
+
+Detailed checkpoint: output/voice-reliability-20261106/CHECKPOINT.md. Existing original FAIL retained and resolved by this follow-up, not erased. Current contracts/passport/D01 note updated; ordinary README/access/CRM/integrations/operations unchanged because setup/domain/public behavior outside voice is unchanged. Publication blocked, no other tasks/agents assigned.
+## POSTGRES-LOAD-20261106 — local transfer and measured load
+
+Owner explicitly authorized local SQLite→PostgreSQL, backup/data preservation and
+concurrent users/request measurements. Canonical PlatformaCRM, starting d6cf5829,
+codex/ui-testing-toolkit; unrelated WIP preserved. Contract and detailed commands:
+output/postgres-load-20261106/CHECKPOINT.md. Evidence:
+[PostgreSQL transfer and load](../evidence/postgres-load-20261106.md).
+Local cutover complete: PG17.10 loopback55432, non-superuser crm_app; source SQLite
+retained;152tables/10117rows exact semantic field parity and dump restore PASS.
+16focused+141isolated PostgreSQL tests PASS; real API requests observed in PostgreSQL;
+startup and expired-token Windows tasks exit0. Temporary load/restore DBs removed.
+Load measured three profiles small4workers/small1worker/large1worker. No stage met
+predeclared p95<=1s/error<1% SLO. Small1worker5users1.98req/s,p952.96s; large1worker
+5users1.03req/s,p9510.69s; both0HTTPerrors. Shared i3/7.7GiB desktop with RAM pressure;
+not capacity certification or an upper bound for a dedicated server. No passing
+stage for180s validation. External providers/AI/file-import/browser load excluded.
+Two later foreign choices migrations bots0014/integrations0009 remain unapplied;
+do not reuse old schema PASS to hide this final backlog. Production unchanged.
+Remaining: no transfer/data-preservation code gap; dedicated-server capacity and
+long-duration SLO acceptance unproven. Original request did not authorize broad
+performance rewrites. Git publication limited by20foreign outgoing/3remote commits;
+Existing Git index.lock blocked own staging/commit; no push/new CI. Details in the task checkpoint.

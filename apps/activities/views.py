@@ -35,7 +35,7 @@ class ActivityEventViewSet(TenantModelViewSet):
             queryset = scope_entity_history(queryset, actor=self.request.user, business=business)
         if self.action == "actors":
             values = {"business": values.get("business")}
-        return filter_timeline(queryset, values, business)
+        return filter_timeline(queryset, values, business, user=self.request.user)
 
     @action(detail=False, methods=["get"])
     def actors(self, request):
@@ -52,6 +52,9 @@ class ActivityEventViewSet(TenantModelViewSet):
 class NoteViewSet(TenantModelViewSet):
     queryset = Note.objects.select_related("business", "client", "author")
     serializer_class = NoteSerializer
+
+    def get_queryset(self):
+        return scope_entity_history(super().get_queryset(), actor=self.request.user)
 
 
 class TagViewSet(TenantModelViewSet):

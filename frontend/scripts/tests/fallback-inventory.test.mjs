@@ -37,6 +37,21 @@ test("fallback registry covers routes, API operations, jobs and provider states"
   assert.ok(inventory.apiOperations.filter((operation) => operation.kind === "mutation").every((operation) => !operation.automaticRetryAllowed));
 });
 
+test("API wrapper inventory expands static branches and preserves unknown boundaries", () => {
+  const source = [
+    'const root = (id: string, platform: boolean) => platform ? `/api/platform/${id}/` : `/api/support/${id}/`;',
+    'apiClient.get(`${root(id, platform)}messages/`);',
+    'function shadow(root: unknown) { apiClient.get(root(id)); }',
+    'const unsafe = (id: string) => lookup(id); apiClient.post(unsafe(id));',
+    'let mutable = () => "/api/old/"; apiClient.post(mutable());',
+  ].join("\n");
+  const values = constantApiArguments(source, { patterns: true });
+  assert.deepEqual(values.get(source.indexOf('apiClient.get(`${root')), ["/api/platform/:param/messages/", "/api/support/:param/messages/"]);
+  for (const call of ["apiClient.get(root(id))", "apiClient.post(unsafe(id))", "apiClient.post(mutable())"]) {
+    assert.equal(values.has(source.indexOf(call)), false, call);
+  }
+});
+
 test("generated fallback report is current", () => {
   const result = verifyFallbackInventory();
   assert.ok(result.routes > 0);

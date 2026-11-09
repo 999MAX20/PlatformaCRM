@@ -45,6 +45,16 @@ def user_can_access_business(user, business):
         return True
     if not user or not user.is_authenticated or business is None:
         return False
+    if getattr(user, "_permission_read_memberships", None) is not None:
+        from apps.businesses.access import get_membership
+
+        return (
+            business.owner_id == user.id
+            or get_membership(user, business) is not None
+            or business.support_access_grants.filter(
+                user=user, is_active=True, expires_at__gt=timezone.now(),
+            ).exists()
+        )
     return (
         business.owner_id == user.id or
         business.members.filter(user=user, is_active=True).exists()

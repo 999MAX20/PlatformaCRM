@@ -1,22 +1,23 @@
-"""Prepare replies and explicit proposals; this module never executes CRM writes."""
+"""Prepare replies/proposals and dispatch explicitly requested voice actions."""
 from copy import deepcopy
 from datetime import date
 
 from django.utils import timezone
 from rest_framework.exceptions import PermissionDenied
 
-from apps.ai_core.agent_runtime import bind_agent, bind_conversation
+from apps.ai_core.agent_runtime import bind_thread, bind_conversation
 from apps.ai_core.assistant import build_crm_context
 from apps.ai_core.conversation_access import references_visible, staff_conversation
 from apps.ai_core.conversation_copy import conversation_text
 from apps.ai_core.conversation_memory import staff_memory
-from apps.ai_core.conversation_router import resolve_step_target, route_turn
+from apps.ai_core.conversation_router import OPERATIONS, resolve_step_target, route_turn
 from apps.ai_core.conversation_state import assert_current_turn, fail_turn, locked_conversation
 from apps.ai_core.crm_planner import plan_command
 from apps.ai_core.crm_tools import ENTITIES, prepare_command, read_entities, serialize_record, target_for_command
 from apps.ai_core.models import AgentTurn, AIToolCallLog
 from apps.ai_core.services import run_ai_request
 from apps.ai_core.workflows import assert_workflow_enabled
+from apps.ai_core.voice_policy import validate_voice_plan, validate_voice_proposal
 
 
 def payload_references(payload):
@@ -27,6 +28,9 @@ def payload_references(payload):
         value = payload.get("values", {}).get(field)
         if type(value) is int:
             references.append({"entity": entity, "id": value})
+    client = payload.get("values", {}).get("client")
+    if isinstance(client, dict) and type(client.get("id")) is int:
+        references.append({"entity": "clients", "id": client["id"]})
     return references
 
 
@@ -44,6 +48,13 @@ def _completed_context(turn):
 def prepare_actions(turn, plan, memory, language):
     thread, user = turn.conversation, turn.conversation.owner
     plan = deepcopy(plan)
+    validate_voice_plan(turn.context_json, plan, turn.message)
+    if thread.kind == "voice" and any(step["entity"] == "appointments" and step["operation"] == "create" for step in plan["steps"]):
+        from apps.ai_core.voice_schedule_planner import prepare_schedule
+        # Legacy two-step router output is collapsed before any client write.
+        step = next(step for step in plan["steps"] if step["entity"] == "appointments")
+        plan["steps"] = [{**step, "after": None, "request": turn.message}]
+        return prepare_schedule(turn, plan, memory, language)
     references, completed = _completed_context(turn)
     memory = {**memory, "completed_actions": completed}
     prepared = []
@@ -67,11 +78,13 @@ def prepare_actions(turn, plan, memory, language):
         if question:
             break
         result = plan_command(business=thread.business, user=user, entity=step["entity"], entity_id=target_id,
-                              message=step["request"], conversation_memory=memory, persist=False)
+                              message=step["request"], conversation_memory=memory, persist=False,
+                              expected_tool=OPERATIONS[step["operation"]], source_message=turn.message)
         question = result["question"]
         if question:
             break
         proposal = result["prepared_command"]
+        validate_voice_proposal(turn.context_json, proposal["tool"], proposal["payload"])
         references.extend(payload_references(proposal["payload"]))
         prepared.append({"step": index, **proposal})
     return {"plan": plan, "prepared": prepared, "references": references, "question": question,
@@ -96,7 +109,7 @@ def prepare_answer(turn, plan, memory, language):
         context["summary"]["search"] = {"entity": entity, "query": plan["read"].get("query", ""),
                                          "count": found["count"], "shown": len(found["results"]), "has_more": found["has_more"]}
     result, log = run_ai_request(business=thread.business, user=user, prompt_type="crm_assistant", user_input=turn.message,
-                                input_json={"crm_context": context, "conversation_memory": memory})
+                                input_json={"crm_context": context, "conversation_memory": memory}, response_language=language)
     prefixes = {"CLIENT": "clients", "LEAD": "leads", "DEAL": "deals", "TASK": "tasks", "APPOINTMENT": "appointments"}
     references = []
     for source in result.sources:
@@ -118,6 +131,7 @@ def _commit_preparation(turn_id, user, result):
         plan = result.get("plan", {})
         for proposal in result.get("prepared", []):
             payload = proposal["payload"]
+            validate_voice_proposal(turn.context_json, proposal["tool"], payload)
             current = prepare_command(business=thread.business, user=user, tool=proposal["tool"],
                 payload={key: value for key, value in payload.items() if key in {"entity", "entity_id", "values", "action", "reason"}})
             if current.get("expected_version") != payload.get("expected_version"):
@@ -136,7 +150,15 @@ def _commit_preparation(turn_id, user, result):
         turn.completed_at = timezone.now() if turn.status == AgentTurn.Statuses.COMPLETED else None
         turn.save()
         thread.save(update_fields=["updated_at"])
-        return turn
+        next_job = None
+        if turn.context_json.get("execution") == "direct" and turn.status == AgentTurn.Statuses.AWAITING_CONFIRMATION:
+            from apps.ai_core.conversation_actions import confirm_turn
+            from apps.ai_core.tool_registry import tool_call_fingerprint
+            actions = [{"id": log.pk, "fingerprint": tool_call_fingerprint(log)}
+                       for log in turn.tool_calls.filter(status=AIToolCallLog.Statuses.SUGGESTED)]
+            turn, next_job = confirm_turn(conversation_id=thread.pk, turn_id=turn.pk, user=user,
+                actions=actions, expected_revision=turn.sequence, _direct=True)
+        return turn, next_job
 
 
 def prepare_agent_turn(turn_id):
@@ -146,34 +168,49 @@ def prepare_agent_turn(turn_id):
     try:
         thread = staff_conversation(conversation_id=turn.conversation_id, user=turn.conversation.owner, write=True)
         turn.conversation = thread
-        with bind_agent(thread.agent_id), bind_conversation(thread.pk):
+        with bind_thread(thread), bind_conversation(thread.pk):
             assert_current_turn(thread, turn)
             config = assert_workflow_enabled(thread.business, "analyst" if turn.mode == "analytics" else "employee")
             language = config.get("language", "ru")
+            if thread.kind == "voice":
+                language = getattr(getattr(thread.owner, "preferences", None), "language", "ru")
+                if language not in {"ru", "kk", "en"}:
+                    language = "ru"
             memory = staff_memory(thread=thread, user=thread.owner, query=turn.message, before_sequence=turn.sequence)
             if turn.plan_json.get("steps"):
                 plan = turn.plan_json  # Resume only the unfinished steps of this turn.
             elif not config["sources"]:
                 plan = {"intent": "answer", "steps": [], "read": None, "period": None}
             else:
-                plan, _ = route_turn(thread=thread, user=thread.owner, message=turn.message, memory=memory, context=turn.context_json, mode=turn.mode)
+                plan, _ = route_turn(thread=thread, user=thread.owner, message=turn.message, memory=memory, context=turn.context_json, mode=turn.mode, language=language)
             turn.refresh_from_db(fields=["status", "memory_epoch"])
             assert_current_turn(staff_conversation(conversation_id=thread.pk, user=thread.owner, write=True), turn)
             if plan["intent"] == "actions" and turn.mode == "analytics":
                 result = {"response": conversation_text("analytics_read_only", language), "status": AgentTurn.Statuses.COMPLETED}
             elif plan["intent"] == "actions":
                 result = prepare_actions(turn, plan, memory, language)
+            elif plan["intent"] in {"greeting", "chat"} and thread.kind == "voice":
+                from apps.ai_core.voice_chat import prepare_voice_chat
+                result = {**prepare_voice_chat(turn, language), "plan": plan}
+            elif plan["intent"] == "greeting":
+                result = {"response": conversation_text("greeting", language), "plan": plan}
             elif plan["intent"] == "clarify":
                 result = {"response": plan["question"], "question": plan["question"], "status": AgentTurn.Statuses.CLARIFYING, "plan": plan}
             elif plan["intent"] == "cancel":
                 result = {"response": conversation_text("cancelled", language), "status": AgentTurn.Statuses.CANCELLED, "plan": plan}
             else:
                 result = {**prepare_answer(turn, plan, memory, language), "plan": plan}
-            saved = _commit_preparation(turn.pk, thread.owner, result)
+            saved, next_job = _commit_preparation(turn.pk, thread.owner, result)
+            if next_job is not None:
+                from apps.ai_core.conversation_state import dispatch_conversation_job
+                dispatch_conversation_job(next_job)
+                saved.refresh_from_db()
             return {"turn_id": saved.pk, "status": saved.status}
     except Exception as exc:
         code = "access_changed" if isinstance(exc, PermissionDenied) else "provider_unavailable"
-        if getattr(exc, "error_code", "") in {"invalid_action_plan", "invalid_sources", "planner_unavailable", "rate_limited"}:
+        if isinstance(exc, PermissionDenied) and str(exc.detail) in {"voice_action_unavailable", "voice_one_operation"}:
+            code = str(exc.detail)
+        if getattr(exc, "error_code", "") in {"invalid_action_plan", "invalid_sources", "planner_unavailable", "rate_limited", "action_failed"}:
             code = exc.error_code
         fail_turn(turn_id, code)
         raise

@@ -1,3 +1,5 @@
+from apps.core.client_projection import visible_client
+from apps.clients.duplicate_visibility import project_duplicate_rows
 from django.contrib.auth import get_user_model
 from django.db import transaction
 from django.db.models import OuterRef, Subquery
@@ -62,6 +64,7 @@ from apps.conversations.inbox_helpers import (
 )
 from apps.conversations.pipeline import run_conversation_pipeline, source_from_channel
 from apps.conversations.services import create_task_from_conversation
+from apps.conversations.read_results import command_result_data, create_result_data, readable_entity_data
 from apps.core.permissions import accessible_businesses
 from apps.core.idempotency import CRMCommandResult, run_idempotent_crm_command
 from apps.crm.models import Deal
@@ -69,6 +72,7 @@ from apps.crm.serializers import DealSerializer
 from apps.leads.models import Lead
 from apps.leads.serializers import LeadSerializer
 from apps.scheduling.serializers import AppointmentSerializer
+from apps.scheduling.models import Appointment
 from apps.tasks.models import Task
 from apps.tasks.serializers import TaskSerializer
 
@@ -330,7 +334,7 @@ class InboxConversationViewSet(ReadOnlyModelViewSet):
                 due_at=serializer.validated_data.get("due_at"),
             )
             return CRMCommandResult(
-                data=TaskSerializer(task).data,
+                data=TaskSerializer(task, context={"request": request}).data,
                 status_code=status.HTTP_201_CREATED,
                 resource=task,
             )
@@ -343,7 +347,8 @@ class InboxConversationViewSet(ReadOnlyModelViewSet):
             payload={"conversation_id": conversation.id, **serializer.validated_data},
             operation=operation,
         )
-        return Response(command.data, status=command.status_code)
+        return Response(command_result_data(command, model=Task, resource=Resources.TASKS,
+            serializer_class=TaskSerializer, business=conversation.business, request=request), status=command.status_code)
 
     @action(detail=True, methods=["post"], url_path="create-appointment")
     def create_appointment(self, request, pk=None):
@@ -375,7 +380,7 @@ class InboxConversationViewSet(ReadOnlyModelViewSet):
                     }
                 ) from exc
             return CRMCommandResult(
-                data=AppointmentSerializer(appointment).data,
+                data=AppointmentSerializer(appointment, context={"request": request}).data,
                 status_code=status.HTTP_201_CREATED,
                 resource=appointment,
             )
@@ -388,7 +393,8 @@ class InboxConversationViewSet(ReadOnlyModelViewSet):
             payload={"conversation_id": conversation.id, **serializer.validated_data},
             operation=operation,
         )
-        return Response(command.data, status=command.status_code)
+        return Response(command_result_data(command, model=Appointment, resource=Resources.APPOINTMENTS,
+            serializer_class=AppointmentSerializer, business=conversation.business, request=request), status=command.status_code)
 
     @action(detail=True, methods=["post"], url_path="qualify")
     def qualify(self, request, pk=None):
@@ -483,10 +489,10 @@ class InboxConversationViewSet(ReadOnlyModelViewSet):
         return Response(
             {
                 "conversation": self.get_serializer(result.conversation).data,
-                "client": ClientSerializer(result.client, context={"request": request}).data,
-                "lead": LeadSerializer(result.lead).data if result.lead else None,
-                "deal": DealSerializer(result.deal).data if result.deal else None,
-                "task": TaskSerializer(result.task).data if result.task else None,
+                "client": ClientSerializer(result.client, context={"request": request}).data if visible_client(result.client, actor=request.user, business=conversation.business) is not None else None,
+                "lead": readable_entity_data(result.lead, resource=Resources.LEADS, serializer_class=LeadSerializer, business=conversation.business, request=request),
+                "deal": readable_entity_data(result.deal, resource=Resources.DEALS, serializer_class=DealSerializer, business=conversation.business, request=request),
+                "task": readable_entity_data(result.task, resource=Resources.TASKS, serializer_class=TaskSerializer, business=conversation.business, request=request),
                 "created": result.created,
                 "qualification": result.qualification.to_dict() if result.qualification else None,
                 "ai_log_id": result.ai_log_id,
@@ -544,7 +550,7 @@ class InboxConversationViewSet(ReadOnlyModelViewSet):
         serializer.is_valid(raise_exception=True)
 
         if conversation.client_id:
-            return Response({"client": ClientSerializer(conversation.client, context={"request": request}).data, "duplicates": [], "created": False})
+            return Response({"client": ClientSerializer(conversation.client, context={"request": request}).data if visible_client(conversation.client, actor=request.user, business=conversation.business) is not None else None, "duplicates": [], "created": False})
 
         full_name = serializer.validated_data.get("full_name") or conversation.external_user_id or conversation.external_thread_id or f"Inbox visitor #{conversation.id}"
         phone = serializer.validated_data.get("phone", "")
@@ -554,7 +560,7 @@ class InboxConversationViewSet(ReadOnlyModelViewSet):
             return Response(
                 {
                     "client": None,
-                    "duplicates": duplicate_payload(duplicates, phone=phone, email=email),
+                    "duplicates": project_duplicate_rows(duplicate_payload(duplicates, phone=phone, email=email), actor=request.user, business=conversation.business),
                     "created": False,
                     "requires_confirmation": True,
                 },
@@ -578,7 +584,7 @@ class InboxConversationViewSet(ReadOnlyModelViewSet):
             text="Client created from inbox conversation.",
             metadata={"client_id": client.id, "channel": conversation.channel},
         )
-        return Response({"client": ClientSerializer(client, context={"request": request}).data, "duplicates": [], "created": True}, status=status.HTTP_201_CREATED)
+        return Response({"client": ClientSerializer(client, context={"request": request}).data if visible_client(client, actor=request.user, business=conversation.business) is not None else None, "duplicates": [], "created": True}, status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=["post"], url_path="create-lead")
     def create_lead(self, request, pk=None):
@@ -589,7 +595,8 @@ class InboxConversationViewSet(ReadOnlyModelViewSet):
         serializer.is_valid(raise_exception=True)
 
         if conversation.lead_id:
-            return Response(LeadSerializer(conversation.lead).data)
+            return Response(create_result_data(conversation.lead, resource=Resources.LEADS,
+                serializer_class=LeadSerializer, business=conversation.business, request=request))
 
         result = run_conversation_pipeline(
             conversation=conversation,
@@ -601,7 +608,8 @@ class InboxConversationViewSet(ReadOnlyModelViewSet):
             use_ai_qualification=False,
             confirmed_actions=["create_lead"],
         )
-        return Response(LeadSerializer(result.lead).data, status=status.HTTP_201_CREATED)
+        return Response(create_result_data(result.lead, resource=Resources.LEADS,
+            serializer_class=LeadSerializer, business=conversation.business, request=request), status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=["post"], url_path="link-deal")
     @transaction.atomic
@@ -643,7 +651,8 @@ class InboxConversationViewSet(ReadOnlyModelViewSet):
         serializer.is_valid(raise_exception=True)
 
         if conversation.deal_id:
-            return Response(DealSerializer(conversation.deal).data)
+            return Response(create_result_data(conversation.deal, resource=Resources.DEALS,
+                serializer_class=DealSerializer, business=conversation.business, request=request))
 
         result = run_conversation_pipeline(
             conversation=conversation,
@@ -657,4 +666,5 @@ class InboxConversationViewSet(ReadOnlyModelViewSet):
             use_ai_qualification=False,
             confirmed_actions=["create_lead", "create_deal"],
         )
-        return Response(DealSerializer(result.deal).data, status=status.HTTP_201_CREATED)
+        return Response(create_result_data(result.deal, resource=Resources.DEALS,
+            serializer_class=DealSerializer, business=conversation.business, request=request), status=status.HTTP_201_CREATED)

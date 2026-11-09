@@ -2,25 +2,39 @@ import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ExternalLink, RefreshCw } from "lucide-react";
 
-import { ycloudApi } from "../../../../api/ycloud";
+import { ycloudApi, type YCloudOnboardingType } from "../../../../api/ycloud";
 import { botChannelsApi } from "../../../../api/bots";
 import { Button } from "../../../../components/ui/Button";
+import { Input } from "../../../../components/ui/Input";
+import { Select } from "../../../../components/ui/Select";
 import { ErrorState, LoadingState } from "../../../../components/ui/StateViews";
 import { useI18n } from "../../../../lib/i18n";
 import type { BotChannel } from "../../../../types";
 import { MessengerSetupShell } from "./IntegrationSetupUi";
 
-export function YCloudSetup({ channel, canManage, onBack }: { channel: BotChannel; canManage: boolean; onBack?: () => void }) {
+type YCloudSetupProps = { channel: BotChannel; canManage: boolean; onBack?: () => void };
+
+export function YCloudSetup(props: YCloudSetupProps) {
+  return <YCloudChannelSetup key={props.channel.id} {...props} />;
+}
+
+function YCloudChannelSetup({ channel, canManage, onBack }: YCloudSetupProps) {
   const { t } = useI18n();
   const queryClient = useQueryClient();
   const [signupLink, setSignupLink] = useState<{ url: string; expiresAt: number } | null>(null);
+  const [selectedMode, setSelectedMode] = useState<YCloudOnboardingType | null>(null);
+  const [enteredNumber, setEnteredNumber] = useState<string | null>(null);
   const status = useQuery({ queryKey: ["ycloud-status", channel.id], queryFn: () => ycloudApi.status(channel.id), refetchInterval: 5000 });
+  const mode = selectedMode ?? status.data?.onboarding_type ?? "WHATSAPP_BUSINESS_PLATFORM";
+  const phoneNumber = enteredNumber ?? status.data?.expected_phone_number ?? "";
+  const coexistence = mode === "WHATSAPP_BUSINESS_APP";
+  const validNumber = /^\+[1-9][0-9]{7,14}$/.test(phoneNumber.trim());
   const invalidate = () => {
     void queryClient.invalidateQueries({ queryKey: ["ycloud-status", channel.id] });
     void queryClient.invalidateQueries({ queryKey: ["bot-channels"] });
     void queryClient.invalidateQueries({ queryKey: ["business-connectors"] });
   };
-  const start = useMutation({ mutationFn: () => ycloudApi.start(channel.id), onSuccess: (data) => {
+  const start = useMutation({ mutationFn: () => ycloudApi.start(channel.id, mode, coexistence ? phoneNumber.trim() : ""), onSuccess: (data) => {
     // Memory only. Do not persist the temporary credential in query/local storage.
     const url = new URL(data.onboarding_url);
     if (url.origin === "https://connect.ycloud.com" && url.pathname === "/open/whatsapp/onboard") {
@@ -52,12 +66,29 @@ export function YCloudSetup({ channel, canManage, onBack }: { channel: BotChanne
     channelToggleLoading={toggle.isPending} onToggleChannel={(value) => toggle.mutate(value)}
     error={error ? <ErrorState message={t("integrations.ycloud.requestFailed")} action={<Button onClick={refresh}>{t("common.retry")}</Button>} /> : null}>
     {status.isPending ? <LoadingState /> : <div className="space-y-3" data-testid="ycloud-setup">
+      {!connected && !pending ? <>
+        <Select label={t("integrations.ycloud.mode")} value={mode}
+          disabled={!canManage || !data?.available || busy}
+          onChange={(event) => setSelectedMode(event.target.value as YCloudOnboardingType)}
+          options={[
+            { value: "WHATSAPP_BUSINESS_PLATFORM", label: t("integrations.ycloud.apiMode") },
+            { value: "WHATSAPP_BUSINESS_APP", label: t("integrations.ycloud.appMode") },
+          ]} />
+        {coexistence ? <Input type="tel" autoComplete="tel" label={t("integrations.ycloud.appNumber")}
+          value={phoneNumber} onChange={(event) => setEnteredNumber(event.target.value)}
+          disabled={!canManage || !data?.available || busy} placeholder="+77010000000"
+          error={phoneNumber && !validNumber ? t("integrations.ycloud.invalidNumber") : undefined}
+          aria-describedby={`ycloud-app-help-${channel.id}`} /> : null}
+      </> : <p className="text-sm text-platforma-muted">{t(data?.onboarding_type === "WHATSAPP_BUSINESS_APP"
+        ? "integrations.ycloud.appMode" : "integrations.ycloud.apiMode")}</p>}
+      {(pending || connected ? data?.onboarding_type === "WHATSAPP_BUSINESS_APP" : coexistence) ?
+        <p id={`ycloud-app-help-${channel.id}`} className="text-sm text-platforma-muted">{t("integrations.ycloud.appHelp")}</p> : null}
       {data?.phone_number ? <p className="font-semibold text-platforma-text">{data.phone_number}</p> : null}
       {!data?.available ? <p role="status" className="text-sm text-platforma-muted">{t("integrations.ycloud.setupRequired")}</p> : null}
       {pending ? <p role="status" className="text-sm text-platforma-muted">{t("integrations.ycloud.pending")}</p> : null}
       {data?.error_code || data?.failed_events ? <p role="alert" className="text-sm text-platforma-danger">{t("integrations.ycloud.needsAttention")}</p> : null}
       <div className="flex flex-wrap gap-3">
-        {!connected && !pending ? <Button disabled={!canManage || !data?.available || busy} isLoading={start.isPending} onClick={() => start.mutate()}>{t("integrations.ycloud.connect")}</Button> : null}
+        {!connected && !pending ? <Button disabled={!canManage || !data?.available || busy || (coexistence && !validNumber)} isLoading={start.isPending} onClick={() => start.mutate()}>{t("integrations.ycloud.connect")}</Button> : null}
         {pending && signupLink && signupLink.expiresAt > Date.now() ? <a className="inline-flex min-h-11 items-center gap-2 rounded-control px-3 font-bold text-brand-700 focus-visible:outline focus-visible:outline-2" href={signupLink.url} target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer"><ExternalLink size={16} />{t("integrations.ycloud.openSignup")}</a> : null}
         {pending ? <Button variant="secondary" disabled={!canManage || busy} onClick={() => recover.mutate("cancel")}>{t("common.cancel")}</Button> : null}
         {Boolean(data?.error_code || data?.failed_events) ? <Button variant="secondary" disabled={!canManage || busy || !data?.available} onClick={() => recover.mutate("retry_events")}>{t("common.retry")}</Button> : null}

@@ -1,6 +1,8 @@
 from rest_framework import serializers
 
 from apps.businesses.access import Resources, can_view_sensitive_field
+from apps.crm.field_policy import deal_amount_visible
+from apps.core.client_projection import ClientProjectionMixin
 from apps.core.work_queues import deal_risk, deal_sla_overdue
 from apps.crm.models import Deal, Pipeline, PipelineStage, StageTransition
 from apps.crm.services import validate_pipeline_links
@@ -60,7 +62,7 @@ class PipelineSerializer(serializers.ModelSerializer):
         read_only_fields = ["created_at", "updated_at", "stages"]
 
 
-class DealSerializer(serializers.ModelSerializer):
+class DealSerializer(ClientProjectionMixin, serializers.ModelSerializer):
     sla_overdue = serializers.SerializerMethodField()
     lifecycle_update_fields = {
         "stage",
@@ -119,7 +121,7 @@ class DealSerializer(serializers.ModelSerializer):
         data = super().to_representation(instance)
         request = self.context.get("request")
         user = getattr(request, "user", None) or self.context.get("actor")
-        if user and not can_view_sensitive_field(user, instance.business, Resources.DEALS, "amount"):
+        if not deal_amount_visible(user, instance.business):
             data["amount"] = None
             data["currency"] = ""
         if user and not can_view_sensitive_field(user, instance.business, Resources.DEALS, "notes"):

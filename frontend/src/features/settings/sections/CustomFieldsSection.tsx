@@ -5,19 +5,19 @@ import { ActionMenu } from "../../../components/ui/ActionMenu";
 import { Button } from "../../../components/ui/Button";
 import { hasPermission } from "../../../lib/permissions";
 import { useAuth } from "../../auth/AuthProvider";
-import type { CrmEntityType } from "../../../types";
+import type { CustomFieldEntityType } from "../../../types";
 import { CustomFieldEditor, fieldEntities } from "../components/CustomFieldEditor";
 import { SettingsFeedback, SettingsSection, SettingsTabs } from "../components/SettingsLayout";
 import { SettingsQueryState } from "../components/SettingsQueryState";
 import type { SettingsModel } from "../useSettingsModel";
 
 const columns = "sm:grid-cols-[minmax(0,1.4fr)_minmax(0,0.8fr)_minmax(0,0.6fr)_44px]";
-const entityLinks = { client: "/app/clients", lead: "/app/leads?history=1", deal: "/app/deals?history=1", appointment: "/app/appointments" };
+const entityLinks = { client: "/app/clients", lead: "/app/leads?history=1", deal: "/app/deals?history=1", appointment: "/app/appointments", service: "/app/business/services", specialist: "/app/business/resources" };
 
 export function CustomFieldsSection({ model }: { model: SettingsModel }) {
   const { t, activeSettingsSection, business, customFields, updateCustomFieldMutation, removeCustomFieldMutation, confirmDelete } = model;
   const { user } = useAuth();
-  const [entity, setEntity] = useState<CrmEntityType>("client");
+  const [entity, setEntity] = useState<CustomFieldEntityType>("client");
   const [editor, setEditor] = useState<"new" | number | null>(null);
   const initial = customFields.data?.find(field => Number(field.id) === editor);
   const rows = (customFields.data || []).filter(field => field.entity_type === entity);
@@ -28,7 +28,7 @@ export function CustomFieldsSection({ model }: { model: SettingsModel }) {
       <SettingsTabs value={entity} onChange={setEntity} label={t("settings.entity")} items={fieldEntities.map(value => ({ value, label: `${t(`settings.customFieldEntity.${value}`)}${value === "lead" || value === "deal" ? ` · ${t("records.historical")}` : ""}` }))} />
       <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-platforma-subtle">
         <p className="max-w-2xl">{t(`settings.workflow.fieldPlacement.${entity}`)}</p>
-        {hasPermission(user, business?.id, entity === "appointment" ? "appointments" : entity + "s", "view") && <Link to={entityLinks[entity]} className="platforma-focus-ring inline-flex min-h-11 items-center rounded-control font-semibold text-brand-700 underline underline-offset-4">{t(entity === "lead" || entity === "deal" ? "records.legacyTitle" : `settings.workflow.openEntities.${entity}`)}</Link>}
+        {hasPermission(user, business?.id, entity === "service" || entity === "specialist" ? "settings" : entity === "appointment" ? "appointments" : entity + "s", "view") && <Link to={entityLinks[entity]} className="platforma-focus-ring inline-flex min-h-11 items-center rounded-control font-semibold text-brand-700 underline underline-offset-4">{t(entity === "lead" || entity === "deal" ? "records.legacyTitle" : `settings.workflow.openEntities.${entity}`)}</Link>}
       </div>
       <SettingsQueryState queries={[customFields]} />
       {customFields.isSuccess && <div>

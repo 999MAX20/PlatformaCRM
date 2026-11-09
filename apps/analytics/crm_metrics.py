@@ -16,6 +16,7 @@ from apps.core.work_queues import (
     unread_sla_overdue_conversations_queryset,
 )
 from apps.crm.models import Deal
+from apps.crm.field_policy import deal_amount_visible
 from apps.integrations.models import BusinessConnector, BusinessEvent, ConnectorSyncRun
 from apps.leads.models import Lead
 from apps.scheduling.models import Appointment
@@ -38,6 +39,7 @@ CONNECTOR_ERROR_STATUSES = [
 
 def build_crm_operational_metrics(business, *, user=None, start_date=None, end_date=None, now=None):
     now = now or timezone.now()
+    amounts_visible = deal_amount_visible(user, business)
     leads = _date_filter(_scoped(Lead.objects.filter(business=business, is_archived=False), user, business, Resources.LEADS), "created_at", start_date, end_date)
     deals = _date_filter(_scoped(Deal.objects.filter(business=business, is_archived=False), user, business, Resources.DEALS), "created_at", start_date, end_date)
     appointments = _date_filter(
@@ -83,9 +85,9 @@ def build_crm_operational_metrics(business, *, user=None, start_date=None, end_d
             "open_count": deals.filter(status=Deal.Statuses.OPEN).count(),
             "won_count": deals.filter(status=Deal.Statuses.WON).count(),
             "lost_count": deals.filter(status=Deal.Statuses.LOST).count(),
-            "open_value": _decimal_str(_sum_amount(deals.filter(status=Deal.Statuses.OPEN))),
-            "won_value": _decimal_str(_sum_amount(deals.filter(status=Deal.Statuses.WON))),
-            "lost_value": _decimal_str(_sum_amount(deals.filter(status=Deal.Statuses.LOST))),
+            "open_value": _decimal_str(_sum_amount(deals.filter(status=Deal.Statuses.OPEN))) if amounts_visible else None,
+            "won_value": _decimal_str(_sum_amount(deals.filter(status=Deal.Statuses.WON))) if amounts_visible else None,
+            "lost_value": _decimal_str(_sum_amount(deals.filter(status=Deal.Statuses.LOST))) if amounts_visible else None,
         },
         "appointments": {
             "total": total_appointments,
@@ -127,7 +129,8 @@ def build_crm_operational_metrics(business, *, user=None, start_date=None, end_d
             "timezone": business.timezone,
             "currency": business.currency,
             "availability": {
-                resource: (user is None or can(user, business, resource, Actions.VIEW).allowed)
+                resource: (resource_is_enabled(business, resource)
+                           and (user is None or can(user, business, resource, Actions.VIEW).allowed))
                 for resource in [
                     Resources.LEADS,
                     Resources.DEALS,
@@ -179,17 +182,19 @@ def build_connector_health_metrics(business):
 
 
 def _manager_performance(*, business, user, start_date, end_date, now):
+    amounts_visible = deal_amount_visible(user, business)
     visible_members = _visible_performance_members(business=business, user=user)
     visible_user_ids = list(visible_members.values_list("user_id", flat=True))
-    leads = _date_filter(Lead.objects.filter(business=business, is_archived=False, responsible_user_id__in=visible_user_ids), "created_at", start_date, end_date)
-    deals = _date_filter(Deal.objects.filter(business=business, is_archived=False, owner_id__in=visible_user_ids), "created_at", start_date, end_date)
+    visible_leads = _scoped(Lead.objects.filter(business=business), user, business, Resources.LEADS)
+    leads = _date_filter(visible_leads.filter(is_archived=False, responsible_user_id__in=visible_user_ids), "created_at", start_date, end_date)
+    deals = _date_filter(_scoped(Deal.objects.filter(business=business, is_archived=False, owner_id__in=visible_user_ids), user, business, Resources.DEALS), "created_at", start_date, end_date)
     appointments = _date_filter(
-        Appointment.objects.filter(business=business, is_archived=False, lead__responsible_user_id__in=visible_user_ids),
+        _scoped(Appointment.objects.filter(business=business, is_archived=False, lead__responsible_user_id__in=visible_user_ids), user, business, Resources.APPOINTMENTS),
         "created_at",
         start_date,
         end_date,
     )
-    tasks = _date_filter(Task.objects.filter(business=business, is_archived=False, assignee_id__in=visible_user_ids), "created_at", start_date, end_date)
+    tasks = _date_filter(_scoped(Task.objects.filter(business=business, is_archived=False, assignee_id__in=visible_user_ids), user, business, Resources.TASKS), "created_at", start_date, end_date)
     lead_metrics = {
         row["responsible_user_id"]: row
         for row in leads.values("responsible_user_id").annotate(assigned_leads=Count("id"))
@@ -198,7 +203,9 @@ def _manager_performance(*, business, user, start_date, end_date, now):
     deal_metrics = {
         row["owner_id"]: row
         for row in deals.values("owner_id").annotate(
-            deals_from_leads=Count("lead_id", distinct=True, filter=Q(lead__responsible_user_id=F("owner_id"))),
+            deals_from_leads=Count("lead_id", distinct=True, filter=Q(
+                lead__responsible_user_id=F("owner_id"), lead_id__in=visible_leads.values("pk"),
+            )),
             won_deals=Count("id", filter=Q(status=Deal.Statuses.WON)),
             lost_deals=Count("id", filter=Q(status=Deal.Statuses.LOST)),
             won_value=Sum("amount", filter=Q(status=Deal.Statuses.WON)),
@@ -248,8 +255,8 @@ def _manager_performance(*, business, user, start_date, end_date, now):
                 "lead_to_deal_rate": _percent(deals_from_leads, assigned_leads),
                 "won_deals": member_deals.get("won_deals", 0),
                 "lost_deals": member_deals.get("lost_deals", 0),
-                "won_value": _decimal_str(member_deals.get("won_value")),
-                "lost_value": _decimal_str(member_deals.get("lost_value")),
+                "won_value": _decimal_str(member_deals.get("won_value")) if amounts_visible else None,
+                "lost_value": _decimal_str(member_deals.get("lost_value")) if amounts_visible else None,
                 "appointments_completed": member_appointments.get("appointments_completed", 0),
                 "appointments_no_show": member_appointments.get("appointments_no_show", 0),
                 "open_tasks": member_tasks.get("open_tasks", 0),

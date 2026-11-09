@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import ts from "typescript";
 
 import { routeActionRegistry } from "../e2e/certification/route-action-registry.mjs";
 import { expectedActionOutcome } from "../e2e/certification/action-outcome-contracts.mjs";
@@ -46,13 +47,67 @@ function countDiff(expected, actual) {
     .map((key) => `${key}: registry=${expected.get(key) || 0}, router=${actual.get(key) || 0}`);
 }
 
+export function declaredRoutePaths(routerPath) {
+  const visited = new Set();
+  const paths = [];
+  function visitFile(file) {
+    if (visited.has(file)) return;
+    visited.add(file);
+    const source = fs.readFileSync(file, "utf8");
+    const ast = ts.createSourceFile(file, source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+    let metadata;
+    function metadataSegment(key) {
+      if (!metadata) {
+        const location = path.join(path.dirname(file), "routeMetadata.ts");
+        const metadataAst = ts.createSourceFile(location, fs.readFileSync(location, "utf8"), ts.ScriptTarget.Latest, true);
+        const declaration = metadataAst.statements.filter(ts.isVariableStatement)
+          .flatMap(statement => [...statement.declarationList.declarations])
+          .find(item => item.name.getText(metadataAst) === "routeMetadata");
+        let object = declaration?.initializer;
+        while (object && (ts.isSatisfiesExpression(object) || ts.isAsExpression(object))) object = object.expression;
+        if (!object || !ts.isObjectLiteralExpression(object)) throw new Error("Route metadata must be a static object");
+        metadata = new Map(object.properties.filter(ts.isPropertyAssignment).map(item => {
+          const segment = ts.isObjectLiteralExpression(item.initializer)
+            ? item.initializer.properties.find(property => ts.isPropertyAssignment(property) && property.name.getText(metadataAst) === "segment") : null;
+          return [item.name.getText(metadataAst), segment && ts.isStringLiteral(segment.initializer) ? segment.initializer.text : undefined];
+        }));
+      }
+      const value = metadata.get(key);
+      if (!value) throw new Error(`Unresolved route metadata segment: ${key}`);
+      return value;
+    }
+    function visit(node) {
+      if (ts.isPropertyAssignment(node) && node.name.getText(ast) === "path") {
+        if (ts.isStringLiteral(node.initializer)) paths.push(node.initializer.text);
+        else {
+          const expression = node.initializer.getText(ast);
+          const match = /^routeMetadata\.(\w+)\.segment$/.exec(expression);
+          if (match) paths.push(metadataSegment(match[1]));
+          else if (expression !== "route.path") throw new Error(`Unresolved router path: ${expression}`);
+        }
+      }
+      ts.forEachChild(node, visit);
+    }
+    visit(ast);
+    for (const statement of ast.statements) {
+      if (!ts.isImportDeclaration(statement) || !ts.isStringLiteral(statement.moduleSpecifier)) continue;
+      const bindings = statement.importClause?.namedBindings;
+      if (!bindings || !ts.isNamedImports(bindings) || !bindings.elements.some(item => /Routes$/.test((item.propertyName || item.name).text))) continue;
+      const relative = statement.moduleSpecifier.text;
+      if (!relative.startsWith(".")) throw new Error(`Route module must be local: ${relative}`);
+      const base = path.resolve(path.dirname(file), relative);
+      const target = [base, `${base}.tsx`, `${base}.ts`].find(candidate => fs.existsSync(candidate) && fs.statSync(candidate).isFile());
+      if (!target) throw new Error(`Route module not found: ${relative}`);
+      visitFile(target);
+    }
+  }
+  visitFile(routerPath);
+  return paths;
+}
+
 export function verifyFunctionalCertificationRegistry({ rootDir = frontendDir } = {}) {
   const errors = [];
-  const routerPath = path.join(rootDir, "src", "app", "router.tsx");
-  const routerSource = fs.readFileSync(routerPath, "utf8");
-  const routerPaths = [...routerSource.matchAll(/\bpath:\s*["']([^"']+)["']/g)].map(
-    (match) => match[1],
-  );
+  const routerPaths = declaredRoutePaths(path.join(rootDir, "src", "app", "router.tsx"));
 
   const ids = new Set();
   for (const [index, entry] of routeActionRegistry.entries()) {

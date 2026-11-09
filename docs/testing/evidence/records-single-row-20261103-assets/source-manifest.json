@@ -1,0 +1,9 @@
+{
+  "frontend/src/features/calendar/RecordsPage.tsx": "042ffbecd96703324bf3a432a2088dfe2803843cd736582997a19ee8f063d997",
+  "frontend/src/features/calendar/RecordsToolbar.tsx": "251995dd8f514cfe6e578196be26c1b067c724a2fb22929112359455bae8ed52",
+  "frontend/src/features/calendar/recordFilters.ts": "cb97def3d339704a96884d77f7160035c97acc27cea59784a6c6d45621fbbbdf",
+  "frontend/src/features/calendar/useRecordsPeriod.ts": "5fdbdadbcd62597963a93e5bd7c642cdb1eb9fe20c1e3bf02dcc128cc001e614",
+  "frontend/scripts/tests/record-filters.test.mjs": "4bd8122a5e3f352db5b2a4299cc9981761ffe27a1c76f5d7b659216220cbbfed",
+  "frontend/e2e/records-toolbar.spec.ts": "fa8744a29da4b1af9b07a1e88bdfb233855201be213088b23d4283b821786932",
+  "frontend/e2e/records-bell-recovery.spec.ts": "4149b9f4b9d7a73e185d8c1d75a83f8a263229cfb3d8b78fd891618cf2a58ba7"
+}

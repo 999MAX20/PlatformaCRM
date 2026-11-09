@@ -61,7 +61,7 @@ export function AppointmentDrawerPanel({
         <div className="mt-5">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <p className="truncate text-2xl font-bold leading-7 text-platforma-text">{clientById.get(appointment.client)?.full_name || appointment.client_name || t("common.client")}</p>
+              <p className="truncate text-2xl font-bold leading-7 text-platforma-text">{(appointment.client !== null ? clientById.get(appointment.client)?.full_name : undefined) || appointment.client_name || t("common.client")}</p>
               <p className="mt-2 text-sm font-bold text-platforma-muted">
                 {formatTime(appointment.start_at, locale, businessTimeZone)}-{formatTime(appointment.end_at, locale, businessTimeZone)} - {formatPickerDate(dateInTimeZone(appointment.start_at, businessTimeZone), locale)}
               </p>
@@ -139,7 +139,7 @@ export function AppointmentDrawerPanel({
                   {t("appointments.reschedule")}
                 </Button>
               ) : null}
-              <Button type="button" variant="secondary" size="sm" className={!canReschedule ? "col-span-2" : undefined} onClick={() => onOpenCard(appointment)}>
+              <Button type="button" data-focus-return-id={`calendar-card-${appointment.id}`} variant="secondary" size="sm" className={!canReschedule ? "col-span-2" : undefined} onClick={() => onOpenCard(appointment)}>
                 {t("calendar.openCard")}
               </Button>
             </div>

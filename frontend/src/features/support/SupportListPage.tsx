@@ -51,7 +51,7 @@ export function SupportListPage({ platform = false, fixedBusiness }: { platform?
   return <div className="space-y-4" data-testid="support-list">
     {!platform && <div className="flex justify-end">{createButton}</div>}
     <div className="flex flex-wrap items-end gap-3 [&>label]:w-full sm:[&>label]:w-auto">
-      <Input label={platform ? undefined : t("supportCases.search")} aria-label={t("supportCases.search")} placeholder={platform ? t("supportCases.search") : undefined} value={search} onChange={event => update({ search: event.target.value, page: "" })} maxLength={200} className="sm:w-80" />
+      <Input label={platform ? undefined : t("supportCases.search")} pageSearch aria-label={t("supportCases.search")} placeholder={platform ? t("supportCases.search") : undefined} value={search} onChange={event => update({ search: event.target.value, page: "" })} maxLength={200} />
       <Select label={platform ? undefined : t("supportCases.statusLabel")} aria-label={t("supportCases.statusLabel")} value={status} onChange={event => update({ status: event.target.value, page: "" })} className="w-full sm:w-56"
         options={[{ value: "", label: t("supportCases.allStatuses") }, { value: "active", label: t("supportCases.active") }, ...supportStatuses.map(value => ({ value, label: t(`supportCases.status.${value}`) }))]} />
       {!platform && <label className="flex min-h-11 items-center gap-2 text-sm"><input type="checkbox" className="platforma-focus-ring size-4" checked={unread} onChange={event => update({ unread: event.target.checked ? "true" : "", page: "" })} />{t("supportCases.unreadOnly")}</label>}

@@ -10,6 +10,7 @@ import { formatTime } from "../calendarUtils";
 export function CalendarAppointmentPreview({
   appointment,
   compact = false,
+  customLabels = [],
   selectedAppointmentId,
   clientById,
   serviceById,
@@ -22,6 +23,7 @@ export function CalendarAppointmentPreview({
 }: {
   appointment: Appointment;
   compact?: boolean;
+  customLabels?: { label: string; value: string }[];
   selectedAppointmentId: number | null;
   clientById: Map<number, Client>;
   serviceById: Map<number, Service>;
@@ -32,7 +34,7 @@ export function CalendarAppointmentPreview({
   onOpenCard: (appointment: Appointment) => void;
   t: CalendarTranslate;
 }) {
-  const client = clientById.get(appointment.client);
+  const client = appointment.client !== null ? clientById.get(appointment.client) : undefined;
   const service = serviceById.get(appointment.service);
   const resource = appointment.resource ? resourceById.get(appointment.resource) : null;
 
@@ -41,6 +43,7 @@ export function CalendarAppointmentPreview({
       key={appointment.id}
       type="button"
       data-appointment-id={appointment.id}
+      data-focus-return-id={`calendar-preview-${appointment.id}`}
       className={cn(
         compact
           ? "w-full bg-platforma-card px-4 py-3 text-left transition hover:bg-brand-50"
@@ -63,6 +66,7 @@ export function CalendarAppointmentPreview({
       {!compact ? <p className="mt-2 truncate text-xs font-semibold text-platforma-muted">{resource?.name || appointment.resource_name || t("calendar.noResource")} · {t(`appointment.source.${appointment.source}`)}</p> : null}
       {appointment.branch_name && <p className="mt-1 truncate text-xs text-platforma-subtle">{appointment.branch_name} · {appointment.branch_address}</p>}
       {appointment.responsible_user_name && <p className="mt-1 truncate text-xs text-platforma-subtle">{t("appointment.responsible")}: {appointment.responsible_user_name}</p>}
+      {customLabels.slice(0, 2).map((field, index) => <p key={`${index}:${field.label}`} className="mt-1 truncate text-xs text-platforma-muted" title={`${field.label}: ${field.value}`}>{field.label}: {field.value}</p>)}
     </button>
   );
 }

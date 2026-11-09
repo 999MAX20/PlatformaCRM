@@ -1,4 +1,7 @@
 import type { UseMutationResult } from "@tanstack/react-query";
+import { useRef, useState } from "react";
+import { DraftGuard } from "../../../components/actions/DraftGuard";
+import { useActionConfirm } from "../../../components/actions/ActionConfirmProvider";
 
 import type {
   ClientMergeDryRun,
@@ -31,14 +34,17 @@ export function ClientsModals({
   t,
   onCloseCreate,
   onCreateSubmit,
+  saveError,
   onOpenClient,
   onCloseMergePreview,
   onCloseTag,
   onTagDraftChange,
   onSegmentDraftChange,
   onCloseSegment,
+  protectDrafts = false,
 }: {
   businessId: Id;
+  saveError?: unknown;
   createOpen: boolean;
   editing?: Client;
   mergePreview: ClientMergeDryRun | null;
@@ -73,19 +79,38 @@ export function ClientsModals({
   onTagDraftChange: (value: string) => void;
   onSegmentDraftChange: (value: SegmentDraft) => void;
   onCloseSegment: () => void;
+  protectDrafts?: boolean;
 }) {
+  const confirm = useActionConfirm();
+  const confirming = useRef(false);
+  const [formState, setFormState] = useState({ dirty: false, pending: false });
+  const dirty = protectDrafts && ((createOpen && formState.dirty) || (tagOpen && Boolean(tagDraft.trim())));
+  const pending = protectDrafts && ((createOpen && formState.pending) || (tagOpen && addTagMutation.isPending));
+  async function attempt(action: () => void) {
+    if (pending || confirming.current) return;
+    if (dirty) {
+      confirming.current = true;
+      const result = await confirm({ title: t("taskWorkspace.discardTitle"), confirmLabel: t("taskWorkspace.discard"), cancelLabel: t("taskWorkspace.keepEditing"), tone: "warning" });
+      confirming.current = false;
+      if (!result.confirmed) return;
+    }
+    action();
+  }
   return (
     <>
+      {dirty || pending ? <DraftGuard dirty={dirty} pending={pending} /> : null}
       <Modal
         title={editing ? t("clients.editTitle") : t("clients.create")}
         open={createOpen}
-        onClose={onCloseCreate}
+        onClose={() => void attempt(onCloseCreate)}
       >
         <ClientForm
+          submitError={saveError}
           businessId={businessId}
           initial={editing}
+          onStateChange={protectDrafts ? setFormState : undefined}
           onSubmit={onCreateSubmit}
-          onOpenClient={onOpenClient}
+          onOpenClient={id => void attempt(() => onOpenClient(id))}
           onMergeDuplicate={(duplicateId) => {
             if (!editing) return Promise.resolve();
             return mergeDryRunMutation.mutateAsync({
@@ -157,24 +182,25 @@ export function ClientsModals({
         ) : null}
       </Modal>
 
-      <Modal title={t("clients.addTag")} open={tagOpen} onClose={onCloseTag}>
+      <Modal title={t("clients.addTag")} open={tagOpen} onClose={() => void attempt(onCloseTag)}>
         <form
           className="space-y-4"
           onSubmit={(event) => {
             event.preventDefault();
             const tagName = tagDraft.trim();
-            if (!selectedClient || !tagName) return;
+            if (!selectedClient || !tagName || addTagMutation.isPending) return;
             addTagMutation.mutate({ clientId: selectedClient.id, tagName });
           }}
         >
           <Input
             label={t("clients.tagPrompt")}
             value={tagDraft}
+            disabled={protectDrafts && addTagMutation.isPending}
             onChange={(event) => onTagDraftChange(event.target.value)}
             required
           />
           <div className="flex justify-end gap-2">
-            <Button type="button" variant="secondary" onClick={onCloseTag}>
+            <Button type="button" variant="secondary" disabled={pending} onClick={() => void attempt(onCloseTag)}>
               {t("common.cancel")}
             </Button>
             <Button

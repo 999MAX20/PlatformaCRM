@@ -7,6 +7,7 @@ import {
   useId,
   useLayoutEffect,
   useRef,
+  type ReactNode,
 } from "react";
 
 import { useBodyScrollLock } from "../../hooks/useBodyScrollLock";
@@ -161,6 +162,7 @@ function useDialogFocus(
     if (!open) return undefined;
 
     function handleKeyDown(event: KeyboardEvent) {
+      if (event.defaultPrevented) return;
       const dialog = dialogRef.current;
       if (!dialog || !isTopmostDialog(dialog)) return;
       if (event.key === "Escape") {
@@ -216,6 +218,9 @@ export function Dialog({
   closeOnBackdrop = true,
   testId,
   focusReturnId,
+  presentation = "dialog",
+  headerActions,
+  footer,
 }: {
   title: string;
   open: boolean;
@@ -227,6 +232,9 @@ export function Dialog({
   closeOnBackdrop?: boolean;
   testId?: string;
   focusReturnId?: string;
+  presentation?: "dialog" | "entity";
+  headerActions?: ReactNode;
+  footer?: ReactNode;
 }) {
   const titleId = useId();
   const dialogRef = useRef<HTMLElement>(null);
@@ -238,7 +246,7 @@ export function Dialog({
   return createPortal(
     <div
       className="platforma-overlay-backdrop fixed inset-0 grid place-items-center p-3 sm:p-5"
-      style={{ zIndex: "var(--platforma-z-modal)" }}
+      style={{ zIndex: presentation === "entity" ? "var(--platforma-z-drawer)" : "var(--platforma-z-modal)", ...(presentation === "entity" ? { backdropFilter: "none" } : {}) }}
       onMouseDown={closeOnBackdrop ? onClose : undefined}
     >
       <section
@@ -250,8 +258,10 @@ export function Dialog({
         tabIndex={-1}
         autoFocus
         className={cn(
-          "platforma-dialog-surface flex max-h-[calc(100dvh-1.5rem)] w-full flex-col overflow-hidden sm:max-h-[90vh]",
-          dialogSizeClass[size],
+          "platforma-dialog-surface flex w-full flex-col overflow-hidden",
+          presentation === "entity"
+            ? "h-[calc(100dvh-1.5rem)] max-h-[calc(100dvh-1.5rem)] max-w-[1080px] sm:h-[90dvh] sm:max-h-[90dvh]"
+            : cn("max-h-[calc(100dvh-1.5rem)] sm:max-h-[90vh]", dialogSizeClass[size]),
           className,
         )}
         onMouseDown={(event) => event.stopPropagation()}
@@ -260,9 +270,10 @@ export function Dialog({
           <h2 id={titleId} className="min-w-0 truncate text-lg font-semibold text-platforma-ink">
             {title}
           </h2>
-          <CloseButton onClose={onClose} />
+          <div className="flex shrink-0 items-center gap-3">{headerActions}<CloseButton onClose={onClose} /></div>
         </header>
-        <div className={cn("min-h-0 flex-1 overflow-auto bg-surface-warm p-4 sm:p-5", bodyClassName)}>{children}</div>
+        <div className={cn("min-h-0 flex-1", presentation === "entity" ? "flex flex-col overflow-y-auto bg-surface-card md:overflow-hidden" : "overflow-auto bg-surface-warm p-4 sm:p-5", bodyClassName)}>{children}</div>
+        {footer ? <footer className="shrink-0 border-t border-platforma-border bg-surface-card px-4 py-3 sm:px-6">{footer}</footer> : null}
       </section>
     </div>,
     document.body,

@@ -1,0 +1,27 @@
+{
+  "desktop": {
+    "viewport": [
+      1440,
+      1000
+    ],
+    "filterGrid": {
+      "top": 113,
+      "height": 156,
+      "bottom": 269
+    },
+    "emptyTextTop": 365.8
+  },
+  "mobile": {
+    "viewport": [
+      390,
+      844
+    ],
+    "filterGrid": {
+      "top": 261,
+      "height": 576,
+      "bottom": 837
+    },
+    "emptyTextTop": 933.8,
+    "horizontalOverflow": false
+  }
+}

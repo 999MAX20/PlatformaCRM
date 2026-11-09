@@ -19,7 +19,7 @@ def accessible_branches(user, business, *, active_only=False):
         return branches.none()
     grant = BranchAccess.objects.filter(member=member).first()
     if grant is None:
-        return branches.none()
+        return branches.filter(uses_business_defaults=True)
     return branches if grant.all_branches else branches.filter(access_grants=grant)
 
 
@@ -52,6 +52,8 @@ def branch_write_allowed(user, business, obj):
     if model == "services.service":
         return not Branch.objects.filter(business=business).exclude(pk__in=accessible_branches(user, business)).exists()
     if model == "scheduling.resource" and obj.pk:
+        if Branch.objects.filter(business=business, uses_business_defaults=True).exclude(pk__in=accessible_branches(user, business)).exists():
+            return False
         return not obj.branch_assignments.exclude(branch__in=accessible_branches(user, business)).exists()
     branch_id = getattr(obj, "branch_id", None)
     if branch_id is None:

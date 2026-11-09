@@ -1,8 +1,9 @@
 from rest_framework import serializers
-from rest_framework.exceptions import PermissionDenied
 
 from apps.businesses.access import Resources, can_view_sensitive_field
 from apps.clients.models import Client
+from apps.clients.field_policy import validate_client_write_fields
+from apps.clients.duplicate_visibility import project_duplicate_rows, readable_duplicate_ids
 from apps.clients.services import duplicate_payload, find_duplicate_clients, merge_clients, merge_clients_dry_run
 from apps.core.permissions import accessible_businesses
 
@@ -85,13 +86,7 @@ class ClientSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         attrs = super().validate(attrs)
         business = attrs.get("business", getattr(self.instance, "business", None))
-        if "notes" in attrs and business and not self.notes_visible(business):
-            if attrs["notes"]:
-                raise PermissionDenied("This field is not available to your role.")
-            # Existing clients submit the masked empty value during ordinary edits.
-            # It must not become a request to clear the stored private note.
-            attrs.pop("notes")
-        return attrs
+        return validate_client_write_fields(attrs, notes_allowed=self.notes_visible(business)) if business else attrs
 
 
 class DuplicateCheckSerializer(serializers.Serializer):
@@ -116,6 +111,10 @@ class DuplicateCheckSerializer(serializers.Serializer):
 
     def duplicates(self):
         business = self.validated_data["business"]
+        actor = getattr(self.context.get("request"), "user", None) or self.context.get("actor")
+        exclude_id = self.validated_data.get("exclude_client_id")
+        if exclude_id not in readable_duplicate_ids([exclude_id], actor=actor, business=business):
+            exclude_id = None
         clients = find_duplicate_clients(
             business,
             phone=self.validated_data.get("phone"),
@@ -123,9 +122,9 @@ class DuplicateCheckSerializer(serializers.Serializer):
             whatsapp_id=self.validated_data.get("whatsapp_id"),
             telegram_id=self.validated_data.get("telegram_id"),
             instagram_id=self.validated_data.get("instagram_id"),
-            exclude_client_id=self.validated_data.get("exclude_client_id"),
+            exclude_client_id=exclude_id,
         )
-        return duplicate_payload(
+        rows = duplicate_payload(
             clients,
             phone=self.validated_data.get("phone"),
             email=self.validated_data.get("email"),
@@ -133,6 +132,7 @@ class DuplicateCheckSerializer(serializers.Serializer):
             telegram_id=self.validated_data.get("telegram_id"),
             instagram_id=self.validated_data.get("instagram_id"),
         )
+        return project_duplicate_rows(rows, actor=actor, business=business)
 
 
 class ClientMergeSerializer(serializers.Serializer):

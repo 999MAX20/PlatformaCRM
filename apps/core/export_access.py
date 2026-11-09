@@ -29,6 +29,8 @@ def export_access_fingerprint(job, actor):
     ).allowed:
         raise PermissionDenied("Export access is no longer available.")
     resources = sorted(PERMISSION_CATALOG) if job.kind == "analytics_report" else [resource]
+    if job.kind == "entity" and job.export_key in {"leads", "deals", "appointments"} and Resources.CLIENTS not in resources:
+        resources.append(Resources.CLIENTS)
     access = {}
     for key in resources:
         permission = can(actor, job.business, key, Actions.VIEW)
@@ -68,8 +70,17 @@ def export_access_fingerprint(job, actor):
                                        .order_by("pk").values_list("pk", flat=True))]
         context["members"] = list(BusinessMember.objects.filter(business=job.business)
                                   .order_by("pk").values_list("user_id", "role", "is_active"))
-        context["sensitive"] = [can_view_sensitive_field(actor, job.business, Resources.CLIENTS, field)
-                                for field in ("notes", "amount")]
+        context["sensitive"] = [can_view_sensitive_field(actor, job.business, Resources.CLIENTS, "notes"),
+                                can_view_sensitive_field(actor, job.business, Resources.DEALS, "amount")]
+    if job.kind == "entity" and job.export_key == "deals":
+        from apps.crm.field_policy import deal_amount_visible
+
+        context["deal_amount"] = deal_amount_visible(actor, job.business)
+    if job.kind == "entity" and job.export_key in {"clients", "services", "specialists", "appointments"}:
+        from apps.core.custom_field_export import export_custom_fields
+        kind = {"clients": "client", "services": "service", "specialists": "specialist", "appointments": "appointment"}[job.export_key]
+        context["custom_fields"] = [[field.pk, field.key, field.field_type, field.permissions_json]
+            for field in export_custom_fields(job.business, kind, actor)]
     return hashlib.sha256(json.dumps(context, sort_keys=True).encode()).hexdigest()
 
 

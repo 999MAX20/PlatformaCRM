@@ -51,7 +51,7 @@ export function AgentTurnCard({ turn, busy, canExecute, isLatest, onConfirm, onC
           </section>;
         })}
         {turn.sources.length > 0 && <details><summary className="cursor-pointer text-xs text-platforma-subtle">{t("aiScenario.sources")}</summary><ul className="mt-2 space-y-1 text-xs text-platforma-subtle">{turn.sources.map(source => <li key={source.id}>{source.label}</li>)}</ul></details>}
-        {turn.status === "failed" && <p className="text-sm text-platforma-danger">{t("agentChat.failedText")}</p>}
+        {turn.status === "failed" && <p className="text-sm text-platforma-danger">{t(["voice_action_unavailable", "voice_one_operation"].includes(turn.error_code) ? `voice.error.${turn.error_code}` : "agentChat.failedText")}</p>}
         {isLatest && <div className="flex flex-wrap gap-2">
           {pending && <Button disabled={busy || !canExecute || !turn.actions.some(item => item.status === "suggested")} onClick={onConfirm}>{t("agentChat.confirm")}</Button>}
           {pending && <Button variant="secondary" disabled={busy} onClick={onCancel}>{t("aiCRM.discard")}</Button>}

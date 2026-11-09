@@ -17,7 +17,7 @@ class EmailRuntimeSmokeTests(TestCase):
 
         call_command("email_runtime_smoke", "--send", "--to", "owner@example.com", stdout=output)
 
-        self.assertIn("Email smoke sent: 1 message", output.getvalue())
+        self.assertIn("Email smoke captured locally; no external delivery.", output.getvalue())
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].to, ["owner@example.com"])
         self.assertNotIn("client", mail.outbox[0].body.lower())

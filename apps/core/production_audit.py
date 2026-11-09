@@ -73,7 +73,7 @@ def run_production_readiness_audit() -> dict:
             "environment.cors",
             "Production HTTPS origins configured",
             _has_safe_https_origins(settings.CORS_ALLOWED_ORIGINS) and _has_safe_https_origins(settings.CSRF_TRUSTED_ORIGINS),
-            f"CORS={settings.CORS_ALLOWED_ORIGINS}; CSRF={settings.CSRF_TRUSTED_ORIGINS}",
+            f"CORS configured={bool(settings.CORS_ALLOWED_ORIGINS)}; CSRF configured={bool(settings.CSRF_TRUSTED_ORIGINS)}",
             "Set CORS_ALLOWED_ORIGINS and CSRF_TRUSTED_ORIGINS to public HTTPS app/API origins only; remove localhost, private IP and http origins.",
         ),
         _item(
@@ -124,7 +124,7 @@ def run_production_readiness_audit() -> dict:
             "queue.redis",
             "TLS Redis broker configured",
             _has_tls_redis_broker(),
-            f"CELERY_BROKER_URL={settings.CELERY_BROKER_URL}",
+            f"CELERY_BROKER_URL configured={bool(settings.CELERY_BROKER_URL)}; tls={_has_tls_redis_broker()}",
             "Use managed Redis over TLS (rediss://) for Celery broker/result backend.",
         ),
         _item(
@@ -182,9 +182,9 @@ def run_production_readiness_audit() -> dict:
             "integrations.telegram",
             "Telegram production guardrails configured",
             _has_safe_telegram_runtime(),
-            "TELEGRAM_ENABLED={enabled}; TELEGRAM_BASE_API_URL={base_url}; {secret_detail}".format(
+            "TELEGRAM_ENABLED={enabled}; TELEGRAM_BASE_API_URL configured={base_url}; {secret_detail}".format(
                 enabled=getattr(settings, "TELEGRAM_ENABLED", False),
-                base_url=getattr(settings, "TELEGRAM_BASE_API_URL", ""),
+                base_url=bool(getattr(settings, "TELEGRAM_BASE_API_URL", "")),
                 secret_detail=shared_secret_strength_detail(getattr(settings, "TELEGRAM_WEBHOOK_SECRET", ""), "TELEGRAM_WEBHOOK_SECRET"),
             ),
             "Keep Telegram disabled or set a strong webhook secret and public HTTPS Telegram API base URL before real traffic.",
@@ -193,9 +193,9 @@ def run_production_readiness_audit() -> dict:
             "integrations.whatsapp",
             "WhatsApp production guardrails configured",
             _has_safe_whatsapp_runtime(),
-            "WHATSAPP_ENABLED={enabled}; WHATSAPP_GRAPH_BASE_URL={graph_url}; {verify_detail}; {secret_detail}".format(
+            "WHATSAPP_ENABLED={enabled}; WHATSAPP_GRAPH_BASE_URL configured={graph_url}; {verify_detail}; {secret_detail}".format(
                 enabled=getattr(settings, "WHATSAPP_ENABLED", False),
-                graph_url=getattr(settings, "WHATSAPP_GRAPH_BASE_URL", ""),
+                graph_url=bool(getattr(settings, "WHATSAPP_GRAPH_BASE_URL", "")),
                 verify_detail=shared_secret_strength_detail(getattr(settings, "WHATSAPP_VERIFY_TOKEN", ""), "WHATSAPP_VERIFY_TOKEN"),
                 secret_detail=shared_secret_strength_detail(getattr(settings, "WHATSAPP_APP_SECRET", ""), "WHATSAPP_APP_SECRET"),
             ),
@@ -205,9 +205,9 @@ def run_production_readiness_audit() -> dict:
             "integrations.instagram",
             "Instagram production guardrails configured",
             _has_safe_instagram_runtime(),
-            "INSTAGRAM_ENABLED={enabled}; INSTAGRAM_GRAPH_BASE_URL={graph_url}; {verify_detail}; {secret_detail}".format(
+            "INSTAGRAM_ENABLED={enabled}; INSTAGRAM_GRAPH_BASE_URL configured={graph_url}; {verify_detail}; {secret_detail}".format(
                 enabled=getattr(settings, "INSTAGRAM_ENABLED", False),
-                graph_url=getattr(settings, "INSTAGRAM_GRAPH_BASE_URL", ""),
+                graph_url=bool(getattr(settings, "INSTAGRAM_GRAPH_BASE_URL", "")),
                 verify_detail=shared_secret_strength_detail(getattr(settings, "INSTAGRAM_VERIFY_TOKEN", ""), "INSTAGRAM_VERIFY_TOKEN"),
                 secret_detail=shared_secret_strength_detail(
                     getattr(settings, "INSTAGRAM_APP_SECRET", "") or getattr(settings, "META_APP_SECRET", ""),

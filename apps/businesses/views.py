@@ -60,9 +60,12 @@ class BusinessViewSet(ModelViewSet):
         assert_can(request.user, business, Resources.SETTINGS, Actions.UPDATE)
         return Response(booking_responsible_options(business))
 
+    @transaction.atomic
     def perform_create(self, serializer):
         owner = serializer.validated_data.get("owner") or self.request.user
         business = serializer.save(owner=owner)
+        from apps.branches.single_location import ensure_initial_location
+        ensure_initial_location(business)
         BusinessMember.objects.get_or_create(
             business=business,
             user=owner,

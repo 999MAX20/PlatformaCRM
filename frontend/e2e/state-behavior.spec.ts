@@ -9,6 +9,7 @@ test("one request produces one toast and keyboard focus pauses expiration", asyn
   await page.getByTestId("duplicate").click();
   await expect(page.getByTestId("action-feedback")).toHaveCount(1);
   await page.getByTestId("action-feedback").getByRole("button", { name: "Закрыть" }).click();
+  await expect(page.getByTestId("action-feedback")).toHaveCount(0);
   await page.getByTestId("short-toast").click();
   const close = page.getByTestId("action-feedback").getByRole("button", { name: "Закрыть" });
   await close.focus();

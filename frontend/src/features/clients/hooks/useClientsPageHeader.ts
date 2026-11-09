@@ -11,7 +11,7 @@ export function useClientsPageHeader({
   onPayments,
 }: {
   t: Translate;
-  onCreateClient: () => void;
+  onCreateClient?: () => void;
   onCloseClientCard: () => void;
   onPayments?: () => void;
 }) {
@@ -20,12 +20,13 @@ export function useClientsPageHeader({
   useEffect(() => {
     setPageHeader({
       title: t("clients.title"),
-      secondaryActions: onPayments ? [{ label: t("payments.title"), title: t("payments.title"), icon: WalletCards, onClick: onPayments, showOnMobile: true, presentation: "label", focusReturnId: "clients-payments" }] : [],
-      primaryAction: {
+      secondaryActions: onPayments ? [{ label: t("payments.title"), title: t("payments.title"), icon: WalletCards, onClick: onPayments, presentation: "icon", showOnMobile: true, focusReturnId: "clients-payments" }] : [],
+
+      primaryAction: onCreateClient ? {
         label: t("clients.create"),
         icon: Plus,
         onClick: onCreateClient,
-      },
+      } : undefined,
     });
     return () => setPageHeader(null);
   }, [onCreateClient, onPayments, setPageHeader, t]);
@@ -34,7 +35,7 @@ export function useClientsPageHeader({
     function handleHotkeys(event: KeyboardEvent) {
       if (event.defaultPrevented || document.querySelector('[role="dialog"][aria-modal="true"]')) return;
       const isCommand = event.metaKey || event.ctrlKey;
-      if (isCommand && event.key.toLowerCase() === "n") {
+      if (isCommand && event.key.toLowerCase() === "n" && onCreateClient) {
         event.preventDefault();
         onCreateClient();
       }

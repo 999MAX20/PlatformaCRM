@@ -1,0 +1,8 @@
+{
+  "frontend/src/features/calendar/RecordsPage.tsx": "738372b6d455ca73904220833e6eb0e0f7dfcbfe8674ae9f4d2d24b87db83f14",
+  "frontend/src/features/calendar/RecordsToolbar.tsx": "adbde254feb4675f0d3e615c46fd4c46f555e5005ba1fac83e5a448f588bded2",
+  "frontend/src/features/calendar/recordFilters.ts": "2b840a36d53c59fcbd8a93d9b9dc8d2ad8df8565fd12d8b3917b657d68ac1d83",
+  "frontend/scripts/tests/record-filters.test.mjs": "a743879d5e23c5af59bde3783a2fc2763e92dc4a0e81ed5a15644f4ff5f14b0b",
+  "frontend/e2e/records-toolbar.spec.ts": "cf775fd99ab5653b7d18a9d06c885add7325dc89fde2c9980c4f79d2fce1b1cc",
+  "frontend/playwright.records-toolbar.config.ts": "9cf6eb2d12b4a28c98e8628962c40d3b8beeeec45bc68686eed03d8f54c3f3bc"
+}

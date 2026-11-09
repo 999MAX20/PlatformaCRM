@@ -16,7 +16,12 @@ def _workflow_profile(business, scenario, agent):
 
 
 def workflow_settings(business, scenario):
-    from apps.ai_core.agent_runtime import resolve_agent
+    from apps.ai_core.agent_runtime import resolve_agent, voice_runtime
+    if voice_runtime():
+        from django.conf import settings
+        return {"enabled": settings.VOICE_INPUT_ENABLED, "runtime": "interface_voice", "version": 1,
+                "sources": ["clients", "tasks", "appointments"],
+                "tools": ["crm_read", "crm_create", "crm_update", "crm_transition", "crm_schedule"]}
     agent = resolve_agent(business)
     profile = _workflow_profile(business, scenario, agent)
     if profile is None:

@@ -13,7 +13,7 @@ function EventBadge({ children, className }: { children: React.ReactNode; classN
   );
 }
 
-function TimelineEventItem({ event }: { event: ActivityEvent }) {
+function TimelineEventItem({ event, locale, timeZone }: { event: ActivityEvent; locale?: string; timeZone?: string }) {
   const { t } = useI18n();
   const config = categoryConfig[event.category] || categoryConfig.system;
   const Icon = config.icon;
@@ -35,7 +35,7 @@ function TimelineEventItem({ event }: { event: ActivityEvent }) {
           <p className="mt-2 break-words text-sm font-bold leading-6 text-platforma-ink">
             {event.event_type === "visit_plan_changed" ? formatTimelineEventText(event, t) : event.text || formatToken(event.event_type)}
           </p>
-          <p className="mt-1 text-xs font-semibold text-platforma-muted">{formatDateTime(event.created_at)}</p>
+          <p className="mt-1 text-xs font-semibold text-platforma-muted">{formatDateTime(event.created_at, timeZone, false, locale)}</p>
           {details.length ? (
             <div className="mt-3 grid gap-2 sm:grid-cols-2">
               {details.map((detail) => (
@@ -54,9 +54,9 @@ function TimelineEventItem({ event }: { event: ActivityEvent }) {
   );
 }
 
-export function EntityTimelineList({ data }: { data: CrmCardPayload }) {
+export function EntityTimelineList({ data, locale, timeZone }: { data: CrmCardPayload; locale?: string; timeZone?: string }) {
   const { language, t } = useI18n();
-  const grouped = groupTimeline(data.timeline, language);
+  const grouped = groupTimeline(data.timeline, locale || language, timeZone);
   const total = data.meta?.related_counts.timeline ?? data.timeline.length;
   const hasMore = Boolean(data.meta?.has_more.timeline);
 
@@ -74,7 +74,7 @@ export function EntityTimelineList({ data }: { data: CrmCardPayload }) {
         <div key={date} className="space-y-3">
           <p className="px-1 text-xs font-bold uppercase text-platforma-faint">{date}</p>
           {events.map((event) => (
-            <TimelineEventItem key={event.id} event={event} />
+            <TimelineEventItem key={event.id} event={event} locale={locale} timeZone={timeZone} />
           ))}
         </div>
       ))}

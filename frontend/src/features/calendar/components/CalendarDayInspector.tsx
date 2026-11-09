@@ -2,22 +2,27 @@ import { ArrowLeft, ChevronLeft, ChevronRight, Plus, X } from "lucide-react";
 import { useEffect, useRef, type ReactNode } from "react";
 import { Link } from "react-router";
 import { Button } from "../../../components/ui/Button";
+import { Select } from "../../../components/ui/Select";
 import { Drawer } from "../../../components/ui/Overlay";
-import { LoadingState } from "../../../components/ui/StateViews";
+import { ErrorState, LoadingState } from "../../../components/ui/StateViews";
 import type { Appointment, Client, Resource, Service, Task } from "../../../types";
 import type { CalendarTranslate } from "../calendarTypes";
 import { formatPickerDate, shiftDateValue } from "../calendarUtils";
 import { CalendarAppointmentPreview, CalendarTaskPreview } from "./CalendarAppointmentCards";
+import { useCalendarCustomLabels } from "./useCalendarCustomLabels";
 
-export function CalendarDayInspector({ open, loading, canViewTasks, date, locale, timeZone, dayAppointments, dayTasks, clientById, serviceById, resourceById, selectedAppointmentId, children, canCreate, hoursLabel, hoursUrl, availableSlots, onClose, onBack, onDayChange, onBooking, onSelectAppointment, onOpenCard, t }: {
+export function CalendarDayInspector({ open, loading, error, onRetry, canViewTasks, date, locale, timeZone, dayAppointments, dayTasks, clientById, serviceById, resourceById, selectedAppointmentId, children, canCreate, hoursLabel, hoursUrl, availableSlots, branchId, branches, onBranchChange, onClose, onBack, onDayChange, onBooking, onSelectAppointment, onOpenCard, t }: {
   open: boolean; loading: boolean; canViewTasks: boolean; date: string; locale: string; timeZone: string; dayAppointments: Appointment[]; dayTasks: Task[];
+  error?: unknown; onRetry?: () => void;
   clientById: Map<number, Client>; serviceById: Map<number, Service>; resourceById: Map<number, Resource>;
   selectedAppointmentId: number | null; children?: ReactNode; canCreate: boolean; hoursLabel: string;
   hoursUrl?: string; availableSlots?: number; onClose: () => void; onBack: () => void;
+  branchId: string; branches: { id: number; name: string }[]; onBranchChange: (value: string) => void;
   onDayChange: (date: string) => void; onBooking: (date: string) => void;
   onSelectAppointment: (appointment: Appointment) => void; onOpenCard: (appointment: Appointment) => void; t: CalendarTranslate;
 }) {
   const content = useRef<HTMLDivElement>(null);
+  const customFields = useCalendarCustomLabels(dayAppointments, open && !selectedAppointmentId);
   const back = useRef<HTMLButtonElement>(null);
   const previous = useRef<number | null>(null);
   useEffect(() => {
@@ -36,10 +41,13 @@ export function CalendarDayInspector({ open, loading, canViewTasks, date, locale
         <Button variant="ghost" size="icon" aria-label={t("calendar.previousDay")} onClick={() => onDayChange(shiftDateValue(date, -1))}><ChevronLeft size={18} /></Button>
         <Button variant="ghost" size="icon" aria-label={t("calendar.nextDay")} onClick={() => onDayChange(shiftDateValue(date, 1))}><ChevronRight size={18} /></Button>
       </div>
-      <p className="mt-1 text-xs text-platforma-muted">{hoursLabel}</p>
+      {branches.length > 1 ? <div className="mt-3"><Select label={t("branches.branch")} value={branchId}
+        options={[{ value: "", label: t("branches.all") }, ...branches.map(branch => ({ value: String(branch.id), label: branch.name }))]}
+        onChange={event => onBranchChange(event.target.value)} /></div> : branches.length === 1 ? <p className="mt-2 text-sm text-platforma-subtle">{branches[0].name}</p> : null}
+      {hoursLabel && <p className="mt-1 text-xs text-platforma-muted">{hoursLabel}</p>}
     </header>
     <div ref={content} className="min-h-0 flex-1 overflow-y-auto px-4 py-5 sm:px-6">
-      {loading ? <LoadingState /> : selectedAppointmentId ? children : <>
+      {error ? <ErrorState error={error} action={onRetry && <Button onClick={onRetry}>{t("common.retry")}</Button>} /> : loading ? <LoadingState /> : selectedAppointmentId ? children : <>
         <div className="mb-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-platforma-muted">
           <span>{t("calendar.bookings")}: <strong className="text-platforma-text">{dayAppointments.length}</strong></span>
           {canViewTasks && <span>{t("calendar.tasksToday")}: <strong className="text-platforma-text">{dayTasks.length}</strong></span>}
@@ -50,7 +58,8 @@ export function CalendarDayInspector({ open, loading, canViewTasks, date, locale
           {hoursUrl && <Link className="platforma-focus-ring text-sm font-medium text-brand-700" to={hoursUrl}>{t("appointment.openHours")}</Link>}
         </div>
         <h3 className="mb-3 text-sm font-semibold">{t("calendar.bookings")}</h3>
-        <div className="space-y-2">{dayAppointments.map(appointment => <CalendarAppointmentPreview key={appointment.id} appointment={appointment} selectedAppointmentId={null} clientById={clientById} serviceById={serviceById} resourceById={resourceById} locale={locale} businessTimeZone={timeZone} onSelect={onSelectAppointment} onOpenCard={onOpenCard} t={t} />)}
+        {customFields.query.error && <ErrorState error={customFields.query.error} action={<Button onClick={() => void customFields.query.refetch()}>{t("importWorkspace.reload")}</Button>} />}
+        <div className="space-y-2">{dayAppointments.map(appointment => <CalendarAppointmentPreview key={appointment.id} appointment={appointment} customLabels={customFields.labels(appointment)} selectedAppointmentId={null} clientById={clientById} serviceById={serviceById} resourceById={resourceById} locale={locale} businessTimeZone={timeZone} onSelect={onSelectAppointment} onOpenCard={onOpenCard} t={t} />)}
           {!dayAppointments.length && <p className="rounded-control border border-dashed border-platforma-border p-4 text-sm text-platforma-muted">{t("calendar.dayEmpty")}</p>}
         </div>
         {!!dayTasks.length && <section className="mt-6"><h3 className="mb-3 text-sm font-semibold">{t("calendar.tasksToday")}</h3><div className="divide-y divide-platforma-border overflow-hidden rounded-control border border-platforma-border">{dayTasks.map(task => <CalendarTaskPreview key={task.id} task={task} locale={locale} businessTimeZone={timeZone} t={t} />)}</div></section>}

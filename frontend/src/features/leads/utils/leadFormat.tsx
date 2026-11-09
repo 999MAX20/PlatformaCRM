@@ -56,6 +56,7 @@ export function initials(name: string) {
 }
 
 export function getClient(lead: Lead, clients: Client[]) {
+  if (lead.client === null) return undefined;
   const client = clients.find((client) => client.id === lead.client);
   if (client) return client;
   if (!lead.client_name && !lead.client_phone && !lead.client_email)

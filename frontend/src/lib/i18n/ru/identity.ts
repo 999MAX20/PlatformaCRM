@@ -1,4 +1,5 @@
 export const identity: Record<string, string> = {
+  "auth.sessionRecoveryFailed": "Не удалось восстановить сессию. Повторите попытку.",
   "auth.logoutFailed": "Не удалось завершить выход. Сессия может оставаться активной. Повторите попытку.",
   "auth.loggingOut": "Завершаем выход…",
   "employeeAccess.title": "Доступ сотрудников",
@@ -185,6 +186,8 @@ export const identity: Record<string, string> = {
     "Не удалось войти через провайдера. Попробуйте ещё раз или используйте email и пароль.",
   "mfa.hero": "Два шага — и доступ к бизнесу защищён",
   "mfa.title": "Подтверждение входа",
+  "mfa.confirmedTitle": "Вход подтверждён",
+  "mfa.confirmedText": "Код принят. Нажмите «Войти», чтобы открыть рабочий кабинет.",
   "mfa.text": "Введите код из приложения-аутентификатора или один резервный код.",
   "mfa.addAuthenticator": "Добавьте PlatformaCRM в аутентификатор",
   "mfa.addAuthenticatorText": "Откройте Google Authenticator, Microsoft Authenticator, 1Password или другое TOTP-приложение и добавьте ключ ниже.",

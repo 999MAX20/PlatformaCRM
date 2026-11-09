@@ -140,6 +140,8 @@ def _ensure_first_business(user: User) -> None:
     )
     ensure_default_roles(business)
     ensure_default_pipeline(business)
+    from apps.branches.single_location import ensure_initial_location
+    ensure_initial_location(business)
     owner_role = BusinessRole.objects.filter(
         business=business,
         preset_key=BusinessMember.Roles.OWNER,

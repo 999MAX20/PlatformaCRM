@@ -282,7 +282,7 @@ class KaspiPricingRuleViewSet(TenantModelViewSet):
             raise ValidationError("Minimum price must be set before enabling autopilot.")
         if rule.max_changes_per_day <= 0:
             raise ValidationError("Daily change limit must be set before enabling autopilot.")
-        if not rule.competitor_offers.filter(available=True).exists():
+        if not rule.competitor_offers.filter(business=rule.business, available=True).exists():
             raise ValidationError("Collect competitor prices before enabling autopilot.")
         rule.mode = KaspiPricingRule.Modes.AUTOPILOT
         rule.status = KaspiPricingRule.Statuses.ACTIVE

@@ -9,7 +9,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from apps.analytics.crm_metrics import build_crm_operational_metrics
+from apps.analytics.crm_metrics import _scoped, build_crm_operational_metrics
 from apps.analytics.financial_metrics import financial_report
 from apps.analytics.models import AnalyticsEvent, ReportWidget, ScheduledReport
 from apps.analytics.reports import build_report_summary
@@ -19,7 +19,7 @@ from apps.core.date_ranges import parse_bounded_date_range
 from apps.core.export_jobs import request_report_export
 from apps.core.models import AuditLog
 from apps.core.serializers import ExportJobSerializer
-from apps.businesses.access import Actions, Resources, assert_can, scope_queryset
+from apps.businesses.access import Actions, Resources, assert_can
 from apps.businesses.capabilities import assert_resource_enabled
 from apps.core.permissions import accessible_businesses, user_can_access_business
 from apps.core.viewsets import TenantModelViewSet
@@ -73,9 +73,9 @@ def owner_dashboard(request):
     )
     financial = financial_report(business, user=request.user, start_date=financial_start, end_date=financial_end)
 
-    leads = scope_queryset(Lead.objects.filter(business=business), request.user, business, Resources.LEADS)
-    appointments = scope_queryset(Appointment.objects.filter(business=business), request.user, business, Resources.APPOINTMENTS)
-    tasks = scope_queryset(Task.objects.filter(business=business), request.user, business, Resources.TASKS)
+    leads = _scoped(Lead.objects.filter(business=business), request.user, business, Resources.LEADS)
+    appointments = _scoped(Appointment.objects.filter(business=business), request.user, business, Resources.APPOINTMENTS)
+    tasks = _scoped(Task.objects.filter(business=business), request.user, business, Resources.TASKS)
 
     total_leads = leads.count()
     leads_with_appointment = leads.filter(status=Lead.Statuses.APPOINTMENT_CREATED).count()

@@ -18,11 +18,12 @@ test("capability-aware permissions hide disabled daily modules before role grant
 test("command palette reuses permission and capability policy for commands and entity queries", async () => {
   const palette = await source("components/layout/CommandPalette.tsx");
   const clientSearch = await source("hooks/useClientSearch.ts");
+  const recordSearch = await source("hooks/useRecordSearch.ts");
 
   assert.match(palette, /hasPermission\(user, businessId, command\.resource, command\.action\)/);
-  assert.match(palette, /id: "create-lead"[^\n]+resource: "leads", action: "create"/);
+  assert.match(palette, /id: "create-record"[^\n]+resource: "appointments", action: "create"/);
   assert.match(palette, /id: "open-settings"[^\n]+resource: "settings", action: "update"/);
-  assert.match(palette, /id: "open-deals"[^\n]+resource: "deals"/);
+  assert.match(palette, /id: "open-records"[^\n]+resource: "appointments"/);
   assert.match(palette, /id: "open-ai-agents"[^\n]+resource: "ai_automation"/);
   assert.match(palette, /clients: false/);
   assert.match(palette, /useClientSearch\(query\)/);
@@ -30,9 +31,13 @@ test("command palette reuses permission and capability policy for commands and e
   assert.match(clientSearch, /hasPermission\(user, businessId, "clients", "view"\)/);
   assert.match(clientSearch, /enabled: enabled && allowed/);
   assert.match(clientSearch, /clients: allowed && !waiting && !result\.isError/);
-  assert.match(palette, /leads: canViewLeads/);
+  assert.match(palette, /leads: false/);
+  assert.match(palette, /useRecordSearch\(query\)/);
+  assert.match(recordSearch, /hasPermission\(user, business\.id, "appointments", "view"\)/);
+  assert.match(recordSearch, /enabled: enabled && allowed/);
+  assert.match(recordSearch, /records: enabled && allowed && !waiting && !result\.isError/);
   assert.match(palette, /services: canViewServices/);
-  assert.match(palette, /canViewLeads \? leads\.data \|\| \[\] : \[\]/);
+  assert.match(palette, /recordSearch\.records\.map/);
   assert.match(palette, /canViewClients \? clients\.data \|\| \[\] : \[\]/);
   assert.match(palette, /canViewServices \? services\.data \|\| \[\] : \[\]/);
 });
@@ -79,11 +84,12 @@ test("owner dashboard fetches and renders capability-scoped daily modules", asyn
   ]);
 
   assert.match(page, /useQuery\(workQueuesQuery\(business\?\.id, limit\)\)/);
-  assert.match(queries, /workQueuesApi\.get\(\{ business: business!, limit \}\)/);
+  assert.match(queries, /workQueuesApi\.get\(\{ business: business!, limit, workflow: "appointments" \}\)/);
   assert.doesNotMatch(page, /useCrmEntities|appointmentsApi\.list|tasksApi\.list/);
-  for (const resource of ["leads", "deals", "appointments", "tasks", "conversations"]) {
+  for (const resource of ["appointments", "tasks", "conversations"]) {
     assert.ok(page.includes(`${resource}: permitted("${resource}")`));
   }
+  assert.match(page, /leads: false, deals: false/);
   assert.match(dashboard, /access\[resource\] && data\.available\[resource\]/);
   assert.match(dashboard, /metrics\.filter\(\(metric\) => canSee\(metric\.resource\)\)/);
   assert.match(dashboard, /data\.attention\.filter\(\(item\) => canSee\(resourceByType\[item\.type\]\)\)/);

@@ -4,6 +4,8 @@ from typing import Iterable
 from urllib.parse import urlparse, urlunparse
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 
 from apps.core.security_config import has_strong_shared_secret
 
@@ -46,8 +48,11 @@ def has_tls_postgres() -> bool:
 
 
 def has_tls_redis_broker() -> bool:
-    parsed = urlparse(str(settings.CELERY_BROKER_URL or ""))
-    return parsed.scheme == "rediss" and bool(parsed.hostname)
+    try:
+        parsed = urlparse(str(settings.CELERY_BROKER_URL or ""))
+        return parsed.scheme == "rediss" and bool(parsed.hostname)
+    except ValueError:
+        return False
 
 
 def is_local_or_private_hostname(hostname: str) -> bool:
@@ -118,14 +123,19 @@ def has_private_object_storage() -> bool:
 
 
 def has_transactional_email() -> bool:
+    if settings.EMAIL_BACKEND != "django.core.mail.backends.smtp.EmailBackend":
+        return False
     _, email_address = parseaddr(str(getattr(settings, "DEFAULT_FROM_EMAIL", "") or ""))
-    email_domain = email_address.rsplit("@", 1)[-1].lower() if "@" in email_address else ""
+    try:
+        validate_email(email_address)
+    except ValidationError:
+        return False
+    email_domain = email_address.rsplit("@", 1)[-1].lower()
     return all(
         [
             configured(getattr(settings, "EMAIL_HOST", "")),
-            configured(email_address),
-            email_domain not in {"", "localhost", "local", "test.local", "zani.local", "example.com"},
-            bool(getattr(settings, "EMAIL_USE_TLS", False)) or bool(getattr(settings, "EMAIL_USE_SSL", False)),
+            email_domain not in {"localhost", "local", "test.local", "zani.local", "example.com", "your-domain.com"},
+            bool(getattr(settings, "EMAIL_USE_TLS", False)) != bool(getattr(settings, "EMAIL_USE_SSL", False)),
         ]
     )
 

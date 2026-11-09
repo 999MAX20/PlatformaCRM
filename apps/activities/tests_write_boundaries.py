@@ -106,7 +106,7 @@ class HistoryWriteBoundaryTests(TestCase):
                 pk = response.data["id"]
                 model.objects.filter(pk=pk).update(entity_id=str(self.lead.pk))
                 response = self.api.patch(f"/api/{endpoint}/{pk}/", {"entity_id": str(allowed.pk)}, format="json")
-                self.assertEqual(response.status_code, 403, response.data)
+                self.assertEqual(response.status_code, 404 if model is Note else 403, response.data)
 
     def test_existing_author_is_not_replaced_by_editor(self):
         for endpoint, model, attribution in self.endpoints():

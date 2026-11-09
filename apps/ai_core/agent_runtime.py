@@ -10,6 +10,7 @@ from apps.bots.models import Bot
 
 
 _agent_id = ContextVar("crm_agent_id", default=None)
+VOICE_RUNTIME = "interface_voice"
 _conversation_id = ContextVar("private_agent_conversation_id", default=None)
 
 
@@ -36,6 +37,18 @@ def bind_agent(agent_id):
         _agent_id.reset(token)
 
 
+def voice_runtime():
+    return _agent_id.get() == VOICE_RUNTIME
+
+
+def bind_thread(thread):
+    return bind_agent(VOICE_RUNTIME if thread.kind == "voice" else thread.agent_id)
+
+
+def bind_runtime(binding):
+    return bind_agent(VOICE_RUNTIME if binding.get("runtime") == VOICE_RUNTIME else binding.get("agent_id"))
+
+
 def agent_request(method):
     """Bind only identity; each workflow lookup scopes it to the authorized business."""
     @wraps(method)
@@ -50,6 +63,8 @@ def agent_request(method):
 
 
 def resolve_agent(business):
+    if voice_runtime():
+        return None
     agents = Bot.objects.filter(business=business, settings_json__scenario=Bot.Scenarios.CRM)
     selected = _agent_id.get()
     if selected is not None:
@@ -68,6 +83,8 @@ def resolve_agent(business):
 
 def agent_binding(business):
     from apps.ai_core.workflows import workflow_fingerprint
+    if voice_runtime():
+        return {"runtime": VOICE_RUNTIME, "agent_fingerprint": workflow_fingerprint(business, "employee")}
     agent = resolve_agent(business)
     if agent is None:
         return {}
@@ -83,7 +100,7 @@ def bind_command(business, payload):
 def command_agent(log):
     from apps.ai_core.workflows import workflow_fingerprint
     binding = (log.input_json or {}).get("_agent", {})
-    with bind_agent(binding.get("agent_id")):
+    with bind_runtime(binding):
         if binding and binding.get("agent_fingerprint") != workflow_fingerprint(log.business, "employee"):
             raise PermissionDenied("Agent settings changed. Prepare and confirm a new command.")
         yield

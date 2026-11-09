@@ -41,11 +41,11 @@ def _store_summary(thread, summary, fingerprint):
 
 
 def staff_memory(*, thread, user, query, before_sequence=None):
-    if thread.kind != AgentConversation.Kinds.STAFF or thread.owner_id != getattr(user, "pk", None):
+    if thread.kind not in {AgentConversation.Kinds.STAFF, AgentConversation.Kinds.VOICE} or thread.owner_id != getattr(user, "pk", None):
         raise PermissionDenied("Conversation is private to its requester.")
     fingerprint = memory_access_fingerprint(business=thread.business, agent=thread.agent, user=user)
     empty = {"messages": [], "summary": [], "references": [], "pending": {}, "access_fingerprint": fingerprint}
-    if not thread.agent.settings_json.get("memory_enabled", True):
+    if thread.agent and not thread.agent.settings_json.get("memory_enabled", True):
         return empty
     turns = thread.turns.filter(access_fingerprint=fingerprint, memory_epoch=thread.memory_epoch).exclude(
         status__in=[AgentTurn.Statuses.PREPARING, AgentTurn.Statuses.FAILED, AgentTurn.Statuses.CANCELLED])
@@ -79,6 +79,9 @@ def staff_memory(*, thread, user, query, before_sequence=None):
         if latest.context_json.get("question") or latest.plan_json.get("steps") or latest.plan_json.get("period"):
             pending = {"turn_id": latest.pk, "state": latest.status, "question": latest.context_json.get("question", ""),
                        "plan": latest.plan_json}
+            if (latest.status in {AgentTurn.Statuses.CLARIFYING, AgentTurn.Statuses.SUPERSEDED}
+                    and latest.context_json.get("question") and latest.context_json.get("schedule_draft")):
+                pending["schedule_draft"] = latest.context_json["schedule_draft"]
     _store_summary(thread, summaries, fingerprint)
     return {"messages": [entry(turn, 1200) for turn in selected], "summary": summaries,
             "references": references[:20], "pending": pending, "access_fingerprint": fingerprint,

@@ -1,3 +1,4 @@
+from apps.core.client_projection import visible_client
 import csv
 import hashlib
 import io
@@ -15,6 +16,7 @@ from rest_framework.exceptions import PermissionDenied, ValidationError
 
 from apps.core.xlsx_reader import read_xlsx_rows
 from apps.clients.models import Client
+from apps.clients.field_policy import validate_client_write_fields
 from apps.clients.services import duplicate_payload, find_duplicate_clients
 from apps.businesses.access import Actions, Resources, assert_can, can_view_sensitive_field, scope_queryset
 from apps.businesses.capabilities import assert_resource_enabled
@@ -31,6 +33,7 @@ from apps.integrations.models import BusinessConnector, BusinessEvent, Connector
 from apps.leads.models import Lead
 from apps.leads.creation import create_lead, validate_initial_lead_state
 from apps.services.models import Service
+from apps.services.services import upsert_catalog_service
 
 
 CLIENT_FIELD_ALIASES = {
@@ -237,7 +240,7 @@ def confirm_import(job: ImportJob, request):
         for row in rows:
             payload = mapped_payload(row, mapping, job.entity_type)
             if job.entity_type == ImportJob.EntityTypes.CLIENTS:
-                result = import_client_row(job, payload, connector=connector)
+                result = import_client_row(job, payload, connector=connector, request=request)
             elif job.entity_type == ImportJob.EntityTypes.LEADS:
                 result = import_lead_row(job, payload, connector=connector, request=request)
             elif job.entity_type == ImportJob.EntityTypes.DEALS:
@@ -245,7 +248,7 @@ def confirm_import(job: ImportJob, request):
             elif job.entity_type == ImportJob.EntityTypes.SALES:
                 result = import_sale_row(job, payload, connector=connector)
             elif job.entity_type == ImportJob.EntityTypes.CATALOG:
-                result = import_catalog_row(job, payload, connector=connector)
+                result = import_catalog_row(job, payload, connector=connector, request=request)
             else:
                 raise ValidationError("Unsupported import entity.")
             summary[result] = summary.get(result, 0) + 1
@@ -375,12 +378,12 @@ def aliases_for_entity(entity_type):
     return aliases
 
 
-def import_client_row(job, payload, connector=None):
+def import_client_row(job, payload, connector=None, request=None):
     if not payload.get("full_name") and not payload.get("phone") and not payload.get("email"):
         return "skipped"
     existing = find_import_client(job.business, payload)
     if existing:
-        changed = fill_missing_client_fields(existing, payload)
+        changed = fill_missing_client_fields(existing, payload, actor=request.user if request is not None else job.actor)
         if changed:
             record_import_event(
                 business=job.business,
@@ -390,7 +393,7 @@ def import_client_row(job, payload, connector=None):
                 payload={"client_id": existing.id, "status": "updated", **payload},
             )
         return "updated" if changed else "skipped"
-    client = Client.objects.create(business=job.business, **client_defaults(payload))
+    client = create_import_client(job.business, payload, actor=request.user if request is not None else job.actor)
     record_import_event(
         business=job.business,
         connector=connector,
@@ -410,9 +413,10 @@ def import_lead_row(job, payload, connector=None, request=None):
         return "skipped"
     client = find_import_client(job.business, payload)
     if client:
-        fill_missing_client_fields(client, payload)
+        fill_missing_client_fields(client, payload, actor=request.user if request is not None else job.actor)
     else:
-        client = Client.objects.create(business=job.business, **client_defaults(payload, fallback="Imported lead"))
+        client = create_import_client(job.business, payload, actor=request.user if request is not None else job.actor,
+                                      fallback="Imported lead")
     service = None
     if payload.get("service_name"):
         service = Service.objects.filter(business=job.business, name__iexact=payload["service_name"]).first()
@@ -458,20 +462,20 @@ def import_deal_row(job, payload, connector=None, request=None):
                 "source": deal_payload.get("source"),
                 "notes": deal_payload.get("notes"),
             },
+            actor=request.user if request is not None else job.actor,
         )
     else:
-        client = Client.objects.create(
-            business=job.business,
-            **client_defaults(
-                {
-                    "full_name": deal_payload.get("client_name") or deal_payload.get("title"),
-                    "phone": deal_payload.get("phone"),
-                    "email": deal_payload.get("email"),
-                    "source": deal_payload.get("source"),
-                    "notes": deal_payload.get("notes"),
-                },
-                fallback="Imported deal client",
-            ),
+        client = create_import_client(
+            job.business,
+            {
+                "full_name": deal_payload.get("client_name") or deal_payload.get("title"),
+                "phone": deal_payload.get("phone"),
+                "email": deal_payload.get("email"),
+                "source": deal_payload.get("source"),
+                "notes": deal_payload.get("notes"),
+            },
+            actor=request.user if request is not None else job.actor,
+            fallback="Imported deal client",
         )
     pipeline = ensure_default_pipeline(job.business)
     stage = default_deal_import_stage(pipeline, deal_payload.get("stage"))
@@ -534,20 +538,16 @@ def import_sale_row(job, payload, connector=None):
     return "created" if created else "skipped"
 
 
-def import_catalog_row(job, payload, connector=None):
+@transaction.atomic
+def import_catalog_row(job, payload, connector=None, request=None):
     catalog_payload = normalize_catalog_payload(payload)
     service = None
     service_created = False
     if catalog_payload["item_type"] == "service":
-        service, service_created = Service.objects.update_or_create(
+        service, service_created = upsert_catalog_service(
             business=job.business,
-            name=catalog_payload["name"],
-            defaults={
-                "description": catalog_payload.get("description", ""),
-                "duration_minutes": catalog_payload.get("duration_minutes") or 30,
-                "price_from": catalog_payload.get("price_from"),
-                "is_active": True,
-            },
+            payload=catalog_payload,
+            actor=request.user if request is not None else job.actor,
         )
     if service:
         catalog_payload["service_id"] = service.id
@@ -587,20 +587,36 @@ def client_defaults(payload, fallback="Imported client"):
     }
 
 
-def fill_missing_client_fields(client, payload):
-    changed_fields = []
+def create_import_client(business, payload, *, actor, fallback="Imported client"):
+    assert_resource_enabled(business, Resources.CLIENTS)
+    defaults = client_defaults(payload, fallback=fallback)
+    assert_can(actor, business, Resources.CLIENTS, Actions.CREATE, obj=Client(business=business, **defaults))
+    attrs = validate_client_write_fields(
+        defaults,
+        notes_allowed=bool(actor and can_view_sensitive_field(actor, business, Resources.CLIENTS, "notes")),
+    )
+    return Client.objects.create(business=business, **attrs)
+
+
+def fill_missing_client_fields(client, payload, *, actor=None):
+    assert_resource_enabled(client.business, Resources.CLIENTS)
+    assert_can(actor, client.business, Resources.CLIENTS, Actions.UPDATE, obj=client)
+    changes = {}
     for field in ["full_name", "phone", "email", "notes"]:
         value = payload.get(field)
         if value and not getattr(client, field):
-            setattr(client, field, value)
-            changed_fields.append(field)
+            changes[field] = value
     source = normalize_client_source(payload.get("source"))
     if source and source != client.source and client.source == Client.Sources.OTHER:
-        client.source = source
-        changed_fields.append("source")
-    if changed_fields:
-        client.save(update_fields=[*changed_fields, "updated_at"])
-    return bool(changed_fields)
+        changes["source"] = source
+    validate_client_write_fields(
+        changes, notes_allowed=bool(actor and can_view_sensitive_field(actor, client.business, Resources.CLIENTS, "notes")),
+    )
+    if changes:
+        for field, value in changes.items():
+            setattr(client, field, value)
+        client.save(update_fields=[*changes, "updated_at"])
+    return bool(changes)
 
 
 def normalize_client_source(value):
@@ -872,18 +888,14 @@ def create_manual_sale(business, payload, request):
     return event
 
 
+@transaction.atomic
 def create_manual_catalog_item(business, payload, request):
     catalog_payload = normalize_catalog_payload(payload)
     if catalog_payload["item_type"] == "service":
-        service, _ = Service.objects.update_or_create(
+        service, _ = upsert_catalog_service(
             business=business,
-            name=catalog_payload["name"],
-            defaults={
-                "description": catalog_payload.get("description", ""),
-                "duration_minutes": catalog_payload.get("duration_minutes") or 30,
-                "price_from": catalog_payload.get("price_from"),
-                "is_active": True,
-            },
+            payload=catalog_payload,
+            actor=getattr(request, "user", None),
         )
         catalog_payload["service_id"] = service.id
     event, _ = normalize_business_event(
@@ -910,39 +922,50 @@ def import_template_response(entity_type):
     return response
 
 
-def export_csv_response(queryset, fields, filename, *, redacted_fields=()):
+def export_csv_response(queryset, fields, filename, *, redacted_fields=(), row_redacted_fields=None, custom_definitions=()):
+    from apps.core.custom_field_export import export_custom_values
+    custom_values = export_custom_values(custom_definitions, queryset) if custom_definitions else {}
     buffer = io.StringIO()
     writer = csv.writer(buffer)
-    writer.writerow(fields)
+    writer.writerow([*fields, *("custom." + field.key for field in custom_definitions)])
     for instance in queryset.iterator(chunk_size=1000):
-        writer.writerow(["" if field in redacted_fields else safe_csv_cell(getattr(instance, field, "")) for field in fields])
+        hidden = set(redacted_fields) | set(row_redacted_fields(instance) if row_redacted_fields else ())
+        writer.writerow([*["" if field in hidden else safe_csv_cell(getattr(instance, field, "")) for field in fields],
+            *(safe_csv_cell(custom_values.get((str(instance.pk), field.pk), "")) for field in custom_definitions)])
     response = HttpResponse(buffer.getvalue(), content_type="text/csv; charset=utf-8")
     response["Content-Disposition"] = f'attachment; filename="{filename}"'
     return response
 
 
 def export_clients(business, *, user=None):
+    from apps.core.custom_field_export import export_custom_fields
     return export_csv_response(
         entity_export_queryset(business, ImportJob.EntityTypes.CLIENTS, user=user),
         ["id", "full_name", "phone", "email", "source", "notes", "created_at"],
         "clients.csv",
+        custom_definitions=export_custom_fields(business, "client", user),
         redacted_fields=() if user and can_view_sensitive_field(user, business, Resources.CLIENTS, "notes") else ("notes",),
     )
 
 
 def export_leads(business, *, user=None):
     return export_csv_response(
-        entity_export_queryset(business, ImportJob.EntityTypes.LEADS, user=user),
+        entity_export_queryset(business, ImportJob.EntityTypes.LEADS, user=user).select_related("client", "business"),
         ["id", "client_id", "service_id", "source", "status", "message", "responsible_user_id", "created_at"],
         "leads.csv",
+        row_redacted_fields=lambda row: () if visible_client(row.client, actor=user, business=business) is not None else ("client_id",),
     )
 
 
 def export_deals(business, *, user=None):
+    from apps.crm.field_policy import deal_amount_visible
+
     return export_csv_response(
-        entity_export_queryset(business, ImportJob.EntityTypes.DEALS, user=user),
+        entity_export_queryset(business, ImportJob.EntityTypes.DEALS, user=user).select_related("client", "business"),
         ["id", "client_id", "pipeline_id", "stage_id", "title", "amount", "status", "owner_id", "source", "created_at"],
         "deals.csv",
+        row_redacted_fields=lambda row: () if visible_client(row.client, actor=user, business=business) is not None else ("client_id",),
+        redacted_fields=() if deal_amount_visible(user, business) else ("amount",),
     )
 
 
@@ -968,7 +991,19 @@ def export_business_events(business, event_type_prefix, filename):
 
 
 def entity_export_queryset(business, entity_type, *, user=None):
-    if entity_type == ImportJob.EntityTypes.CLIENTS:
+    if entity_type in {"services", "specialists", "appointments"}:
+        from apps.services.models import Service
+        from apps.scheduling.models import Resource, Appointment
+        if entity_type == "services":
+            queryset = Service.objects.filter(business=business, is_archived=False)
+            resource = Resources.SETTINGS
+        elif entity_type == "specialists":
+            queryset = Resource.objects.filter(business=business, resource_type="staff", retired_at__isnull=True)
+            resource = Resources.SETTINGS
+        else:
+            queryset = Appointment.objects.filter(business=business, is_archived=False)
+            resource = Resources.APPOINTMENTS
+    elif entity_type == ImportJob.EntityTypes.CLIENTS:
         queryset = Client.objects.filter(business=business, is_archived=False)
         resource = Resources.CLIENTS
     elif entity_type == ImportJob.EntityTypes.LEADS:
@@ -989,6 +1024,22 @@ def entity_export_queryset(business, entity_type, *, user=None):
 
 
 def export_entity_response(business, entity_type, *, user=None):
+    if entity_type in {"services", "specialists", "appointments"}:
+        from apps.core.custom_field_export import export_custom_fields
+        from apps.businesses.access import can
+        fields = {
+            "services": ["id", "name", "description", "duration_minutes", "price_from", "is_active"],
+            "specialists": ["id", "name", "profession", "contact_phone", "public_description", "is_active"],
+            "appointments": ["id", "client_id", "service_id", "resource_id", "start_at", "end_at", "status", "notes"],
+        }[entity_type]
+        kind = {"services": "service", "specialists": "specialist", "appointments": "appointment"}[entity_type]
+        queryset = entity_export_queryset(business, entity_type, user=user)
+        if entity_type == "appointments":
+            queryset = queryset.select_related("client")
+        return export_csv_response(queryset, fields, entity_type + ".csv",
+            custom_definitions=export_custom_fields(business, kind, user),
+            row_redacted_fields=(lambda obj: () if user and can(user, business, Resources.CLIENTS, Actions.VIEW, obj=obj.client).allowed else ("client_id",)) if entity_type == "appointments" else None)
+
     if entity_type == ImportJob.EntityTypes.CLIENTS:
         return export_clients(business, user=user)
     if entity_type == ImportJob.EntityTypes.LEADS:

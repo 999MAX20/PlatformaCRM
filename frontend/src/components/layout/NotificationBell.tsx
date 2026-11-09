@@ -1,16 +1,18 @@
+import { useNavigate } from "react-router";
+import type { useAuth } from "../../features/auth/AuthProvider";
 import { useNotificationBell } from "./useNotificationBell";
 
 import { Bell, Check, Sparkles } from "lucide-react";
 
 import { Link } from "react-router";
-import { useNavigate } from "react-router";
-import { useAuth } from "../../features/auth/AuthProvider";
+
 import { useActiveBusiness } from "../../hooks/useBusiness";
 import { useI18n } from "../../lib/i18n";
 import { formatDateTime } from "../../lib/format";
 import { Button } from "../ui/Button";
 
-import { StatusBadge } from "../ui/StatusBadge";
+import { notificationText } from "../../features/notifications/NotificationInspector";
+import { ErrorState, LoadingState } from "../ui/StateViews";
 
 import type { Dispatch, SetStateAction } from "react";
 type Props = {
@@ -18,14 +20,16 @@ type Props = {
   business: ReturnType<typeof useActiveBusiness>["business"];
   showNotifications: boolean;
   setShowNotifications: Dispatch<SetStateAction<boolean>>;
+  setSelectedNotification: Dispatch<SetStateAction<number | null>>;
 };
 export function NotificationBell({
   user,
   business,
   showNotifications,
   setShowNotifications,
+  setSelectedNotification,
 }: Props) {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const navigate = useNavigate();
   const {
     notificationsRef,
@@ -55,10 +59,11 @@ export function NotificationBell({
         size="icon"
         className="relative h-10 w-10 min-h-10 min-w-10 rounded-control px-0"
         aria-label={t("header.notifications")}
+        disabled={!business}
         onClick={() => setShowNotifications((current) => !current)}
         data-testid="header-notifications-trigger"
       >
-        <Bell aria-hidden="true" size={24} strokeWidth={2.1} />
+        <Bell aria-hidden="true" size={20} strokeWidth={2} />
         {unreadCount ? (
           <span className="absolute -right-1 -top-1 min-w-5 rounded-full bg-brand-500 px-1.5 py-0.5 text-[10px] font-semibold text-white ring-2 ring-surface">
             {unreadCount > 9 ? "9+" : unreadCount}
@@ -73,9 +78,9 @@ export function NotificationBell({
                 {t("header.notifications")}
               </p>
               <p className="mt-0.5 text-xs text-platforma-faint">
-                {t("header.notificationsSummary", {
-                  due: notificationSummary.data?.due || 0,
-                  urgent: notificationSummary.data?.urgent || 0,
+                {notificationSummary.isPending ? t("common.loading") : notificationSummary.isError || !notificationSummary.data ? t("serviceStatus.countsUnavailable") : t("header.notificationsSummary", {
+                  due: notificationSummary.data.due,
+                  urgent: notificationSummary.data.urgent,
                 })}
               </p>
             </div>
@@ -83,12 +88,26 @@ export function NotificationBell({
               variant="ghost"
               className="h-9 rounded-full px-3 text-xs"
               onClick={() => markAllReadMutation.mutate()}
-              disabled={!unreadCount}
+              disabled={
+                !unreadCount || !business || notificationSummary.isError || notifications.isError || markAllReadMutation.isPending
+              }
             >
               <Check size={14} /> {t("header.markAllRead")}
             </Button>
           </div>
           <div className="mt-4 space-y-4">
+            {notifications.isPending ? <LoadingState /> : null}
+            {notifications.isError ? (
+              <ErrorState error={notifications.error} action={<Button variant="secondary" onClick={() => void notifications.refetch()}>{t("common.retry")}</Button>} />
+            ) : null}
+            {notificationSummary.isError ? (
+              <ErrorState error={notificationSummary.error} action={<Button variant="secondary" onClick={() => void notificationSummary.refetch()}>{t("common.retry")}</Button>} />
+            ) : null}
+            {markReadMutation.isError || markAllReadMutation.isError ? (
+              <ErrorState
+                error={markReadMutation.error || markAllReadMutation.error}
+              />
+            ) : null}
             {Object.entries(groupedNotifications).map(([category, items]) => (
               <div key={category} className="space-y-2">
                 <p className="text-xs font-semibold text-platforma-faint">
@@ -113,17 +132,40 @@ export function NotificationBell({
                           </span>
                         </div>
                         <p className="line-clamp-2 font-semibold text-platforma-ink">
-                          {notification.text}
+                          {notificationText(notification, t)}
                         </p>
                         <p className="mt-1 text-xs text-platforma-faint">
                           {notificationAudienceLabel(notification)} ·{" "}
                           {notification.client_name || "CRM"} ·{" "}
-                          {formatDateTime(notification.send_at)}
+                          {formatDateTime(
+                            notification.send_at,
+                            undefined,
+                            false,
+                            language,
+                          )}
                         </p>
                       </div>
-                      <StatusBadge status={notification.status} />
+                      <span className="text-xs text-platforma-subtle">
+                        {t(
+                          notification.kind === "announcement"
+                            ? "notification.announcement"
+                            : "notification.workItem",
+                        )}
+                      </span>
                     </div>
                     <div className="mt-2 flex flex-wrap gap-2">
+                      {notification.kind === "announcement" ? (
+                        <Button
+                          variant="secondary"
+                          className="h-9 rounded-full px-3 text-xs"
+                          onClick={() => {
+                            setSelectedNotification(notification.id);
+                            setShowNotifications(false);
+                          }}
+                        >
+                          {t("common.open")}
+                        </Button>
+                      ) : null}
                       {notification.action_url ? (
                         <Button
                           variant="secondary"
@@ -157,18 +199,20 @@ export function NotificationBell({
                 ))}
               </div>
             ))}
-            {!latestNotifications.length ? (
+            {!notifications.isPending &&
+            !notifications.isError &&
+            !latestNotifications.length ? (
               <p className="rounded-card bg-surface-muted p-4 leading-6 text-platforma-subtle">
                 {t("header.noNotifications")}
               </p>
             ) : null}
           </div>
           <Link
-            to="/app/tasks"
+            to="/app/notifications"
             onClick={() => setShowNotifications(false)}
             className="platforma-focus-ring mt-4 block rounded-control bg-brand-500 px-4 py-3 text-center text-sm font-semibold text-white ring-1 ring-brand-600/10 transition hover:bg-brand-600"
           >
-            {t("header.openTasks")}
+            {t("notification.openCenter")}
           </Link>
         </div>
       ) : null}

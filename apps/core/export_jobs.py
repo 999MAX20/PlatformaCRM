@@ -26,6 +26,9 @@ def export_resource(export_key):
         return Resources.ANALYTICS
     return {
         "clients": Resources.CLIENTS,
+        "services": Resources.SETTINGS,
+        "specialists": Resources.SETTINGS,
+        "appointments": Resources.APPOINTMENTS,
         "leads": Resources.LEADS,
         "deals": Resources.DEALS,
         "sales": Resources.INTEGRATIONS,

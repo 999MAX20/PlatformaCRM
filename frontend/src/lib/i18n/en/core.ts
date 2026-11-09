@@ -212,10 +212,9 @@ export const core: Record<string, string> = {
   "language.ru": "Russian",
   "language.kk": "Kazakh",
   "language.en": "English",
-  "notFound.eyebrow": "Pilot-safe route",
-  "notFound.title": "This page is not connected yet",
-  "notFound.text":
-    "PlatformaCRM does not send users into dead ends: this route is kept as a safe pilot placeholder. Return to the workspace and continue checking the main scenarios.",
+  "notFound.eyebrow": "404",
+  "notFound.title": "Page not found",
+  "notFound.text": "Check the address or return to your workspace.",
   "notFound.backWorkspace": "Back to workspace",
   "table.emptyDescription": "First records will appear here after creation.",
   "table.total": "Total: {count}",

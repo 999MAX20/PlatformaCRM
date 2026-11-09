@@ -164,7 +164,7 @@ def annotate_client_list_queryset(queryset, *, related_querysets=None, waiting_o
     tasks_count = _client_related_count(related["tasks"].filter(is_archived=False))
     conversations_count = _client_related_count(related["conversations"].filter(is_archived=False))
 
-    return queryset.annotate(
+    return queryset.alias(
         latest_lead_manager_id=Subquery(latest_lead.values("responsible_user_id")[:1]),
         latest_deal_owner_id=Subquery(latest_deal.values("owner_id")[:1]),
         latest_task_manager_id=Subquery(latest_task.values("assignee_id")[:1]),
@@ -176,6 +176,7 @@ def annotate_client_list_queryset(queryset, *, related_querysets=None, waiting_o
         latest_task_title=Subquery(latest_task.values("title")[:1]),
         latest_task_due_at=Subquery(latest_task.values("due_at")[:1], output_field=DateTimeField()),
         latest_task_priority=Subquery(latest_task.values("priority")[:1]),
+    ).annotate(
         leads_count=leads_count,
         deals_count=deals_count,
         appointments_count=appointments_count,
@@ -304,7 +305,10 @@ def apply_client_quick_filter(queryset, request):
 
 
 def build_client_summary(queryset, *, user=None):
-    return queryset.aggregate(
+    fields = ("pk", "is_archived", "is_active", "is_vip", "has_no_reply", "has_multiple_deals", "has_multiple_appointments")
+    if user:
+        fields += ("manager_user_id",)
+    return queryset.order_by().values(*fields).aggregate(
         total=Count("id"),
         active=Count("id", filter=Q(is_active=True) | Q(is_vip=True)),
         no_reply=Count("id", filter=Q(has_no_reply=True)),
@@ -316,12 +320,15 @@ def build_client_summary(queryset, *, user=None):
 
 
 def build_client_facets(queryset):
+    activity = queryset.order_by().values(
+        "pk", "is_active", "is_vip", "has_no_reply", "has_multiple_deals", "has_multiple_appointments",
+    ).aggregate(
+        active=Count("id", filter=Q(is_active=True)),
+        vip=Count("id", filter=Q(is_vip=True)),
+        no_reply=Count("id", filter=Q(has_no_reply=True)),
+        repeat=Count("id", filter=Q(has_multiple_deals=True) | Q(has_multiple_appointments=True)),
+    )
     return {
         "source": {item["source"] or "manual": item["count"] for item in queryset.order_by().values("source").annotate(count=Count("id", distinct=True))},
-        "activity": {
-            "active": queryset.filter(is_active=True).count(),
-            "vip": queryset.filter(is_vip=True).count(),
-            "no_reply": queryset.filter(has_no_reply=True).count(),
-            "repeat": queryset.filter(Q(has_multiple_deals=True) | Q(has_multiple_appointments=True)).count(),
-        },
+        "activity": activity,
     }

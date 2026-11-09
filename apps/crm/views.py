@@ -1,3 +1,4 @@
+from apps.core.client_projection import client_relation_q, client_search_q
 from django.utils import timezone
 from django.db.models import Count, Prefetch, Q
 from rest_framework.decorators import action
@@ -17,6 +18,7 @@ from apps.core.work_queues import no_next_action_deals_queryset, sla_overdue_dea
 from apps.crm.models import Deal, Pipeline, PipelineStage, StageTransition
 from apps.crm.pipeline_templates import DEFAULT_STAGE_SPECS
 from apps.crm.selectors import build_deal_summary, stale_deals_queryset
+from apps.crm.field_policy import assert_amount_query_visible
 from apps.crm.workspace import deal_workspace_queryset
 from apps.crm.serializers import DealListSerializer, DealSerializer, PipelineSerializer, PipelineStageSerializer, StageTransitionSerializer
 from apps.crm.services import assign_deal_owner, mark_deal_lost, mark_deal_won, move_deal_stage, record_deal_value_change, reopen_deal
@@ -132,11 +134,12 @@ class DealViewSet(LockedCRMUpdateMixin, TenantModelViewSet):
             )
         )
         params = self.request.query_params
+        assert_amount_query_visible(queryset, self.request.user, params)
         if params.get("workspace") == "true" and self.action in {"list", "board", "summary"}:
             return deal_workspace_queryset(queryset, self.request)
         client_ids = self.parse_query_id_list("client_ids")
         if client_ids:
-            queryset = queryset.filter(client_id__in=client_ids)
+            queryset = queryset.filter(client_relation_q(self.request.user), client_id__in=client_ids)
         lead_ids = self.parse_query_id_list("lead_ids")
         if lead_ids:
             queryset = queryset.filter(lead_id__in=lead_ids)
@@ -164,9 +167,7 @@ class DealViewSet(LockedCRMUpdateMixin, TenantModelViewSet):
             queryset = queryset.filter(
                 Q(title__icontains=search)
                 | Q(source__icontains=search)
-                | Q(client__full_name__icontains=search)
-                | Q(client__phone__icontains=search)
-                | Q(client__email__icontains=search)
+                | client_search_q(self.request.user, search)
             )
         amount_min = params.get("amount_min") or params.get("min")
         if amount_min not in (None, ""):

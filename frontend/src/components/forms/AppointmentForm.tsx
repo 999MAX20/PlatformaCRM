@@ -19,7 +19,7 @@ import { useActionFeedback } from "../actions/useActionFeedback";
 import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
 import { Select } from "../ui/Select";
-import { ErrorState } from "../ui/StateViews";
+import { ErrorState, LoadingState } from "../ui/StateViews";
 import { StatusNotice } from "../ui/StatusNotice";
 import { Textarea } from "../ui/Textarea";
 
@@ -162,7 +162,8 @@ export function AppointmentForm({
   const selectedService = selectableServices.find((service) => service.id === Number(serviceId));
   const hasClients = clients.length > 0;
   const hasServices = selectableServices.length > 0;
-  const activeResources = resources.filter((resource) => resource.is_active && !resource.retired_at && resource.resource_type === "staff" && (!branch.enabled || branch.catalog?.assignments.some((item) => item.resource === resource.id && item.service_ids.includes(Number(serviceId)))));
+  const businessStaff = resources.filter(resource => resource.is_active && !resource.retired_at && resource.resource_type === "staff");
+  const activeResources = businessStaff.filter(resource => !branch.enabled || branch.catalog?.assignments.some(item => item.resource === resource.id && item.service_ids.includes(Number(serviceId))));
   const hasResources = activeResources.length > 0;
   const locale = language === "en" ? "en-US" : language === "kk" ? "kk-KZ" : "ru-RU";
   const selectedDate = new Date(`${date}T00:00:00`);
@@ -188,7 +189,7 @@ export function AppointmentForm({
         resource_id: resourceId ? Number(resourceId) : "",
         date,
       }),
-    enabled: Boolean(branch.ready && businessId && serviceId && resourceId && date && !initial),
+    enabled: Boolean(branch.ready && businessId && selectedService && hasResources && resourceId && date && !initial),
   });
   const noSlots = !initial && !slots.isLoading && slots.data?.length === 0;
   const workingHours = useQuery({
@@ -207,9 +208,9 @@ export function AppointmentForm({
 
   useEffect(() => {
     if (initial || !branch.ready || !branch.enabled) return;
-    if (!branch.catalog?.offers.some((offer) => offer.service === Number(serviceId))) form.setValue("service", 0);
+    if (!branch.catalog?.offers.some((offer) => offer.service === Number(serviceId))) form.setValue("service", selectableServices[0]?.id || 0);
     if (!branch.catalog?.assignments.some((item) => item.resource === Number(resourceId) && item.service_ids.includes(Number(serviceId)))) form.setValue("resource", 0);
-  }, [branch.catalog, branch.ready, branch.enabled, serviceId, resourceId, form, initial]);
+  }, [branch.catalog, branch.ready, branch.enabled, serviceId, resourceId, form, initial, selectableServices[0]?.id]);
 
   useEffect(() => {
     if (!initial) {
@@ -227,6 +228,27 @@ export function AppointmentForm({
     const matchingSlot = slots.data.find((slot) => hourInTimeZone(slot.start_at, timeZone) === prefill.hour);
     if (matchingSlot) form.setValue("slot", matchingSlot.start_at, { shouldDirty: true, shouldValidate: true });
   }, [form, initial, prefill?.hour, slots.data, timeZone]);
+
+  const branchControl = branch.requiresSelection ? <Select label={t("branches.branch")} value={branch.branchId} disabled={!!initial}
+    onChange={event => branch.setBranchId(event.target.value)} options={[{ value: "", label: t("branches.choose") }, ...branch.branches.map(item => ({ value: item.id, label: [item.name, item.address].filter(Boolean).join(" · ") }))]} /> : null;
+  const serviceControl = <Select disabled={fixedContext} label={t("appointment.service")} error={form.formState.errors.service?.message} options={[{ value: 0, label: t("appointment.selectService") }, ...selectableServices.map(service => ({ value: service.id, label: `${service.name} · ${service.duration_minutes} ${t("appointment.minutes")}${recordFirst ? ` · ${formatMoney(service.price_from, currency)}` : ""}` }))]} {...form.register("service")} value={form.watch("service")} />;
+  const anyConfiguredStaff = businessStaff.some(resource =>
+    (!branch.enabled || branch.catalog?.assignments.some(item => item.resource === resource.id && item.service_ids.some(id => selectableServices.some(service => service.id === id)))));
+  const needsSetup = !branch.ready || (!recordFirst && !hasClients) || !hasServices || !anyConfiguredStaff || (!!selectedService && !hasResources);
+  if (!initial && needsSetup) return <section data-testid="appointment-setup" className="space-y-4">
+    {branchControl}
+    {branch.loading ? <LoadingState /> : branch.error ? <ErrorState error={branch.error} action={<Button onClick={branch.retry}>{t("common.retry")}</Button>} /> : !branch.ready ? (
+      !branch.branches.length ? <StatusNotice tone="warning" title={t("branches.noBookable")}
+        action={canManageSchedule ? <Link to="/app/business/branches" className="platforma-focus-ring text-brand-700">{t("branches.settings")}</Link> : undefined} /> : null
+    ) : <>
+      {!recordFirst && !hasClients && <SetupNotice title={t("appointment.needClientTitle")} description={t("appointment.needClientText")} to="/app/clients" action={t("appointment.goClients")} />}
+      {!hasServices && <SetupNotice title={t("appointment.needServiceTitle")} description={t("appointment.needServiceText")}
+        to={branch.enabled ? `/app/business/branches?branch=${branch.branchId}` : "/app/business/services"} action={t("appointment.goServices")} />}
+      {hasServices && anyConfiguredStaff && !hasResources && serviceControl}
+      {(!businessStaff.length || (hasServices && (!anyConfiguredStaff || (!!selectedService && !hasResources)))) && <SetupNotice title={t("appointment.resourceHintTitle")} description={t("appointment.resourceHintText")}
+        to={branch.enabled ? `/app/business/branches?branch=${branch.branchId}` : "/app/business/resources"} action={t("appointment.goResources")} />}
+    </>}
+  </section>;
 
   return (
     <form
@@ -268,7 +290,7 @@ export function AppointmentForm({
       })}
     >
       {branch.error ? <ErrorState error={branch.error} /> : null}
-      {branch.enabled && <Select label={t("branches.branch")} value={branch.branchId} disabled={!!initial} onChange={(event) => branch.setBranchId(event.target.value)} options={[{ value: "", label: t("branches.choose") }, ...branch.branches.map((item) => ({ value: item.id, label: `${item.name} · ${item.address}` }))]} />}
+      {branchControl}
       {!recordFirst && !hasClients ? (
         <SetupNotice
           title={t("appointment.needClientTitle")}
@@ -302,7 +324,7 @@ export function AppointmentForm({
             onChange={value => form.setValue("client", Number(value), { shouldValidate: true })}
             error={form.formState.errors.client?.message} />
         ) : <Select label={t("appointment.client")} error={form.formState.errors.client?.message} options={[{ value: 0, label: t("appointment.selectClient") }, ...clients.map((client) => ({ value: client.id, label: client.full_name }))]} {...form.register("client")} value={form.watch("client")} />}
-        <Select disabled={fixedContext} label={t("appointment.service")} error={form.formState.errors.service?.message} options={[{ value: 0, label: t("appointment.selectService") }, ...selectableServices.map((service) => ({ value: service.id, label: `${service.name} · ${service.duration_minutes} ${t("appointment.minutes")}${recordFirst ? ` · ${formatMoney(service.price_from, currency)}` : ""}` }))]} {...form.register("service")} value={form.watch("service")} />
+        {serviceControl}
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <Select
@@ -392,7 +414,7 @@ export function AppointmentForm({
         { value: "bot", label: "Bot" },
       ]} {...form.register("source")} />}
       <Textarea label={t("appointment.notes")} {...form.register("notes")} />
-      <Button data-testid="appointment-submit" type="submit" isLoading={form.formState.isSubmitting} disabled={!initial && (!branch.ready || (!recordFirst && !hasClients) || !hasServices || slots.isLoading || slots.data?.length === 0)}>
+      <Button data-testid="appointment-submit" type="submit" isLoading={form.formState.isSubmitting} disabled={!initial && (!branch.ready || (!recordFirst && !hasClients) || !hasServices || !hasResources || slots.isLoading || slots.data?.length === 0)}>
         {initial ? t("appointment.save") : t("appointment.create")}
       </Button>
     </form>
