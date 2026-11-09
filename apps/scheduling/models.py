@@ -17,6 +17,7 @@ class Resource(TimeStampedModel):
         OTHER = "other", "Other"
 
     business = models.ForeignKey(Business, on_delete=models.CASCADE, related_name="resources")
+    branch = models.ForeignKey("branches.Branch", on_delete=models.PROTECT, null=True, blank=True, related_name="physical_resources")
     name = models.CharField(max_length=255)
     resource_type = models.CharField(max_length=32, choices=ResourceTypes.choices, default=ResourceTypes.STAFF)
     linked_user = models.ForeignKey(
@@ -139,6 +140,15 @@ class Appointment(TimeStampedModel):
 
     def __str__(self):
         return f"{self.client} at {self.start_at}"
+
+
+class AppointmentResource(models.Model):
+    appointment = models.ForeignKey(Appointment, on_delete=models.CASCADE, related_name="reserved_resources")
+    resource = models.ForeignKey(Resource, on_delete=models.PROTECT, related_name="reservations")
+    resource_name = models.CharField(max_length=255)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["appointment", "resource"], name="appointment_resource_unique")]
 
 
 class VisitPlan(TimeStampedModel):

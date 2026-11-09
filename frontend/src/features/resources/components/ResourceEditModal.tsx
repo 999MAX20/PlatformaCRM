@@ -107,6 +107,7 @@ export function ResourceEditModal({
             <StatusNotice tone="warning" title={t("resources.readOnlyTitle")} description={t("resources.readOnlyText")} />
           ) : null}
           <ResourceForm
+            branches={branches.data}
             key={`${resource.id}:${resource.updated_at}:${resetVersion}`}
             formId={FORM_ID}
             businessId={businessId}
@@ -144,7 +145,7 @@ export function ResourceEditModal({
               </div>
               <div className="min-w-0 flex-1">
                 <h3 className="text-sm font-semibold text-platforma-ink">{t("resources.scheduleTitle")}</h3>
-                {branches.data?.length ? <Link className="mt-3 inline-flex text-sm font-semibold text-brand-700 underline" to={`/app/business/branches?section=schedule&resource=${resource.id}`}>{t("branches.schedule")}</Link> : scheduleLoading ? (
+                {branches.data?.length ? <Link className="mt-3 inline-flex text-sm font-semibold text-brand-700 underline" to={`/app/business/working-hours?resource=${resource.id}${resource.branch ? `&branch=${resource.branch}` : ""}`}>{t("branches.schedule")}</Link> : scheduleLoading ? (
                   <div className="mt-3 space-y-2" aria-busy="true">
                     <SkeletonBlock className="h-8" />
                     <SkeletonBlock className="h-8" />

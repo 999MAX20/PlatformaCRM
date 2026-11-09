@@ -25,10 +25,11 @@ class BranchViewSet(BranchConfigurationMixin, TenantModelViewSet):
         return Actions.VIEW if self.action in {"list", "retrieve", "catalog", "configuration"} else Actions.UPDATE
 
     def get_queryset(self):
+        from .setup_state import with_setup_state
         queryset = super().get_queryset()
         if self.request.query_params.get("business"):
             queryset = queryset.filter(business_id=self.request.query_params["business"])
-        return queryset
+        return with_setup_state(queryset)
 
     def perform_create(self, serializer):
         serializer.save()

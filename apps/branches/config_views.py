@@ -14,25 +14,41 @@ class BranchConfigurationMixin:
     def configuration(self, request, pk=None):
         branch = self.get_object()
         assert_can(request.user, branch.business, Resources.SETTINGS, Actions.VIEW)
+        from .physical_resources import resource_configuration, physical_schedule_projection
+        if branch.uses_business_defaults:
+            from .catalog import automatic_catalog
+            return Response({**automatic_catalog(branch), **resource_configuration(branch), "travel": []})
         return Response({
+            **resource_configuration(branch),
             "offers": OfferSerializer(branch.service_offers.select_related("service"), many=True).data,
             "assignments": AssignmentSerializer(branch.specialist_assignments.select_related("resource").prefetch_related("services"), many=True).data,
-            "days": DaySerializer(branch.schedule_days.all(), many=True).data,
+            "days": [*DaySerializer(branch.schedule_days.all(), many=True).data, *physical_schedule_projection(branch)],
             "travel": TravelSerializer(BranchTravelTime.objects.filter(business=branch.business)
                                        .filter(Q(from_branch=branch) | Q(to_branch=branch)), many=True).data,
         })
 
+    @action(detail=True, methods=["post"], url_path="resource-requirements")
+    def resource_requirements(self, request, pk=None):
+        from .config_serializers import ResourceRequirementsInput
+        from .physical_resources import save_resource_requirements
+        data = ResourceRequirementsInput(data=request.data)
+        data.is_valid(raise_exception=True)
+        ids = save_resource_requirements(branch=self.get_object(), actor=request.user,
+            service_id=data.validated_data["service"], resource_ids=data.validated_data["resource_ids"])
+        return Response({"service": data.validated_data["service"], "resource_ids": ids})
+
     @action(detail=True, methods=["get"])
     def catalog(self, request, pk=None):
         branch = self.get_object()
+        from .physical_resources import resource_configuration
         if branch.uses_business_defaults:
             from .catalog import automatic_catalog
-            return Response(automatic_catalog(branch))
+            return Response({**automatic_catalog(branch), **resource_configuration(branch)})
         offers = branch.service_offers.filter(is_active=True, service__is_active=True, service__is_archived=False).select_related("service")
         assignments = branch.specialist_assignments.filter(is_active=True, resource__is_active=True, resource__retired_at__isnull=True).select_related("resource").prefetch_related("services")
         if not branch.is_active or branch.archived_at:
             offers, assignments = offers.none(), assignments.none()
-        return Response({"offers": OfferSerializer(offers, many=True).data,
+        return Response({**resource_configuration(branch), "offers": OfferSerializer(offers, many=True).data,
                          "assignments": AssignmentSerializer(assignments, many=True).data,
                          "days": DaySerializer(branch.schedule_days.all(), many=True).data,
                          "absences": list(SpecialistAbsence.objects.filter(business=branch.business,

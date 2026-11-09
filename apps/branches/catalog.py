@@ -95,7 +95,7 @@ def automatic_catalog(branch):
             "price_from": str(row.price_from) if row.price_from is not None else None, "is_active": True} for row in offers],
         "assignments": [{"id": row.resource_id, "branch": branch.pk, "resource": row.resource_id,
             "resource_name": row.resource.name, "service_ids": row.service_ids, "is_active": True} for row in assignments],
-        "days": automatic_days(branch, [row.resource for row in assignments]) if assignments else [],
+        "days": automatic_days(branch, [row.resource for row in assignments]),
         "absences": list(SpecialistAbsence.objects.filter(business=branch.business,
             resource_id__in=[row.resource_id for row in assignments]).filter(Q(branch=branch) | Q(branch__isnull=True))
             .values("resource_id", "starts_on", "ends_on")),

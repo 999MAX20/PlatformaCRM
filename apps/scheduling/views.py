@@ -117,7 +117,7 @@ class ResourceViewSet(ResourceLifecycleMixin, TenantModelViewSet):
                 "appointments",
                 filter=Q(appointments__is_archived=False),
                 distinct=True,
-            ),
+            ) + Count("reservations", filter=Q(reservations__appointment__is_archived=False), distinct=True),
             has_individual_schedule=Exists(individual_schedule),
         )
         params = self.request.query_params

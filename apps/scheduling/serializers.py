@@ -7,9 +7,9 @@ from apps.clients.models import Client
 from apps.businesses.models import Business
 from apps.services.models import Service
 from apps.leads.models import Lead
-from apps.scheduling.models import Appointment, AppointmentMessageSetting, Resource, WorkingHours
+from apps.scheduling.models import Appointment, AppointmentMessageSetting, AppointmentResource, Resource, WorkingHours
 from apps.scheduling.services import validate_appointment_availability
-from apps.scheduling.resource_services import create_resource, validate_week, validate_staff_account
+from apps.scheduling.resource_services import create_resource, update_resource, validate_week
 from apps.scheduling.schedule_serializers import WeeklyDaySerializer
 from apps.scheduling.working_hours import working_hours_write
 from apps.branches.models import Branch
@@ -30,6 +30,7 @@ class ResourceSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "business",
+            "branch",
             "name",
             "resource_type",
             "linked_user",
@@ -63,7 +64,8 @@ class ResourceSerializer(serializers.ModelSerializer):
         annotated_count = getattr(obj, "appointment_count", None)
         if annotated_count is not None:
             return annotated_count
-        return obj.appointments.filter(is_archived=False).count()
+        from django.db.models import Q
+        return Appointment.objects.filter(Q(resource=obj) | Q(reserved_resources__resource=obj), is_archived=False).distinct().count()
 
     def get_has_individual_schedule(self, obj):
         annotated_value = getattr(obj, "has_individual_schedule", None)
@@ -97,16 +99,12 @@ class ResourceSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
-        return create_resource(**validated_data)
+        request = self.context.get("request")
+        return create_resource(actor=request.user if request else None, **validated_data)
 
     def update(self, instance, validated_data):
-        linked_user = validated_data.get("linked_user", instance.linked_user)
-        resource_type = validated_data.get("resource_type", instance.resource_type)
-        if getattr(linked_user, "pk", None) != instance.linked_user_id or resource_type != instance.resource_type:
-            validate_staff_account(business=instance.business,
-                                   resource_type=resource_type,
-                                   linked_user=linked_user, exclude_id=instance.pk)
-        return super().update(instance, validated_data)
+        request = self.context.get("request")
+        return update_resource(resource=instance, attributes=validated_data, actor=request.user if request else None)
 
 
 class WorkingHoursSerializer(serializers.ModelSerializer):
@@ -152,7 +150,22 @@ class WorkingHoursSerializer(serializers.ModelSerializer):
         return attrs
 
 
+class ReservedResourceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AppointmentResource
+        fields = ["resource", "resource_name"]
+
+
+class AppointmentListSerializer(serializers.ListSerializer):
+    def to_representation(self, data):
+        from django.db.models import Manager, prefetch_related_objects
+        items = list(data.all() if isinstance(data, Manager) else data)
+        prefetch_related_objects(items, "reserved_resources")
+        return super().to_representation(items)
+
+
 class AppointmentSerializer(ClientProjectionMixin, serializers.ModelSerializer):
+    reserved_resources = ReservedResourceSerializer(many=True, read_only=True)
     client_name = serializers.CharField(source="client.full_name", read_only=True)
     client_phone = serializers.CharField(source="client.phone", read_only=True)
     service_name = serializers.CharField(source="service.name", read_only=True)
@@ -169,6 +182,7 @@ class AppointmentSerializer(ClientProjectionMixin, serializers.ModelSerializer):
 
     class Meta:
         model = Appointment
+        list_serializer_class = AppointmentListSerializer
         fields = [
             "id",
             "business",
@@ -185,6 +199,7 @@ class AppointmentSerializer(ClientProjectionMixin, serializers.ModelSerializer):
             "resource",
             "resource_name",
             "resource_type",
+            "reserved_resources",
             "start_at",
             "end_at",
             "status",

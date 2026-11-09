@@ -111,6 +111,7 @@ export type DealSummary = {
 };
 
 export type Appointment = {
+  reserved_resources?: { resource: Id; resource_name: string }[];
   visit_plan?: Id | null;
   responsible_user?: Id | null;
   responsible_user_name?: string;

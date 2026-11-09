@@ -2,20 +2,22 @@ import { apiClient } from "./client";
 import { createCrudApi } from "./crud";
 import type { Appointment, Id, Resource } from "../types";
 
-export type Branch = { id: Id; business: Id; name: string; address: string; phone: string; is_active: boolean; archived_at: string | null; uses_business_defaults?: boolean; can_manage: boolean; can_book: boolean; can_work: boolean };
+export type Branch = { id: Id; business: Id; name: string; address: string; phone: string; is_active: boolean; archived_at: string | null; uses_business_defaults?: boolean; setup_state?: "configured" | "incomplete"; can_manage: boolean; can_book: boolean; can_work: boolean };
 export type BranchOffer = { id: Id; branch: Id; service: Id; service_name: string; duration_minutes: number; price_from: string | null; is_active: boolean };
 export type BranchAssignment = { id: Id; branch: Id; resource: Id; resource_name: string; service_ids: Id[]; is_active: boolean };
 export type Interval = { start: string; end: string };
 export type BranchDay = { id: Id; branch: Id; resource: Id | null; weekday: number | null; date: string | null; intervals: Interval[] };
 export type BranchTravel = { id: Id; from_branch: Id; to_branch: Id; minutes: number };
-export type BranchCatalog = { offers: BranchOffer[]; assignments: BranchAssignment[]; days?: BranchDay[]; absences?: { resource_id: Id; starts_on: string; ends_on: string }[] };
-export type BranchConfiguration = BranchCatalog & { days: BranchDay[]; travel: BranchTravel[] };
+export type BranchCatalog = { offers: BranchOffer[]; assignments: BranchAssignment[]; days?: BranchDay[]; physical_resources?: PhysicalResource[]; resource_requirements?: { service_id: Id; resource_id: Id }[]; absences?: { resource_id: Id; starts_on: string; ends_on: string }[] };
+export type PhysicalResource = Pick<Resource, "id" | "name" | "resource_type" | "is_active" | "branch">;
+export type BranchConfiguration = BranchCatalog & { days: BranchDay[]; travel: BranchTravel[]; physical_resources: PhysicalResource[]; resource_requirements: { service_id: Id; resource_id: Id }[] };
 export type Absence = { id: Id; branch: Id | null; starts_on: string; ends_on: string; reason: "unavailable" | "vacation" | "sick" };
 export type RetirementPreview = { pending: Record<string, number>; appointments: Appointment[]; appointments_count: number; appointments_truncated: boolean };
 export const branchesApi = {
   ...createCrudApi<Branch>("/api/branches/"),
   configuration: async (id: Id) => (await apiClient.get<BranchConfiguration>(`/api/branches/${id}/configuration/`)).data,
   catalog: async (id: Id) => (await apiClient.get<BranchCatalog>(`/api/branches/${id}/catalog/`)).data,
+  resourceRequirements: async (id: Id, payload: { service: Id; resource_ids: Id[] }) => (await apiClient.post<{ service: Id; resource_ids: Id[] }>(`/api/branches/${id}/resource-requirements/`, payload)).data,
   offer: async (id: Id, payload: Pick<BranchOffer, "service" | "duration_minutes" | "price_from" | "is_active">) => (await apiClient.post(`/api/branches/${id}/offers/`, payload)).data,
   assignment: async (id: Id, payload: Pick<BranchAssignment, "resource" | "service_ids" | "is_active">) => (await apiClient.post(`/api/branches/${id}/assignments/`, payload)).data,
   day: async (id: Id, payload: { resource?: Id | null; weekday?: number; date?: string; intervals: Interval[]; remove?: boolean }) => (await apiClient.post(`/api/branches/${id}/schedule/`, payload)).data,

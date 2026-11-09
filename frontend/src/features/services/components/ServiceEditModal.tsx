@@ -10,6 +10,7 @@ import { StatusNotice } from "../../../components/ui/StatusNotice";
 import { useI18n } from "../../../lib/i18n";
 import type { Id, Service } from "../../../types";
 import { ServiceStatusBadge } from "./ServiceStatusBadge";
+import { ServiceResourceRequirements } from "./ServiceResourceRequirements";
 
 const FORM_ID = "service-edit-form";
 
@@ -40,12 +41,14 @@ export function ServiceEditModal({
   const [resetVersion, setResetVersion] = useState(0);
   const [isDirty, setIsDirty] = useState(false);
   const [fieldsDirty, setFieldsDirty] = useState(false);
-  useEffect(() => { onDirtyChange(isDirty || fieldsDirty); }, [isDirty, fieldsDirty, onDirtyChange]);
+  const [resourceDirty, setResourceDirty] = useState(false);
+  useEffect(() => { onDirtyChange(isDirty || fieldsDirty || resourceDirty); }, [isDirty, fieldsDirty, resourceDirty, onDirtyChange]);
 
   useEffect(() => {
     setResetVersion(0);
     setIsDirty(false);
     setFieldsDirty(false);
+    setResourceDirty(false);
   }, [onDirtyChange, service?.id]);
 
   if (!service) return null;
@@ -98,6 +101,8 @@ export function ServiceEditModal({
             onSubmit={onSubmit}
           />
           <CustomEntityFields business={businessId} kind="service" id={service.id} readOnly={!canEdit} onDirtyChange={setFieldsDirty} />
+          {canEdit && <ServiceResourceRequirements key={service.id} businessId={businessId} serviceId={service.id}
+            disabled={isSaving || !service.is_active} onDirtyChange={setResourceDirty} />}
         </div>
 
         <aside className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-xs lg:self-start">

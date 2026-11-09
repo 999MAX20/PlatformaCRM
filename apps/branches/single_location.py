@@ -28,6 +28,7 @@ def materialize_initial_location(branch):
     from .catalog import automatic_days
     from .models import ScheduleDay
     from apps.scheduling.models import Resource
+    Resource.objects.filter(business=branch.business, branch__isnull=True).exclude(resource_type="staff").update(branch=branch)
     for day in automatic_days(branch, list(Resource.objects.filter(business=branch.business, resource_type="staff"))):
         ScheduleDay.objects.update_or_create(branch=branch, resource_id=day["resource"],
             weekday=day["weekday"], date=day["date"], defaults={"business": branch.business, "intervals": day["intervals"]})

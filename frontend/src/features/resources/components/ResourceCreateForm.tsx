@@ -26,7 +26,7 @@ export function ResourceCreateForm({ businessId, initial, teamMembers, businessH
   if (branches.error) return <ErrorState error={branches.error} />;
   if (branches.data?.length) return <>
     {submitError ? <ErrorState error={submitError} /> : null}
-    <ResourceForm businessId={businessId} initial={initial} teamMembers={teamMembers} disabled={disabled} showContextHint={false} onSubmit={onSubmit} />
+    <ResourceForm businessId={businessId} initial={initial} teamMembers={teamMembers} branches={branches.data} disabled={disabled} showContextHint={false} onSubmit={onSubmit} />
   </>;
   if (!scheduleStep || !draft) return (
     <ResourceForm businessId={businessId} initial={draft || initial} teamMembers={teamMembers}

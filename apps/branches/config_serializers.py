@@ -61,3 +61,8 @@ class DayInput(serializers.Serializer):
 class TravelInput(serializers.Serializer):
     other_branch = serializers.IntegerField(min_value=1)
     minutes = serializers.IntegerField(min_value=0, max_value=1440)
+
+
+class ResourceRequirementsInput(serializers.Serializer):
+    service = serializers.IntegerField(min_value=1)
+    resource_ids = serializers.ListField(child=serializers.IntegerField(min_value=1), max_length=32, allow_empty=True)

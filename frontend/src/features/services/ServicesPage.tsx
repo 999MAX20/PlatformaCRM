@@ -104,7 +104,7 @@ export function ServicesPage() {
     mutationFn: ({ id, payload }: { id?: Id; payload: Partial<Service> }) =>
       id ? servicesApi.update({ id, payload }) : servicesApi.create(payload),
     onSuccess: async (_service, variables) => {
-      await queryClient.invalidateQueries({ queryKey: ["services"] });
+      await Promise.all(["services", "branches", "branch-configuration", "branch-catalog", "available-slots"].map(key => queryClient.invalidateQueries({ queryKey: [key] })));
       setInspectorDirty(false);
       if (variables.id) {
         showNotification({ message: t("services.noticeSaved"), tone: "success" });
@@ -133,6 +133,7 @@ export function ServicesPage() {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ["services"] }),
         queryClient.invalidateQueries({ queryKey: ["available-slots"] }),
+        ...["branches", "branch-configuration", "branch-catalog"].map(key => queryClient.invalidateQueries({ queryKey: [key] })),
       ]);
       const remainsVisible = status === "archived"
         ? updatedService.is_archived

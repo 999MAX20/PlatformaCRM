@@ -111,8 +111,12 @@ def get_available_slots(business, service, date, resource=None, after_time=None,
     from apps.branches.schedule import resolve_branch, branch_available_slots
     branch = resolve_branch(business, branch)
     if branch is not None and not branch.uses_business_defaults:
-        return branch_available_slots(business, service, date, resource=resource, branch=branch,
-                                      after_time=after_time, exclude_appointment=exclude_appointment)
+        slots = branch_available_slots(business, service, date, resource=resource, branch=branch,
+                                       after_time=after_time, exclude_appointment=exclude_appointment)
+        from apps.branches.schedule import booking_terms
+        from .resource_booking import filter_resource_slots
+        _, minutes, _ = booking_terms(business, service, resource, branch, appointment=exclude_appointment)
+        return filter_resource_slots(business, service, branch, slots, minutes, exclude_appointment=exclude_appointment)
 
     weekday = date.weekday()
     from apps.branches.schedule import resource_absent
@@ -158,7 +162,8 @@ def get_available_slots(business, service, date, resource=None, after_time=None,
             slots.append(current)
         current += step
 
-    return slots
+    from .resource_booking import filter_resource_slots
+    return filter_resource_slots(business, service, branch, slots, minutes, exclude_appointment=exclude_appointment)
 
 
 def validate_appointment_availability(business, service, start_at, resource=None, exclude_appointment=None, branch=None):
@@ -171,8 +176,13 @@ def validate_appointment_availability(business, service, start_at, resource=None
     from apps.branches.schedule import resolve_branch, validate_branch_slot
     branch = resolve_branch(business, branch)
     if branch is not None and not branch.uses_business_defaults:
-        return validate_branch_slot(business, service, start_at, resource=resource, branch=branch,
-                                    exclude_appointment=exclude_appointment)
+        if timezone.is_naive(start_at):
+            start_at = timezone.make_aware(start_at, business_zone(business))
+        end_at = validate_branch_slot(business, service, start_at, resource=resource, branch=branch,
+                                     exclude_appointment=exclude_appointment)
+        from .resource_booking import validate_resource_availability
+        validate_resource_availability(business, service, branch, start_at, end_at, exclude_appointment=exclude_appointment)
+        return end_at
 
     tz = business_zone(business)
     if timezone.is_naive(start_at):
@@ -217,4 +227,6 @@ def validate_appointment_availability(business, service, start_at, resource=None
             errors={"start_at": "Select another available time."}
         )
 
+    from .resource_booking import validate_resource_availability
+    validate_resource_availability(business, service, branch, start_at, end_at, exclude_appointment=exclude_appointment)
     return end_at

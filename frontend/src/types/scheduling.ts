@@ -18,6 +18,7 @@ export type Service = {
 };
 
 export type Resource = {
+  branch?: Id | null;
   profession?: string;
   public_description?: string;
   contact_phone?: string;

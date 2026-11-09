@@ -51,6 +51,8 @@ def create_imported_record(*, business, actor, client, service, specialist, star
     appointment = Appointment.objects.create(business=business, client=client, service=service, resource=specialist,
         responsible_user=actor, start_at=start_at, end_at=end_at, status=status, notes=notes,
         source=Appointment.Sources.MANUAL, **snapshot)
+    from .resource_booking import reserve_appointment_resources
+    reserve_appointment_resources(appointment)
     metadata = {"kind": "import", "reference": import_reference, "status": status,
                 "reason": reason, "creation_effects": "suppressed"}
     write_actor_audit_log(actor=actor, action=AuditLog.Actions.CREATE, instance=appointment, metadata=metadata)

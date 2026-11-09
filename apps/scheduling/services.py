@@ -161,6 +161,8 @@ def handle_appointment_created(appointment):
     )
     if not created:
         return event
+    from .resource_booking import reserve_appointment_resources
+    reserve_appointment_resources(appointment)
     schedule_appointment_followups(appointment)
     notify_appointment_responsible(appointment, "New appointment created")
     run_automations_for_event(
@@ -350,6 +352,9 @@ def reschedule_appointment(*, appointment, actor, start_at, resource=None, branc
         exclude_appointment=appointment,
         branch=snapshot["branch"],
     )
+    from .resource_booking import required_resources, set_reserved_resources
+    previous_physical_resources = list(appointment.reserved_resources.values_list("resource_id", flat=True))
+    physical_resources = required_resources(appointment.business, appointment.service, snapshot["branch"], appointment=appointment)
 
     appointment.start_at = start_at
     appointment.end_at = end_at
@@ -358,6 +363,7 @@ def reschedule_appointment(*, appointment, actor, start_at, resource=None, branc
     for key, value in snapshot.items():
         setattr(appointment, key, value)
     appointment.save(update_fields=["start_at", "end_at", "resource", "status", "updated_at", *snapshot])
+    set_reserved_resources(appointment, physical_resources)
     touch_appointment_plan(plan)
 
     schedule_appointment_followups(appointment)
@@ -380,6 +386,8 @@ def reschedule_appointment(*, appointment, actor, start_at, resource=None, branc
             "end_at": appointment.end_at.isoformat(),
             "previous_resource_id": previous_resource_id,
             "previous_branch_id": previous_branch_id,
+            "previous_physical_resource_ids": previous_physical_resources,
+            "physical_resource_ids": [item.pk for item in physical_resources],
             "branch_id": appointment.branch_id,
             "resource_id": appointment.resource_id,
             "reason": reason,

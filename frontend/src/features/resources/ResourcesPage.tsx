@@ -147,7 +147,7 @@ export function ResourcesPage() {
     mutationFn: ({ id, payload }: { id?: Id; payload: Partial<Resource> }) =>
       id ? resourcesApi.update({ id, payload }) : resourcesApi.create(payload),
     onSuccess: async (_resource, variables) => {
-      await queryClient.invalidateQueries({ queryKey: ["resources"] });
+      await Promise.all(["resources", "branches", "branch-configuration", "branch-catalog", "available-slots"].map(key => queryClient.invalidateQueries({ queryKey: [key] })));
       setInspectorDirty(false);
       if (variables.id) {
         showNotification({ message: t("resources.noticeSaved"), tone: "success" });
@@ -166,7 +166,7 @@ export function ResourcesPage() {
     mutationFn: ({ resource, isActive }: { resource: Resource; isActive: boolean }) =>
       resourcesApi.update({ id: resource.id, payload: { is_active: isActive } }),
     onSuccess: async (_resource, variables) => {
-      await queryClient.invalidateQueries({ queryKey: ["resources"] });
+      await Promise.all(["resources", "branches", "branch-configuration", "branch-catalog", "available-slots"].map(key => queryClient.invalidateQueries({ queryKey: [key] })));
       showNotification({
         message: t(variables.isActive ? "resources.noticeActivated" : "resources.noticeDeactivated"),
         tone: "success",

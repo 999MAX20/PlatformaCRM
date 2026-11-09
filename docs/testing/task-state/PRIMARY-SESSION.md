@@ -1,3 +1,14 @@
+BRANCH-WORKSPACE-20261109: implemented, scoped checks passed, activated locally.
+Simple single-point overview/direct hours; physical resources linked to location;
+service requirements jointly reserved for manual/bot/AI booking; snapshots retained.
+API/migration42; bot/AI46; PG6+7; card/PII/budget40; browser6/build/types/i18n/bundlePASS.
+Aggregate239PASS/14PGskips retains1bad-label loaderERROR, correctedconsumer runPASS.
+Owner-approved two migrations applied; backup restore152tables/10287rowsPASS,
+all existing data preserved incl14appointments. No scoped code/local-evidence remainder.
+No push/deploy/CI;3foreign migrations and existing worker outside activation scope.
+Evidence: docs/testing/evidence/branch-workspace-20261109.md.
+Details: output/branch-workspace-20261109/CHECKPOINT.md.
+
 PUSH-FIXES-20261109: fixes verified, owner-approved local integration complete; NO PUSH.
 Candidate commit6648e297; mergeff312e69 preserves both histories and verified source tree.
 All9conflicts resolved as approved; duplicate Vite import avoided; stale lock archived.

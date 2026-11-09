@@ -8,10 +8,11 @@ class BranchSerializer(serializers.ModelSerializer):
     can_manage = serializers.SerializerMethodField()
     can_book = serializers.SerializerMethodField()
     can_work = serializers.SerializerMethodField()
+    setup_state = serializers.SerializerMethodField()
 
     class Meta:
         model = Branch
-        fields = ["id", "business", "name", "address", "phone", "is_active", "archived_at", "uses_business_defaults", "can_manage", "can_book", "can_work", "created_at", "updated_at"]
+        fields = ["id", "business", "name", "address", "phone", "is_active", "archived_at", "uses_business_defaults", "setup_state", "can_manage", "can_book", "can_work", "created_at", "updated_at"]
         read_only_fields = ["is_active", "archived_at", "uses_business_defaults", "created_at", "updated_at"]
 
     def get_can_manage(self, obj):
@@ -19,6 +20,12 @@ class BranchSerializer(serializers.ModelSerializer):
         from .access import accessible_branches
         actor = self.context["request"].user
         return can(actor, obj.business, Resources.SETTINGS, Actions.UPDATE).allowed and accessible_branches(actor, obj.business).filter(pk=obj.pk).exists()
+
+    def get_setup_state(self, obj):
+        if not hasattr(obj, "_setup_services"):
+            from .setup_state import with_setup_state
+            obj = with_setup_state(Branch.objects.filter(pk=obj.pk)).get()
+        return "configured" if obj._setup_services and obj._setup_staff and obj._setup_hours else "incomplete"
 
     def get_can_book(self, obj):
         from .access import accessible_branches

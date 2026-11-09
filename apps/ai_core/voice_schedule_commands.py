@@ -135,9 +135,11 @@ def validate_schedule(*, business, user, values, lock=False):
             end = validate_appointment_availability(business, service, start, resource=resource, branch=branch)
         except (ValueError, TypeError, ArithmeticError):
             raise ValidationError({"start_at": "Select an available future time."}) from None
-        if any(resource.pk == pk and start < other_end and end > other_start for pk, other_start, other_end in occupied):
+        from apps.scheduling.resource_booking import required_resources
+        resource_ids = {resource.pk, *(item.pk for item in required_resources(business, service, branch))}
+        if any(resource_ids.intersection(ids) and start < other_end and end > other_start for ids, other_start, other_end in occupied):
             raise ValidationError({"start_at": "Visits overlap within this request."})
-        occupied.append((resource.pk, start, end))
+        occupied.append((resource_ids, start, end))
         resolved.append({"service": service, "resource": resource, "branch": branch, "start_at": start,
             "expected_price": price, "expected_duration_minutes": visit["expected_duration_minutes"]})
     return client, serializer, resolved

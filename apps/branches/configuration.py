@@ -78,9 +78,18 @@ def save_schedule_day(*, branch, actor, resource_id=None, weekday=None, date=Non
     _lock_and_authorize(branch, actor)
     if (date is None) == (weekday is None) or (weekday is not None and weekday not in range(7)):
         raise ValidationError({"weekday": "Choose one weekday or one date."})
-    resource = _staff(branch, resource_id) if resource_id is not None else None
-    if resource and not SpecialistBranch.objects.filter(branch=branch, resource=resource, is_active=True).exists():
-        raise ValidationError({"resource": "Assign this specialist to the branch first."})
+    resource = None
+    if resource_id is not None:
+        resource = Resource.objects.filter(business=branch.business, pk=resource_id, retired_at__isnull=True).first()
+        if resource is None:
+            raise ValidationError({"resource": "Select a resource of this business."})
+        if resource.resource_type == "staff":
+            if not SpecialistBranch.objects.filter(branch=branch, resource=resource, is_active=True).exists():
+                raise ValidationError({"resource": "Assign this specialist to the branch first."})
+        else:
+            from .physical_resources import physical_resources
+            if not physical_resources(branch).filter(pk=resource.pk).exists():
+                raise ValidationError({"resource": "Select a room or equipment belonging to this location."})
     values = {"branch": branch, "resource": resource, "weekday": weekday, "date": date}
     if remove:
         if date is None:
@@ -89,7 +98,7 @@ def save_schedule_day(*, branch, actor, resource_id=None, weekday=None, date=Non
         row = None
     else:
         row, _ = ScheduleDay.objects.update_or_create(**values, defaults={"business": branch.business, "intervals": normalize_intervals(intervals)})
-    if resource:
+    if resource and resource.resource_type == "staff":
         validate_specialist_schedule(resource)
     _audit(actor, branch, row or branch, "branch_schedule")
     return row

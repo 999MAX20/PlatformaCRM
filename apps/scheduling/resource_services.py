@@ -25,9 +25,11 @@ def validate_staff_account(*, business, resource_type, linked_user, exclude_id=N
 
 
 @transaction.atomic
-def create_resource(*, weekly_schedule=None, **attributes):
+def create_resource(*, weekly_schedule=None, actor=None, **attributes):
     business = attributes["business"]
     Business.objects.select_for_update().get(pk=business.pk)
+    from apps.branches.physical_resources import validate_resource_location
+    attributes["branch"] = validate_resource_location(business=business, attributes=attributes, actor=actor)
     validate_staff_account(business=business, resource_type=attributes.get("resource_type", Resource.ResourceTypes.STAFF), linked_user=attributes.get("linked_user"))
     if weekly_schedule is not None:
         validate_week(weekly_schedule)
@@ -47,4 +49,21 @@ def create_resource(*, weekly_schedule=None, **attributes):
         WorkingHours.objects.bulk_create([
             WorkingHours(business=business, resource=resource, **day) for day in weekly_schedule
         ])
+    return resource
+
+
+@transaction.atomic
+def update_resource(*, resource, attributes, actor=None):
+    Business.objects.select_for_update().get(pk=resource.business_id)
+    resource = Resource.objects.select_for_update().get(pk=resource.pk)
+    if "business" in attributes and attributes["business"].pk != resource.business_id:
+        raise ValidationError({"business": "Business cannot be changed."})
+    from apps.branches.physical_resources import validate_resource_change
+    attributes["branch"] = validate_resource_change(resource, attributes, actor=actor)
+    validate_staff_account(business=resource.business,
+        resource_type=attributes.get("resource_type", resource.resource_type),
+        linked_user=attributes.get("linked_user", resource.linked_user), exclude_id=resource.pk)
+    for key, value in attributes.items():
+        setattr(resource, key, value)
+    resource.save()
     return resource

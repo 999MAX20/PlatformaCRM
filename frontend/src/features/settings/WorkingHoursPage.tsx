@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CalendarClock, CalendarDays, Clock3, SlidersHorizontal, UsersRound } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Navigate, useNavigate, useSearchParams } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import { branchesApi } from "../../api/branches";
 
 import { getApiErrorMessage } from "../../api/client";
@@ -22,6 +22,7 @@ import { hasPermission, permissionForbiddenMessage } from "../../lib/permissions
 import type { Resource, WorkingHours } from "../../types";
 import { useAuth } from "../auth/AuthProvider";
 import { BusinessWorkspaceNav } from "../business/components/BusinessWorkspaceNav";
+import { BranchWorkingHours } from "../business/components/BranchWorkingHours";
 import { WorkingHoursBusinessView } from "./components/WorkingHoursBusinessView";
 import { WorkingHoursEditModal } from "./components/WorkingHoursEditModal";
 import { WorkingHoursResourcesView, type ResourceScheduleSummary } from "./components/WorkingHoursResourcesView";
@@ -51,12 +52,14 @@ function positiveInteger(value: string | null) {
 }
 
 export function WorkingHoursPage() {
+  const { t } = useI18n();
   const { business } = useActiveBusiness();
-  const [params] = useSearchParams();
   const branches = useQuery({ queryKey: ["branches", business?.id], queryFn: () => branchesApi.listAll({ business: business!.id }), enabled: !!business });
   if (branches.isLoading) return <LoadingState />;
-  if (branches.error) return <ErrorState error={branches.error} />;
-  if (branches.data?.length) return <Navigate replace to={`/app/business/branches?section=schedule&resource=${params.get("resource") || ""}`} />;
+  if (branches.error) return <ErrorState error={branches.error} action={<Button onClick={() => branches.refetch()}>{t("common.retry")}</Button>} />;
+  if (branches.data?.length && !branches.data.some(branch => branch.uses_business_defaults)) {
+    return <BranchWorkingHours branches={branches.data} />;
+  }
   return <LegacyWorkingHoursPage />;
 }
 
@@ -172,6 +175,7 @@ function LegacyWorkingHoursPage() {
         queryClient.invalidateQueries({ queryKey: ["working-hours"] }),
         queryClient.invalidateQueries({ queryKey: ["available-slots"] }),
         queryClient.invalidateQueries({ queryKey: ["resources"] }),
+        ...["branches", "branch-configuration", "branch-catalog"].map(key => queryClient.invalidateQueries({ queryKey: [key] })),
       ]);
       setModalDirty(false);
       showNotification({ message: t("workingHours.savedNotice"), tone: "success" });
@@ -185,6 +189,7 @@ function LegacyWorkingHoursPage() {
         queryClient.invalidateQueries({ queryKey: ["working-hours"] }),
         queryClient.invalidateQueries({ queryKey: ["available-slots"] }),
         queryClient.invalidateQueries({ queryKey: ["resources"] }),
+        ...["branches", "branch-configuration", "branch-catalog"].map(key => queryClient.invalidateQueries({ queryKey: [key] })),
       ]);
       showNotification({ message: t("workingHours.presetNotice").replace("{count}", String(data.count)), tone: "success" });
     },

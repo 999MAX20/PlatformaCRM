@@ -20,6 +20,15 @@ class Branch(TimeStampedModel):
         return self.name
 
 
+class ServiceResourceRequirement(models.Model):
+    branch = models.ForeignKey(Branch, on_delete=models.CASCADE, related_name="resource_requirements")
+    service = models.ForeignKey("services.Service", on_delete=models.PROTECT, related_name="resource_requirements")
+    resource = models.ForeignKey("scheduling.Resource", on_delete=models.PROTECT, related_name="service_requirements")
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["branch", "service", "resource"], name="branch_service_resource_unique")]
+
+
 class BranchAccess(TimeStampedModel):
     member = models.OneToOneField("businesses.BusinessMember", on_delete=models.CASCADE, related_name="branch_access")
     all_branches = models.BooleanField(default=False)
