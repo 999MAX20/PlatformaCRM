@@ -40,6 +40,8 @@ PLAN_CONTRACT = (
     ' Ordinary speech supplies values without field labels or quotes. For a task, the stated work IS the title.'
     ' "Создай задачу позвонить поставщику" supplies title "позвонить поставщику"; do not ask for another name or purpose.'
     ' Use an answer to the pending question with the unfinished request; a bare description of work can answer a title question.'
+    ' If the latest message supplies a bare title in answer to that question, copy the whole title verbatim.'
+    ' Preserve leading abbreviations, codes and prefixes in user-supplied names and titles; they are part of the value, not disposable labels.'
     ' A supplied title is sufficient for a task. Deadline, assignee and links are optional, not clarification requirements.'
     ' command_context.original_request is the actual latest employee message; use it to preserve values omitted from the routed step.'
     ' Response language applies ONLY to question. Record values such as title and description retain the language and wording'
@@ -114,6 +116,27 @@ def reference_choices(business, user, entity):
     return choices
 
 
+def preserve_task_title_prefix(values, message, memory):
+    pending = (memory or {}).get("pending", {})
+    steps = pending.get("plan", {}).get("steps", [])
+    title = values.get("title")
+    if (not pending.get("question") or len(steps) != 1 or steps[0].get("entity") != "tasks"
+            or steps[0].get("operation") != "create" or not isinstance(title, str) or not title
+            or not message.endswith(title) or "\n" in message):
+        return
+    prefix = message[:-len(title)].strip()
+    words = prefix.split()
+    framing = {"create", "add", "task", "title", "name", "please", "ok", "yes",
+               "создай", "создайте", "добавь", "задачу", "название", "назови", "пожалуйста", "ок", "да",
+               "тапсырма", "құр", "жаса", "атауы"}
+    if not words or any(word.casefold() in framing for word in words):
+        return
+    if all(re.fullmatch(r"[\w./-]+", word) and (word.isupper() or word.isdecimal()) for word in words):
+        # A bare title reply can start with a code. Recover only an exact prefix
+        # from the user's text, never a generated spelling or external lookup.
+        values["title"] = message
+
+
 def plan_command(*, business, user, entity, message, entity_id=None, conversation_memory=None, persist=True, expected_tool=None, source_message=None):
     config = assert_workflow_enabled(business, "employee")
     spec = ENTITIES[entity]
@@ -181,6 +204,8 @@ def plan_command(*, business, user, entity, message, entity_id=None, conversatio
             raise ValueError
         if tool in {"crm_create", "crm_update"} and set(values) - set(spec.fields):
             raise ValueError
+        if tool == "crm_create" and entity == "tasks":
+            preserve_task_title_prefix(values, (source_message if source_message is not None else message).strip(), conversation_memory)
         if tool == "crm_create":
             # A new record has nothing to clear. Omit only optional, nonnullable
             # null placeholders; updates and required/unknown fields stay strict.

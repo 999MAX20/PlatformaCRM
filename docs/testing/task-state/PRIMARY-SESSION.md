@@ -12847,3 +12847,26 @@ No scoped code/evidence remainder; fullrelease/PGconcurrency/screenreader/produc
 Only owned paths/hunks eligible for commit;42foreign outgoing after fetch prevent own-only
 normal push. No new CI/deployment. Detailed commands/failures/hashes: output/analytics-fixes-20261111.
 Evidence: docs/testing/evidence/analytics-fixes-20261111.md.
+
+## AI-WORK-CRM-FIXES-20261111
+
+Owner explicitly requested all4 Work CRM fixes and API/Playwright realAI without working-data changes.
+Canonical/currentbranch, startf01d2d8b; now286c9cf6 from unrelated work. Own source12paths,
+source hashes in output/ai-work-crm-fixes-20261111/RESULT.json; foreign WIP retained.
+W1targetresolution/explicitselection, W2transition,W3Lead,W4accessdenial+no retry;
+additional literal codeprefix retained in pending task-title answer. No schema/env/newpermissions.
+Final core API22+7regressionsPASS; extension6PASS, title failure superseded by3API+1browserPASS.
+Owner7/readonly3locales/plannerafterclarification and titlebrowser=10scenariosPASS.
+Final core77realcalls +title16; all attempts197calls803482tokens,0providererrors/mock.
+Unit suites15/16 then85(83PASS1badlabelERROR1fixtureFAIL),correctedvoice79PASS,
+43PASS,intermediate33(8FAIL1ERROR during edits),21/34/36PASS. Initial failures retained.
+Build/types/i18n/app/widget/budgetPASS; final compatibility75PASS; system/driftPASS.
+Initial unrelated staff_lifecycle.py SyntaxError retained; fixed outside this task.
+Own runtime/browsers stopped,4disposableDBs absent. WorkingDB/env/provider settings/deploy untouched.
+Full title-cohort SQL parity not claimed: representation comparison at Deal.amount failed
+before final snapshot retention; per-turn snapshots/task records/replayPASS. Core protected4rowsPASS.
+Optional-field model question recovered by explicit user answer; not a guarantee against extra questions.
+Docs/contract/passport/roadmap/evidence updated. README/domain/access/integration/operations unchanged:
+no setup/schema/domain/role/notification/BusinessEvent changes. Own local commit; no push/newCI;
+43foreignoutgoing also block publishing only this task. Exact logs/checkpoint:
+output/ai-work-crm-fixes-20261111; docs/testing/evidence/ai-work-crm-fixes-20261111.md.

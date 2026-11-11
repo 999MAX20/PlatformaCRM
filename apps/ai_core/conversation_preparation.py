@@ -80,11 +80,15 @@ def prepare_actions(turn, plan, memory, language):
         parent = plan["steps"][step["after"]] if step.get("after") is not None else None
         if parent and not parent.get("completed"):
             break  # Its concrete result will require a separate reviewed proposal.
+        parent_target = None
         if parent and step["operation"] != "create" and not step.get("target_id") and not step.get("query"):
             parent_log = turn.tool_calls.get(pk=parent["tool_call_id"])
             if parent_log.output_json.get("entity") == step["entity"]:
                 step["target_id"] = parent_log.output_json.get("entity_id")
-        target_id, question, found = resolve_step_target(thread=thread, user=user, step=step, language=language)
+                parent_target = step["target_id"]
+        target_id, question, found = resolve_step_target(thread=thread, user=user, step=step, language=language,
+            message=turn.message, memory=memory, context=turn.context_json, parent_target=parent_target,
+            allow_explicit_override=len(plan["steps"]) == 1)
         references.extend(found)
         if question:
             break

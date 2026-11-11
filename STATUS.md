@@ -6,6 +6,13 @@ Existing design/rights preserved; no new KPI/schema/workingDB/env/provider/deplo
 No scoped code/local-evidence remainder;42foreign outgoing block own-only push/newCI.
 Evidence: docs/testing/evidence/analytics-fixes-20261111.md.
 
+AI-WORK-CRM-FIXES-20261111: W1–W4 implemented; isolated API/Chrome verification recorded.
+Target identity/explicit selection, task transitions, Lead and localized access denial.
+API22+7PASS;10browser scenarios incl recovery; title3API+browserPASS; backend scoped PASS.
+Final shared-checkout compatibility 75PASS; system/driftPASS; earlier foreign SyntaxError retained.
+No workingDB/env/deploy; own runtimes stopped. Own local commit;43foreign outgoing block push/newCI.
+Evidence: docs/testing/evidence/ai-work-crm-fixes-20261111.md.
+
 BUSINESS-CLEAR-20261111: /app/business content removed at owner request.
 Empty workspace in existing shell; no company redirect/form/section tabs.
 Direct subsection routes and data preserved; unfinished parity edits withdrawn.

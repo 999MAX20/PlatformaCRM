@@ -570,6 +570,7 @@ export const aiAgents: Record<string, string> = {
   "agentChat.confirm": "Confirm actions",
   "agentChat.progress": "{done} of {total} complete",
   "agentChat.redacted": "This message is hidden because access to its sources changed.",
+  "agentChat.accessDenied": "You cannot access the requested action, record or source. Ask an administrator to check your permissions and agent settings, then send a new request. Completed actions were preserved.",
   "agentChat.failedText": "Processing stopped. Completed actions were preserved. Retry the remaining work or send a new message.",
   "agentChat.retryRemaining": "Retry remaining work",
   "agentChat.leaveDraft": "Switch conversations?",

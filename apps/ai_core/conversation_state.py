@@ -175,6 +175,8 @@ def retry_turn(*, conversation_id, turn_id, user, idempotency_key):
             return turn, None
         if turn.status != AgentTurn.Statuses.FAILED or turn.sequence != thread.revision or turn.memory_epoch != thread.memory_epoch:
             raise ValidationError("This request cannot be retried. Send a new message.")
+        if turn.error_code == "access_changed":
+            raise PermissionDenied("Check permissions and agent sources, then send a new request.")
         assert_turn_access(thread, user, turn.mode)
         with bind_thread(thread):
             turn.runtime_fingerprint = workflow_fingerprint(thread.business, "analyst" if turn.mode == "analytics" else "employee")

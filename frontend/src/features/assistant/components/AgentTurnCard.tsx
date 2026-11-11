@@ -51,11 +51,11 @@ export function AgentTurnCard({ turn, busy, canExecute, isLatest, onConfirm, onC
           </section>;
         })}
         {turn.sources.length > 0 && <details><summary className="cursor-pointer text-xs text-platforma-subtle">{t("aiScenario.sources")}</summary><ul className="mt-2 space-y-1 text-xs text-platforma-subtle">{turn.sources.map(source => <li key={source.id}>{source.label}</li>)}</ul></details>}
-        {turn.status === "failed" && <p className="text-sm text-platforma-danger">{t(["voice_action_unavailable", "voice_one_operation"].includes(turn.error_code) ? `voice.error.${turn.error_code}` : "agentChat.failedText")}</p>}
+        {turn.status === "failed" && <p role="alert" className="text-sm text-platforma-danger">{t(["voice_action_unavailable", "voice_one_operation"].includes(turn.error_code) ? `voice.error.${turn.error_code}` : turn.error_code === "access_changed" ? "agentChat.accessDenied" : "agentChat.failedText")}</p>}
         {isLatest && <div className="flex flex-wrap gap-2">
           {pending && <Button disabled={busy || !canExecute || !turn.actions.some(item => item.status === "suggested")} onClick={onConfirm}>{t("agentChat.confirm")}</Button>}
           {pending && <Button variant="secondary" disabled={busy} onClick={onCancel}>{t("aiCRM.discard")}</Button>}
-          {turn.status === "failed" && <Button variant="secondary" disabled={busy} onClick={onRetry}>{t("agentChat.retryRemaining")}</Button>}
+          {turn.status === "failed" && turn.error_code !== "access_changed" && <Button variant="secondary" disabled={busy} onClick={onRetry}>{t("agentChat.retryRemaining")}</Button>}
         </div>}
       </div>
     </div>

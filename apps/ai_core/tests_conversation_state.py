@@ -88,3 +88,17 @@ class ConversationStateTests(TestCase):
         self.assertEqual(turn.error_code, "interrupted")
         self.assertNotEqual(newer.pk, turn.pk)
         self.assertEqual(job.max_attempts, 1)
+
+    def test_access_denial_requires_new_request_without_dispatching_retry(self):
+        turn, job = self.start()
+        turn.status, turn.error_code = "failed", "access_changed"
+        turn.save()
+        job.status = "failed"
+        job.save()
+        with self.assertRaises(PermissionDenied):
+            retry_turn(conversation_id=self.thread.pk, turn_id=turn.pk, user=self.owner, idempotency_key="denied")
+        turn.refresh_from_db()
+        self.assertEqual(turn.status, "failed")
+        self.assertEqual(AIJob.objects.count(), 1)
+        newer, _ = self.start(key="new-permission-request", message="Try with current permissions")
+        self.assertNotEqual(newer.pk, turn.pk)

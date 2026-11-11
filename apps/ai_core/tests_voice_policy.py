@@ -54,7 +54,7 @@ class VoicePolicyTests(TestCase):
                 "request": "Add note to this client"}
         proposal = output({"tool": "crm_update", "arguments": {"entity": "clients",
                            "entity_id": client.pk, "values": {"notes": note}}, "question": ""})
-        turn = self.prepare([action_route(step), proposal], message=f"Добавь заметку: {note}")
+        turn = self.prepare([action_route(step), proposal], message=f"Клиенту #{client.pk} добавь заметку: {note}")
         self.assertEqual(turn.status, "awaiting_confirmation", turn.error_code)
         client.refresh_from_db()
         self.assertEqual(client.notes, "Before")
