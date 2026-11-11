@@ -1,4 +1,4 @@
-import { CalendarDays, Search } from "lucide-react";
+import { CalendarDays, RotateCcw, Search } from "lucide-react";
 import { categoryConfig } from "../../components/crm/drawers/timelineHelpers";
 import { Button } from "../../components/ui/Button";
 import { DatePickerPanel, isCalendarDate, type DateRangeValue } from "../../components/ui/DateRangePicker";
@@ -9,7 +9,7 @@ import { useI18n } from "../../lib/i18n";
 import type { Id } from "../../types";
 import type { TimelineFilters } from "../../types/timeline";
 import { TimelineActorFilter } from "./TimelineActorFilter";
-import { useId, useRef, useState } from "react";
+import { useId, useRef, useState, type ReactNode } from "react";
 
 export function TimelineToolbar({
   businessId,
@@ -18,6 +18,7 @@ export function TimelineToolbar({
   onReset,
   onDateChange,
   timeZone,
+  pagination,
 }: {
   businessId: Id;
   filters: TimelineFilters;
@@ -25,6 +26,7 @@ export function TimelineToolbar({
   onReset: () => void;
   onDateChange: (range: DateRangeValue) => void;
   timeZone: string;
+  pagination: ReactNode;
 }) {
   const { t, language } = useI18n();
   const anchor = useRef<HTMLButtonElement>(null);
@@ -44,11 +46,11 @@ export function TimelineToolbar({
   );
   return (
     <div
-      className="shrink-0 space-y-3 border-b border-platforma-border p-3 [--global-search-width:100%] lg:grid lg:grid-cols-[minmax(100px,1fr)_minmax(120px,180px)_minmax(120px,180px)_auto_auto] lg:gap-2 lg:space-y-0"
+      className="flex shrink-0 flex-wrap items-center gap-2 border-b border-platforma-border p-3"
       data-testid="timeline-toolbar"
     >
-      {filters.entity_id ? <p className="col-span-full text-sm text-platforma-subtle">{t("timeline.object")} #{filters.entity_id}</p> : null}
-      <div className="flex gap-2 lg:contents [&>label]:min-w-0 [&>label]:flex-1">
+      {filters.entity_id ? <p className="w-full text-sm text-platforma-subtle">{t("timeline.object")} #{filters.entity_id}</p> : null}
+      <div className="flex max-w-full items-center gap-2 [&>label]:min-w-0">
         <Input
           pageSearch aria-label={t("timeline.search")}
           placeholder={t("timeline.searchPlaceholder")}
@@ -60,8 +62,8 @@ export function TimelineToolbar({
         />
         <Button type="button" variant="secondary" className="lg:hidden" aria-expanded={expanded} aria-controls={filterId} onClick={() => setExpanded(value => !value)}>{t("timeline.filters")}{filterCount ? ` (${filterCount})` : ""}</Button>
       </div>
-      <div id={filterId} className={`${expanded ? "block" : "hidden"} space-y-3 lg:contents`}>
-      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:contents">
+      <div id={filterId} className={`${expanded ? "flex" : "hidden"} w-full flex-wrap items-center gap-2 lg:contents`}>
+      <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-2 lg:flex lg:w-auto lg:[&>*]:w-32 lg:[&>*:first-child]:w-40">
         <Select
           aria-label={t("timeline.category")}
           value={filters.category}
@@ -80,18 +82,19 @@ export function TimelineToolbar({
           onChange={(value) => onChange("actor", value)}
         />
       </div>
-      <div className="flex flex-wrap items-center gap-2 lg:contents">
-        <Button ref={anchor} data-calendar-trigger type="button" variant="secondary" className="min-h-11 min-w-0 max-w-full" aria-label={t("timeline.chooseDate")} aria-haspopup="dialog" aria-expanded={calendarOpen} onClick={() => setCalendarOpen(value => !value)}>
+      <div className="flex min-w-0 flex-wrap items-center gap-2 lg:contents">
+        <Button ref={anchor} data-calendar-trigger type="button" variant="secondary" className="min-h-11 min-w-0 max-w-full lg:max-w-52" aria-label={t("timeline.chooseDate")} aria-haspopup="dialog" aria-expanded={calendarOpen} onClick={() => setCalendarOpen(value => !value)}>
           <CalendarDays size={17} className="shrink-0" /><span className="truncate">{dateLabel}</span>
         </Button>
         {calendarOpen && <DatePickerPanel anchor={anchor} label={t("timeline.chooseDate")} value={{ from: filters.date_from, to: filters.date_to }} today={dateInTimeZone(new Date(), timeZone)} allowClear onApply={range => { onDateChange(range); closeCalendar(); }} onClose={closeCalendar} />}
         {active && (
-          <Button type="button" variant="ghost" onClick={onReset}>
-            {t("timeline.reset")}
+          <Button type="button" variant="ghost" size="icon" aria-label={t("timeline.reset")} title={t("timeline.reset")} onClick={onReset}>
+            <RotateCcw size={17} />
           </Button>
         )}
       </div>
       </div>
+      <div className="ml-auto min-w-0" data-testid="timeline-pagination">{pagination}</div>
       {!expanded && active && <Button type="button" variant="ghost" className="lg:hidden" onClick={onReset}>{t("timeline.reset")}</Button>}
     </div>
   );

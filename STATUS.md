@@ -1,3 +1,10 @@
+TIMELINE-PAGINATION-20261111: search uses global-header width; pagination moved into toolbar.
+Desktop1440 both search controls480px; single-row toolbar; table footer removed.
+Browser320/390/1024/1440 paging/back/size/filter-reset/keyboard PASS; no page overflow.
+Node9/build-types-i18n/bundle logs in output/timeline-pagination-20261111.
+No backend/workingDB/deploy changes; own publication blocked by foreign outgoing range.
+Evidence: docs/testing/evidence/timeline-fixes-20261111.md#toolbar-pagination.
+
 TIMELINE-LAYOUT-20261111: requested layout refinement implemented and locally verified.
 Table matches Clients width; balanced desktop gaps and expanded mobile list.
 Single toolbar date button opens shared DatePickerPanel; atomic range/clear/cancel.

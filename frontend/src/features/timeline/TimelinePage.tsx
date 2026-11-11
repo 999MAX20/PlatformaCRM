@@ -148,6 +148,32 @@ export function TimelinePage() {
               onChange={changeFilter}
               onReset={reset}
               timeZone={timeZone}
+              pagination={
+                <fieldset
+                  disabled={busy || query.isError}
+                  aria-label={t("timeline.range", { from, to, total })}
+                  title={t("timeline.range", { from, to, total })}
+                  className="min-w-0 shrink-0"
+                >
+                  <CrmPagination
+                    variant="toolbar"
+                    className="[&>p]:sr-only xl:[&>p]:not-sr-only [&>div>button]:h-11 [&>div>button]:w-11 [&>div>button]:min-h-11 [&>div>button]:px-0 [&>div>button>span]:sr-only [&>div>button>svg]:block"
+                    shown={rows.length}
+                    total={total}
+                    page={filters.page}
+                    pageSize={filters.page_size}
+                    rangeLabel={`${from}–${to} / ${total}`}
+                    previousLabel={t("pagination.previous")}
+                    nextLabel={t("pagination.next")}
+                    pageSizeAriaLabel={t("timeline.pageSize")}
+                    pageSizeLabel={(size) =>
+                      t("timeline.perPage", { count: size })
+                    }
+                    onPageChange={(page) => changeFilter("page", page)}
+                    onPageSizeChange={(size) => changeFilter("page_size", size)}
+                  />
+                </fieldset>
+              }
               onDateChange={({ from, to }) => setParams(current => {
                 const next = new URLSearchParams(current);
                 if (from) next.set("date_from", from); else next.delete("date_from");
@@ -203,28 +229,7 @@ export function TimelinePage() {
                     }}
                   />
                 </div>
-                <fieldset
-                  disabled={busy}
-                  className="min-w-0 shrink-0 [&_button]:min-h-11"
-                >
-                  <CrmPagination
-                    variant="toolbar"
-                    className="border-t border-platforma-border px-3 py-3"
-                    shown={rows.length}
-                    total={total}
-                    page={filters.page}
-                    pageSize={filters.page_size}
-                    rangeLabel={t("timeline.range", { from, to, total })}
-                    previousLabel={t("pagination.previous")}
-                    nextLabel={t("pagination.next")}
-                    pageSizeAriaLabel={t("timeline.pageSize")}
-                    pageSizeLabel={(size) =>
-                      t("timeline.perPage", { count: size })
-                    }
-                    onPageChange={(page) => changeFilter("page", page)}
-                    onPageSizeChange={(size) => changeFilter("page_size", size)}
-                  />
-                </fieldset>
+
               </>
             )}
           </Surface>

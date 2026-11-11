@@ -12552,3 +12552,28 @@ need no change: this is layout/filter presentation only, no changed business beh
 No scoped code/local-evidence remainder. Publication blocked by26foreign outgoing
 commits at task base; no permission to publish that range. Own local commit only,
 no push/newCI/deployment. Screenshots and initial diff: output/timeline-layout-20261111.
+
+## TIMELINE-PAGINATION-20261111
+
+Owner requested global-header search width and right-side toolbar pagination to reclaim
+list height; implemented using existing width token, CrmPagination and URL callbacks.
+Canonical checkout/current branch, base ee4ff50f; starting foreign WIP retained.
+No shared component/API/backend/schema/permission/notification/BusinessEvent/AI changes.
+Read-only pagination totals remain accessible through named group/live range; compact
+count visible on wide desktop, arrows retain labels. Mobile controls wrap in toolbar.
+Browser Chrome isolated API/Vite50061/50062:1440 search outer widths480/480, toolbar
+68.8px and no lower footer;320/390/1024 no document overflow. Next/back including Enter,
+20→10 size, page2→search→page1, filtered24count and reset→29count PASS. Test session
+expired once; re-login recovered. Browser selector timeouts retained, not product failures.
+Initial overly broad button CSS hid size label; corrected to direct navigation buttons,
+rechecked actual size selector/value and desktop/mobile screenshots before completion.
+Commands: .venv/Scripts/python.exe output/timeline-pagination-20261111/runtime.py;
+.venv/Scripts/python.exe output/timeline-pagination-20261111/build.py. Node presentation9,
+final npm run build (i18n7106/types/app/widget) and npm run check:bundle logs retained.
+No backend/full-project/new E2E tests for layout; existing domain behavior unchanged.
+Frontend contract and existing evidence updated; roadmap/passport/README and other
+contracts need no change: no changed data/domain/setup/release acceptance. Skills:
+existing Taste/AntiSlop direction retained; React review hooks/types/labels/reuse PASS.
+Task runtimes stopped; normal dev and workingDB untouched. No scoped code/evidence
+remainder. Own local commit only; foreign outgoing prevents own-only push/newCI/deploy.
+Screenshots/starting snapshot/logs: output/timeline-pagination-20261111.
