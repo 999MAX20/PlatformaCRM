@@ -1,3 +1,11 @@
+LOCAL-MIGRATIONS-20261111: exactly3 approved local migrations applied; no pending migrations.
+Fresh pg_dump verified by restore:154tables/9855rows; SHA retained with backup.
+RestoredDB rehearsal and workingDB old-column parityPASS;153data tables/9662rows unchanged.
+Historical status choices +YCloud onboarding fields only; no provider actions/data reseeding.
+IsolatedPG27/system/drift/5readonlyAPI/HTTP/browserloginPASS; dev.ps1 exit0,6services running.
+No product source edits/push/deployment. Backup and checks:
+docs/testing/evidence/local-migrations-20261111.md; output/local-migrations-20261111.
+
 BRANCH-WORKSPACE-20261109: implemented, scoped checks passed, activated locally.
 Simple single-point overview/direct hours; physical resources linked to location;
 service requirements jointly reserved for manual/bot/AI booking; snapshots retained.
