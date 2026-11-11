@@ -31,7 +31,7 @@ test("visible profile, deliberate template and navigation draft protection", asy
   await expect(editor.getByRole("textbox", { name: "Главная инструкция", exact: true })).not.toHaveValue("Keep this instruction");
   await editor.getByRole("button", { name: "Открыть сообщения", exact: true }).click();
   await dialog.getByRole("button", { name: "Отменить изменения", exact: true }).click();
-  await expect(page).toHaveURL(/conversations$/);
+  await expect(page).toHaveURL(new RegExp(`/conversations\\?bot=${bot.id}&preset=all$`));
   await page.goto(`/app/ai-agents/${bot.id}/profile`);
   await expect(editor.getByRole("textbox", { name: "Главная инструкция", exact: true })).toHaveValue("Keep this instruction");
   await page.screenshot({ path: info.outputPath("profile-template-guard.png"), fullPage: true });

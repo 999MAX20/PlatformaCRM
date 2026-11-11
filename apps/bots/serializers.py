@@ -61,7 +61,7 @@ class BotSerializer(serializers.ModelSerializer):
         read_only_fields = ["readiness", "created_at", "updated_at"]
 
     def get_readiness(self, instance):
-        return get_bot_readiness(instance)
+        return get_bot_readiness(instance, include_diagnostics=True)
 
 
 class EnsureBotChannelSerializer(serializers.Serializer):

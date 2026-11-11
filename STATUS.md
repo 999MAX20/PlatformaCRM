@@ -1,3 +1,10 @@
+AI-AGENTS-FIXES-20261111: readiness/UI fixes implemented and locally verified.
+Provider/configuration and booking diagnostics; effective actions, recovery, scoped Inbox.
+Backend123/system/drift/browser7+final1/build-types-i18n-bundle PASS; RU/KK/EN320–1440.
+Design/permissions/foreign WIP retained; no workingDB/provider/deploy or new CI.
+No scoped implementation/local-evidence remainder; foreign outgoing range blocks push.
+Evidence: docs/testing/evidence/ai-agents-fixes-20261111.md; output/ai-agents-fixes-20261111.
+
 CRM-GLOBAL-TEST-PLAN-20261111: detailed draft prepared for owner review.
 Implemented-function matrix, Computer user scenarios and static route/test inventory.
 No application tests/build/browser/server/DB/provider actions; no acceptance closure.

@@ -17,6 +17,7 @@ import type {
 import type { AgentFormState, AgentSection, BotDraftState } from "../aiAgentsTypes";
 import { getOnboardingSteps } from "../aiAgentsUtils";
 import { AIAgentEditorShell } from "./AIAgentEditorShell";
+import { AgentReadiness } from "./AgentReadiness";
 import { CreateAgentModal, UnsavedAgentChangesModal } from "./AIAgentModals";
 import {
   AgentActionsSection,
@@ -186,6 +187,7 @@ export function AIAgentsWorkspace({
             showFooter={dirty || activeSection === "profile" || activeSection === "actions" || (selectedBot.scenario === "crm" && activeSection === "knowledge")}
             afterFooter={activeSection === "profile" ? deleteControl : undefined}
           >
+            <AgentReadiness bot={selectedBot} dirty={dirty} onRefresh={onRetry} />
             {mutationError ? <ErrorState error={mutationError} message={getApiErrorMessage(mutationError)} /> : null}
             {activeSection === "channels" && !canViewChannels ? (
               <ErrorState message={t("aiAgents.channelsPermissionDenied")} />
@@ -203,6 +205,7 @@ export function AIAgentsWorkspace({
                 form={profileForm}
                 setForm={setProfileForm}
                 canManage={canManage}
+                readiness={selectedBot.readiness}
               />
             ) : activeSection === "channels" ? (
               <ChannelManagerSection

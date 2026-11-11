@@ -235,17 +235,18 @@ function FunctionsSection({
         {tools.map(([key, title, text]) => {
           const enabled = key === "handoff_to_manager" || (form.allowed_tools.includes(key)
             && (key !== "create_appointment" || runtime.create_appointment));
-          const unavailable = !proposesWork || (key === "create_deal" && runtime.mode !== "draft_deal");
+          const unavailable = key !== "handoff_to_manager" && (!proposesWork || (key === "create_deal" && runtime.mode !== "draft_deal"));
           return (
             <div key={key} className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 py-1">
               <div className="min-w-0 py-2 text-sm">
                 <h4 className="mb-1 font-semibold text-platforma-ink">{title}</h4>
                 <div className="pb-2">
                   <p className="leading-5 text-platforma-subtle">{text}</p>
+                  {unavailable && enabled && <p className="mt-1 text-platforma-subtle">{t("aiAgents.functions.modeRequired")}</p>}
                 </div>
               </div>
               <div className="flex min-h-11 shrink-0 items-center gap-2 sm:min-h-9">
-                <span className="text-xs font-semibold text-platforma-subtle">{enabled ? t("aiAgents.functions.enabled") : t("aiAgents.functions.disabled")}</span>
+                <span className="max-w-28 text-right text-xs font-semibold text-platforma-subtle">{t(enabled && unavailable ? "aiAgents.functions.savedOnly" : enabled ? "aiAgents.functions.enabled" : "aiAgents.functions.disabled")}</span>
                 <ToggleSwitch checked={enabled} disabled={!canManage || key === "handoff_to_manager" || unavailable} label={title} tone="ai" onChange={(next) => toggleTool(key, next)} />
               </div>
             </div>

@@ -6,7 +6,7 @@ import { Input } from "../../../components/ui/Input";
 import { Select } from "../../../components/ui/Select";
 import { Textarea } from "../../../components/ui/Textarea";
 import { useI18n } from "../../../lib/i18n";
-import type { AgentProfile } from "../../../types";
+import type { AgentProfile, Bot } from "../../../types";
 import type { AgentFormState, BotDraftState } from "../aiAgentsTypes";
 import { FieldHint } from "./AIAgentsShared";
 import { ToggleSwitch } from "../../../components/ui/Switch";
@@ -18,9 +18,10 @@ type ProfileProps = {
   form: AgentFormState;
   setForm: Dispatch<SetStateAction<AgentFormState>>;
   canManage: boolean;
+  readiness?: Bot["readiness"];
 };
 
-export function ProfileManagerSection({ botDraft, setBotDraft, form, setForm, canManage }: ProfileProps) {
+export function ProfileManagerSection({ botDraft, setBotDraft, form, setForm, canManage, readiness }: ProfileProps) {
   const { t } = useI18n();
   const [templateOpen, setTemplateOpen] = useState(false);
   const applyTemplate = () => {
@@ -78,7 +79,7 @@ export function ProfileManagerSection({ botDraft, setBotDraft, form, setForm, ca
                   onChange={event => setForm(current => ({ ...current, rules_text: event.target.value }))} />
                 <FieldHint>{t("aiAgents.hint.rules")}</FieldHint>
               </div>
-              <ModelsSection draft={botDraft} setDraft={setBotDraft} canManage={canManage} />
+              <ModelsSection draft={botDraft} setDraft={setBotDraft} canManage={canManage} readiness={readiness} />
               </div>
             </details>
           </div>
@@ -94,10 +95,12 @@ export function ProfileManagerSection({ botDraft, setBotDraft, form, setForm, ca
   );
 }
 
-function ModelsSection({ draft, setDraft, canManage }: { draft: BotDraftState; setDraft: React.Dispatch<React.SetStateAction<BotDraftState>>; canManage: boolean }) {
+function ModelsSection({ draft, setDraft, canManage, readiness }: { draft: BotDraftState; setDraft: React.Dispatch<React.SetStateAction<BotDraftState>>; canManage: boolean; readiness?: Bot["readiness"] }) {
   const { t } = useI18n();
   const model = String(draft.settings_json.model || "");
   const temperature = Number(draft.settings_json.temperature ?? 0.4);
+  const configuredOptions = readiness?.provider?.model_options || [];
+  const tierLabels = { smart: "quality", fast: "fast", cheap: "economy" };
   const setModel = (value: string) => setDraft((current) => ({ ...current, settings_json: { ...current.settings_json, model: value } }));
   const setTemperature = (value: number) => setDraft((current) => ({ ...current, settings_json: { ...current.settings_json, temperature: value } }));
 
@@ -113,13 +116,12 @@ function ModelsSection({ draft, setDraft, canManage }: { draft: BotDraftState; s
             onChange={(event) => setModel(event.target.value)}
             options={[
               { value: "", label: t("aiQuality.configuredModel") },
-              ...(model && !["gpt-4.1", "gpt-4.1-mini", "gpt-4o-mini"].includes(model) ? [{ value: model, label: model }] : []),
-              { value: "gpt-4.1", label: t("aiAgents.responseMode.quality") },
-              { value: "gpt-4.1-mini", label: t("aiAgents.responseMode.fast") },
-              { value: "gpt-4o-mini", label: t("aiAgents.responseMode.economy") },
+              ...(model && !configuredOptions.some(option => option.value === model) ? [{ value: model, label: model }] : []),
+              ...configuredOptions.map(option => ({ value: option.value, label: t(`aiAgents.responseMode.${tierLabels[option.tier]}`) })),
             ]}
           />
           <FieldHint>{t("aiAgents.hint.responseMode")}</FieldHint>
+          <FieldHint>{t("aiAgents.readiness.modelOptions")}</FieldHint>
           <label className="block">
             <span className="mb-2 block text-sm font-semibold text-platforma-subtle">{t("aiAgents.responseFreedom", { value: temperature.toFixed(1) })}</span>
             <input className="w-full accent-ai-600" type="range" min="0" max="1" step="0.1" value={temperature} disabled={!canManage} onChange={(event) => setTemperature(Number(event.target.value))} />

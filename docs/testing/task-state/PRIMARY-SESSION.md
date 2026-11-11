@@ -12626,3 +12626,25 @@ Frontend contract/existing evidence updated; roadmap/passport/README/other contr
 no domain/setup/roadmap impact. React/Taste/AntiSlop review scoped to accepted component.
 No scoped code/local-verification remainder. Fetch0remote-only/29outgoing at9d9b7a0d;
 foreign range not authorized to publish. Own local commit only; no push/newCI/deployment.
+
+## AI-AGENTS-FIXES-20261111
+
+Owner-authorized fixes to /ai-agents and readiness implemented and locally verified.
+Canonical root/current codex/ui-testing-toolkit retained; base841e8bfa, foreign WIP
+and subsequent unrelated voice/timeline/docs commits preserved. No other-task work.
+Local provider/model configuration now gates activation/runtime; structural readiness
+separate, mock explicit, no live-health claim/network read. Booking preflight warns
+about responsible/consent without weakening write-time checks or blocking other tools.
+Saved vs effective action state, configured model profiles, CRM status recovery, disabled
+analytics, scoped real Inbox counts/links and explicit URL filters implemented RU/KK/EN.
+Backend123/system/drift PASS; browser7PASS plus final affected1PASS after link-scope
+correction; final build/types/i18n7134/bundle PASS. Desktop1440/KK320/EN390 screenshots
+inspected, no overflow; scoped axe and keyboard link PASS. Initial test-setup failures
+retained and corrected; no lowered product gates. Isolated SQLite/mock/eager only.
+Evidence and exact commands: docs/testing/evidence/ai-agents-fixes-20261111.md.
+Detailed checkpoint/logs: output/ai-agents-fixes-20261111/CHECKPOINT.md.
+No schema/workingDB/provider/deploy/permission/notification/BusinessEvent changes.
+No full-project/PG concurrency/live gate: unchanged transactional semantics; no release.
+Contracts/frontend/capabilities/passports updated; README/setup/access/CRM/integrations/
+operations and roadmap need no change. No scoped code/local-evidence remainder.
+Own commit/publication review pending; unrelated outgoing range not authorized to push.

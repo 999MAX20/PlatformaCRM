@@ -57,18 +57,18 @@ export function useConversationFilters({
   const [filters, setFilters] = useState<InboxFilters>(() => {
     const base: InboxFilters = {
       status: searchParams.get("status") || "",
-      bot: searchParams.get("bot") || savedState?.filters?.bot || undefined,
+      bot: searchParams.get("bot") || (!isFilterUrlPresent ? savedState?.filters?.bot : undefined),
       channel:
         searchParams.get("channel") ||
-        savedState?.filters?.channel ||
+        (!isFilterUrlPresent ? savedState?.filters?.channel : undefined) ||
         undefined,
       assigned_to:
         searchParams.get("assigned_to") ||
-        savedState?.filters?.assigned_to ||
+        (!isFilterUrlPresent ? savedState?.filters?.assigned_to : undefined) ||
         undefined,
       priority:
         searchParams.get("priority") ||
-        savedState?.filters?.priority ||
+        (!isFilterUrlPresent ? savedState?.filters?.priority : undefined) ||
         undefined,
       unread: searchParams.get("unread") || undefined,
       handoff_required: searchParams.get("handoff_required") || undefined,

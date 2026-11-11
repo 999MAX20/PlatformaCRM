@@ -186,6 +186,10 @@ export const inboxApi = {
     const { data } = await apiClient.get<InboxSummary>("/api/inbox/conversations/summary/");
     return data;
   },
+  getAgentSummary: async (bot: Id) => {
+    const { data } = await apiClient.get<InboxSummary>("/api/inbox/conversations/summary/", { params: { bot } });
+    return data;
+  },
   listConversations: async (filters: InboxFilters = {}) => {
     const { data } = await apiClient.get<PaginatedResponse<InboxConversation>>("/api/inbox/conversations/", {
       params: cleanParams(filters),

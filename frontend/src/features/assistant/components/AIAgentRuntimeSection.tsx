@@ -4,6 +4,7 @@ import type { Bot } from "../../../types";
 import type { OnboardingStep } from "../aiAgentsTypes";
 import { OnboardingProgress } from "./AIAgentsShared";
 import { AIAgentPreview } from "./AIAgentPreview";
+import { CustomerAgentActivity } from "./CustomerAgentActivity";
 
 export function TestAndLaunchSection({ bot, onboardingSteps, launchReady, dirty, canTest }: {
   bot: Bot; onboardingSteps: OnboardingStep[]; launchReady: boolean; dirty: boolean; canTest: boolean;
@@ -20,6 +21,7 @@ export function TestAndLaunchSection({ bot, onboardingSteps, launchReady, dirty,
       <p className="mt-2 leading-5 text-platforma-subtle">{t("aiSetup.launchHelp")}</p>
     </details>
     <OnboardingProgress compact steps={onboardingSteps} />
+    <CustomerAgentActivity bot={bot} />
     <AIAgentPreview key={`${bot.id}-${bot.updated_at}`} botId={bot.id} blocked={dirty || !bot.readiness?.profile_ready} canTest={canTest} />
   </div>;
 }

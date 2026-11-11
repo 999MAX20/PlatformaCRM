@@ -266,13 +266,11 @@ class AIAssistantStatusView(APIView):
 
         from django.conf import settings
 
-        provider = settings.AI_PROVIDER
-        configured_keys = {
-            "kimi": bool(settings.KIMI_API_KEY),
-            "openrouter": bool(settings.OPENROUTER_API_KEY),
-            "openai": bool(settings.OPENAI_API_KEY),
-        }
-        key_ready = provider == "mock" or configured_keys.get(provider, False)
+        from apps.ai_core.availability import generation_readiness
+        from apps.ai_core.agent_runtime import resolve_agent
+        availability = generation_readiness(resolve_agent(business))
+        provider = availability["provider"]
+        key_ready = availability["configuration_ready"]
         from apps.ai_core.workflows import workflow_settings
         config = workflow_settings(business, "analyst" if mode == "analytics" else "employee")
         enabled = settings.AI_ENABLED and config["enabled"]
@@ -284,7 +282,7 @@ class AIAssistantStatusView(APIView):
                 "mode": mode,
                 "ready": bool(enabled and key_ready),
                 "key_configured": key_ready,
-                "model": config.get("model") or settings.AI_SMART_MODEL,
+                "model": availability["model"],
                 "sources": [source for source in config["sources"] if source != "knowledge" and can(request.user, business, source, Actions.VIEW).allowed],
                 "tools": config["tools"],
                 "fast_model": settings.AI_FAST_MODEL,

@@ -14,6 +14,17 @@ export type Bot = {
     channel_ready: boolean;
     knowledge_ready: boolean;
     missing: Array<"profile" | "channel" | "knowledge">;
+    configured_ready?: boolean;
+    analytics_enabled?: boolean;
+    provider?: {
+      state: "disabled" | "not_configured" | "model_missing" | "mock" | "configured";
+      configuration_ready: boolean;
+      provider: string;
+      model: string;
+      model_options: Array<{ value: string; tier: "smart" | "fast" | "cheap" }>;
+      live_verified: boolean;
+    };
+    booking?: { enabled: boolean; setup_ready: boolean; missing: Array<"responsible" | "authorization"> };
   };
   created_at: string;
   updated_at: string;

@@ -12,18 +12,20 @@ READINESS_CHANNEL = "channel"
 READINESS_KNOWLEDGE = "knowledge"
 
 
-def get_bot_readiness(bot: Bot) -> dict:
-    profiles = list(bot.agent_profiles.all())
-    if bot.scenario == Bot.Scenarios.CRM:
-        ready = any(profile.is_active for profile in profiles)
-        return {"is_ready": ready, "profile_ready": ready, "channel_ready": True,
-                "knowledge_ready": True, "missing": [] if ready else [READINESS_PROFILE]}
-    channels = list(bot.channels.all())
-    from apps.ai_core.knowledge import agent_knowledge
+def get_bot_readiness(bot: Bot, *, include_diagnostics=False) -> dict:
+    from apps.ai_core.availability import generation_readiness
 
+    profiles = list(bot.agent_profiles.all())
+    profile = max(profiles, key=lambda item: (item.is_active, item.updated_at, item.pk), default=None)
+    provider = generation_readiness(bot)
     profile_ready = any(profile.is_active for profile in profiles)
-    channel_ready = any(channel.status == BotChannel.Statuses.ACTIVE for channel in channels)
-    knowledge_ready = agent_knowledge(business=bot.business, agent=bot).filter(is_active=True).exists()
+    if bot.scenario == Bot.Scenarios.CRM:
+        channel_ready = knowledge_ready = True
+    else:
+        channels = list(bot.channels.all())
+        from apps.ai_core.knowledge import agent_knowledge
+        channel_ready = any(channel.status == BotChannel.Statuses.ACTIVE for channel in channels)
+        knowledge_ready = agent_knowledge(business=bot.business, agent=bot).filter(is_active=True).exists()
     missing = [
         key
         for key, ready in (
@@ -33,13 +35,20 @@ def get_bot_readiness(bot: Bot) -> dict:
         )
         if not ready
     ]
-    return {
-        "is_ready": not missing,
+    result = {
+        "is_ready": not missing and provider["configuration_ready"],
+        "configured_ready": not missing,
+        "provider": provider,
+        "analytics_enabled": bool(profile and profile.is_active and (profile.rules_json or {}).get("analyst_enabled", True)),
         "profile_ready": profile_ready,
         "channel_ready": channel_ready,
         "knowledge_ready": knowledge_ready,
         "missing": missing,
     }
+    if include_diagnostics and bot.scenario == Bot.Scenarios.INBOX:
+        from apps.bots.readiness import booking_readiness
+        result["booking"] = booking_readiness(bot, profile)
+    return result
 
 
 def is_bot_runtime_ready(bot: Bot) -> bool:
