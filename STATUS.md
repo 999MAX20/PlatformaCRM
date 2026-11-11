@@ -1,3 +1,10 @@
+TIMELINE-LAYOUT-20261111: requested layout refinement implemented and locally verified.
+Table matches Clients width; balanced desktop gaps and expanded mobile list.
+Single toolbar date button opens shared DatePickerPanel; atomic range/clear/cancel.
+Node9/build/types/i18n/bundle PASS; browser RU/KK/EN320–1440/calendar/keyboard PASS.
+No backend/workingDB/provider/deploy changes. Own commit only; foreign outgoing blocks push.
+Evidence: docs/testing/evidence/timeline-fixes-20261111.md#layout-refinement.
+
 TIMELINE-FIXES-20261111: all5 audit findings fixed and locally verified.
 RU/KK/EN event catalog; safe historical details/current object names; author semantics;
 compact mobile/filter disclosure/single scroll; prior design and access retained.

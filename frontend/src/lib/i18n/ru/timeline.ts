@@ -1,4 +1,5 @@
 export const timeline: Record<string, string> = {
+  "timeline.chooseDate": "Выбрать дату",
   "timeline.eventType.client_created": "Создан клиент",
   "timeline.eventType.client_updated": "Обновлён клиент",
   "timeline.eventType.client_merged": "Клиенты объединены",

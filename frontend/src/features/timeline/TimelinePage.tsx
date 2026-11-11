@@ -124,8 +124,10 @@ export function TimelinePage() {
   const to = Math.min(total, filters.page * filters.page_size);
   return (
     <CrmWorkspacePage
-      maxWidthClassName="max-w-[1720px]"
-      heightClassName="h-[calc(100dvh-var(--app-header-height)-9rem)] min-h-0 lg:h-[calc(100dvh-var(--app-header-height)-2rem)]"
+      edgeToEdge
+      className="-mb-10 pt-2 lg:-mb-2"
+      maxWidthClassName="max-w-none"
+      heightClassName="h-[calc(100dvh-var(--app-header-height)-6.5rem)] min-h-0 lg:h-[calc(100dvh-var(--app-header-height)-1.5rem)]"
       testId="timeline-workspace"
     >
       <OperationalWorkspace
@@ -145,6 +147,14 @@ export function TimelinePage() {
               filters={filters}
               onChange={changeFilter}
               onReset={reset}
+              timeZone={timeZone}
+              onDateChange={({ from, to }) => setParams(current => {
+                const next = new URLSearchParams(current);
+                if (from) next.set("date_from", from); else next.delete("date_from");
+                if (to) next.set("date_to", to); else next.delete("date_to");
+                next.set("page", "1");
+                return next;
+              })}
             />
             {query.isError ? (
               <div className="p-4">

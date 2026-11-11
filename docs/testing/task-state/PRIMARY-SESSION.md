@@ -12528,3 +12528,27 @@ Code/local-evidence/owner-decision remainder: none for the five fixes. Publicati
 fetch confirmed25foreign outgoing/0remote-only commits. Publishing those is not authorized;
 own reviewed change committed locally only. No push/newCI/deployment. Test runtime stopped
 after browser verification; normal dev processes untouched. Final own SHA in output RESULT.
+
+## TIMELINE-LAYOUT-20261111
+
+User-requested refinement of timeline width/height and single date control complete.
+Base2e555385; canonical root/current codex/ui-testing-toolkit retained. Foreign starting
+STATUS/PRIMARY/leads-header/TaskFormModal changes preserved; explicit own paths only.
+Clients workspace and timeline both x88/width1328 at1440; desktop top/bottom gaps16px,
+page scrollHeight900 at viewport900. Mobile390x844 no document overflow;320 calendar
+uses its existing internal scroll to keep controls reachable. Common DatePickerPanel
+retained, no new picker; range atomic URL updates/page reset, apply/cancel/clear and
+Enter/Escape/focus verified. RU/KK/EN actual browser inspected; desktop controls one row.
+Commands: .venv/Scripts/python.exe output/timeline-layout-20261111/runtime.py (isolated
+synthetic SQLite/API/Vite), build.py (node --test scripts/tests/timeline-presentation.test.mjs:
+9PASS; npm run build: types/i18n/app/widget PASS; npm run check:bundle PASS).
+Final checks repeated after viewport spacing corrections; earlier successful builds
+are not claimed as proof for later changes. Final logs in output folder. Browser used
+Chrome on isolated54402/54401. Working DB/dev services untouched. Test runtime stopped.
+No backend contract/schema/permission/notification/BusinessEvent/AI/provider changes;
+prior113 backend PASS remains unchanged-input evidence, no redundant full gate.
+Frontend contract and existing evidence updated; roadmap/passport/README/other contracts
+need no change: this is layout/filter presentation only, no changed business behavior.
+No scoped code/local-evidence remainder. Publication blocked by26foreign outgoing
+commits at task base; no permission to publish that range. Own local commit only,
+no push/newCI/deployment. Screenshots and initial diff: output/timeline-layout-20261111.
