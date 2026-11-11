@@ -12648,3 +12648,20 @@ No full-project/PG concurrency/live gate: unchanged transactional semantics; no 
 Contracts/frontend/capabilities/passports updated; README/setup/access/CRM/integrations/
 operations and roadmap need no change. No scoped code/local-evidence remainder.
 Own commit/publication review pending; unrelated outgoing range not authorized to push.
+
+## VOICE-RECOGNITION-20261111
+
+Owner-requested recognition fixes complete within synthetic scope. Base2e715377,
+canonical checkout/current branch preserved. Default Scribe v2 +temperature0 and
+exact labeled digit-word phones; no inferred names/digits/CRM lookup/extra model call.
+10audio corpus names/digits exact; final10realSTT+model API→persistedClient/Appointment/
+Task or safeclarification and replay PASS;118backend/system/driftPASS. Initial client
+planner failure with exact transcript did not recur; retained, cause unproven. Harness
+JSON-date failure fixed only in diagnostic script. Human/KK/mixed/noise/fullD01/live
+remain open, not new authorization. WorkingDB/env/migrations/providerconfig unchanged.
+No UI/build/full/PGqueue rerun: unchanged affected semantics and no release requested.
+Source hashes, audio hashes, commands/costs/timing/failures: output/voice-recognition-20261111.
+Contract/passport/capabilities/roadmap updated; access/CRM/integrations/README/operations
+unchanged because setup/permissions/domain rules are unchanged (STT config in contract
+and .env.example). Task-only local commit;32foreignoutgoing block push/newCI/deploy.
+Evidence: docs/testing/evidence/voice-recognition-20261111.md.

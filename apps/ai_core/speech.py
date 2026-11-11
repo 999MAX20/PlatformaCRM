@@ -10,6 +10,7 @@ from rest_framework.exceptions import ValidationError
 
 from apps.ai_core.providers.base import AIProviderError
 from apps.ai_core.providers.openrouter import OpenRouterProvider
+from apps.ai_core.speech_numbers import normalize_spoken_phone
 
 
 logger = logging.getLogger(__name__)
@@ -46,7 +47,7 @@ def transcribe_audio(content, language="auto"):
     if not settings.AI_ENABLED or not settings.VOICE_INPUT_ENABLED or not settings.OPENROUTER_API_KEY or not settings.OPENROUTER_BASE_URL:
         raise AIProviderError(code="not_configured", retryable=False)
     provider = OpenRouterProvider()
-    payload = {"model": settings.VOICE_TRANSCRIPTION_MODEL,
+    payload = {"model": settings.VOICE_TRANSCRIPTION_MODEL, "temperature": 0,
         "input_audio": {"data": base64.b64encode(content).decode("ascii"), "format": "wav"},
         "provider": {"zdr": True, "data_collection": "deny"}}
     if language != "auto":
@@ -71,4 +72,4 @@ def transcribe_audio(content, language="auto"):
     text = result["text"].strip()
     if not text:
         raise AIProviderError(code="no_speech", retryable=False)
-    return {"text": text, "duration_seconds": duration}
+    return {"text": normalize_spoken_phone(text), "duration_seconds": duration}

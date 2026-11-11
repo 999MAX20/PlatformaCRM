@@ -518,7 +518,7 @@ OPENROUTER_BASE_URL = env("OPENROUTER_BASE_URL", default="https://openrouter.ai/
 OPENROUTER_SITE_URL = env("OPENROUTER_SITE_URL", default="")
 OPENROUTER_APP_NAME = env("OPENROUTER_APP_NAME", default="PlatformaCRM")
 VOICE_INPUT_ENABLED = env.bool("VOICE_INPUT_ENABLED", default=True)
-VOICE_TRANSCRIPTION_MODEL = env("VOICE_TRANSCRIPTION_MODEL", default="openai/whisper-large-v3-turbo")
+VOICE_TRANSCRIPTION_MODEL = env("VOICE_TRANSCRIPTION_MODEL", default="elevenlabs/scribe-v2")
 VOICE_HTTP_TIMEOUT_SECONDS = env.int("VOICE_HTTP_TIMEOUT_SECONDS", default=60)
 KIMI_API_KEY = env("KIMI_API_KEY", default="")
 KIMI_BASE_URL = env("KIMI_BASE_URL", default="https://api.moonshot.ai/v1")

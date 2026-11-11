@@ -24,7 +24,7 @@ def audio_bytes(seconds=1):
 
 @override_settings(AI_ENABLED=True, VOICE_INPUT_ENABLED=True, OPENROUTER_API_KEY="synthetic-test-key",
     OPENROUTER_BASE_URL="https://openrouter.ai/api/v1",
-    VOICE_TRANSCRIPTION_MODEL="openai/whisper-large-v3-turbo", VOICE_HTTP_TIMEOUT_SECONDS=60)
+    VOICE_TRANSCRIPTION_MODEL="elevenlabs/scribe-v2", VOICE_HTTP_TIMEOUT_SECONDS=60)
 class SpeechTests(TestCase):
     setUp = fixtures.ConversationMemoryTests.setUp
 
@@ -42,6 +42,18 @@ class SpeechTests(TestCase):
         self.assertEqual(response.data["text"], "Create Call task")
         formatting.assert_not_called()
 
+    def test_direct_capture_preserves_dictated_phone_before_command_planning(self):
+        self.api.force_authenticate(self.owner)
+        text = "Запиши Ивана Иванова телефон плюс семь семь ноль два два два два два два два два к Анне"
+        with patch("apps.ai_core.speech.request.urlopen", return_value=io.BytesIO(json.dumps({"text": text}).encode())) as send, \
+             patch("apps.ai_core.speech_views.format_transcript") as formatting:
+            response = self.post(format_text="false")
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(response.data["text"], "Запиши Ивана Иванова телефон +77022222222 к Анне")
+        send.assert_called_once()
+        formatting.assert_not_called()
+        self.assertFalse(AgentTurn.objects.exists())
+
     def test_adapter_sends_audio_only_and_policy_without_chat_tools(self):
         response = io.BytesIO(json.dumps({"text": "Ертең клиентке хабарлас", "usage": {"cost": 0.001}}).encode())
         with patch("apps.ai_core.speech.request.urlopen", return_value=response) as send:
@@ -49,7 +61,8 @@ class SpeechTests(TestCase):
         call = send.call_args.args[0]
         self.assertTrue(call.full_url.endswith("/audio/transcriptions"))
         payload = json.loads(call.data)
-        self.assertEqual(payload["model"], "openai/whisper-large-v3-turbo")
+        self.assertEqual(payload["model"], "elevenlabs/scribe-v2")
+        self.assertEqual(payload["temperature"], 0)
         self.assertEqual(payload["language"], "kk")
         self.assertEqual(payload["provider"], {"zdr": True, "data_collection": "deny"})
         self.assertNotIn("tools", payload)

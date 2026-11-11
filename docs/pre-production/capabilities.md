@@ -1,3 +1,11 @@
+## Точность голосовой диктовки — 11.11.2026
+
+VOICE-RECOGNITION11.11: Scribe v2 и точное преобразование отдельных цифр телефона
+заменили ошибочный Whisper default.10 synthetic STT/API→CRM/replay PASS,118 backend
+и system/driftPASS. Первичный отдельный сбой планировщика не воспроизведён и остаётся
+ограничением; human/KK/mixed/noise/fullD01/production не закрыты.
+[Сравнение, стоимость, проверки и остаток](../testing/evidence/voice-recognition-20261111.md).
+
 ## История действий — 11.11.2026
 
 `/app/timeline`: понятные RU/KK/EN события, разрешённые сохранённые изменения,

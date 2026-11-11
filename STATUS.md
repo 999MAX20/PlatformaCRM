@@ -1,3 +1,10 @@
+VOICE-RECOGNITION-20261111: names/phones fixed locally, synthetic corpus verified.
+Scribe v2 default, exact digit-word phone conversion; ZDR/access/direct flow preserved.
+10real STT/model API→CRM+replay PASS;118backend/system/driftPASS. Initial transient
+planner failure retained; not a general human/KK/noise/fullD01/production certification.
+No workingDB/env/deploy changes. Own local commit;32foreignoutgoing block push/newCI.
+Evidence: docs/testing/evidence/voice-recognition-20261111.md.
+
 AI-AGENTS-FIXES-20261111: readiness/UI fixes implemented and locally verified.
 Provider/configuration and booking diagnostics; effective actions, recovery, scoped Inbox.
 Backend123/system/drift/browser7+final1/build-types-i18n-bundle PASS; RU/KK/EN320–1440.

@@ -1,8 +1,14 @@
+VOICE-RECOGNITION11.11: Scribe v2 и точное преобразование отдельных цифр телефона
+заменили ошибочный Whisper default.10 synthetic STT/API→CRM/replay PASS,118 backend
+и system/driftPASS. Первичный отдельный сбой планировщика не воспроизведён и остаётся
+ограничением; human/KK/mixed/noise/fullD01/production не закрыты.
+[Сравнение, стоимость, проверки и остаток](../testing/evidence/voice-recognition-20261111.md).
+
 VOICE-IDENTITY11.11: локально устранён выбор одноимённого клиента вопреки указанному
 телефону. Уточнение RU/KK/EN, явный выбор, проверка при исполнении, replay и rollback
 покрыты автоматическими проверками. Реальная модель на synthetic RU подтверждает
-ожидаемые CRM-исходы, но выявленная ошибка STT имени/цифры не позволяет заявлять
-точность диктовки. Изолированные Redis/Celery crash/recovery/replay и PostgreSQL12
+ожидаемые CRM-исходы. Найденная тогда ошибка STT имени/цифры исправлена
+отдельным срезом VOICE-RECOGNITION11.11; он не заменяет human-приёмку. Изолированные Redis/Celery crash/recovery/replay и PostgreSQL12
 прошли; human записи отсутствуют, production и полный D01 остаются открыты.
 [Доказательства и локальная queue-приёмка](../testing/evidence/voice-identity-20261111.md).
 
@@ -62,8 +68,8 @@ approval/audit и replay. Другие AI-пути сохраняют просм
 языковая/production-приёмка остаются открытыми.
 [Проверки независимости](../testing/evidence/voice-interface-20261105.md). Проверки и live-ограничения: [голосовой контракт](../current/voice-assistant.md).
 В карточках клиента и записи добавлен контекстный вход в голосовую панель,
-с явным выбором передачи ID и неизменной серверной проверкой. Default STT теперь
-Whisper Large V3 Turbo; прежний live Task-срез относится к Large V3. Turbo отдельно
+с явным выбором передачи ID и неизменной серверной проверкой. Default STT с11.11 — Scribe v2;
+Whisper Large V3 Turbo относится к прежнему срезу; прежний live Task-срез относится к Large V3. Turbo отдельно
 прошёл synthetic RU API→Task/replay05.11. Исправлены ложные запреты текстовых
 команд и перенос без смены специалиста; Семь команд через изолированный worker с реальной моделью прошли; production broker/recovery не проверены. [текущий срез](../testing/evidence/voice-hardening-20261105.md)
 разделяет live provider, изолированный worker и непроверенную production-среду.
