@@ -47,6 +47,23 @@ def _approve(log, user, request, *, authorization="review"):
 
 
 def confirm_turn(*, conversation_id, turn_id, user, actions, expected_revision, _direct=False):
+    try:
+        return _confirm_turn(conversation_id=conversation_id, turn_id=turn_id, user=user,
+                             actions=actions, expected_revision=expected_revision, _direct=_direct)
+    except AIClientError as exc:
+        if exc.error_code != "action_failed":
+            raise
+        # The confirmation transaction has rolled back before saving a recoverable failure.
+        with locked_conversation(conversation_id, user) as thread:
+            turn = thread.turns.get(pk=turn_id)
+            assert_current_turn(thread, turn, statuses=(AgentTurn.Statuses.AWAITING_CONFIRMATION,))
+            turn.status, turn.error_code, turn.response = AgentTurn.Statuses.FAILED, "action_failed", ""
+            turn.completed_at = timezone.now()
+            turn.save(update_fields=["status", "error_code", "response", "completed_at", "updated_at"])
+            return turn, None
+
+
+def _confirm_turn(*, conversation_id, turn_id, user, actions, expected_revision, _direct=False):
     job = None
     with locked_conversation(conversation_id, user) as thread, bind_thread(thread):
         turn = thread.turns.filter(pk=turn_id).first()
@@ -70,6 +87,10 @@ def confirm_turn(*, conversation_id, turn_id, user, actions, expected_revision, 
             raise PermissionDenied("voice_one_operation")
         for log in selected:
             validate_voice_proposal(turn.context_json, log.tool_name, log.input_json)
+            if _direct:
+                from apps.ai_core.voice_policy import requires_voice_creation_review
+                if requires_voice_creation_review(log.tool_name, log.input_json):
+                    raise PermissionDenied("Review the new client or task before creation.")
         # A lost HTTP response can be recovered without another approval/write.
         if all(log.status == AIToolCallLog.Statuses.EXECUTED for log in selected):
             return turn, None

@@ -61,6 +61,8 @@ export function VoicePanel({ userId, status, currentEntity, currentBranch }: { u
     {chat.send.isPending && <p role="status" className="text-sm text-platforma-subtle">{t("agentChat.status.preparing")}</p>}
     {showResult && <VoiceTurnResult turn={chat.latest!} busy={chat.action.isPending} canExecute={canExecute}
       onAction={kind => chat.action.mutate({ kind, turn: chat.latest! })} />}
+    {showResult && ["awaiting_confirmation", "clarifying"].includes(chat.latest!.status) && <Button variant="secondary" disabled={chat.busy}
+      onClick={() => { setText(chat.latest!.message); setDraft(true); focusTranscript.current = true; requestAnimationFrame(() => textInput.current?.focus()); }}>{t("voice.editRequest")}</Button>}
     {(error || chat.send.error || chat.action.error) && <ErrorState error={error || chat.send.error || chat.action.error} message={error ? t("voice.unavailable") : undefined} />}
     {recorder.error && <p role="alert" className="text-sm text-platforma-danger">{t(`voice.error.${recorder.error}`)}</p>}
     {!status.ready && <p role="status" className="text-sm text-platforma-subtle">{t("voice.unavailable")}</p>}

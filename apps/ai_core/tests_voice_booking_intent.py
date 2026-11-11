@@ -58,6 +58,7 @@ class BookingIntentConversationTests(TestCase):
                     action_route(create_step("clients", request=message)), output(draft)]):
                 process_ai_job(job.pk)
         turn.refresh_from_db()
+        turn = schedule_fixtures.confirm_prepared_creation(turn, self.owner)
         return turn
 
     def booking_draft(self):
@@ -100,6 +101,9 @@ class BookingIntentConversationTests(TestCase):
                 action_route(create_step("clients")), create_plan("clients", full_name="Иван Иванов")]):
             process_ai_job(job.pk)
         turn.refresh_from_db()
+        self.assertEqual(turn.status, "awaiting_confirmation")
+        self.assertFalse(Client.objects.exists())
+        turn = schedule_fixtures.confirm_prepared_creation(turn, self.owner)
         self.assertEqual(turn.status, "completed", turn.error_code)
         self.assertEqual(turn.response, "Клиент создан.")
         self.assertEqual(Client.objects.count(), 1)

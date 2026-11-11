@@ -120,6 +120,13 @@ class VoiceLocationTests(TestCase):
                 "idempotency_key": "selected-location", "origin": "voice", "execution": "direct",
                 "current_branch": first.pk}, format="json")
         self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(response.data["status"], "awaiting_confirmation", response.data)
+        self.assertFalse(Appointment.objects.exists())
+        response = api.post(f"/api/ai/conversations/{self.thread.pk}/turns/{response.data['id']}/confirm/", {
+            "expected_revision": response.data["sequence"],
+            "actions": [{"id": item["id"], "fingerprint": item["fingerprint"]} for item in response.data["actions"]],
+        }, format="json")
+        self.assertEqual(response.status_code, 200, response.data)
         self.assertEqual(response.data["status"], "completed", response.data)
         self.assertEqual(Appointment.objects.get().branch_id, first.pk)
         self.assertEqual(response.data["actions"][0]["output_json"]["records"][1]["record"]["branch_name"], "North")

@@ -229,7 +229,13 @@ def resolve_schedule(*, business, user, draft, language):
             raise PermissionDenied("Client is unavailable.")
     elif draft["client_name"].strip():
         # Evaluate only identity fields, without recent-record truncation.
-        rows = _matches(list(clients.only("id", "full_name", "phone")), draft["client_name"], "full_name")
+        from apps.ai_core.voice_schedule_commands import spelling_candidates
+        available_clients = list(clients.only("id", "full_name", "phone"))
+        rows = _matches(available_clients, draft["client_name"], "full_name")
+        spelling_ambiguous = False
+        if not rows:
+            rows = spelling_candidates(available_clients, draft["client_name"])
+            spelling_ambiguous = bool(rows)
         phone_conflict = False
         if rows and draft["client_phone"].strip():
             phone = normalize_phone(draft["client_phone"])
@@ -238,9 +244,9 @@ def resolve_schedule(*, business, user, draft, language):
                 rows = by_phone
             else:
                 phone_conflict = True
-        if len(rows) == 1 and not phone_conflict:
+        if len(rows) == 1 and not phone_conflict and not spelling_ambiguous:
             client = rows[0]
-        elif len(rows) > 1 or phone_conflict:
+        elif len(rows) > 1 or phone_conflict or spelling_ambiguous:
             references.extend({"entity": "clients", "id": row.pk} for row in rows[:5])
             if phone_conflict:
                 questions.append(copy["client_phone_conflict"])

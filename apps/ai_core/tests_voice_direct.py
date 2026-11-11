@@ -6,7 +6,8 @@ from rest_framework.exceptions import PermissionDenied, ValidationError
 from apps.ai_core import tests as foundation
 from apps.ai_core.tests_conversation_execution import action_route, create_step, create_plan, output
 from apps.ai_core.conversation_access import create_voice_conversation
-from apps.ai_core.conversation_state import start_turn, cancel_turn, retry_turn
+from apps.ai_core.conversation_state import start_turn, cancel_turn
+from apps.ai_core.tests_voice_schedule import confirm_prepared_creation
 from apps.ai_core.services import process_ai_job
 from apps.ai_core.models import ApprovalRequest
 from apps.tasks.models import Task
@@ -27,13 +28,23 @@ class VoiceDirectTests(TestCase):
                    [action_route(create_step()), create_plan(title="Call")]):
             process_ai_job(job.pk)
 
-    def test_direct_submission_executes_once_and_binds_audit(self):
+    def test_task_submission_waits_for_review_and_executes_once_with_review_audit(self):
         turn, job = self.start()
         self.run_job(job)
         turn.refresh_from_db()
+        self.assertEqual(turn.status, "awaiting_confirmation", turn.error_code)
+        self.assertFalse(Task.objects.exists())
+        self.assertFalse(ApprovalRequest.objects.exists())
+        from apps.ai_core.conversation_actions import confirm_turn
+        from apps.ai_core.tool_registry import tool_call_fingerprint
+        log = turn.tool_calls.get()
+        with self.assertRaises(PermissionDenied):
+            confirm_turn(conversation_id=self.thread.pk, turn_id=turn.pk, user=self.owner, expected_revision=turn.sequence,
+                actions=[{"id": log.pk, "fingerprint": tool_call_fingerprint(log)}], _direct=True)
+        turn = confirm_prepared_creation(turn, self.owner)
         self.assertEqual(turn.status, "completed", turn.error_code)
         self.assertEqual(Task.objects.get().title, "Call")
-        self.assertEqual(ApprovalRequest.objects.get().payload["authorization"], "voice_direct_submission")
+        self.assertEqual(ApprovalRequest.objects.get().payload["authorization"], "review")
         replay, next_job = self.start()
         self.assertEqual(replay.pk, turn.pk)
         self.assertIsNone(next_job)
@@ -47,6 +58,22 @@ class VoiceDirectTests(TestCase):
         self.assertEqual(turn.status, "clarifying", turn.error_code)
         self.assertFalse(Task.objects.exists())
         self.assertFalse(ApprovalRequest.objects.exists())
+
+    def test_corrected_kazakh_task_title_is_reviewed_before_write(self):
+        turn, job = self.start()
+        self.run_job(job, [action_route(create_step()), create_plan(title="Ертән клиентке қынарау шалу")])
+        turn.refresh_from_db()
+        self.assertEqual(turn.status, "awaiting_confirmation")
+        self.assertFalse(Task.objects.exists())
+        corrected, job = start_turn(conversation_id=self.thread.pk, user=self.owner,
+            message="Create task Ертең клиентке қоңырау шалу", idempotency_key="corrected", context={"execution": "direct"})
+        self.run_job(job, [action_route(create_step()), create_plan(title="Ертең клиентке қоңырау шалу")])
+        corrected.refresh_from_db(); turn.refresh_from_db()
+        self.assertEqual(turn.status, "superseded")
+        self.assertEqual(corrected.status, "awaiting_confirmation")
+        self.assertFalse(Task.objects.exists())
+        confirm_prepared_creation(corrected, self.owner)
+        self.assertEqual(Task.objects.get().title, "Ертең клиентке қоңырау шалу")
 
     def test_cancel_during_model_call_prevents_execution(self):
         turn, job = self.start()
@@ -73,15 +100,15 @@ class VoiceDirectTests(TestCase):
 
     def test_audit_failure_rolls_back_and_explicit_retry_executes_once(self):
         turn, job = self.start()
-        with patch("apps.ai_core.conversation_actions.audit_ai_tool_execution", side_effect=RuntimeError("rollback")):
-            self.run_job(job)
+        self.run_job(job)
         turn.refresh_from_db()
-        self.assertEqual(turn.status, "failed")
+        with patch("apps.ai_core.conversation_actions.audit_ai_tool_execution", side_effect=RuntimeError("rollback")), self.assertRaises(RuntimeError):
+            confirm_prepared_creation(turn, self.owner)
+        turn.refresh_from_db()
+        self.assertEqual(turn.status, "awaiting_confirmation")
         self.assertFalse(Task.objects.exists())
         self.assertFalse(ApprovalRequest.objects.exists())
-        turn, retry = retry_turn(conversation_id=self.thread.pk, turn_id=turn.pk, user=self.owner, idempotency_key="retry")
-        self.run_job(retry)
-        turn.refresh_from_db()
+        turn = confirm_prepared_creation(turn, self.owner)
         self.assertEqual(turn.status, "completed", turn.error_code)
         self.assertEqual(Task.objects.count(), 1)
 
@@ -99,6 +126,13 @@ class VoiceDirectTests(TestCase):
             response = self.api.post(f"/api/ai/conversations/{self.thread.pk}/turns/",
                 {"message": "Create Call task", "execution": "direct", "idempotency_key": "api"}, format="json")
         self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(response.data["status"], "awaiting_confirmation")
+        self.assertFalse(Task.objects.exists())
+        response = self.api.post(f"/api/ai/conversations/{self.thread.pk}/turns/{response.data['id']}/confirm/", {
+            "expected_revision": response.data["sequence"],
+            "actions": [{"id": action["id"], "fingerprint": action["fingerprint"]} for action in response.data["actions"]],
+        }, format="json")
+        self.assertEqual(response.status_code, 200, response.data)
         self.assertEqual(response.data["status"], "completed")
         with patch("apps.ai_core.services.generate_text", return_value=action_route({**create_step("clients"), "operation": "archive"})):
             response = self.api.post(f"/api/ai/conversations/{self.thread.pk}/turns/",
@@ -115,7 +149,7 @@ class VoiceDirectTests(TestCase):
         with self.assertRaises(ValidationError):
             self.start()
 
-    def test_no_approval_permission_blocks_direct_write(self):
+    def test_no_approval_permission_blocks_task_confirmation(self):
         from apps.accounts.models import User
         from apps.businesses.models import BusinessMember, BusinessRole, RolePermission
         user = User.objects.create_user(username="voice-limited", email="voice-limited@example.test", password="pass", role="staff")
@@ -129,12 +163,13 @@ class VoiceDirectTests(TestCase):
         turn, job = self.start()
         self.run_job(job)
         turn.refresh_from_db()
-        self.assertEqual(turn.status, "failed")
-        self.assertEqual(turn.error_code, "access_changed")
+        self.assertEqual(turn.status, "awaiting_confirmation")
+        with self.assertRaises(PermissionDenied):
+            confirm_prepared_creation(turn, self.owner)
         self.assertFalse(Task.objects.exists())
         self.assertFalse(ApprovalRequest.objects.exists())
 
-    def test_linked_client_then_appointment_execute_once_without_second_click(self):
+    def test_linked_new_client_and_appointment_execute_once_after_identity_review(self):
         from datetime import datetime, time, timezone
         from apps.clients.models import Client
         from apps.services.models import Service
@@ -156,6 +191,11 @@ class VoiceDirectTests(TestCase):
             with patch("apps.ai_core.services.generate_text", side_effect=response):
                 process_ai_job(job.pk)
             turn.refresh_from_db()
+            self.assertEqual(turn.status, "awaiting_confirmation")
+            self.assertFalse(Client.objects.exists())
+            self.assertFalse(Appointment.objects.exists())
+            from apps.ai_core.tests_voice_schedule import confirm_prepared_creation
+            turn = confirm_prepared_creation(turn, self.owner)
             self.assertEqual(turn.status, "completed", turn.error_code)
             self.assertEqual(Appointment.objects.get().client_id, Client.objects.get().pk)
             self.assertEqual(ApprovalRequest.objects.count(), 1)

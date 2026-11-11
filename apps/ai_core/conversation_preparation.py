@@ -18,7 +18,7 @@ from apps.ai_core.crm_tools import ENTITIES, prepare_command, read_entities, sco
 from apps.ai_core.models import AgentTurn, AIToolCallLog
 from apps.ai_core.services import run_ai_request
 from apps.ai_core.workflows import assert_workflow_enabled
-from apps.ai_core.voice_policy import validate_voice_plan, validate_voice_proposal
+from apps.ai_core.voice_policy import requires_voice_creation_review, validate_voice_plan, validate_voice_proposal
 
 
 def payload_references(payload):
@@ -50,6 +50,16 @@ def prepare_actions(turn, plan, memory, language):
     thread, user = turn.conversation, turn.conversation.owner
     plan = deepcopy(plan)
     validate_voice_plan(turn.context_json, plan, turn.message)
+    if thread.kind == "voice" and any(step["entity"] in {"clients", "appointments"} for step in plan["steps"]):
+        from apps.ai_core.speech_numbers import ambiguous_spoken_phone
+        if ambiguous_spoken_phone(turn.message):
+            question = {
+                "ru": "Не удалось точно распознать телефон. Напишите номер цифрами и повторите команду.",
+                "kk": "Телефон нөмірі нақты танылмады. Нөмірді цифрлармен жазып, пәрменді қайталаңыз.",
+                "en": "The phone number was not recognized clearly. Type the number in digits and repeat the command.",
+            }.get(language, "The phone number was not recognized clearly. Type the number in digits and repeat the command.")
+            return {"plan": plan, "prepared": [], "references": [], "question": question,
+                    "response": question, "status": AgentTurn.Statuses.CLARIFYING}
     if thread.kind == "voice" and any(step["entity"] == "appointments" and step["operation"] == "create" for step in plan["steps"]):
         from apps.ai_core.voice_schedule_planner import prepare_schedule
         # Legacy two-step router output is collapsed before any client write.
@@ -163,7 +173,10 @@ def _commit_preparation(turn_id, user, result):
         turn.save()
         thread.save(update_fields=["updated_at"])
         next_job = None
-        if turn.context_json.get("execution") == "direct" and turn.status == AgentTurn.Statuses.AWAITING_CONFIRMATION:
+        creation_review = thread.kind == "voice" and any(
+            requires_voice_creation_review(log.tool_name, log.input_json)
+            for log in turn.tool_calls.filter(status=AIToolCallLog.Statuses.SUGGESTED))
+        if turn.context_json.get("execution") == "direct" and turn.status == AgentTurn.Statuses.AWAITING_CONFIRMATION and not creation_review:
             from apps.ai_core.conversation_actions import confirm_turn
             from apps.ai_core.tool_registry import tool_call_fingerprint
             actions = [{"id": log.pk, "fingerprint": tool_call_fingerprint(log)}

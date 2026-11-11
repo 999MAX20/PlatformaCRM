@@ -33,6 +33,12 @@ even when prefixed with a greeting. Never use chat to bypass CRM grounding.
 '''
 
 
+def requires_voice_creation_review(tool, payload):
+    if tool == "crm_create" and payload.get("entity") in {"clients", "tasks"}:
+        return True
+    return tool == "crm_schedule" and not payload.get("values", {}).get("client", {}).get("id")
+
+
 def voice_booking_request(message):
     """Recognize explicit booking instructions when a route drops the visit."""
     pattern = (r"\b(?:запиши(?:те)?|записать)\b.{0,400}?\b(?:на|к)\b|"

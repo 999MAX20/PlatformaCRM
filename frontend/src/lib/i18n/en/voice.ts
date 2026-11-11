@@ -20,6 +20,9 @@ export const voice = {
 
   "voice.title": "Voice assistant",
   "voice.review": "Review the action before confirming.",
+  "voice.reviewIdentity": "Check the new client's name and phone. The client and any related appointments will be created after confirmation.",
+  "voice.editRequest": "Edit request",
+  "voice.reviewTask": "Check the task title and details. The task will be created after confirmation.",
   "voice.completed": "Action completed. The result is shown below.",
   "settings.section.voice-input": "Voice assistant",
   "voice.settings": "Microphone settings",

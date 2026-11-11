@@ -17,10 +17,13 @@ export function VoiceTurnResult({ turn, busy, canExecute, onAction, readOnly = f
     typeof record.start_at === "string" ? formatDateTime(record.start_at, undefined, true, locale) : null].filter(Boolean).join(" · ");
   if (turn.redacted) return <p role="status" className="text-sm text-platforma-subtle">{t("agentChat.redacted")}</p>;
   const pending = turn.status === "awaiting_confirmation";
+  const identityReview = pending && turn.actions.some(action => action.tool_name === "crm_create" && action.input_json.entity === "clients"
+    || action.tool_name === "crm_schedule" && !object(object(action.input_json.values).client).id);
+  const taskReview = pending && turn.actions.some(action => action.tool_name === "crm_create" && action.input_json.entity === "tasks");
   const processing = ["preparing", "executing"].includes(turn.status);
   return <div className="space-y-3 text-sm" aria-live="polite">
     <p role="status" className="whitespace-pre-wrap break-words leading-6">{processing ? t(`agentChat.status.${turn.status}`)
-      : pending ? t("voice.review") : turn.status === "completed" && turn.actions.length ? t("voice.completed") : turn.response}</p>
+      : pending ? t(identityReview ? "voice.reviewIdentity" : taskReview ? "voice.reviewTask" : "voice.review") : turn.status === "completed" && turn.actions.length ? t("voice.completed") : turn.response}</p>
     {turn.actions.map(action => {
       const fields = object(action.input_json.values); const before = object(action.input_json.before);
       const record = object(action.output_json.record); const entity = String(action.output_json.entity || action.input_json.entity || "");
@@ -38,7 +41,10 @@ export function VoiceTurnResult({ turn, busy, canExecute, onAction, readOnly = f
               <Link className="platforma-focus-ring block break-words underline underline-offset-4" to={`/app/${path[0]}?${path[1]}=${id}`}>
                 {String(record.full_name || visitLabel(record) || `#${id}`)}</Link>
             </li>;
-          })}</ul> : <><p className="break-words">{String(preview.client_name || "")}</p>
+          })}</ul> : <><dl className="space-y-1">
+            <div className="flex flex-wrap gap-x-2"><dt className="text-platforma-subtle">{t("aiCRM.field.full_name")}:</dt><dd className="min-w-0 break-words">{String(preview.client_name || "")}</dd></div>
+            {!object(fields.client).id && <div className="flex flex-wrap gap-x-2"><dt className="text-platforma-subtle">{t("aiCRM.field.phone")}:</dt><dd className="min-w-0 break-words">{printable(object(fields.client).phone)}</dd></div>}
+          </dl>
             <ul className="space-y-2">{(Array.isArray(preview.visits) ? preview.visits : []).map((visit, index) => <li key={index}>{visitLabel(object(visit))}</li>)}</ul></>}
           {typeof action.output_json.visit_plan_id === "number" && <Link className="platforma-focus-ring inline-flex min-h-9 items-center underline underline-offset-4"
             to={`/app/appointments?view=plans&plan=${action.output_json.visit_plan_id}`}>{t("plans.plan")} #{action.output_json.visit_plan_id}</Link>}

@@ -18,6 +18,13 @@ from apps.services.models import Service
 MAX_VISITS = 30
 
 
+def spelling_candidates(rows, name):
+    # These spellings may refer to different people: use them only to ask, never select.
+    table = str.maketrans("әғқңөұүһіё", "агкноуухие")
+    key = " ".join(name.split()).casefold().translate(table)
+    return [row for row in rows if " ".join(row.full_name.split()).casefold().translate(table) == key]
+
+
 def name_matches(queryset, name):
     # Python casefold also handles Cyrillic on the local SQLite backend. Only
     # names/IDs from the permission-scoped queryset enter this comparison.
@@ -47,6 +54,8 @@ def schedule_access(business, user, values):
         raise ValidationError({"client": "Select one of the matching clients."})
     if matches:
         return clients.get(pk=matches[0]), None
+    if spelling_candidates(clients.only("id", "full_name"), data.get("full_name", "")):
+        raise ValidationError({"client": "A similar client spelling exists. Select the client explicitly."})
     assert_can(user, business, Resources.CLIENTS, Actions.CREATE)
     serializer = validated_details(business=business, user=user, spec=ENTITIES["clients"],
         entity="clients", tool="crm_create", target=None, values=data)

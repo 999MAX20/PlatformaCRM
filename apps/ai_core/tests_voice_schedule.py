@@ -13,6 +13,17 @@ from apps.scheduling.models import Appointment, Resource, VisitPlan, WorkingHour
 from apps.services.models import Service
 
 
+def confirm_prepared_creation(turn, user):
+    """Domain fixtures continue after the owner's explicit creation-review click."""
+    from apps.ai_core.conversation_actions import confirm_turn
+    from apps.ai_core.tool_registry import tool_call_fingerprint
+    if turn.status == "awaiting_confirmation":
+        turn, _ = confirm_turn(conversation_id=turn.conversation_id, turn_id=turn.pk, user=user,
+            expected_revision=turn.sequence, actions=[{"id": log.pk, "fingerprint": tool_call_fingerprint(log)}
+                for log in turn.tool_calls.filter(status="suggested")])
+    return turn
+
+
 @override_settings(AI_PROVIDER="mock", AI_ENABLED=True, VOICE_INPUT_ENABLED=True, AI_QUEUE_LIVE_REQUESTS=False)
 class VoiceScheduleCommandTests(TestCase):
     def setUp(self):
@@ -143,7 +154,7 @@ class VoiceScheduleConversationTests(TestCase):
         return {"client_name": "Иван Иванов", "client_phone": "", "client_id": None, "plan": False,
             "visits": [{"date": "2030-11-07", "time": "12:00", "time_text": "noon", "time_basis": "business", "service": "Consultation", "specialist": "Anna", "branch": "", "any_resource": False}], **changes}
 
-    def run_turn(self, draft, *, key="schedule", message="Book Иван Иванов November 7 2030 at noon, Consultation with Anna"):
+    def run_turn(self, draft, *, key="schedule", message="Book Иван Иванов November 7 2030 at noon, Consultation with Anna", confirm_client=True):
         from apps.ai_core.conversation_state import start_turn
         from apps.ai_core.tests_conversation_execution import action_route, create_step, output
         from apps.ai_core.services import process_ai_job
@@ -154,9 +165,11 @@ class VoiceScheduleConversationTests(TestCase):
                 process_ai_job(job.pk)
             self.generated = generate
         turn.refresh_from_db()
+        if confirm_client:
+            turn = confirm_prepared_creation(turn, self.owner)
         return turn
 
-    def test_direct_schedule_and_replay_create_once(self):
+    def test_reviewed_new_client_schedule_and_replay_create_once(self):
         from apps.ai_core.models import ApprovalRequest
         turn = self.run_turn(self.draft())
         self.assertEqual(turn.status, "completed", turn.error_code)
@@ -164,7 +177,7 @@ class VoiceScheduleConversationTests(TestCase):
         self.assertEqual(Client.objects.count(), 1)
         self.assertEqual(turn.tool_calls.get().tool_name, "crm_schedule")
         self.assertEqual(len(turn.references_json), 2)
-        self.assertEqual(ApprovalRequest.objects.get().payload["authorization"], "voice_direct_submission")
+        self.assertEqual(ApprovalRequest.objects.get().payload["authorization"], "review")
         self.assertEqual(self.run_turn(self.draft()).pk, turn.pk)
         self.assertEqual(Appointment.objects.count(), 1)
 
