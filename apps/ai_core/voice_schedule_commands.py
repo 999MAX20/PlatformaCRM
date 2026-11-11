@@ -153,8 +153,17 @@ def validate_schedule(*, business, user, values, lock=False):
             end = validate_appointment_availability(business, service, start, resource=resource, branch=branch)
         except (ValueError, TypeError, ArithmeticError):
             raise ValidationError({"start_at": "Select an available future time."}) from None
-        from apps.scheduling.resource_booking import required_resources
-        resource_ids = {resource.pk, *(item.pk for item in required_resources(business, service, branch))}
+        from apps.scheduling.resource_booking import validate_resource_availability
+        unavailable_ids = {item for ids, other_start, other_end in occupied
+            if start < other_end and end > other_start for item in ids}
+        from apps.core.domain_errors import ScheduleConflict
+        try:
+            physical = validate_resource_availability(business, service, branch, start, end, unavailable_ids=unavailable_ids)
+        except ScheduleConflict:
+            if unavailable_ids:
+                raise ValidationError({"start_at": "Visits overlap within this request or no suitable room remains."}) from None
+            raise
+        resource_ids = {resource.pk, *(item.pk for item in physical)}
         if any(resource_ids.intersection(ids) and start < other_end and end > other_start for ids, other_start, other_end in occupied):
             raise ValidationError({"start_at": "Visits overlap within this request."})
         occupied.append((resource_ids, start, end))

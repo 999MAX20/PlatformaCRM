@@ -8,6 +8,7 @@ import { identity } from "./ru/identity";
 import { support } from "./ru/support";
 import { crm } from "./ru/crm";
 import { business } from "./ru/business";
+import { management } from "./ru/management";
 import { analytics } from "./ru/analytics";
 import { core } from "./ru/core";
 import { tasks } from "./ru/tasks";
@@ -34,6 +35,7 @@ export const ru: Record<string, string> = {
   ...support,
   ...crm,
   ...business,
+  ...management,
   ...analytics,
   ...core,
   ...tasks,

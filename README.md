@@ -1,3 +1,8 @@
+Management UI (12.11.2026): five real-data pages replace the previous Business entry.
+The five Management migrations are applied to the owner-authorized local PostgreSQL
+with verified backup/restore and preservation checks. Other environments require their
+own reviewed migration target. [Behavior and verification](docs/testing/evidence/management-implementation-20261111.md).
+
 ## Лендинг CRM
 
 Главная `/` показывает встроенный лендинг, «Войти» открывает существующий `/login`.

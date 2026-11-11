@@ -23,7 +23,7 @@ class AssignmentSerializer(serializers.ModelSerializer):
 class DaySerializer(serializers.ModelSerializer):
     class Meta:
         model = ScheduleDay
-        fields = ["id", "branch", "resource", "weekday", "date", "intervals", "updated_at"]
+        fields = ["id", "branch", "resource", "weekday", "date", "effective_from", "intervals", "updated_at"]
 
 
 class TravelSerializer(serializers.ModelSerializer):
@@ -51,6 +51,7 @@ class IntervalInput(serializers.Serializer):
 
 
 class DayInput(serializers.Serializer):
+    effective_from = serializers.DateField(required=False)
     resource = serializers.IntegerField(min_value=1, allow_null=True, required=False)
     weekday = serializers.IntegerField(min_value=0, max_value=6, allow_null=True, required=False)
     date = serializers.DateField(allow_null=True, required=False)
@@ -64,6 +65,7 @@ class TravelInput(serializers.Serializer):
 
 
 class WeekdaysInput(serializers.Serializer):
+    effective_from = serializers.DateField(required=False)
     resource = serializers.IntegerField(min_value=1, allow_null=True, required=False)
     weekdays = serializers.ListField(child=serializers.IntegerField(min_value=0, max_value=6), min_length=1, max_length=7)
     intervals = IntervalInput(many=True, allow_empty=True)

@@ -24,7 +24,7 @@ class BranchConfigurationMixin:
             "assignments": AssignmentSerializer(branch.specialist_assignments.select_related("resource").prefetch_related("services"), many=True).data,
             "days": [*DaySerializer(branch.schedule_days.all(), many=True).data, *physical_schedule_projection(branch)],
             "absences": list(SpecialistAbsence.objects.filter(business=branch.business,
-                resource_id__in=branch.specialist_assignments.values("resource_id"))
+                resource_id__in=[*branch.specialist_assignments.values_list("resource_id", flat=True), *branch.physical_resources.values_list("pk", flat=True)])
                 .filter(Q(branch=branch) | Q(branch__isnull=True))
                 .values("resource_id", "starts_on", "ends_on")),
             "travel": TravelSerializer(BranchTravelTime.objects.filter(business=branch.business)
@@ -44,7 +44,7 @@ class BranchConfigurationMixin:
     @action(detail=True, methods=["get"])
     def catalog(self, request, pk=None):
         branch = self.get_object()
-        from .physical_resources import resource_configuration
+        from .physical_resources import resource_configuration, physical_schedule_projection
         if branch.uses_business_defaults:
             from .catalog import automatic_catalog
             return Response({**automatic_catalog(branch), **resource_configuration(branch)})
@@ -54,9 +54,9 @@ class BranchConfigurationMixin:
             offers, assignments = offers.none(), assignments.none()
         return Response({**resource_configuration(branch), "offers": OfferSerializer(offers, many=True).data,
                          "assignments": AssignmentSerializer(assignments, many=True).data,
-                         "days": DaySerializer(branch.schedule_days.all(), many=True).data,
+                         "days": [*DaySerializer(branch.schedule_days.all(), many=True).data, *physical_schedule_projection(branch)],
                          "absences": list(SpecialistAbsence.objects.filter(business=branch.business,
-                             resource_id__in=assignments.values("resource_id")).filter(Q(branch=branch) | Q(branch__isnull=True))
+                             resource_id__in=[*assignments.values_list("resource_id", flat=True), *branch.physical_resources.values_list("pk", flat=True)]).filter(Q(branch=branch) | Q(branch__isnull=True))
                              .values("resource_id", "starts_on", "ends_on"))})
 
     @action(detail=True, methods=["post"])

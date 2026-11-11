@@ -9,6 +9,7 @@ import { identity } from "./en/identity";
 import { support } from "./en/support";
 import { crm } from "./en/crm";
 import { business } from "./en/business";
+import { management } from "./en/management";
 import { analytics } from "./en/analytics";
 import { core } from "./en/core";
 import { tasks } from "./en/tasks";
@@ -36,6 +37,7 @@ export const en: Record<string, string> = {
   ...support,
   ...crm,
   ...business,
+  ...management,
   ...analytics,
   ...core,
   ...tasks,

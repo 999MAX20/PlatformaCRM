@@ -44,7 +44,7 @@ def update_branch(*, branch, actor, changes):
     if branch.uses_business_defaults:
         raise ValidationError({"branch": "Edit the business details for the primary location."})
     for key, value in changes.items():
-        if key not in {"name", "address", "phone"}:
+        if key not in {"name", "city", "address", "phone"}:
             raise ValidationError({key: "Use the explicit branch lifecycle action."})
         setattr(branch, key, value)
     branch.save()

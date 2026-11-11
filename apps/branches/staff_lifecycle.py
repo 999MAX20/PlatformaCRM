@@ -62,22 +62,47 @@ def pending_work(resource):
 
 
 @transaction.atomic
-def add_absence(*, resource, actor, starts_on, ends_on, branch=None, reason="unavailable"):
+def add_absence(*, resource, actor, starts_on, ends_on, branch=None, reason="unavailable", absence_id=None):
     Business.objects.select_for_update().get(pk=resource.business_id)
     resource = Resource.objects.select_for_update().get(pk=resource.pk)
+    physical = resource.resource_type in {"room", "hall", "box"}
+    if physical:
+        if branch is not None and branch.pk != resource.branch_id:
+            raise ValidationError({"branch": "Select the room's branch."})
+        branch = resource.branch
     if branch:
         assert_can(actor, resource.business, Resources.SETTINGS, Actions.UPDATE)
         assert_branch_access(actor, resource.business, branch)
-        if not branch.uses_business_defaults and not resource.branch_assignments.filter(branch=branch, is_active=True).exists():
+        if not physical and not branch.uses_business_defaults and not resource.branch_assignments.filter(branch=branch, is_active=True).exists():
             raise ValidationError({"branch": "The specialist is not assigned to this branch."})
     else:
         assert_staff_scope(actor, resource)
-    if resource.retired_at or resource.resource_type != "staff":
-        raise ValidationError({"resource": "Select a current specialist."})
+    if resource.retired_at or resource.archived_at or resource.resource_type not in {"staff", "room", "hall", "box"}:
+        raise ValidationError({"resource": "Select a current specialist or room."})
     if starts_on > ends_on or reason not in {"unavailable", "vacation", "sick"}:
         raise ValidationError({"ends_on": "Use an ordered absence period and valid reason."})
-    absence, _ = SpecialistAbsence.objects.get_or_create(business=resource.business, resource=resource, branch=branch,
-        starts_on=starts_on, ends_on=ends_on, reason=reason)
+    from .management_lifecycle import related_visits
+    zone = business_zone(resource.business)
+    affected = related_visits(resource).filter(status__in=["created", "confirmed"], end_at__gt=timezone.now()).filter(
+        start_at__lt=timezone.make_aware(datetime.combine(ends_on + timedelta(days=1), time.min), zone),
+        end_at__gt=timezone.make_aware(datetime.combine(starts_on, time.min), zone))
+    if branch is not None:
+        affected = affected.filter(branch=branch)
+    if affected.exists():
+        raise InvalidTransition("Reschedule or cancel appointments in this absence period first.")
+    if absence_id is not None:
+        absence = SpecialistAbsence.objects.filter(business=resource.business, resource=resource, pk=absence_id).first()
+        if absence is None:
+            raise ValidationError({"id": "Absence is not available."})
+        if absence.branch_id:
+            assert_branch_access(actor, resource.business, absence.branch)
+        else:
+            assert_staff_scope(actor, resource)
+        absence.branch, absence.starts_on, absence.ends_on, absence.reason = branch, starts_on, ends_on, reason
+        absence.save(update_fields=["branch", "starts_on", "ends_on", "reason", "updated_at"])
+    else:
+        absence, _ = SpecialistAbsence.objects.get_or_create(business=resource.business, resource=resource, branch=branch,
+            starts_on=starts_on, ends_on=ends_on, reason=reason)
     write_actor_audit_log(actor=actor, business=resource.business, action=AuditLog.Actions.UPDATE, instance=resource,
         metadata={"kind": "specialist_absence", "absence_id": absence.pk, "starts_on": str(starts_on), "ends_on": str(ends_on), "branch_id": branch.pk if branch else None})
     return absence
@@ -136,8 +161,8 @@ def change_branch_state(*, branch, actor, state):
     if state == "archived" and branch.archived_at is None and not Branch.objects.filter(
             business=branch.business, is_active=True, archived_at__isnull=True).exclude(pk=branch.pk).exists():
         raise LastActiveBranch()
-    if state == "archived" and branch.appointments.filter(is_archived=False, end_at__gt=timezone.now(), status__in=["created", "confirmed"]).exists():
-        raise InvalidTransition("Review future appointments before archiving the branch.")
+    if state in {"paused", "archived"} and branch.appointments.filter(end_at__gt=timezone.now(), status__in=["created", "confirmed"]).exists():
+        raise InvalidTransition("Reschedule or cancel future appointments before pausing or archiving the branch.")
     branch.is_active = state == "active"
     branch.archived_at = timezone.now() if state == "archived" else None
     branch.save(update_fields=["is_active", "archived_at", "updated_at"])

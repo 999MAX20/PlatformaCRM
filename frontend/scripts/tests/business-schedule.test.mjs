@@ -47,3 +47,16 @@ test("absence is separate from the stored schedule and does not mutate it", () =
   assert.equal(cell({ config: data, resource: 99 }).absent, false);
   assert.equal(JSON.stringify(data), before);
 });
+
+
+test("weekly versions begin on their effective date without rewriting earlier weeks", () => {
+  const data = { ...config, days: [
+    { resource: 12, weekday: 0, date: null, effective_from: "0001-01-01", intervals: [interval] },
+    { resource: 12, weekday: 0, date: null, effective_from: "2030-01-14", intervals: [{ start: "10:00", end: "16:00" }] },
+    { resource: 12, weekday: null, date: "2030-01-21", intervals: [] },
+  ] };
+  assert.deepEqual(cell({ config: data, date: "2030-01-07" }).intervals, [interval]);
+  assert.deepEqual(cell({ config: data, date: "2030-01-14" }).intervals, [{ start: "10:00", end: "16:00" }]);
+  assert.deepEqual(cell({ config: data, date: "2030-01-21" }).intervals, []);
+  assert.deepEqual(cell({ config: data, date: "2030-01-28" }).intervals, [{ start: "10:00", end: "16:00" }]);
+});

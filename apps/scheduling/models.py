@@ -32,6 +32,7 @@ class Resource(TimeStampedModel):
     public_description = models.TextField(blank=True)
     contact_phone = models.CharField(max_length=32, blank=True)
     retired_at = models.DateTimeField(null=True, blank=True)
+    archived_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         ordering = ["name"]

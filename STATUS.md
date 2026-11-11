@@ -1,3 +1,12 @@
+MANAGEMENT-IMPLEMENTATION-20261111: five approved pages implemented with real APIs.
+Explicit service/staff/branch links, room pools, effective schedules and safe lifecycle.
+7browser scenarios RU/KK/EN320–1440; API31+18/AI40/PG14/node14/build-types-i18n-bundlePASS.
+Owner-approved localPG5 migrations applied; backup restore154tables/10212rowsPASS.
+15automatic branches converted; protecteddata/6API/5Chrome pagesPASS.
+No scoped remainder; owncommit only,45foreign outgoing block push/newCI; no deploy/provider.
+Evidence: docs/testing/evidence/management-implementation-20261111.md.
+Checkpoint: output/management-implementation-20261111/CHECKPOINT.md.
+
 ANALYTICS-DETAIL-COMPARE-20261111: metric drilldown and previous-period comparison verified locally.
 KPI/status/source/service/team lists match period/archive/scope; financial Decimal delta guarded.
 145dependentPASS/2PGskips +11focusedPASS; system/drift,3logic/types/i18n/build/budgetPASS.

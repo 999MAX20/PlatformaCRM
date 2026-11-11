@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 
 from apps.businesses.models import TimeStampedModel
@@ -7,6 +9,7 @@ class Branch(TimeStampedModel):
     business = models.ForeignKey("businesses.Business", on_delete=models.CASCADE, related_name="branches")
     name = models.CharField(max_length=255)
     address = models.TextField(blank=True)
+    city = models.CharField(max_length=120, blank=True)
     phone = models.CharField(max_length=32, blank=True)
     is_active = models.BooleanField(default=True)
     archived_at = models.DateTimeField(null=True, blank=True)
@@ -24,6 +27,7 @@ class ServiceResourceRequirement(models.Model):
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE, related_name="resource_requirements")
     service = models.ForeignKey("services.Service", on_delete=models.PROTECT, related_name="resource_requirements")
     resource = models.ForeignKey("scheduling.Resource", on_delete=models.PROTECT, related_name="service_requirements")
+    is_alternative = models.BooleanField(default=False)
 
     class Meta:
         constraints = [models.UniqueConstraint(fields=["branch", "service", "resource"], name="branch_service_resource_unique")]
@@ -71,6 +75,7 @@ class ScheduleDay(TimeStampedModel):
     resource = models.ForeignKey("scheduling.Resource", on_delete=models.PROTECT, null=True, blank=True, related_name="branch_schedule_days")
     weekday = models.PositiveSmallIntegerField(null=True, blank=True)
     date = models.DateField(null=True, blank=True)
+    effective_from = models.DateField(default=datetime.date.min)
     intervals = models.JSONField(default=list)
 
     class Meta:
@@ -78,8 +83,8 @@ class ScheduleDay(TimeStampedModel):
         constraints = [
             models.CheckConstraint(condition=(models.Q(date__isnull=True, weekday__gte=0, weekday__lte=6, weekday__isnull=False)
                                                | models.Q(date__isnull=False, weekday__isnull=True)), name="branch_schedule_day_kind"),
-            models.UniqueConstraint(fields=["branch", "resource", "weekday"], condition=models.Q(date__isnull=True, resource__isnull=False), name="branch_staff_weekday_unique"),
-            models.UniqueConstraint(fields=["branch", "weekday"], condition=models.Q(date__isnull=True, resource__isnull=True), name="branch_weekday_unique"),
+            models.UniqueConstraint(fields=["branch", "resource", "weekday", "effective_from"], condition=models.Q(date__isnull=True, resource__isnull=False), name="branch_staff_weekday_unique"),
+            models.UniqueConstraint(fields=["branch", "weekday", "effective_from"], condition=models.Q(date__isnull=True, resource__isnull=True), name="branch_weekday_unique"),
             models.UniqueConstraint(fields=["branch", "resource", "date"], condition=models.Q(date__isnull=False, resource__isnull=False), name="branch_staff_date_unique"),
             models.UniqueConstraint(fields=["branch", "date"], condition=models.Q(date__isnull=False, resource__isnull=True), name="branch_date_unique"),
         ]

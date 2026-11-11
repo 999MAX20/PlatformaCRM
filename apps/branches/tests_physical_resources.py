@@ -12,7 +12,7 @@ from apps.services.models import Service
 from .models import BranchAccess, ServiceResourceRequirement
 from .physical_resources import save_resource_requirements
 from .services import create_branch
-from .single_location import ensure_initial_location
+from .tests_legacy_fixtures import ensure_legacy_initial_location as ensure_initial_location
 
 
 class PhysicalResourceConfigurationTests(TestCase):

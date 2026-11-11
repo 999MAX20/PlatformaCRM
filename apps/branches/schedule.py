@@ -74,7 +74,8 @@ def day_intervals(branch, resource, *, date=None, weekday=None):
     query = ScheduleDay.objects.filter(branch=branch, resource=resource)
     row = query.filter(date=date).first() if date is not None else None
     if row is None:
-        row = query.filter(date__isnull=True, weekday=date.weekday() if date else weekday).first()
+        row = query.filter(date__isnull=True, weekday=date.weekday() if date else weekday,
+                           effective_from__lte=date or timezone.localdate()).order_by("-effective_from").first()
     return row.intervals if row else []
 
 
@@ -99,6 +100,9 @@ def validate_specialist_schedule(resource):
                                          specialist_assignments__is_active=True, is_active=True, archived_at__isnull=True))
     dates = set(ScheduleDay.objects.filter(branch__in=branches, date__isnull=False)
                 .filter(Q(resource=resource) | Q(resource__isnull=True)).values_list("date", flat=True))
+    boundaries = ScheduleDay.objects.filter(branch__in=branches, date__isnull=True, effective_from__gt="0001-01-01")
+    for boundary in boundaries.values_list("effective_from", flat=True).distinct():
+        dates.update(boundary + timedelta(days=offset) for offset in range(7))
     for weekday, date in [(day, None) for day in range(7)] + [(None, day) for day in dates]:
         periods = []
         for branch in branches:

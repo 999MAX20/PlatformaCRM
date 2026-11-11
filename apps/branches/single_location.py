@@ -1,4 +1,4 @@
-"""The initial location shares the ordinary Business catalog and working hours."""
+"""Initial locations are ordinary branches; legacy conversion preserves existing work."""
 from django.db import transaction
 
 from apps.businesses.models import Business
@@ -12,11 +12,17 @@ def ensure_initial_location(business):
     if existing is not None:
         return existing
     branch = Branch.objects.create(business=business, name=business.name,
-        address=business.address, phone=business.phone, uses_business_defaults=True)
+        address=business.address, phone=business.phone, city=business.city)
+    from .compatibility import adopt_first_branch
+    adopt_first_branch(branch)
+    for member in business.members.all():
+        grant, created = BranchAccess.objects.get_or_create(member=member)
+        if created:
+            grant.branches.add(branch)
     from apps.core.audit import write_actor_audit_log
     from apps.core.models import AuditLog
     write_actor_audit_log(actor=business.owner, business=business, action=AuditLog.Actions.CREATE,
-        instance=branch, metadata={"kind": "automatic_initial_location"})
+        instance=branch, metadata={"kind": "initial_location"})
     return branch
 
 

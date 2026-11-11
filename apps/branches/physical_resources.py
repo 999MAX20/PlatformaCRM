@@ -36,10 +36,10 @@ def validate_resource_location(*, business, attributes, instance=None, actor=Non
         elif locations:
             raise ValidationError({"branch": "Select a location for this resource."})
     if branch is not None:
-        if branch.business_id != business.pk or not branch.is_active or branch.archived_at:
-            raise ValidationError({"branch": "Select an active location of this business."})
+        if branch.business_id != business.pk or branch.archived_at:
+            raise ValidationError({"branch": "Select a current location of this business."})
         if actor is not None:
-            assert_branch_access(actor, business, branch, active=True)
+            assert_branch_access(actor, business, branch)
     elif actor is not None:
         assert_all_branch_access(actor, business)
     return branch
@@ -53,6 +53,9 @@ def validate_resource_change(resource, attributes, *, actor=None):
     moving = getattr(branch, "pk", None) != resource.branch_id
     changing_type = new_type != resource.resource_type
     deactivating = not attributes.get("is_active", resource.is_active)
+    if deactivating and resource.resource_type == "staff":
+        from .management_lifecycle import assert_no_future
+        assert_no_future(resource)
     if changing_type and (resource.reservations.exists() or resource.service_requirements.exists()):
         raise InvalidTransition("A resource with requirements or reservation history cannot change type.")
     if moving and resource.service_requirements.exists():
@@ -93,19 +96,25 @@ def resource_configuration(branch):
 
 
 def physical_schedule_projection(branch):
+    from datetime import date as date_type, timedelta
     from apps.scheduling.resource_booking import ResourceCalendar
 
     resources = list(physical_resources(branch))
     if not resources:
         return []
     calendar = ResourceCalendar(branch.business, branch, resources)
-    dates = {date for _, date in calendar.exceptions} | {date for _, _, date in calendar.days if date is not None}
+    dates = {date for _, date in calendar.exceptions} | {row.date for row in calendar.day_rows if row.date is not None}
+    versions = {date_type.min} | {row.effective_from for row in calendar.day_rows if row.date is None}
+    explicit = {(row.resource_id, row.weekday, row.date, row.effective_from) for row in calendar.day_rows}
     result = []
     for resource in resources:
-        for weekday, date in [(day, None) for day in range(7)] + [(None, day) for day in sorted(dates)]:
-            if (resource.pk, weekday, date) in calendar.days:
+        points = [(day, None, version) for version in sorted(versions) for day in range(7)]
+        points += [(None, day, date_type.min) for day in sorted(dates)]
+        for weekday, date, version in points:
+            if (resource.pk, weekday, date, version) in explicit:
                 continue
+            as_of = date or version + timedelta(days=(weekday - version.weekday()) % 7)
             result.append({"id": -(len(result) + 1), "branch": branch.pk, "resource": resource.pk,
-                "weekday": weekday, "date": str(date) if date else None,
-                "intervals": calendar.intervals(resource, date.weekday() if date else weekday, date)})
+                "weekday": weekday, "date": str(date) if date else None, "effective_from": str(version),
+                "intervals": calendar.intervals(resource, as_of.weekday(), as_of)})
     return result

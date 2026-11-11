@@ -7,7 +7,7 @@ from rest_framework.exceptions import ValidationError
 from apps.ai_core import tests_voice_schedule as fixtures
 from apps.ai_core.voice_schedule_commands import validate_schedule
 from apps.branches.physical_resources import save_resource_requirements
-from apps.branches.single_location import ensure_initial_location
+from apps.branches.tests_legacy_fixtures import ensure_legacy_initial_location as ensure_initial_location
 from apps.clients.models import Client
 from apps.scheduling.models import Appointment, Resource
 from apps.scheduling.record_commands import create_record

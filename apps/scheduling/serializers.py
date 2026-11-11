@@ -37,14 +37,14 @@ class ResourceSerializer(serializers.ModelSerializer):
             "linked_user_name",
             "linked_user_email",
             "is_active",
-            "profession", "public_description", "contact_phone", "retired_at",
+            "profession", "public_description", "contact_phone", "retired_at", "archived_at",
             "appointment_count",
             "has_individual_schedule",
             "weekly_schedule",
             "created_at",
             "updated_at",
         ]
-        read_only_fields = ["created_at", "updated_at", "retired_at"]
+        read_only_fields = ["created_at", "updated_at", "retired_at", "archived_at"]
 
     def get_linked_user_name(self, obj):
         if obj.linked_user is None:

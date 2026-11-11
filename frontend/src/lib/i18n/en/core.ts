@@ -29,7 +29,7 @@ export const core: Record<string, string> = {
   "nav.outreach": "Outreach",
   "nav.settings": "Settings",
   "nav.channels": "Channels",
-  "nav.business": "Business",
+  "nav.business": "Management",
   "nav.control": "Control",
   "nav.appointments": "Appointments",
   "nav.services": "Services",

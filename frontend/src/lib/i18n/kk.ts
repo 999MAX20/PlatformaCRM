@@ -9,6 +9,7 @@ import { identity } from "./kk/identity";
 import { support } from "./kk/support";
 import { crm } from "./kk/crm";
 import { business } from "./kk/business";
+import { management } from "./kk/management";
 import { analytics } from "./kk/analytics";
 import { core } from "./kk/core";
 import { tasks } from "./kk/tasks";
@@ -36,6 +37,7 @@ export const kk: Record<string, string> = {
   ...support,
   ...crm,
   ...business,
+  ...management,
   ...analytics,
   ...core,
   ...tasks,

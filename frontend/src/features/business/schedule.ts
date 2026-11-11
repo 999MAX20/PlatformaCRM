@@ -37,6 +37,7 @@ export function scheduleCell({ automatic, config, hours, exceptions, resource, d
     return { intervals: row && !row.is_day_off ? [{ start: row.start_time.slice(0, 5), end: row.end_time.slice(0, 5) }] : [], override: !!exception, configured: !!row, absent };
   }
   const override = config.days.find(row => row.resource === resource && row.date === date);
-  const row = override || config.days.find(row => row.resource === resource && row.date === null && row.weekday === weekday);
+  const row = override || config.days.filter(row => row.resource === resource && row.date === null && row.weekday === weekday && (!row.effective_from || row.effective_from <= date))
+    .sort((a, b) => (b.effective_from || "0001-01-01").localeCompare(a.effective_from || "0001-01-01"))[0];
   return { intervals: row?.intervals || [], override: !!override, configured: !!row, absent };
 }

@@ -3,6 +3,7 @@ import { Navigate } from "react-router";
 import { lazy } from "react";
 const VoiceSettingsPage = lazy(() => import("../features/voice/VoiceSettingsPage"));
 const VoiceHistoryPage = lazy(() => import("../features/voice/VoiceHistoryPage"));
+const ManagementPage = lazy(() => import("../features/management/ManagementPage").then(module => ({ default: module.ManagementPage })));
 import { RecordsPage, LegacyRecordsPage, ImportWorkspacePage } from "./routeLoaders";
 
 import { PageLoader, UserStartRedirect, BusinessRouteRedirect, SettingsAccessRoute, IntegrationsSettingsRedirect } from "./routeGuards";
@@ -209,27 +210,27 @@ export const merchantFeatureRoutes = [
       </PageLoader>
     ),
   },
-{ path: routeMetadata.business.segment, ...merchantRoutePermission("business"), element: <PageLoader><BusinessPage /></PageLoader> },
+{ path: routeMetadata.business.segment, ...merchantRoutePermission("business"), element: <BusinessRouteRedirect section="services" /> },
 { path: "business/company", resource: "settings", element: <PageLoader><CompanyPage /></PageLoader> },
-{ path: "business/staff", resource: "settings", element: <PageLoader><ResourcesPage key="staff" mode="staff" /></PageLoader> },
+{ path: "business/staff", resource: "settings", element: <PageLoader><ManagementPage section="staff" /></PageLoader> },
 { path: routeMetadata.services.segment, ...merchantRoutePermission("services"), element: (
       <PageLoader>
-        <ServicesPage />
+        <ManagementPage section="services" />
       </PageLoader>
     ) },
 {
     path: "business/branches",
     resource: "settings",
-    element: <PageLoader><BranchesPage /></PageLoader>,
+    element: <PageLoader><ManagementPage section="branches" /></PageLoader>,
   },
 { path: routeMetadata.resources.segment, ...merchantRoutePermission("resources"), element: (
       <PageLoader>
-        <ResourcesPage key="physical" mode="physical" />
+        <ManagementPage section="resources" />
       </PageLoader>
     ) },
 { path: routeMetadata.workingHours.segment, ...merchantRoutePermission("workingHours"), element: (
       <PageLoader>
-        <WorkingHoursPage />
+        <ManagementPage section="working-hours" />
       </PageLoader>
     ) },
 {

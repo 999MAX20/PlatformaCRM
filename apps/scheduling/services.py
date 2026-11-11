@@ -352,9 +352,10 @@ def reschedule_appointment(*, appointment, actor, start_at, resource=None, branc
         exclude_appointment=appointment,
         branch=snapshot["branch"],
     )
-    from .resource_booking import required_resources, set_reserved_resources
+    from .resource_booking import validate_resource_availability, set_reserved_resources
     previous_physical_resources = list(appointment.reserved_resources.values_list("resource_id", flat=True))
-    physical_resources = required_resources(appointment.business, appointment.service, snapshot["branch"], appointment=appointment)
+    physical_resources = validate_resource_availability(appointment.business, appointment.service, snapshot["branch"],
+        start_at, end_at, exclude_appointment=appointment)
 
     appointment.start_at = start_at
     appointment.end_at = end_at

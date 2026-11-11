@@ -26,7 +26,7 @@ import { scheduleCell, shiftDate, validDate, weekDates, weekdayKeys } from "./sc
 
 export type ScheduleTarget = { id: Id | null; name: string; kind: "opening" | "staff" | "physical"; active: boolean };
 
-export function BusinessSchedulePage() {
+export function BusinessSchedulePage({ embedded = false }: { embedded?: boolean }) {
   const { t } = useI18n();
   const { business } = useActiveBusiness();
   const { setPageHeader } = usePageHeader();
@@ -36,19 +36,19 @@ export function BusinessSchedulePage() {
   const available = (branches.data || []).filter(branch => !branch.archived_at && (branch.can_work || branch.can_manage));
   const selected = available.find(branch => String(branch.id) === params.get("branch")) || available[0];
   return <div className="min-w-0 space-y-4">
-    <BusinessWorkspaceNav />
+    {!embedded && <BusinessWorkspaceNav />}
     {branches.isPending ? <LoadingState /> : branches.error ? <ErrorState error={branches.error} action={<Button onClick={() => void branches.refetch()}>{t("common.retry")}</Button>} /> : selected && business ? <>
       <div className="flex flex-wrap items-end justify-between gap-3">
         <h2 className="text-base font-semibold">{t("nav.workingHours")}</h2>
         <div className="w-full sm:w-72"><Select label={t("branches.branch")} value={selected.id} options={available.map(branch => ({ value: branch.id, label: branch.name }))}
           onChange={event => setParams(previous => { const next = new URLSearchParams(previous); next.set("branch", event.target.value); next.delete("resource"); return next; })} /></div>
       </div>
-      <ScheduleWorkspace key={selected.id} branch={selected} branches={available} timeZone={business.timezone} />
+      <ScheduleWorkspace key={selected.id} branch={selected} branches={available} timeZone={business.timezone} embedded={embedded} />
     </> : <Link className="text-sm text-brand-700 underline" to="/app/business/branches">{t("branches.empty")}</Link>}
   </div>;
 }
 
-function ScheduleWorkspace({ branch, branches, timeZone }: { branch: Branch; branches: Branch[]; timeZone: string }) {
+function ScheduleWorkspace({ branch, branches, timeZone, embedded }: { branch: Branch; branches: Branch[]; timeZone: string; embedded: boolean }) {
   const { t, language } = useI18n();
   const [params, setParams] = useSearchParams();
   const today = todayInTimeZone(timeZone);
@@ -79,9 +79,11 @@ function ScheduleWorkspace({ branch, branches, timeZone }: { branch: Branch; bra
   if (!config.data) return null;
   const targets: ScheduleTarget[] = view === "opening" ? [{ id: null, name: branch.name, kind: "opening", active: branch.is_active }] : (resources.data || [])
     .filter(resource => !resource.retired_at && (view === "staff" ? resource.resource_type === "staff" : resource.resource_type !== "staff"))
+    .filter(resource => !embedded || view === "staff" || ["room", "hall", "box"].includes(resource.resource_type))
     .filter(resource => view !== "staff" || branch.uses_business_defaults || config.data!.assignments.some(row => row.resource === resource.id && row.is_active))
     .filter(resource => resource.name.toLocaleLowerCase().includes(search.trim().toLocaleLowerCase()))
     .map(resource => ({ id: resource.id, name: resource.name, kind: view as "staff" | "physical", active: resource.is_active }));
+  if (embedded && view !== "opening") targets.unshift({ id: null, name: branch.name, kind: "opening", active: branch.is_active });
   const shortDate = (value: string) => language === "kk" ? `${Number(value.slice(-2))} ${t(`calendar.month.${Number(value.slice(5, 7))}`)}` : new Intl.DateTimeFormat(language === "ru" ? "ru-RU" : "en-GB", { day: "numeric", month: "short", timeZone: "UTC" }).format(new Date(`${value}T12:00:00Z`));
   const cell = (target: ScheduleTarget, value: string) => scheduleCell({ automatic: !!branch.uses_business_defaults, config: config.data!, hours: hours.data || [], exceptions: exceptions.data || [], resource: target.id, date: value });
   function renderCell(target: ScheduleTarget, value: string) {
@@ -94,8 +96,9 @@ function ScheduleWorkspace({ branch, branches, timeZone }: { branch: Branch; bra
     </button>;
   }
   return <div className="space-y-4">
+    {embedded && <p className="text-xs text-platforma-subtle">{timeZone}</p>}
     <Tabs value={view} onChange={value => setParams(previous => { const next = new URLSearchParams(previous); next.set("view", value); next.delete("resource"); return next; })} appearance="underline" ariaLabel={t("nav.workingHours")}
-      options={[{ value: "staff", label: t("business.staff") }, { value: "physical", label: t("branches.physicalResources") }, { value: "opening", label: t("branches.openingHours") }]} />
+      options={[{ value: "staff", label: t(embedded ? "management.specialists" : "business.staff") }, { value: "physical", label: t(embedded ? "management.rooms" : "branches.physicalResources") }, ...(!embedded || view === "opening" ? [{ value: "opening", label: t("branches.openingHours") }] : [])]} />
     <div className="flex flex-wrap items-end gap-2">
       <div className="flex items-center gap-2">
       <Button variant="secondary" aria-label={t("business.previousWeek")} onClick={() => setDate(shiftDate(date, -7))}><ChevronLeft size={18} /></Button>
@@ -104,7 +107,7 @@ function ScheduleWorkspace({ branch, branches, timeZone }: { branch: Branch; bra
       </div>
       <div className="w-full min-w-0 sm:w-44"><Input label={t("appointment.date")} type="date" value={date} onChange={event => event.target.value && setDate(validDate(event.target.value, today))} /></div>
       <p className="w-full py-1 text-sm text-platforma-subtle sm:w-auto sm:py-2">{shortDate(dates[0])} – {shortDate(dates[6])}</p>
-      {branch.can_manage && <Button variant="secondary" disabled={!branch.is_active || !targets.length} onClick={() => setEdit({ target: targets.find(target => String(target.id) === params.get("resource")) || targets[0], date, weekly: true })}>{t("business.weekTemplate")}</Button>}
+      {branch.can_manage && <Button variant="secondary" disabled={!targets.length} onClick={() => setEdit({ target: targets.find(target => String(target.id) === params.get("resource")) || targets[0], date, weekly: true })}>{t("business.weekTemplate")}</Button>}
       {branches.length > 1 && branch.can_manage && <Button variant="secondary" onClick={() => setTravel(true)}>{t("branches.travel")}</Button>}
     </div>
     {view !== "opening" && <div className="max-w-md"><Input label={t("resources.searchPlaceholder")} value={search} onChange={event => setSearch(event.target.value)} /></div>}
@@ -114,7 +117,7 @@ function ScheduleWorkspace({ branch, branches, timeZone }: { branch: Branch; bra
     {targets.length ? <>
       <div className="hidden overflow-x-auto rounded-card border border-platforma-border bg-surface-card md:block">
         <table className="w-full table-fixed text-sm"><caption className="sr-only">{branch.name} · {shortDate(dates[0])} – {shortDate(dates[6])}</caption>
-          <thead><tr className="border-b border-platforma-border"><th scope="col" className="w-44 p-3 text-left font-semibold">{t(view === "opening" ? "branches.branch" : view === "staff" ? "business.staff" : "nav.resources")}</th>{dates.map((value, index) => <th scope="col" key={value} className="p-2 font-medium"><span className="block">{t(weekdayKeys[index])}</span><span className="mt-1 block text-xs text-platforma-subtle">{shortDate(value)}</span></th>)}</tr></thead>
+          <thead><tr className="border-b border-platforma-border"><th scope="col" className="w-44 p-3 text-left font-semibold">{t(view === "opening" ? "branches.branch" : view === "staff" ? embedded ? "management.specialists" : "business.staff" : embedded ? "management.rooms" : "nav.resources")}</th>{dates.map((value, index) => <th scope="col" key={value} className="p-2 font-medium"><span className="block">{t(weekdayKeys[index])}</span><span className="mt-1 block text-xs text-platforma-subtle">{shortDate(value)}</span></th>)}</tr></thead>
           <tbody>{targets.map(target => <tr key={target.id ?? "opening"} className="border-b border-platforma-border last:border-0"><th scope="row" className="break-words p-3 text-left font-medium">{target.name}{!target.active && <span className="mt-1 block text-xs text-platforma-subtle">{t("branches.paused")}</span>}</th>{dates.map(value => <td key={value} className="border-l border-platforma-border p-1 align-top">{renderCell(target, value)}</td>)}</tr>)}</tbody>
         </table>
       </div>

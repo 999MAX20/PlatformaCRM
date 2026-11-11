@@ -56,6 +56,8 @@ def create_resource(*, weekly_schedule=None, actor=None, **attributes):
 def update_resource(*, resource, attributes, actor=None):
     Business.objects.select_for_update().get(pk=resource.business_id)
     resource = Resource.objects.select_for_update().get(pk=resource.pk)
+    if resource.archived_at:
+        raise ValidationError({"resource": "Restore the resource before editing it."})
     if "business" in attributes and attributes["business"].pk != resource.business_id:
         raise ValidationError({"business": "Business cannot be changed."})
     from apps.branches.physical_resources import validate_resource_change

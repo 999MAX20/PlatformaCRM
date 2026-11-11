@@ -41,12 +41,17 @@ class StaffLifecycleTests(TestCase):
         return self.api.post(f"/api/resources/{self.resource.pk}/absences/", {
             "starts_on": "2030-01-07", "ends_on": "2030-01-09", "reason": "sick", **extra}, format="json")
 
-    def test_absence_blocks_new_slots_keeps_visits_and_expires_by_date(self):
+    def test_absence_requires_resolving_visits_then_blocks_slots_and_expires(self):
         visit = self.book()
         self.assertEqual(visit.status_code, 201, visit.data)
         response = self.absence()
-        self.assertEqual(response.status_code, 201, response.data)
+        self.assertEqual(response.status_code, 409, response.data)
+        self.assertFalse(SpecialistAbsence.objects.exists())
         self.assertEqual(Appointment.objects.get(pk=visit.data["id"]).status, "created")
+        cancelled = self.api.post(f'/api/appointments/{visit.data["id"]}/cancel/', {"reason": "Reschedule before absence"})
+        self.assertEqual(cancelled.status_code, 200, cancelled.data)
+        response = self.absence()
+        self.assertEqual(response.status_code, 201, response.data)
         self.assertEqual(self.book(self.start + timedelta(hours=1)).status_code, 409)
         self.assertEqual(self.book(self.start + timedelta(days=2)).status_code, 409)
         self.assertEqual(self.book(self.start + timedelta(days=3)).status_code, 201)
@@ -95,10 +100,16 @@ class StaffLifecycleTests(TestCase):
             self.assertEqual(self.absence().status_code, 500)
         self.assertFalse(SpecialistAbsence.objects.exists())
 
-    def test_branch_pause_and_archive_keep_future_appointments(self):
+    def test_branch_pause_and_archive_require_resolving_future_appointments(self):
         visit = self.book()
         self.assertEqual(visit.status_code, 201)
-        self.assertEqual(self.api.post(f"/api/branches/{self.branch.pk}/state/", {"state": "paused"}).status_code, 200)
-        self.assertEqual(self.book(self.start + timedelta(hours=1)).status_code, 400)
+        self.assertEqual(self.api.post(f"/api/branches/{self.branch.pk}/state/", {"state": "paused"}).status_code, 409)
+        self.branch.refresh_from_db()
+        self.assertTrue(self.branch.is_active)
         self.assertEqual(self.api.post(f"/api/branches/{self.branch.pk}/state/", {"state": "archived"}).status_code, 409)
         self.assertEqual(Appointment.objects.get(pk=visit.data["id"]).status, "created")
+
+        cancelled = self.api.post(f'/api/appointments/{visit.data["id"]}/cancel/', {"reason": "Resolve before pause"})
+        self.assertEqual(cancelled.status_code, 200, cancelled.data)
+        self.assertEqual(self.api.post(f"/api/branches/{self.branch.pk}/state/", {"state": "paused"}).status_code, 200)
+        self.assertEqual(self.book(self.start + timedelta(hours=1)).status_code, 400)

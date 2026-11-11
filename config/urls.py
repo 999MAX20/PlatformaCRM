@@ -74,6 +74,7 @@ from apps.businesses.views import (
 )
 from apps.clients.views import ClientViewSet
 from apps.branches.views import BranchViewSet
+from apps.branches.management_views import ManagementViewSet
 from apps.payments.views import PaymentViewSet
 from apps.conversations.inbox_views import InboxConversationViewSet
 from apps.conversations.views import ConversationViewSet, MessageViewSet, QuickReplyTemplateViewSet
@@ -138,6 +139,7 @@ from apps.tasks.views import TaskViewSet
 
 router = DefaultRouter()
 router.register("branches", BranchViewSet, basename="branch")
+router.register("management", ManagementViewSet, basename="management")
 router.register("businesses", BusinessViewSet, basename="business")
 router.register("business-members", BusinessMemberViewSet, basename="business-member")
 router.register("business-capabilities", BusinessCapabilityViewSet, basename="business-capability")

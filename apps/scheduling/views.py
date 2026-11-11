@@ -453,7 +453,7 @@ class AppointmentViewSet(IdempotentCRMCreateMixin, TenantModelViewSet):
         if service_id:
             queryset = queryset.filter(service_id=service_id)
         if resource_id:
-            queryset = queryset.filter(resource_id=resource_id)
+            queryset = queryset.filter(Q(resource_id=resource_id) | Q(reserved_resources__resource_id=resource_id)).distinct()
         if status:
             queryset = queryset.filter(status=status)
 

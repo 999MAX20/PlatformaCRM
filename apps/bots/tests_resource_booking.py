@@ -8,7 +8,7 @@ from apps.bots.models import BotMessage
 from apps.bots.runtime_configuration import agent_runtime_fingerprint
 from apps.bots.scheduling_context import build_bot_scheduling_context
 from apps.branches.physical_resources import save_resource_requirements
-from apps.branches.single_location import ensure_initial_location
+from apps.branches.tests_legacy_fixtures import ensure_legacy_initial_location as ensure_initial_location
 from apps.conversations.booking import store_offered_slots
 from apps.scheduling.models import Appointment, Resource, WorkingHours
 from apps.scheduling.record_commands import create_record

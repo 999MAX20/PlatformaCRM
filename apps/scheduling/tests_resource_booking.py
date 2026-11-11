@@ -10,7 +10,7 @@ from apps.branches.configuration import save_assignment, save_offer, save_schedu
 from apps.branches.models import ServiceResourceRequirement
 from apps.branches.physical_resources import save_resource_requirements
 from apps.branches.services import create_branch
-from apps.branches.single_location import ensure_initial_location
+from apps.branches.tests_legacy_fixtures import ensure_legacy_initial_location as ensure_initial_location
 from apps.businesses.models import Business
 from apps.clients.models import Client
 from apps.core.domain_errors import ScheduleConflict

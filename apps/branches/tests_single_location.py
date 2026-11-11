@@ -16,7 +16,7 @@ from apps.services.models import Service
 from .access import accessible_branches
 from .models import Branch, BranchAccess
 from .services import create_branch
-from .single_location import ensure_initial_location
+from .tests_legacy_fixtures import ensure_legacy_initial_location as ensure_initial_location
 from .staff_lifecycle import change_branch_state
 
 
@@ -133,10 +133,10 @@ class SingleLocationTests(TestCase):
         grant.branches.clear()
         self.assertFalse(accessible_branches(user, self.business).exists())
 
-    def test_business_api_creation_includes_automatic_location(self):
+    def test_business_api_creation_includes_ordinary_location(self):
         response = self.api.post("/api/businesses/", {"name": "Created", "slug": "created-point"}, format="json")
         self.assertEqual(response.status_code, 201, response.data)
-        self.assertTrue(Branch.objects.get(business_id=response.data["id"]).uses_business_defaults)
+        self.assertFalse(Branch.objects.get(business_id=response.data["id"]).uses_business_defaults)
 
     def test_catalog_exposes_new_services_and_specialists_without_branch_setup(self):
         branch = ensure_initial_location(self.business)

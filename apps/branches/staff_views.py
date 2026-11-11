@@ -14,6 +14,7 @@ class AbsenceSerializer(serializers.ModelSerializer):
 
 
 class AbsenceInput(serializers.Serializer):
+    id = serializers.IntegerField(min_value=1, required=False)
     starts_on = serializers.DateField()
     ends_on = serializers.DateField()
     branch = serializers.PrimaryKeyRelatedField(queryset=Branch.objects.all(), allow_null=True, required=False)
@@ -27,7 +28,9 @@ class ResourceLifecycleMixin:
         if request.method == "POST":
             data = AbsenceInput(data=request.data)
             data.is_valid(raise_exception=True)
-            absence = add_absence(resource=resource, actor=request.user, **data.validated_data)
+            values = dict(data.validated_data)
+            absence_id = values.pop("id", None)
+            absence = add_absence(resource=resource, actor=request.user, absence_id=absence_id, **values)
             return Response(AbsenceSerializer(absence).data, status=201)
         assert_can(request.user, resource.business, Resources.SETTINGS, Actions.VIEW)
         return Response(AbsenceSerializer(resource.absences.all(), many=True).data)

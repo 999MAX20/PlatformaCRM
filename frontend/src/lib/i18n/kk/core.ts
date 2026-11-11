@@ -29,7 +29,7 @@ export const core: Record<string, string> = {
   "nav.outreach": "Таратылымдар",
   "nav.settings": "Баптаулар",
   "nav.channels": "Арналар",
-  "nav.business": "Бизнес",
+  "nav.business": "Басқару",
   "nav.control": "Бақылау",
   "nav.appointments": "Жазбалар",
   "nav.services": "Қызметтер",

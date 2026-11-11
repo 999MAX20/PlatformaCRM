@@ -26,16 +26,17 @@ export function ScheduleDayDialog({ branch, target, targets, date, weekly, confi
   const [selectedTarget, setSelectedTarget] = useState(target);
   const [isWeekly, setIsWeekly] = useState(weekly);
   const [days, setDays] = useState([weekdayOf(date)]);
+  const [effectiveFrom, setEffectiveFrom] = useState(date);
   const [dirty, setDirty] = useState(false);
   const resolve = (next: ScheduleTarget, asWeek: boolean) => scheduleCell({ automatic, config: asWeek ? { ...config, days: config.days.filter(row => !row.date) } : config,
     hours, exceptions: asWeek ? [] : exceptions, resource: next.id, date });
   const [intervals, setIntervals] = useState<Interval[]>(resolve(target, weekly).intervals);
   const current = resolve(selectedTarget, isWeekly);
-  const canManage = branch.can_manage && branch.is_active && !branch.archived_at;
+  const canManage = branch.can_manage && !branch.archived_at;
   const mutation = useMutation({
     mutationFn: async (remove: boolean) => {
       if (!automatic) {
-        if (isWeekly) return branchesApi.weekdays(branch.id, { resource: selectedTarget.id, weekdays: days, intervals });
+        if (isWeekly) return branchesApi.weekdays(branch.id, { resource: selectedTarget.id, weekdays: days, intervals, effective_from: effectiveFrom });
         return branchesApi.day(branch.id, { resource: selectedTarget.id, date, intervals, remove });
       }
       const times = { start_time: intervals[0]?.start || "09:00", end_time: intervals[0]?.end || "18:00", is_day_off: !intervals.length };
@@ -75,6 +76,7 @@ export function ScheduleDayDialog({ branch, target, targets, date, weekly, confi
         options={[{ value: "date", label: t("branches.dateOverride") }, { value: "weekly", label: t("workingHours.weekTitle") }]}
         onChange={event => void changeTarget(selectedTarget, event.target.value === "weekly")} />}
       <fieldset disabled={!canManage || mutation.isPending} className="space-y-4">
+        {isWeekly && !automatic && <Input label={t("management.effectiveFrom")} type="date" required value={effectiveFrom} onChange={event => { setEffectiveFrom(event.target.value); setDirty(true); }} />}
         {isWeekly && <fieldset className="flex flex-wrap gap-2"><legend className="mb-2 text-sm font-semibold">{t("branches.weekday")}</legend>
           {weekdayKeys.map((key, weekday) => <label key={key} className="flex min-h-11 items-center gap-2 rounded-control border border-platforma-border px-3 text-sm"><input type="checkbox" checked={days.includes(weekday)} onChange={event => { setDirty(true); setDays(event.target.checked ? [...days, weekday] : days.filter(day => day !== weekday)); }} />{t(key)}</label>)}
         </fieldset>}

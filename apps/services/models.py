@@ -11,6 +11,7 @@ class Service(TimeStampedModel):
     duration_minutes = models.PositiveIntegerField(default=30)
     price_from = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     is_active = models.BooleanField(default=True)
+    requires_room = models.BooleanField(default=False)
     is_archived = models.BooleanField(default=False, db_index=True)
     archived_at = models.DateTimeField(null=True, blank=True)
     archived_by = models.ForeignKey(

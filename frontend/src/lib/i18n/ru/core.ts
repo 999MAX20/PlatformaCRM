@@ -27,7 +27,7 @@ export const core: Record<string, string> = {
   "nav.outreach": "Рассылки",
   "nav.settings": "Настройки",
   "nav.channels": "Каналы",
-  "nav.business": "Бизнес",
+  "nav.business": "Управление",
   "nav.control": "Контроль",
   "nav.account": "Мой аккаунт",
   "nav.appointments": "Записи",

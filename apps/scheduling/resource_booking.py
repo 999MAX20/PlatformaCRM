@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from django.db.models import Q
 from django.utils import timezone
 
-from apps.branches.models import ScheduleDay, ServiceResourceRequirement
+from apps.branches.models import ScheduleDay, ServiceResourceRequirement, SpecialistAbsence
 from apps.core.domain_errors import ScheduleConflict
 from .models import Appointment, AppointmentResource, Resource, ScheduleException, WorkingHours
 
@@ -15,7 +15,20 @@ def required_resources(business, service, branch, *, appointment=None):
     if branch is None:
         return []
     return [row.resource for row in ServiceResourceRequirement.objects.filter(
-        branch=branch, service=service).select_related("resource").order_by("resource_id")]
+        branch=branch, service=service, is_alternative=False).select_related("resource").order_by("resource_id")]
+
+
+def room_options(service, branch, *, appointment=None):
+    if appointment is not None and appointment.branch_id == getattr(branch, "pk", None) and appointment.service_id == service.pk:
+        return None
+    if not service.requires_room:
+        return None
+    if branch is None:
+        return []
+    return [row.resource for row in ServiceResourceRequirement.objects.filter(
+        branch=branch, service=service, is_alternative=True,
+        resource__resource_type__in=["room", "hall", "box"],
+    ).select_related("resource").order_by("resource_id")]
 
 
 def _intervals(row):
@@ -36,10 +49,18 @@ class ResourceCalendar:
         if date is not None:
             exceptions = exceptions.filter(date=date)
         self.exceptions = {(row.resource_id, row.date): _intervals(row) for row in exceptions}
+        self.day_rows = list(ScheduleDay.objects.filter(scope, branch=branch).order_by("effective_from")) if self.explicit else []
         self.days = {(row.resource_id, row.weekday, row.date): row.intervals
-            for row in ScheduleDay.objects.filter(scope, branch=branch)} if self.explicit else {}
+                     for row in self.day_rows if row.effective_from <= (date or timezone.localdate())}
+        self.absences = list(SpecialistAbsence.objects.filter(business=business, resource_id__in=ids)
+            .filter(Q(branch=branch) | Q(branch__isnull=True)).values_list("resource_id", "starts_on", "ends_on"))
 
     def intervals(self, resource, weekday, date=None):
+        as_of = date or timezone.localdate()
+        self.days = {(row.resource_id, row.weekday, row.date): row.intervals
+                     for row in self.day_rows if row.effective_from <= as_of}
+        if date and any(identifier == resource.pk and first <= date <= last for identifier, first, last in self.absences):
+            return []
         missing = object()
         intervals = self.days.get((resource.pk, None, date), missing) if date else missing
         if intervals is missing:
@@ -99,18 +120,30 @@ def filter_resource_slots(business, service, branch, slots, duration, *, exclude
     if not slots:
         return slots
     resources = required_resources(business, service, branch, appointment=exclude_appointment)
-    if not resources:
+    options = room_options(service, branch, appointment=exclude_appointment)
+    if not resources and options is None:
         return slots
     delta = timedelta(minutes=duration)
     availability = ResourceAvailability(business, branch, resources, min(slots), max(slots) + delta, exclude=exclude_appointment)
-    return [start for start in slots if availability.permits(start, start + delta)]
+    rooms = [ResourceAvailability(business, branch, [room], min(slots), max(slots) + delta,
+        exclude=exclude_appointment) for room in options or []]
+    return [start for start in slots if availability.permits(start, start + delta)
+        and (options is None or any(room.permits(start, start + delta) for room in rooms))]
 
 
-def validate_resource_availability(business, service, branch, start, end, *, exclude_appointment=None, preserve_snapshot=True):
+def validate_resource_availability(business, service, branch, start, end, *, exclude_appointment=None, preserve_snapshot=True, unavailable_ids=()):
     resources = required_resources(business, service, branch, appointment=exclude_appointment if preserve_snapshot else None)
+    options = room_options(service, branch, appointment=exclude_appointment if preserve_snapshot else None)
     availability = ResourceAvailability(business, branch, resources, start, end, exclude=exclude_appointment)
-    if not availability.permits(start, end):
+    if not availability.permits(start, end) or any(resource.pk in unavailable_ids for resource in resources):
         raise ScheduleConflict(errors={"start_at": "Required room or equipment is unavailable. Select another time or review the service resources."})
+    if options is not None:
+        room = next((room for room in options if room.pk not in unavailable_ids
+            and ResourceAvailability(business, branch, [room], start, end, exclude=exclude_appointment).permits(start, end)), None)
+        if room is None:
+            raise ScheduleConflict(errors={"start_at": "No suitable room is available for the entire appointment."})
+        if room.pk not in {resource.pk for resource in resources}:
+            resources.append(room)
     return resources
 
 

@@ -1,0 +1,17 @@
+.management-main { container-type: inline-size; }
+.management-table { width:100%; border-collapse:collapse; table-layout:auto; }
+.management-table th, .management-table td { padding:16px 12px; text-align:left; vertical-align:top; }
+.management-table th { font-size:12px; font-weight:500; }
+.management-table td { font-size:13px; }
+.management-table .management-number { white-space:nowrap; font-variant-numeric:tabular-nums; }
+.management-table td::before { display:none; }
+@container (max-width: 700px) {
+  .management-table, .management-table tbody { display:block; }
+  .management-table thead { display:none; }
+  .management-table tr { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:16px; padding:16px; margin-bottom:12px; border:1px solid var(--color-border-default); border-radius:10px; }
+  .management-table td { display:block; min-width:0; padding:0; overflow-wrap:anywhere; }
+  .management-table td::before { display:block; content:attr(data-label); font-size:11px; opacity:.75; margin-bottom:4px; }
+  .management-table td:first-child, .management-table td:last-child { grid-column:1 / -1; }
+  .management-table td:first-child::before, .management-table td:last-child::before { display:none; }
+  .management-table .management-number { white-space:normal; }
+}

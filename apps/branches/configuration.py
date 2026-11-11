@@ -1,4 +1,5 @@
 """Atomic branch configuration through existing settings/team permissions."""
+from datetime import date as date_type
 from django.db import transaction
 from django.utils import timezone
 from rest_framework.exceptions import ValidationError
@@ -18,7 +19,9 @@ from .schedule import normalize_intervals, validate_specialist_schedule
 def _lock_and_authorize(branch, actor):
     Business.objects.select_for_update().get(pk=branch.business_id)
     assert_can(actor, branch.business, Resources.SETTINGS, Actions.UPDATE)
-    assert_branch_access(actor, branch.business, branch, active=True)
+    assert_branch_access(actor, branch.business, branch)
+    if branch.archived_at:
+        raise ValidationError({"branch": "Restore the branch before editing its configuration."})
     if branch.uses_business_defaults:
         raise ValidationError({"branch": "Use the business catalog and working hours for the primary location."})
 
@@ -43,6 +46,9 @@ def save_offer(*, branch, actor, service_id, duration_minutes, price_from, is_ac
         raise ValidationError({"service": "Select a service of this business."})
     if duration_minutes < 1 or duration_minutes > 1440 or (price_from is not None and price_from < 0):
         raise ValidationError({"duration_minutes": "Use a positive duration and a non-negative price."})
+    if not is_active:
+        from .management_lifecycle import assert_no_future
+        assert_no_future(service, branch=branch)
     offer, _ = BranchService.objects.update_or_create(branch=branch, service=service, defaults={
         "business": branch.business, "duration_minutes": duration_minutes, "price_from": price_from, "is_active": is_active})
     _audit(actor, branch, offer, "branch_service")
@@ -74,7 +80,7 @@ def save_assignment(*, branch, actor, resource_id, service_ids, is_active=True):
 
 
 @transaction.atomic
-def save_schedule_day(*, branch, actor, resource_id=None, weekday=None, date=None, intervals=None, remove=False):
+def save_schedule_day(*, branch, actor, resource_id=None, weekday=None, date=None, intervals=None, remove=False, effective_from=None):
     _lock_and_authorize(branch, actor)
     if (date is None) == (weekday is None) or (weekday is not None and weekday not in range(7)):
         raise ValidationError({"weekday": "Choose one weekday or one date."})
@@ -91,6 +97,10 @@ def save_schedule_day(*, branch, actor, resource_id=None, weekday=None, date=Non
             if not physical_resources(branch).filter(pk=resource.pk).exists():
                 raise ValidationError({"resource": "Select a room or equipment belonging to this location."})
     values = {"branch": branch, "resource": resource, "weekday": weekday, "date": date}
+    if date is not None and effective_from is not None:
+        raise ValidationError({"effective_from": "An effective date applies only to regular hours."})
+    if date is None:
+        values["effective_from"] = effective_from or date_type.min
     if remove:
         if date is None:
             raise ValidationError({"date": "Only date overrides can be removed; use empty intervals for a day off."})
@@ -100,19 +110,21 @@ def save_schedule_day(*, branch, actor, resource_id=None, weekday=None, date=Non
         row, _ = ScheduleDay.objects.update_or_create(**values, defaults={"business": branch.business, "intervals": normalize_intervals(intervals)})
     if resource and resource.resource_type == "staff":
         validate_specialist_schedule(resource)
+    from .management_schedule import assert_future_hours
+    assert_future_hours(branch, resource, date=date, weekday=weekday)
     _audit(actor, branch, row or branch, "branch_schedule")
     return row
 
 
 @transaction.atomic
-def save_schedule_weekdays(*, branch, actor, weekdays, resource_id=None, intervals=None):
+def save_schedule_weekdays(*, branch, actor, weekdays, resource_id=None, intervals=None, effective_from=None):
     _lock_and_authorize(branch, actor)
     if (not isinstance(weekdays, list) or not 1 <= len(weekdays) <= 7
             or any(type(day) is not int or day not in range(7) for day in weekdays)
             or len(set(weekdays)) != len(weekdays)):
         raise ValidationError({"weekdays": "Select one to seven distinct weekdays."})
     return [save_schedule_day(branch=branch, actor=actor, resource_id=resource_id,
-                             weekday=weekday, intervals=intervals) for weekday in weekdays]
+                             weekday=weekday, intervals=intervals, effective_from=effective_from) for weekday in weekdays]
 
 
 @transaction.atomic

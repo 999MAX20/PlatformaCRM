@@ -35,6 +35,12 @@ def upsert_catalog_service(*, business, payload, actor):
 
 @transaction.atomic
 def set_service_active(*, request, service, is_active):
+    from apps.businesses.models import Business
+    Business.objects.select_for_update().get(pk=service.business_id)
+    service.refresh_from_db()
+    if not is_active:
+        from apps.branches.management_lifecycle import assert_no_future
+        assert_no_future(service)
     if service.is_archived:
         raise InvalidTransition("Restore the service before changing its status.")
     if service.is_active == is_active:
@@ -63,6 +69,11 @@ def set_service_active(*, request, service, is_active):
 
 @transaction.atomic
 def archive_service(*, request, service, reason=""):
+    from apps.businesses.models import Business
+    Business.objects.select_for_update().get(pk=service.business_id)
+    service.refresh_from_db()
+    from apps.branches.management_lifecycle import assert_no_future
+    assert_no_future(service)
     if service.is_archived:
         return service
     if service.is_active:
