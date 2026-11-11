@@ -1,3 +1,4 @@
+import { timeline } from "./kk/timeline";
 import { importWorkspace } from "./kk/importWorkspace";
 import { voice } from "./kk/voice";
 import { ru } from "./ru";
@@ -50,6 +51,7 @@ export const kk: Record<string, string> = {
   ...notifications,
   ...clients,
   ...deals,
+  ...timeline,
   "notification.announcement": "Хабарландыру",
   "notification.announcements": "Бизнес хабарландырулары",
   "notification.myFeed": "Менің хабарламаларым",

@@ -7,6 +7,7 @@ import { useI18n } from "../../lib/i18n";
 import type { Id } from "../../types";
 import type { TimelineFilters } from "../../types/timeline";
 import { TimelineActorFilter } from "./TimelineActorFilter";
+import { useId, useState } from "react";
 
 export function TimelineToolbar({
   businessId,
@@ -20,6 +21,9 @@ export function TimelineToolbar({
   onReset: () => void;
 }) {
   const { t } = useI18n();
+  const [expanded, setExpanded] = useState(false);
+  const filterId = useId();
+  const filterCount = [filters.category, filters.actor, filters.date_from, filters.date_to].filter(Boolean).length;
   const active = Boolean(
     filters.entity_id || filters.entity_type || filters.search ||
       filters.category ||
@@ -29,11 +33,11 @@ export function TimelineToolbar({
   );
   return (
     <div
-      className="shrink-0 space-y-3 border-b border-platforma-border p-3"
+      className="shrink-0 space-y-3 border-b border-platforma-border p-3 [--global-search-width:100%] md:grid md:grid-cols-[minmax(0,480px)_minmax(140px,220px)_minmax(140px,220px)] md:gap-2 md:space-y-0"
       data-testid="timeline-toolbar"
     >
-      {filters.entity_id ? <p className="text-sm text-platforma-subtle">{t("timeline.object")} #{filters.entity_id}</p> : null}
-      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-[minmax(0,var(--global-search-width,480px))_minmax(160px,220px)_minmax(160px,220px)]">
+      {filters.entity_id ? <p className="col-span-full text-sm text-platforma-subtle">{t("timeline.object")} #{filters.entity_id}</p> : null}
+      <div className="flex gap-2 md:contents [&>label]:min-w-0 [&>label]:flex-1">
         <Input
           pageSearch aria-label={t("timeline.search")}
           placeholder={t("timeline.searchPlaceholder")}
@@ -43,6 +47,10 @@ export function TimelineToolbar({
           value={filters.search}
           onChange={(e) => onChange("search", e.target.value)}
         />
+        <Button type="button" variant="secondary" className="md:hidden" aria-expanded={expanded} aria-controls={filterId} onClick={() => setExpanded(value => !value)}>{t("timeline.filters")}{filterCount ? ` (${filterCount})` : ""}</Button>
+      </div>
+      <div id={filterId} className={`${expanded ? "block" : "hidden"} space-y-3 md:contents`}>
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:contents">
         <Select
           aria-label={t("timeline.category")}
           value={filters.category}
@@ -61,7 +69,7 @@ export function TimelineToolbar({
           onChange={(value) => onChange("actor", value)}
         />
       </div>
-      <div className="flex flex-wrap items-end gap-2">
+      <div className="col-span-full flex flex-wrap items-end gap-2">
         <div className="min-w-0 flex-1 sm:flex-none">
           <Input
             className="!min-w-0 sm:w-44"
@@ -88,6 +96,8 @@ export function TimelineToolbar({
           </Button>
         )}
       </div>
+      </div>
+      {!expanded && active && <Button type="button" variant="ghost" className="md:hidden" onClick={onReset}>{t("timeline.reset")}</Button>}
     </div>
   );
 }

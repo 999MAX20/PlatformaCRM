@@ -36,6 +36,91 @@ class TimelineWorkspaceTests(TestCase):
         self.assertEqual(response.data["count"], 1)
         self.assertEqual(response.data["results"][0]["actor_name"], "Owner Timeline")
         self.assertEqual(response.data["results"][0]["client_name"], "Searchable Client")
+        self.assertEqual(response.data["results"][0]["entity_name"], "Searchable Client")
+        self.assertTrue(response.data["results"][0]["entity_available"])
+
+    def test_task_without_client_has_authorized_object_name_in_list_and_detail(self):
+        from apps.tasks.models import Task
+        task = Task.objects.create(business=self.business, title="Call supplier")
+        event = ActivityEvent.objects.create(business=self.business, event_type="task_created", entity_type="Task", entity_id=str(task.pk))
+        for response in (self.get(), self.get(f"{event.pk}/")):
+            self.assertEqual(response.status_code, 200)
+            row = next(row for row in response.data["results"] if row["id"] == event.pk) if "results" in response.data else response.data
+            self.assertEqual(row["entity_name"], "Call supplier")
+            self.assertTrue(row["entity_available"])
+
+    def test_projection_does_not_trust_cross_tenant_missing_or_unknown_entities(self):
+        from apps.activities.timeline_projection import timeline_objects
+        for kind, identifier in (("Client", str(self.other_client.pk)), ("Client", "999999"), ("Client", "9" * 30), ("Provider", "1")):
+            event = ActivityEvent(business=self.business, entity_type=kind, entity_id=identifier)
+            self.assertEqual(timeline_objects([event], self.owner), {})
+
+    def test_projection_rechecks_object_permission_and_disabled_resource(self):
+        from apps.activities.timeline_projection import timeline_objects
+        BusinessCapability.objects.update_or_create(business=self.business, module_key="clients", defaults={"is_enabled": False})
+        self.assertEqual(timeline_objects([self.event], self.owner), {})
+        self.assertEqual(timeline_objects([self.event], None), {})
+
+    def test_object_name_respects_own_scope(self):
+        from apps.activities.timeline_projection import timeline_objects
+        from apps.businesses.models import BusinessRole, RolePermission
+        from apps.tasks.models import Task
+        reader = User.objects.create_user(username="timeline-scoped")
+        role = BusinessRole.objects.create(business=self.business, name="Own tasks")
+        BusinessMember.objects.create(business=self.business, user=reader, role="operator", business_role=role)
+        RolePermission.objects.create(business_role=role, resource="tasks", action="view", scope="own")
+        visible = Task.objects.create(business=self.business, title="Own task", assignee=reader, created_by=reader)
+        hidden = Task.objects.create(business=self.business, title="Other task secret", assignee=self.owner, created_by=self.owner)
+        events = [ActivityEvent(business=self.business, entity_type="Task", entity_id=str(task.pk)) for task in (visible, hidden)]
+        result = timeline_objects(events, reader)
+        self.assertEqual(result, {(self.business.pk, "task", str(visible.pk)): "Own task"})
+
+    def test_appointment_name_rejects_poisoned_service_relation(self):
+        from apps.scheduling.models import Appointment
+        from apps.services.models import Service
+        from django.utils import timezone
+        from datetime import timedelta
+        from apps.activities.timeline_projection import timeline_objects
+        service = Service.objects.create(business=self.business, name="Consultation", duration_minutes=30)
+        appointment = Appointment.objects.create(business=self.business, client=self.crm_client, service=service, start_at=timezone.now(), end_at=timezone.now()+timedelta(minutes=30))
+        event = ActivityEvent(business=self.business, entity_type="Appointment", entity_id=str(appointment.pk))
+        key = (self.business.pk, "appointment", str(appointment.pk))
+        self.assertEqual(timeline_objects([event], self.owner)[key], "Consultation")
+        foreign_service = Service.objects.create(business=self.other, name="Private service", duration_minutes=30)
+        Appointment.objects.filter(pk=appointment.pk).update(service=foreign_service)
+        self.assertEqual(timeline_objects([event], self.owner)[key], "")
+
+    def test_assignment_names_never_resolve_foreign_users(self):
+        from apps.tasks.models import Task
+        task = Task.objects.create(business=self.business, title="Assignment history")
+        event = ActivityEvent.objects.create(business=self.business, event_type="task_assigned", entity_type="Task", entity_id=str(task.pk), metadata={"from_assignee": self.foreign.pk, "to_assignee": self.owner.pk})
+        row = self.get(f"{event.pk}/").data
+        self.assertEqual(row["reference_names"], {"to_assignee": "Owner Timeline"})
+
+    def test_stage_names_require_same_business_and_pipeline(self):
+        from apps.crm.models import Deal, Pipeline, PipelineStage
+        pipeline = Pipeline.objects.create(business=self.business, name="Sales", slug="sales")
+        stage = PipelineStage.objects.create(business=self.business, pipeline=pipeline, name="Contacted")
+        foreign_pipeline = Pipeline.objects.create(business=self.other, name="Private", slug="private")
+        foreign_stage = PipelineStage.objects.create(business=self.other, pipeline=foreign_pipeline, name="Secret stage")
+        deal = Deal.objects.create(business=self.business, client=self.crm_client, pipeline=pipeline, stage=stage, title="Proposal")
+        event = ActivityEvent.objects.create(business=self.business, event_type="deal_stage_changed", entity_type="Deal", entity_id=str(deal.pk), metadata={"from_stage": foreign_stage.pk, "to_stage": stage.pk})
+        row = self.get(f"{event.pk}/").data
+        self.assertEqual(row["reference_names"], {"to_stage": "Contacted"})
+        self.assertEqual(row["entity_name"], "Proposal")
+
+    def test_object_labels_are_batched_per_resource_not_per_event(self):
+        from apps.activities.timeline_projection import timeline_objects
+        from django.db import connection
+        from django.test.utils import CaptureQueriesContext
+        events = [self.event] * 25
+        timeline_objects([self.event], self.owner)  # Warm the request-local access cache equally.
+        with CaptureQueriesContext(connection) as small:
+            timeline_objects([self.event], self.owner)
+        with CaptureQueriesContext(connection) as large:
+            names = timeline_objects(events, self.owner)
+        self.assertEqual(len(small), len(large))
+        self.assertEqual(names[(self.business.pk, "client", str(self.crm_client.pk))], "Searchable Client")
 
     def test_actor_category_and_null_filters(self):
         ActivityEvent.objects.create(business=self.business, category="task", event_type="task_created")

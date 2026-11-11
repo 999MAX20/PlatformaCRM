@@ -1,3 +1,4 @@
+import { timeline } from "./en/timeline";
 import { importWorkspace } from "./en/importWorkspace";
 import { voice } from "./en/voice";
 import { ru } from "./ru";
@@ -50,6 +51,7 @@ export const en: Record<string, string> = {
   ...notifications,
   ...clients,
   ...deals,
+  ...timeline,
   "notification.announcement": "Announcement",
   "notification.announcements": "Business announcements",
   "notification.myFeed": "My notifications",

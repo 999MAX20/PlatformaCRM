@@ -28,6 +28,7 @@ export function TimelinePage() {
   const [params, setParams] = useTimelineSearchParams();
   const filters = readTimelineFilters(params);
   const hasFilters = Boolean(
+    filters.entity_id || filters.entity_type ||
     filters.search ||
       filters.category ||
       filters.actor ||
@@ -124,7 +125,7 @@ export function TimelinePage() {
   return (
     <CrmWorkspacePage
       maxWidthClassName="max-w-[1720px]"
-      className="!min-h-0 !h-[calc(100dvh-10rem)] md:!h-[calc(100dvh-5.5rem)]"
+      heightClassName="h-[calc(100dvh-var(--app-header-height)-9rem)] min-h-0 lg:h-[calc(100dvh-var(--app-header-height)-2rem)]"
       testId="timeline-workspace"
     >
       <OperationalWorkspace
@@ -174,7 +175,7 @@ export function TimelinePage() {
                     rows={rows}
                     selectedId={selected?.id}
                     timeZone={timeZone}
-                    isLoading={query.isPending}
+                    isLoading={query.isPending || (busy && !rows.length)}
                     busy={busy}
                     hasFilters={hasFilters}
                     onReset={reset}

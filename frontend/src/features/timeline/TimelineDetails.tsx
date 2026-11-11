@@ -9,6 +9,7 @@ import {
   timelineDetailTransitions,
   timelineEntityRoutes,
   timelineSummary,
+  timelineObjectLabel,
 } from "./timelinePresentation";
 
 export function TimelineEventLabel({ event }: { event: TimelineEvent }) {
@@ -48,9 +49,14 @@ export function TimelineDetails({
     timeZone,
     t,
   );
+  for (const field of ["stage", "assignee"] as const) {
+    const from = event.reference_names?.[`from_${field}`];
+    const to = event.reference_names?.[`to_${field}`];
+    if (from || to) details.push({label: t(`timeline.${field}`), value: `${from || "—"} → ${to || "—"}`});
+  }
   const entity = timelineEntityRoutes[event.entity_type.toLowerCase()];
   const entityHref =
-    entity && /^[1-9]\d*$/.test(event.entity_id) && canOpen(entity.permission)
+    entity && event.entity_available && /^[1-9]\d*$/.test(event.entity_id) && canOpen(entity.permission)
       ? `/app/${entity.path}/${event.entity_id}`
       : null;
   const clientHref =
@@ -93,7 +99,7 @@ export function TimelineDetails({
                 {details.map((detail) => (
                   <div
                     key={detail.label}
-                    className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-3 text-sm"
+                    className="space-y-1 text-sm"
                   >
                     <dt className="text-platforma-subtle">{detail.label}</dt>
                     <dd>{detail.value}</dd>
@@ -107,7 +113,8 @@ export function TimelineDetails({
             )}
           </section>
           <section className="space-y-2">
-            <h3 className="text-sm font-semibold">{t("timeline.object")}</h3>
+            <h3 className="text-sm font-semibold">{t("timeline.currentObject")}</h3>
+            {!entityHref && <p className="text-sm text-platforma-subtle">{timelineObjectLabel(event, t)}</p>}
             {clientHref ? (
               <Link
                 className="platforma-focus-ring flex min-h-11 items-center justify-between gap-2 rounded-control border border-platforma-border bg-surface-card px-3 py-2 text-sm"
@@ -126,7 +133,7 @@ export function TimelineDetails({
                 className="platforma-focus-ring flex min-h-11 items-center justify-between gap-2 rounded-control border border-platforma-border bg-surface-card px-3 py-2 text-sm"
                 to={entityHref}
               >
-                {t(entity.label)}
+                {timelineObjectLabel(event, t)}
                 <ExternalLink aria-hidden size={16} />
               </Link>
             )}

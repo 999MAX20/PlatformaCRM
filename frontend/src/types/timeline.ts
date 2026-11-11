@@ -4,6 +4,9 @@ import type { PaginatedResponse } from "../api/client";
 export type TimelineEvent = ActivityEvent & {
   actor_name: string;
   client_name: string;
+  entity_name?: string;
+  entity_available?: boolean;
+  reference_names?: Partial<Record<"from_stage" | "to_stage" | "from_assignee" | "to_assignee", string>>;
 };
 export type TimelineFilters = {
   entity_type?: string;

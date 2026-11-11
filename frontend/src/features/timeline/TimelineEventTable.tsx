@@ -7,7 +7,9 @@ import { Button } from "../../components/ui/Button";
 import { useI18n } from "../../lib/i18n";
 import type { TimelineEvent } from "../../types/timeline";
 import { TimelineCategory, TimelineEventLabel } from "./TimelineDetails";
-import { timelineDate, timelineSummary } from "./timelinePresentation";
+import { timelineDate, timelineSummary, timelineObjectLabel } from "./timelinePresentation";
+import { Fragment } from "react";
+import { useMediaQuery } from "../../hooks/useMediaQuery";
 
 export function TimelineEventTable({
   rows,
@@ -32,6 +34,29 @@ export function TimelineEventTable({
   ) => void;
 }) {
   const { language, t } = useI18n();
+  const mobile = useMediaQuery("(max-width: 767px)");
+  if (mobile && rows.length && !isLoading) return (
+    <div className="h-full min-h-0 overflow-auto overscroll-contain" aria-label={t("timeline.title")}>
+      {rows.map((event, index) => {
+        const day = timelineDate(event.created_at, language, timeZone);
+        const object = timelineObjectLabel(event, t);
+        return <Fragment key={event.id}>
+          {(index === 0 || timelineDate(rows[index - 1].created_at, language, timeZone) !== day) && <h3 className="bg-surface-muted px-3 py-2 text-xs font-semibold text-platforma-subtle">{day}</h3>}
+          <button type="button" disabled={busy}
+            data-testid={`timeline-event-${event.id}`} data-focus-return-id={`timeline-event-${event.id}`}
+            aria-current={selectedId === event.id ? "true" : undefined}
+            className={`platforma-focus-ring block w-full space-y-1 border-b border-platforma-border px-3 py-3 text-left ${selectedId === event.id ? "bg-surface-muted" : "bg-surface-card"}`}
+            onClick={() => onSelect(event, { source: "pointer" })}
+            onKeyDown={(key) => { if (key.key === "Enter" || key.key === " ") { key.preventDefault(); onSelect(event, {source: "keyboard", key: key.key}); } }}>
+            <span className="flex items-start justify-between gap-2"><span className="min-w-0 break-words text-sm font-semibold"><TimelineEventLabel event={event}/></span><time className="shrink-0 text-xs tabular-nums text-platforma-subtle" dateTime={event.created_at}>{timelineDate(event.created_at, language, timeZone, true)}</time></span>
+            <span className="block break-words text-sm">{object}</span>
+            {event.client_name && event.client_name !== object && <span className="block break-words text-xs text-platforma-subtle">{event.client_name}</span>}
+            <span className="flex flex-wrap items-center justify-between gap-2 text-xs text-platforma-subtle"><span>{t("timeline.actor")}: {event.actor_name || t(event.actor ? "timeline.unknownActor" : "timeline.noActor")}</span><TimelineCategory event={event}/></span>
+          </button>
+        </Fragment>;
+      })}
+    </div>
+  );
   return (
     <DataTable
       className="h-full !rounded-none !border-0 !shadow-none"
@@ -42,7 +67,7 @@ export function TimelineEventTable({
       selectedRowKey={selectedId}
       tableLabel={t("timeline.title")}
       rowAriaLabel={(event) =>
-        `${t("timeline.openDetails")}: ${timelineSummary(event.event_type, t)}, ${event.client_name || t("timeline.noClient")}, ${timelineDate(event.created_at, language, timeZone, true)}`
+        `${t("timeline.openDetails")}: ${timelineSummary(event.event_type, t)}, ${timelineObjectLabel(event, t)}, ${timelineDate(event.created_at, language, timeZone, true)}`
       }
       rowFocusReturnId={(event) => `timeline-event-${event.id}`}
       rowTestId={(event) => `timeline-event-${event.id}`}
@@ -90,9 +115,10 @@ export function TimelineEventTable({
           cell: (event) => (
             <span
               className="block max-w-[200px] truncate"
-              title={event.client_name}
+              title={timelineObjectLabel(event, t)}
             >
-              {event.client_name || t("timeline.noClient")}
+              {timelineObjectLabel(event, t)}
+              {event.client_name && event.client_name !== timelineObjectLabel(event, t) && <span className="block truncate text-xs text-platforma-subtle">{event.client_name}</span>}
             </span>
           ),
         },

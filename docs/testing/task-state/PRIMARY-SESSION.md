@@ -12490,3 +12490,41 @@ Remaining: no transfer/data-preservation code gap; dedicated-server capacity and
 long-duration SLO acceptance unproven. Original request did not authorize broad
 performance rewrites. Git publication limited by20foreign outgoing/3remote commits;
 Existing Git index.lock blocked own staging/commit; no push/new CI. Details in the task checkpoint.
+
+## TIMELINE-FIXES-20261111 — all five timeline audit findings
+
+Owner explicitly authorized all five fixes: retain current design, meaningful events
+and details, mobile, rights, RU/KK/EN. Base1645163a754e075c384c304e4a2b846d8cca7d96;
+canonical root/branch unchanged. Starting snapshot output/timeline-fixes-20261111/starting.patch
+retains foreign STATUS/PRIMARY and leads-header/TaskFormModal WIP; no edits to those
+product paths. Contract, risk and checks recorded before implementation in output checkpoint.
+
+API projection batches authorized object names and resolves stage/member references within
+Business/pipeline/access scope. Existing analytics/object/amount/client boundaries retained.
+All taxonomy types and generic model actions have RU/KK/EN labels, dotted aliases supported.
+Details use historical status/time/amount/activation/field metadata, never raw text/reason;
+current names clearly separate. Actor is author, object column no longer client-only.
+Mobile compact buttons/disclosure filters; original desktop table/tokens/inspector retained.
+
+Verification: projection17, references62, final113 backend PASS; final system/drift PASS.
+First projection test failed comparing cold/warm permission-cache query counts; equally
+warmed fixture passed without source fix. Failed log preserved. Node presentation9PASS,
+catalog matches taxonomy in every language; final npm build/types/i18n7105PASS,
+bundle PASS (RU/KK >500kB advisory remains; app-shell within400kB).
+Chrome real isolated API/UI: RU1536/390, KK320, EN1024/1440/1536/390, object details,
+status/reschedule/stage/assignee, task link, category/empty/reset/paging, Enter/Escape/focus,
+network interruption/retry and operator denial PASS. Document width/height equal viewport
+on320/390/1024. Synthetic user data remains untranslated; native date entry follows browser.
+
+All commands and logs: docs/testing/evidence/timeline-fixes-20261111.md and output folder.
+No schema/domain writes/notification/BusinessEvent/AI/provider changes; workingDB untouched.
+Frontend contract, capabilities and money-analytics passport updated; registry links evidence.
+Access/CRM requirements unchanged and enforced; roadmap not a named phase in this task,
+README/setup/integrations/AI/operations need no change. No full/release/live gate requested.
+Self-review includes React hooks/no network waterfall, controlled fields, named controls,
+keyboard/default actions, scoped lookup/foreign relations and safe text rendering.
+
+Code/local-evidence/owner-decision remainder: none for the five fixes. Publication remainder:
+fetch confirmed25foreign outgoing/0remote-only commits. Publishing those is not authorized;
+own reviewed change committed locally only. No push/newCI/deployment. Test runtime stopped
+after browser verification; normal dev processes untouched. Final own SHA in output RESULT.

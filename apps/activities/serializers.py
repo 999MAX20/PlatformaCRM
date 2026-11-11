@@ -53,9 +53,31 @@ class ActivityTimelineSerializer(ActivityEventSerializer):
     """Labels for already-authorized event reads; no account emails or raw metadata UI."""
     actor_name = serializers.SerializerMethodField()
     client_name = serializers.SerializerMethodField()
+    entity_name = serializers.SerializerMethodField()
+    entity_available = serializers.SerializerMethodField()
+    reference_names = serializers.SerializerMethodField()
 
     class Meta(ActivityEventSerializer.Meta):
-        fields = [*ActivityEventSerializer.Meta.fields, "actor_name", "client_name"]
+        fields = [*ActivityEventSerializer.Meta.fields, "actor_name", "client_name", "entity_name", "entity_available", "reference_names"]
+
+    def _objects(self):
+        if not hasattr(self, "_timeline_objects"):
+            from apps.activities.timeline_projection import timeline_objects, timeline_reference_names
+            source = self.parent.instance if isinstance(self.parent, serializers.ListSerializer) else self.instance
+            events = [source] if isinstance(source, ActivityEvent) else list(source or [])
+            self._timeline_objects = timeline_objects(events, reader_actor(self.context))
+            self._reference_names = timeline_reference_names(events, reader_actor(self.context), self._timeline_objects)
+        return self._timeline_objects
+
+    def get_entity_name(self, event):
+        return self._objects().get((event.business_id, event.entity_type.lower(), event.entity_id), "")
+
+    def get_entity_available(self, event):
+        return (event.business_id, event.entity_type.lower(), event.entity_id) in self._objects()
+
+    def get_reference_names(self, event):
+        self._objects()
+        return self._reference_names.get(event.pk, {})
 
     def get_actor_name(self, event):
         if not event.actor or not (event.actor_id == event.business.owner_id or getattr(event, "actor_is_member", False)):

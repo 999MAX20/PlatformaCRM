@@ -1,3 +1,12 @@
+TIMELINE-FIXES-20261111: all5 audit findings fixed and locally verified.
+RU/KK/EN event catalog; safe historical details/current object names; author semantics;
+compact mobile/filter disclosure/single scroll; prior design and access retained.
+Backend113/presentation9/system-drift/build-types-i18n/bundle/browser PASS.
+Browser320–1536: locales/keyboard/filter/paging/link/recovery/operator denial PASS.
+No workingDB/migration/provider/deploy; publication blocked by25foreign outgoing commits.
+Own local commit only; exact commands/limits: docs/testing/evidence/timeline-fixes-20261111.md.
+Artifacts/checkpoint: output/timeline-fixes-20261111.
+
 LOCAL-MIGRATIONS-20261111: exactly3 approved local migrations applied; no pending migrations.
 Fresh pg_dump verified by restore:154tables/9855rows; SHA retained with backup.
 RestoredDB rehearsal and workingDB old-column parityPASS;153data tables/9662rows unchanged.

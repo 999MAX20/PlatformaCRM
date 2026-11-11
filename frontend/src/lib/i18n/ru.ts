@@ -1,3 +1,4 @@
+import { timeline } from "./ru/timeline";
 import { importWorkspace } from "./ru/importWorkspace";
 import { voice } from "./ru/voice";
 import { leads } from "./ru/leads";
@@ -48,6 +49,7 @@ export const ru: Record<string, string> = {
   ...notifications,
   ...clients,
   ...deals,
+  ...timeline,
   "notification.announcement": "Объявление",
   "notification.announcements": "Объявления бизнеса",
   "notification.myFeed": "Мои уведомления",

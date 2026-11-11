@@ -1,4 +1,4 @@
-import type { TimelineFilters } from "../../types/timeline";
+import type { TimelineEvent, TimelineFilters } from "../../types/timeline";
 
 export function readTimelineFilters(params: URLSearchParams): TimelineFilters {
   const page = Number(params.get("page"));
@@ -41,6 +41,7 @@ export function safeTimelineMetadata(metadata: Record<string, unknown>) {
     "draft",
     "ready",
     "closed",
+    "created", "waiting", "contacted", "appointment_created",
   ]);
   for (const key of ["amount_before", "amount_after"]) {
     const value = metadata[key];
@@ -51,7 +52,7 @@ export function safeTimelineMetadata(metadata: Record<string, unknown>) {
     )
       safe[key] = value;
   }
-  for (const key of ["previous_start_at", "current_start_at", "start_at"]) {
+  for (const key of ["previous_start_at", "current_start_at", "start_at", "previous_due_at", "due_at"]) {
     const value = metadata[key];
     if (
       typeof value === "string" &&
@@ -61,11 +62,12 @@ export function safeTimelineMetadata(metadata: Record<string, unknown>) {
       safe[key] = value;
   }
   for (const key of ["from_status", "to_status"]) {
+    const value = metadata[key] ?? metadata[key === "from_status" ? "from" : "to"];
     if (
-      typeof metadata[key] === "string" &&
-      statuses.has(metadata[key] as string)
+      typeof value === "string" &&
+      statuses.has(value)
     )
-      safe[key] = metadata[key];
+      safe[key] = value;
   }
   return safe;
 }
@@ -100,6 +102,10 @@ export function timelineDate(
 }
 
 export function timelineSummary(eventType: string, t: (key: string) => string) {
+  const aliases: Record<string, string> = { deal_marked_won: "deal_won", deal_marked_lost: "deal_lost", lead_marked_lost: "lead_lost" };
+  const normalized = aliases[eventType] || eventType.replace(".", "_");
+  const eventKey = `timeline.eventType.${normalized}`;
+  if (t(eventKey) !== eventKey) return t(eventKey);
   const key = `crmCard.timelineEvent.${eventType}`;
   const label = t(key);
   return label !== key ? label : t("timeline.otherEvent");
@@ -114,6 +120,8 @@ export function timelineDetailTransitions(
   const safe = safeTimelineMetadata(metadata);
   const translatedStatus = (value: unknown) => {
     if (typeof value !== "string") return "";
+    const timelineKey = `timeline.status.${value}`;
+    if (t(timelineKey) !== timelineKey) return t(timelineKey);
     const key = `status.${value}`;
     return t(key) !== key ? t(key) : "";
   };
@@ -127,7 +135,12 @@ export function timelineDetailTransitions(
       : new Intl.NumberFormat(
           language === "kk" ? "kk-KZ" : language === "en" ? "en-GB" : "ru-RU",
         ).format(Number(value));
-  return [
+  const transitions = [
+    {
+      label: t("timeline.dueDate"),
+      from: date(safe.previous_due_at),
+      to: date(safe.due_at),
+    },
     {
       label: t("crmCard.timelineFieldStatus"),
       from: translatedStatus(safe.from_status),
@@ -147,8 +160,24 @@ export function timelineDetailTransitions(
     .filter((detail) => detail.from || detail.to)
     .map(({ label, from, to }) => ({
       label,
-      value: `${from || "—"} → ${to || "—"}`,
+      value: from && to ? `${from} → ${to}` : to || from,
     }));
+  if (typeof metadata.from_active === "boolean" && typeof metadata.to_active === "boolean") {
+    transitions.push({label: t("timeline.activeState"), value: `${t(metadata.from_active ? "timeline.enabled" : "timeline.disabled")} → ${t(metadata.to_active ? "timeline.enabled" : "timeline.disabled")}`});
+  }
+  const fields = metadata.fields;
+  if (fields && (Array.isArray(fields) || typeof fields === "object")) {
+    const names = (Array.isArray(fields) ? fields : Object.keys(fields)).filter((key): key is string => typeof key === "string").map(key => `timeline.field.${key}`).filter(key => t(key) !== key).map(key => t(key));
+    if (names.length) transitions.push({label: t("timeline.changedFields"), value: names.join(", ")});
+  }
+  return transitions;
+}
+
+export function timelineObjectLabel(event: TimelineEvent, t: (key: string) => string) {
+  if (event.entity_name && event.entity_available) return event.entity_name;
+  const kind = timelineEntityRoutes[event.entity_type.toLowerCase()];
+  if (kind && event.entity_available && /^[1-9]\d*$/.test(event.entity_id)) return `${t(kind.label)} #${event.entity_id}`;
+  return t(event.entity_id ? "timeline.objectUnavailable" : "timeline.objectNotLinked");
 }
 
 export const timelineEntityRoutes: Record<

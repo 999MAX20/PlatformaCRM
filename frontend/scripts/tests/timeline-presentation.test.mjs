@@ -1,5 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { readFileSync } from "node:fs";
+import { timeline as ru } from "../../src/lib/i18n/ru/timeline.ts";
+import { timeline as kk } from "../../src/lib/i18n/kk/timeline.ts";
+import { timeline as en } from "../../src/lib/i18n/en/timeline.ts";
 import {
   readTimelineFilters,
   safeTimelineMetadata,
@@ -7,6 +11,7 @@ import {
   timelineDetailTransitions,
   timelineSummary,
   timelineEntityRoutes,
+  timelineObjectLabel,
 } from "../../src/features/timeline/timelinePresentation.ts";
 
 test("URL filters retain search and normalize invalid pagination", () => {
@@ -30,6 +35,35 @@ test("URL filters retain search and normalize invalid pagination", () => {
     readTimelineFilters(new URLSearchParams("page=3&page_size=50")).page,
     3,
   );
+});
+
+test("every domain event has an explicit label in RU/KK/EN, including historical aliases", () => {
+  const source = readFileSync(new URL("../../../apps/activities/taxonomy.py", import.meta.url), "utf8").split("EVENT_ALIASES")[0];
+  const events = [...source.matchAll(/^    [A-Z_]+ = "([a-z_]+)"/gm)].map(match => match[1]);
+  assert.ok(events.length > 50);
+  for (const dictionary of [ru, kk, en]) {
+    const t = key => dictionary[key] || key;
+    for (const event of events) assert.ok(dictionary[`timeline.eventType.${event}`], event);
+    assert.equal(timelineSummary("client.archived", t), dictionary["timeline.eventType.client_archived"]);
+    assert.equal(timelineSummary("bot.deleted", t), dictionary["timeline.eventType.bot_deleted"]);
+    assert.equal(timelineSummary("deal_marked_lost", t), dictionary["timeline.eventType.deal_lost"]);
+  }
+});
+
+test("legacy appointment metadata yields a status change without leaking a reason", () => {
+  const t = key => ({"status.confirmed":"Confirmed","status.no_show":"No show"})[key] || key;
+  const details = timelineDetailTransitions({from:"confirmed",to:"no_show",reason:"PRIVATE",fields:{phone:"PRIVATE",token:"PRIVATE"}}, "en", "UTC", key => en[key] || t(key));
+  assert.equal(details[0].value,"Confirmed → No show");
+  assert.doesNotMatch(JSON.stringify(details),/PRIVATE|token/);
+  assert.match(JSON.stringify(details),/Phone/);
+});
+
+test("partial history never invents an old value and denied objects never reveal their name", () => {
+  const t = key => en[key] || key;
+  const details = timelineDetailTransitions({start_at:"2026-11-11T10:00:00Z"},"en","UTC",t);
+  assert.doesNotMatch(details[0].value,/→/);
+  assert.equal(timelineObjectLabel({entity_type:"Task",entity_id:"42",entity_name:"Private",entity_available:false},t),en["timeline.objectUnavailable"]);
+  assert.equal(timelineObjectLabel({entity_type:"Task",entity_id:"42",entity_name:"Call supplier",entity_available:true},t),"Call supplier");
 });
 
 test("historical drilldown retains entity scope and record events open the canonical card", () => {
