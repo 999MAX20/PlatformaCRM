@@ -110,7 +110,10 @@ use current crm.local_date and timezone. Archive is reversible deletion. The ser
 For a standalone social greeting or "how are you?" addressed to the assistant, use intent=greeting,
 question="", steps=[], period=null, read=null. The server will supply a localized courtesy reply.
 Never use greeting for a CRM question, business assessment or action, even when preceded by a greeting.
-For intent=answer, read may be null or {"entity":"one permitted entity","query":"short search text"}.
+For intent=answer, read may be null or {"entity":"one permitted entity","query":"short search text","archive":"active|archived|all"}.
+Use archive=archived when the employee asks for archived records, all for both active and archived,
+and active otherwise. Archive is record state, not a separate source or a permission denial.
+For an explicit record ID keep the correct entity; the server will resolve the ID within current access.
 Use read for a specific lookup or list needing records beyond the recent sample. No arbitrary filters/SQL.
 For intent=analytics, period must be {"start":"YYYY-MM-DD","end":"YYYY-MM-DD"} from the requested dates,
 or from selected_period when the user refers to that period; otherwise ask for dates with intent=clarify.
@@ -194,6 +197,9 @@ def parse_route(text, context, message=""):
             raise ValueError
         allowed_ids = {(entity, row["id"]) for entity, rows in context["available_records"].items() for row in rows}
         allowed_ids.update((item["entity"], item["record"]["id"]) for item in context["fresh_references"])
+        for entity in ENTITIES:
+            key = {"leads": "latest_leads", "appointments": "upcoming_appointments"}.get(entity, entity)
+            allowed_ids.update((entity, row["id"]) for row in context.get("crm", {}).get(key, []))
         for index, step in enumerate(steps):
             if not isinstance(step, dict) or set(step) - {"entity", "operation", "target_id", "query", "request", "after"}:
                 raise ValueError
@@ -212,8 +218,9 @@ def parse_route(text, context, message=""):
             if dependency is not None and (type(dependency) is not int or not 0 <= dependency < index):
                 raise ValueError
         read = value.get("read")
-        if read is not None and (intent != "answer" or not isinstance(read, dict) or set(read) - {"entity", "query"}
-                                or read.get("entity") not in ENTITIES or not isinstance(read.get("query", ""), str) or len(read.get("query", "")) > 200):
+        if read is not None and (intent != "answer" or not isinstance(read, dict) or set(read) - {"entity", "query", "archive"}
+                                or read.get("entity") not in ENTITIES or not isinstance(read.get("query", ""), str) or len(read.get("query", "")) > 200
+                                or read.get("archive", "active") not in ("active", "archived", "all")):
             raise ValueError
         period = value.get("period")
         if period is not None:

@@ -154,6 +154,8 @@ export const ai: Record<string, string> = {
   "aiCRM.field.source": "Дереккөз",
   "aiCRM.field.notes": "Ескертпелер",
   "aiCRM.field.client": "Клиент",
+  "aiCRM.field.branch": "Филиал",
+  "aiCRM.referenceUnavailable": "Жазба қолжетімсіз",
   "aiCRM.field.service": "Қызмет",
   "aiCRM.field.message": "Өтініш",
   "aiCRM.field.responsible_user": "Жауапты",

@@ -95,10 +95,12 @@ def scoped_entities(business, user, entity, *, include_archived=False):
     return queryset if include_archived else queryset.filter(is_archived=False)
 
 
-def read_entities(*, business, user, entity, query="", entity_id=None, offset=0, limit=20, include_archived=False):
+def read_entities(*, business, user, entity, query="", entity_id=None, offset=0, limit=20, include_archived=False, archived_only=False):
     assert_employee_tool(business, "crm_read")
     spec = entity_spec(entity)
     queryset = scoped_entities(business, user, entity, include_archived=include_archived)
+    if archived_only:
+        queryset = queryset.filter(is_archived=True)
     if entity_id is not None:
         queryset = queryset.filter(pk=entity_id)
     if query:

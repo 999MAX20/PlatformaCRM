@@ -154,6 +154,8 @@ export const ai: Record<string, string> = {
   "aiCRM.field.source": "Source",
   "aiCRM.field.notes": "Notes",
   "aiCRM.field.client": "Client",
+  "aiCRM.field.branch": "Branch",
+  "aiCRM.referenceUnavailable": "Record unavailable",
   "aiCRM.field.service": "Service",
   "aiCRM.field.message": "Request",
   "aiCRM.field.responsible_user": "Responsible user",

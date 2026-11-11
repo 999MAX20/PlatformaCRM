@@ -10,7 +10,7 @@ from apps.ai_core.assistant import build_crm_context
 from apps.ai_core.conversation_access import references_visible, staff_conversation
 from apps.ai_core.conversation_copy import conversation_text
 from apps.ai_core.conversation_memory import staff_memory
-from apps.ai_core.conversation_router import OPERATIONS, effective_sources, resolve_step_target, route_turn
+from apps.ai_core.conversation_router import OPERATIONS, effective_sources, explicit_target_ids, resolve_step_target, route_turn
 from apps.ai_core.conversation_state import assert_current_turn, fail_turn, locked_conversation
 from apps.ai_core.crm_planner import plan_command
 from apps.ai_core.ai_client import AIClientError
@@ -100,6 +100,17 @@ def prepare_actions(turn, plan, memory, language):
             break
         proposal = result["prepared_command"]
         validate_voice_proposal(turn.context_json, proposal["tool"], proposal["payload"])
+        if proposal["tool"] == "crm_create" and step.get("after") is None:
+            for previous in prepared:
+                earlier = plan["steps"][previous["step"]]
+                if (previous["tool"] == "crm_create" and earlier.get("after") is None
+                        and earlier["request"].strip() != step["request"].strip()
+                        and previous["payload"]["entity"] == proposal["payload"]["entity"]
+                        and previous["payload"].get("values") == proposal["payload"].get("values")):
+                    return {"plan": plan, "prepared": [], "references": references,
+                            "question": conversation_text("duplicate_creation", language),
+                            "response": conversation_text("duplicate_creation", language),
+                            "status": AgentTurn.Statuses.CLARIFYING}
         references.extend(payload_references(proposal["payload"]))
         prepared.append({"step": index, **proposal})
     return {"plan": plan, "prepared": prepared, "references": references, "question": question,
@@ -119,15 +130,29 @@ def prepare_answer(turn, plan, memory, language):
     answer_contract = None
     if plan.get("read"):
         entity = plan["read"]["entity"]
-        found = read_entities(business=thread.business, user=user, entity=entity, query=plan["read"].get("query", ""))
+        archive = plan["read"].get("archive", "active")
+        ids = explicit_target_ids(turn.message, entity)
+        entity_id = next(iter(ids)) if len(ids) == 1 else None
+        found = read_entities(business=thread.business, user=user, entity=entity,
+                              query="" if entity_id else plan["read"].get("query", ""), entity_id=entity_id,
+                              include_archived=archive != "active", archived_only=archive == "archived")
+        if not found["count"] and (entity_id is not None or archive != "active"):
+            return {"response": conversation_text("records_not_found", language), "sources": [], "references": [],
+                    "context": {"provider_state": "no_data"}}
+        total = scoped_entities(thread.business, user, entity, include_archived=archive != "active")
+        if archive == "archived":
+            total = total.filter(is_archived=True)
         key = {"leads": "latest_leads", "appointments": "upcoming_appointments"}.get(entity, entity)
         context[key] = found["results"]
         context["summary"]["search"] = {"entity": entity, "query": plan["read"].get("query", ""),
                                          "count": found["count"], "shown": len(found["results"]), "has_more": found["has_more"],
-                                         "total_count": scoped_entities(thread.business, user, entity).count(),
-                                         "coverage": "permitted_non_archived_records"}
+                                         "total_count": total.count(),
+                                         "coverage": {"active": "permitted_non_archived_records", "archived": "permitted_archived_records",
+                                                      "all": "permitted_active_and_archived_records"}[archive]}
         answer_contract = (
-            " summary.search.total_count is the total of all currently permitted non-archived records of that entity, without the search filter."
+            " summary.search.total_count is the total in the explicitly stated coverage, without the search filter."
+            " Archived records are included only when coverage says archived. is_archived describes each record's state."
+            " Missing search results do not mean access is disabled. Only crm_context.disabled_sources establishes a disabled source."
             " summary.search.count is only the number matching query; shown is the bounded page size, never a total."
             " A question asking for both a total and a named record needs both facts: give total_count as the overall count,"
             " then explicitly label count as matching the search and identify the record. Never replace the overall count with count or shown."

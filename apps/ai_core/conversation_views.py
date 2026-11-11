@@ -8,6 +8,8 @@ from rest_framework.views import APIView
 from apps.ai_core.conversation_access import create_staff_conversation, create_voice_conversation, voice_access, memory_access_fingerprint, references_visible, staff_conversation, staff_conversations
 from apps.ai_core.models import AgentConversation
 from apps.ai_core.conversation_actions import confirm_turn
+from apps.ai_core.agent_runtime import bind_thread
+from apps.ai_core.conversation_review import action_reviews
 from apps.ai_core.conversation_state import OPEN, cancel_turn, dispatch_conversation_job, locked_conversation, recover_interrupted, reset_memory, retry_turn, start_turn, stop_turn
 from apps.ai_core.serializers import AIToolCallLogSerializer
 from apps.ai_core.tool_registry import tool_call_fingerprint
@@ -86,9 +88,11 @@ def turn_payload(turn, user, *, fingerprint=None):
     current_ids = {step.get("tool_call_id") for step in turn.plan_json.get("steps", [])}
     actions = []
     if visible:
-        for log in turn.tool_calls.all().order_by("pk"):
-            if log.pk in current_ids or log.status == "executed":
-                actions.append({**AIToolCallLogSerializer(log).data, "fingerprint": tool_call_fingerprint(log)})
+        logs = [log for log in turn.tool_calls.all().order_by("pk") if log.pk in current_ids or log.status == "executed"]
+        with bind_thread(thread):
+            reviews = action_reviews(logs, business=thread.business, user=user)
+        for log in logs:
+            actions.append({**AIToolCallLogSerializer(log).data, "fingerprint": tool_call_fingerprint(log), "review": reviews[log.pk]})
     return {"id": turn.pk, "sequence": turn.sequence, "status": turn.status, "mode": turn.mode,
             "message": turn.message if visible else "", "response": turn.response if visible else "",
             "redacted": not visible, "sources": turn.sources_json if visible else [], "actions": actions,

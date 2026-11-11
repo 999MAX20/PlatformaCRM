@@ -10,7 +10,7 @@ export type AgentConversation = {
 export type AgentTurn = {
   id: Id; sequence: number; status: TurnStatus; mode: ConversationMode; message: string; response: string;
   redacted: boolean; sources: Array<{ id: string; label: string }>;
-  actions: Array<AIToolCallLog & { fingerprint: string }>;
+  actions: Array<AIToolCallLog & { fingerprint: string; review?: { timezone: string; values: Record<string, string | null>; before: Record<string, string | null> } }>;
   error_code: string; provider_state: string; completed_steps: number; total_steps: number; created_at: string; updated_at: string;
 };
 export type ConversationPage = { conversation: AgentConversation; turns: AgentTurn[]; has_more: boolean; next_before: number | null };

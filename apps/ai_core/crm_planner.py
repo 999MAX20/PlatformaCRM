@@ -43,7 +43,9 @@ PLAN_CONTRACT = (
     ' If the latest message supplies a bare title in answer to that question, copy the whole title verbatim.'
     ' Preserve leading abbreviations, codes and prefixes in user-supplied names and titles; they are part of the value, not disposable labels.'
     ' A supplied title is sufficient for a task. Deadline, assignee and links are optional, not clarification requirements.'
-    ' command_context.original_request is the actual latest employee message; use it to preserve values omitted from the routed step.'
+    ' The user input and command_context.selected_step identify this one action, including its own name and field values.'
+    ' command_context.original_request is supporting context for missing details, not a replacement for the selected step.'
+    ' When several actions concern the same entity type, use only this step\'s values. Never copy a sibling action\'s title or description.'
     ' Response language applies ONLY to question. Record values such as title and description retain the language and wording'
     ' supplied by the employee in original_request or pending dialogue, even if the routed step was translated. Never translate values unless explicitly asked.'
     ' The routed step may contain only the work description, with the creation verb omitted. When the selected tool is crm_create'
@@ -163,7 +165,7 @@ def plan_command(*, business, user, entity, message, entity_id=None, conversatio
         "allow_null": fields[name].allow_null, "allow_blank": getattr(fields[name], "allow_blank", False),
         "choices": list(getattr(fields[name], "choices", {}))} for name in spec.fields}
     result, request_log = run_ai_request(business=business, user=user, prompt_type="crm_action_plan",
-        user_input=source_message if source_message is not None else message,
+        user_input=message,
         input_json={"command_context": context, **({"conversation_memory": conversation_memory} if conversation_memory else {})},
         response_contract=plan_response_contract(entity, target, context["available_tools"]))
     if result.is_mock:

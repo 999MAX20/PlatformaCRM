@@ -1,5 +1,7 @@
 """Localized deterministic workflow messages; facts come from domain results."""
 COPY = {
+    "records_not_found": ("По этому запросу доступные записи не найдены. Уточните название или номер записи.", "Бұл сұрау бойынша қолжетімді жазбалар табылмады. Жазбаның атауын немесе нөмірін нақтылаңыз.", "No accessible records match this request. Clarify the record name or ID."),
+    "duplicate_creation": ("Для разных новых записей получились одинаковые поля. Уточните отличия или отправьте команды отдельно.", "Әртүрлі жаңа жазбалардың өрістері бірдей болып шықты. Айырмашылықтарын нақтылаңыз немесе пәрмендерді бөлек жіберіңіз.", "Different new records have identical proposed fields. Clarify their differences or send the commands separately."),
     "sources_unavailable": ("Для этого запроса нет доступных источников данных. Проверьте права доступа и источники в настройках агента.", "Бұл сұрау үшін қолжетімді дереккөздер жоқ. Қол жеткізу құқықтары мен агент баптауларындағы дереккөздерді тексеріңіз.", "No data sources are available for this request. Check your access permissions and the agent's source settings."),
     "greeting": ("Привет! Чем помочь в CRM?", "Сәлем! CRM бойынша қалай көмектесе аламын?", "Hi! How can I help with the CRM?"),
     "analytics_read_only": ("В аналитике доступны вопросы и отчёты. Для изменения записей откройте «Работа с CRM».", "Аналитикада сұрақтар мен есептер қолжетімді. Жазбаларды өзгерту үшін «CRM-мен жұмыс» бөлімін ашыңыз.", "Analytics supports questions and reports. Open Work with CRM to change records."),

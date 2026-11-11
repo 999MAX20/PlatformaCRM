@@ -3,6 +3,7 @@ import { Link } from "react-router";
 import type { AgentTurn } from "../../../api/aiConversations";
 import { Button } from "../../../components/ui/Button";
 import { useI18n } from "../../../lib/i18n";
+import { reviewValue } from "../reviewValue";
 
 const paths: Record<string, [string, string]> = { clients: ["clients", "client"], leads: ["leads", "lead"], deals: ["deals", "deal"], tasks: ["tasks", "task"], appointments: ["calendar", "appointment"] };
 const printable = (value: unknown) => value === null || value === undefined || value === "" ? "—" : typeof value === "object" ? JSON.stringify(value) : String(value);
@@ -12,7 +13,7 @@ export function AgentTurnCard({ turn, busy, canExecute, isLatest, onConfirm, onC
   turn: AgentTurn; busy: boolean; canExecute: boolean; isLatest: boolean;
   onConfirm: () => void; onCancel: () => void; onRetry: () => void;
 }) {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   if (turn.redacted) return <p role="status" className="rounded-xl border border-platforma-border p-4 text-sm text-platforma-subtle">{t("agentChat.redacted")}</p>;
   const pending = turn.status === "awaiting_confirmation";
   return <article className="space-y-3">
@@ -44,7 +45,7 @@ export function AgentTurnCard({ turn, busy, canExecute, isLatest, onConfirm, onC
             {route && typeof target === "number" && <Link className="inline-block text-sm underline" to={`/app/${route[0]}?${route[1]}=${target}`}>{String(record.full_name || record.title || record.message || `#${target}`)}</Link>}
             {Object.keys(fields).length > 0 && <div className="overflow-x-auto" tabIndex={0}><table className="w-full text-left text-sm">
               <thead><tr><th className="p-2">{t("aiCRM.field")}</th><th className="p-2">{t("aiCRM.before")}</th><th className="p-2">{t("aiCRM.after")}</th></tr></thead>
-              <tbody>{Object.entries(fields).map(([key, value]) => <tr key={key} className="border-t border-platforma-border"><th className="p-2 font-medium">{t(`aiCRM.field.${key}`)}</th><td className="max-w-64 break-words p-2">{printable(before[key])}</td><td className="max-w-64 break-words p-2">{printable(value)}</td></tr>)}</tbody>
+              <tbody>{Object.entries(fields).map(([key, value]) => <tr key={key} className="border-t border-platforma-border"><th className="p-2 font-medium">{t(`aiCRM.field.${key}`)}</th><td className="max-w-64 break-words p-2">{reviewValue(key, before[key], "before", action.review, language, t("aiCRM.referenceUnavailable"))}</td><td className="max-w-64 break-words p-2">{reviewValue(key, value, "values", action.review, language, t("aiCRM.referenceUnavailable"))}</td></tr>)}</tbody>
             </table></div>}
             {action.input_json.action ? <p className="text-sm">{t(`aiCRM.action.${String(action.input_json.action)}`)}</p> : null}
             {action.input_json.reason ? <p className="break-words text-sm">{printable(action.input_json.reason)}</p> : null}

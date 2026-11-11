@@ -1,3 +1,12 @@
+AI-WORK-CRM-COMPLEX-FIXES-20261112: C1–C3 fixed and verified on isolated realAI data.
+Independent action values, scoped archive reads, named/localized Appointment review.
+Router accepts both permitted samples; unknown IDs/ambiguity remain guarded.
+API17initial15PASS2FAIL; targeted recovery/final PASS, failures retained; browser11PASS/1harnessFAIL.
+90realcalls,SQL2clients12tasks2appointments; no extra writes/leaks. Newrequest→Appointment preserved.
+Backend focused/dependent, system/drift, frontend build/types/i18n/budget/formatter checks recorded.
+Own runtimes stopped; workingDB/env untouched. Own commit only; foreign outgoing blocks push/newCI.
+Evidence: docs/testing/evidence/ai-work-crm-complex-fixes-20261112.md.
+
 MANAGEMENT-BROWSER-REVIEW-20261112: all five pages checked through real browser/API.
 Fixed Select-only draft guard, schedule-to-absence link and direct-form save/reopen.
 Existing7browserPASS; targeted regression,20viewports/four320forms/branch+searchPASS.
