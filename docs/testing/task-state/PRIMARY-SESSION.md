@@ -1,3 +1,12 @@
+AI-WORK-CRM-LIVE-20261111: verification completed with open W1–W4; no product fixes.
+Real AI/API/Chrome: create/update, confirmation, rights and sequential replay tested.
+Wrong/ambiguous target, completion routing, Lead interpretation and denied-action UX fail.
+22initial API17PASS/5FAIL (incl harness403/dependent skip); extension7PASS;65real calls.
+Protected records unchanged; no unauthorized writes/duplicates observed. Own runtimes stopped.
+WorkingDB/env/deploy untouched. FullD01/PGconcurrency/production not certified.
+Own docs commit only;40foreign outgoing block push/newCI. Evidence:
+docs/testing/evidence/ai-work-crm-live-20261111.md.
+
 VOICE-KAZAKH-20261111: approved review for new voice clients/tasks implemented and verified locally.
 Ambiguous phones/spelling clarify; edits/cancel/replay/rollback and bypass guards verified.
 145dependent +38task-review +25PostgreSQL PASS; system/drift,5browser,build/types/i18n/bundle PASS.
