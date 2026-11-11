@@ -43,6 +43,12 @@ class HistoryAnswerTests(TestCase):
         with patch("apps.ai_core.services.generate_text", side_effect=AIClientError()):
             self.assertEqual(self.answer().status_code, 503)
 
+    def test_internal_history_section_is_not_accepted_as_a_citation(self):
+        result = AIClientResult(output_text=json.dumps({"answer": "2", "source_ids": ["HISTORY-tasks"], "no_data": False}), model="test", provider="test")
+        with patch("apps.ai_core.services.generate_text", return_value=result) as provider:
+            self.assertEqual(self.answer().status_code, 503)
+        self.assertIn("HISTORY-* values are internal", provider.call_args.args[0].messages[0]["content"])
+
     def test_no_sources_skips_provider(self):
         self.business.financial_source_mode = "external"
         self.business.save()

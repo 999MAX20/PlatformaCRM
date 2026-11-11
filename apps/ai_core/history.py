@@ -15,6 +15,17 @@ from apps.businesses.access import Actions, Resources, assert_can, can, scope_qu
 from apps.businesses.capabilities import resource_is_enabled
 
 
+HISTORY_ANSWER_SCHEMA = {
+    "type": "object", "additionalProperties": False,
+    "required": ["answer", "source_ids", "no_data"],
+    "properties": {
+        "answer": {"type": "string"},
+        "source_ids": {"type": "array", "items": {"type": "string", "enum": ["CRM-summary"]}},
+        "no_data": {"type": "boolean"},
+    },
+}
+
+
 def operational_period(business, user, start, end, sources):
     lower, upper = business_period(business, start, end)
     metrics = {}
@@ -27,7 +38,8 @@ def operational_period(business, user, start, end, sources):
         metrics[entity] = {"count": period.count(), "date_field": field, "includes_archived": True,
             "source_id": f"HISTORY-{entity}", "current_statuses": {}}
         if entity != "clients":
-            metrics[entity]["current_statuses"] = dict(period.values_list("status").annotate(count=Count("pk")))
+            metrics[entity]["current_statuses"] = dict(
+                period.order_by().values_list("status").annotate(count=Count("pk", distinct=True)))
     return metrics
 
 
@@ -99,9 +111,11 @@ def explain_history(*, business, user, start, end, question, conversation_memory
         " Net receipts are receipts minus refunds, never profit, revenue accrual, balance or debt. Profit and debt are unavailable."
         " Never infer cash from clients, deal amounts, services or events. Respect unavailable/stale states and currency."
         " Explain only supplied deterministic totals and differences. Do not invent causes or forecasts."
+        " Cite CRM-summary for this report. HISTORY-* values are internal report sections, not citation IDs."
     )
     result, log = run_ai_request(business=business, user=user, prompt_type="business_history_analyst",
-        user_input=question, input_json={"crm_context": {"summary": report}, **({"conversation_memory": conversation_memory} if conversation_memory else {})}, response_contract=contract)
+        user_input=question, input_json={"crm_context": {"summary": report}, **({"conversation_memory": conversation_memory} if conversation_memory else {})},
+        response_contract=contract, response_schema=HISTORY_ANSWER_SCHEMA)
     business.refresh_from_db()
     fresh = build_history_report(business=business, user=user, start=start, end=end)
     def signature(value):

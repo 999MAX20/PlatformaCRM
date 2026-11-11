@@ -12783,3 +12783,22 @@ Report: output/business-browser-review-20261111/REPORT.md.
 Evidence: docs/testing/evidence/business-workspace-20261111.md#browser-review-20261111.
 Relevant frontend contract and scheduling passport updated. CRM/access/AI/integration/
 operations/setup/roadmap need no changes: backend policy, env and phase acceptance unchanged.
+
+## AI-ANALYTICS-COMPLEX-FIXES-20261111
+
+Owner explicitly requested all4 fixes and complex API/Playwright realAI, no working data changes.
+Canonical/current branch; initial698cf014, source manifest in output/playwright/ai-analytics-complex-verified.
+A1single/selected dates; A2orderless distinct own/team/watchers; A3discriminated strict route;
+A4effective-source no_data beforemodel. Historical citation schema added for reproduced HISTORY-tasks mismatch.
+34API/8browser/2directhistory/replayPASS; final41calls103732tokens, all22turns completed,0toolcalls.
+39fixture tasks preserved/privacyPASS; all owned runtimes/browser closed,3disposable DBs absent.
+First34matrix32PASS2FAIL and3probe2PASS1FAIL kept; total72calls181615tokens incl failures.
+Backend138dependentPASS; focused17PASS; final historical/routing22PASS; final48=47PASS1newfixtureERROR,
+corrected unique email fixtures then own/team2PASS. System/driftPASS; unaffected evidence reused.
+Initial2runtime cleanupWinError32 resolved by exact leftover disposable-file removal; finalruntimeexit0.
+No workingDB/env/provider-settings/notification/BusinessEvent/deploy effects. No frontend change/build.
+Contracts/passport/roadmap/registry/status/evidence consistent; README/domain/access docs unchanged by behavior.
+No scoped code/local-evidence remainder; fullD01/PG/livequeue/production/other models not certified.
+Own commit only;39foreignoutgoing after fetch block own-onlypush/newCI; foreign WIP retained.
+Evidence: docs/testing/evidence/ai-analytics-complex-fixes-20261111.md.
+Exact commands/logs/failures/processes: output/ai-analytics-complex-fixes-20261111/CHECKPOINT.md.

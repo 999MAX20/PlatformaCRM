@@ -10,7 +10,7 @@ from apps.ai_core.assistant import build_crm_context
 from apps.ai_core.conversation_access import references_visible, staff_conversation
 from apps.ai_core.conversation_copy import conversation_text
 from apps.ai_core.conversation_memory import staff_memory
-from apps.ai_core.conversation_router import OPERATIONS, resolve_step_target, route_turn
+from apps.ai_core.conversation_router import OPERATIONS, effective_sources, resolve_step_target, route_turn
 from apps.ai_core.conversation_state import assert_current_turn, fail_turn, locked_conversation
 from apps.ai_core.crm_planner import plan_command
 from apps.ai_core.ai_client import AIClientError
@@ -202,9 +202,10 @@ def prepare_agent_turn(turn_id):
                 if language not in {"ru", "kk", "en"}:
                     language = "ru"
             memory = staff_memory(thread=thread, user=thread.owner, query=turn.message, before_sequence=turn.sequence)
+            no_sources = turn.mode == "analytics" and not effective_sources(thread.business, thread.owner, config)
             if turn.plan_json.get("steps"):
                 plan = turn.plan_json  # Resume only the unfinished steps of this turn.
-            elif not config["sources"]:
+            elif not config["sources"] or no_sources:
                 plan = {"intent": "answer", "steps": [], "read": None, "period": None}
             else:
                 for attempt in range(2 if turn.mode == "analytics" else 1):
@@ -219,7 +220,10 @@ def prepare_agent_turn(turn_id):
                             raise
             turn.refresh_from_db(fields=["status", "memory_epoch"])
             assert_current_turn(staff_conversation(conversation_id=thread.pk, user=thread.owner, write=True), turn)
-            if plan["intent"] == "actions" and turn.mode == "analytics":
+            if no_sources:
+                result = {"response": conversation_text("sources_unavailable", language), "plan": plan,
+                          "sources": [], "context": {"provider_state": "no_data", "reason": "sources_unavailable"}}
+            elif plan["intent"] == "actions" and turn.mode == "analytics":
                 result = {"response": conversation_text("analytics_read_only", language), "status": AgentTurn.Statuses.COMPLETED}
             elif plan["intent"] == "actions":
                 result = prepare_actions(turn, plan, memory, language)

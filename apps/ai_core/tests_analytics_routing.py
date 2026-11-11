@@ -32,9 +32,9 @@ class AnalyticsRoutingTests(TestCase):
         Task.objects.create(business=self.business, title="Архив LIVE-QA-731", is_archived=True)
         Task.objects.create(business=self.other_business, title="Чужая LIVE-QA-731")
 
-    def prepare(self, responses, *, mode="analytics", key="initial", message="Сколько задач? Назови LIVE-QA-731."):
+    def prepare(self, responses, *, mode="analytics", key="initial", message="Сколько задач? Назови LIVE-QA-731.", context=None):
         turn, job = start_turn(conversation_id=self.thread.pk, user=self.owner, message=message,
-                               idempotency_key=key, mode=mode)
+                               idempotency_key=key, mode=mode, context=context)
         with patch("apps.ai_core.services.generate_text", side_effect=responses) as generate:
             process_ai_job(job.pk)
         turn.refresh_from_db()
@@ -185,3 +185,46 @@ class AnalyticsRoutingTests(TestCase):
         self.assertEqual(turn.status, "completed", turn.error_code)
         self.assertEqual(turn.context_json["provider_state"], "no_data")
         generate.assert_not_called()
+
+    def test_denied_sources_complete_without_provider_or_false_interruption(self):
+        from apps.accounts.models import User
+        from apps.businesses.models import BusinessMember, BusinessRole, RolePermission
+        from apps.ai_core.conversation_access import create_staff_conversation
+        actor = User.objects.create_user(username="analytics-no-tasks")
+        role = BusinessRole.objects.create(business=self.business, name="No task sources")
+        RolePermission.objects.create(business_role=role, resource="tasks", action="view", is_allowed=False)
+        RolePermission.objects.create(business_role=role, resource="ai_analyst", action="view", scope="business", is_allowed=True)
+        BusinessMember.objects.create(business=self.business, user=actor, role="manager", business_role=role)
+        self.owner = actor
+        self.thread = create_staff_conversation(business=self.business, agent_id=self.agent.pk, user=actor, mode="analytics")
+        turn, _, generate = self.prepare([])
+        self.assertEqual(turn.status, "completed", turn.error_code)
+        self.assertEqual(turn.context_json["reason"], "sources_unavailable")
+        self.assertIn("источников", turn.response)
+        self.assertEqual(turn.sources_json, [])
+        self.assertFalse(AIToolCallLog.objects.exists())
+        generate.assert_not_called()
+
+    def test_selected_period_cannot_fall_back_to_current_search(self):
+        from django.utils import timezone
+        day = timezone.localdate().isoformat()
+        period = {"start": day, "end": day}
+        answer = output({"answer": "3 задачи, включая архив.", "source_ids": ["CRM-summary"], "no_data": False})
+        turn, _, _ = self.prepare([output({"route": route(read={"entity": "tasks", "query": ""})}), answer],
+            context={"period": period}, message="Сколько задач за выбранный период?")
+        self.assertEqual(turn.status, "completed", turn.error_code)
+        self.assertEqual(turn.plan_json["intent"], "analytics")
+        self.assertEqual(turn.context_json["period"], period)
+        report = AIRequestLog.objects.get(prompt_type="business_history_analyst").input_json["crm_context"]["summary"]
+        self.assertEqual(report["operations"]["tasks"]["count"], 3)
+
+    def test_date_search_dsl_is_rejected_before_false_zero_answer(self):
+        from django.utils import timezone
+        day = timezone.localdate().isoformat()
+        invalid = output({"route": route(read={"entity": "tasks", "query": f"created_at:{day}"})})
+        valid = output({"route": route(intent="analytics", period={"start": day, "end": day})})
+        answer = output({"answer": "3 задачи.", "source_ids": ["CRM-summary"], "no_data": False})
+        turn, _, generate = self.prepare([invalid, valid, answer], message=f"Сколько задач создано {day}?")
+        self.assertEqual(turn.status, "completed", turn.error_code)
+        self.assertEqual(generate.call_count, 3)
+        self.assertFalse(AIRequestLog.objects.filter(prompt_type="crm_assistant").exists())

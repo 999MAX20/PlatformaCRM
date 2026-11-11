@@ -18,12 +18,17 @@ Default/tier модель теперь определяется до JSON capabi
 Scoped остатка кода/проверок нет; human/fullD01/production остаются открыты.
 [Причина, точные границы и результаты](../testing/evidence/voice-planner-20261111.md).
 
-AI-ANALYTICS-COMPLEX11.11: расширенная проверка API/Playwright с реальным AI — FAIL.
-Итоговые периоды/архив/own-count/tenant-denial проверены; открыты потеря даты/периода,
-неверная own-разбивка статусов, сбои плана и сообщение при запрете источника.
-52realcalls,39synthetic tasks preserved,0toolcalls; рабочие данные/код не менялись.
-Предыдущие7сценариев остаются scoped PASS; новые A1–A4 требуют исправлений и повторной проверки.
-[Находки, доказательства и границы](../testing/evidence/ai-analytics-complex-20261111.md).
+AI-ANALYTICS-COMPLEX-FIXES11.11: A1–A4 исправлены и локально перепроверены.
+Даты/выбранный период доходят до history; own/team статусы считают distinct записи;
+варианты плана совместимы, отсутствие источников даёт no_data без модели.
+Исторические ответы ограничивают цитаты CRM-summary, строгая проверка сохранена.
+34API+8browser+2direct-history+replayPASS с реальным OpenRouter; финально41calls,
+39synthetic tasks preserved/0toolcalls. Backend affected138PASS и адресные повторы
+после последних изменений PASS; промежуточные citation/fixture ошибки сохранены.
+Scope кода/локальных доказательств закрыт; fullD01/production остаются открыты.
+Рабочая БД/env/deploy не менялись; публикацию блокирует чужая outgoing история.
+[Итоговые доказательства](../testing/evidence/ai-analytics-complex-fixes-20261111.md) ·
+[Исходный аудит FAIL](../testing/evidence/ai-analytics-complex-20261111.md).
 
 AI-ANALYTICS-FIXES11.11: отдельный read-only routing и один ограниченный повтор
 неверного формата; поиск различает общие, совпавшие и показанные записи.

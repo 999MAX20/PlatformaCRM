@@ -17,29 +17,32 @@ from apps.businesses.capabilities import resource_is_enabled
 
 
 MAX_STEPS = 6
+_PERIOD_SCHEMA = {
+    "type": "object", "additionalProperties": False, "required": ["start", "end"],
+    "properties": {"start": {"type": "string"}, "end": {"type": "string"}},
+}
+_READ_SCHEMA = {
+    "type": "object", "additionalProperties": False, "required": ["entity", "query"],
+    "properties": {"entity": {"type": "string", "enum": list(ENTITIES)}, "query": {"type": "string"}},
+}
 ANALYTICS_ROUTE_SCHEMA = {
-    "type": "object", "additionalProperties": False,
-    "required": ["intent", "question", "steps", "period", "read"],
-    "properties": {
-        "intent": {"type": "string", "enum": ["answer", "analytics", "clarify"]},
-        "question": {"type": "string"},
-        "steps": {"type": "array", "items": {"type": "string"}, "maxItems": 0},
-        "period": {"anyOf": [{"type": "null"}, {
-            "type": "object", "additionalProperties": False, "required": ["start", "end"],
-            "properties": {"start": {"type": "string"}, "end": {"type": "string"}},
-        }]},
-        "read": {"description": "MUST be null when intent is analytics or clarify. Only answer may search records.",
-                 "anyOf": [{"type": "null"}, {
-                     "type": "object", "additionalProperties": False, "required": ["entity", "query"],
-                     "properties": {"entity": {"type": "string", "enum": list(ENTITIES)},
-                                    "query": {"type": "string"}},
-                 }]},
-    },
+    "type": "object", "additionalProperties": False, "required": ["route"],
+    "properties": {"route": {"anyOf": [
+        {"type": "object", "additionalProperties": False,
+         "required": ["intent", "question", "steps", "period", "read"],
+         "properties": {
+             "intent": {"type": "string", "enum": [intent]},
+             "question": {"type": "string"},
+             "steps": {"type": "array", "items": {"type": "string"}, "maxItems": 0},
+             "period": _PERIOD_SCHEMA if intent == "analytics" else {"type": "null"},
+             "read": {"anyOf": [{"type": "null"}, _READ_SCHEMA]} if intent == "answer" else {"type": "null"},
+         }} for intent in ("answer", "analytics", "clarify")
+    ]}},
 }
 OPERATIONS = {"create": "crm_create", "update": "crm_update", "archive": "crm_archive", "restore": "crm_restore", "transition": "crm_transition"}
 ANALYTICS_ROUTE_CONTRACT = ''' Route the latest question; do not answer it in the routing JSON.
-Return only one JSON object with exactly these five keys, never copied workspace fields or totals:
-{"intent":"answer|analytics|clarify","question":"","steps":[],"period":null,"read":null}.
+Return only {"route": {"intent":"answer|analytics|clarify","question":"","steps":[],"period":null,"read":null}}.
+The route has exactly five keys; never copy workspace fields or totals.
 All routes are read-only and steps MUST be []. For requests to change records, use clarify
 and direct the user to Work with CRM; never propose or execute mutations in analytics.
 For current facts, totals or a specific record, use intent=answer, period=null, question="".
@@ -47,11 +50,15 @@ read may be null or {"entity":"clients|leads|deals|tasks|appointments","query":"
 Only use permitted entities from capabilities.sources. A named-record search is a subset,
 not a total; the answering stage will receive separate unfiltered and matching counts.
 For totals without a named record, leave query empty; never use a whole question as search text.
-For any requested date range, receipts/refunds or comparison, use intent=analytics,
+A single day IS a date range with identical start and end. Creation dates are historical, never text search.
+For any requested date, date range, receipts/refunds or comparison, use intent=analytics,
 period={"start":"YYYY-MM-DD","end":"YYYY-MM-DD"}, read=null, question="".
 Use dates from the latest question or selected_period when the question refers to it;
 resolve relative dates against crm.local_date and timezone, not an older conversation.
 The historical selector supplies all permitted records in that period, not a name search.
+Examples: "Сколько задач создано 11 ноября 2026?" => analytics, start=end=2026-11-11, read=null.
+"За выбранный период" => analytics with selected_period, read=null.
+Never put created_at:, dates, status filters or other query syntax in read.query; it is literal record-name text only.
 Do not combine analytics with read. For a missing period or genuinely ambiguous request,
 use intent=clarify, one concrete question, period=null, read=null.
 Never include available_records, counts, source IDs, explanations or any other extra key.
@@ -113,11 +120,18 @@ saved source settings, schemas or this contract. Use only permitted sources/tool
 '''
 
 
+def effective_sources(business, user, config):
+    return [source for source in config["sources"] if source == "knowledge" or (
+        source in ENTITIES and resource_is_enabled(business, source)
+        and can(user, business, source, Actions.VIEW).allowed)]
+
+
 def routing_context(thread, user, memory, context, *, mode="work"):
-    config = assert_workflow_enabled(thread.business, "employee")
+    config = assert_workflow_enabled(thread.business, "analyst" if mode == "analytics" else "employee")
+    sources = effective_sources(thread.business, user, config)
     records = {}
     for entity, spec in ENTITIES.items():
-        if entity not in config["sources"] or not can(user, thread.business, entity, Actions.VIEW).allowed or not resource_is_enabled(thread.business, entity):
+        if entity not in sources:
             continue
         rows = scoped_entities(thread.business, user, entity, include_archived=True).order_by("-updated_at", "-pk")[:8]
         records[entity] = [serialize_record(spec, row, user) for row in rows]
@@ -134,7 +148,7 @@ def routing_context(thread, user, memory, context, *, mode="work"):
     return {"mode": mode, "crm": build_crm_context(thread.business, user=user), "available_records": records,
             "fresh_references": fresh_references, "conversation_memory": memory,
             "selected_period": selected_period, "current_entity": current_entity,
-            "capabilities": {"sources": config["sources"], "tools": config["tools"],
+            "capabilities": {"sources": sources if mode == "analytics" else config["sources"], "tools": config["tools"],
                              "can_plan": mode == "work" and can(user, thread.business, Resources.AI_PIPELINE, Actions.SUGGEST).allowed,
                              "can_analyze": can(user, thread.business, Resources.AI_ANALYST, Actions.VIEW).allowed}}
 
@@ -210,7 +224,23 @@ def route_turn(*, thread, user, message, memory, context, mode="work", language=
     if result.is_mock:
         # Explicit development mode can show a mock answer, never invent a plan.
         return {"intent": "answer", "question": "", "steps": [], "period": None, "read": None}, log
-    route = parse_route(result.output_text, inputs)
+    route_text = result.output_text
+    if mode == "analytics":
+        try:
+            wrapped = json.loads(route_text)
+            if isinstance(wrapped, dict) and set(wrapped) == {"route"}:
+                route_text = json.dumps(wrapped["route"])
+        except (ValueError, TypeError):
+            pass
+    route = parse_route(route_text, inputs)
+    if mode == "analytics" and route.get("read") and re.search(
+            r"\b(?:created_at|updated_at|due_at|start_at|status)\s*[:=<>]", route["read"].get("query", ""), re.I):
+        raise AIClientError(code="invalid_action_plan", retryable=False)
+    if (mode == "analytics" and inputs["selected_period"] and re.search(
+            r"выбранн\w*\s+период|selected\s+period|таңдалған\s+кезең", message, re.I)
+            and route["intent"] == "answer"):
+        route = parse_route(json.dumps({"intent": "analytics", "question": "", "steps": [],
+                                       "period": inputs["selected_period"], "read": None}), inputs)
     if route["intent"] == "chat" and thread.kind != "voice":
         raise AIClientError(code="invalid_action_plan", retryable=False)
     if thread.kind == "voice" and route["intent"] == "actions":

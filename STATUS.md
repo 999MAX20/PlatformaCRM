@@ -1,3 +1,12 @@
+AI-ANALYTICS-COMPLEX-FIXES-20261111: A1–A4 fixed and locally reverified.
+Dates/selected period, own/team status groups, compatible routing and denied-source response.
+34API/8Playwright/2directhistory/replay PASS with real AI; final41calls,0toolcalls.
+39synthetic tasks preserved; no hidden/foreign leaks found; backend scoped checksPASS.
+Prior citation/fixture/cleanup failures retained; final runtimes stopped, disposableDBs removed.
+WorkingDB/env/deploy untouched. No scoped code/evidence remainder; fullD01/production open.
+Own local commit;39foreign outgoing block own-only push/newCI. Evidence:
+docs/testing/evidence/ai-analytics-complex-fixes-20261111.md.
+
 BUSINESS-BROWSER-REVIEW-20261111: six pages reviewed;7UI/data-context findings fixed.
 Branch service terms, archive context, staff actions, mobile forms/search/nav/schedule.
 Chrome owner+manager; real isolated CRUD/lifecycle/drafts/recovery, RU/KK/EN320–1440.
