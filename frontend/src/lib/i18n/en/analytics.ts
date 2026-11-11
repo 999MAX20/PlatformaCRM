@@ -1,4 +1,15 @@
 export const analytics: Record<string, string> = {
+  "analyticsWorkspace.openRecords": "Open appointments: {name}, {value}",
+  "analyticsWorkspace.openPreviousRecords": "Open previous-period appointments: {name}, {value}",
+  "analyticsWorkspace.previous": "Previous",
+  "analyticsWorkspace.pp": "pp",
+  "analyticsWorkspace.archivedRecord": "Archived appointment",
+  "analyticsWorkspace.comparedPeriod": "Compared with: {start} — {end}",
+  "analyticsWorkspace.comparisonUnavailable": "Previous period is unavailable for these dates",
+  "analyticsWorkspace.change": "Change",
+  "analyticsWorkspace.method.comparison": "Comparison and details",
+  "analyticsWorkspace.method.comparisonText": "The previous period has the same number of calendar days immediately before the selected period. Numbers open appointments for that period; rates open numerator records. Rate changes use percentage points; relative change requires a positive baseline. Financial comparison requires available data from the same source and currency. CSV includes only the selected period without comparison.",
+
   "exportHistory.title": "Background exports",
   "exportHistory.kind": "Export type",
   "exportHistory.kind.entity": "CRM data",

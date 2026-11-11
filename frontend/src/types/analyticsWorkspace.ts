@@ -29,4 +29,27 @@ export type AnalyticsWorkspace = {
   }[] };
   current: { pending_records: number | null; new_leads: number | null; overdue_tasks: number | null; unanswered: number | null };
   financial: FinancialReport;
+  comparison?: WorkspaceComparison;
+};
+
+export type WorkspaceComparison = { available: false; reason: string; period: null } | {
+  available: true;
+  period: AnalyticsPeriod & { timezone: string };
+  appointments: AnalyticsWorkspace["appointments"];
+  services: AnalyticsWorkspace["services"];
+  record_sources: AnalyticsWorkspace["record_sources"];
+  team: { id: Id; appointments: number | null; completed_appointments: number | null }[];
+  financial: FinancialReport;
+  financial_changes: Record<"receipts" | "refunds" | "net_receipts", string | null>;
+};
+
+export type WorkspaceRecordFilter = {
+  metric?: "total" | "completed" | "cancelled" | "no_show" | "planned";
+  service?: Id; source?: string; responsible_user?: Id;
+};
+export type WorkspaceRecordSelection = { title: string; period: AnalyticsPeriod; filters: WorkspaceRecordFilter };
+export type WorkspaceRecord = {
+  id: Id; client: Id | null; client_name: string; service: Id; service_name: string;
+  start_at: string; end_at: string; status: string; source: string;
+  responsible_user: Id | null; responsible_user_name: string; is_archived: boolean;
 };

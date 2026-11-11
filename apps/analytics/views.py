@@ -216,7 +216,11 @@ def report_summary(request):
         from apps.analytics.workspace import build_analytics_workspace, workspace_period
 
         start_date, end_date = workspace_period(business, request.query_params)
-        return Response(build_analytics_workspace(business, user=request.user, start_date=start_date, end_date=end_date))
+        comparison = request.query_params.get("compare", "")
+        if comparison not in ("", "previous"):
+            raise ValidationError({"compare": "Use previous."})
+        return Response(build_analytics_workspace(business, user=request.user, start_date=start_date,
+                                                 end_date=end_date, compare=comparison == "previous"))
     start_date, end_date = parse_bounded_date_range(request.query_params)
     return Response(
         build_report_summary(

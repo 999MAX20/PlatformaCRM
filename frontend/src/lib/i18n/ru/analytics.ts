@@ -1,4 +1,15 @@
 export const analytics: Record<string, string> = {
+  "analyticsWorkspace.openRecords": "Открыть записи: {name}, {value}",
+  "analyticsWorkspace.openPreviousRecords": "Открыть записи прошлого периода: {name}, {value}",
+  "analyticsWorkspace.previous": "Ранее",
+  "analyticsWorkspace.pp": "п. п.",
+  "analyticsWorkspace.archivedRecord": "Архивная запись",
+  "analyticsWorkspace.comparedPeriod": "Сравнение: {start} — {end}",
+  "analyticsWorkspace.comparisonUnavailable": "Предыдущий период недоступен для выбранных дат",
+  "analyticsWorkspace.change": "Изменение",
+  "analyticsWorkspace.method.comparison": "Сравнение и детализация",
+  "analyticsWorkspace.method.comparisonText": "Предыдущий период — столько же календарных дней непосредственно перед выбранным. Числа открывают записи соответствующего периода; для долей — записи числителя. Изменение долей показано в процентных пунктах, относительное изменение — только при положительной базе. Финансы сравниваются только при доступных данных одного источника и валюты. CSV содержит выбранный период без сравнения.",
+
   "exportHistory.title": "Фоновые экспорты",
   "exportHistory.kind": "Тип экспорта",
   "exportHistory.kind.entity": "Данные CRM",

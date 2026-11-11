@@ -1,4 +1,15 @@
 export const analytics: Record<string, string> = {
+  "analyticsWorkspace.openRecords": "Жазбаларды ашу: {name}, {value}",
+  "analyticsWorkspace.openPreviousRecords": "Алдыңғы кезең жазбаларын ашу: {name}, {value}",
+  "analyticsWorkspace.previous": "Бұрын",
+  "analyticsWorkspace.pp": "п. т.",
+  "analyticsWorkspace.archivedRecord": "Мұрағаттағы жазба",
+  "analyticsWorkspace.comparedPeriod": "Салыстыру: {start} — {end}",
+  "analyticsWorkspace.comparisonUnavailable": "Таңдалған күндер үшін алдыңғы кезең қолжетімсіз",
+  "analyticsWorkspace.change": "Өзгеріс",
+  "analyticsWorkspace.method.comparison": "Салыстыру және егжей-тегжей",
+  "analyticsWorkspace.method.comparisonText": "Алдыңғы кезең — таңдалған кезеңнің алдындағы дәл сондай күнтізбелік күн саны. Сандар тиісті кезеңнің жазбаларын ашады; үлестер үшін — алымдағы жазбалар. Үлестер өзгерісі пайыздық тармақпен, салыстырмалы өзгеріс тек оң негіз болғанда көрсетіледі. Қаржы бір дереккөз бен валюта бойынша қолжетімді деректер болғанда ғана салыстырылады. CSV тек таңдалған кезеңді қамтиды, салыстыру кірмейді.",
+
   "exportHistory.title": "Фондық экспорттар",
   "exportHistory.kind": "Экспорт түрі",
   "exportHistory.kind.entity": "CRM деректері",

@@ -6,6 +6,7 @@ import { StatusNotice } from "../../components/ui/StatusNotice";
 import { Surface } from "../../components/ui/Card";
 import { formatDateTime, formatMoney } from "../../lib/format";
 import { useI18n } from "../../lib/i18n";
+import type { WorkspaceComparison } from "../../types/analyticsWorkspace";
 import type { FinancialReport } from "../../types";
 
 const reasons = new Set([
@@ -34,7 +35,7 @@ export function FinancialStatus({ report, compact = false, inNotice = false }: {
   );
 }
 
-export function FinancialSummary({ report }: { report: FinancialReport }) {
+export function FinancialSummary({ report, comparison }: { report: FinancialReport; comparison?: WorkspaceComparison }) {
   const { t, language } = useI18n();
   const { user } = useAuth();
   const { business } = useActiveBusiness();
@@ -58,6 +59,7 @@ export function FinancialSummary({ report }: { report: FinancialReport }) {
             <div key={key}>
               <dt className="text-sm text-platforma-subtle">{t(`finance.${key}`)}</dt>
               <dd className="mt-1 text-2xl font-semibold tabular-nums text-platforma-ink">{formatMoney(report[key], report.currency, language)}</dd>
+              {comparison?.available ? <dd className="mt-1 text-xs leading-5 text-platforma-subtle">{t("analyticsWorkspace.previous")}: {comparison.financial_changes[key] === null ? "—" : formatMoney(comparison.financial[key], report.currency, language)}<span className="block">{t("analyticsWorkspace.change")}: {comparison.financial_changes[key] === null ? "—" : formatMoney(comparison.financial_changes[key], report.currency, language)}</span></dd> : null}
             </div>
           ))}
         </dl>

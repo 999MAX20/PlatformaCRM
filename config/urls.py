@@ -46,6 +46,7 @@ from apps.ai_core.conversation_views import (
     AgentConversationResetView, AgentTurnCancelView, AgentTurnRetryView, AgentTurnConfirmView,
 )
 from apps.analytics.views import AnalyticsEventViewSet, ReportWidgetViewSet, ScheduledReportViewSet, owner_dashboard, report_export, report_summary
+from apps.analytics.workspace_records import report_records
 from apps.automations.views import AutomationActionViewSet, AutomationConditionViewSet, AutomationRuleViewSet, AutomationRunViewSet
 from apps.billing.views import CurrentSubscriptionViewSet, EntitlementSummaryViewSet, SubscriptionPlanViewSet, UsageSummaryViewSet
 from apps.bots.views import (
@@ -283,6 +284,7 @@ urlpatterns = [
     path("api/security/risk-summary/", security_risk_summary, name="security_risk_summary"),
     path("api/analytics/owner-dashboard/", owner_dashboard, name="owner_dashboard"),
     path("api/analytics/reports/summary/", report_summary, name="analytics_report_summary"),
+    path("api/analytics/reports/records/", report_records, name="analytics_report_records"),
     path("api/analytics/reports/export/", report_export, name="analytics_report_export"),
     path("api/platform/ping/", platform_ping, name="platform_ping"),
     path("api/work-queues/", work_queues, name="work_queues"),

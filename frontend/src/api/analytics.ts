@@ -1,12 +1,18 @@
 import { createCrudApi } from "./crud";
 import { apiClient } from "./client";
 import type { AnalyticsEvent, AnalyticsReportSummary, Id, OwnerDashboardMetrics, ReportWidget, ScheduledReport, TeamPerformanceMetrics } from "../types";
-import type { AnalyticsPeriod, AnalyticsWorkspace } from "../types/analyticsWorkspace";
+import type { AnalyticsPeriod, AnalyticsWorkspace, WorkspaceRecord, WorkspaceRecordFilter } from "../types/analyticsWorkspace";
 
 export const analyticsApi = {
   workspace: async (business: Id, period: AnalyticsPeriod) => {
     const { data } = await apiClient.get<AnalyticsWorkspace>("/api/analytics/reports/summary/", {
-      params: { business, view: "workspace", ...period },
+      params: { business, view: "workspace", compare: "previous", ...period },
+    });
+    return data;
+  },
+  records: async (business: Id, period: AnalyticsPeriod, filters: WorkspaceRecordFilter, page: number, pageSize: number, signal?: AbortSignal) => {
+    const { data } = await apiClient.get<{ count: number; results: WorkspaceRecord[] }>("/api/analytics/reports/records/", {
+      params: { business, ...period, ...filters, page, page_size: pageSize }, signal,
     });
     return data;
   },

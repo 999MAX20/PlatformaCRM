@@ -15,9 +15,10 @@ import { useActiveBusiness } from "../../hooks/useBusiness";
 import { dateInTimeZone } from "../../lib/format";
 import { useI18n } from "../../lib/i18n";
 import type { Business, Id } from "../../types";
-import type { WorkspaceReport } from "../../types/analyticsWorkspace";
+import type { WorkspaceReport, WorkspaceRecordSelection } from "../../types/analyticsWorkspace";
 import { useAuth } from "../auth/AuthProvider";
 import { FinancialSummary } from "./FinancialSummary";
+import { RecordDetails } from "./RecordDetails";
 import { ExportHistory } from "./ExportHistory";
 import { Overview, ServicesTable, SourcesTable, TeamTable } from "./WorkspaceSections";
 
@@ -53,6 +54,9 @@ function AnalyticsWorkspacePage({ business, userId }: { business: Business; user
   const context = `${userId}:${business.id}:${start}:${end}:${active}`;
   const periodAnchor = useRef<HTMLButtonElement>(null);
   const tabList = useRef<HTMLElement>(null);
+  const [detail, setDetail] = useState<{ context: string; selection: WorkspaceRecordSelection } | null>(null);
+  const openRecords = (selection: WorkspaceRecordSelection) => setDetail({ context, selection });
+  useEffect(() => { setDetail(null); }, [context]);
   const [help, setHelp] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [periodOpen, setPeriodOpen] = useState(false);
@@ -132,17 +136,21 @@ function AnalyticsWorkspacePage({ business, userId }: { business: Business; user
     {job.error ? <ErrorState error={job.error} action={<Button variant="secondary" onClick={() => void job.refetch()}>{t("analyticsWorkspace.refresh")}</Button>} /> : null}
     {retainReport ? <StatusNotice tone="warning" title={t("analyticsWorkspace.refreshFailed")} action={<Button variant="secondary" disabled={metrics.isFetching || !periodValid} onClick={() => void metrics.refetch()}>{t("analyticsWorkspace.refresh")}</Button>} /> : null}
     {metrics.isPending ? <LoadingState scope="page" /> : metrics.error && !retainReport ? (periodValid ? <ErrorState error={metrics.error} action={errorCategory === "permission" || errorCategory === "authentication" ? undefined : <Button variant="secondary" onClick={() => void metrics.refetch()}>{t("analyticsWorkspace.refresh")}</Button>} /> : null) : metrics.data ? <>
+      {metrics.data.comparison ? <p className="text-xs text-platforma-subtle">{metrics.data.comparison.available ? t("analyticsWorkspace.comparedPeriod", { start: dateLabel(metrics.data.comparison.period.start), end: dateLabel(metrics.data.comparison.period.end) }) : t("analyticsWorkspace.comparisonUnavailable")}</p> : null}
       <div aria-busy={metrics.isFetching}>
-        {active === "overview" ? <Overview data={metrics.data} /> : active === "sources" ? <SourcesTable data={metrics.data} /> : active === "services" ? <ServicesTable data={metrics.data} /> : active === "team" ? <TeamTable data={metrics.data} /> : <FinancialSummary report={metrics.data.financial} />}
+        {active === "overview" ? <Overview data={metrics.data} onRecords={openRecords} /> : active === "sources" ? <SourcesTable data={metrics.data} onRecords={openRecords} /> : active === "services" ? <ServicesTable data={metrics.data} onRecords={openRecords} /> : active === "team" ? <TeamTable data={metrics.data} onRecords={openRecords} /> : <FinancialSummary report={metrics.data.financial} comparison={metrics.data.comparison} />}
       </div>
       <p className="text-xs text-platforma-subtle">{t("analyticsWorkspace.updated", { time: new Intl.DateTimeFormat(language, { dateStyle: "short", timeStyle: "short", timeZone: business.timezone }).format(new Date(metrics.data.generated_at)) })} · {metrics.data.period.timezone}</p>
     </> : null}
+    <Dialog title={detail?.selection.title || t("appointments.title")} open={Boolean(detail && detail.context === context && (!metrics.error || retainReport))} onClose={() => setDetail(null)} size="lg">
+      {detail && detail.context === context && (!metrics.error || retainReport) ? <RecordDetails key={JSON.stringify(detail)} business={business} userId={userId} selection={detail.selection} /> : null}
+    </Dialog>
     <Dialog title={t("exportHistory.title")} open={historyOpen} onClose={() => setHistoryOpen(false)} size="lg">
       {historyOpen ? <ExportHistory business={business} userId={userId} /> : null}
     </Dialog>
     {periodOpen && <DatePickerPanel anchor={periodAnchor} label={t("analyticsWorkspace.period")} value={{ from: start, to: end }} today={today} onApply={applyPeriod} onClose={closePeriod} validate={validPeriod} validationMessage={t("analyticsWorkspace.periodLimit", { days: maxDays })} />}
     <Dialog title={t("analyticsWorkspace.method")} open={help} onClose={() => setHelp(false)} size="sm">
-      <dl className="space-y-4 text-sm">{["period", "recordCompletion", "noShow", "history", "money"].map(key => <div key={key}><dt className="font-bold">{t(`analyticsWorkspace.method.${key}`)}</dt><dd className="mt-1 leading-6 text-platforma-subtle">{t(`analyticsWorkspace.method.${key}Text`)}</dd></div>)}</dl>
+      <dl className="space-y-4 text-sm">{["period", "recordCompletion", "noShow", "history", "money", "comparison"].map(key => <div key={key}><dt className="font-bold">{t(`analyticsWorkspace.method.${key}`)}</dt><dd className="mt-1 leading-6 text-platforma-subtle">{t(`analyticsWorkspace.method.${key}Text`)}</dd></div>)}</dl>
     </Dialog>
   </div>;
 }

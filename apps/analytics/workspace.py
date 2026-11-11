@@ -53,7 +53,7 @@ def _by(queryset, field):
     return {row[field]: row["count"] for row in queryset.order_by().values(field).annotate(count=Count("pk", distinct=True))}
 
 
-def build_analytics_workspace(business, *, user, start_date, end_date, now=None):
+def build_analytics_workspace(business, *, user, start_date, end_date, now=None, compare=False):
     now = now or timezone.now()
     bounds = _bounds(business, start_date, end_date)
     models = {
@@ -103,7 +103,7 @@ def build_analytics_workspace(business, *, user, start_date, end_date, now=None)
         no_show=Count("pk", distinct=True, filter=Q(status="no_show")),
     ).order_by("-total", "source"))
     team = _team_rows(business, user, leads, won, lost, tasks, overdue, unanswered, availability, appointments)
-    return {
+    result = {
         "business": business.pk,
         "period": {"start": start_date.isoformat(), "end": end_date.isoformat(), "timezone": business.timezone,
                    "max_days": settings.REPORT_MAX_RANGE_DAYS},
@@ -135,6 +135,11 @@ def build_analytics_workspace(business, *, user, start_date, end_date, now=None)
         },
         "financial": financial_report(business, user=user, start_date=start_date, end_date=end_date, now=now),
     }
+    if compare:
+        from apps.analytics.workspace_comparison import build_workspace_comparison
+        result["comparison"] = build_workspace_comparison(business, user=user, start_date=start_date,
+            end_date=end_date, current=result, now=now)
+    return result
 
 
 def _team_rows(business, user, leads, won, lost, tasks, overdue, unanswered, availability, appointments):

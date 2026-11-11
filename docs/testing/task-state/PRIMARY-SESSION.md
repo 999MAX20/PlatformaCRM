@@ -12870,3 +12870,29 @@ Docs/contract/passport/roadmap/evidence updated. README/domain/access/integratio
 no setup/schema/domain/role/notification/BusinessEvent changes. Own local commit; no push/newCI;
 43foreignoutgoing also block publishing only this task. Exact logs/checkpoint:
 output/ai-work-crm-fixes-20261111; docs/testing/evidence/ai-work-crm-fixes-20261111.md.
+
+## ANALYTICS-DETAIL-COMPARE-20261111
+
+Explicit owner-approved additions after nine-fix closure: metric details and previous-period comparison,
+preserved design/access/foreign work. Canonical/current branch start286c9cf6, verified2537e8b6+owned diff.
+New analytics readonly records endpoint uses exact start cohort/timezone/archive/scoped appointments,
+independent ClientProjectionMixin; status/source/service/responsible filters, stable bounded pagination.
+Opt-in compare=previous uses equal immediately preceding calendar length; prior-only groups remain,
+zero/missing distinct, rates use percentage points, relative change requires positive baseline.
+Money compares only verified same-source/currency reports with Decimal delta. Current queues and CSV
+stay selected/current scope; no financial transaction drilldown/new KPI/new permission/schema/migration.
+UI all record KPI/status/source/service/team counts open current/prior details and existing appointment
+card. Context change/abort, loading/error/retry/403/empty, archive labels, RU/KK/EN and keyboard verified.
+Backend147 total145PASS2existingPGskips/system/driftPASS; finalnewfocused11PASS/system/driftPASS;
+Nodecomparison3PASS; finaltypes/i18n7236/app/widget/bundlePASS. Browser5scripts56assertionsPASS:
+core13/recovery8/locales21/roles5/metrics9. Desktop1440/KK320/EN390 images visually inspected.
+Preserved failures: fixture manager policy assumption, source fixture price field, foreign staff syntax,
+foreign management i18n/type errors, Vite foreignHMR providercontext, CLI quoting/version and browser
+selector/race expectations. Each final corresponding checkPASS; no product assertion/budget weakened.
+Own browser/backend/frontend exited; disposable DB cleanup verified. WorkingDB/env/provider/deploy untouched.
+Docs CRM/frontend/passport/capability/registry/evidence updated; R01 not reopened/closed, no roadmap phase
+or setup/domain/AI/integration/operations/access policy change, so those docs/README unchanged by task.
+No scoped code/local-evidence remainder. Fullrelease/PGconcurrency/live/screenreader unclaimed.
+44foreign outgoing after fetch prevent own-only normalpush; no newCI/deployment. Own paths/hunks only.
+Evidence: docs/testing/evidence/analytics-detail-compare-20261111.md. Exact commands/failures/hashes:
+output/analytics-detail-20261111/CHECKPOINT.md and verified-source.json; Git receipt RESULT.json.

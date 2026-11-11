@@ -1,3 +1,11 @@
+ANALYTICS-DETAIL-COMPARE-20261111: metric drilldown and previous-period comparison verified locally.
+KPI/status/source/service/team lists match period/archive/scope; financial Decimal delta guarded.
+145dependentPASS/2PGskips +11focusedPASS; system/drift,3logic/types/i18n/build/budgetPASS.
+Playwright real isolatedAPI: current/prior/zero/paging/roles/503retry/403/RU-KK-EN320–1440PASS.
+No new KPI/schema/workingDB/env/provider/deploy; own runtimes stopped. No scoped code/evidence remainder.
+44foreign outgoing block own-only push/newCI. Evidence:
+docs/testing/evidence/analytics-detail-compare-20261111.md.
+
 ANALYTICS-FIXES-20261111: nine audited /analytics defects fixed and locally verified.
 API validation/period, team scope, exact Inbox link, cached recovery, locales and responsive/a11y.
 Focused16 and dependent131PASS/2PGskips; system/drift, build/types/i18n/bundle PASS.
