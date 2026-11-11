@@ -11,6 +11,7 @@ from apps.ai_core.agent_runtime import bind_command
 from apps.ai_core.crm_tools import scoped_entities
 from apps.ai_core.services import run_ai_request
 from apps.ai_core.voice_schedule_commands import MAX_VISITS, validate_schedule
+from apps.clients.identity import normalize_phone
 from apps.core.domain_errors import ScheduleConflict
 from apps.scheduling.availability import business_zone
 
@@ -67,6 +68,7 @@ COPY = {
         "specialist_unavailable": "Для посещения {visit} специалист не оказывает эту услугу в выбранном филиале. Выберите другого специалиста или филиал.",
         "slot_unavailable": "Время посещения {visit} занято или недоступно по расписанию специалиста. Укажите другое время.",
         "client_invalid": "Проверьте имя и телефон клиента для посещения {visit}.",
+        "client_phone_conflict": "Телефон не совпадает. Выберите клиента из списка или уточните имя и телефон.",
         "terms_changed": "Условия услуги для посещения {visit} изменились. Повторите запрос с актуальной услугой."},
     "en": {"missing": "Please specify: {fields}.", "client": "the client's name", "date": "the visit date", "time": "the visit time",
         "service": "the service", "resource": "the specialist (or allow any available specialist)", "branch": "the branch",
@@ -80,6 +82,7 @@ COPY = {
         "specialist_unavailable": "The specialist for visit {visit} does not offer this service at the selected branch. Select another specialist or branch.",
         "slot_unavailable": "The time for visit {visit} is occupied or outside the specialist's availability. Specify another time.",
         "client_invalid": "Check the client's name and phone number for visit {visit}.",
+        "client_phone_conflict": "The phone number does not match. Select a client from the list or correct the name and phone number.",
         "terms_changed": "The service terms for visit {visit} have changed. Repeat the request with the current service."},
     "kk": {"missing": "Нақтылаңыз: {fields}.", "client": "клиенттің аты-жөні", "date": "қабылдау күні", "time": "қабылдау уақыты",
         "service": "қызмет", "resource": "маман (немесе кез келген бос маманды таңдауға рұқсат беріңіз)", "branch": "филиал",
@@ -93,6 +96,7 @@ COPY = {
         "specialist_unavailable": "{visit}-қабылдаудың маманы таңдалған филиалда бұл қызметті көрсетпейді. Басқа маманды немесе филиалды таңдаңыз.",
         "slot_unavailable": "{visit}-қабылдау уақыты бос емес немесе маманның жұмыс кестесіне сәйкес келмейді. Басқа уақытты көрсетіңіз.",
         "client_invalid": "{visit}-қабылдау үшін клиенттің аты-жөні мен телефон нөмірін тексеріңіз.",
+        "client_phone_conflict": "Телефон нөмірі сәйкес келмейді. Тізімнен клиентті таңдаңыз немесе аты-жөні мен телефон нөмірін нақтылаңыз.",
         "terms_changed": "{visit}-қабылдаудың қызмет шарттары өзгерді. Өзекті қызметпен сұрауды қайталаңыз."},
 }
 
@@ -226,15 +230,20 @@ def resolve_schedule(*, business, user, draft, language):
     elif draft["client_name"].strip():
         # Evaluate only identity fields, without recent-record truncation.
         rows = _matches(list(clients.only("id", "full_name", "phone")), draft["client_name"], "full_name")
-        if draft["client_phone"].strip():
-            phone = re.sub(r"\D", "", draft["client_phone"])
-            by_phone = [row for row in rows if re.sub(r"\D", "", row.phone or "") == phone]
+        phone_conflict = False
+        if rows and draft["client_phone"].strip():
+            phone = normalize_phone(draft["client_phone"])
+            by_phone = [row for row in rows if phone and normalize_phone(row.phone) == phone]
             if by_phone:
                 rows = by_phone
-        if len(rows) == 1:
+            else:
+                phone_conflict = True
+        if len(rows) == 1 and not phone_conflict:
             client = rows[0]
-        elif len(rows) > 1:
+        elif len(rows) > 1 or phone_conflict:
             references.extend({"entity": "clients", "id": row.pk} for row in rows[:5])
+            if phone_conflict:
+                questions.append(copy["client_phone_conflict"])
             ask("client", rows)
     else:
         ask("client")

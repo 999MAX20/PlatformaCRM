@@ -1822,3 +1822,10 @@ Node17/browser12+7/backend40/final build PASS; audit3 includes2 confirmed open P
 Records filter defects, not fixes. Isolated data only, foreign WIP preserved.
 No own commit/push/CI/deploy: existing index.lock and mixed outgoing retained.
 Evidence: docs/testing/evidence/calendar-review-20261104.md. Other active tasks unchanged.
+
+VOICE-IDENTITY-20261111: conflicting phone no longer selects a same-name client silently.
+Explicit clarification/selection, normalized phone, guarded execution; no partial writes.
+Focused7/dependent128/final9/system-drift PASS; isolated PG12 and Redis/Celery crash/retry/replay PASS.
+Real synthetic3 +final conflict outcomes/replay PASS; STT digit/name errors retained, human speech OPEN.
+No workingDB/deploy; locally verified change set, push blocked by28foreign outgoing commits.
+Evidence: docs/testing/evidence/voice-identity-20261111.md; output/voice-identity-20261111.

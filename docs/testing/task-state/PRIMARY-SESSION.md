@@ -12577,3 +12577,18 @@ existing Taste/AntiSlop direction retained; React review hooks/types/labels/reus
 Task runtimes stopped; normal dev and workingDB untouched. No scoped code/evidence
 remainder. Own local commit only; foreign outgoing prevents own-only push/newCI/deploy.
 Screenshots/starting snapshot/logs: output/timeline-pagination-20261111.
+
+## VOICE-IDENTITY-20261111 — client selection and local queue recovery
+
+Owner authorized audit recommendations; no human recordings available, selected local isolated queue.
+Canonical PlatformaCRM, codex/ui-testing-toolkit, base841e8bfa; foreign changes retained.
+Phone conflict now clarifies RU/KK/EN; normalized8/+7, server execution guard, explicit ID/replay and no partial writes.
+Focused7/dependent128/final9/system-drift PASS; PostgreSQL identity9/concurrency3 PASS.
+Dedicated Redis +Celery subprocesses: queue before worker, interrupted preparation/recovery/explicit retry,
+commit-before-ACK duplicate delivery and HTTP replay PASS. Fixture model; accelerated lease timestamp,
+not natural broker visibility timing or production. All owned runtimes stopped; temp DBs removed.
+Real syntheticRU Task/Appointment/conflict3 +final conflict API outcomes PASS. STT added phone digit
+and altered specialist name; retained errors, no speech-quality PASS. Human/completeD01 remain open.
+No workingDB/env/migration/deploy/external messages; locally verified, no push/CI due28foreign outgoing.
+Evidence: docs/testing/evidence/voice-identity-20261111.md. Detailed command logs, baseline, live timings,
+queue receipts and remaining work: output/voice-identity-20261111/CHECKPOINT.md.

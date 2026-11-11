@@ -9,6 +9,7 @@ from rest_framework.exceptions import PermissionDenied, ValidationError
 from apps.ai_core.crm_tools import ENTITIES, request_context, scoped_entities, validated_details
 from apps.businesses.access import Actions, Resources, assert_can
 from apps.businesses.models import Business
+from apps.clients.identity import normalize_phone
 from apps.clients.models import Client
 from apps.scheduling.models import Appointment, Resource
 from apps.services.models import Service
@@ -36,6 +37,12 @@ def schedule_access(business, user, values):
             raise PermissionDenied("Client is unavailable.")
         return client, None
     matches = name_matches(clients, data.get("full_name", ""))
+    if matches and data.get("phone", "").strip():
+        phone = normalize_phone(data["phone"])
+        matches = [row.pk for row in clients.filter(pk__in=matches).only("id", "phone")
+                   if phone and normalize_phone(row.phone) == phone]
+        if not matches:
+            raise ValidationError({"client": "The supplied phone does not match. Select the client explicitly."})
     if len(matches) > 1:
         raise ValidationError({"client": "Select one of the matching clients."})
     if matches:
@@ -57,6 +64,8 @@ def _shape(values):
             raise ValidationError({"client": "Invalid client selection."})
     elif not isinstance(client.get("full_name"), str) or not client["full_name"].strip():
         raise ValidationError({"client": "Provide the client name."})
+    if "phone" in client and not isinstance(client["phone"], str):
+        raise ValidationError({"client": "Provide the phone number as text."})
     if type(values["plan"]) is not bool or not isinstance(visits, list) or not 1 <= len(visits) <= MAX_VISITS:
         raise ValidationError({"visits": "Provide between 1 and 30 visits."})
     if not values["plan"] and len(visits) != 1:
