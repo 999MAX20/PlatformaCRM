@@ -160,6 +160,10 @@ def _channel_catalog():
 
 
 def apply_inbox_filters(queryset, params, user):
+    if params.get("unanswered") == "true":
+        queryset = queryset.filter(is_archived=False, status="open").filter(
+            Q(unread_count__gt=0) | Q(handoff_required=True)
+        )
     for field in ["channel", "status", "priority"]:
         value = params.get(field)
         if value:

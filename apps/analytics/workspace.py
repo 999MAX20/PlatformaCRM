@@ -2,6 +2,7 @@
 from datetime import datetime, time, timedelta
 from zoneinfo import ZoneInfo
 
+from django.conf import settings
 from django.db.models import Count, Exists, OuterRef, Q
 from django.utils import timezone
 from rest_framework import serializers
@@ -27,6 +28,9 @@ class WorkspacePeriod(serializers.Serializer):
 def workspace_period(business, params):
     period = WorkspacePeriod(data={key: params[key] for key in ("start", "end") if params.get(key)})
     period.is_valid(raise_exception=True)
+    for key, value in period.validated_data.items():
+        if not 2 <= value.year <= 9998:
+            raise serializers.ValidationError({key: "Use a year between 0002 and 9998."})
     values = {key: value.isoformat() for key, value in period.validated_data.items()}
     values.setdefault("end", timezone.localdate(timezone=ZoneInfo(business.timezone)).isoformat())
     return parse_bounded_date_range(values, default_days=30)
@@ -101,7 +105,8 @@ def build_analytics_workspace(business, *, user, start_date, end_date, now=None)
     team = _team_rows(business, user, leads, won, lost, tasks, overdue, unanswered, availability, appointments)
     return {
         "business": business.pk,
-        "period": {"start": start_date.isoformat(), "end": end_date.isoformat(), "timezone": business.timezone},
+        "period": {"start": start_date.isoformat(), "end": end_date.isoformat(), "timezone": business.timezone,
+                   "max_days": settings.REPORT_MAX_RANGE_DAYS},
         "generated_at": now.isoformat(), "availability": availability,
         "leads": {
             "total": lead_counts["total"] if availability[Resources.LEADS] else None,

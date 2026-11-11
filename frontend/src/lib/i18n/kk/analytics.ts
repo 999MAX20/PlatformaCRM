@@ -233,4 +233,11 @@ export const analytics: Record<string, string> = {
   "analytics.action.sla_overdue_deal.description": "{count} мәміле кезеңде белгіленген уақыттан ұзақ тұр.",
   "analytics.action.overdue_task.title": "Мерзімі өткен тапсырмаларды жабу",
   "analytics.action.overdue_task.description": "Мерзімі өткен тапсырмалар: {count}.",
+  "analyticsWorkspace.periodLimit": "{days} күннен аспайтын кезеңді таңдаңыз.",
+  "analyticsWorkspace.refreshFailed": "Есеп жаңартылмады. Соңғы жүктелген деректер көрсетілген.",
+  "analyticsWorkspace.scope.business": "Қамту: бизнес.",
+  "analyticsWorkspace.scope.team": "Қамту: сіздің командаңыз.",
+  "analyticsWorkspace.scope.own": "Қамту: сіздің жазбаларыңыз.",
+  "analyticsWorkspace.scope.none": "Қамту қолжетімсіз.",
+  "analyticsWorkspace.teamCoverage": "Кестеде қолжетімді ауқымдағы белсенді қатысушылар ғана бар. Жауаптысы жоқ немесе жауаптысы белсенді емес жазбалар қызметкерлер жолдарына кірмейді; олардың қосындысы шолудан өзгеше болуы мүмкін.",
 };

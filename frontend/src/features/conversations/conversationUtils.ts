@@ -22,6 +22,7 @@ export function getSavedConversationsFilterState() {
 
 export function getPresetFilters(preset: InboxPreset, existing: InboxFilters): InboxFilters {
   const presetFilters: InboxFilters = { ...existing };
+  presetFilters.unanswered = undefined;
   if (preset === "mine") {
     presetFilters.assigned_to = "me";
   } else if (preset === "new") {

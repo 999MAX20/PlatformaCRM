@@ -232,4 +232,11 @@ export const analytics: Record<string, string> = {
   "analytics.action.sla_overdue_deal.description": "{count} deals have stayed in a stage longer than expected.",
   "analytics.action.overdue_task.title": "Complete overdue tasks",
   "analytics.action.overdue_task.description": "Overdue tasks: {count}.",
+  "analyticsWorkspace.periodLimit": "Choose a period of up to {days} days.",
+  "analyticsWorkspace.refreshFailed": "The report could not be refreshed. Showing the last loaded data.",
+  "analyticsWorkspace.scope.business": "Scope: business.",
+  "analyticsWorkspace.scope.team": "Scope: your team.",
+  "analyticsWorkspace.scope.own": "Scope: your records.",
+  "analyticsWorkspace.scope.none": "Scope unavailable.",
+  "analyticsWorkspace.teamCoverage": "The table includes only active members within your scope. Records without a coordinator or with an inactive coordinator are excluded from employee rows; their sum may differ from the overview.",
 };

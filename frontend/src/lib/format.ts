@@ -26,11 +26,11 @@ export function formatDate(value?: string | null, timeZone = activeBusinessTimeZ
   }).format(new Date(value));
 }
 
-export function formatMoney(value?: string | number | null, currency = "KZT") {
+export function formatMoney(value?: string | number | null, currency = "KZT", locale = "ru-KZ") {
   if (value === null || value === undefined || value === "") return "-";
   const amount = Number(value);
   if (!Number.isFinite(amount)) return "-";
-  return new Intl.NumberFormat("ru-KZ", {
+  return new Intl.NumberFormat(locale, {
     style: "currency",
     currency,
     minimumFractionDigits: 0,

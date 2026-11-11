@@ -234,4 +234,11 @@ export const analytics: Record<string, string> = {
   "analytics.action.sla_overdue_deal.description": "{count} сделок находятся на этапе дольше нормы.",
   "analytics.action.overdue_task.title": "Закрыть просроченные задачи",
   "analytics.action.overdue_task.description": "Просрочено задач: {count}.",
+  "analyticsWorkspace.periodLimit": "Выберите период до {days} дней.",
+  "analyticsWorkspace.refreshFailed": "Не удалось обновить отчёт. Показаны последние загруженные данные.",
+  "analyticsWorkspace.scope.business": "Область: бизнес.",
+  "analyticsWorkspace.scope.team": "Область: ваша команда.",
+  "analyticsWorkspace.scope.own": "Область: ваши записи.",
+  "analyticsWorkspace.scope.none": "Область недоступна.",
+  "analyticsWorkspace.teamCoverage": "Таблица включает только активных участников доступной области. Записи без ответственного или с неактивным ответственным не входят в строки сотрудников; их сумма может отличаться от обзора.",
 };

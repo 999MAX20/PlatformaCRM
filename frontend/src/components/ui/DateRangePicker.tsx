@@ -123,10 +123,11 @@ export function DateRangePicker({ label, value, onChange, today, range = true, i
   </div>;
 }
 
-export function DatePickerPanel({ anchor, label, value, today, onApply, onClose, range = true, allowClear = false, validate, min, max, yearRange, id, testId }: {
+export function DatePickerPanel({ anchor, label, value, today, onApply, onClose, range = true, allowClear = false, validate, validationMessage, min, max, yearRange, id, testId }: {
   anchor: RefObject<HTMLElement | null>; label: string; value: DateRangeValue; today: string;
   onApply: (value: DateRangeValue) => void; onClose: (restoreFocus?: boolean) => void;
   range?: boolean; allowClear?: boolean; validate?: (value: DateRangeValue) => boolean;
+  validationMessage?: string;
   min?: string; max?: string; id?: string; testId?: string;
   yearRange?: CalendarYearRange;
 }) {
@@ -138,6 +139,7 @@ export function DatePickerPanel({ anchor, label, value, today, onApply, onClose,
   return <CalendarPopover anchor={anchor} label={label} id={id} testId={testId} onClose={onClose}>
     <DateRangePicker inline compact range={range} allowClear={false} label={label} value={draft} today={today} min={min} max={max} yearRange={yearRange}
       onChange={next => { setDraft(next); if (!range) onApply(next); }} />
+    {!valid && validationMessage ? <p role="alert" className="mt-2 text-sm text-platforma-danger">{validationMessage}</p> : null}
     <div className="mt-3 flex flex-wrap justify-end gap-2 border-t border-platforma-border pt-3">
       {allowClear && <Button type="button" variant="ghost" className="mr-auto min-h-11" onClick={() => range ? setDraft({ from: "", to: "" }) : onApply({ from: "", to: "" })}>{t("common.clear")}</Button>}
       <Button type="button" variant="secondary" className="min-h-11" onClick={() => onClose()}>{t("common.cancel")}</Button>

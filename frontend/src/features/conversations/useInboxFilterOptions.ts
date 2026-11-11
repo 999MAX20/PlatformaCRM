@@ -49,6 +49,7 @@ export function useInboxFilterOptions({
         filters.assigned_to ||
         filters.status ||
         filters.unread ||
+        filters.unanswered ||
         filters.handoff_required ||
         filters.bot_enabled,
       ),
@@ -56,6 +57,7 @@ export function useInboxFilterOptions({
   );
   const activeFilterSummary = useMemo(() => {
     const parts: string[] = [];
+    if (filters.unanswered === "true") parts.push(t("analytics.unansweredConversations"));
     if (filters.bot) parts.push(t("conversations.agent"));
     if (filters.channel) parts.push(channelLabel(filters.channel, t));
     if (filters.priority)
@@ -80,6 +82,7 @@ export function useInboxFilterOptions({
   }, [filters, t]);
   const queueFilterOptions = useMemo(
     () => [
+      ...(filters.unanswered === "true" ? [{ value: "unanswered", label: t("analytics.unansweredConversations") }] : []),
       {
         value: "all",
         label: `${t("conversations.queueAll")} (${conversationCounts.all})`,
@@ -103,6 +106,7 @@ export function useInboxFilterOptions({
     ],
     [
       conversationCounts.all,
+      filters.unanswered,
       conversationCounts.attention,
       conversationCounts.botDisabled,
       conversationCounts.closed,

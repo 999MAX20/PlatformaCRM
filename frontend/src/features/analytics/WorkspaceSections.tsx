@@ -30,8 +30,8 @@ function Breakdown({ title, rows, unavailable }: { title: string; rows: { label:
   return <Card><CardHeader><h2 className="text-base font-bold">{title}</h2></CardHeader><CardBody>
     {unavailable ? <p className="text-sm text-platforma-subtle">{t("analyticsWorkspace.unavailable")}</p>
       : rows.every(row => !row.value) ? <p className="text-sm text-platforma-subtle">{t("analyticsWorkspace.empty")}</p>
-      : <dl className="space-y-4">{rows.map(row => <div key={row.label} className="grid grid-cols-[minmax(90px,1fr)_2fr_32px] items-center gap-3 text-[13px]">
-        <dt className="break-words">{row.label}</dt><div aria-hidden="true" className="h-2 overflow-hidden rounded-full bg-surface-muted"><div className={`h-full rounded-full ${row.danger ? "bg-platforma-danger" : "bg-brand-500"}`} style={{ width: `${row.value / maximum * 100}%` }} /></div>
+      : <dl className="space-y-4">{rows.map(row => <div key={row.label} className="grid grid-cols-[minmax(0,1fr)_32px] items-center gap-x-3 gap-y-2 text-[13px] sm:grid-cols-[minmax(160px,1fr)_2fr_32px]">
+        <dt>{row.label}</dt><div aria-hidden="true" className="col-start-1 row-start-2 h-2 overflow-hidden rounded-full bg-surface-muted sm:col-start-auto sm:row-start-auto"><div className={`h-full rounded-full ${row.danger ? "bg-platforma-danger" : "bg-brand-500"}`} style={{ width: `${row.value / maximum * 100}%` }} /></div>
         <dd className="text-right font-semibold tabular-nums"><MetricValue value={row.value} /></dd></div>)}</dl>}
   </CardBody></Card>;
 }
@@ -55,7 +55,9 @@ export function ServicesTable({ data }: { data: AnalyticsWorkspace }) {
 export function TeamTable({ data }: { data: AnalyticsWorkspace }) {
   const { t } = useI18n();
   if (!data.team.available) return <ForbiddenState title={t("analytics.teamHidden")} />;
-  return <div className="space-y-4"><ReportTable title={t("analytics.employees")}
+  return <div className="space-y-4">
+    <p className="text-sm text-platforma-subtle">{t(`analyticsWorkspace.scope.${data.team.scope}`)} {t("analyticsWorkspace.teamCoverage")}</p>
+    <ReportTable title={t("analytics.employees")}
     columns={[t("appointment.responsible"), t("appointments.title"), t("records.completed")]}
     rows={data.team.rows.map(row => [row.name, <MetricValue value={row.appointments} />, <MetricValue value={row.completed_appointments} />])} />
     <ReportTable title={t("analyticsWorkspace.workloadNow")}
@@ -81,15 +83,15 @@ export function Overview({ data }: { data: AnalyticsWorkspace }) {
   ];
   const attention = [
     { label: t("analytics.overdueTasks"), value: data.current.overdue_tasks, href: "/app/tasks?tab=all&bucket=overdue" },
-    { label: t("analytics.unansweredConversations"), value: data.current.unanswered, href: "/app/conversations?status=open" },
+    { label: t("analytics.unansweredConversations"), value: data.current.unanswered, href: "/app/conversations?status=open&unanswered=true" },
     { label: t("records.pendingResult"), value: data.current.pending_records, href: "/app/appointments?attention=pending_result" },
   ];
   return <div className="space-y-4">
     <Card><dl className="grid grid-cols-2 divide-platforma-border lg:grid-cols-4">{stats.map((stat, index) => <div key={stat.label} className={`px-4 py-4 ${index ? "lg:border-l" : ""}`}><dt className="text-xs font-semibold text-platforma-subtle">{stat.label}</dt><dd className="mt-2 text-[26px] font-bold leading-8 tabular-nums"><MetricValue value={stat.value} percent={stat.percent} /></dd></div>)}</dl></Card>
     <div className="grid gap-4 lg:grid-cols-2">
       <Breakdown title={t("nav.appointments")} unavailable={!data.availability.appointments} rows={appointmentRows} />
+      <SourcesTable data={data} />
     </div>
-    <SourcesTable data={data} />
     <Card><CardHeader><h2 className="text-base font-bold">{t("analyticsWorkspace.attentionNow")}</h2></CardHeader><ul className="divide-y divide-platforma-border">
       {attention.filter(item => item.value !== null).map(item => <li key={item.href}><Link to={item.href} className="flex min-h-12 items-center gap-3 px-4 py-3 text-sm hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-500"><span className="flex-1">{item.label}</span><span className="font-semibold tabular-nums"><MetricValue value={item.value} /></span><ArrowUpRight size={16} aria-hidden="true" /></Link></li>)}
     </ul></Card>

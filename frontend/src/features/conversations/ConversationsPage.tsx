@@ -286,11 +286,13 @@ export function ConversationsPage() {
     const next: InboxFilters = {
       ...filters,
       unread: undefined,
+      unanswered: undefined,
       handoff_required: undefined,
       bot_enabled: undefined,
       status: "",
     };
     if (value === "new") next.unread = "true";
+    if (value === "unanswered") next.unanswered = "true";
     if (value === "attention") next.handoff_required = "true";
     if (value === "paused") next.bot_enabled = "false";
     if (value === "closed") next.status = "closed";
@@ -317,6 +319,7 @@ export function ConversationsPage() {
       next,
       value === "all" &&
         !next.unread &&
+        !next.unanswered &&
         !next.handoff_required &&
         !next.bot_enabled &&
         !next.status &&

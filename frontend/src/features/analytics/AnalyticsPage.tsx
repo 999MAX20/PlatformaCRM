@@ -1,11 +1,13 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Download, HelpCircle, RefreshCw } from "lucide-react";
+import { Download, HelpCircle, History, RefreshCw } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "react-router";
 import { analyticsApi } from "../../api/analytics";
+import { normalizeAppError } from "../../api/appError";
 import { analyticsExports } from "../../api/analyticsExports";
 import { usePageHeader } from "../../components/layout/PageHeaderContext";
 import { Button } from "../../components/ui/Button";
+import { StatusNotice } from "../../components/ui/StatusNotice";
 import { DatePickerPanel, isCalendarDate, type DateRangeValue } from "../../components/ui/DateRangePicker";
 import { Dialog } from "../../components/ui/Overlay";
 import { EmptyState, ErrorState, LoadingState } from "../../components/ui/StateViews";
@@ -50,14 +52,38 @@ function AnalyticsWorkspacePage({ business, userId }: { business: Business; user
   const active = tabs.includes(params.get("tab") as Tab) ? params.get("tab") as Tab : "overview";
   const context = `${userId}:${business.id}:${start}:${end}:${active}`;
   const periodAnchor = useRef<HTMLButtonElement>(null);
+  const tabList = useRef<HTMLElement>(null);
   const [help, setHelp] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [periodOpen, setPeriodOpen] = useState(false);
   useEffect(() => { setPageHeader({ title: t("analytics.title") }); return () => setPageHeader(null); }, [setPageHeader, t]);
+  useEffect(() => {
+    const list = tabList.current;
+    const selected = list?.querySelector<HTMLElement>('[aria-current="page"]');
+    if (!list || !selected) return;
+    const reveal = () => {
+      const left = selected.getBoundingClientRect().left - list.getBoundingClientRect().left + list.scrollLeft;
+      if (left < list.scrollLeft) list.scrollLeft = left;
+      else if (left + selected.offsetWidth > list.scrollLeft + list.clientWidth) {
+        list.scrollLeft = left + selected.offsetWidth - list.clientWidth;
+      }
+    };
+    reveal();
+    const observer = new ResizeObserver(reveal);
+    observer.observe(list);
+    return () => observer.disconnect();
+  }, [active, language]);
   const metrics = useQuery({
     queryKey: ["analytics-workspace", userId, business.id, start, end],
     queryFn: () => analyticsApi.workspace(business.id, { start, end }), retry: false,
   });
+  const maxDays = metrics.data?.period.max_days ?? 366;
+  const validPeriod = (value: DateRangeValue) => isCalendarDate(value.from) && isCalendarDate(value.to)
+    && value.from >= "0002-01-01" && value.to <= "9998-12-31" && value.from <= value.to
+    && (Date.parse(`${value.to}T12:00:00Z`) - Date.parse(`${value.from}T12:00:00Z`)) / 86400000 + 1 <= maxDays;
+  const periodValid = validPeriod({ from: start, to: end });
+  const errorCategory = metrics.error ? normalizeAppError(metrics.error).category : null;
+  const retainReport = Boolean(metrics.data) && ["temporary", "offline", "rate_limit"].includes(errorCategory || "");
   const exportMutation = useMutation({
     mutationFn: async () => ({ context, job: await analyticsExports.request(business.id, { start, end }, reports[active]) }),
   });
@@ -74,6 +100,7 @@ function AnalyticsWorkspacePage({ business, userId }: { business: Business; user
   function changeTab(tab: Tab) { setParams(previous => { const next = new URLSearchParams(previous); next.set("tab", tab); return next; }); }
   function closePeriod(restore = true) { setPeriodOpen(false); if (restore) periodAnchor.current?.focus(); }
   function applyPeriod(draft: DateRangeValue) {
+    if (!validPeriod(draft)) return;
     setParams(previous => { const next = new URLSearchParams(previous); next.set("start", draft.from); next.set("end", draft.to); return next; });
     closePeriod();
   }
@@ -82,19 +109,20 @@ function AnalyticsWorkspacePage({ business, userId }: { business: Business; user
     ? new Intl.DateTimeFormat(language, { day: "numeric", month: language === "kk" ? "numeric" : "short", year: "numeric", timeZone: "UTC" }).format(new Date(`${day}T12:00:00Z`)) : day;
 
   return <div className="space-y-4" data-testid="analytics-workspace">
-    <h1 className="sr-only">{t("analytics.title")}</h1>
+    <h1 className="text-xl font-bold lg:sr-only">{t("analytics.title")}</h1>
     <div className="flex flex-wrap items-center justify-between gap-3 border-b border-platforma-border pb-3">
-      <nav aria-label={t("analyticsWorkspace.sections")} className="flex flex-wrap gap-1">
-        {tabs.map(tab => <Button key={tab} variant={active === tab ? "secondary" : "ghost"} aria-current={active === tab ? "page" : undefined} onClick={() => changeTab(tab)} className="min-h-11 px-3">{t(`analyticsWorkspace.${tab}`)}</Button>)}
+      <nav ref={tabList} aria-label={t("analyticsWorkspace.sections")} className="relative flex w-full gap-1 overflow-x-auto xl:w-auto">
+        {tabs.map(tab => <Button key={tab} variant={active === tab ? "secondary" : "ghost"} aria-current={active === tab ? "page" : undefined} onClick={() => changeTab(tab)} className="min-h-11 shrink-0 whitespace-nowrap px-3">{t(`analyticsWorkspace.${tab}`)}</Button>)}
       </nav>
       <div className="flex w-full flex-wrap items-center gap-2 xl:w-auto">
-        <Button ref={periodAnchor} data-calendar-trigger type="button" variant="secondary" onClick={openPeriod} className="min-h-11" aria-haspopup="dialog" aria-expanded={periodOpen} aria-label={t("analyticsWorkspace.period")}>{dateLabel(start)} — {dateLabel(end)}</Button>
+        <Button ref={periodAnchor} data-calendar-trigger type="button" variant="secondary" onClick={openPeriod} className="min-h-11 w-full sm:w-auto" aria-haspopup="dialog" aria-expanded={periodOpen} aria-label={`${t("analyticsWorkspace.period")}: ${dateLabel(start)} — ${dateLabel(end)}`}>{dateLabel(start)} — {dateLabel(end)}</Button>
         <Button variant="secondary" disabled={!canExport} isLoading={exportMutation.isPending} onClick={() => exportMutation.mutate()}><Download size={16} />CSV</Button>
-        <Button variant="secondary" onClick={() => setHistoryOpen(true)}>{t("exportHistory.title")}</Button>
-        <Button variant="ghost" aria-label={t("analyticsWorkspace.refresh")} disabled={metrics.isFetching} onClick={() => void metrics.refetch()}><RefreshCw size={16} /></Button>
+        <Button variant="secondary" aria-label={t("exportHistory.title")} onClick={() => setHistoryOpen(true)}><History size={16} className="sm:hidden" aria-hidden="true" /><span className="hidden sm:inline">{t("exportHistory.title")}</span></Button>
+        <Button variant="ghost" aria-label={t("analyticsWorkspace.refresh")} disabled={metrics.isFetching || !periodValid} onClick={() => void metrics.refetch()}><RefreshCw size={16} /></Button>
         <Button variant="ghost" aria-label={t("analyticsWorkspace.method")} onClick={() => setHelp(true)}><HelpCircle size={17} /></Button>
       </div>
     </div>
+    {!periodValid ? <StatusNotice tone="warning" title={t("analyticsWorkspace.periodLimit", { days: maxDays })} action={<Button variant="secondary" onClick={openPeriod}>{t("analyticsWorkspace.period")}</Button>} /> : null}
     {exportMutation.error || download.error ? <ErrorState error={exportMutation.error || download.error} /> : null}
     {receipt && !receipt.job ? <p role="status" className="text-sm text-platforma-subtle">{t("analyticsWorkspace.downloaded")}</p> : null}
     {currentJob ? <div role="status" className="flex flex-wrap items-center gap-3 rounded-control border border-platforma-border bg-surface-muted p-3 text-sm">
@@ -102,7 +130,8 @@ function AnalyticsWorkspacePage({ business, userId }: { business: Business; user
       {currentJob.status === "succeeded" ? <Button variant="secondary" isLoading={download.isPending} onClick={() => download.mutate()}>{t("analyticsWorkspace.download")}</Button> : null}
     </div> : null}
     {job.error ? <ErrorState error={job.error} action={<Button variant="secondary" onClick={() => void job.refetch()}>{t("analyticsWorkspace.refresh")}</Button>} /> : null}
-    {metrics.isPending ? <LoadingState scope="page" /> : metrics.error ? <ErrorState error={metrics.error} action={<Button variant="secondary" onClick={() => void metrics.refetch()}>{t("analyticsWorkspace.refresh")}</Button>} /> : metrics.data ? <>
+    {retainReport ? <StatusNotice tone="warning" title={t("analyticsWorkspace.refreshFailed")} action={<Button variant="secondary" disabled={metrics.isFetching || !periodValid} onClick={() => void metrics.refetch()}>{t("analyticsWorkspace.refresh")}</Button>} /> : null}
+    {metrics.isPending ? <LoadingState scope="page" /> : metrics.error && !retainReport ? (periodValid ? <ErrorState error={metrics.error} action={errorCategory === "permission" || errorCategory === "authentication" ? undefined : <Button variant="secondary" onClick={() => void metrics.refetch()}>{t("analyticsWorkspace.refresh")}</Button>} /> : null) : metrics.data ? <>
       <div aria-busy={metrics.isFetching}>
         {active === "overview" ? <Overview data={metrics.data} /> : active === "sources" ? <SourcesTable data={metrics.data} /> : active === "services" ? <ServicesTable data={metrics.data} /> : active === "team" ? <TeamTable data={metrics.data} /> : <FinancialSummary report={metrics.data.financial} />}
       </div>
@@ -111,7 +140,7 @@ function AnalyticsWorkspacePage({ business, userId }: { business: Business; user
     <Dialog title={t("exportHistory.title")} open={historyOpen} onClose={() => setHistoryOpen(false)} size="lg">
       {historyOpen ? <ExportHistory business={business} userId={userId} /> : null}
     </Dialog>
-    {periodOpen && <DatePickerPanel anchor={periodAnchor} label={t("analyticsWorkspace.period")} value={{ from: start, to: end }} today={today} onApply={applyPeriod} onClose={closePeriod} />}
+    {periodOpen && <DatePickerPanel anchor={periodAnchor} label={t("analyticsWorkspace.period")} value={{ from: start, to: end }} today={today} onApply={applyPeriod} onClose={closePeriod} validate={validPeriod} validationMessage={t("analyticsWorkspace.periodLimit", { days: maxDays })} />}
     <Dialog title={t("analyticsWorkspace.method")} open={help} onClose={() => setHelp(false)} size="sm">
       <dl className="space-y-4 text-sm">{["period", "recordCompletion", "noShow", "history", "money"].map(key => <div key={key}><dt className="font-bold">{t(`analyticsWorkspace.method.${key}`)}</dt><dd className="mt-1 leading-6 text-platforma-subtle">{t(`analyticsWorkspace.method.${key}Text`)}</dd></div>)}</dl>
     </Dialog>

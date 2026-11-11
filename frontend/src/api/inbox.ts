@@ -101,6 +101,7 @@ export type InboxFilters = {
   priority?: string;
   bot_enabled?: string;
   unread?: string;
+  unanswered?: string;
   handoff_required?: string;
   search?: string;
   q?: string;

@@ -12819,3 +12819,31 @@ No scoped code/local-evidence remainder; fullD01/PG/livequeue/production/other m
 Own commit only;39foreignoutgoing after fetch block own-onlypush/newCI; foreign WIP retained.
 Evidence: docs/testing/evidence/ai-analytics-complex-fixes-20261111.md.
 Exact commands/logs/failures/processes: output/ai-analytics-complex-fixes-20261111/CHECKPOINT.md.
+
+## ANALYTICS-FIXES-20261111
+
+Owner explicitly requested all nine findings from this chat's read-only /analytics audit,
+Playwright/backend verification, preserved design, no new analytics functions or foreign edits.
+Canonical PlatformaCRM/current codex/ui-testing-toolkit; basef01d2d8b, starting dirty snapshot
+and own source hashes in output/analytics-fixes-20261111. No separate source tree.
+Business/date bounds return400; configured max period exposed for calendar validation;
+team scope/coverage explicit without widened access/new totals; unanswered Inbox exact OR;
+temporary refresh preserves dated report,403 hides it; finance follows locale; existing
+overview cards paired, mobile text/actions/header/nav and period accessible name corrected.
+Focused14PASS, queuefixture1ERROR missingbot corrected, final16PASS. Completion133 total:
+131PASS/2PG-onlyskips; system/driftPASS. Full frontend build/types/i18n/bundlePASS, then
+affected app/types/budget after final nav ResizeObserver; unchanged widget/i18n reused.
+Playwright Chromium real syntheticAPI: calendar invalid/valid/empty/Escape/arrows/focus,
+503/retry/403, realCSV, exact Inbox count, manager own scope/operator denial, RU/KK/EN,
+320/390/768/1024/1440/nooverflow/active tab/history. Screenshots visually inspected.
+Harness selector/race assumptions and WindowsViteEBUSY downloadwatch failure retained;
+recovered by own devserver artifact watch exclusion, no source infrastructure change.
+Existing design/tokens/API/domain/access unchanged except additive query/period metadata.
+No schema/workingDB/env/provider/messaging/BusinessEvent/AI/deployment effects.
+Owned runtimes/browser stopped and disposableDBremoved; no foreign processes stopped.
+CRM/frontend/passport/evidence/registry/status consistent. Roadmap/R01 not reopened;
+access/AI/integrations/operations/README unchanged: no policy,setup,live or roadmap change.
+No scoped code/evidence remainder; fullrelease/PGconcurrency/screenreader/production unclaimed.
+Only owned paths/hunks eligible for commit;42foreign outgoing after fetch prevent own-only
+normal push. No new CI/deployment. Detailed commands/failures/hashes: output/analytics-fixes-20261111.
+Evidence: docs/testing/evidence/analytics-fixes-20261111.md.

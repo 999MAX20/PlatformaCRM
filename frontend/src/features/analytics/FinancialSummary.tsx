@@ -15,7 +15,7 @@ const reasons = new Set([
 ]);
 
 export function FinancialStatus({ report, compact = false, inNotice = false }: { report?: FinancialReport; compact?: boolean; inNotice?: boolean }) {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const reason = report?.reason && reasons.has(report.reason) ? report.reason : "source_unavailable";
   return (
     <span className={`block ${compact ? "space-y-0.5 text-[11px] leading-4" : "space-y-1 text-xs leading-5"}`} data-testid="financial-status">
@@ -27,15 +27,15 @@ export function FinancialStatus({ report, compact = false, inNotice = false }: {
       {report?.source ? <span className="block break-words">{t("finance.source", { name: report.source.provider === "manual" ? t("aiHistory.manual") : report.source.name })}</span> : null}
       {report ? <span className="block">{t("finance.period", { start: report.period.start, end: report.period.end })}</span> : null}
       {report?.last_successful_sync_at ? (
-        <span className="block">{t("finance.asOf", { at: formatDateTime(report.last_successful_sync_at, undefined, true) })}</span>
+        <span className="block">{t("finance.asOf", { at: formatDateTime(report.last_successful_sync_at, undefined, true, language) })}</span>
       ) : null}
-      {report?.last_recorded_at ? <span className="block">{t("aiHistory.lastRecorded", { at: formatDateTime(report.last_recorded_at, undefined, true) })}</span> : null}
+      {report?.last_recorded_at ? <span className="block">{t("aiHistory.lastRecorded", { at: formatDateTime(report.last_recorded_at, undefined, true, language) })}</span> : null}
     </span>
   );
 }
 
 export function FinancialSummary({ report }: { report: FinancialReport }) {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const { user } = useAuth();
   const { business } = useActiveBusiness();
   const canViewConnections = hasPermission(user, business?.id, "integrations");
@@ -57,7 +57,7 @@ export function FinancialSummary({ report }: { report: FinancialReport }) {
           {(["receipts", "refunds", "net_receipts"] as const).map((key) => (
             <div key={key}>
               <dt className="text-sm text-platforma-subtle">{t(`finance.${key}`)}</dt>
-              <dd className="mt-1 text-2xl font-semibold tabular-nums text-platforma-ink">{formatMoney(report[key], report.currency)}</dd>
+              <dd className="mt-1 text-2xl font-semibold tabular-nums text-platforma-ink">{formatMoney(report[key], report.currency, language)}</dd>
             </div>
           ))}
         </dl>

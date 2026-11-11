@@ -60,12 +60,13 @@ export function ConversationQueueFilters({
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
 
   const queueValue = useMemo(() => {
+    if (filters.unanswered === "true") return "unanswered";
     if (filters.status === "closed") return "closed";
     if (filters.bot_enabled === "false") return "paused";
     if (filters.handoff_required === "true") return "attention";
     if (filters.unread === "true") return "new";
     return "all";
-  }, [filters.bot_enabled, filters.handoff_required, filters.status, filters.unread]);
+  }, [filters.bot_enabled, filters.handoff_required, filters.status, filters.unread, filters.unanswered]);
 
   const ownerValue = filters.assigned_to || "all";
   const advancedCount = activeFilterSummary.length;

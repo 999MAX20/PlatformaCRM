@@ -1,3 +1,11 @@
+ANALYTICS-FIXES-20261111: nine audited /analytics defects fixed and locally verified.
+API validation/period, team scope, exact Inbox link, cached recovery, locales and responsive/a11y.
+Focused16 and dependent131PASS/2PGskips; system/drift, build/types/i18n/bundle PASS.
+Playwright real isolatedAPI:503/recovery/403/CSV/calendar/roles/RU-KK-EN320–1440 PASS.
+Existing design/rights preserved; no new KPI/schema/workingDB/env/provider/deploy.
+No scoped code/local-evidence remainder;42foreign outgoing block own-only push/newCI.
+Evidence: docs/testing/evidence/analytics-fixes-20261111.md.
+
 BUSINESS-CLEAR-20261111: /app/business content removed at owner request.
 Empty workspace in existing shell; no company redirect/form/section tabs.
 Direct subsection routes and data preserved; unfinished parity edits withdrawn.

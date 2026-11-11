@@ -17,6 +17,7 @@ const FILTER_QUERY_KEYS = [
   "assigned_to",
   "priority",
   "unread",
+  "unanswered",
   "handoff_required",
   "bot_enabled",
   "search",
@@ -71,6 +72,7 @@ export function useConversationFilters({
         (!isFilterUrlPresent ? savedState?.filters?.priority : undefined) ||
         undefined,
       unread: searchParams.get("unread") || undefined,
+      unanswered: searchParams.get("unanswered") || undefined,
       handoff_required: searchParams.get("handoff_required") || undefined,
       bot_enabled: searchParams.get("bot_enabled") || undefined,
       search: searchParams.get("search") || undefined,
@@ -145,6 +147,7 @@ export function useConversationFilters({
       assigned_to: searchParams.get("assigned_to") || undefined,
       priority: searchParams.get("priority") || undefined,
       unread: searchParams.get("unread") || undefined,
+      unanswered: searchParams.get("unanswered") || undefined,
       handoff_required: searchParams.get("handoff_required") || undefined,
       bot_enabled: searchParams.get("bot_enabled") || undefined,
       search: searchParams.get("search") || undefined,

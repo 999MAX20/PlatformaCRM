@@ -14,6 +14,8 @@ from apps.scheduling.models import Appointment
 from apps.tasks.models import Task
 from apps.core.models import ExportJob
 from apps.core.export_jobs import process_export_job
+from apps.bots.models import Bot, BotConversation
+from apps.conversations.inbox_helpers import apply_inbox_filters
 
 
 class AnalyticsWorkspaceTests(TestCase):
@@ -88,6 +90,38 @@ class AnalyticsWorkspaceTests(TestCase):
                        {"start": "2000-01-01"}, {"end": "2026-13-01"}):
             with self.subTest(params=params):
                 self.assertEqual(self.report(**params).status_code, 400)
+
+    def test_extreme_dates_and_invalid_business_are_validation_errors(self):
+        for value in ("abc", "1.5", "-1", "9" * 40):
+            with self.subTest(business=value):
+                self.assertEqual(self.report(business=value).status_code, 400)
+        for day in ("9999-12-31", "0001-01-01"):
+            with self.subTest(day=day):
+                self.assertEqual(self.report(start=day, end=day).status_code, 400)
+
+    def test_unanswered_drilldown_matches_current_queue(self):
+        expected = []
+        bot = Bot.objects.create(business=self.business, name="Analytics queue")
+        for index, extra in enumerate(({"unread_count": 1}, {"handoff_required": True},
+                                      {"unread_count": 2, "handoff_required": True}, {},
+                                      {"unread_count": 1, "status": "closed"},
+                                      {"handoff_required": True, "is_archived": True})):
+            row = BotConversation.objects.create(business=self.business, bot=bot, channel="website",
+                                                 external_user_id=f"analytics-{index}", **extra)
+            if index < 3:
+                expected.append(row.pk)
+        scoped = BotConversation.objects.filter(business=self.business)
+        filtered = apply_inbox_filters(scoped, {"unanswered": "true"}, self.owner)
+        self.assertCountEqual(filtered.values_list("pk", flat=True), expected)
+        self.assertEqual(self.report().data["current"]["unanswered"], len(expected))
+        response = self.api.get("/api/inbox/conversations/", {"business": self.business.pk, "unanswered": "true"})
+        self.assertEqual(response.status_code, 200)
+        self.assertCountEqual([row["id"] for row in response.data["results"]], expected)
+
+    @override_settings(REPORT_MAX_RANGE_DAYS=31)
+    def test_calendar_limit_matches_server_policy(self):
+        self.assertEqual(self.report().data["period"]["max_days"], 31)
+        self.assertEqual(self.report(start="2026-10-01", end="2026-11-01").status_code, 400)
 
     def test_empty_report_has_undefined_rates_and_unavailable_finance(self):
         result = self.report().data

@@ -421,6 +421,12 @@ def _resolve_business(request):
     business_id = request.query_params.get("business")
     businesses = accessible_businesses(request.user)
     if business_id:
+        try:
+            business_id = int(business_id)
+        except (ValueError, TypeError):
+            raise ValidationError({"business": "Use a valid business ID."})
+        if not 0 < business_id <= 9223372036854775807:
+            raise ValidationError({"business": "Use a valid business ID."})
         business = businesses.filter(id=business_id).first()
         if business is None:
             raise ValidationError({"business": "Business is not available."})

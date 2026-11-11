@@ -13,7 +13,7 @@ export type AnalyticsExportJob = {
 };
 export type AnalyticsWorkspace = {
   business: Id;
-  period: AnalyticsPeriod & { timezone: string };
+  period: AnalyticsPeriod & { timezone: string; max_days?: number };
   generated_at: string;
   availability: Record<"leads" | "deals" | "appointments" | "tasks" | "conversations", boolean>;
   leads: { total: number | null; converted: number | null; conversion_rate: number | null };
