@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Link, useSearchParams } from "react-router";
 import { managementApi, type ManagementKind, type ManagementResource, type ManagementService } from "../../api/management";
 import { usePageHeader } from "../../components/layout/PageHeaderContext";
@@ -39,12 +39,21 @@ function ManagementCatalogPage({ section }: { section: Exclude<ManagementSection
   const query = useQuery({ queryKey: ["management", business?.id], queryFn: () => managementApi.catalog(business!.id), enabled: !!business });
   const data = query.data;
   const requestedEntity = params.get(section === "services" ? "service" : "resource");
+  const requestedAbsence = params.get("absence");
+  const openedRequest = useRef<string | null>(null);
   useEffect(() => {
+    if (!requestedEntity) { openedRequest.current = null; return; }
     if (!data || !requestedEntity || section === "branches") return;
+    const request = `${section}:${requestedEntity}:${requestedAbsence || ""}`;
+    if (openedRequest.current === request) return;
     const item = (section === "services" ? data.services : data.resources).find(row => String(row.id) === requestedEntity);
-    if (item?.can_manage) setEditor({ kind: section === "resources" ? "rooms" : section, id: item.id });
-  }, [data, requestedEntity, section]);
-  const closeEditor = () => { setEditor(null); setParams(previous => { const next = new URLSearchParams(previous); next.delete("service"); next.delete("resource"); return next; }, { replace: true }); };
+    if (item?.can_manage) {
+      openedRequest.current = request;
+      if (requestedAbsence === "1" && section === "staff") setAbsence(item as ManagementResource);
+      else setEditor({ kind: section === "resources" ? "rooms" : section, id: item.id });
+    }
+  }, [data, requestedEntity, requestedAbsence, section]);
+  const closeEditor = () => { setEditor(null); setAbsence(null); setParams(previous => { const next = new URLSearchParams(previous); next.delete("service"); next.delete("resource"); next.delete("absence"); return next; }, { replace: true }); };
   if (query.isPending) return <LoadingState />;
   if (query.error || !data || !business) return <ErrorState error={query.error} action={<Button onClick={() => void query.refetch()}>{t("common.retry")}</Button>} />;
   const currentBranches = data.branches.filter(row => !row.archived_at);
@@ -107,7 +116,7 @@ function ManagementCatalogPage({ section }: { section: Exclude<ManagementSection
     {editor?.kind === "services" && <ServiceEditor data={data} business={business.id} item={data.services.find(row => row.id === editor.id)} selectedBranch={branchId} onClose={closeEditor} />}
     {editor && (editor.kind === "staff" || editor.kind === "rooms") && <ResourceEditor kind={editor.kind} data={data} business={business.id} item={data.resources.find(row => row.id === editor.id)} selectedBranch={branchId} onClose={closeEditor} />}
     {editor?.kind === "branches" && <BranchEditor data={data} business={business.id} item={data.branches.find(row => row.id === editor.id)} onClose={closeEditor} />}
-    {absence && <AbsenceDialog item={absence} onClose={() => setAbsence(null)} />}
+    {absence && <AbsenceDialog item={absence} onClose={closeEditor} />}
   </div>;
 }
 

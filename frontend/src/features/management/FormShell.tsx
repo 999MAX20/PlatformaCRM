@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState, type ReactNode } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import { useActionConfirm } from "../../components/actions/ActionConfirmProvider";
 import { DraftGuard } from "../../components/actions/DraftGuard";
 import { Button } from "../../components/ui/Button";
@@ -10,23 +10,28 @@ import type { Id } from "../../types";
 
 export const managementQueryKeys = ["management", "branches", "services", "resources", "branch-configuration", "branch-catalog", "working-hours", "available-slots"];
 
-export function FormShell({ title, onClose, save, children }: { title: string; onClose: () => void; save: () => Promise<unknown>; children: ReactNode }) {
+export function FormShell({ title, onClose, save, children, dirty: controlledDirty = false }: { title: string; onClose: () => void; save: () => Promise<unknown>; children: ReactNode; dirty?: boolean }) {
   const { t } = useI18n();
   const [dirty, setDirty] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const savedRef = useRef(false);
+  const hasChanges = !saved && (dirty || controlledDirty);
   const confirm = useActionConfirm();
   const cache = useQueryClient();
   const mutation = useMutation({ mutationFn: save, onSuccess: async () => {
     setDirty(false);
+    setSaved(true);
+    savedRef.current = true;
     await Promise.all(managementQueryKeys.map(key => cache.invalidateQueries({ queryKey: [key] })));
     onClose();
   } });
   const close = async () => {
     if (mutation.isPending) return;
-    if (dirty && !(await confirm({ title: t("workingHours.discardChanges"), confirmLabel: t("actions.discardChanges"), tone: "warning" })).confirmed) return;
+    if (hasChanges && !(await confirm({ title: t("taskWorkspace.discardTitle"), confirmLabel: t("actions.discardChanges"), tone: "warning" })).confirmed) return;
     onClose();
   };
   return <Modal open title={title} onClose={() => void close()} size="lg" closeOnBackdrop={!mutation.isPending}>
-    <DraftGuard dirty={dirty} pending={mutation.isPending} />
+    <DraftGuard dirty={hasChanges} pending={mutation.isPending} saved={savedRef} />
     <form className="space-y-5" onChange={() => setDirty(true)} onSubmit={event => { event.preventDefault(); mutation.mutate(); }}>
       {mutation.error && <ErrorState error={mutation.error} />}
       <fieldset disabled={mutation.isPending} className="min-w-0 space-y-5">{children}</fieldset>

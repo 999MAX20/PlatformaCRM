@@ -96,7 +96,7 @@ export function ScheduleDayDialog({ branch, target, targets, date, weekly, confi
           }}>{t("branches.removeOverride")}</Button>}
         </div>
       </fieldset>
-      {selectedTarget.kind === "staff" && <Link className="platforma-focus-ring inline-flex min-h-11 items-center text-sm text-brand-700 underline" to={`/app/business/staff?branch=${branch.id}&resource=${selectedTarget.id}`}>{t("branches.absences")}</Link>}
+      {selectedTarget.kind === "staff" && <Link className="platforma-focus-ring inline-flex min-h-11 items-center text-sm text-brand-700 underline" to={`/app/business/staff?branch=${branch.id}&resource=${selectedTarget.id}&absence=1`}>{t("branches.absences")}</Link>}
       <Button type="button" variant="secondary" disabled={mutation.isPending} onClick={() => void close()}>{t("common.close")}</Button>
     </form>
   </Modal>;

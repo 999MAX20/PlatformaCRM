@@ -1,3 +1,12 @@
+MANAGEMENT-BROWSER-REVIEW-20261112: all five pages checked through real browser/API.
+Fixed Select-only draft guard, schedule-to-absence link and direct-form save/reopen.
+Existing7browserPASS; targeted regression,20viewports/four320forms/branch+searchPASS.
+RU/KK/EN, keyboard, relations/schedule/recovery/manager; build-types-i18n-bundlePASS.
+Isolated synthetic DB only; no backend/schema/workingDB/provider/deploy changes.
+Own local commit only; foreign outgoing range blocks push/newCI. Evidence:
+docs/testing/evidence/management-implementation-20261111.md#browser-review--12112026.
+Checkpoint: output/playwright/management-review-20261112/CHECKPOINT.md.
+
 MANAGEMENT-IMPLEMENTATION-20261111: five approved pages implemented with real APIs.
 Explicit service/staff/branch links, room pools, effective schedules and safe lifecycle.
 7browser scenarios RU/KK/EN320–1440; API31+18/AI40/PG14/node14/build-types-i18n-bundlePASS.

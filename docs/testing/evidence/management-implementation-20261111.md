@@ -1,5 +1,56 @@
 # MANAGEMENT-IMPLEMENTATION-20261111
 
+## Browser review — 12.11.2026
+
+Owner separately requested ordinary-user browser verification of all five pages,
+forms, relations and schedules, including mobile, with fixes. Review base372ec4f8,
+canonical checkout/current branch unchanged. Only five frontend files changed;
+existing foreign WIP preserved. Detailed artifacts and commands:
+`output/playwright/management-review-20261112/CHECKPOINT.md`.
+
+Three reproduced issues fixed:
+
+1. Changing only room branch/schedule mode or absence reason did not mark the form
+   dirty: Cancel discarded the selection without warning. Explicit custom-Select
+   dirtiness now reaches the form and navigation guard. The confirmation uses the
+   existing general RU/KK/EN wording instead of referring to a schedule in every form.
+2. The schedule's Absences link opened the specialist editor. It now opens that
+   specialist's absence form directly, retaining branch context and existing rights.
+3. Saving a direct-linked editor could reopen it when query invalidation reprocessed
+   the same URL. Each requested form is opened once; successful saves bypass the
+   dirty/pending navigation guard when clearing the form parameters.
+
+Chrome interactive checks: specialist create, bidirectional service/room/branch
+   relations, zero price and reload, branch address edit, date-specific schedule,
+   absence create/edit, dropdown-only draft warning and successful form close.
+Playwright against the same real disposable API: existing seven Management scenarios
+PASS (CRUD/relations/reload,503 recovery/drafts/effective schedule, RU320/KK390/EN768,
+manager denial403, lifecycle). Added diagnostic scripts prove direct-link save,
+absence link/reason/calendar, room-branch-only discard, branch creation with links,
+empty search/reset, all five pages at320/390/768/1440 and four forms at320 with
+required-name/long-text/keyboard/discard behavior. Screenshot review performed;
+no horizontal overflow in this coverage. Desktop/mobile browser, not a physical phone.
+
+`npm run build` (types + i18n7237 keys + app/widget), `npm run check:bundle` and diff
+hygiene PASS. Existing two locale chunk warnings remain; app shell is within400kB.
+No backend/schema changes; isolated backend regression suites were not repeated for
+these frontend-only fixes. No dependency installation, working-DB writes/migrations,
+external-provider action or deployment. Existing design/tokens and API rights retained.
+
+Retained failed attempts: initial CLI login500 from disposable SQLite lock contention
+while another browser run wrote; serialized retry passed. First direct-link retry
+exposed the query-reopen cause above, then passed after the fix. One diagnostic expected
+an absence reason in a calendar cell; the approved cell uses generic Absences, corrected
+against the implementation and independently checked saved reason. A dev-HMR provider
+error interrupted the viewport sweep during build; fresh navigation after build passed
+the remaining768/1440 screens and all forms. CUA time-field fill changed DOM but did not
+commit React state; native keyboard input and independent Playwright schedule checks
+confirmed persistence. Earlier failures are not presented as PASS.
+
+No remaining code or local-browser evidence item in this review scope. Local commit
+only; foreign outgoing commits prevent own-only push/new CI. Production remains outside
+this review. Runtime/fixture cleanup and exact Git receipt are in the checkpoint.
+
 Owner request: implement the accepted Management prototype in CRM, all five pages,
 inner navigation, forms and responsive layouts with real data. Owner additionally
 approved preserving existing automatic service eligibility as explicit links.

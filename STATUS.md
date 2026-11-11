@@ -1,3 +1,12 @@
+MANAGEMENT-BROWSER-REVIEW-20261112: all five pages checked through real browser/API.
+Fixed Select-only draft guard, schedule-to-absence link and direct-form save/reopen.
+Existing7browserPASS; targeted regression,20viewports/four320forms/branch+searchPASS.
+RU/KK/EN, keyboard, relations/schedule/recovery/manager; build-types-i18n-bundlePASS.
+Isolated synthetic DB only; no backend/schema/workingDB/provider/deploy changes.
+Own local commit only; foreign outgoing range blocks push/newCI. Evidence:
+docs/testing/evidence/management-implementation-20261111.md#browser-review--12112026.
+Checkpoint: output/playwright/management-review-20261112/CHECKPOINT.md.
+
 AI-WORK-CRM-COMPLEX-20261112: complex live CRM verification complete; open C1–C3.
 Two independent creates duplicate first values; archive read invents access denial;
 Appointment review shows raw IDs/untranslated branch. API/browser findings retained.

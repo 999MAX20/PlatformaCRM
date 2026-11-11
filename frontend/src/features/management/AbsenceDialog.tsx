@@ -19,10 +19,11 @@ export function AbsenceDialog({ item, onClose }: { item: ManagementResource; onC
   const [end, setEnd] = useState("");
   const [reason, setReason] = useState<Absence["reason"]>("unavailable");
   const [editing, setEditing] = useState<Absence | null>(null);
+  const [reasonDirty, setReasonDirty] = useState(false);
   const removal = useMutation({ mutationFn: (id: number) => specialistLifecycleApi.removeAbsence(item.id, id), onSuccess: async () => {
     await Promise.all([...managementQueryKeys, "specialist-absences"].map(key => cache.invalidateQueries({ queryKey: [key] })));
   } });
-  return <FormShell title={`${t("management.unavailability")}: ${item.name}`} onClose={onClose} save={async () => {
+  return <FormShell dirty={reasonDirty} title={`${t("management.unavailability")}: ${item.name}`} onClose={onClose} save={async () => {
     await specialistLifecycleApi.addAbsence(item.id, { id: editing?.id, starts_on: start, ends_on: end, reason, branch: editing ? editing.branch : item.resource_type === "staff" ? null : item.branch });
     await cache.invalidateQueries({ queryKey: ["specialist-absences", item.id] });
   }}>
@@ -41,6 +42,6 @@ export function AbsenceDialog({ item, onClose }: { item: ManagementResource; onC
       <Input label={t("branches.absenceStart")} type="date" required value={start} onChange={event => setStart(event.target.value)} />
       <Input label={t("branches.absenceEnd")} type="date" required min={start} value={end} onChange={event => setEnd(event.target.value)} />
     </div>
-    <Select label={t("branches.reason")} value={reason} onChange={event => setReason(event.target.value as Absence["reason"])} options={(item.resource_type === "staff" ? ["unavailable", "vacation", "sick"] : ["unavailable"]).map(value => ({ value, label: t(`branches.${value}`) }))} />
+    <Select label={t("branches.reason")} value={reason} onChange={event => { setReasonDirty(true); setReason(event.target.value as Absence["reason"]); }} options={(item.resource_type === "staff" ? ["unavailable", "vacation", "sick"] : ["unavailable"]).map(value => ({ value, label: t(`branches.${value}`) }))} />
   </FormShell>;
 }
