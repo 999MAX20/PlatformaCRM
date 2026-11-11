@@ -101,8 +101,8 @@ export function ServiceEditModal({
             onSubmit={onSubmit}
           />
           <CustomEntityFields business={businessId} kind="service" id={service.id} readOnly={!canEdit} onDirtyChange={setFieldsDirty} />
-          {canEdit && <ServiceResourceRequirements key={service.id} businessId={businessId} serviceId={service.id}
-            disabled={isSaving || !service.is_active} onDirtyChange={setResourceDirty} />}
+          <ServiceResourceRequirements key={service.id} businessId={businessId} service={service}
+            disabled={isSaving || !canEdit || !service.is_active} onDirtyChange={setResourceDirty} />
         </div>
 
         <aside className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-xs lg:self-start">

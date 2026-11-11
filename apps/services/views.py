@@ -3,6 +3,7 @@ from django.db.models import Q
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError
 
 from apps.businesses.access import Actions, Resources, assert_can, can
 from apps.core.permissions import accessible_businesses
@@ -34,6 +35,22 @@ class ServiceViewSet(TenantModelViewSet):
 
         if business_id:
             queryset = queryset.filter(business_id=business_id)
+        if self.action == "list" and self.request.query_params.get("branch"):
+            from apps.branches.access import assert_branch_access
+            from apps.branches.models import Branch
+            branch_id = self.request.query_params["branch"]
+            if not branch_id.isdecimal():
+                raise ValidationError({"branch": "Select a branch of this business."})
+            branch = Branch.objects.select_related("business").filter(
+                pk=branch_id, business_id__in=accessible_businesses(self.request.user).values("pk")
+            ).first()
+            if branch is None or (business_id and str(branch.business_id) != business_id):
+                queryset = queryset.none()
+            else:
+                assert_branch_access(self.request.user, branch.business, branch)
+                queryset = queryset.filter(business=branch.business)
+                if not branch.uses_business_defaults:
+                    queryset = queryset.filter(branch_offers__branch=branch).distinct()
         if search:
             queryset = queryset.filter(Q(name__icontains=search) | Q(description__icontains=search))
         if status == "active":

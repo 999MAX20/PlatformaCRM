@@ -4,6 +4,7 @@ import type { Id, Service } from "../types";
 
 export type ServiceListParams = {
   business?: Id;
+  branch?: Id;
   search?: string;
   custom_field?: string;
   custom_operator?: string;

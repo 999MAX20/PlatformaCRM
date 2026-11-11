@@ -105,6 +105,17 @@ def save_schedule_day(*, branch, actor, resource_id=None, weekday=None, date=Non
 
 
 @transaction.atomic
+def save_schedule_weekdays(*, branch, actor, weekdays, resource_id=None, intervals=None):
+    _lock_and_authorize(branch, actor)
+    if (not isinstance(weekdays, list) or not 1 <= len(weekdays) <= 7
+            or any(type(day) is not int or day not in range(7) for day in weekdays)
+            or len(set(weekdays)) != len(weekdays)):
+        raise ValidationError({"weekdays": "Select one to seven distinct weekdays."})
+    return [save_schedule_day(branch=branch, actor=actor, resource_id=resource_id,
+                             weekday=weekday, intervals=intervals) for weekday in weekdays]
+
+
+@transaction.atomic
 def save_travel_time(*, branch, actor, other_id, minutes):
     _lock_and_authorize(branch, actor)
     other = Branch.objects.filter(business=branch.business, pk=other_id).exclude(pk=branch.pk).first()

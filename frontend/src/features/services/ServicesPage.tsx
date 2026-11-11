@@ -1,11 +1,13 @@
 import { useCustomColumns, customFilterParams } from "../../components/crm/CustomFieldColumns";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { CalendarClock, Clock3, Plus, Search, Scissors, WalletCards } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router";
+import { Plus, Search } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router";
 
 import { getApiErrorMessage } from "../../api/client";
 import { servicesApi } from "../../api/services";
+import { DraftGuard } from "../../components/actions/DraftGuard";
+import { BusinessBranchFilter } from "../business/components/BusinessBranchFilter";
 import { useActionConfirm } from "../../components/actions/ActionConfirmProvider";
 import { CrmPagination, CrmWorkspacePage } from "../../components/crm";
 import { ServiceForm } from "../../components/forms/ServiceForm";
@@ -15,7 +17,6 @@ import { DataTable } from "../../components/tables/DataTable";
 import type { DataTableRowInteraction } from "../../components/tables/DataTable";
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
-import { MetricCard } from "../../components/ui/MetricCard";
 import { Modal } from "../../components/ui/Modal";
 import { Select } from "../../components/ui/Select";
 import { ErrorState, LoadingState } from "../../components/ui/StateViews";
@@ -43,16 +44,18 @@ export function ServicesPage() {
   const showNotification = useNotification();
   const confirmAction = useActionConfirm();
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
   const { setPageHeader } = usePageHeader();
   const { business } = useActiveBusiness();
   const { user } = useAuth();
   const canManage = hasPermission(user, business?.id, "settings", "update");
-  const canViewSettings = hasPermission(user, business?.id, "settings", "view");
   const [searchParams, setSearchParams] = useSearchParams();
   const customFilters = customFilterParams(searchParams);
   const [createOpen, setCreateOpen] = useState(false);
+  const [createDirty, setCreateDirty] = useState(false);
+  const savedRef = useRef(false);
+  const branch = positiveInteger(searchParams.get("branch"), 0) || undefined;
   const [inspectorDirty, setInspectorDirty] = useState(false);
+  useEffect(() => { if (inspectorDirty || createDirty) savedRef.current = false; }, [inspectorDirty, createDirty]);
 
   const search = searchParams.get("search") || "";
   const [searchDraft, setSearchDraft] = useState(search);
@@ -87,9 +90,10 @@ export function ServicesPage() {
   }, [search, searchDraft, updateSearchParams]);
 
   const servicesQuery = useQuery({
-    queryKey: ["services", "workspace", business?.id, user?.id, search, status, page, pageSize, customFilters],
+    queryKey: ["services", "workspace", business?.id, user?.id, search, status, page, pageSize, customFilters, branch],
     queryFn: () => servicesApi.listPage({
       business: business!.id,
+      branch,
       ...customFilters,
       search: search || undefined,
       status,
@@ -105,11 +109,15 @@ export function ServicesPage() {
       id ? servicesApi.update({ id, payload }) : servicesApi.create(payload),
     onSuccess: async (_service, variables) => {
       await Promise.all(["services", "branches", "branch-configuration", "branch-catalog", "available-slots"].map(key => queryClient.invalidateQueries({ queryKey: [key] })));
+      savedRef.current = true;
       setInspectorDirty(false);
       if (variables.id) {
         showNotification({ message: t("services.noticeSaved"), tone: "success" });
       } else {
         setCreateOpen(false);
+        setCreateDirty(false);
+        setSearchDraft("");
+        updateSearchParams({ service: _service.id, search: null, status: null, page: 1, branch: null });
         showNotification({ message: t("services.noticeCreated"), tone: "success" });
       }
     },
@@ -183,33 +191,12 @@ export function ServicesPage() {
     }
   }, [page, servicesQuery.isFetching, servicesQuery.isLoading, totalPages, updateSearchParams]);
 
-  const summary = servicesQuery.isError || servicesQuery.isPlaceholderData ? undefined : servicesQuery.data?.summary;
   const permissionMessage = permissionForbiddenMessage("settings", "update", t);
 
   useEffect(() => {
-    setPageHeader({
-      title: t("nav.services"),
-      secondaryActions: canViewSettings
-        ? [
-            {
-              label: t("settings.schedulingCenter"),
-              icon: CalendarClock,
-              onClick: () => navigate("/app/settings#operations-setup"),
-              presentation: "label",
-              showOnMobile: true,
-            },
-          ]
-        : undefined,
-      primaryAction: {
-        label: t("services.add"),
-        icon: Plus,
-        onClick: () => setCreateOpen(true),
-        disabled: !canManage,
-        title: !canManage ? permissionMessage : undefined,
-      },
-    });
+    setPageHeader({ title: t("nav.business") });
     return () => setPageHeader(null);
-  }, [canManage, canViewSettings, navigate, permissionMessage, setPageHeader, t]);
+  }, [setPageHeader, t]);
 
   const confirmDiscard = useCallback(async () => {
     if (!inspectorDirty) return true;
@@ -283,17 +270,11 @@ export function ServicesPage() {
 
   return (
     <>
-      <CrmWorkspacePage maxWidthClassName="max-w-[1520px]" testId={pageError ? undefined : "services-workspace-ready"}>
+      <DraftGuard saved={savedRef} dirty={inspectorDirty || createDirty} pending={mutation.isPending || lifecycleMutation.isPending} />
+      <CrmWorkspacePage edgeToEdge maxWidthClassName="max-w-none" testId={pageError ? undefined : "services-workspace-ready"}>
         <BusinessWorkspaceNav />
-        <section
-          tabIndex={0}
-          aria-label={t("services.metricsLabel")}
-          className="platforma-focus-ring mb-3 flex shrink-0 snap-x gap-3 overflow-x-auto rounded-card pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:grid lg:grid-cols-3 lg:overflow-visible lg:pb-0"
-        >
-          <MetricCard compact className="min-w-[220px] snap-start lg:min-w-0" label={t("services.active")} value={summary?.active ?? "—"} hint={t("services.activeHint")} icon={Scissors} />
-          <MetricCard compact className="min-w-[220px] snap-start lg:min-w-0" label={t("services.avgDuration")} value={summary?.average_duration_minutes != null ? `${summary.average_duration_minutes} ${t("appointment.minutes")}` : "—"} hint={t("services.avgDurationHint")} icon={Clock3} />
-          <MetricCard compact className="min-w-[220px] snap-start lg:min-w-0" label={t("services.usedInBookings")} value={summary?.used_in_bookings ?? "—"} hint={t("services.usedInBookingsHint")} icon={WalletCards} />
-        </section>
+        <BusinessBranchFilter />
+        <h2 className="mb-3 text-base font-semibold">{t("nav.services")}</h2>
 
         {selectedServiceQuery.isLoading ? <LoadingState /> : null}
         {pageError ? (
@@ -363,6 +344,7 @@ export function ServicesPage() {
                       />
                     </div>
                   </div>
+                  <Button type="button" variant="secondary" disabled={!canManage} onClick={() => setCreateOpen(true)}><Plus size={16} aria-hidden="true" />{t("services.add")}</Button>
                   <CrmPagination
                     variant="toolbar"
                     className="w-full border-t border-platforma-border pt-3 xl:w-auto xl:border-t-0 xl:pt-0"
@@ -420,8 +402,12 @@ export function ServicesPage() {
         onSubmit={(payload) => mutation.mutateAsync({ id: selectedService!.id, payload })}
       />
 
-      <Modal title={t("services.add")} open={createOpen} onClose={() => { if (!mutation.isPending) setCreateOpen(false); }}>
-        <ServiceForm businessId={business.id} disabled={!canManage} onSubmit={(payload) => mutation.mutateAsync({ payload })} />
+      <Modal title={t("services.add")} open={createOpen} onClose={async () => {
+        if (mutation.isPending) return;
+        if (createDirty && !(await confirmAction({ title: t("services.discardChanges"), confirmLabel: t("actions.discardChanges"), tone: "warning" })).confirmed) return;
+        setCreateDirty(false); setCreateOpen(false);
+      }}>
+        <ServiceForm businessId={business.id} disabled={!canManage} onDirtyChange={setCreateDirty} onSubmit={(payload) => mutation.mutateAsync({ payload })} />
       </Modal>
     </>
   );

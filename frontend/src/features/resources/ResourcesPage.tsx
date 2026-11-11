@@ -1,7 +1,7 @@
 import { useCustomColumns, customFilterParams } from "../../components/crm/CustomFieldColumns";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { BriefcaseBusiness, CalendarClock, Plus, UsersRound } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { Plus } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 
 import { getApiErrorMessage } from "../../api/client";
@@ -9,6 +9,7 @@ import { resourcesApi } from "../../api/resources";
 import { teamApi } from "../../api/team";
 import { workingHoursApi } from "../../api/workingHours";
 import { useActionConfirm } from "../../components/actions/ActionConfirmProvider";
+import { DraftGuard } from "../../components/actions/DraftGuard";
 import { CrmWorkspacePage } from "../../components/crm";
 import { ResourceCreateForm } from "./components/ResourceCreateForm";
 import { usePageHeader } from "../../components/layout/PageHeaderContext";
@@ -16,7 +17,6 @@ import { useNotification } from "../../components/notifications/NotificationProv
 import { DataTable } from "../../components/tables/DataTable";
 import type { DataTableRowInteraction } from "../../components/tables/DataTable";
 import { Button } from "../../components/ui/Button";
-import { MetricCard } from "../../components/ui/MetricCard";
 import { Modal } from "../../components/ui/Modal";
 import { ErrorState, LoadingState } from "../../components/ui/StateViews";
 import { useActiveBusiness } from "../../hooks/useBusiness";
@@ -24,6 +24,8 @@ import { useI18n } from "../../lib/i18n";
 import { hasPermission, permissionForbiddenMessage } from "../../lib/permissions";
 import type { Id, Resource } from "../../types";
 import { useAuth } from "../auth/AuthProvider";
+import { BusinessBranchFilter } from "../business/components/BusinessBranchFilter";
+import { StaffAccounts } from "../business/components/StaffAccounts";
 import { BusinessWorkspaceNav } from "../business/components/BusinessWorkspaceNav";
 import { ResourceActionsMenu } from "./components/ResourceActionsMenu";
 import { ResourceEditModal } from "./components/ResourceEditModal";
@@ -45,7 +47,7 @@ function validResourceType(value: string | null): Resource["resource_type"] | ""
     : "";
 }
 
-export function ResourcesPage() {
+export function ResourcesPage({ mode = "physical" }: { mode?: "staff" | "physical" }) {
   const { t } = useI18n();
   const showNotification = useNotification();
   const confirmAction = useActionConfirm();
@@ -55,17 +57,21 @@ export function ResourcesPage() {
   const { business } = useActiveBusiness();
   const { user } = useAuth();
   const canManage = hasPermission(user, business?.id, "settings", "update");
-  const canViewSettings = hasPermission(user, business?.id, "settings", "view");
   const [searchParams, setSearchParams] = useSearchParams();
   const customFilters = customFilterParams(searchParams);
   const [createOpen, setCreateOpen] = useState(false);
+  const [createDirty, setCreateDirty] = useState(false);
+  const savedRef = useRef(false);
+  const [accountsOpen, setAccountsOpen] = useState(false);
   const [createDraft, setCreateDraft] = useState<Partial<Resource> | undefined>();
-  const [selectedTemplate, setSelectedTemplate] = useState("staff");
   const [inspectorDirty, setInspectorDirty] = useState(false);
+  useEffect(() => { if (inspectorDirty || createDirty) savedRef.current = false; }, [inspectorDirty, createDirty]);
 
   const search = searchParams.get("search") || "";
   const [searchDraft, setSearchDraft] = useState(search);
-  const resourceType = validResourceType(searchParams.get("type"));
+  const requestedType = validResourceType(searchParams.get("type"));
+  const resourceType = mode === "staff" ? "staff" : requestedType === "staff" ? "" : requestedType;
+  const branch = positiveInteger(searchParams.get("branch"), 0) || undefined;
   const statusParam = searchParams.get("status");
   const status = statusParam === "active" || statusParam === "inactive" ? statusParam : "";
   const page = positiveInteger(searchParams.get("page"), 1);
@@ -95,12 +101,14 @@ export function ResourcesPage() {
   }, [search, searchDraft, updateSearchParams]);
 
   const resourcesQuery = useQuery({
-    queryKey: ["resources", "workspace", business?.id, search, resourceType, status, page, pageSize, customFilters],
+    queryKey: ["resources", "workspace", business?.id, mode, branch, search, resourceType, status, page, pageSize, customFilters],
     queryFn: () => resourcesApi.listPage({
       business: business!.id,
       ...customFilters,
       search: search || undefined,
       resource_type: resourceType,
+      resource_group: mode,
+      branch,
       status,
       page,
       page_size: pageSize,
@@ -110,8 +118,8 @@ export function ResourcesPage() {
   });
   const teamMembersQuery = useQuery({
     queryKey: ["team-members", business?.id],
-    queryFn: () => teamApi.members(business!.id),
-    enabled: Boolean(business?.id),
+    queryFn: () => teamApi.allMembers(business!.id),
+    enabled: Boolean(business?.id) && hasPermission(user, business?.id, "team", "view"),
   });
 
   const resourceRows = resourcesQuery.data?.results || [];
@@ -148,13 +156,16 @@ export function ResourcesPage() {
       id ? resourcesApi.update({ id, payload }) : resourcesApi.create(payload),
     onSuccess: async (_resource, variables) => {
       await Promise.all(["resources", "branches", "branch-configuration", "branch-catalog", "available-slots"].map(key => queryClient.invalidateQueries({ queryKey: [key] })));
+      savedRef.current = true;
       setInspectorDirty(false);
       if (variables.id) {
         showNotification({ message: t("resources.noticeSaved"), tone: "success" });
       } else {
         setCreateOpen(false);
+        setCreateDirty(false);
         setCreateDraft(undefined);
-        updateSearchParams({ resource: _resource.id });
+        updateSearchParams({ resource: _resource.id, search: null, type: null, status: null, page: 1, branch: _resource.resource_type === "staff" ? null : _resource.branch || branch || null });
+        setSearchDraft("");
         showNotification({ message: t("resources.noticeCreated"), tone: "success" });
       }
     },
@@ -186,32 +197,9 @@ export function ResourcesPage() {
   const permissionMessage = permissionForbiddenMessage("settings", "update", t);
 
   useEffect(() => {
-    setPageHeader({
-      title: t("nav.resources"),
-      secondaryActions: canViewSettings
-        ? [
-            {
-              label: t("settings.schedulingCenter"),
-              icon: CalendarClock,
-              onClick: () => navigate("/app/settings#operations-setup"),
-              presentation: "label",
-              showOnMobile: true,
-            },
-          ]
-        : undefined,
-      primaryAction: {
-        label: t("resources.add"),
-        icon: Plus,
-        onClick: () => {
-          setCreateDraft(undefined);
-          setCreateOpen(true);
-        },
-        disabled: !canManage,
-        title: !canManage ? permissionMessage : undefined,
-      },
-    });
+    setPageHeader({ title: t("nav.business") });
     return () => setPageHeader(null);
-  }, [canManage, canViewSettings, navigate, permissionMessage, setPageHeader, t]);
+  }, [setPageHeader, t]);
 
   const confirmDiscard = useCallback(async () => {
     if (!inspectorDirty) return true;
@@ -240,8 +228,8 @@ export function ResourcesPage() {
   const openSelectedResourceSchedule = useCallback(async () => {
     if (!selectedResource || !await confirmDiscard()) return;
     setInspectorDirty(false);
-    navigate(`/app/business/working-hours?view=resources&resource=${selectedResource.id}`);
-  }, [confirmDiscard, navigate, selectedResource]);
+    navigate(`/app/business/working-hours?view=${selectedResource.resource_type === "staff" ? "staff" : "physical"}&resource=${selectedResource.id}${selectedResource.branch || branch ? `&branch=${selectedResource.branch || branch}` : ""}`);
+  }, [branch, confirmDiscard, navigate, selectedResource]);
 
   const handleResourceRowSelect = useCallback((resource: Resource, _index: number, _interaction: DataTableRowInteraction) => {
     void selectResource(resource);
@@ -257,16 +245,9 @@ export function ResourcesPage() {
     if (result.confirmed) statusMutation.mutate({ resource, isActive: false });
   }, [confirmAction, statusMutation, t]);
 
-  const templates: Record<string, Partial<Resource>> = {
-    staff: { name: t("resources.templateMasterName"), resource_type: "staff", is_active: true },
-    equipment: { name: t("resources.templateChairName"), resource_type: "equipment", is_active: true },
-    room: { name: t("resources.templateRoomName"), resource_type: "room", is_active: true },
-    box: { name: t("resources.templateBoxName"), resource_type: "box", is_active: true },
-  };
-
-  function openTemplate() {
+  function openCreate() {
     if (!canManage) return;
-    setCreateDraft(templates[selectedTemplate] || templates.staff);
+    setCreateDraft({ resource_type: mode === "staff" ? "staff" : resourceType || "room", branch: mode === "physical" ? branch : undefined });
     setCreateOpen(true);
   }
 
@@ -274,28 +255,19 @@ export function ResourcesPage() {
   if (resourcesQuery.isLoading || teamMembersQuery.isLoading) return <LoadingState scope="page" />;
 
   const pageError = resourcesQuery.error || teamMembersQuery.error || (!selectedResourceOnPage && selectedResourceQuery.error);
-  const hasFilters = Boolean(search || resourceType || status);
+  const hasFilters = Boolean(search || (mode !== "staff" && resourceType) || status);
   const pageFrom = totalResources === 0 ? 0 : (page - 1) * pageSize + 1;
   const pageTo = Math.min(totalResources, page * pageSize);
-  const summary = resourcesQuery.data?.summary || {
-    active: resourceRows.filter((resource) => resource.is_active).length,
-    staff: resourceRows.filter((resource) => resource.is_active && resource.resource_type === "staff").length,
-    with_individual_schedule: resourceRows.filter((resource) => resource.is_active && resource.has_individual_schedule).length,
-  };
-
   return (
     <>
-      <CrmWorkspacePage maxWidthClassName="max-w-[1520px]" testId={pageError ? undefined : "resources-workspace-ready"}>
+      <DraftGuard saved={savedRef} dirty={inspectorDirty || createDirty} pending={mutation.isPending} />
+      <CrmWorkspacePage edgeToEdge maxWidthClassName="max-w-none" testId={pageError ? undefined : "resources-workspace-ready"}>
         <BusinessWorkspaceNav />
-        <section
-          tabIndex={0}
-          aria-label={t("resources.metricsLabel")}
-          className="platforma-focus-ring mb-3 flex shrink-0 snap-x gap-3 overflow-x-auto rounded-card pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden lg:grid lg:grid-cols-3 lg:overflow-visible lg:pb-0"
-        >
-          <MetricCard compact className="min-w-[220px] snap-start lg:min-w-0" label={t("resources.active")} value={summary.active} hint={t("resources.activeHint")} icon={UsersRound} />
-          <MetricCard compact className="min-w-[220px] snap-start lg:min-w-0" label={t("resources.staff")} value={summary.staff} hint={t("resources.staffHint")} icon={BriefcaseBusiness} />
-          <MetricCard compact className="min-w-[220px] snap-start lg:min-w-0" label={t("resources.withSchedule")} value={`${summary.with_individual_schedule}/${summary.active}`} hint={t("resources.withScheduleHint")} icon={CalendarClock} />
-        </section>
+        <BusinessBranchFilter />
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <h2 className="text-base font-semibold">{t(mode === "staff" ? "business.staff" : "branches.physicalResources")}</h2>
+          {mode === "staff" && hasPermission(user, business.id, "team", "view") && <Button variant="secondary" onClick={() => setAccountsOpen(true)}>{t("settings.section.team-access")}</Button>}
+        </div>
 
         {selectedResourceQuery.isLoading ? <LoadingState /> : null}
         {pageError ? (
@@ -327,7 +299,7 @@ export function ResourcesPage() {
                 hasFilters ? (
                   <Button type="button" variant="secondary" onClick={() => { setSearchDraft(""); updateSearchParams({ search: null, type: null, status: null, page: 1, resource: null }); }}>{t("common.clearAll")}</Button>
                 ) : (
-                  <Button type="button" variant="secondary" disabled={!canManage} title={!canManage ? permissionMessage : undefined} onClick={() => { setCreateDraft(undefined); setCreateOpen(true); }}>
+                  <Button type="button" variant="secondary" disabled={!canManage} title={!canManage ? permissionMessage : undefined} onClick={openCreate}>
                     <Plus aria-hidden="true" size={16} />{t("resources.add")}
                   </Button>
                 )
@@ -337,7 +309,7 @@ export function ResourcesPage() {
                   searchDraft={searchDraft}
                   resourceType={resourceType}
                   status={status}
-                  template={selectedTemplate}
+                  mode={mode}
                   canManage={canManage}
                   permissionMessage={permissionMessage}
                   isSplitWorkspace={false}
@@ -349,8 +321,7 @@ export function ResourcesPage() {
                   onSearchChange={setSearchDraft}
                   onResourceTypeChange={(value) => updateSearchParams({ type: value || null, page: 1, resource: null })}
                   onStatusChange={(value) => updateSearchParams({ status: value || null, page: 1, resource: null })}
-                  onTemplateChange={setSelectedTemplate}
-                  onUseTemplate={openTemplate}
+                  onCreate={openCreate}
                   onPageChange={(nextPage) => updateSearchParams({ page: nextPage, resource: null }, false)}
                   onPageSizeChange={(nextPageSize) => updateSearchParams({ page_size: nextPageSize, page: 1, resource: null })}
                 />
@@ -358,9 +329,8 @@ export function ResourcesPage() {
               columns={[
                 { header: t("resources.name"), className: "max-w-[300px]", cell: (resource) => <span data-testid="resource-name" className="block truncate font-semibold text-platforma-ink">{resource.name}</span> },
                 { header: t("resources.type"), cell: (resource) => t(resourceTypeLabelKeys[resource.resource_type]) },
-                { header: t("resources.linkedUser"), className: "max-w-[220px]", cell: (resource) => <span className="block truncate">{resource.linked_user_name || resource.linked_user_email || t("resources.noLinkedUser")}</span> },
+                ...(mode === "staff" ? [{ header: t("resources.linkedUser"), className: "max-w-[220px]", cell: (resource: Resource) => <span className="block truncate">{resource.linked_user_name || resource.linked_user_email || t("resources.noLinkedUser")}</span> }] : []),
                 { header: t("resources.bookings"), cell: (resource) => resource.appointment_count || 0 },
-                { header: t("resources.scheduleState"), cell: (resource) => t(resource.has_individual_schedule ? "resources.individualSchedule" : "resources.businessSchedule") },
                 { header: t("appointment.status"), cell: (resource) => <ResourceStatusBadge resource={resource} /> },
                 ...customTable.columns,
                 {
@@ -398,18 +368,25 @@ export function ResourcesPage() {
         onSubmit={(payload) => mutation.mutateAsync({ id: selectedResource!.id, payload })}
       />
 
+      <Modal title={t("settings.section.team-access")} open={accountsOpen} onClose={() => setAccountsOpen(false)}>
+        <StaffAccounts businessId={business.id} />
+      </Modal>
       <Modal
         title={t("resources.add")}
         testId="resource-create-modal"
         open={createOpen}
-        onClose={() => {
+        onClose={async () => {
           if (mutation.isPending) return;
+          if (createDirty && !(await confirmAction({ title: t("resources.discardChanges"), confirmLabel: t("actions.discardChanges"), tone: "warning" })).confirmed) return;
           setCreateOpen(false);
+          setCreateDirty(false);
           setCreateDraft(undefined);
         }}
       >
         {businessHoursQuery.error ? <ErrorState error={businessHoursQuery.error} message={getApiErrorMessage(businessHoursQuery.error)} /> : null}
         <ResourceCreateForm
+          mode={mode}
+          onDirtyChange={setCreateDirty}
           submitError={mutation.error}
           businessId={business.id}
           initial={createDraft}

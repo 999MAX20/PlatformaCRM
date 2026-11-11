@@ -63,6 +63,12 @@ class TravelInput(serializers.Serializer):
     minutes = serializers.IntegerField(min_value=0, max_value=1440)
 
 
+class WeekdaysInput(serializers.Serializer):
+    resource = serializers.IntegerField(min_value=1, allow_null=True, required=False)
+    weekdays = serializers.ListField(child=serializers.IntegerField(min_value=0, max_value=6), min_length=1, max_length=7)
+    intervals = IntervalInput(many=True, allow_empty=True)
+
+
 class ResourceRequirementsInput(serializers.Serializer):
     service = serializers.IntegerField(min_value=1)
     resource_ids = serializers.ListField(child=serializers.IntegerField(min_value=1), max_length=32, allow_empty=True)

@@ -5,7 +5,6 @@ import { branchesApi, type Branch, type BranchConfiguration } from "../../../api
 import { servicesApi } from "../../../api/services";
 import { resourcesApi } from "../../../api/resources";
 import { Button } from "../../../components/ui/Button";
-import { Tabs } from "../../../components/ui/Tabs";
 import { useActionConfirm } from "../../../components/actions/ActionConfirmProvider";
 import { ErrorState, LoadingState } from "../../../components/ui/StateViews";
 import { useI18n } from "../../../lib/i18n";
@@ -22,7 +21,6 @@ export function BranchEditor({ branch, branches }: { branch: Branch; branches: B
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
   const automatic = !!branch.uses_business_defaults;
-  const simple = branches.length === 1;
   const sections = ["overview", "services", "specialists", "resources", "schedule", ...(branches.length > 1 ? ["travel"] : []), "details"];
   const tab = sections.includes(params.get("section") || "") ? params.get("section")! : "overview";
   const selectTab = (value: string) => setParams(previous => { const next = new URLSearchParams(previous); next.set("section", value); return next; });
@@ -41,9 +39,9 @@ export function BranchEditor({ branch, branches }: { branch: Branch; branches: B
   const save = (operation: () => Promise<unknown>) => mutation.mutateAsync(operation);
   const disabled = !branch.can_manage || !!branch.archived_at || mutation.isPending;
   const open = (section: string) => {
-    if (!automatic) { selectTab(section); return; }
-    const path = section === "services" ? "services" : section === "schedule" ? "working-hours" : "resources";
-    navigate(`/app/business/${path}${section === "specialists" ? "?resource_type=staff" : ""}`);
+    if (branch.archived_at) { selectTab(section); return; }
+    const path = section === "services" ? "services" : section === "schedule" ? "working-hours" : section === "specialists" ? "staff" : "resources";
+    navigate(`/app/business/${path}?branch=${branch.id}`);
   };
   return <section className="space-y-5" data-testid={automatic ? "automatic-location" : "configured-location"}>
     <header className="flex flex-wrap items-start justify-between gap-3">
@@ -51,14 +49,15 @@ export function BranchEditor({ branch, branches }: { branch: Branch; branches: B
         <div className="flex flex-wrap items-center gap-3"><h3 className="break-words text-lg font-semibold">{branch.name}</h3><BranchStatusBadge branch={branch} /></div>
         {(branch.address || branch.phone) && <p className="break-words text-sm text-platforma-subtle">{[branch.address, branch.phone].filter(Boolean).join(" · ")}</p>}
       </div>
-      {branch.can_manage && (automatic ? <Link className="platforma-focus-ring inline-flex min-h-10 items-center text-sm font-semibold text-brand-700 underline" to="/app/settings#business-profile">{t("branches.editContacts")}</Link>
-        : <Button variant="secondary" onClick={() => selectTab("details")}>{t("branches.editContacts")}</Button>)}
+      <div className="flex flex-wrap gap-2">
+        {branch.can_manage && !branch.archived_at && (automatic ? <Link className="platforma-focus-ring inline-flex min-h-10 items-center text-sm font-semibold text-brand-700 underline" to={`/app/business/company?branch=${branch.id}`}>{t("branches.editContacts")}</Link>
+          : <Button variant="secondary" onClick={() => selectTab("details")}>{t("branches.editContacts")}</Button>)}
+        {!automatic && branches.length > 1 && <Button variant="secondary" onClick={() => selectTab("travel")}>{t("branches.travel")}</Button>}
+      </div>
     </header>
-    {!automatic && !simple && <Tabs value={tab} onChange={selectTab} appearance="underline" idPrefix="location-settings" ariaLabel={t("branches.settings")}
-      options={sections.map(value => ({ value, label: t(value === "resources" ? "branches.physicalResources" : `branches.${value}`) }))} />}
-    {!automatic && simple && tab !== "overview" && <div className="flex flex-wrap items-center gap-3"><Button variant="secondary" onClick={() => selectTab("overview")}>{t("common.back")}</Button><h4 className="font-semibold">{t(tab === "resources" ? "branches.physicalResources" : `branches.${tab}`)}</h4></div>}
+    {!automatic && tab !== "overview" && <div className="flex flex-wrap items-center gap-3"><Button variant="secondary" onClick={() => selectTab("overview")}>{t("common.back")}</Button><h4 className="font-semibold">{t(tab === "resources" ? "branches.physicalResources" : `branches.${tab}`)}</h4></div>}
     {mutation.error && <ErrorState error={mutation.error} message={normalizeAppError(mutation.error).code === "last_active_branch" ? t("branches.lastActive") : undefined} />}
-    <div role={!automatic && !simple ? "tabpanel" : undefined} id={`location-settings-panel-${tab}`} aria-labelledby={!automatic && !simple ? `location-settings-tab-${tab}` : undefined}>
+    <div id={`location-settings-panel-${tab}`}>
       {!automatic && tab === "details" ? <BranchDetailsForm branch={branch} pending={mutation.isPending} onSave={payload => save(() => branchesApi.update({ id: branch.id, payload }))} />
         : query.isLoading ? <LoadingState /> : query.error ? <ErrorState error={query.error} action={<Button onClick={() => query.refetch()}>{t("common.retry")}</Button>} /> : query.data && <>
           {(automatic || tab === "overview") && <BranchOverview config={query.data} onOpen={open} />}
@@ -81,7 +80,7 @@ function BranchLifecycleActions({ branch, branches, pending, onState }: {
   if (!branch.can_manage) return null;
   return <div className="space-y-2">
     <div className="flex flex-wrap gap-2">
-      <Button variant="secondary" disabled={pending} onClick={() => onState(branch.is_active ? "paused" : "active")}>{t(branch.is_active ? "branches.pause" : "branches.activate")}</Button>
+      <Button variant="secondary" disabled={pending} onClick={() => onState(branch.archived_at || branch.is_active ? "paused" : "active")}>{t(branch.archived_at ? "business.restorePaused" : branch.is_active ? "branches.pause" : "branches.activate")}</Button>
       {!branch.archived_at && <Button variant="secondary" disabled={pending || !canArchive} aria-describedby={!canArchive ? "last-active-branch" : undefined} onClick={async () => {
         const result = await confirm({ title: t("branches.archive"), description: t("branches.archiveConfirm"), tone: "warning" });
         if (result.confirmed) onState("archived");

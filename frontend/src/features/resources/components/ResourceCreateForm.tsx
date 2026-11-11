@@ -9,7 +9,7 @@ import { Button } from "../../../components/ui/Button";
 import { useI18n } from "../../../lib/i18n";
 import type { Id, Resource, TeamMember, WorkingHours } from "../../../types";
 
-export function ResourceCreateForm({ businessId, initial, teamMembers, businessHours, disabled, onSubmit, submitError }: {
+export function ResourceCreateForm({ businessId, initial, teamMembers, businessHours, disabled, onSubmit, submitError, mode, onDirtyChange }: {
   businessId: Id;
   initial?: Partial<Resource>;
   teamMembers: TeamMember[];
@@ -17,6 +17,8 @@ export function ResourceCreateForm({ businessId, initial, teamMembers, businessH
   disabled: boolean;
   submitError?: unknown;
   onSubmit: (payload: Partial<Resource>) => Promise<unknown>;
+  mode?: "staff" | "physical";
+  onDirtyChange?: (dirty: boolean) => void;
 }) {
   const { t } = useI18n();
   const [draft, setDraft] = useState<Partial<Resource> | null>(null);
@@ -26,7 +28,7 @@ export function ResourceCreateForm({ businessId, initial, teamMembers, businessH
   if (branches.error) return <ErrorState error={branches.error} />;
   if (branches.data?.length) return <>
     {submitError ? <ErrorState error={submitError} /> : null}
-    <ResourceForm businessId={businessId} initial={initial} teamMembers={teamMembers} branches={branches.data} disabled={disabled} showContextHint={false} onSubmit={onSubmit} />
+    <ResourceForm businessId={businessId} initial={initial} teamMembers={teamMembers} branches={branches.data} disabled={disabled} showContextHint={false} onSubmit={onSubmit} physicalOnly={mode === "physical"} staffOnly={mode === "staff"} onDirtyChange={onDirtyChange} />
   </>;
   if (!scheduleStep || !draft) return (
     <ResourceForm businessId={businessId} initial={draft || initial} teamMembers={teamMembers}

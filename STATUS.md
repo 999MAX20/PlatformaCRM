@@ -1,3 +1,11 @@
+BUSINESS-IMPLEMENTATION-20261111: approved six-section workspace implemented locally.
+Company/branches/staff/services/physical resources/schedule use real APIs and existing rules.
+Backend97PASS/1PGskip +PG15 +absence9; system/drift PASS. Eight browser scenarios PASS,
+RU desktop/KK320/EN390; logic6/i18n/types/app-widget/bundle PASS. Prior failures retained.
+No workingDB/env/migration/provider/deploy changes; no scoped implementation remainder.
+Task-only local commit;35foreign outgoing block push/newCI. Evidence:
+docs/testing/evidence/business-workspace-20261111.md.
+
 AI-ANALYTICS-FIXES-20261111: both live analytics findings fixed and locally verified.
 Strict routing schema + bounded retry; overall totals separated from search matches.
 182backend/system/driftPASS;7real-provider API/Playwright turns incl503/retryPASS.

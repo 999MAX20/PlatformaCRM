@@ -12709,3 +12709,21 @@ Contracts/passport/roadmap/registry/status/evidence updated; other domain/setup 
 Own-only commit;34foreignoutgoing after fetch block own-onlypush/newCI. No foreign WIP staged.
 Evidence: docs/testing/evidence/ai-analytics-fixes-20261111.md; exact commands/failures/processes:
 output/ai-analytics-fixes-20261111/CHECKPOINT.md;live artifacts output/playwright/ai-analytics-fixed.
+
+## BUSINESS-IMPLEMENTATION-20261111
+
+Owner-authorized implementation of approved six-section business prototypes complete locally.
+Canonical PlatformaCRM/current branch, base2e715377; unrelated source/docs changes preserved.
+Real company/branch/staff/service/physical/schedule APIs, scope/access/lifecycle guards retained.
+Atomic weekday batch; resource/service branch filters; no models/migrations/new roles.
+Backend97PASS/1PGskip, PG15PASS incl concurrency, final absence9PASS/system/driftPASS.
+Eight distinct real-API browser scenarios PASS across retained desktop and final targeted runs;
+RU1440/KK320/EN390, keyboard/errors/retry, one-point/network/archive/access tested.
+Logic6/i18n7151/forcedtypes/app/widget/bundlePASS; final affected app checks repeated.
+Initial selector/fixture/retry test failures retained, no domain assertions weakened.
+No workingDB/env/provider/deployment changes; test runtimes exited. No scoped code/evidence
+remainder; no full-project/production certification. Contracts/frontend/scheduling passport
+and registry updated; roadmap/setup/access/AI/integration/operations unchanged by scope.
+Task-only local commit,35foreign outgoing after fetch block push/newCI. No foreign work staged.
+Evidence: docs/testing/evidence/business-workspace-20261111.md.
+Commands/hashes/logs/checkpoint: output/business-implementation-20261111.

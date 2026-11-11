@@ -1,6 +1,6 @@
 import { DraftGuard } from "../../../components/actions/DraftGuard";
 import { useActionConfirm } from "../../../components/actions/ActionConfirmProvider";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router";
 import { branchesApi, type Branch, type BranchConfiguration, type Interval } from "../../../api/branches";
 import { Button } from "../../../components/ui/Button";
@@ -8,13 +8,15 @@ import { Input } from "../../../components/ui/Input";
 import { Select } from "../../../components/ui/Select";
 import { useI18n } from "../../../lib/i18n";
 
-export function BranchScheduleEditor({ tab, branch, branches, config, save, disabled }: {
+export function BranchScheduleEditor({ tab, branch, branches, config, save, disabled, onDirtyChange }: {
   tab: string; branch: Branch; branches: Branch[]; config: BranchConfiguration;
   save: (operation: () => Promise<unknown>) => Promise<unknown>; disabled: boolean;
+  onDirtyChange?: (dirty: boolean) => void;
 }) {
   const { t } = useI18n();
   const confirm = useActionConfirm();
   const [dirty, setDirty] = useState(false);
+  useEffect(() => { onDirtyChange?.(dirty); return () => onDirtyChange?.(false); }, [dirty, onDirtyChange]);
   const [params] = useSearchParams();
   const targets = [...config.assignments.filter(item => item.is_active).map(item => ({ value: item.resource, label: item.resource_name })),
     ...(config.physical_resources || []).filter(item => item.is_active).map(item => ({ value: item.id, label: item.name }))];
@@ -38,7 +40,7 @@ export function BranchScheduleEditor({ tab, branch, branches, config, save, disa
     <DraftGuard dirty={dirty} pending={disabled && dirty} />
     <fieldset disabled={disabled} className="space-y-4">
       {tab === "travel" ? <>
-        <Select label={t("branches.branch")} value={other} onChange={(event) => { const id = Number(event.target.value); setOther(event.target.value); setMinutes(String(config.travel.find((item) => item.from_branch === id || item.to_branch === id)?.minutes ?? 30)); }} options={[{ value: "", label: t("branches.choose") }, ...branches.filter((item) => item.id !== branch.id && !item.archived_at).map((item) => ({ value: item.id, label: item.name }))]} />
+        <Select label={t("branches.branch")} value={other} onChange={async (event) => { const value = event.target.value; const id = Number(value); if (dirty && !(await confirm({ title: t("workingHours.discardChanges"), confirmLabel: t("actions.discardChanges"), tone: "warning" })).confirmed) return; setDirty(false); setOther(value); setMinutes(String(config.travel.find((item) => item.from_branch === id || item.to_branch === id)?.minutes ?? 30)); }} options={[{ value: "", label: t("branches.choose") }, ...branches.filter((item) => item.id !== branch.id && !item.archived_at).map((item) => ({ value: item.id, label: item.name }))]} />
         <Input label={t("branches.travelMinutes")} type="number" min={0} max={1440} value={minutes} onChange={(event) => { setDirty(true); setMinutes(event.target.value); }} required />
       </> : <>
         <Select label={t("branches.scheduleFor")} value={resource} onChange={(event) => load(event.target.value, weekday, date, dated)} options={[{ value: "", label: t("branches.openingHours") }, ...targets]} />

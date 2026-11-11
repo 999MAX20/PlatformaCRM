@@ -12,7 +12,7 @@ import { Select } from "../ui/Select";
 
 const createSchema = (t: (key: string) => string) =>
   z.object({
-    name: z.string().min(2, t("resources.nameRequired")),
+    name: z.string().trim().min(2, t("resources.nameRequired")),
     resource_type: z.string(),
     branch: z.string(),
     linked_user: z.string(),
@@ -30,6 +30,7 @@ export function ResourceForm({
   teamMembers = [],
   branches = [],
   physicalOnly = false,
+  staffOnly = false,
   onSubmit,
   formId,
   showSubmit = true,
@@ -43,6 +44,7 @@ export function ResourceForm({
   teamMembers?: TeamMember[];
   branches?: Branch[];
   physicalOnly?: boolean;
+  staffOnly?: boolean;
   onSubmit: (payload: Partial<Resource>) => Promise<unknown>;
   formId?: string;
   showSubmit?: boolean;
@@ -135,7 +137,7 @@ export function ResourceForm({
               { value: "box", label: t("resources.typeBox") },
               { value: "equipment", label: t("resources.typeEquipment") },
               { value: "other", label: t("resources.typeOther") },
-            ]}
+            ].filter(option => !staffOnly || option.value === "staff")}
           />
         )}
       />

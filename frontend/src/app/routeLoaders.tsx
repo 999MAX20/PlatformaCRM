@@ -161,8 +161,8 @@ export const SettingsPage = lazy(() =>
   })),
 );
 export const WorkingHoursPage = lazy(() =>
-  import("../features/settings/WorkingHoursPage").then((module) => ({
-    default: module.WorkingHoursPage,
+  import("../features/business/BusinessSchedulePage").then((module) => ({
+    default: module.BusinessSchedulePage,
   })),
 );
 export const PlatformOverviewPage = lazy(() =>
@@ -188,3 +188,5 @@ export const PlatformMerchantDetailPage = lazy(() =>
 export const SupportListPage = lazy(() => import("../features/support/SupportListPage").then(module => ({ default: module.SupportListPage })));
 export const SupportDetailPage = lazy(() => import("../features/support/SupportDetailPage").then(module => ({ default: module.SupportDetailPage })));
 export const SupportIncidentPage = lazy(() => import("../features/support/SupportIncidentPage").then(module => ({ default: module.SupportIncidentPage })));
+
+export const CompanyPage = lazy(() => import("../features/business/CompanyPage").then(module => ({ default: module.CompanyPage })));

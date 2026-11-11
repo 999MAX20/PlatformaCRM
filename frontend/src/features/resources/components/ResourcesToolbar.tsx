@@ -23,7 +23,7 @@ export function ResourcesToolbar({
   searchDraft,
   resourceType,
   status,
-  template,
+  mode,
   canManage,
   permissionMessage,
   isSplitWorkspace,
@@ -35,15 +35,14 @@ export function ResourcesToolbar({
   onSearchChange,
   onResourceTypeChange,
   onStatusChange,
-  onTemplateChange,
-  onUseTemplate,
+  onCreate,
   onPageChange,
   onPageSizeChange,
 }: {
   searchDraft: string;
   resourceType: Resource["resource_type"] | "";
   status: "active" | "inactive" | "";
-  template: string;
+  mode: "staff" | "physical";
   canManage: boolean;
   permissionMessage: string;
   isSplitWorkspace: boolean;
@@ -55,8 +54,7 @@ export function ResourcesToolbar({
   onSearchChange: (value: string) => void;
   onResourceTypeChange: (value: Resource["resource_type"] | "") => void;
   onStatusChange: (value: "active" | "inactive" | "") => void;
-  onTemplateChange: (value: string) => void;
-  onUseTemplate: () => void;
+  onCreate: () => void;
   onPageChange: (page: number) => void;
   onPageSizeChange: (pageSize: number) => void;
 }) {
@@ -75,15 +73,15 @@ export function ResourcesToolbar({
           />
         </div>
         <div className="grid min-w-0 grid-cols-1 gap-2 sm:grid-cols-2">
-          <Select
+          {mode === "physical" && <Select
             aria-label={t("resources.typeFilter")}
             value={resourceType}
             options={[
               { value: "", label: t("resources.allTypes") },
-              ...resourceTypes.map((value) => ({ value, label: t(resourceTypeLabelKeys[value]) })),
+              ...resourceTypes.filter(value => value !== "staff").map((value) => ({ value, label: t(resourceTypeLabelKeys[value]) })),
             ]}
             onChange={(event) => onResourceTypeChange(event.target.value as Resource["resource_type"] | "")}
-          />
+          />}
           <Select
             aria-label={t("resources.statusFilter")}
             value={status}
@@ -99,30 +97,16 @@ export function ResourcesToolbar({
 
       <div className={cn("flex min-w-0 flex-col gap-3 border-t border-platforma-border pt-3", !isSplitWorkspace && "xl:flex-row xl:items-center xl:justify-between")}>
         <div className="flex min-w-0 items-center gap-2">
-          <Select
-            aria-label={t("resources.quickCreate")}
-            value={template}
-            disabled={!canManage}
-            title={!canManage ? permissionMessage : undefined}
-            className="min-w-0 flex-1 sm:w-52 sm:flex-none"
-            options={[
-              { value: "staff", label: t("resources.templateMaster") },
-              { value: "equipment", label: t("resources.templateChair") },
-              { value: "room", label: t("resources.templateRoom") },
-              { value: "box", label: t("resources.templateBox") },
-            ]}
-            onChange={(event) => onTemplateChange(event.target.value)}
-          />
           <Button
             type="button"
             size="sm"
             variant="secondary"
             disabled={!canManage}
             title={!canManage ? permissionMessage : undefined}
-            onClick={onUseTemplate}
+            onClick={onCreate}
           >
             <Plus aria-hidden="true" size={16} />
-            {t("resources.useTemplate")}
+            {t("resources.add")}
           </Button>
         </div>
         <CrmPagination

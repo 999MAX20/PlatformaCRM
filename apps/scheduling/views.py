@@ -126,6 +126,30 @@ class ResourceViewSet(ResourceLifecycleMixin, TenantModelViewSet):
             queryset = queryset.filter(business_id=business_id)
         if self.action == "list":
             queryset = filter_custom_field(queryset, actor=self.request.user, entity_type="specialist", params=self.request.query_params)
+            group = params.get("resource_group")
+            if group not in (None, "", "staff", "physical"):
+                raise ValidationError({"resource_group": "Select staff or physical resources."})
+            if group == "staff":
+                queryset = queryset.filter(resource_type=Resource.ResourceTypes.STAFF)
+            elif group == "physical":
+                queryset = queryset.exclude(resource_type=Resource.ResourceTypes.STAFF)
+            branch_id = params.get("branch")
+            if branch_id:
+                from apps.branches.access import assert_branch_access
+                from apps.branches.models import Branch
+                if not branch_id.isdecimal():
+                    raise ValidationError({"branch": "Select a branch of this business."})
+                branch = Branch.objects.select_related("business").filter(
+                    pk=branch_id, business_id__in=queryset.values("business_id")
+                ).first()
+                if branch is None:
+                    return queryset.none()
+                assert_branch_access(self.request.user, branch.business, branch)
+                queryset = queryset.filter(business=branch.business)
+                staff_scope = Q(branch_assignments__branch=branch)
+                if branch.uses_business_defaults:
+                    staff_scope = Q(resource_type=Resource.ResourceTypes.STAFF) | Q(branch__isnull=True)
+                queryset = queryset.filter(Q(branch=branch) | staff_scope).distinct()
         if not apply_filters:
             return queryset
 

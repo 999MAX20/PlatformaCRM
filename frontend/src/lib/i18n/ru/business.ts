@@ -1,4 +1,25 @@
 export const business: Record<string, string> = {
+  "business.previousWeek": "Предыдущая неделя",
+  "business.nextWeek": "Следующая неделя",
+  "business.today": "Сегодня",
+  "business.weekTemplate": "Недельный шаблон",
+  "business.automaticOpeningWeek": "Часы основной точки задаются по дням недели. Изменения на дату доступны для специалистов и ресурсов.",
+  "business.invalidIntervals": "Начало должно быть раньше окончания. Интервалы не должны пересекаться.",
+
+  "business.permissions": "Права доступа",
+  "business.manageAccounts": "Приглашения и роли",
+  "business.assignments": "Филиалы и услуги",
+  "business.automaticAssignment": "В основной точке активные специалисты выполняют все активные услуги.",
+  "business.automaticTerms": "Основная точка использует общие условия услуги.",
+  "business.branchTerms": "Условия в филиале",
+
+  "business.archive": "Архив",
+  "business.restorePaused": "Восстановить на паузе",
+  "business.allBranches": "Все филиалы",
+
+  "business.company": "Компания",
+  "business.staff": "Сотрудники",
+
   "branches.overview": "Обзор",
   "branches.configured": "Настроен",
   "branches.notConfigured": "Не настроен",

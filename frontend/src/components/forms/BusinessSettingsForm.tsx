@@ -11,10 +11,11 @@ import type { Business } from "../../types";
 import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
 import { Select } from "../ui/Select";
+import { DraftGuard } from "../actions/DraftGuard";
 
 function createSchema(t: (key: string) => string) {
   return z.object({
-    name: z.string().min(2, t("validation.businessName")),
+    name: z.string().trim().min(2, t("validation.businessName")),
     business_type: z.enum(["dentistry", "beauty", "sauna", "autoservice", "education", "medical", "other"]), city: z.string().optional(), address: z.string().optional(),
     phone: z.string().optional(), whatsapp: z.string().optional(), telegram: z.string().optional(), instagram: z.string().optional(),
     timezone: z.string().min(1, t("settings.redesign.required")),
@@ -25,12 +26,12 @@ function createSchema(t: (key: string) => string) {
   });
 }
 type Values = z.infer<ReturnType<typeof createSchema>>;
-export function BusinessSettingsForm({ initial, onSubmit }: { initial?: Business | null; onSubmit: (payload: Partial<Business>) => Promise<unknown>; }) {
+export function BusinessSettingsForm({ initial, onSubmit, readOnly = false, protectDraft = false }: { initial?: Business | null; onSubmit: (payload: Partial<Business>) => Promise<unknown>; readOnly?: boolean; protectDraft?: boolean }) {
   const { t } = useI18n();
   const [saveError, setSaveError] = useState<unknown>(null);
   const [saved, setSaved] = useState(false);
   const responsibleOptions = useQuery({ queryKey: ["booking-responsible-options", initial?.id],
-    queryFn: () => getBookingResponsibleOptions(initial!.id), enabled: Boolean(initial?.id) });
+    queryFn: () => getBookingResponsibleOptions(initial!.id), enabled: Boolean(initial?.id) && !readOnly });
   const form = useForm<Values>({
     resolver: zodResolver(createSchema(t)), shouldFocusError: false,
     defaultValues: {
@@ -62,7 +63,8 @@ export function BusinessSettingsForm({ initial, onSubmit }: { initial?: Business
   const error = (name: keyof Values) => form.formState.errors[name]?.message;
   const field = (name: keyof Values) => ({ ...form.register(name), error: error(name) });
   return <form noValidate onChange={() => setSaved(false)} onSubmit={form.handleSubmit(submit, errors => focusField(Object.keys(errors)[0] as keyof Values))}>
-    <fieldset disabled={form.formState.isSubmitting} className="space-y-5 p-4 sm:p-5">
+    {protectDraft && <DraftGuard dirty={form.formState.isDirty} pending={form.formState.isSubmitting} />}
+    <fieldset disabled={form.formState.isSubmitting || readOnly} className="space-y-5 p-4 sm:p-5">
       <legend className="sr-only">{t("businessForm.group.profile")}</legend>
       <div className="space-y-3">
         <h2 className="text-base font-bold">{t("settings.redesign.basics")}</h2>
@@ -74,7 +76,7 @@ export function BusinessSettingsForm({ initial, onSubmit }: { initial?: Business
           <Select label={t("businessForm.currency")} {...field("currency")} value={form.watch("currency")} options={["KZT", "USD", "EUR", "RUB"].map(value => ({ value, label: value }))} />
         </div>
       </div>
-      {initial?.id ? <div className="space-y-3 border-t border-platforma-border pt-5" aria-busy={responsibleOptions.isPending}>
+      {initial?.id && !readOnly ? <div className="space-y-3 border-t border-platforma-border pt-5" aria-busy={responsibleOptions.isPending}>
         <Select label={t("businessForm.aiBookingResponsible")} {...field("ai_booking_responsible_user")}
           onFocus={event => { const trigger = event.currentTarget.nextElementSibling; if (trigger instanceof HTMLButtonElement) trigger.focus(); }}
           value={form.watch("ai_booking_responsible_user") || ""}
@@ -108,9 +110,9 @@ export function BusinessSettingsForm({ initial, onSubmit }: { initial?: Business
         </div>
       </div>
     </fieldset>
-    <SettingsSaveBar feedback={saveError || saved ? <SettingsFeedback error={saveError} saved={saved} /> : form.formState.isDirty ? <p className="text-sm text-platforma-subtle">{t("settings.redesign.unsaved")}</p> : null}>
+    {!readOnly && <SettingsSaveBar feedback={saveError || saved ? <SettingsFeedback error={saveError} saved={saved} /> : form.formState.isDirty ? <p className="text-sm text-platforma-subtle">{t("settings.redesign.unsaved")}</p> : null}>
       <Button type="button" variant="secondary" disabled={form.formState.isSubmitting || !form.formState.isDirty} onClick={() => { form.reset(); setSaveError(null); setSaved(false); }}>{t("common.cancel")}</Button>
       <Button type="submit" disabled={!form.formState.isDirty} isLoading={form.formState.isSubmitting}>{t("businessForm.save")}</Button>
-    </SettingsSaveBar>
+    </SettingsSaveBar>}
   </form>;
 }

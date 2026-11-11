@@ -1,4 +1,25 @@
 export const business: Record<string, string> = {
+  "business.previousWeek": "Previous week",
+  "business.nextWeek": "Next week",
+  "business.today": "Today",
+  "business.weekTemplate": "Weekly template",
+  "business.automaticOpeningWeek": "Main location hours are set by weekday. Date overrides are available for specialists and resources.",
+  "business.invalidIntervals": "Start must precede end. Intervals must not overlap.",
+
+  "business.permissions": "Access permissions",
+  "business.manageAccounts": "Invitations and roles",
+  "business.assignments": "Branches and services",
+  "business.automaticAssignment": "At the main location, active specialists perform all active services.",
+  "business.automaticTerms": "The main location uses the shared service terms.",
+  "business.branchTerms": "Branch terms",
+
+  "business.archive": "Archive",
+  "business.restorePaused": "Restore paused",
+  "business.allBranches": "All branches",
+
+  "business.company": "Company",
+  "business.staff": "Staff",
+
   "branches.overview": "Overview",
   "branches.configured": "Configured",
   "branches.notConfigured": "Not configured",

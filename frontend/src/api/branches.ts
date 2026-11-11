@@ -21,6 +21,7 @@ export const branchesApi = {
   offer: async (id: Id, payload: Pick<BranchOffer, "service" | "duration_minutes" | "price_from" | "is_active">) => (await apiClient.post(`/api/branches/${id}/offers/`, payload)).data,
   assignment: async (id: Id, payload: Pick<BranchAssignment, "resource" | "service_ids" | "is_active">) => (await apiClient.post(`/api/branches/${id}/assignments/`, payload)).data,
   day: async (id: Id, payload: { resource?: Id | null; weekday?: number; date?: string; intervals: Interval[]; remove?: boolean }) => (await apiClient.post(`/api/branches/${id}/schedule/`, payload)).data,
+  weekdays: async (id: Id, payload: { resource?: Id | null; weekdays: number[]; intervals: Interval[] }) => (await apiClient.post<BranchDay[]>(`/api/branches/${id}/schedule-weekdays/`, payload)).data,
   travel: async (id: Id, payload: { other_branch: Id; minutes: number }) => (await apiClient.post(`/api/branches/${id}/travel/`, payload)).data,
   state: async (id: Id, state: "active" | "paused" | "archived") => (await apiClient.post<Branch>(`/api/branches/${id}/state/`, { state })).data,
   grant: async (payload: { member: Id; branch_ids: Id[]; all_branches: boolean }) => (await apiClient.post("/api/branches/member-access/", payload)).data,

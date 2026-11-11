@@ -3,9 +3,9 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from apps.businesses.access import Actions, Resources, assert_can
-from .configuration import save_offer, save_assignment, save_schedule_day, save_travel_time
+from .configuration import save_offer, save_assignment, save_schedule_day, save_schedule_weekdays, save_travel_time
 from .config_serializers import (OfferSerializer, AssignmentSerializer, DaySerializer, TravelSerializer,
-                                 OfferInput, AssignmentInput, DayInput, TravelInput)
+                                 OfferInput, AssignmentInput, DayInput, TravelInput, WeekdaysInput)
 from .models import BranchTravelTime, SpecialistAbsence
 
 
@@ -23,6 +23,10 @@ class BranchConfigurationMixin:
             "offers": OfferSerializer(branch.service_offers.select_related("service"), many=True).data,
             "assignments": AssignmentSerializer(branch.specialist_assignments.select_related("resource").prefetch_related("services"), many=True).data,
             "days": [*DaySerializer(branch.schedule_days.all(), many=True).data, *physical_schedule_projection(branch)],
+            "absences": list(SpecialistAbsence.objects.filter(business=branch.business,
+                resource_id__in=branch.specialist_assignments.values("resource_id"))
+                .filter(Q(branch=branch) | Q(branch__isnull=True))
+                .values("resource_id", "starts_on", "ends_on")),
             "travel": TravelSerializer(BranchTravelTime.objects.filter(business=branch.business)
                                        .filter(Q(from_branch=branch) | Q(to_branch=branch)), many=True).data,
         })
@@ -90,3 +94,13 @@ class BranchConfigurationMixin:
         data.is_valid(raise_exception=True)
         return Response(TravelSerializer(save_travel_time(branch=branch, actor=request.user,
             other_id=data.validated_data["other_branch"], minutes=data.validated_data["minutes"])).data)
+
+    @action(detail=True, methods=["post"], url_path="schedule-weekdays")
+    def schedule_weekdays(self, request, pk=None):
+        branch = self.get_object()
+        data = WeekdaysInput(data=request.data)
+        data.is_valid(raise_exception=True)
+        values = dict(data.validated_data)
+        values["resource_id"] = values.pop("resource", None)
+        days = save_schedule_weekdays(branch=branch, actor=request.user, **values)
+        return Response(DaySerializer(days, many=True).data)

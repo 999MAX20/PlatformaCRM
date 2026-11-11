@@ -1,4 +1,25 @@
 export const business: Record<string, string> = {
+  "business.previousWeek": "Алдыңғы апта",
+  "business.nextWeek": "Келесі апта",
+  "business.today": "Бүгін",
+  "business.weekTemplate": "Апталық үлгі",
+  "business.automaticOpeningWeek": "Негізгі орынның жұмыс уақыты апта күндері бойынша беріледі. Күнге арналған өзгерістер мамандар мен ресурстарға қолжетімді.",
+  "business.invalidIntervals": "Басталу уақыты аяқталудан бұрын болуы керек. Аралықтар қиылыспауы керек.",
+
+  "business.permissions": "Қол жеткізу құқықтары",
+  "business.manageAccounts": "Шақырулар мен рөлдер",
+  "business.assignments": "Филиалдар мен қызметтер",
+  "business.automaticAssignment": "Негізгі орында белсенді мамандар барлық белсенді қызметтерді орындайды.",
+  "business.automaticTerms": "Негізгі орын қызметтің жалпы шарттарын қолданады.",
+  "business.branchTerms": "Филиалдағы шарттар",
+
+  "business.archive": "Мұрағат",
+  "business.restorePaused": "Кідіртілген күйде қалпына келтіру",
+  "business.allBranches": "Барлық филиалдар",
+
+  "business.company": "Компания",
+  "business.staff": "Қызметкерлер",
+
   "branches.overview": "Шолу",
   "branches.configured": "Бапталған",
   "branches.notConfigured": "Бапталмаған",

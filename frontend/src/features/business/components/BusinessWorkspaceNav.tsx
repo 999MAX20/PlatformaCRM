@@ -1,17 +1,21 @@
-import { NavLink } from "react-router";
+import { NavLink, useSearchParams } from "react-router";
 
 import { cn } from "../../../lib/cn";
 import { useI18n } from "../../../lib/i18n";
 
 const businessRoutes = [
+  { to: "/app/business/company", labelKey: "business.company" },
   { to: "/app/business/branches", labelKey: "branches.title" },
+  { to: "/app/business/staff", labelKey: "business.staff" },
   { to: "/app/business/services", labelKey: "nav.services" },
-  { to: "/app/business/resources", labelKey: "nav.resources" },
+  { to: "/app/business/resources", labelKey: "branches.physicalResources" },
   { to: "/app/business/working-hours", labelKey: "nav.workingHours" },
 ];
 
 export function BusinessWorkspaceNav() {
   const { t } = useI18n();
+  const [params] = useSearchParams();
+  const branch = params.get("branch");
 
   return (
     <nav
@@ -22,7 +26,7 @@ export function BusinessWorkspaceNav() {
         {businessRoutes.map((route) => (
           <NavLink
             key={route.to}
-            to={route.to}
+            to={{ pathname: route.to, search: branch ? `?branch=${encodeURIComponent(branch)}` : "" }}
             className={({ isActive }) => cn(
               "platforma-focus-ring inline-flex min-h-10 shrink-0 items-center justify-center rounded-control px-4 text-sm font-semibold transition sm:flex-1",
               isActive

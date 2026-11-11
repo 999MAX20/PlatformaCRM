@@ -13,7 +13,9 @@ import { ResourceStatusBadge } from "./ResourceStatusBadge";
 import { SpecialistLifecycle } from "./SpecialistLifecycle";
 import { useQuery } from "@tanstack/react-query";
 import { branchesApi } from "../../../api/branches";
-import { Link } from "react-router";
+import { Link, useSearchParams } from "react-router";
+import { StaffAccounts } from "../../business/components/StaffAccounts";
+import { StaffAssignments } from "../../business/components/StaffAssignments";
 
 const FORM_ID = "resource-edit-form";
 const weekdayKeys = [
@@ -60,16 +62,19 @@ export function ResourceEditModal({
   onOpenSchedule: () => void;
 }) {
   const { t } = useI18n();
+  const [params] = useSearchParams();
   const branches = useQuery({ queryKey: ["branches", businessId], queryFn: () => branchesApi.listAll({ business: businessId }), enabled: !!resource });
   const [resetVersion, setResetVersion] = useState(0);
   const [isDirty, setIsDirty] = useState(false);
   const [fieldsDirty, setFieldsDirty] = useState(false);
-  useEffect(() => { onDirtyChange(isDirty || fieldsDirty); }, [isDirty, fieldsDirty, onDirtyChange]);
+  const [assignmentsDirty, setAssignmentsDirty] = useState(false);
+  useEffect(() => { onDirtyChange(isDirty || fieldsDirty || assignmentsDirty); }, [isDirty, fieldsDirty, assignmentsDirty, onDirtyChange]);
 
   useEffect(() => {
     setResetVersion(0);
     setIsDirty(false);
     setFieldsDirty(false);
+    setAssignmentsDirty(false);
   }, [onDirtyChange, resource?.id]);
 
   if (!resource) return null;
@@ -112,6 +117,8 @@ export function ResourceEditModal({
             formId={FORM_ID}
             businessId={businessId}
             initial={resource}
+            physicalOnly={resource.resource_type !== "staff"}
+            staffOnly={resource.resource_type === "staff"}
             teamMembers={teamMembers}
             disabled={!canManage || !!resource.retired_at}
             showContextHint={false}
@@ -119,7 +126,11 @@ export function ResourceEditModal({
             onDirtyChange={handleDirtyChange}
             onSubmit={onSubmit}
           />
-          {resource.resource_type === "staff" && <CustomEntityFields business={businessId} kind="specialist" id={resource.id} readOnly={!canManage || !!resource.retired_at} onDirtyChange={setFieldsDirty} />}
+          {resource.resource_type === "staff" && <>
+            <CustomEntityFields business={businessId} kind="specialist" id={resource.id} readOnly={!canManage || !!resource.retired_at} onDirtyChange={setFieldsDirty} />
+            <StaffAccounts businessId={businessId} linkedUser={resource.linked_user || null} />
+            {branches.error ? <ErrorState error={branches.error} /> : <StaffAssignments resource={resource} branches={branches.data || []} onDirtyChange={setAssignmentsDirty} />}
+          </>}
         </div>
 
         <div className="space-y-4">
@@ -145,7 +156,7 @@ export function ResourceEditModal({
               </div>
               <div className="min-w-0 flex-1">
                 <h3 className="text-sm font-semibold text-platforma-ink">{t("resources.scheduleTitle")}</h3>
-                {branches.data?.length ? <Link className="mt-3 inline-flex text-sm font-semibold text-brand-700 underline" to={`/app/business/working-hours?resource=${resource.id}${resource.branch ? `&branch=${resource.branch}` : ""}`}>{t("branches.schedule")}</Link> : scheduleLoading ? (
+                {branches.data?.length ? <Link className="mt-3 inline-flex text-sm font-semibold text-brand-700 underline" to={`/app/business/working-hours?resource=${resource.id}&view=${resource.resource_type === "staff" ? "staff" : "physical"}${resource.branch || params.get("branch") ? `&branch=${resource.branch || params.get("branch")}` : ""}`}>{t("branches.schedule")}</Link> : scheduleLoading ? (
                   <div className="mt-3 space-y-2" aria-busy="true">
                     <SkeletonBlock className="h-8" />
                     <SkeletonBlock className="h-8" />

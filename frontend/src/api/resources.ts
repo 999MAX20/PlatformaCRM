@@ -4,6 +4,8 @@ import type { Id, Resource } from "../types";
 
 export type ResourceListParams = {
   business?: Id;
+  branch?: Id;
+  resource_group?: "staff" | "physical";
   search?: string;
   custom_field?: string;
   custom_operator?: string;
