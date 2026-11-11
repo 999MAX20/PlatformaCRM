@@ -136,7 +136,7 @@ class SpeechTests(TestCase):
                     side_effect=HTTPError("https://private.invalid/token", status, "private-secret", {}, io.BytesIO(b"private audio"))):
                 with self.assertLogs("apps.ai_core.speech", level="WARNING") as logs, self.assertRaises(AIProviderError) as caught:
                     transcribe_audio(audio_bytes())
-                self.assertEqual(caught.exception.code, "provider_rejected")
+                self.assertEqual(caught.exception.code, "speech_payment_required" if status == 402 else "provider_rejected")
                 self.assertFalse(caught.exception.retryable)
                 self.assertEqual(logs.records[0].status_code, status)
                 self.assertNotIn("private", str(logs.records[0].__dict__))
@@ -147,3 +147,19 @@ class SpeechTests(TestCase):
                 transcribe_audio(audio_bytes())
         self.assertEqual(caught.exception.code, "provider_unavailable")
         self.assertTrue(caught.exception.retryable)
+
+    def test_api_error_codes_are_safe_and_never_create_commands(self):
+        self.api.force_authenticate(self.owner)
+        before = (AgentTurn.objects.count(), AIRequestLog.objects.count())
+        for failure, code, retryable in (
+            (HTTPError("PRIVATE_SENTINEL", 402, "PRIVATE_SENTINEL", {}, None), "speech_payment_required", False),
+            (TimeoutError("PRIVATE_SENTINEL"), "speech_timeout", True),
+            (HTTPError("PRIVATE_SENTINEL", 503, "PRIVATE_SENTINEL", {}, None), "provider_unavailable", True),
+        ):
+            with self.subTest(code=code), patch("apps.ai_core.speech.request.urlopen", side_effect=failure) as send:
+                response = self.post(format_text="false")
+            self.assertEqual(response.status_code, 503)
+            self.assertEqual(response.data, {"code": code, "retryable": retryable})
+            self.assertNotIn("PRIVATE_SENTINEL", str(response.data))
+            send.assert_called_once()
+            self.assertEqual((AgentTurn.objects.count(), AIRequestLog.objects.count()), before)

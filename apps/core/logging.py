@@ -33,6 +33,12 @@ class JsonLogFormatter(logging.Formatter):
             value = getattr(record, key, None)
             if value not in (None, ""):
                 payload[key] = value
+        if record.name == "apps.ai_core.speech" and record.msg in {"ai.speech_request_completed", "ai.speech_provider_failed"}:
+            for key in ("speech_stage", "speech_model", "speech_error_code", "speech_exception_type",
+                        "speech_provider_request_id", "speech_generation_id", "speech_headers_ms"):
+                value = getattr(record, key, None)
+                if isinstance(value, (str, int, float)) and not isinstance(value, bool):
+                    payload[key] = value
         if record.exc_info:
             payload["exception"] = self.formatException(record.exc_info)
         # Normalize custom context values before redaction; retain complete tracebacks.

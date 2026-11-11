@@ -1,3 +1,11 @@
+VOICE-ERRORS-20261112: localized speech errors and safe diagnostics locally verified.
+No paid calls; mocked API/provider,17browser RU/KK/EN, backend/system/drift and frontendPASS.
+Explicit retry/countdown/text recovery; bounded metadata only, no audio/text/secrets.
+Own runtimes stopped; workingDB/env/default unchanged. Prior accuracy/live timeout open.
+Own-only publication blocked by foreign outgoing; no newCI/deploy.
+Evidence: docs/testing/evidence/voice-errors-20261112.md.
+Checkpoint: output/voice-errors-20261112/CHECKPOINT.md.
+
 AI-WORK-CRM-COMPLEX-FIXES-20261112: C1–C3 fixed and verified on isolated realAI data.
 Independent action values, scoped archive reads, named/localized Appointment review.
 Router accepts both permitted samples; unknown IDs/ambiguity remain guarded.

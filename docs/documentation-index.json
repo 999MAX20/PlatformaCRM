@@ -3,6 +3,7 @@
   "asOf": "2026-10-21",
   "archivePolicy": "Historical evidence only; excluded from default search. No task or requirement authority.",
   "documents": [
+    {"path": "docs/testing/evidence/voice-errors-20261112.md", "role": "evidence"},
     {"path": "docs/testing/evidence/ai-work-crm-complex-fixes-20261112.md", "role": "evidence"},
     {"path": "docs/testing/evidence/ai-work-crm-complex-20261112.md", "role": "evidence"},
     {"path": "docs/testing/evidence/management-implementation-20261111.md", "role": "evidence"},
