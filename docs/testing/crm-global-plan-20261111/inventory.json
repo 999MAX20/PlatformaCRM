@@ -1,0 +1,4259 @@
+{
+  "kind": "static-inventory-not-test-results",
+  "as_of": "2026-11-11",
+  "initial_head": "ee4ff50fbcfe1c914fff6f49b31cb64830ceeb21",
+  "inspection_head": "9d9b7a0dcc03b0411c4b25df9a77798d81fea24c",
+  "api": [
+    {
+      "kind": "router-family",
+      "route": "/api/branches/",
+      "handler": "BranchViewSet",
+      "module": "apps.branches.views",
+      "source": "config/urls.py",
+      "line": 139,
+      "group": "BUSINESS"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/businesses/",
+      "handler": "BusinessViewSet",
+      "module": "apps.businesses.views",
+      "source": "config/urls.py",
+      "line": 140,
+      "group": "BUSINESS"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/business-members/",
+      "handler": "BusinessMemberViewSet",
+      "module": "apps.businesses.views",
+      "source": "config/urls.py",
+      "line": 141,
+      "group": "TEAM"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/business-capabilities/",
+      "handler": "BusinessCapabilityViewSet",
+      "module": "apps.businesses.views",
+      "source": "config/urls.py",
+      "line": 142,
+      "group": "ACCESS"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/routing-policies/",
+      "handler": "RoutingPolicyViewSet",
+      "module": "apps.businesses.views",
+      "source": "config/urls.py",
+      "line": 143,
+      "group": "BUSINESS"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/team/members/",
+      "handler": "TeamMemberManagementViewSet",
+      "module": "apps.businesses.views",
+      "source": "config/urls.py",
+      "line": 144,
+      "group": "TEAM"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/team/invitations/",
+      "handler": "BusinessInvitationViewSet",
+      "module": "apps.businesses.views",
+      "source": "config/urls.py",
+      "line": 145,
+      "group": "TEAM"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/team/roles/",
+      "handler": "BusinessRoleViewSet",
+      "module": "apps.businesses.views",
+      "source": "config/urls.py",
+      "line": 146,
+      "group": "TEAM"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/team/role-permissions/",
+      "handler": "RolePermissionViewSet",
+      "module": "apps.businesses.views",
+      "source": "config/urls.py",
+      "line": 147,
+      "group": "TEAM"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/team/departments/",
+      "handler": "TeamViewSet",
+      "module": "apps.businesses.views",
+      "source": "config/urls.py",
+      "line": 148,
+      "group": "TEAM"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/team/department-members/",
+      "handler": "TeamMembershipViewSet",
+      "module": "apps.businesses.views",
+      "source": "config/urls.py",
+      "line": 149,
+      "group": "TEAM"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/clients/",
+      "handler": "ClientViewSet",
+      "module": "apps.clients.views",
+      "source": "config/urls.py",
+      "line": 150,
+      "group": "CLIENT"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/visit-plans/",
+      "handler": "VisitPlanViewSet",
+      "module": "apps.scheduling.plan_views",
+      "source": "config/urls.py",
+      "line": 151,
+      "group": "PLAN"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/client-payments/",
+      "handler": "PaymentViewSet",
+      "module": "apps.payments.views",
+      "source": "config/urls.py",
+      "line": 152,
+      "group": "MONEY"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/pipelines/",
+      "handler": "PipelineViewSet",
+      "module": "apps.crm.views",
+      "source": "config/urls.py",
+      "line": 153,
+      "group": "LEGACY"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/pipeline-stages/",
+      "handler": "PipelineStageViewSet",
+      "module": "apps.crm.views",
+      "source": "config/urls.py",
+      "line": 154,
+      "group": "LEGACY"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/stage-transitions/",
+      "handler": "StageTransitionViewSet",
+      "module": "apps.crm.views",
+      "source": "config/urls.py",
+      "line": 155,
+      "group": "LEGACY"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/deals/",
+      "handler": "DealViewSet",
+      "module": "apps.crm.views",
+      "source": "config/urls.py",
+      "line": 156,
+      "group": "LEGACY"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/services/",
+      "handler": "ServiceViewSet",
+      "module": "apps.services.views",
+      "source": "config/urls.py",
+      "line": 157,
+      "group": "BUSINESS"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/leads/",
+      "handler": "LeadViewSet",
+      "module": "apps.leads.views",
+      "source": "config/urls.py",
+      "line": 158,
+      "group": "LEGACY"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/lead-forms/",
+      "handler": "LeadFormViewSet",
+      "module": "apps.leads.views",
+      "source": "config/urls.py",
+      "line": 159,
+      "group": "PUBLIC"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/lead-form-fields/",
+      "handler": "LeadFormFieldViewSet",
+      "module": "apps.leads.views",
+      "source": "config/urls.py",
+      "line": 160,
+      "group": "PUBLIC"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/lead-form-submissions/",
+      "handler": "LeadFormSubmissionViewSet",
+      "module": "apps.leads.views",
+      "source": "config/urls.py",
+      "line": 161,
+      "group": "PUBLIC"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/lead-form-submission-errors/",
+      "handler": "LeadFormSubmissionErrorViewSet",
+      "module": "apps.leads.views",
+      "source": "config/urls.py",
+      "line": 162,
+      "group": "PUBLIC"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/resources/",
+      "handler": "ResourceViewSet",
+      "module": "apps.scheduling.views",
+      "source": "config/urls.py",
+      "line": 163,
+      "group": "SCHEDULE"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/working-hours/",
+      "handler": "WorkingHoursViewSet",
+      "module": "apps.scheduling.views",
+      "source": "config/urls.py",
+      "line": 164,
+      "group": "SCHEDULE"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/schedule-exceptions/",
+      "handler": "ScheduleExceptionViewSet",
+      "module": "apps.scheduling.schedule_views",
+      "source": "config/urls.py",
+      "line": 165,
+      "group": "SCHEDULE"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/appointments/",
+      "handler": "AppointmentViewSet",
+      "module": "apps.scheduling.views",
+      "source": "config/urls.py",
+      "line": 166,
+      "group": "RECORD"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/appointment-message-settings/",
+      "handler": "AppointmentMessageSettingViewSet",
+      "module": "apps.scheduling.views",
+      "source": "config/urls.py",
+      "line": 167,
+      "group": "NOTIFY"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/conversations/",
+      "handler": "ConversationViewSet",
+      "module": "apps.conversations.views",
+      "source": "config/urls.py",
+      "line": 168,
+      "group": "INBOX"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/messages/",
+      "handler": "MessageViewSet",
+      "module": "apps.conversations.views",
+      "source": "config/urls.py",
+      "line": 169,
+      "group": "INBOX"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/quick-replies/",
+      "handler": "QuickReplyTemplateViewSet",
+      "module": "apps.conversations.views",
+      "source": "config/urls.py",
+      "line": 170,
+      "group": "INBOX"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/notifications/",
+      "handler": "NotificationViewSet",
+      "module": "apps.notifications.views",
+      "source": "config/urls.py",
+      "line": 171,
+      "group": "NOTIFY"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/notification-preferences/",
+      "handler": "NotificationPreferenceViewSet",
+      "module": "apps.notifications.views",
+      "source": "config/urls.py",
+      "line": 172,
+      "group": "NOTIFY"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/outreach/templates/",
+      "handler": "OutreachTemplateViewSet",
+      "module": "apps.outreach.views",
+      "source": "config/urls.py",
+      "line": 173,
+      "group": "OUTREACH"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/outreach/campaigns/",
+      "handler": "OutreachCampaignViewSet",
+      "module": "apps.outreach.views",
+      "source": "config/urls.py",
+      "line": 174,
+      "group": "OUTREACH"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/outreach/recipients/",
+      "handler": "OutreachRecipientViewSet",
+      "module": "apps.outreach.views",
+      "source": "config/urls.py",
+      "line": 175,
+      "group": "OUTREACH"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/outreach/consents/",
+      "handler": "OutreachConsentViewSet",
+      "module": "apps.outreach.views",
+      "source": "config/urls.py",
+      "line": 176,
+      "group": "OUTREACH"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/analytics-events/",
+      "handler": "AnalyticsEventViewSet",
+      "module": "apps.analytics.views",
+      "source": "config/urls.py",
+      "line": 177,
+      "group": "ANALYTICS"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/report-widgets/",
+      "handler": "ReportWidgetViewSet",
+      "module": "apps.analytics.views",
+      "source": "config/urls.py",
+      "line": 178,
+      "group": "ANALYTICS"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/scheduled-reports/",
+      "handler": "ScheduledReportViewSet",
+      "module": "apps.analytics.views",
+      "source": "config/urls.py",
+      "line": 179,
+      "group": "ANALYTICS"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/activity-events/",
+      "handler": "ActivityEventViewSet",
+      "module": "apps.activities.views",
+      "source": "config/urls.py",
+      "line": 180,
+      "group": "TIMELINE"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/notes/",
+      "handler": "NoteViewSet",
+      "module": "apps.activities.views",
+      "source": "config/urls.py",
+      "line": 181,
+      "group": "CLIENT"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/tags/",
+      "handler": "TagViewSet",
+      "module": "apps.activities.views",
+      "source": "config/urls.py",
+      "line": 182,
+      "group": "FIELDS"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/tagged-objects/",
+      "handler": "TaggedObjectViewSet",
+      "module": "apps.activities.views",
+      "source": "config/urls.py",
+      "line": 183,
+      "group": "FIELDS"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/segments/",
+      "handler": "SegmentViewSet",
+      "module": "apps.activities.views",
+      "source": "config/urls.py",
+      "line": 184,
+      "group": "FIELDS"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/segment-filters/",
+      "handler": "SegmentFilterViewSet",
+      "module": "apps.activities.views",
+      "source": "config/urls.py",
+      "line": 185,
+      "group": "FIELDS"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/custom-fields/",
+      "handler": "CustomFieldDefinitionViewSet",
+      "module": "apps.core.custom_field_views",
+      "source": "config/urls.py",
+      "line": 186,
+      "group": "FIELDS"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/custom-field-values/",
+      "handler": "CustomFieldValueViewSet",
+      "module": "apps.core.custom_field_views",
+      "source": "config/urls.py",
+      "line": 187,
+      "group": "FIELDS"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/import-jobs/",
+      "handler": "ImportJobViewSet",
+      "module": "apps.core.import_export_views",
+      "source": "config/urls.py",
+      "line": 188,
+      "group": "IMPORT"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/import-workspaces/",
+      "handler": "ImportWorkspaceViewSet",
+      "module": "apps.core.import_workspace.views",
+      "source": "config/urls.py",
+      "line": 189,
+      "group": "IMPORT"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/export-jobs/",
+      "handler": "ExportJobViewSet",
+      "module": "apps.core.import_export_views",
+      "source": "config/urls.py",
+      "line": 190,
+      "group": "EXPORT"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/file-attachments/",
+      "handler": "FileAttachmentViewSet",
+      "module": "apps.core.file_attachment_views",
+      "source": "config/urls.py",
+      "line": 191,
+      "group": "FILE"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/security/support-grants/",
+      "handler": "SupportAccessGrantViewSet",
+      "module": "apps.core.security_views",
+      "source": "config/urls.py",
+      "line": 192,
+      "group": "ACCESS"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/tasks/",
+      "handler": "TaskViewSet",
+      "module": "apps.tasks.views",
+      "source": "config/urls.py",
+      "line": 193,
+      "group": "TASK"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/automation-rules/",
+      "handler": "AutomationRuleViewSet",
+      "module": "apps.automations.views",
+      "source": "config/urls.py",
+      "line": 194,
+      "group": "AUTO"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/automation-conditions/",
+      "handler": "AutomationConditionViewSet",
+      "module": "apps.automations.views",
+      "source": "config/urls.py",
+      "line": 195,
+      "group": "AUTO"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/automation-actions/",
+      "handler": "AutomationActionViewSet",
+      "module": "apps.automations.views",
+      "source": "config/urls.py",
+      "line": 196,
+      "group": "AUTO"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/automation-runs/",
+      "handler": "AutomationRunViewSet",
+      "module": "apps.automations.views",
+      "source": "config/urls.py",
+      "line": 197,
+      "group": "AUTO"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/billing/plans/",
+      "handler": "SubscriptionPlanViewSet",
+      "module": "apps.billing.views",
+      "source": "config/urls.py",
+      "line": 198,
+      "group": "BILLING"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/billing/current-subscription/",
+      "handler": "CurrentSubscriptionViewSet",
+      "module": "apps.billing.views",
+      "source": "config/urls.py",
+      "line": 199,
+      "group": "BILLING"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/billing/usage-summary/",
+      "handler": "UsageSummaryViewSet",
+      "module": "apps.billing.views",
+      "source": "config/urls.py",
+      "line": 200,
+      "group": "BILLING"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/billing/entitlements/",
+      "handler": "EntitlementSummaryViewSet",
+      "module": "apps.billing.views",
+      "source": "config/urls.py",
+      "line": 201,
+      "group": "BILLING"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/bots/",
+      "handler": "BotViewSet",
+      "module": "apps.bots.views",
+      "source": "config/urls.py",
+      "line": 202,
+      "group": "BOT"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/bot-channels/",
+      "handler": "BotChannelViewSet",
+      "module": "apps.bots.views",
+      "source": "config/urls.py",
+      "line": 203,
+      "group": "BOT"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/bot-conversations/",
+      "handler": "BotConversationViewSet",
+      "module": "apps.bots.views",
+      "source": "config/urls.py",
+      "line": 204,
+      "group": "BOT"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/bot-messages/",
+      "handler": "BotMessageViewSet",
+      "module": "apps.bots.views",
+      "source": "config/urls.py",
+      "line": 205,
+      "group": "BOT"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/inbox/conversations/",
+      "handler": "InboxConversationViewSet",
+      "module": "apps.conversations.inbox_views",
+      "source": "config/urls.py",
+      "line": 206,
+      "group": "INBOX"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/ai/request-logs/",
+      "handler": "AIRequestLogViewSet",
+      "module": "apps.ai_core.views",
+      "source": "config/urls.py",
+      "line": 207,
+      "group": "AI"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/ai/jobs/",
+      "handler": "AIJobViewSet",
+      "module": "apps.ai_core.views",
+      "source": "config/urls.py",
+      "line": 208,
+      "group": "AI"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/ai/knowledge-items/",
+      "handler": "BusinessKnowledgeItemViewSet",
+      "module": "apps.ai_core.views",
+      "source": "config/urls.py",
+      "line": 209,
+      "group": "AI"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/ai/agent-profiles/",
+      "handler": "AgentProfileViewSet",
+      "module": "apps.ai_core.views",
+      "source": "config/urls.py",
+      "line": 210,
+      "group": "AI"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/ai/approval-requests/",
+      "handler": "ApprovalRequestViewSet",
+      "module": "apps.ai_core.views",
+      "source": "config/urls.py",
+      "line": 211,
+      "group": "AI"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/integration-event-logs/",
+      "handler": "IntegrationEventLogViewSet",
+      "module": "apps.integrations.views",
+      "source": "config/urls.py",
+      "line": 212,
+      "group": "INTEGRATION"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/business-connectors/",
+      "handler": "BusinessConnectorViewSet",
+      "module": "apps.integrations.views",
+      "source": "config/urls.py",
+      "line": 213,
+      "group": "INTEGRATION"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/connector-credentials/",
+      "handler": "ConnectorCredentialViewSet",
+      "module": "apps.integrations.views",
+      "source": "config/urls.py",
+      "line": 214,
+      "group": "INTEGRATION"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/business-events/",
+      "handler": "BusinessEventViewSet",
+      "module": "apps.integrations.views",
+      "source": "config/urls.py",
+      "line": 215,
+      "group": "INTEGRATION"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/connector-sync-runs/",
+      "handler": "ConnectorSyncRunViewSet",
+      "module": "apps.integrations.views",
+      "source": "config/urls.py",
+      "line": 216,
+      "group": "INTEGRATION"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/api-tokens/",
+      "handler": "ApiTokenViewSet",
+      "module": "apps.integrations.views",
+      "source": "config/urls.py",
+      "line": 217,
+      "group": "INTEGRATION"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/webhook-endpoints/",
+      "handler": "WebhookEndpointViewSet",
+      "module": "apps.integrations.views",
+      "source": "config/urls.py",
+      "line": 218,
+      "group": "INTEGRATION"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/webhook-deliveries/",
+      "handler": "WebhookDeliveryLogViewSet",
+      "module": "apps.integrations.views",
+      "source": "config/urls.py",
+      "line": 219,
+      "group": "INTEGRATION"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/pricing/kaspi/rules/",
+      "handler": "KaspiPricingRuleViewSet",
+      "module": "apps.pricing.views",
+      "source": "config/urls.py",
+      "line": 220,
+      "group": "PRICING"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/pricing/kaspi/catalog/",
+      "handler": "PricingCatalogItemViewSet",
+      "module": "apps.pricing.views",
+      "source": "config/urls.py",
+      "line": 221,
+      "group": "PRICING"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/pricing/kaspi/control/",
+      "handler": "KaspiPricingControlViewSet",
+      "module": "apps.pricing.views",
+      "source": "config/urls.py",
+      "line": 222,
+      "group": "PRICING"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/pricing/kaspi/alerts/",
+      "handler": "KaspiPricingAlertViewSet",
+      "module": "apps.pricing.views",
+      "source": "config/urls.py",
+      "line": 223,
+      "group": "PRICING"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/pricing/kaspi/competitor-offers/",
+      "handler": "KaspiCompetitorOfferViewSet",
+      "module": "apps.pricing.views",
+      "source": "config/urls.py",
+      "line": 224,
+      "group": "PRICING"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/pricing/kaspi/recommendations/",
+      "handler": "KaspiPricingRecommendationViewSet",
+      "module": "apps.pricing.views",
+      "source": "config/urls.py",
+      "line": 225,
+      "group": "PRICING"
+    },
+    {
+      "kind": "router-family",
+      "route": "/api/pricing/kaspi/change-logs/",
+      "handler": "KaspiPriceChangeLogViewSet",
+      "module": "apps.pricing.views",
+      "source": "config/urls.py",
+      "line": 226,
+      "group": "PRICING"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/billing/businesses/<int:business_id>/orders/",
+      "handler": "merchant_orders",
+      "module": "apps.billing.commerce_views",
+      "source": "config/urls.py",
+      "line": 229,
+      "group": "BILLING"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/billing/businesses/<int:business_id>/orders/<uuid:order_id>/<slug:action>/",
+      "handler": "merchant_card",
+      "module": "apps.billing.commerce_views",
+      "source": "config/urls.py",
+      "line": 230,
+      "group": "BILLING"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/billing/card-notifications/<slug:provider>/",
+      "handler": "card_notification",
+      "module": "apps.billing.commerce_views",
+      "source": "config/urls.py",
+      "line": 231,
+      "group": "BILLING"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/platform/merchants/<int:business_id>/billing-orders/",
+      "handler": "platform_orders",
+      "module": "apps.billing.commerce_views",
+      "source": "config/urls.py",
+      "line": 232,
+      "group": "BILLING"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/platform/merchants/<int:business_id>/billing-orders/<uuid:order_id>/<slug:action>/",
+      "handler": "platform_payment_action",
+      "module": "apps.billing.commerce_views",
+      "source": "config/urls.py",
+      "line": 233,
+      "group": "BILLING"
+    },
+    {
+      "kind": "explicit",
+      "route": "/health/",
+      "handler": "health",
+      "module": "apps.core.views",
+      "source": "config/urls.py",
+      "line": 235,
+      "group": "OPS"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/service-status/",
+      "handler": "service_status",
+      "module": "apps.core.service_status_views",
+      "source": "config/urls.py",
+      "line": 236,
+      "group": "OPS"
+    },
+    {
+      "kind": "explicit",
+      "route": "/health/db/",
+      "handler": "health_db",
+      "module": "apps.core.views",
+      "source": "config/urls.py",
+      "line": 237,
+      "group": "OPS"
+    },
+    {
+      "kind": "explicit",
+      "route": "/ready/",
+      "handler": "readiness",
+      "module": "apps.core.views",
+      "source": "config/urls.py",
+      "line": 238,
+      "group": "OPS"
+    },
+    {
+      "kind": "explicit",
+      "route": "/admin/",
+      "handler": "admin.site.urls",
+      "module": "django.contrib",
+      "source": "config/urls.py",
+      "line": 239,
+      "group": "AUTH"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/auth/csrf/",
+      "handler": "auth_csrf",
+      "module": "apps.accounts.csrf",
+      "source": "config/urls.py",
+      "line": 240,
+      "group": "AUTH"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/auth/token/",
+      "handler": "ThrottledTokenObtainPairView.as_view()",
+      "module": "apps.accounts.auth_views",
+      "source": "config/urls.py",
+      "line": 241,
+      "group": "AUTH"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/auth/token/refresh/",
+      "handler": "ThrottledTokenRefreshView.as_view()",
+      "module": "apps.accounts.auth_views",
+      "source": "config/urls.py",
+      "line": 242,
+      "group": "AUTH"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/auth/logout/",
+      "handler": "LogoutView.as_view()",
+      "module": "apps.accounts.auth_views",
+      "source": "config/urls.py",
+      "line": 243,
+      "group": "AUTH"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/auth/social/",
+      "handler": "SocialAuthView.as_view()",
+      "module": "apps.accounts.views",
+      "source": "config/urls.py",
+      "line": 244,
+      "group": "AUTH"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/auth/signup/owner/",
+      "handler": "OwnerSignupView.as_view()",
+      "module": "apps.accounts.views",
+      "source": "config/urls.py",
+      "line": 245,
+      "group": "AUTH"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/auth/password-reset/request/",
+      "handler": "PasswordResetRequestView.as_view()",
+      "module": "apps.accounts.views",
+      "source": "config/urls.py",
+      "line": 246,
+      "group": "AUTH"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/auth/account-recovery/",
+      "handler": "public_recovery",
+      "module": "apps.accounts.recovery_views",
+      "source": "config/urls.py",
+      "line": 247,
+      "group": "PLATFORM"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/auth/recovery-confirmations/",
+      "handler": "recovery_confirmations",
+      "module": "apps.accounts.recovery_views",
+      "source": "config/urls.py",
+      "line": 248,
+      "group": "PLATFORM"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/auth/recovery-confirmations/<uuid:recovery_id>/",
+      "handler": "recovery_decision",
+      "module": "apps.accounts.recovery_views",
+      "source": "config/urls.py",
+      "line": 249,
+      "group": "PLATFORM"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/platform/merchants/<int:business_id>/employee-access/",
+      "handler": "platform_employee_access",
+      "module": "apps.businesses.employee_access_views",
+      "source": "config/urls.py",
+      "line": 250,
+      "group": "PLATFORM"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/platform/merchants/<int:business_id>/employee-access/<uuid:repair_id>/",
+      "handler": "platform_employee_access_action",
+      "module": "apps.businesses.employee_access_views",
+      "source": "config/urls.py",
+      "line": 251,
+      "group": "PLATFORM"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/auth/employee-access-confirmations/",
+      "handler": "employee_access_confirmations",
+      "module": "apps.businesses.employee_access_views",
+      "source": "config/urls.py",
+      "line": 252,
+      "group": "PLATFORM"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/auth/employee-access-confirmations/<uuid:repair_id>/",
+      "handler": "employee_access_decision",
+      "module": "apps.businesses.employee_access_views",
+      "source": "config/urls.py",
+      "line": 253,
+      "group": "PLATFORM"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/platform/merchants/<int:business_id>/account-recovery/",
+      "handler": "platform_recovery",
+      "module": "apps.accounts.recovery_views",
+      "source": "config/urls.py",
+      "line": 254,
+      "group": "PLATFORM"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/platform/merchants/<int:business_id>/account-recovery/<uuid:recovery_id>/",
+      "handler": "platform_recovery_action",
+      "module": "apps.accounts.recovery_views",
+      "source": "config/urls.py",
+      "line": 255,
+      "group": "PLATFORM"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/auth/password-reset/confirm/",
+      "handler": "PasswordResetConfirmView.as_view()",
+      "module": "apps.accounts.views",
+      "source": "config/urls.py",
+      "line": 256,
+      "group": "AUTH"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/auth/me/avatar/",
+      "handler": "CurrentUserAvatarView.as_view()",
+      "module": "apps.accounts.avatar_views",
+      "source": "config/urls.py",
+      "line": 257,
+      "group": "ACCOUNT"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/auth/me/",
+      "handler": "CurrentUserView.as_view()",
+      "module": "apps.accounts.views",
+      "source": "config/urls.py",
+      "line": 258,
+      "group": "ACCOUNT"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/auth/ownership-transfers/",
+      "handler": "account_ownership_transfers",
+      "module": "apps.businesses.ownership_views",
+      "source": "config/urls.py",
+      "line": 259,
+      "group": "PLATFORM"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/auth/ownership-transfers/<uuid:transfer_id>/decision/",
+      "handler": "account_ownership_decision",
+      "module": "apps.businesses.ownership_views",
+      "source": "config/urls.py",
+      "line": 260,
+      "group": "PLATFORM"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/auth/change-password/",
+      "handler": "ChangePasswordView.as_view()",
+      "module": "apps.accounts.views",
+      "source": "config/urls.py",
+      "line": 261,
+      "group": "AUTH"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/auth/sessions/",
+      "handler": "AccountSessionsView.as_view()",
+      "module": "apps.accounts.session_views",
+      "source": "config/urls.py",
+      "line": 262,
+      "group": "ACCOUNT"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/auth/sessions/<uuid:session_id>/revoke/",
+      "handler": "RevokeAccountSessionView.as_view()",
+      "module": "apps.accounts.session_views",
+      "source": "config/urls.py",
+      "line": 263,
+      "group": "ACCOUNT"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/auth/change-email/request/",
+      "handler": "EmailChangeRequestView.as_view()",
+      "module": "apps.accounts.email_change_views",
+      "source": "config/urls.py",
+      "line": 264,
+      "group": "ACCOUNT"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/auth/change-email/confirm/",
+      "handler": "EmailChangeConfirmView.as_view()",
+      "module": "apps.accounts.email_change_views",
+      "source": "config/urls.py",
+      "line": 265,
+      "group": "ACCOUNT"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/auth/login-history/",
+      "handler": "CurrentUserLoginHistoryView.as_view()",
+      "module": "apps.accounts.views",
+      "source": "config/urls.py",
+      "line": 266,
+      "group": "ACCOUNT"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/auth/mfa/status/",
+      "handler": "MfaStatusView.as_view()",
+      "module": "apps.accounts.mfa_views",
+      "source": "config/urls.py",
+      "line": 267,
+      "group": "AUTH"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/auth/mfa/enrollment/start/",
+      "handler": "MfaEnrollmentStartView.as_view()",
+      "module": "apps.accounts.mfa_views",
+      "source": "config/urls.py",
+      "line": 268,
+      "group": "AUTH"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/auth/mfa/enrollment/confirm/",
+      "handler": "MfaEnrollmentConfirmView.as_view()",
+      "module": "apps.accounts.mfa_views",
+      "source": "config/urls.py",
+      "line": 269,
+      "group": "AUTH"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/auth/mfa/verify/",
+      "handler": "MfaVerifyView.as_view()",
+      "module": "apps.accounts.mfa_views",
+      "source": "config/urls.py",
+      "line": 270,
+      "group": "AUTH"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/auth/mfa/step-up/",
+      "handler": "MfaStepUpView.as_view()",
+      "module": "apps.accounts.mfa_views",
+      "source": "config/urls.py",
+      "line": 271,
+      "group": "AUTH"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/auth/mfa/recovery-codes/",
+      "handler": "MfaRecoveryCodesView.as_view()",
+      "module": "apps.accounts.mfa_views",
+      "source": "config/urls.py",
+      "line": 272,
+      "group": "AUTH"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/auth/mfa/disable/",
+      "handler": "MfaDisableView.as_view()",
+      "module": "apps.accounts.mfa_views",
+      "source": "config/urls.py",
+      "line": 273,
+      "group": "AUTH"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/auth/mfa/sessions/revoke/",
+      "handler": "MfaRevokeSessionsView.as_view()",
+      "module": "apps.accounts.mfa_views",
+      "source": "config/urls.py",
+      "line": 274,
+      "group": "AUTH"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/team/permissions/catalog/",
+      "handler": "team_permissions_catalog",
+      "module": "apps.businesses.views",
+      "source": "config/urls.py",
+      "line": 275,
+      "group": "TEAM"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/team/performance/",
+      "handler": "team_performance",
+      "module": "apps.businesses.views",
+      "source": "config/urls.py",
+      "line": 276,
+      "group": "TEAM"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/export/<str:entity_type>/",
+      "handler": "export_entity",
+      "module": "apps.core.import_export_views",
+      "source": "config/urls.py",
+      "line": 277,
+      "group": "EXPORT"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/import-templates/<str:entity_type>/",
+      "handler": "import_template",
+      "module": "apps.core.import_export_views",
+      "source": "config/urls.py",
+      "line": 278,
+      "group": "IMPORT"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/data/sales/",
+      "handler": "manual_sale",
+      "module": "apps.core.import_export_views",
+      "source": "config/urls.py",
+      "line": 279,
+      "group": "IMPORT"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/data/catalog-items/",
+      "handler": "manual_catalog_item",
+      "module": "apps.core.import_export_views",
+      "source": "config/urls.py",
+      "line": 280,
+      "group": "IMPORT"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/security/audit/",
+      "handler": "security_audit",
+      "module": "apps.core.security_views",
+      "source": "config/urls.py",
+      "line": 281,
+      "group": "ACCESS"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/security/login-history/",
+      "handler": "security_login_history",
+      "module": "apps.core.security_views",
+      "source": "config/urls.py",
+      "line": 282,
+      "group": "ACCESS"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/security/risk-summary/",
+      "handler": "security_risk_summary",
+      "module": "apps.core.security_views",
+      "source": "config/urls.py",
+      "line": 283,
+      "group": "ACCESS"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/analytics/owner-dashboard/",
+      "handler": "owner_dashboard",
+      "module": "apps.analytics.views",
+      "source": "config/urls.py",
+      "line": 284,
+      "group": "ANALYTICS"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/analytics/reports/summary/",
+      "handler": "report_summary",
+      "module": "apps.analytics.views",
+      "source": "config/urls.py",
+      "line": 285,
+      "group": "ANALYTICS"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/analytics/reports/export/",
+      "handler": "report_export",
+      "module": "apps.analytics.views",
+      "source": "config/urls.py",
+      "line": 286,
+      "group": "ANALYTICS"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/platform/ping/",
+      "handler": "platform_ping",
+      "module": "apps.core.views",
+      "source": "config/urls.py",
+      "line": 287,
+      "group": "PLATFORM"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/work-queues/",
+      "handler": "work_queues",
+      "module": "apps.core.views",
+      "source": "config/urls.py",
+      "line": 288,
+      "group": "ANALYTICS"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/platform/overview/",
+      "handler": "platform_overview",
+      "module": "apps.core.platform_views",
+      "source": "config/urls.py",
+      "line": 289,
+      "group": "PLATFORM"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/platform/operations-health/",
+      "handler": "platform_operations_health_view",
+      "module": "apps.core.platform_views",
+      "source": "config/urls.py",
+      "line": 290,
+      "group": "PLATFORM"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/platform/operations-worklist/",
+      "handler": "platform_worklist",
+      "module": "apps.core.platform_worklists",
+      "source": "config/urls.py",
+      "line": 291,
+      "group": "PLATFORM"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/platform/merchants/",
+      "handler": "platform_merchants",
+      "module": "apps.core.platform_views",
+      "source": "config/urls.py",
+      "line": 292,
+      "group": "PLATFORM"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/platform/merchants/<int:business_id>/",
+      "handler": "platform_merchant_detail",
+      "module": "apps.core.platform_views",
+      "source": "config/urls.py",
+      "line": 293,
+      "group": "PLATFORM"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/platform/merchants/<int:business_id>/crm/<str:kind>/",
+      "handler": "platform_clinic_records",
+      "module": "apps.core.platform_crm_views",
+      "source": "config/urls.py",
+      "line": 294,
+      "group": "PLATFORM"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/platform/merchants/<int:business_id>/crm/<str:kind>/<int:record_id>/",
+      "handler": "platform_clinic_record",
+      "module": "apps.core.platform_crm_views",
+      "source": "config/urls.py",
+      "line": 295,
+      "group": "PLATFORM"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/platform/merchants/<int:business_id>/crm/<str:kind>/<int:record_id>/<str:section>/",
+      "handler": "platform_clinic_record_section",
+      "module": "apps.core.platform_crm_views",
+      "source": "config/urls.py",
+      "line": 296,
+      "group": "PLATFORM"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/platform/merchants/<int:business_id>/crm-access-log/",
+      "handler": "platform_clinic_access_log",
+      "module": "apps.core.platform_crm_views",
+      "source": "config/urls.py",
+      "line": 297,
+      "group": "PLATFORM"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/platform/merchants/<int:business_id>/details/",
+      "handler": "platform_business_details",
+      "module": "apps.core.platform_details_views",
+      "source": "config/urls.py",
+      "line": 298,
+      "group": "PLATFORM"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/platform/merchants/<int:business_id>/ownership/",
+      "handler": "platform_business_ownership",
+      "module": "apps.businesses.ownership_views",
+      "source": "config/urls.py",
+      "line": 299,
+      "group": "PLATFORM"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/platform/merchants/<int:business_id>/ownership/<uuid:transfer_id>/",
+      "handler": "platform_ownership_action",
+      "module": "apps.businesses.ownership_views",
+      "source": "config/urls.py",
+      "line": 300,
+      "group": "PLATFORM"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/platform/merchants/<int:business_id>/support-actions/",
+      "handler": "platform_merchant_support_action",
+      "module": "apps.core.platform_views",
+      "source": "config/urls.py",
+      "line": 301,
+      "group": "PLATFORM"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/platform/activate-landing/",
+      "handler": "platform_activate_landing",
+      "module": "apps.core.platform_views",
+      "source": "config/urls.py",
+      "line": 302,
+      "group": "PLATFORM"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/pilot/readiness/",
+      "handler": "PilotReadinessView.as_view()",
+      "module": "apps.core.pilot_views",
+      "source": "config/urls.py",
+      "line": 303,
+      "group": "OPS"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/onboarding/templates/",
+      "handler": "onboarding_templates",
+      "module": "apps.onboarding.views",
+      "source": "config/urls.py",
+      "line": 304,
+      "group": "ONBOARD"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/onboarding/status/",
+      "handler": "onboarding_status",
+      "module": "apps.onboarding.views",
+      "source": "config/urls.py",
+      "line": 305,
+      "group": "ONBOARD"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/onboarding/apply-template/",
+      "handler": "apply_onboarding_template",
+      "module": "apps.onboarding.views",
+      "source": "config/urls.py",
+      "line": 306,
+      "group": "ONBOARD"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/onboarding/demo-data/",
+      "handler": "onboarding_demo_data",
+      "module": "apps.onboarding.views",
+      "source": "config/urls.py",
+      "line": 307,
+      "group": "ONBOARD"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/onboarding/setup-channel/",
+      "handler": "onboarding_setup_channel",
+      "module": "apps.onboarding.views",
+      "source": "config/urls.py",
+      "line": 308,
+      "group": "ONBOARD"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/onboarding/first-message/",
+      "handler": "onboarding_first_message",
+      "module": "apps.onboarding.views",
+      "source": "config/urls.py",
+      "line": 309,
+      "group": "ONBOARD"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/files/private/<path:file_path>/",
+      "handler": "private_media_file",
+      "module": "apps.core.file_views",
+      "source": "config/urls.py",
+      "line": 310,
+      "group": "FILE"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/public/website-chat/<uuid:public_token>/",
+      "handler": "PublicWebsiteChatChannelView.as_view()",
+      "module": "apps.bots.views",
+      "source": "config/urls.py",
+      "line": 311,
+      "group": "PUBLIC"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/public/forms/<uuid:public_id>/",
+      "handler": "PublicLeadFormView.as_view()",
+      "module": "apps.leads.views",
+      "source": "config/urls.py",
+      "line": 312,
+      "group": "PUBLIC"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/public/forms/<uuid:public_id>/submit/",
+      "handler": "PublicLeadFormSubmitView.as_view()",
+      "module": "apps.leads.views",
+      "source": "config/urls.py",
+      "line": 313,
+      "group": "PUBLIC"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/public/website-chat/<uuid:public_token>/conversations/",
+      "handler": "PublicWebsiteChatConversationCreateView.as_view()",
+      "module": "apps.bots.views",
+      "source": "config/urls.py",
+      "line": 314,
+      "group": "PUBLIC"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/public/website-chat/<uuid:public_token>/conversations/<uuid:conversation_id>/messages/",
+      "handler": "PublicWebsiteChatMessageCreateView.as_view()",
+      "module": "apps.bots.views",
+      "source": "config/urls.py",
+      "line": 319,
+      "group": "PUBLIC"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/integrations/telegram/webhook/",
+      "handler": "TelegramWebhookView.as_view()",
+      "module": "apps.integrations.views",
+      "source": "config/urls.py",
+      "line": 324,
+      "group": "INTEGRATION"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/integrations/ycloud/channels/<int:pk>/",
+      "handler": "YCloudSetupView.as_view()",
+      "module": "apps.integrations.ycloud.api",
+      "source": "config/urls.py",
+      "line": 325,
+      "group": "INTEGRATION"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/integrations/ycloud/webhook/",
+      "handler": "YCloudWebhookView.as_view()",
+      "module": "apps.integrations.ycloud.api",
+      "source": "config/urls.py",
+      "line": 326,
+      "group": "INTEGRATION"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/integrations/whatsapp/webhook/",
+      "handler": "WhatsAppWebhookView.as_view()",
+      "module": "apps.integrations.views",
+      "source": "config/urls.py",
+      "line": 327,
+      "group": "INTEGRATION"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/integrations/instagram/webhook/",
+      "handler": "InstagramWebhookView.as_view()",
+      "module": "apps.integrations.views",
+      "source": "config/urls.py",
+      "line": 328,
+      "group": "INTEGRATION"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/public-api/clients/",
+      "handler": "PublicApiClientsView.as_view()",
+      "module": "apps.integrations.views",
+      "source": "config/urls.py",
+      "line": 329,
+      "group": "INTEGRATION"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/ai/agents/",
+      "handler": "AIRuntimeAgentsView.as_view()",
+      "module": "apps.ai_core.agent_views",
+      "source": "config/urls.py",
+      "line": 330,
+      "group": "AI"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/ai/speech/",
+      "handler": "SpeechView.as_view()",
+      "module": "apps.ai_core.speech_views",
+      "source": "config/urls.py",
+      "line": 331,
+      "group": "VOICE"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/ai/conversations/",
+      "handler": "AgentConversationListView.as_view()",
+      "module": "apps.ai_core.conversation_views",
+      "source": "config/urls.py",
+      "line": 332,
+      "group": "AI"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/ai/conversations/<uuid:conversation_id>/",
+      "handler": "AgentConversationDetailView.as_view()",
+      "module": "apps.ai_core.conversation_views",
+      "source": "config/urls.py",
+      "line": 333,
+      "group": "AI"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/ai/conversations/<uuid:conversation_id>/turns/",
+      "handler": "AgentConversationTurnsView.as_view()",
+      "module": "apps.ai_core.conversation_views",
+      "source": "config/urls.py",
+      "line": 334,
+      "group": "AI"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/ai/conversations/<uuid:conversation_id>/reset-memory/",
+      "handler": "AgentConversationResetView.as_view()",
+      "module": "apps.ai_core.conversation_views",
+      "source": "config/urls.py",
+      "line": 335,
+      "group": "AI"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/ai/conversations/<uuid:conversation_id>/turns/<int:turn_id>/cancel/",
+      "handler": "AgentTurnCancelView.as_view()",
+      "module": "apps.ai_core.conversation_views",
+      "source": "config/urls.py",
+      "line": 336,
+      "group": "AI"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/ai/conversations/<uuid:conversation_id>/turns/<int:turn_id>/retry/",
+      "handler": "AgentTurnRetryView.as_view()",
+      "module": "apps.ai_core.conversation_views",
+      "source": "config/urls.py",
+      "line": 337,
+      "group": "AI"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/ai/conversations/<uuid:conversation_id>/turns/<int:turn_id>/confirm/",
+      "handler": "AgentTurnConfirmView.as_view()",
+      "module": "apps.ai_core.conversation_views",
+      "source": "config/urls.py",
+      "line": 338,
+      "group": "AI"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/ai/assistant/status/",
+      "handler": "AIAssistantStatusView.as_view()",
+      "module": "apps.ai_core.views",
+      "source": "config/urls.py",
+      "line": 339,
+      "group": "AI"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/ai/assistant/chat/",
+      "handler": "AIAssistantChatView.as_view()",
+      "module": "apps.ai_core.views",
+      "source": "config/urls.py",
+      "line": 340,
+      "group": "AI"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/ai/analyst/brief/",
+      "handler": "AIAnalystBriefView.as_view()",
+      "module": "apps.ai_core.views",
+      "source": "config/urls.py",
+      "line": 341,
+      "group": "AI"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/ai/analyst/history/",
+      "handler": "AIHistoryView.as_view()",
+      "module": "apps.ai_core.crm_views",
+      "source": "config/urls.py",
+      "line": 342,
+      "group": "AI"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/ai/crm/read/",
+      "handler": "CRMReadView.as_view()",
+      "module": "apps.ai_core.crm_views",
+      "source": "config/urls.py",
+      "line": 343,
+      "group": "AI"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/ai/crm/plan/",
+      "handler": "CRMPlanView.as_view()",
+      "module": "apps.ai_core.crm_views",
+      "source": "config/urls.py",
+      "line": 344,
+      "group": "AI"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/ai/owner-brief/daily/",
+      "handler": "AIOwnerDailyBriefView.as_view()",
+      "module": "apps.ai_core.views",
+      "source": "config/urls.py",
+      "line": 345,
+      "group": "AI"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/ai/tools/suggest/",
+      "handler": "AIToolSuggestView.as_view()",
+      "module": "apps.ai_core.views",
+      "source": "config/urls.py",
+      "line": 346,
+      "group": "AI"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/ai/tools/<int:log_id>/execute/",
+      "handler": "AIToolExecuteView.as_view()",
+      "module": "apps.ai_core.views",
+      "source": "config/urls.py",
+      "line": 347,
+      "group": "AI"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/platform/support-incidents/",
+      "handler": "views.SupportIncidentView.as_view()",
+      "module": "apps.support.views",
+      "source": "apps/support/urls.py",
+      "line": 7,
+      "group": "SUPPORT"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/platform/support-cases/<int:pk>/incidents/",
+      "handler": "views.CaseIncidentsView.as_view()",
+      "module": "apps.support.views",
+      "source": "apps/support/urls.py",
+      "line": 8,
+      "group": "SUPPORT"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/platform/support-cases/staff/",
+      "handler": "views.SupportStaffView.as_view()",
+      "module": "apps.support.views",
+      "source": "apps/support/urls.py",
+      "line": 9,
+      "group": "SUPPORT"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/platform/support-cases/<int:pk>/internal-notes/",
+      "handler": "views.CaseNotesView.as_view()",
+      "module": "apps.support.views",
+      "source": "apps/support/urls.py",
+      "line": 10,
+      "group": "SUPPORT"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/platform/support-cases/<int:pk>/assign/",
+      "handler": "views.CaseAssignView.as_view()",
+      "module": "apps.support.views",
+      "source": "apps/support/urls.py",
+      "line": 11,
+      "group": "SUPPORT"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/platform/support-cases/<int:pk>/transition/",
+      "handler": "views.CaseTransitionView.as_view()",
+      "module": "apps.support.views",
+      "source": "apps/support/urls.py",
+      "line": 12,
+      "group": "SUPPORT"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/platform/support-cases/",
+      "handler": "views.CaseListView.as_view(platform=platform)",
+      "module": "apps.support.views",
+      "source": "apps/support/urls.py",
+      "line": 17,
+      "group": "SUPPORT"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/support/cases/",
+      "handler": "views.CaseListView.as_view(platform=platform)",
+      "module": "apps.support.views",
+      "source": "apps/support/urls.py",
+      "line": 17,
+      "group": "SUPPORT"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/platform/support-cases/<int:pk>/",
+      "handler": "views.CaseDetailView.as_view(platform=platform)",
+      "module": "apps.support.views",
+      "source": "apps/support/urls.py",
+      "line": 18,
+      "group": "SUPPORT"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/support/cases/<int:pk>/",
+      "handler": "views.CaseDetailView.as_view(platform=platform)",
+      "module": "apps.support.views",
+      "source": "apps/support/urls.py",
+      "line": 18,
+      "group": "SUPPORT"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/platform/support-cases/<int:pk>/messages/",
+      "handler": "views.CaseMessagesView.as_view(platform=platform)",
+      "module": "apps.support.views",
+      "source": "apps/support/urls.py",
+      "line": 19,
+      "group": "SUPPORT"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/support/cases/<int:pk>/messages/",
+      "handler": "views.CaseMessagesView.as_view(platform=platform)",
+      "module": "apps.support.views",
+      "source": "apps/support/urls.py",
+      "line": 19,
+      "group": "SUPPORT"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/platform/support-cases/<int:pk>/events/",
+      "handler": "views.CaseEventsView.as_view(platform=platform)",
+      "module": "apps.support.views",
+      "source": "apps/support/urls.py",
+      "line": 20,
+      "group": "SUPPORT"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/support/cases/<int:pk>/events/",
+      "handler": "views.CaseEventsView.as_view(platform=platform)",
+      "module": "apps.support.views",
+      "source": "apps/support/urls.py",
+      "line": 20,
+      "group": "SUPPORT"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/platform/support-cases/<int:pk>/reopen/",
+      "handler": "views.CaseReopenView.as_view(platform=platform)",
+      "module": "apps.support.views",
+      "source": "apps/support/urls.py",
+      "line": 21,
+      "group": "SUPPORT"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/support/cases/<int:pk>/reopen/",
+      "handler": "views.CaseReopenView.as_view(platform=platform)",
+      "module": "apps.support.views",
+      "source": "apps/support/urls.py",
+      "line": 21,
+      "group": "SUPPORT"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/platform/support-cases/<int:pk>/read/",
+      "handler": "views.CaseReadView.as_view(platform=platform)",
+      "module": "apps.support.views",
+      "source": "apps/support/urls.py",
+      "line": 22,
+      "group": "SUPPORT"
+    },
+    {
+      "kind": "explicit",
+      "route": "/api/support/cases/<int:pk>/read/",
+      "handler": "views.CaseReadView.as_view(platform=platform)",
+      "module": "apps.support.views",
+      "source": "apps/support/urls.py",
+      "line": 22,
+      "group": "SUPPORT"
+    }
+  ],
+  "ui": [
+    {
+      "route": "/documents",
+      "source": "frontend/src/app/publicRoutes.tsx",
+      "line": 11,
+      "group": "PUBLIC"
+    },
+    {
+      "route": "/documents/:documentId",
+      "source": "frontend/src/app/publicRoutes.tsx",
+      "line": 12,
+      "group": "PUBLIC"
+    },
+    {
+      "route": "/",
+      "source": "frontend/src/app/publicRoutes.tsx",
+      "line": 14,
+      "group": "PUBLIC"
+    },
+    {
+      "route": "/pricing",
+      "source": "frontend/src/app/publicRoutes.tsx",
+      "line": 19,
+      "group": "PUBLIC"
+    },
+    {
+      "route": "/bots",
+      "source": "frontend/src/app/publicRoutes.tsx",
+      "line": 24,
+      "group": "PUBLIC"
+    },
+    {
+      "route": "/crm",
+      "source": "frontend/src/app/publicRoutes.tsx",
+      "line": 29,
+      "group": "PUBLIC"
+    },
+    {
+      "route": "/contacts",
+      "source": "frontend/src/app/publicRoutes.tsx",
+      "line": 34,
+      "group": "PUBLIC"
+    },
+    {
+      "route": "/login",
+      "source": "frontend/src/app/publicRoutes.tsx",
+      "line": 39,
+      "group": "AUTH"
+    },
+    {
+      "route": "/signup",
+      "source": "frontend/src/app/publicRoutes.tsx",
+      "line": 48,
+      "group": "ONBOARD"
+    },
+    {
+      "route": "/mfa",
+      "source": "frontend/src/app/publicRoutes.tsx",
+      "line": 59,
+      "group": "AUTH"
+    },
+    {
+      "route": "/forgot-password",
+      "source": "frontend/src/app/publicRoutes.tsx",
+      "line": 70,
+      "group": "AUTH"
+    },
+    {
+      "route": "/reset-password/:uid/:token",
+      "source": "frontend/src/app/publicRoutes.tsx",
+      "line": 81,
+      "group": "AUTH"
+    },
+    {
+      "route": "/recover-account",
+      "source": "frontend/src/app/publicRoutes.tsx",
+      "line": 92,
+      "group": "PLATFORM"
+    },
+    {
+      "route": "/invite/:token",
+      "source": "frontend/src/app/publicRoutes.tsx",
+      "line": 97,
+      "group": "TEAM"
+    },
+    {
+      "route": "/app/voice/history",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 11,
+      "group": "VOICE"
+    },
+    {
+      "route": "/app/settings/voice",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 12,
+      "group": "VOICE"
+    },
+    {
+      "route": "/app/integrations/import",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 13,
+      "group": "IMPORT"
+    },
+    {
+      "route": "/app/appointments",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 14,
+      "group": "RECORD"
+    },
+    {
+      "route": "/app/appointments/:id",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 15,
+      "group": "RECORD"
+    },
+    {
+      "route": "/app/support",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 16,
+      "group": "SUPPORT"
+    },
+    {
+      "route": "/app/support/:id",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 17,
+      "group": "SUPPORT"
+    },
+    {
+      "route": "/app/dashboard",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 22,
+      "group": "ANALYTICS"
+    },
+    {
+      "route": "/app/account",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 27,
+      "group": "ACCOUNT"
+    },
+    {
+      "route": "/app/leads",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 32,
+      "group": "LEGACY"
+    },
+    {
+      "route": "/app/leads/:id",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 38,
+      "group": "LEGACY"
+    },
+    {
+      "route": "/app/deals",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 46,
+      "group": "LEGACY"
+    },
+    {
+      "route": "/app/deals/:id",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 52,
+      "group": "LEGACY"
+    },
+    {
+      "route": "/app/clients",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 60,
+      "group": "CLIENT"
+    },
+    {
+      "route": "/app/clients/:id",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 66,
+      "group": "CLIENT"
+    },
+    {
+      "route": "/app/tasks",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 74,
+      "group": "TASK"
+    },
+    {
+      "route": "/app/tasks/:id",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 80,
+      "group": "TASK"
+    },
+    {
+      "route": "/app/calendar",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 88,
+      "group": "RECORD"
+    },
+    {
+      "route": "/app/calendar/:id",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 94,
+      "group": "RECORD"
+    },
+    {
+      "route": "/app/conversations",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 102,
+      "group": "INBOX"
+    },
+    {
+      "route": "/app/conversations/:id",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 108,
+      "group": "INBOX"
+    },
+    {
+      "route": "/app/timeline",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 116,
+      "group": "TIMELINE"
+    },
+    {
+      "route": "/app/bots",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 122,
+      "group": "BOT"
+    },
+    {
+      "route": "/app/bots/:id",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 131,
+      "group": "BOT"
+    },
+    {
+      "route": "/app/integrations",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 139,
+      "group": "INTEGRATION"
+    },
+    {
+      "route": "/app/pricing",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 145,
+      "group": "PRICING"
+    },
+    {
+      "route": "/app/ai-assistant",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 154,
+      "group": "AI"
+    },
+    {
+      "route": "/app/ai",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 162,
+      "group": "AI"
+    },
+    {
+      "route": "/app/assistant",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 166,
+      "group": "AI"
+    },
+    {
+      "route": "/app/inbox",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 174,
+      "group": "INBOX"
+    },
+    {
+      "route": "/app/ai-agents",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 182,
+      "group": "AI"
+    },
+    {
+      "route": "/app/ai-agents/:id",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 188,
+      "group": "AI"
+    },
+    {
+      "route": "/app/ai-agents/:id/:section",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 196,
+      "group": "AI"
+    },
+    {
+      "route": "/app/automations",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 204,
+      "group": "AUTO"
+    },
+    {
+      "route": "/app/business",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 212,
+      "group": "BUSINESS"
+    },
+    {
+      "route": "/app/business/services",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 213,
+      "group": "BUSINESS"
+    },
+    {
+      "route": "/app/business/branches",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 219,
+      "group": "BUSINESS"
+    },
+    {
+      "route": "/app/business/resources",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 223,
+      "group": "BUSINESS"
+    },
+    {
+      "route": "/app/business/working-hours",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 228,
+      "group": "SCHEDULE"
+    },
+    {
+      "route": "/app/services",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 234,
+      "group": "BUSINESS"
+    },
+    {
+      "route": "/app/resources",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 239,
+      "group": "BUSINESS"
+    },
+    {
+      "route": "/app/working-hours",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 244,
+      "group": "SCHEDULE"
+    },
+    {
+      "route": "/app/analytics",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 248,
+      "group": "ANALYTICS"
+    },
+    {
+      "route": "/app/settings",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 253,
+      "group": "UX"
+    },
+    {
+      "route": "/app/billing",
+      "source": "frontend/src/app/merchantRoutes.tsx",
+      "line": 259,
+      "group": "BILLING"
+    },
+    {
+      "route": "/platform",
+      "source": "frontend/src/app/platformRoutes.tsx",
+      "line": 9,
+      "group": "PLATFORM"
+    },
+    {
+      "route": "/platform/operations",
+      "source": "frontend/src/app/platformRoutes.tsx",
+      "line": 28,
+      "group": "PLATFORM"
+    },
+    {
+      "route": "/platform/merchants",
+      "source": "frontend/src/app/platformRoutes.tsx",
+      "line": 36,
+      "group": "PLATFORM"
+    },
+    {
+      "route": "/platform/merchants/:id",
+      "source": "frontend/src/app/platformRoutes.tsx",
+      "line": 44,
+      "group": "PLATFORM"
+    },
+    {
+      "route": "/platform/account",
+      "source": "frontend/src/app/platformRoutes.tsx",
+      "line": 51,
+      "group": "ACCOUNT"
+    },
+    {
+      "route": "/platform/support",
+      "source": "frontend/src/app/platformRoutes.tsx",
+      "line": 52,
+      "group": "SUPPORT"
+    },
+    {
+      "route": "/platform/support/:id",
+      "source": "frontend/src/app/platformRoutes.tsx",
+      "line": 53,
+      "group": "SUPPORT"
+    },
+    {
+      "route": "/platform/merchants/:id/incidents/:component/:episode",
+      "source": "frontend/src/app/platformRoutes.tsx",
+      "line": 54,
+      "group": "SUPPORT"
+    },
+    {
+      "route": "/platform/prospects",
+      "source": "frontend/src/app/platformRoutes.tsx",
+      "line": 56,
+      "group": "PLATFORM"
+    },
+    {
+      "route": "/platform/landings",
+      "source": "frontend/src/app/platformRoutes.tsx",
+      "line": 60,
+      "group": "PLATFORM"
+    },
+    {
+      "route": "/platform/billing",
+      "source": "frontend/src/app/platformRoutes.tsx",
+      "line": 64,
+      "group": "PLATFORM"
+    },
+    {
+      "route": "/platform/analytics",
+      "source": "frontend/src/app/platformRoutes.tsx",
+      "line": 68,
+      "group": "PLATFORM"
+    },
+    {
+      "route": "/platform/settings",
+      "source": "frontend/src/app/platformRoutes.tsx",
+      "line": 72,
+      "group": "PLATFORM"
+    },
+    {
+      "route": "/leads",
+      "source": "frontend/src/app/legacyRoutes.tsx",
+      "line": 7,
+      "group": "LEGACY"
+    },
+    {
+      "route": "/account",
+      "source": "frontend/src/app/legacyRoutes.tsx",
+      "line": 16,
+      "group": "ACCOUNT"
+    },
+    {
+      "route": "/deals",
+      "source": "frontend/src/app/legacyRoutes.tsx",
+      "line": 24,
+      "group": "LEGACY"
+    },
+    {
+      "route": "/clients",
+      "source": "frontend/src/app/legacyRoutes.tsx",
+      "line": 33,
+      "group": "CLIENT"
+    },
+    {
+      "route": "/tasks",
+      "source": "frontend/src/app/legacyRoutes.tsx",
+      "line": 42,
+      "group": "TASK"
+    },
+    {
+      "route": "/calendar",
+      "source": "frontend/src/app/legacyRoutes.tsx",
+      "line": 51,
+      "group": "RECORD"
+    },
+    {
+      "route": "/conversations",
+      "source": "frontend/src/app/legacyRoutes.tsx",
+      "line": 60,
+      "group": "INBOX"
+    },
+    {
+      "route": "/timeline",
+      "source": "frontend/src/app/legacyRoutes.tsx",
+      "line": 69,
+      "group": "TIMELINE"
+    },
+    {
+      "route": "/crm-bots",
+      "source": "frontend/src/app/legacyRoutes.tsx",
+      "line": 78,
+      "group": "BOT"
+    },
+    {
+      "route": "/integrations",
+      "source": "frontend/src/app/legacyRoutes.tsx",
+      "line": 87,
+      "group": "INTEGRATION"
+    },
+    {
+      "route": "/ai-assistant",
+      "source": "frontend/src/app/legacyRoutes.tsx",
+      "line": 96,
+      "group": "AI"
+    },
+    {
+      "route": "/ai",
+      "source": "frontend/src/app/legacyRoutes.tsx",
+      "line": 104,
+      "group": "AI"
+    },
+    {
+      "route": "/assistant",
+      "source": "frontend/src/app/legacyRoutes.tsx",
+      "line": 108,
+      "group": "AI"
+    },
+    {
+      "route": "/inbox",
+      "source": "frontend/src/app/legacyRoutes.tsx",
+      "line": 116,
+      "group": "INBOX"
+    },
+    {
+      "route": "/ai-agents",
+      "source": "frontend/src/app/legacyRoutes.tsx",
+      "line": 125,
+      "group": "AI"
+    },
+    {
+      "route": "/automations",
+      "source": "frontend/src/app/legacyRoutes.tsx",
+      "line": 133,
+      "group": "AUTO"
+    },
+    {
+      "route": "/services",
+      "source": "frontend/src/app/legacyRoutes.tsx",
+      "line": 142,
+      "group": "BUSINESS"
+    },
+    {
+      "route": "/resources",
+      "source": "frontend/src/app/legacyRoutes.tsx",
+      "line": 147,
+      "group": "BUSINESS"
+    },
+    {
+      "route": "/working-hours",
+      "source": "frontend/src/app/legacyRoutes.tsx",
+      "line": 152,
+      "group": "SCHEDULE"
+    },
+    {
+      "route": "/analytics",
+      "source": "frontend/src/app/legacyRoutes.tsx",
+      "line": 157,
+      "group": "ANALYTICS"
+    },
+    {
+      "route": "/settings",
+      "source": "frontend/src/app/legacyRoutes.tsx",
+      "line": 166,
+      "group": "UX"
+    },
+    {
+      "route": "/billing",
+      "source": "frontend/src/app/legacyRoutes.tsx",
+      "line": 176,
+      "group": "BILLING"
+    },
+    {
+      "route": "/app",
+      "source": "frontend/src/app/router.tsx",
+      "group": "UX"
+    },
+    {
+      "route": "/app/notifications",
+      "source": "frontend/src/app/router.tsx",
+      "group": "NOTIFY"
+    },
+    {
+      "route": "/dashboard/*",
+      "source": "frontend/src/app/router.tsx",
+      "group": "LEGACY"
+    },
+    {
+      "route": "*",
+      "source": "frontend/src/app/router.tsx",
+      "group": "PUBLIC"
+    }
+  ],
+  "settings": [
+    {
+      "route": "/app/settings#integrations",
+      "component": "IntegrationsSection"
+    },
+    {
+      "route": "/app/settings#voice-input",
+      "component": "VoiceInputSection"
+    },
+    {
+      "route": "/app/settings#business-profile",
+      "component": "BusinessProfileSection"
+    },
+    {
+      "route": "/app/settings#team-access",
+      "component": "TeamSection"
+    },
+    {
+      "route": "/app/settings#roles",
+      "component": "RolesSection"
+    },
+    {
+      "route": "/app/settings#security-center",
+      "component": "SecuritySection"
+    },
+    {
+      "route": "/app/settings#appointment-messages",
+      "component": "AppointmentMessagesSection"
+    },
+    {
+      "route": "/app/settings#quick-replies",
+      "component": "QuickRepliesSection"
+    },
+    {
+      "route": "/app/settings#custom-fields",
+      "component": "CustomFieldsSection"
+    },
+    {
+      "route": "/app/settings#billing",
+      "component": "BillingSection"
+    },
+    {
+      "route": "/app/settings#usage",
+      "component": "UsageSection"
+    }
+  ],
+  "backend_test_files": [
+    {
+      "file": "apps/accounts/tests.py",
+      "module": "apps.accounts.tests",
+      "declared_test_methods": 29
+    },
+    {
+      "file": "apps/accounts/tests_admin_mfa.py",
+      "module": "apps.accounts.tests_admin_mfa",
+      "declared_test_methods": 16
+    },
+    {
+      "file": "apps/accounts/tests_avatars.py",
+      "module": "apps.accounts.tests_avatars",
+      "declared_test_methods": 8
+    },
+    {
+      "file": "apps/accounts/tests_device_sessions.py",
+      "module": "apps.accounts.tests_device_sessions",
+      "declared_test_methods": 9
+    },
+    {
+      "file": "apps/accounts/tests_email_changes.py",
+      "module": "apps.accounts.tests_email_changes",
+      "declared_test_methods": 9
+    },
+    {
+      "file": "apps/accounts/tests_legal_documents.py",
+      "module": "apps.accounts.tests_legal_documents",
+      "declared_test_methods": 2
+    },
+    {
+      "file": "apps/accounts/tests_login_csrf.py",
+      "module": "apps.accounts.tests_login_csrf",
+      "declared_test_methods": 7
+    },
+    {
+      "file": "apps/accounts/tests_mfa.py",
+      "module": "apps.accounts.tests_mfa",
+      "declared_test_methods": 14
+    },
+    {
+      "file": "apps/accounts/tests_password_throttle.py",
+      "module": "apps.accounts.tests_password_throttle",
+      "declared_test_methods": 5
+    },
+    {
+      "file": "apps/accounts/tests_recovery.py",
+      "module": "apps.accounts.tests_recovery",
+      "declared_test_methods": 27
+    },
+    {
+      "file": "apps/accounts/tests_session_policy.py",
+      "module": "apps.accounts.tests_session_policy",
+      "declared_test_methods": 9
+    },
+    {
+      "file": "apps/accounts/tests_token_cleanup.py",
+      "module": "apps.accounts.tests_token_cleanup",
+      "declared_test_methods": 4
+    },
+    {
+      "file": "apps/activities/tests.py",
+      "module": "apps.activities.tests",
+      "declared_test_methods": 8
+    },
+    {
+      "file": "apps/activities/tests_note_read_scope.py",
+      "module": "apps.activities.tests_note_read_scope",
+      "declared_test_methods": 14
+    },
+    {
+      "file": "apps/activities/tests_segments.py",
+      "module": "apps.activities.tests_segments",
+      "declared_test_methods": 2
+    },
+    {
+      "file": "apps/activities/tests_timeline_workspace.py",
+      "module": "apps.activities.tests_timeline_workspace",
+      "declared_test_methods": 21
+    },
+    {
+      "file": "apps/activities/tests_write_boundaries.py",
+      "module": "apps.activities.tests_write_boundaries",
+      "declared_test_methods": 9
+    },
+    {
+      "file": "apps/ai_core/tests.py",
+      "module": "apps.ai_core.tests",
+      "declared_test_methods": 33
+    },
+    {
+      "file": "apps/ai_core/tests_agent_runtime.py",
+      "module": "apps.ai_core.tests_agent_runtime",
+      "declared_test_methods": 9
+    },
+    {
+      "file": "apps/ai_core/tests_approval_binding.py",
+      "module": "apps.ai_core.tests_approval_binding",
+      "declared_test_methods": 17
+    },
+    {
+      "file": "apps/ai_core/tests_conversation_api.py",
+      "module": "apps.ai_core.tests_conversation_api",
+      "declared_test_methods": 8
+    },
+    {
+      "file": "apps/ai_core/tests_conversation_execution.py",
+      "module": "apps.ai_core.tests_conversation_execution",
+      "declared_test_methods": 7
+    },
+    {
+      "file": "apps/ai_core/tests_conversation_memory.py",
+      "module": "apps.ai_core.tests_conversation_memory",
+      "declared_test_methods": 8
+    },
+    {
+      "file": "apps/ai_core/tests_conversation_state.py",
+      "module": "apps.ai_core.tests_conversation_state",
+      "declared_test_methods": 6
+    },
+    {
+      "file": "apps/ai_core/tests_crm_planner.py",
+      "module": "apps.ai_core.tests_crm_planner",
+      "declared_test_methods": 12
+    },
+    {
+      "file": "apps/ai_core/tests_crm_tools.py",
+      "module": "apps.ai_core.tests_crm_tools",
+      "declared_test_methods": 20
+    },
+    {
+      "file": "apps/ai_core/tests_history.py",
+      "module": "apps.ai_core.tests_history",
+      "declared_test_methods": 5
+    },
+    {
+      "file": "apps/ai_core/tests_history_answers.py",
+      "module": "apps.ai_core.tests_history_answers",
+      "declared_test_methods": 4
+    },
+    {
+      "file": "apps/ai_core/tests_inbox_continuity.py",
+      "module": "apps.ai_core.tests_inbox_continuity",
+      "declared_test_methods": 8
+    },
+    {
+      "file": "apps/ai_core/tests_job_recovery.py",
+      "module": "apps.ai_core.tests_job_recovery",
+      "declared_test_methods": 6
+    },
+    {
+      "file": "apps/ai_core/tests_knowledge_isolation.py",
+      "module": "apps.ai_core.tests_knowledge_isolation",
+      "declared_test_methods": 8
+    },
+    {
+      "file": "apps/ai_core/tests_prompt_preferences.py",
+      "module": "apps.ai_core.tests_prompt_preferences",
+      "declared_test_methods": 4
+    },
+    {
+      "file": "apps/ai_core/tests_quality.py",
+      "module": "apps.ai_core.tests_quality",
+      "declared_test_methods": 26
+    },
+    {
+      "file": "apps/ai_core/tests_record_workflow.py",
+      "module": "apps.ai_core.tests_record_workflow",
+      "declared_test_methods": 5
+    },
+    {
+      "file": "apps/ai_core/tests_resource_booking.py",
+      "module": "apps.ai_core.tests_resource_booking",
+      "declared_test_methods": 3
+    },
+    {
+      "file": "apps/ai_core/tests_settings_certification.py",
+      "module": "apps.ai_core.tests_settings_certification",
+      "declared_test_methods": 4
+    },
+    {
+      "file": "apps/ai_core/tests_speech.py",
+      "module": "apps.ai_core.tests_speech",
+      "declared_test_methods": 10
+    },
+    {
+      "file": "apps/ai_core/tests_speech_formatting.py",
+      "module": "apps.ai_core.tests_speech_formatting",
+      "declared_test_methods": 4
+    },
+    {
+      "file": "apps/ai_core/tests_voice_booking_intent.py",
+      "module": "apps.ai_core.tests_voice_booking_intent",
+      "declared_test_methods": 11
+    },
+    {
+      "file": "apps/ai_core/tests_voice_direct.py",
+      "module": "apps.ai_core.tests_voice_direct",
+      "declared_test_methods": 10
+    },
+    {
+      "file": "apps/ai_core/tests_voice_identity.py",
+      "module": "apps.ai_core.tests_voice_identity",
+      "declared_test_methods": 9
+    },
+    {
+      "file": "apps/ai_core/tests_voice_interface.py",
+      "module": "apps.ai_core.tests_voice_interface",
+      "declared_test_methods": 10
+    },
+    {
+      "file": "apps/ai_core/tests_voice_language.py",
+      "module": "apps.ai_core.tests_voice_language",
+      "declared_test_methods": 8
+    },
+    {
+      "file": "apps/ai_core/tests_voice_locations.py",
+      "module": "apps.ai_core.tests_voice_locations",
+      "declared_test_methods": 11
+    },
+    {
+      "file": "apps/ai_core/tests_voice_policy.py",
+      "module": "apps.ai_core.tests_voice_policy",
+      "declared_test_methods": 13
+    },
+    {
+      "file": "apps/ai_core/tests_voice_schedule.py",
+      "module": "apps.ai_core.tests_voice_schedule",
+      "declared_test_methods": 26
+    },
+    {
+      "file": "apps/ai_core/tests_voice_schedule_concurrency.py",
+      "module": "apps.ai_core.tests_voice_schedule_concurrency",
+      "declared_test_methods": 3
+    },
+    {
+      "file": "apps/ai_core/tests_workflows.py",
+      "module": "apps.ai_core.tests_workflows",
+      "declared_test_methods": 7
+    },
+    {
+      "file": "apps/analytics/tests.py",
+      "module": "apps.analytics.tests",
+      "declared_test_methods": 10
+    },
+    {
+      "file": "apps/analytics/tests_financial_sources.py",
+      "module": "apps.analytics.tests_financial_sources",
+      "declared_test_methods": 14
+    },
+    {
+      "file": "apps/analytics/tests_manual_finance.py",
+      "module": "apps.analytics.tests_manual_finance",
+      "declared_test_methods": 7
+    },
+    {
+      "file": "apps/analytics/tests_record_metrics.py",
+      "module": "apps.analytics.tests_record_metrics",
+      "declared_test_methods": 3
+    },
+    {
+      "file": "apps/analytics/tests_resource_visibility.py",
+      "module": "apps.analytics.tests_resource_visibility",
+      "declared_test_methods": 15
+    },
+    {
+      "file": "apps/analytics/tests_workspace.py",
+      "module": "apps.analytics.tests_workspace",
+      "declared_test_methods": 13
+    },
+    {
+      "file": "apps/automations/tests.py",
+      "module": "apps.automations.tests",
+      "declared_test_methods": 28
+    },
+    {
+      "file": "apps/automations/tests_action_validation.py",
+      "module": "apps.automations.tests_action_validation",
+      "declared_test_methods": 14
+    },
+    {
+      "file": "apps/automations/tests_claim_ownership.py",
+      "module": "apps.automations.tests_claim_ownership",
+      "declared_test_methods": 4
+    },
+    {
+      "file": "apps/automations/tests_configuration.py",
+      "module": "apps.automations.tests_configuration",
+      "declared_test_methods": 12
+    },
+    {
+      "file": "apps/automations/tests_configuration_authority.py",
+      "module": "apps.automations.tests_configuration_authority",
+      "declared_test_methods": 7
+    },
+    {
+      "file": "apps/automations/tests_configuration_concurrency.py",
+      "module": "apps.automations.tests_configuration_concurrency",
+      "declared_test_methods": 2
+    },
+    {
+      "file": "apps/automations/tests_dispatch_commit.py",
+      "module": "apps.automations.tests_dispatch_commit",
+      "declared_test_methods": 3
+    },
+    {
+      "file": "apps/automations/tests_follow_up_concurrency.py",
+      "module": "apps.automations.tests_follow_up_concurrency",
+      "declared_test_methods": 1
+    },
+    {
+      "file": "apps/automations/tests_follow_up_policy.py",
+      "module": "apps.automations.tests_follow_up_policy",
+      "declared_test_methods": 6
+    },
+    {
+      "file": "apps/automations/tests_history.py",
+      "module": "apps.automations.tests_history",
+      "declared_test_methods": 7
+    },
+    {
+      "file": "apps/automations/tests_queue_runtime.py",
+      "module": "apps.automations.tests_queue_runtime",
+      "declared_test_methods": 1
+    },
+    {
+      "file": "apps/automations/tests_rule_editor.py",
+      "module": "apps.automations.tests_rule_editor",
+      "declared_test_methods": 4
+    },
+    {
+      "file": "apps/billing/tests.py",
+      "module": "apps.billing.tests",
+      "declared_test_methods": 14
+    },
+    {
+      "file": "apps/billing/tests_commerce.py",
+      "module": "apps.billing.tests_commerce",
+      "declared_test_methods": 24
+    },
+    {
+      "file": "apps/billing/tests_commerce_concurrency.py",
+      "module": "apps.billing.tests_commerce_concurrency",
+      "declared_test_methods": 3
+    },
+    {
+      "file": "apps/billing/tests_settings_scope.py",
+      "module": "apps.billing.tests_settings_scope",
+      "declared_test_methods": 6
+    },
+    {
+      "file": "apps/bots/tests.py",
+      "module": "apps.bots.tests",
+      "declared_test_methods": 58
+    },
+    {
+      "file": "apps/bots/tests_automatic_booking.py",
+      "module": "apps.bots.tests_automatic_booking",
+      "declared_test_methods": 9
+    },
+    {
+      "file": "apps/bots/tests_booking_creation.py",
+      "module": "apps.bots.tests_booking_creation",
+      "declared_test_methods": 7
+    },
+    {
+      "file": "apps/bots/tests_booking_creation_concurrency.py",
+      "module": "apps.bots.tests_booking_creation_concurrency",
+      "declared_test_methods": 2
+    },
+    {
+      "file": "apps/bots/tests_booking_terms.py",
+      "module": "apps.bots.tests_booking_terms",
+      "declared_test_methods": 13
+    },
+    {
+      "file": "apps/bots/tests_booking_terms_concurrency.py",
+      "module": "apps.bots.tests_booking_terms_concurrency",
+      "declared_test_methods": 1
+    },
+    {
+      "file": "apps/bots/tests_configuration.py",
+      "module": "apps.bots.tests_configuration",
+      "declared_test_methods": 5
+    },
+    {
+      "file": "apps/bots/tests_controlled_creation.py",
+      "module": "apps.bots.tests_controlled_creation",
+      "declared_test_methods": 9
+    },
+    {
+      "file": "apps/bots/tests_customer_knowledge.py",
+      "module": "apps.bots.tests_customer_knowledge",
+      "declared_test_methods": 4
+    },
+    {
+      "file": "apps/bots/tests_customer_safety.py",
+      "module": "apps.bots.tests_customer_safety",
+      "declared_test_methods": 12
+    },
+    {
+      "file": "apps/bots/tests_deletion.py",
+      "module": "apps.bots.tests_deletion",
+      "declared_test_methods": 5
+    },
+    {
+      "file": "apps/bots/tests_handoff_notice.py",
+      "module": "apps.bots.tests_handoff_notice",
+      "declared_test_methods": 13
+    },
+    {
+      "file": "apps/bots/tests_handoff_recovery.py",
+      "module": "apps.bots.tests_handoff_recovery",
+      "declared_test_methods": 22
+    },
+    {
+      "file": "apps/bots/tests_pause_inbound.py",
+      "module": "apps.bots.tests_pause_inbound",
+      "declared_test_methods": 12
+    },
+    {
+      "file": "apps/bots/tests_preview.py",
+      "module": "apps.bots.tests_preview",
+      "declared_test_methods": 10
+    },
+    {
+      "file": "apps/bots/tests_readiness.py",
+      "module": "apps.bots.tests_readiness",
+      "declared_test_methods": 11
+    },
+    {
+      "file": "apps/bots/tests_readiness_diagnostics.py",
+      "module": "apps.bots.tests_readiness_diagnostics",
+      "declared_test_methods": 9
+    },
+    {
+      "file": "apps/bots/tests_resource_booking.py",
+      "module": "apps.bots.tests_resource_booking",
+      "declared_test_methods": 3
+    },
+    {
+      "file": "apps/bots/tests_runtime_configuration.py",
+      "module": "apps.bots.tests_runtime_configuration",
+      "declared_test_methods": 6
+    },
+    {
+      "file": "apps/bots/tests_safety_migration.py",
+      "module": "apps.bots.tests_safety_migration",
+      "declared_test_methods": 1
+    },
+    {
+      "file": "apps/bots/tests_safety_recovery.py",
+      "module": "apps.bots.tests_safety_recovery",
+      "declared_test_methods": 5
+    },
+    {
+      "file": "apps/bots/tests_safety_state.py",
+      "module": "apps.bots.tests_safety_state",
+      "declared_test_methods": 11
+    },
+    {
+      "file": "apps/bots/tests_scenarios.py",
+      "module": "apps.bots.tests_scenarios",
+      "declared_test_methods": 5
+    },
+    {
+      "file": "apps/branches/tests_access.py",
+      "module": "apps.branches.tests_access",
+      "declared_test_methods": 6
+    },
+    {
+      "file": "apps/branches/tests_bot.py",
+      "module": "apps.branches.tests_bot",
+      "declared_test_methods": 4
+    },
+    {
+      "file": "apps/branches/tests_compatibility.py",
+      "module": "apps.branches.tests_compatibility",
+      "declared_test_methods": 3
+    },
+    {
+      "file": "apps/branches/tests_concurrency.py",
+      "module": "apps.branches.tests_concurrency",
+      "declared_test_methods": 1
+    },
+    {
+      "file": "apps/branches/tests_initial_location_migration.py",
+      "module": "apps.branches.tests_initial_location_migration",
+      "declared_test_methods": 1
+    },
+    {
+      "file": "apps/branches/tests_physical_resources.py",
+      "module": "apps.branches.tests_physical_resources",
+      "declared_test_methods": 10
+    },
+    {
+      "file": "apps/branches/tests_scheduling.py",
+      "module": "apps.branches.tests_scheduling",
+      "declared_test_methods": 10
+    },
+    {
+      "file": "apps/branches/tests_single_location.py",
+      "module": "apps.branches.tests_single_location",
+      "declared_test_methods": 14
+    },
+    {
+      "file": "apps/branches/tests_single_location_concurrency.py",
+      "module": "apps.branches.tests_single_location_concurrency",
+      "declared_test_methods": 2
+    },
+    {
+      "file": "apps/branches/tests_staff.py",
+      "module": "apps.branches.tests_staff",
+      "declared_test_methods": 4
+    },
+    {
+      "file": "apps/businesses/tests_access.py",
+      "module": "apps.businesses.tests_access",
+      "declared_test_methods": 42
+    },
+    {
+      "file": "apps/businesses/tests_activation.py",
+      "module": "apps.businesses.tests_activation",
+      "declared_test_methods": 10
+    },
+    {
+      "file": "apps/businesses/tests_booking_settings.py",
+      "module": "apps.businesses.tests_booking_settings",
+      "declared_test_methods": 7
+    },
+    {
+      "file": "apps/businesses/tests_booking_settings_migration.py",
+      "module": "apps.businesses.tests_booking_settings_migration",
+      "declared_test_methods": 1
+    },
+    {
+      "file": "apps/businesses/tests_business_delete.py",
+      "module": "apps.businesses.tests_business_delete",
+      "declared_test_methods": 8
+    },
+    {
+      "file": "apps/businesses/tests_demo_seed.py",
+      "module": "apps.businesses.tests_demo_seed",
+      "declared_test_methods": 10
+    },
+    {
+      "file": "apps/businesses/tests_employee_access.py",
+      "module": "apps.businesses.tests_employee_access",
+      "declared_test_methods": 19
+    },
+    {
+      "file": "apps/businesses/tests_employee_access_concurrency.py",
+      "module": "apps.businesses.tests_employee_access_concurrency",
+      "declared_test_methods": 4
+    },
+    {
+      "file": "apps/businesses/tests_invitation_concurrency.py",
+      "module": "apps.businesses.tests_invitation_concurrency",
+      "declared_test_methods": 2
+    },
+    {
+      "file": "apps/businesses/tests_invitation_token.py",
+      "module": "apps.businesses.tests_invitation_token",
+      "declared_test_methods": 11
+    },
+    {
+      "file": "apps/businesses/tests_member_deactivation.py",
+      "module": "apps.businesses.tests_member_deactivation",
+      "declared_test_methods": 5
+    },
+    {
+      "file": "apps/businesses/tests_ownership.py",
+      "module": "apps.businesses.tests_ownership",
+      "declared_test_methods": 19
+    },
+    {
+      "file": "apps/businesses/tests_permission_reads.py",
+      "module": "apps.businesses.tests_permission_reads",
+      "declared_test_methods": 9
+    },
+    {
+      "file": "apps/businesses/tests_pilot_onboarding.py",
+      "module": "apps.businesses.tests_pilot_onboarding",
+      "declared_test_methods": 3
+    },
+    {
+      "file": "apps/businesses/tests_role_visibility.py",
+      "module": "apps.businesses.tests_role_visibility",
+      "declared_test_methods": 4
+    },
+    {
+      "file": "apps/businesses/tests_settings_team.py",
+      "module": "apps.businesses.tests_settings_team",
+      "declared_test_methods": 7
+    },
+    {
+      "file": "apps/businesses/tests_team_source_visibility.py",
+      "module": "apps.businesses.tests_team_source_visibility",
+      "declared_test_methods": 10
+    },
+    {
+      "file": "apps/clients/tests.py",
+      "module": "apps.clients.tests",
+      "declared_test_methods": 13
+    },
+    {
+      "file": "apps/clients/tests_archive_dependencies.py",
+      "module": "apps.clients.tests_archive_dependencies",
+      "declared_test_methods": 16
+    },
+    {
+      "file": "apps/clients/tests_duplicate_visibility.py",
+      "module": "apps.clients.tests_duplicate_visibility",
+      "declared_test_methods": 20
+    },
+    {
+      "file": "apps/clients/tests_merge_atomicity.py",
+      "module": "apps.clients.tests_merge_atomicity",
+      "declared_test_methods": 4
+    },
+    {
+      "file": "apps/clients/tests_query_cost.py",
+      "module": "apps.clients.tests_query_cost",
+      "declared_test_methods": 3
+    },
+    {
+      "file": "apps/clients/tests_search_pagination.py",
+      "module": "apps.clients.tests_search_pagination",
+      "declared_test_methods": 8
+    },
+    {
+      "file": "apps/clients/tests_sensitive_notes.py",
+      "module": "apps.clients.tests_sensitive_notes",
+      "declared_test_methods": 9
+    },
+    {
+      "file": "apps/clients/tests_workspace_filters.py",
+      "module": "apps.clients.tests_workspace_filters",
+      "declared_test_methods": 6
+    },
+    {
+      "file": "apps/conversations/tests_ai_behavior_boundaries.py",
+      "module": "apps.conversations.tests_ai_behavior_boundaries",
+      "declared_test_methods": 4
+    },
+    {
+      "file": "apps/conversations/tests_ai_confirmation.py",
+      "module": "apps.conversations.tests_ai_confirmation",
+      "declared_test_methods": 11
+    },
+    {
+      "file": "apps/conversations/tests_client_linking.py",
+      "module": "apps.conversations.tests_client_linking",
+      "declared_test_methods": 15
+    },
+    {
+      "file": "apps/conversations/tests_create_read_visibility.py",
+      "module": "apps.conversations.tests_create_read_visibility",
+      "declared_test_methods": 20
+    },
+    {
+      "file": "apps/conversations/tests_inbox_context.py",
+      "module": "apps.conversations.tests_inbox_context",
+      "declared_test_methods": 15
+    },
+    {
+      "file": "apps/conversations/tests_inbox_tasks.py",
+      "module": "apps.conversations.tests_inbox_tasks",
+      "declared_test_methods": 10
+    },
+    {
+      "file": "apps/conversations/tests_message_history.py",
+      "module": "apps.conversations.tests_message_history",
+      "declared_test_methods": 13
+    },
+    {
+      "file": "apps/conversations/tests_message_history_concurrency.py",
+      "module": "apps.conversations.tests_message_history_concurrency",
+      "declared_test_methods": 1
+    },
+    {
+      "file": "apps/conversations/tests_quick_replies.py",
+      "module": "apps.conversations.tests_quick_replies",
+      "declared_test_methods": 3
+    },
+    {
+      "file": "apps/core/tests.py",
+      "module": "apps.core.tests",
+      "declared_test_methods": 45
+    },
+    {
+      "file": "apps/core/tests_api_contracts.py",
+      "module": "apps.core.tests_api_contracts",
+      "declared_test_methods": 7
+    },
+    {
+      "file": "apps/core/tests_api_exceptions.py",
+      "module": "apps.core.tests_api_exceptions",
+      "declared_test_methods": 7
+    },
+    {
+      "file": "apps/core/tests_api_load_smoke.py",
+      "module": "apps.core.tests_api_load_smoke",
+      "declared_test_methods": 2
+    },
+    {
+      "file": "apps/core/tests_archive.py",
+      "module": "apps.core.tests_archive",
+      "declared_test_methods": 3
+    },
+    {
+      "file": "apps/core/tests_b0_security.py",
+      "module": "apps.core.tests_b0_security",
+      "declared_test_methods": 14
+    },
+    {
+      "file": "apps/core/tests_b101_capability_enforcement.py",
+      "module": "apps.core.tests_b101_capability_enforcement",
+      "declared_test_methods": 6
+    },
+    {
+      "file": "apps/core/tests_b1_runtime.py",
+      "module": "apps.core.tests_b1_runtime",
+      "declared_test_methods": 8
+    },
+    {
+      "file": "apps/core/tests_b2_roles_queues.py",
+      "module": "apps.core.tests_b2_roles_queues",
+      "declared_test_methods": 13
+    },
+    {
+      "file": "apps/core/tests_b301_performance.py",
+      "module": "apps.core.tests_b301_performance",
+      "declared_test_methods": 4
+    },
+    {
+      "file": "apps/core/tests_b3_contracts.py",
+      "module": "apps.core.tests_b3_contracts",
+      "declared_test_methods": 6
+    },
+    {
+      "file": "apps/core/tests_b4_capabilities.py",
+      "module": "apps.core.tests_b4_capabilities",
+      "declared_test_methods": 5
+    },
+    {
+      "file": "apps/core/tests_b5_performance.py",
+      "module": "apps.core.tests_b5_performance",
+      "declared_test_methods": 8
+    },
+    {
+      "file": "apps/core/tests_backup_readiness.py",
+      "module": "apps.core.tests_backup_readiness",
+      "declared_test_methods": 4
+    },
+    {
+      "file": "apps/core/tests_business_flows_e2e.py",
+      "module": "apps.core.tests_business_flows_e2e",
+      "declared_test_methods": 11
+    },
+    {
+      "file": "apps/core/tests_catalog_permissions.py",
+      "module": "apps.core.tests_catalog_permissions",
+      "declared_test_methods": 19
+    },
+    {
+      "file": "apps/core/tests_client_import_permissions.py",
+      "module": "apps.core.tests_client_import_permissions",
+      "declared_test_methods": 27
+    },
+    {
+      "file": "apps/core/tests_client_pii_projections.py",
+      "module": "apps.core.tests_client_pii_projections",
+      "declared_test_methods": 27
+    },
+    {
+      "file": "apps/core/tests_crm_cards.py",
+      "module": "apps.core.tests_crm_cards",
+      "declared_test_methods": 9
+    },
+    {
+      "file": "apps/core/tests_crm_projection_access.py",
+      "module": "apps.core.tests_crm_projection_access",
+      "declared_test_methods": 24
+    },
+    {
+      "file": "apps/core/tests_crm_server_concurrency.py",
+      "module": "apps.core.tests_crm_server_concurrency",
+      "declared_test_methods": 4
+    },
+    {
+      "file": "apps/core/tests_crm_server_scenarios.py",
+      "module": "apps.core.tests_crm_server_scenarios",
+      "declared_test_methods": 18
+    },
+    {
+      "file": "apps/core/tests_crm_workspace_filters.py",
+      "module": "apps.core.tests_crm_workspace_filters",
+      "declared_test_methods": 3
+    },
+    {
+      "file": "apps/core/tests_custom_fields.py",
+      "module": "apps.core.tests_custom_fields",
+      "declared_test_methods": 17
+    },
+    {
+      "file": "apps/core/tests_email_readiness.py",
+      "module": "apps.core.tests_email_readiness",
+      "declared_test_methods": 7
+    },
+    {
+      "file": "apps/core/tests_export_access.py",
+      "module": "apps.core.tests_export_access",
+      "declared_test_methods": 12
+    },
+    {
+      "file": "apps/core/tests_export_attempts.py",
+      "module": "apps.core.tests_export_attempts",
+      "declared_test_methods": 9
+    },
+    {
+      "file": "apps/core/tests_export_history.py",
+      "module": "apps.core.tests_export_history",
+      "declared_test_methods": 5
+    },
+    {
+      "file": "apps/core/tests_file_attachments.py",
+      "module": "apps.core.tests_file_attachments",
+      "declared_test_methods": 8
+    },
+    {
+      "file": "apps/core/tests_file_scanning.py",
+      "module": "apps.core.tests_file_scanning",
+      "declared_test_methods": 14
+    },
+    {
+      "file": "apps/core/tests_historical_resolution.py",
+      "module": "apps.core.tests_historical_resolution",
+      "declared_test_methods": 4
+    },
+    {
+      "file": "apps/core/tests_idempotency_prune.py",
+      "module": "apps.core.tests_idempotency_prune",
+      "declared_test_methods": 4
+    },
+    {
+      "file": "apps/core/tests_import_custom_fields.py",
+      "module": "apps.core.tests_import_custom_fields",
+      "declared_test_methods": 9
+    },
+    {
+      "file": "apps/core/tests_import_export.py",
+      "module": "apps.core.tests_import_export",
+      "declared_test_methods": 19
+    },
+    {
+      "file": "apps/core/tests_import_history.py",
+      "module": "apps.core.tests_import_history",
+      "declared_test_methods": 6
+    },
+    {
+      "file": "apps/core/tests_import_job_boundaries.py",
+      "module": "apps.core.tests_import_job_boundaries",
+      "declared_test_methods": 15
+    },
+    {
+      "file": "apps/core/tests_import_job_concurrency.py",
+      "module": "apps.core.tests_import_job_concurrency",
+      "declared_test_methods": 4
+    },
+    {
+      "file": "apps/core/tests_import_lifecycle.py",
+      "module": "apps.core.tests_import_lifecycle",
+      "declared_test_methods": 8
+    },
+    {
+      "file": "apps/core/tests_import_mapping_ui.py",
+      "module": "apps.core.tests_import_mapping_ui",
+      "declared_test_methods": 6
+    },
+    {
+      "file": "apps/core/tests_import_samples.py",
+      "module": "apps.core.tests_import_samples",
+      "declared_test_methods": 2
+    },
+    {
+      "file": "apps/core/tests_import_workspace_activation.py",
+      "module": "apps.core.tests_import_workspace_activation",
+      "declared_test_methods": 4
+    },
+    {
+      "file": "apps/core/tests_import_workspace_api.py",
+      "module": "apps.core.tests_import_workspace_api",
+      "declared_test_methods": 11
+    },
+    {
+      "file": "apps/core/tests_import_workspace_concurrency.py",
+      "module": "apps.core.tests_import_workspace_concurrency",
+      "declared_test_methods": 2
+    },
+    {
+      "file": "apps/core/tests_import_workspace_drafts.py",
+      "module": "apps.core.tests_import_workspace_drafts",
+      "declared_test_methods": 8
+    },
+    {
+      "file": "apps/core/tests_import_workspace_engine.py",
+      "module": "apps.core.tests_import_workspace_engine",
+      "declared_test_methods": 12
+    },
+    {
+      "file": "apps/core/tests_import_workspace_operations.py",
+      "module": "apps.core.tests_import_workspace_operations",
+      "declared_test_methods": 5
+    },
+    {
+      "file": "apps/core/tests_import_workspace_sources.py",
+      "module": "apps.core.tests_import_workspace_sources",
+      "declared_test_methods": 6
+    },
+    {
+      "file": "apps/core/tests_internal_notification_accounting.py",
+      "module": "apps.core.tests_internal_notification_accounting",
+      "declared_test_methods": 4
+    },
+    {
+      "file": "apps/core/tests_log_redaction.py",
+      "module": "apps.core.tests_log_redaction",
+      "declared_test_methods": 10
+    },
+    {
+      "file": "apps/core/tests_mixed_membership_scope.py",
+      "module": "apps.core.tests_mixed_membership_scope",
+      "declared_test_methods": 2
+    },
+    {
+      "file": "apps/core/tests_observability.py",
+      "module": "apps.core.tests_observability",
+      "declared_test_methods": 6
+    },
+    {
+      "file": "apps/core/tests_observability_django.py",
+      "module": "apps.core.tests_observability_django",
+      "declared_test_methods": 1
+    },
+    {
+      "file": "apps/core/tests_paid_beta_gate.py",
+      "module": "apps.core.tests_paid_beta_gate",
+      "declared_test_methods": 5
+    },
+    {
+      "file": "apps/core/tests_platform_crm.py",
+      "module": "apps.core.tests_platform_crm",
+      "declared_test_methods": 12
+    },
+    {
+      "file": "apps/core/tests_platform_details.py",
+      "module": "apps.core.tests_platform_details",
+      "declared_test_methods": 12
+    },
+    {
+      "file": "apps/core/tests_platform_operations.py",
+      "module": "apps.core.tests_platform_operations",
+      "declared_test_methods": 15
+    },
+    {
+      "file": "apps/core/tests_platform_overview.py",
+      "module": "apps.core.tests_platform_overview",
+      "declared_test_methods": 9
+    },
+    {
+      "file": "apps/core/tests_platform_rebuild.py",
+      "module": "apps.core.tests_platform_rebuild",
+      "declared_test_methods": 14
+    },
+    {
+      "file": "apps/core/tests_platform_s02.py",
+      "module": "apps.core.tests_platform_s02",
+      "declared_test_methods": 7
+    },
+    {
+      "file": "apps/core/tests_platform_worklists.py",
+      "module": "apps.core.tests_platform_worklists",
+      "declared_test_methods": 13
+    },
+    {
+      "file": "apps/core/tests_production_audit.py",
+      "module": "apps.core.tests_production_audit",
+      "declared_test_methods": 32
+    },
+    {
+      "file": "apps/core/tests_rate_limits.py",
+      "module": "apps.core.tests_rate_limits",
+      "declared_test_methods": 2
+    },
+    {
+      "file": "apps/core/tests_readiness_redaction.py",
+      "module": "apps.core.tests_readiness_redaction",
+      "declared_test_methods": 9
+    },
+    {
+      "file": "apps/core/tests_record_queues.py",
+      "module": "apps.core.tests_record_queues",
+      "declared_test_methods": 3
+    },
+    {
+      "file": "apps/core/tests_security.py",
+      "module": "apps.core.tests_security",
+      "declared_test_methods": 13
+    },
+    {
+      "file": "apps/core/tests_service_status.py",
+      "module": "apps.core.tests_service_status",
+      "declared_test_methods": 11
+    },
+    {
+      "file": "apps/core/tests_storage_runtime.py",
+      "module": "apps.core.tests_storage_runtime",
+      "declared_test_methods": 1
+    },
+    {
+      "file": "apps/core/tests_task_preview_context.py",
+      "module": "apps.core.tests_task_preview_context",
+      "declared_test_methods": 12
+    },
+    {
+      "file": "apps/core/tests_tenant_isolation.py",
+      "module": "apps.core.tests_tenant_isolation",
+      "declared_test_methods": 11
+    },
+    {
+      "file": "apps/core/tests_work_queues.py",
+      "module": "apps.core.tests_work_queues",
+      "declared_test_methods": 8
+    },
+    {
+      "file": "apps/core/tests_workspace_related_filters.py",
+      "module": "apps.core.tests_workspace_related_filters",
+      "declared_test_methods": 2
+    },
+    {
+      "file": "apps/core/tests_xlsx_reader.py",
+      "module": "apps.core.tests_xlsx_reader",
+      "declared_test_methods": 10
+    },
+    {
+      "file": "apps/crm/tests.py",
+      "module": "apps.crm.tests",
+      "declared_test_methods": 28
+    },
+    {
+      "file": "apps/crm/tests_amount_projections.py",
+      "module": "apps.crm.tests_amount_projections",
+      "declared_test_methods": 19
+    },
+    {
+      "file": "apps/crm/tests_creation.py",
+      "module": "apps.crm.tests_creation",
+      "declared_test_methods": 10
+    },
+    {
+      "file": "apps/crm/tests_pipeline_boundaries.py",
+      "module": "apps.crm.tests_pipeline_boundaries",
+      "declared_test_methods": 12
+    },
+    {
+      "file": "apps/crm/tests_workspace_filters.py",
+      "module": "apps.crm.tests_workspace_filters",
+      "declared_test_methods": 4
+    },
+    {
+      "file": "apps/integrations/tests.py",
+      "module": "apps.integrations.tests",
+      "declared_test_methods": 76
+    },
+    {
+      "file": "apps/integrations/tests_channel_ownership.py",
+      "module": "apps.integrations.tests_channel_ownership",
+      "declared_test_methods": 21
+    },
+    {
+      "file": "apps/integrations/tests_channel_setup_consistency.py",
+      "module": "apps.integrations.tests_channel_setup_consistency",
+      "declared_test_methods": 11
+    },
+    {
+      "file": "apps/integrations/tests_connectors.py",
+      "module": "apps.integrations.tests_connectors",
+      "declared_test_methods": 38
+    },
+    {
+      "file": "apps/integrations/tests_credential_encryption.py",
+      "module": "apps.integrations.tests_credential_encryption",
+      "declared_test_methods": 12
+    },
+    {
+      "file": "apps/integrations/tests_encrypted_config.py",
+      "module": "apps.integrations.tests_encrypted_config",
+      "declared_test_methods": 4
+    },
+    {
+      "file": "apps/integrations/tests_provider_rollout.py",
+      "module": "apps.integrations.tests_provider_rollout",
+      "declared_test_methods": 16
+    },
+    {
+      "file": "apps/integrations/tests_public_api.py",
+      "module": "apps.integrations.tests_public_api",
+      "declared_test_methods": 23
+    },
+    {
+      "file": "apps/integrations/tests_whatsapp_binding.py",
+      "module": "apps.integrations.tests_whatsapp_binding",
+      "declared_test_methods": 20
+    },
+    {
+      "file": "apps/integrations/tests_ycloud.py",
+      "module": "apps.integrations.tests_ycloud",
+      "declared_test_methods": 22
+    },
+    {
+      "file": "apps/integrations/tests_ycloud_coexistence.py",
+      "module": "apps.integrations.tests_ycloud_coexistence",
+      "declared_test_methods": 19
+    },
+    {
+      "file": "apps/integrations/tests_ycloud_coexistence_concurrency.py",
+      "module": "apps.integrations.tests_ycloud_coexistence_concurrency",
+      "declared_test_methods": 1
+    },
+    {
+      "file": "apps/integrations/tests_ycloud_concurrency.py",
+      "module": "apps.integrations.tests_ycloud_concurrency",
+      "declared_test_methods": 3
+    },
+    {
+      "file": "apps/integrations/tests_ycloud_dispatch.py",
+      "module": "apps.integrations.tests_ycloud_dispatch",
+      "declared_test_methods": 11
+    },
+    {
+      "file": "apps/leads/tests_assignment_patch.py",
+      "module": "apps.leads.tests_assignment_patch",
+      "declared_test_methods": 13
+    },
+    {
+      "file": "apps/leads/tests_creation.py",
+      "module": "apps.leads.tests_creation",
+      "declared_test_methods": 8
+    },
+    {
+      "file": "apps/leads/tests_crm_light.py",
+      "module": "apps.leads.tests_crm_light",
+      "declared_test_methods": 26
+    },
+    {
+      "file": "apps/leads/tests_duplicate_visibility.py",
+      "module": "apps.leads.tests_duplicate_visibility",
+      "declared_test_methods": 15
+    },
+    {
+      "file": "apps/leads/tests_form_field_access.py",
+      "module": "apps.leads.tests_form_field_access",
+      "declared_test_methods": 8
+    },
+    {
+      "file": "apps/leads/tests_form_write_boundaries.py",
+      "module": "apps.leads.tests_form_write_boundaries",
+      "declared_test_methods": 8
+    },
+    {
+      "file": "apps/leads/tests_forms.py",
+      "module": "apps.leads.tests_forms",
+      "declared_test_methods": 8
+    },
+    {
+      "file": "apps/leads/tests_offline_commands.py",
+      "module": "apps.leads.tests_offline_commands",
+      "declared_test_methods": 11
+    },
+    {
+      "file": "apps/leads/tests_public_intake_privacy.py",
+      "module": "apps.leads.tests_public_intake_privacy",
+      "declared_test_methods": 12
+    },
+    {
+      "file": "apps/leads/tests_task_assignment.py",
+      "module": "apps.leads.tests_task_assignment",
+      "declared_test_methods": 28
+    },
+    {
+      "file": "apps/leads/tests_workspace_filters.py",
+      "module": "apps.leads.tests_workspace_filters",
+      "declared_test_methods": 4
+    },
+    {
+      "file": "apps/notifications/tests.py",
+      "module": "apps.notifications.tests",
+      "declared_test_methods": 17
+    },
+    {
+      "file": "apps/notifications/tests_appointment_feed_links.py",
+      "module": "apps.notifications.tests_appointment_feed_links",
+      "declared_test_methods": 6
+    },
+    {
+      "file": "apps/notifications/tests_bell.py",
+      "module": "apps.notifications.tests_bell",
+      "declared_test_methods": 1
+    },
+    {
+      "file": "apps/notifications/tests_email.py",
+      "module": "apps.notifications.tests_email",
+      "declared_test_methods": 2
+    },
+    {
+      "file": "apps/notifications/tests_event_stream.py",
+      "module": "apps.notifications.tests_event_stream",
+      "declared_test_methods": 13
+    },
+    {
+      "file": "apps/notifications/tests_mark_all_access.py",
+      "module": "apps.notifications.tests_mark_all_access",
+      "declared_test_methods": 19
+    },
+    {
+      "file": "apps/notifications/tests_personal_api.py",
+      "module": "apps.notifications.tests_personal_api",
+      "declared_test_methods": 9
+    },
+    {
+      "file": "apps/notifications/tests_personal_concurrency.py",
+      "module": "apps.notifications.tests_personal_concurrency",
+      "declared_test_methods": 3
+    },
+    {
+      "file": "apps/notifications/tests_personal_migration.py",
+      "module": "apps.notifications.tests_personal_migration",
+      "declared_test_methods": 1
+    },
+    {
+      "file": "apps/notifications/tests_personal_recipients.py",
+      "module": "apps.notifications.tests_personal_recipients",
+      "declared_test_methods": 7
+    },
+    {
+      "file": "apps/notifications/tests_personal_services.py",
+      "module": "apps.notifications.tests_personal_services",
+      "declared_test_methods": 19
+    },
+    {
+      "file": "apps/notifications/tests_realtime.py",
+      "module": "apps.notifications.tests_realtime",
+      "declared_test_methods": 8
+    },
+    {
+      "file": "apps/notifications/tests_service_messages.py",
+      "module": "apps.notifications.tests_service_messages",
+      "declared_test_methods": 6
+    },
+    {
+      "file": "apps/notifications/tests_settings_preferences.py",
+      "module": "apps.notifications.tests_settings_preferences",
+      "declared_test_methods": 4
+    },
+    {
+      "file": "apps/onboarding/tests.py",
+      "module": "apps.onboarding.tests",
+      "declared_test_methods": 11
+    },
+    {
+      "file": "apps/onboarding/tests_preset_preservation.py",
+      "module": "apps.onboarding.tests_preset_preservation",
+      "declared_test_methods": 12
+    },
+    {
+      "file": "apps/outreach/tests.py",
+      "module": "apps.outreach.tests",
+      "declared_test_methods": 24
+    },
+    {
+      "file": "apps/outreach/tests_automation_status_access.py",
+      "module": "apps.outreach.tests_automation_status_access",
+      "declared_test_methods": 21
+    },
+    {
+      "file": "apps/outreach/tests_consent_xlsx_limits.py",
+      "module": "apps.outreach.tests_consent_xlsx_limits",
+      "declared_test_methods": 18
+    },
+    {
+      "file": "apps/outreach/tests_mutation_permissions.py",
+      "module": "apps.outreach.tests_mutation_permissions",
+      "declared_test_methods": 27
+    },
+    {
+      "file": "apps/outreach/tests_public_intake_optout.py",
+      "module": "apps.outreach.tests_public_intake_optout",
+      "declared_test_methods": 16
+    },
+    {
+      "file": "apps/outreach/tests_template_safety.py",
+      "module": "apps.outreach.tests_template_safety",
+      "declared_test_methods": 13
+    },
+    {
+      "file": "apps/payments/tests.py",
+      "module": "apps.payments.tests",
+      "declared_test_methods": 21
+    },
+    {
+      "file": "apps/pricing/tests.py",
+      "module": "apps.pricing.tests",
+      "declared_test_methods": 23
+    },
+    {
+      "file": "apps/pricing/tests_business_validation.py",
+      "module": "apps.pricing.tests_business_validation",
+      "declared_test_methods": 13
+    },
+    {
+      "file": "apps/scheduling/tests.py",
+      "module": "apps.scheduling.tests",
+      "declared_test_methods": 49
+    },
+    {
+      "file": "apps/scheduling/tests_calendar_summary.py",
+      "module": "apps.scheduling.tests_calendar_summary",
+      "declared_test_methods": 11
+    },
+    {
+      "file": "apps/scheduling/tests_import_commands.py",
+      "module": "apps.scheduling.tests_import_commands",
+      "declared_test_methods": 7
+    },
+    {
+      "file": "apps/scheduling/tests_plan_concurrency.py",
+      "module": "apps.scheduling.tests_plan_concurrency",
+      "declared_test_methods": 3
+    },
+    {
+      "file": "apps/scheduling/tests_record_commands.py",
+      "module": "apps.scheduling.tests_record_commands",
+      "declared_test_methods": 17
+    },
+    {
+      "file": "apps/scheduling/tests_record_completion.py",
+      "module": "apps.scheduling.tests_record_completion",
+      "declared_test_methods": 5
+    },
+    {
+      "file": "apps/scheduling/tests_record_concurrency.py",
+      "module": "apps.scheduling.tests_record_concurrency",
+      "declared_test_methods": 4
+    },
+    {
+      "file": "apps/scheduling/tests_record_migration.py",
+      "module": "apps.scheduling.tests_record_migration",
+      "declared_test_methods": 1
+    },
+    {
+      "file": "apps/scheduling/tests_record_workspace.py",
+      "module": "apps.scheduling.tests_record_workspace",
+      "declared_test_methods": 12
+    },
+    {
+      "file": "apps/scheduling/tests_resource_booking.py",
+      "module": "apps.scheduling.tests_resource_booking",
+      "declared_test_methods": 17
+    },
+    {
+      "file": "apps/scheduling/tests_resource_booking_concurrency.py",
+      "module": "apps.scheduling.tests_resource_booking_concurrency",
+      "declared_test_methods": 3
+    },
+    {
+      "file": "apps/scheduling/tests_resource_booking_migration.py",
+      "module": "apps.scheduling.tests_resource_booking_migration",
+      "declared_test_methods": 1
+    },
+    {
+      "file": "apps/scheduling/tests_settings_delivery.py",
+      "module": "apps.scheduling.tests_settings_delivery",
+      "declared_test_methods": 10
+    },
+    {
+      "file": "apps/scheduling/tests_specialist_schedule.py",
+      "module": "apps.scheduling.tests_specialist_schedule",
+      "declared_test_methods": 14
+    },
+    {
+      "file": "apps/scheduling/tests_visit_plans.py",
+      "module": "apps.scheduling.tests_visit_plans",
+      "declared_test_methods": 22
+    },
+    {
+      "file": "apps/scheduling/tests_working_hours_concurrency.py",
+      "module": "apps.scheduling.tests_working_hours_concurrency",
+      "declared_test_methods": 1
+    },
+    {
+      "file": "apps/scheduling/tests_working_hours_integrity.py",
+      "module": "apps.scheduling.tests_working_hours_integrity",
+      "declared_test_methods": 6
+    },
+    {
+      "file": "apps/services/tests.py",
+      "module": "apps.services.tests",
+      "declared_test_methods": 8
+    },
+    {
+      "file": "apps/services/tests_metrics.py",
+      "module": "apps.services.tests_metrics",
+      "declared_test_methods": 8
+    },
+    {
+      "file": "apps/support/tests_api.py",
+      "module": "apps.support.tests_api",
+      "declared_test_methods": 15
+    },
+    {
+      "file": "apps/support/tests_concurrency.py",
+      "module": "apps.support.tests_concurrency",
+      "declared_test_methods": 4
+    },
+    {
+      "file": "apps/support/tests_domain.py",
+      "module": "apps.support.tests_domain",
+      "declared_test_methods": 17
+    },
+    {
+      "file": "apps/support/tests_incidents.py",
+      "module": "apps.support.tests_incidents",
+      "declared_test_methods": 9
+    },
+    {
+      "file": "apps/tasks/tests.py",
+      "module": "apps.tasks.tests",
+      "declared_test_methods": 42
+    },
+    {
+      "file": "apps/tasks/tests_concurrency.py",
+      "module": "apps.tasks.tests_concurrency",
+      "declared_test_methods": 1
+    },
+    {
+      "file": "apps/tasks/tests_migrations.py",
+      "module": "apps.tasks.tests_migrations",
+      "declared_test_methods": 1
+    },
+    {
+      "file": "apps/tasks/tests_reminders.py",
+      "module": "apps.tasks.tests_reminders",
+      "declared_test_methods": 10
+    },
+    {
+      "file": "apps/tasks/tests_workspace.py",
+      "module": "apps.tasks.tests_workspace",
+      "declared_test_methods": 17
+    }
+  ],
+  "browser_test_files": [
+    "frontend/e2e/accessibility-responsive.spec.ts",
+    "frontend/e2e/account-avatar.spec.ts",
+    "frontend/e2e/account-interface.spec.ts",
+    "frontend/e2e/account-mfa-qr-recovery.spec.ts",
+    "frontend/e2e/account-mfa-qr.spec.ts",
+    "frontend/e2e/account-section-nav.spec.ts",
+    "frontend/e2e/account-session-continuations.spec.ts",
+    "frontend/e2e/account-sessions.spec.ts",
+    "frontend/e2e/account-user-settings.spec.ts",
+    "frontend/e2e/action-color-roles.spec.ts",
+    "frontend/e2e/action-feedback.spec.ts",
+    "frontend/e2e/agent-header-picker.spec.ts",
+    "frontend/e2e/agent-reference-layout.spec.ts",
+    "frontend/e2e/agent-setup.spec.ts",
+    "frontend/e2e/ai-agent-analytics-certification.spec.ts",
+    "frontend/e2e/ai-agent-continuity.spec.ts",
+    "frontend/e2e/ai-agent-followup.spec.ts",
+    "frontend/e2e/ai-agent-isolation.spec.ts",
+    "frontend/e2e/ai-agent-readiness.spec.ts",
+    "frontend/e2e/ai-agent-scenarios.spec.ts",
+    "frontend/e2e/ai-agent-settings-certification.spec.ts",
+    "frontend/e2e/ai-agents-ux.spec.ts",
+    "frontend/e2e/ai-crm-history.spec.ts",
+    "frontend/e2e/ai-functional-settings.spec.ts",
+    "frontend/e2e/ai-inbox-memory.spec.ts",
+    "frontend/e2e/ai-job-recovery.spec.ts",
+    "frontend/e2e/alert-application.spec.ts",
+    "frontend/e2e/alert-components.spec.ts",
+    "frontend/e2e/alert-remediation.spec.ts",
+    "frontend/e2e/billing-commerce.spec.ts",
+    "frontend/e2e/booking-responsible-settings.spec.ts",
+    "frontend/e2e/calendar-consumers.spec.ts",
+    "frontend/e2e/calendar-controls.spec.ts",
+    "frontend/e2e/calendar-workspace.spec.ts",
+    "frontend/e2e/color-system-audit.spec.ts",
+    "frontend/e2e/color-system-details.spec.ts",
+    "frontend/e2e/connection-probe.spec.ts",
+    "frontend/e2e/connection-recovery.spec.ts",
+    "frontend/e2e/crm-toolbar-refinement.spec.ts",
+    "frontend/e2e/crm-unified-filters.spec.ts",
+    "frontend/e2e/crm-workspace-overlay.spec.ts",
+    "frontend/e2e/crm-workspaces-data.spec.ts",
+    "frontend/e2e/crm-workspaces-deals.spec.ts",
+    "frontend/e2e/crm-workspaces-reference.spec.ts",
+    "frontend/e2e/daily-workspaces.spec.ts",
+    "frontend/e2e/dashboard-data-loading.spec.ts",
+    "frontend/e2e/deals-empty-workspace.spec.ts",
+    "frontend/e2e/deals-kanban-density.spec.ts",
+    "frontend/e2e/deals-workspace-density.spec.ts",
+    "frontend/e2e/emerald-palette.spec.ts",
+    "frontend/e2e/entity-workspaces.spec.ts",
+    "frontend/e2e/failure-certification.spec.ts",
+    "frontend/e2e/focus-modality.spec.ts",
+    "frontend/e2e/functional-certification.spec.ts",
+    "frontend/e2e/handoff-recovery.spec.ts",
+    "frontend/e2e/header-search-width.spec.ts",
+    "frontend/e2e/import-file-picker.spec.cjs",
+    "frontend/e2e/import-workspace.spec.cjs",
+    "frontend/e2e/inbox-agent-safety.spec.ts",
+    "frontend/e2e/inbox-client-relink.spec.ts",
+    "frontend/e2e/inbox-compact.spec.ts",
+    "frontend/e2e/inbox-draft-provenance.spec.ts",
+    "frontend/e2e/inbox-inspector.spec.ts",
+    "frontend/e2e/inbox-local-pilot.spec.ts",
+    "frontend/e2e/inspector-interaction.spec.ts",
+    "frontend/e2e/kazakh-typography.spec.ts",
+    "frontend/e2e/leads-offline-isolation.spec.ts",
+    "frontend/e2e/legal-documents.spec.ts",
+    "frontend/e2e/logout-callers.spec.ts",
+    "frontend/e2e/logout-cross-tab.spec.ts",
+    "frontend/e2e/logout-recovery.spec.ts",
+    "frontend/e2e/merchant-journeys-certification.spec.ts",
+    "frontend/e2e/mfa-login.spec.ts",
+    "frontend/e2e/multibranch.spec.ts",
+    "frontend/e2e/neutral-terminology.spec.ts",
+    "frontend/e2e/notification-refactor.spec.ts",
+    "frontend/e2e/pilot-actions.spec.ts",
+    "frontend/e2e/pilot-auth-security.spec.ts",
+    "frontend/e2e/pilot-auth.spec.ts",
+    "frontend/e2e/pilot-invitations.spec.ts",
+    "frontend/e2e/pilot-password-reset.spec.ts",
+    "frontend/e2e/pilot-record-content.spec.ts",
+    "frontend/e2e/pilot-staff-sales-cycle.spec.ts",
+    "frontend/e2e/platform-clinic-crm.spec.ts",
+    "frontend/e2e/platform-details.spec.ts",
+    "frontend/e2e/platform-employee-access.spec.ts",
+    "frontend/e2e/platform-operations.spec.ts",
+    "frontend/e2e/platform-overview.spec.ts",
+    "frontend/e2e/platform-ownership.spec.ts",
+    "frontend/e2e/platform-recovery.spec.ts",
+    "frontend/e2e/platform-s02.spec.ts",
+    "frontend/e2e/platform-shell.spec.ts",
+    "frontend/e2e/platform-support-incidents.spec.ts",
+    "frontend/e2e/platform-support.spec.ts",
+    "frontend/e2e/pricing-refactor.spec.ts",
+    "frontend/e2e/r01-daily-cycle.spec.ts",
+    "frontend/e2e/r01-inbox-task.spec.ts",
+    "frontend/e2e/records-bell-recovery.spec.ts",
+    "frontend/e2e/records-toolbar.spec.ts",
+    "frontend/e2e/runtime-maintainability.spec.ts",
+    "frontend/e2e/service-error-feedback.spec.ts",
+    "frontend/e2e/service-s03.spec.ts",
+    "frontend/e2e/services-lifecycle.spec.ts",
+    "frontend/e2e/session-cache-isolation.spec.ts",
+    "frontend/e2e/session-notices.spec.ts",
+    "frontend/e2e/session-persistence.spec.ts",
+    "frontend/e2e/settings-assignment.spec.ts",
+    "frontend/e2e/settings-functional.spec.ts",
+    "frontend/e2e/settings-redesign.spec.ts",
+    "frontend/e2e/settings-workflow.spec.ts",
+    "frontend/e2e/smoke.spec.ts",
+    "frontend/e2e/state-behavior.spec.ts",
+    "frontend/e2e/tasks-redesign.spec.ts",
+    "frontend/e2e/ui-operations.spec.ts",
+    "frontend/e2e/widget-colors.spec.ts"
+  ],
+  "frontend_node_test_files": [
+    "frontend/scripts/tests/action-color-policy.test.mjs",
+    "frontend/scripts/tests/action-feedback-policy.test.mjs",
+    "frontend/scripts/tests/announcement-events.test.mjs",
+    "frontend/scripts/tests/app-error-normalization.test.mjs",
+    "frontend/scripts/tests/appointment-cache.test.mjs",
+    "frontend/scripts/tests/audit-runtime.test.mjs",
+    "frontend/scripts/tests/auth-request.test.mjs",
+    "frontend/scripts/tests/auth-return-path.test.mjs",
+    "frontend/scripts/tests/automation-editor.test.mjs",
+    "frontend/scripts/tests/automation-history.test.mjs",
+    "frontend/scripts/tests/automation-models.test.mjs",
+    "frontend/scripts/tests/bundle-budget.test.mjs",
+    "frontend/scripts/tests/calendar-period.test.mjs",
+    "frontend/scripts/tests/calendar-years.test.mjs",
+    "frontend/scripts/tests/capture-field-options.test.mjs",
+    "frontend/scripts/tests/chromatic-runtime.test.mjs",
+    "frontend/scripts/tests/client-search.test.mjs",
+    "frontend/scripts/tests/clients-toolbar.test.mjs",
+    "frontend/scripts/tests/custom-field-filter.test.mjs",
+    "frontend/scripts/tests/daily-workspaces-policy.test.mjs",
+    "frontend/scripts/tests/dashboard-appointment-dedupe.test.mjs",
+    "frontend/scripts/tests/error-boundary-policy.test.mjs",
+    "frontend/scripts/tests/export-history.test.mjs",
+    "frontend/scripts/tests/failure-certification-registry.test.mjs",
+    "frontend/scripts/tests/fallback-inventory.test.mjs",
+    "frontend/scripts/tests/fallback-surface-policy.test.mjs",
+    "frontend/scripts/tests/form-resolver-compatibility.test.mjs",
+    "frontend/scripts/tests/functional-certification-registry.test.mjs",
+    "frontend/scripts/tests/gate-environment-policy.test.mjs",
+    "frontend/scripts/tests/i18n-dictionary-source.test.mjs",
+    "frontend/scripts/tests/import-history.test.mjs",
+    "frontend/scripts/tests/import-review.test.mjs",
+    "frontend/scripts/tests/import-workspace-errors.test.mjs",
+    "frontend/scripts/tests/inbox-delivery-policy.test.mjs",
+    "frontend/scripts/tests/inbox-draft.test.mjs",
+    "frontend/scripts/tests/inbox-sending-model.test.mjs",
+    "frontend/scripts/tests/industry-terms.test.mjs",
+    "frontend/scripts/tests/landing-routes.test.mjs",
+    "frontend/scripts/tests/lead-csv-safety.test.mjs",
+    "frontend/scripts/tests/lead-offline-commands.test.mjs",
+    "frontend/scripts/tests/lead-offline-storage.test.mjs",
+    "frontend/scripts/tests/login-page-policy.test.mjs",
+    "frontend/scripts/tests/merchant-journey-certification.test.mjs",
+    "frontend/scripts/tests/notification-cache.test.mjs",
+    "frontend/scripts/tests/notification-dedupe.test.mjs",
+    "frontend/scripts/tests/notification-header-model.test.mjs",
+    "frontend/scripts/tests/record-filters.test.mjs",
+    "frontend/scripts/tests/record-legacy-export.test.mjs",
+    "frontend/scripts/tests/route-prefetch.test.mjs",
+    "frontend/scripts/tests/settings-section-models.test.mjs",
+    "frontend/scripts/tests/sidebar-navigation-policy.test.mjs",
+    "frontend/scripts/tests/task-workspace.test.mjs",
+    "frontend/scripts/tests/telemetry-privacy.test.mjs",
+    "frontend/scripts/tests/telemetry-sdk-browser.test.mjs",
+    "frontend/scripts/tests/timeline-presentation.test.mjs",
+    "frontend/scripts/tests/token-csrf.test.mjs",
+    "frontend/scripts/tests/ui-toolkit-policy.test.mjs",
+    "frontend/scripts/tests/vite-cache-isolation.test.mjs",
+    "frontend/scripts/tests/voice-audio.test.mjs"
+  ],
+  "script_test_files": [
+    "scripts/tests/test_api_load_smoke.py",
+    "scripts/tests/test_auth_cache.py",
+    "scripts/tests/test_browser_test_runtime.py",
+    "scripts/tests/test_clean_archive.py",
+    "scripts/tests/test_codex_verify.py",
+    "scripts/tests/test_dev_local.py",
+    "scripts/tests/test_local_postgres.py",
+    "scripts/tests/test_recovery_faults.py"
+  ],
+  "concurrency_candidate_files": [
+    "apps/ai_core/tests_voice_schedule_concurrency.py",
+    "apps/automations/tests_configuration_concurrency.py",
+    "apps/automations/tests_follow_up_concurrency.py",
+    "apps/billing/tests_commerce_concurrency.py",
+    "apps/bots/tests_booking_creation_concurrency.py",
+    "apps/bots/tests_booking_terms_concurrency.py",
+    "apps/branches/tests_concurrency.py",
+    "apps/branches/tests_single_location_concurrency.py",
+    "apps/businesses/tests_employee_access_concurrency.py",
+    "apps/businesses/tests_invitation_concurrency.py",
+    "apps/conversations/tests_message_history_concurrency.py",
+    "apps/core/tests_crm_server_concurrency.py",
+    "apps/core/tests_import_job_concurrency.py",
+    "apps/core/tests_import_workspace_concurrency.py",
+    "apps/integrations/tests_ycloud_coexistence_concurrency.py",
+    "apps/integrations/tests_ycloud_concurrency.py",
+    "apps/notifications/tests_personal_concurrency.py",
+    "apps/scheduling/tests_plan_concurrency.py",
+    "apps/scheduling/tests_record_concurrency.py",
+    "apps/scheduling/tests_resource_booking_concurrency.py",
+    "apps/scheduling/tests_working_hours_concurrency.py",
+    "apps/support/tests_concurrency.py",
+    "apps/tasks/tests_concurrency.py"
+  ]
+}

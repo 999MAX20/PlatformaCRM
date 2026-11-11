@@ -1,3 +1,10 @@
+CRM-GLOBAL-TEST-PLAN-20261111: detailed draft prepared for owner review.
+Implemented-function matrix, Computer user scenarios and static route/test inventory.
+No application tests/build/browser/server/DB/provider actions; no acceptance closure.
+Execution target/candidate/external effects/defect policy require plan agreement.
+Plan: docs/testing/crm-global-plan-20261111/README.md.
+Checkpoint: output/crm-global-test-plan-20261111/CHECKPOINT.md.
+
 LOCAL-MIGRATIONS-20261111: exactly3 approved local migrations applied; no pending migrations.
 Fresh pg_dump verified by restore:154tables/9855rows; SHA retained with backup.
 RestoredDB rehearsal and workingDB old-column parityPASS;153data tables/9662rows unchanged.

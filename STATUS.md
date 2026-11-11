@@ -1,3 +1,10 @@
+CRM-GLOBAL-TEST-PLAN-20261111: detailed draft prepared for owner review.
+Implemented-function matrix, Computer user scenarios and static route/test inventory.
+No application tests/build/browser/server/DB/provider actions; no acceptance closure.
+Execution target/candidate/external effects/defect policy require plan agreement.
+Plan: docs/testing/crm-global-plan-20261111/README.md.
+Checkpoint: output/crm-global-test-plan-20261111/CHECKPOINT.md.
+
 TIMELINE-FLAT-PAGINATION-20261111: approved flat prototype implemented in timeline only.
 Rows select + persistent range + arrows; no panel/page badge; global search width retained.
 Browser1440/390/320, RU/KK, boundaries/zero/size/keyboard PASS; Node9/build/types/i18n/bundle PASS.
