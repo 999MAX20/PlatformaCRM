@@ -6,7 +6,7 @@ const VoiceHistoryPage = lazy(() => import("../features/voice/VoiceHistoryPage")
 import { RecordsPage, LegacyRecordsPage, ImportWorkspacePage } from "./routeLoaders";
 
 import { PageLoader, UserStartRedirect, BusinessRouteRedirect, SettingsAccessRoute, IntegrationsSettingsRedirect } from "./routeGuards";
-import { DashboardPage, AccountPage, ClientsPage, ClientWorkspacePage, TasksPage, TaskWorkspacePage, CalendarPage, AppointmentWorkspacePage, ConversationsPage, TimelinePage, BotsPage, BotDetailPage, PricingPage, AIAgentsPage, AutomationsPage, ResourcesPage, ServicesPage, BranchesPage, CompanyPage, AnalyticsPage, SettingsPage, WorkingHoursPage, SupportListPage, SupportDetailPage } from "./routeLoaders";
+import { DashboardPage, AccountPage, ClientsPage, ClientWorkspacePage, TasksPage, TaskWorkspacePage, CalendarPage, AppointmentWorkspacePage, ConversationsPage, TimelinePage, BotsPage, BotDetailPage, PricingPage, AIAgentsPage, AutomationsPage, ResourcesPage, ServicesPage, BranchesPage, CompanyPage, BusinessPage, AnalyticsPage, SettingsPage, WorkingHoursPage, SupportListPage, SupportDetailPage } from "./routeLoaders";
 export const merchantFeatureRoutes = [
   { path: "voice/history", resource: "ai_assistant", permissionAction: "suggest", element: <PageLoader><VoiceHistoryPage /></PageLoader> },
   { path: "settings/voice", resource: "ai_assistant", permissionAction: "suggest", element: <PageLoader><VoiceSettingsPage /></PageLoader> },
@@ -209,7 +209,7 @@ export const merchantFeatureRoutes = [
       </PageLoader>
     ),
   },
-{ path: routeMetadata.business.segment, ...merchantRoutePermission("business"), element: <Navigate to="/app/business/company" replace /> },
+{ path: routeMetadata.business.segment, ...merchantRoutePermission("business"), element: <PageLoader><BusinessPage /></PageLoader> },
 { path: "business/company", resource: "settings", element: <PageLoader><CompanyPage /></PageLoader> },
 { path: "business/staff", resource: "settings", element: <PageLoader><ResourcesPage key="staff" mode="staff" /></PageLoader> },
 { path: routeMetadata.services.segment, ...merchantRoutePermission("services"), element: (

@@ -132,3 +132,27 @@ Mobile-browser не означает проверку физических ус�
 Снимки, DOM receipts, команды/логи, source hashes и commit receipt — там же.
 Собственный локальный коммит; чужой outgoing range препятствует own-only push/newCI.
 Чужие исходники/документы сохранены. Собственный disposable runtime остановлен.
+
+
+<a id="clear-business-entry-20261111"></a>
+## Очистка входной страницы «Бизнес» — 11.11.2026
+
+Владелец отменил продолжение выравнивания шести страниц и поручил полностью убрать
+контент `/business`. Маршрут приложения `/app/business` теперь отображает пустую
+рабочую область внутри общей оболочки CRM. Перенаправление на компанию, форма и
+шесть вкладок на этой странице отсутствуют. Прямые маршруты подразделов и их
+данные/API сохранены. Права входа в раздел не изменены.
+
+Незавершённые собственные изменения предыдущего поручения сохранены отдельно в
+`output/business-prototype-parity-20261111/interrupted-owned.patch` и убраны из
+исходников. Их11серверных PASS не являются проверкой новой задачи.
+
+Текущая проверка: `node --test frontend/scripts/tests/sidebar-navigation-policy.test.mjs
+frontend/scripts/tests/route-prefetch.test.mjs` —13PASS. Изолированный output runner
+`output/business-clear-20261111/frontend_verify.py --app`: forced TypeScript build,
+Vite app build и bundle budget PASS. Backend/schema/полныйE2E не запускались:
+серверные контракты не изменены. Рабочая БД, env, провайдеры и deployment не менялись.
+Chrome1440×900 и390×844: `/app/business` сохраняет URL, main пуст; снимки desktop.jpg/mobile.jpg. Прямой маршрут company по-прежнему открывает форму. Первый fullPage capture получил timeout; обычный viewport capture и повторная визуальная проверка PASS.
+Собственная вкладка закрыта, viewport сброшен, одноразовый runtime остановлен.
+Локальная публикация ограничена своим коммитом:40предшествующих чужих outgoing
+коммитов блокируют own-only push. Нового CI/deploy нет.
