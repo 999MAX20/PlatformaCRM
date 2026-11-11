@@ -12905,3 +12905,30 @@ No scoped code/local-evidence remainder. Fullrelease/PGconcurrency/live/screenre
 44foreign outgoing after fetch prevent own-only normalpush; no newCI/deployment. Own paths/hunks only.
 Evidence: docs/testing/evidence/analytics-detail-compare-20261111.md. Exact commands/failures/hashes:
 output/analytics-detail-20261111/CHECKPOINT.md and verified-source.json; Git receipt RESULT.json.
+
+## AI-WORK-CRM-COMPLEX-20261112
+
+Owner requested complex Work CRM scenarios through Playwright/API/realAI and report review;
+verification only, no working-data/product fixes. Canonical/currentbranch, start1af54a43,
+foreign HEADa3d7c63a at closure. Starting diff/status and unchanged AI/UI hashes retained.
+Report ai-request-appointments reviewed: new requests→Appointment; historical Lead updatePASS.
+API17initial14PASS3FAIL: C1duplicate independent task values, C2archive read false denial,
+one invalid harness assumption on mixed partial proposal. Extended6PASS proves partial
+allowed task then access_changed/no client write/retry403; revoked permission, appointment
+chain, occupiedslot partial/retry, exact time and two targeted updatesPASS. InitialFAIL kept.
+Browser10:8PASS2C1/C2FAIL; RU1440/390, keyboard, clarification/correction/dependency/recovery.
+C3observed missing aiCRM.field.branch +raw relation IDs in review; no UI/source repair.
+Supplement cancel-selector timeout/UTF-helper typo/interrupted own node retained; corrected
+harness reused pending proposal, no assertion weakening. Two equipment tests1PASS each,
+including exact previously failing shared-equipment test; old full64case gate not rerun.
+79realOpenRouter/gpt4o-mini calls320511tokens/0providererrors/0mock; all attempts included.
+Full readonlySQL baseline/final:2newclients8tasks2appointments,0Lead/Deal/delete;9expected
+existing-row updates only; all other rows equal,foreign records preserved. Privacy markers0.
+All own runtime/browser runs ended; backend/Vite gone,disposableDBabsence verified.
+WorkingDB/env/providerconfig/externalmessages/deploy untouched. FullD01/R01/PG/livequeue/
+othermodels/locales/humanSTT not certified. No build/types needed without product edits.
+Evidence/registry/STATUS/D01/passport updated; behavior contracts/README unchanged:
+audit does not change policy or certify fixes. Audit complete; C1–C3 repairs remain unauthorized.
+Own docs commit only;46pre-existing foreign outgoing block own-onlypush/newCI.
+Evidence: docs/testing/evidence/ai-work-crm-complex-20261112.md.
+Commands/logs/snapshots/hashes/attempts: output/playwright/ai-work-crm-complex/CHECKPOINT.md.

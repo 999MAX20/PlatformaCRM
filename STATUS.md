@@ -1,3 +1,13 @@
+AI-WORK-CRM-COMPLEX-20261112: complex live CRM verification complete; open C1–C3.
+Two independent creates duplicate first values; archive read invents access denial;
+Appointment review shows raw IDs/untranslated branch. API/browser findings retained.
+Dependent chains/corrections/partial recovery/archive restore/rights/replay verified.
+79real calls; SQL2clients8tasks2appointments only; no leaks/unexpected writes found.
+Prior report reviewed: new requests→Appointment; exact equipment reproducer1PASS now.
+Own runtimes stopped/disposableDBremoved; workingDB/env/productcode/deploy untouched.
+Own docs commit;46foreign outgoing block push/newCI. Evidence:
+docs/testing/evidence/ai-work-crm-complex-20261112.md.
+
 MANAGEMENT-IMPLEMENTATION-20261111: five approved pages implemented with real APIs.
 Explicit service/staff/branch links, room pools, effective schedules and safe lifecycle.
 7browser scenarios RU/KK/EN320–1440; API31+18/AI40/PG14/node14/build-types-i18n-bundlePASS.
