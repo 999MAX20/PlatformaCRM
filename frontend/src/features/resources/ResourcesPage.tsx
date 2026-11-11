@@ -266,7 +266,7 @@ export function ResourcesPage({ mode = "physical" }: { mode?: "staff" | "physica
         <BusinessBranchFilter />
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
           <h2 className="text-base font-semibold">{t(mode === "staff" ? "business.staff" : "branches.physicalResources")}</h2>
-          {mode === "staff" && hasPermission(user, business.id, "team", "view") && <Button variant="secondary" onClick={() => setAccountsOpen(true)}>{t("settings.section.team-access")}</Button>}
+          {mode === "staff" && hasPermission(user, business.id, "team", "view") && <Button variant="secondary" onClick={() => setAccountsOpen(true)}>{t("business.manageAccounts")}</Button>}
         </div>
 
         {selectedResourceQuery.isLoading ? <LoadingState /> : null}
@@ -300,7 +300,7 @@ export function ResourcesPage({ mode = "physical" }: { mode?: "staff" | "physica
                   <Button type="button" variant="secondary" onClick={() => { setSearchDraft(""); updateSearchParams({ search: null, type: null, status: null, page: 1, resource: null }); }}>{t("common.clearAll")}</Button>
                 ) : (
                   <Button type="button" variant="secondary" disabled={!canManage} title={!canManage ? permissionMessage : undefined} onClick={openCreate}>
-                    <Plus aria-hidden="true" size={16} />{t("resources.add")}
+                    <Plus aria-hidden="true" size={16} />{t(mode === "staff" ? "business.addStaff" : "resources.add")}
                   </Button>
                 )
               }
@@ -368,11 +368,11 @@ export function ResourcesPage({ mode = "physical" }: { mode?: "staff" | "physica
         onSubmit={(payload) => mutation.mutateAsync({ id: selectedResource!.id, payload })}
       />
 
-      <Modal title={t("settings.section.team-access")} open={accountsOpen} onClose={() => setAccountsOpen(false)}>
+      <Modal title={t("business.manageAccounts")} open={accountsOpen} onClose={() => setAccountsOpen(false)}>
         <StaffAccounts businessId={business.id} />
       </Modal>
       <Modal
-        title={t("resources.add")}
+        title={t(mode === "staff" ? "business.addStaff" : "resources.add")}
         testId="resource-create-modal"
         open={createOpen}
         onClose={async () => {

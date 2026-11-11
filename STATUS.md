@@ -1,3 +1,12 @@
+BUSINESS-BROWSER-REVIEW-20261111: six pages reviewed;7UI/data-context findings fixed.
+Branch service terms, archive context, staff actions, mobile forms/search/nav/schedule.
+Chrome owner+manager; real isolated CRUD/lifecycle/drafts/recovery, RU/KK/EN320–1440.
+Logic6/i18n/types/app-widget/build-budgetPASS; stale-output bundleFAIL retained.
+No backend/workingDB/env/provider/deploy changes. Own runtime stopped; foreignWIP kept.
+Own local commit only; foreign outgoing range blocks push/newCI. Evidence:
+docs/testing/evidence/business-workspace-20261111.md#browser-review-20261111.
+Details: output/business-browser-review-20261111/REPORT.md.
+
 VOICE-KAZAKH-20261111: approved review for new voice clients/tasks implemented and verified locally.
 Ambiguous phones/spelling clarify; edits/cancel/replay/rollback and bypass guards verified.
 145dependent +38task-review +25PostgreSQL PASS; system/drift,5browser,build/types/i18n/bundle PASS.

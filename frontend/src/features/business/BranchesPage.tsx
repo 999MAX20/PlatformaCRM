@@ -36,6 +36,16 @@ export function BranchesPage() {
   const selectBranch = (id: string) => setParams(previous => {
     const next = new URLSearchParams(previous); next.set(selectionKey, id); next.delete("create"); next.delete("section"); return next;
   });
+  useEffect(() => {
+    const workingBranch = query.data?.find(item => String(item.id) === params.get("branch"));
+    if (!workingBranch?.archived_at) return;
+    const nextBranch = query.data?.find(item => !item.archived_at && (item.can_work || item.can_manage));
+    setParams(previous => {
+      const next = new URLSearchParams(previous);
+      if (nextBranch) next.set("branch", String(nextBranch.id)); else next.delete("branch");
+      return next;
+    }, { replace: true });
+  }, [query.data, params, setParams]);
   const canManage = hasPermission(user, business?.id, "settings", "update");
   useEffect(() => { setPageHeader({ title: t("nav.business") }); return () => setPageHeader(null); }, [setPageHeader, t]);
   const save = useMutation({ mutationFn: (payload: Partial<Branch>) => branchesApi.create({ ...payload, business: business!.id }),

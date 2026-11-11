@@ -104,3 +104,31 @@ runners exited. Full-project certification was not performed.
 Fetch confirmed 0 remote-only / 35 pre-existing outgoing commits. Task-only local
 commit is permitted; pushing that foreign range is not authorized. No push, new CI
 or deployment is claimed. Publication is the remaining external blocker.
+
+
+<a id="browser-review-20261111"></a>
+## Браузерная проверка и исправления — 11.11.2026
+
+Отдельное поручение после исходной реализации: сопоставить с прототипами, проверить
+действия на компьютере/телефоне и исправить найденное. Все6 страниц проверены;
+исправлены7 групп: подписи сотрудников/доступа, филиальные цена/длительность услуг,
+обрезание компании на320px, рабочий контекст после архивации, ширина мобильного
+поиска, видимость активного пункта навигации и перенос панели/семи дней графика.
+
+Chrome owner/manager, RU desktop1440/mobile320, KK320, EN390. Реальные синтетические
+сохранения и reload, черновики, связи, отсутствие/недельный/датированный график,
+нулевой переезд, создание/архив/restore неактивной услуги, завершение специалиста,
+архив/restore paused/активация филиала, физический ресурс и read-only менеджер PASS.
+Филиальная ошибка загрузки скрывает неверные данные; снятие сетевого отказа+RetryPASS.
+
+Logic6/i18n/forcedtypes/app/widgetPASS. Повторный bundle-check первоначальноFAIL из-за
+старых chunks во внешней папке; новая dist-final build+budgetPASS с прежним400kB.
+Исходный failure сохранён. Backend не менялся, его suites/system/migrations не запускались.
+Исходники прототипов сравнены статически; запрещённый file:// не обходился.
+Mobile-browser не означает проверку физических устройств. Доставка приглашений,
+внешние провайдеры/workingDB/deployment не затронуты; нет новой production-сертификации.
+
+Подробная матрица и ограничения: `output/business-browser-review-20261111/REPORT.md`.
+Снимки, DOM receipts, команды/логи, source hashes и commit receipt — там же.
+Собственный локальный коммит; чужой outgoing range препятствует own-only push/newCI.
+Чужие исходники/документы сохранены. Собственный disposable runtime остановлен.

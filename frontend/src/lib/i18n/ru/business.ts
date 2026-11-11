@@ -18,6 +18,7 @@ export const business: Record<string, string> = {
   "business.allBranches": "Все филиалы",
 
   "business.company": "Компания",
+  "business.addStaff": "Добавить сотрудника",
   "business.staff": "Сотрудники",
 
   "branches.overview": "Обзор",

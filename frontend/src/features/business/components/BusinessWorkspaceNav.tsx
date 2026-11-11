@@ -1,4 +1,5 @@
-import { NavLink, useSearchParams } from "react-router";
+import { useLayoutEffect, useRef } from "react";
+import { NavLink, useLocation, useSearchParams } from "react-router";
 
 import { cn } from "../../../lib/cn";
 import { useI18n } from "../../../lib/i18n";
@@ -16,9 +17,28 @@ export function BusinessWorkspaceNav() {
   const { t } = useI18n();
   const [params] = useSearchParams();
   const branch = params.get("branch");
+  const { pathname } = useLocation();
+  const trackRef = useRef<HTMLElement>(null);
+  useLayoutEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    const reveal = () => {
+      const active = track.querySelector<HTMLElement>('[aria-current="page"]');
+      if (!active) return;
+      const bounds = track.getBoundingClientRect();
+      const item = active.getBoundingClientRect();
+      if (item.left < bounds.left) track.scrollLeft -= bounds.left - item.left;
+      else if (item.right > bounds.right) track.scrollLeft += item.right - bounds.right;
+    };
+    reveal();
+    const observer = new ResizeObserver(reveal);
+    observer.observe(track);
+    return () => observer.disconnect();
+  }, [pathname, t]);
 
   return (
     <nav
+      ref={trackRef}
       aria-label={t("business.navigationLabel")}
       className="mb-3 shrink-0 overflow-x-auto rounded-card border border-platforma-border bg-surface-card p-1 shadow-card no-scrollbar"
     >

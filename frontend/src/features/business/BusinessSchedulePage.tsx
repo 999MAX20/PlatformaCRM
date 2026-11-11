@@ -97,17 +97,19 @@ function ScheduleWorkspace({ branch, branches, timeZone }: { branch: Branch; bra
     <Tabs value={view} onChange={value => setParams(previous => { const next = new URLSearchParams(previous); next.set("view", value); next.delete("resource"); return next; })} appearance="underline" ariaLabel={t("nav.workingHours")}
       options={[{ value: "staff", label: t("business.staff") }, { value: "physical", label: t("branches.physicalResources") }, { value: "opening", label: t("branches.openingHours") }]} />
     <div className="flex flex-wrap items-end gap-2">
+      <div className="flex items-center gap-2">
       <Button variant="secondary" aria-label={t("business.previousWeek")} onClick={() => setDate(shiftDate(date, -7))}><ChevronLeft size={18} /></Button>
       <Button variant="secondary" onClick={() => setDate(today)}>{t("business.today")}</Button>
       <Button variant="secondary" aria-label={t("business.nextWeek")} onClick={() => setDate(shiftDate(date, 7))}><ChevronRight size={18} /></Button>
-      <div className="w-44"><Input label={t("appointment.date")} type="date" value={date} onChange={event => event.target.value && setDate(validDate(event.target.value, today))} /></div>
-      <p className="py-2 text-sm text-platforma-subtle">{shortDate(dates[0])} – {shortDate(dates[6])}</p>
+      </div>
+      <div className="w-full min-w-0 sm:w-44"><Input label={t("appointment.date")} type="date" value={date} onChange={event => event.target.value && setDate(validDate(event.target.value, today))} /></div>
+      <p className="w-full py-1 text-sm text-platforma-subtle sm:w-auto sm:py-2">{shortDate(dates[0])} – {shortDate(dates[6])}</p>
       {branch.can_manage && <Button variant="secondary" disabled={!branch.is_active || !targets.length} onClick={() => setEdit({ target: targets.find(target => String(target.id) === params.get("resource")) || targets[0], date, weekly: true })}>{t("business.weekTemplate")}</Button>}
       {branches.length > 1 && branch.can_manage && <Button variant="secondary" onClick={() => setTravel(true)}>{t("branches.travel")}</Button>}
     </div>
     {view !== "opening" && <div className="max-w-md"><Input label={t("resources.searchPlaceholder")} value={search} onChange={event => setSearch(event.target.value)} /></div>}
     <div className="flex gap-1 overflow-x-auto pb-1 md:hidden" aria-label={t("branches.weekday")}>
-      {dates.map((value, index) => <button key={value} type="button" aria-pressed={value === date} onClick={() => setDate(value)} className={cn("platforma-focus-ring flex min-h-12 min-w-12 flex-1 flex-col items-center justify-center rounded-control border text-xs", value === date ? "border-brand-200 bg-brand-50 text-brand-700" : "border-platforma-border bg-surface-card")}><span>{t(weekdayKeys[index])}</span><span className="mt-1 font-semibold">{Number(value.slice(-2))}</span></button>)}
+      {dates.map((value, index) => <button key={value} type="button" aria-pressed={value === date} onClick={() => setDate(value)} className={cn("platforma-focus-ring flex min-h-12 min-w-0 flex-1 flex-col items-center justify-center rounded-control border text-xs", value === date ? "border-brand-200 bg-brand-50 text-brand-700" : "border-platforma-border bg-surface-card")}><span>{t(weekdayKeys[index])}</span><span className="mt-1 font-semibold">{Number(value.slice(-2))}</span></button>)}
     </div>
     {targets.length ? <>
       <div className="hidden overflow-x-auto rounded-card border border-platforma-border bg-surface-card md:block">

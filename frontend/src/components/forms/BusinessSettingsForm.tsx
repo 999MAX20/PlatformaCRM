@@ -64,7 +64,7 @@ export function BusinessSettingsForm({ initial, onSubmit, readOnly = false, prot
   const field = (name: keyof Values) => ({ ...form.register(name), error: error(name) });
   return <form noValidate onChange={() => setSaved(false)} onSubmit={form.handleSubmit(submit, errors => focusField(Object.keys(errors)[0] as keyof Values))}>
     {protectDraft && <DraftGuard dirty={form.formState.isDirty} pending={form.formState.isSubmitting} />}
-    <fieldset disabled={form.formState.isSubmitting || readOnly} className="space-y-5 p-4 sm:p-5">
+    <fieldset disabled={form.formState.isSubmitting || readOnly} className="min-w-0 space-y-5 p-4 sm:p-5">
       <legend className="sr-only">{t("businessForm.group.profile")}</legend>
       <div className="space-y-3">
         <h2 className="text-base font-bold">{t("settings.redesign.basics")}</h2>

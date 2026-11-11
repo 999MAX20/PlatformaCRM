@@ -12760,3 +12760,26 @@ Docs gates only for evidence updates; previous scopedPASS preserved, broader cla
 36foreignoutgoing prevent own-onlypush/newCI. Exact commands/results/limits:
 output/playwright/ai-analytics-complex/CHECKPOINT.md and
 docs/testing/evidence/ai-analytics-complex-20261111.md.
+
+## BUSINESS-BROWSER-REVIEW-20261111
+
+Owner requested browser review of implemented Business against approved prototypes and fixes.
+Seven groups fixed: staff/account CTA labels; actual selected-branch service price/duration;
+320px company fieldset clipping; active context after archiving; mobile search width;
+active navigation reveal; seven-day/date toolbar reflow. Ten own frontend source files.
+Chrome current pass covers six pages, owner/manager, RU1440/320, KK320, EN390,
+real synthetic company/staff/service/resource/branch lifecycle, schedule/absence/travel,
+reload/drafts, network error+Retry and role-read-only UI. No working data changed.
+Pure schedule6/i18n/types/app/widgetPASS. Repeated bundle check initiallyFAIL due stale
+outDir chunks; fresh dist-final build+budgetPASS, no threshold change; failure preserved.
+Browser timeouts/reconnect and native-time fill limitation retained; actual keyboard
+change saved. Refresh401 recovered login; no backend500. No full-project/device/live
+certification; invitations/providers/deployment untested and untouched. Backend unchanged.
+Canonical root/currentbranch; startffea10e9, verified-source.json records current dirty
+source. Foreign AI/voice/leads/tasks/docs preserved. Only own paths/hunks to local commit;
+foreign outgoing commits block own-only push/newCI. Exact receipt/logs/source hash checks
+in output/business-browser-review-20261111. No scoped implementation remainder.
+Report: output/business-browser-review-20261111/REPORT.md.
+Evidence: docs/testing/evidence/business-workspace-20261111.md#browser-review-20261111.
+Relevant frontend contract and scheduling passport updated. CRM/access/AI/integration/
+operations/setup/roadmap need no changes: backend policy, env and phase acceptance unchanged.

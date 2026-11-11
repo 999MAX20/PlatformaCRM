@@ -18,6 +18,7 @@ export const business: Record<string, string> = {
   "business.allBranches": "Барлық филиалдар",
 
   "business.company": "Компания",
+  "business.addStaff": "Қызметкер қосу",
   "business.staff": "Қызметкерлер",
 
   "branches.overview": "Шолу",

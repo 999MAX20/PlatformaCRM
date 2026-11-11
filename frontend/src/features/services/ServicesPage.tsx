@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router";
 
 import { getApiErrorMessage } from "../../api/client";
+import { branchesApi } from "../../api/branches";
 import { servicesApi } from "../../api/services";
 import { DraftGuard } from "../../components/actions/DraftGuard";
 import { BusinessBranchFilter } from "../business/components/BusinessBranchFilter";
@@ -103,6 +104,19 @@ export function ServicesPage() {
     enabled: Boolean(business?.id),
     placeholderData: (previous, query) => query?.queryKey[2] === business?.id && query?.queryKey[3] === user?.id ? previous : undefined,
   });
+
+  const branches = useQuery({
+    queryKey: ["branches", business?.id],
+    queryFn: () => branchesApi.listAll({ business: business!.id }),
+    enabled: Boolean(business?.id && branch),
+  });
+  const selectedBranch = branches.data?.find(item => item.id === branch);
+  const branchCatalog = useQuery({
+    queryKey: [selectedBranch?.can_manage ? "branch-configuration" : "branch-catalog", branch],
+    queryFn: () => selectedBranch?.can_manage ? branchesApi.configuration(branch!) : branchesApi.catalog(branch!),
+    enabled: Boolean(branch && branches.isSuccess),
+  });
+  const branchOffer = (service: Service) => branchCatalog.data?.offers.find(offer => offer.service === service.id);
 
   const mutation = useMutation({
     mutationFn: ({ id, payload }: { id?: Id; payload: Partial<Service> }) =>
@@ -263,7 +277,7 @@ export function ServicesPage() {
   if (!business) return <ErrorState message={t("services.noBusiness")} />;
   if (servicesQuery.isLoading) return <LoadingState scope="page" />;
 
-  const pageError = servicesQuery.error || (!selectedServiceOnPage && selectedServiceQuery.error);
+  const pageError = (branch && (branches.error || branchCatalog.error)) || servicesQuery.error || (!selectedServiceOnPage && selectedServiceQuery.error);
   const hasFilters = Boolean(search || status);
   const pageFrom = totalServices === 0 ? 0 : (page - 1) * pageSize + 1;
   const pageTo = Math.min(totalServices, page * pageSize);
@@ -281,15 +295,15 @@ export function ServicesPage() {
           <div className="mb-3 shrink-0">
             <ErrorState
               error={pageError} message={getApiErrorMessage(pageError)}
-              action={<Button type="button" variant="secondary" onClick={() => void Promise.all([servicesQuery.refetch(), ...(selectedServiceId && !selectedServiceOnPage ? [selectedServiceQuery.refetch()] : [])])}>{t("common.retry")}</Button>}
+              action={<Button type="button" variant="secondary" onClick={() => void Promise.all([servicesQuery.refetch(), ...(branch ? [branches.refetch(), branchCatalog.refetch()] : []), ...(selectedServiceId && !selectedServiceOnPage ? [selectedServiceQuery.refetch()] : [])])}>{t("common.retry")}</Button>}
             />
           </div>
         ) : null}
 
         <div data-testid="services-operational-workspace" aria-busy={servicesQuery.isFetching} className="min-h-[420px] flex-1">
           {customTable.toolbar}
-          {!servicesQuery.isError ? <DataTable
-              isLoading={servicesQuery.isPlaceholderData}
+          {!pageError ? <DataTable
+              isLoading={servicesQuery.isPlaceholderData || Boolean(branch && branchCatalog.isPending)}
               className="h-full"
               contentClassName="overscroll-contain"
               rows={serviceRows}
@@ -320,7 +334,7 @@ export function ServicesPage() {
                   className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between"
                 >
                   <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
-                    <div className="w-[var(--global-search-width,480px)] max-w-full min-w-0 shrink-0">
+                    <div className="w-full sm:w-[var(--global-search-width,480px)] max-w-full min-w-0 shrink-0">
                       <Input
                         data-testid="services-search"
                         value={searchDraft}
@@ -364,8 +378,8 @@ export function ServicesPage() {
               }
               columns={[
                 { header: t("services.name"), className: "max-w-[320px]", cell: (service) => <span data-testid="service-name" className="block truncate font-semibold text-platforma-ink">{service.name}</span> },
-                { header: t("services.duration"), cell: (service) => `${service.duration_minutes} ${t("appointment.minutes")}` },
-                { header: t("services.priceFrom"), cell: (service) => formatMoney(service.price_from) },
+                { header: t("services.duration"), cell: (service) => `${branchOffer(service)?.duration_minutes ?? service.duration_minutes} ${t("appointment.minutes")}` },
+                { header: t("services.priceFrom"), cell: (service) => formatMoney(branchOffer(service) ? branchOffer(service)!.price_from : service.price_from) },
                 { header: t("services.bookings"), cell: (service) => servicesQuery.isError ? "—" : service.appointment_count ?? "—" },
                 { header: t("appointment.status"), cell: (service) => <ServiceStatusBadge service={service} /> },
                 ...customTable.columns,

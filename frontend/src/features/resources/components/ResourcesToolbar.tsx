@@ -62,7 +62,7 @@ export function ResourcesToolbar({
   return (
     <div data-testid="resources-table-toolbar" className="flex flex-col gap-3">
       <div className={cn("flex min-w-0 flex-col gap-2", !isSplitWorkspace && "xl:flex-row xl:items-center")}>
-        <div className="w-[var(--global-search-width,480px)] max-w-full min-w-0 shrink-0">
+        <div className="w-full sm:w-[var(--global-search-width,480px)] max-w-full min-w-0 shrink-0">
           <Input
             data-testid="resources-search"
             value={searchDraft}
@@ -106,7 +106,7 @@ export function ResourcesToolbar({
             onClick={onCreate}
           >
             <Plus aria-hidden="true" size={16} />
-            {t("resources.add")}
+            {t(mode === "staff" ? "business.addStaff" : "resources.add")}
           </Button>
         </div>
         <CrmPagination

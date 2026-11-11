@@ -18,6 +18,7 @@ export const business: Record<string, string> = {
   "business.allBranches": "All branches",
 
   "business.company": "Company",
+  "business.addStaff": "Add staff member",
   "business.staff": "Staff",
 
   "branches.overview": "Overview",
