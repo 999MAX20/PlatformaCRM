@@ -107,7 +107,10 @@ def reference_choices(business, user, entity):
     if "service" in allowed:
         choices["service"] = list(Service.objects.filter(business=business, is_active=True, is_archived=False).order_by("name", "pk").values("id", "name")[:100])
     if entity == "appointments":
-        choices["resource"] = list(Resource.objects.filter(business=business, is_active=True).order_by("name", "pk").values("id", "name")[:100])
+        choices["resource"] = list(Resource.objects.filter(
+            business=business, is_active=True, resource_type=Resource.ResourceTypes.STAFF,
+            retired_at__isnull=True, archived_at__isnull=True,
+        ).order_by("name", "pk").values("id", "name")[:100])
     if entity == "deals":
         choices["pipeline"] = list(Pipeline.objects.filter(business=business).order_by("pk").values("id", "name")[:50])
         choices["stage"] = list(PipelineStage.objects.filter(business=business, is_active=True).order_by("pipeline_id", "order", "pk").values("id", "name", "pipeline_id", "is_won", "is_lost")[:100])

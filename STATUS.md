@@ -1,3 +1,12 @@
+MANAGEMENT-BOOKING-20261112: manual/AI booking integration locally verified.
+Management terms, staff eligibility, rooms, schedules/absence, transfer/rollback PASS.
+Fixed text-AI specialist references exposing physical/retired/archived resources.
+64focused/dependent tests +realAPI browser create/transfer/AIapproval PASS; system/driftPASS.
+Mock planner only; no live-model certification, workingDB/schema/env/deploy changes.
+Own local commit;Foreign outgoing block own-only push/newCI. Evidence:
+docs/testing/evidence/management-implementation-20261111.md#management-booking-integration--12112026.
+Checkpoint: output/management-booking-20261112/CHECKPOINT.md.
+
 VOICE-ERRORS-20261112: localized speech errors and safe diagnostics locally verified.
 No paid calls; mocked API/provider,17browser RU/KK/EN, backend/system/drift and frontendPASS.
 Explicit retry/countdown/text recovery; bounded metadata only, no audio/text/secrets.

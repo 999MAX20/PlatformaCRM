@@ -165,3 +165,70 @@ remain distinct. 45 foreign outgoing commits prevent own-only
 publication; no push or new CI is claimed. Own reviewed changes are committed locally. Contracts/frontend/scheduling passport/README
 and roadmap are reconciled in this task; access/AI/product decisions outside this scope
 remain unchanged. No unrelated roadmap or acceptance item is closed.
+
+
+## Management booking integration — 12.11.2026
+
+Task MANAGEMENT-BOOKING-20261112: owner requested verification and fixes for services,
+specialists, rooms and schedules from Management in manual/AI creation and rescheduling.
+Canonical PlatformaCRM, branch `codex/ui-testing-toolkit`; initial HEAD
+`fe5cea81834d67f8e8bc6e58883768c2e9cc7892`, shared checkout later advanced to `1fa364b0`.
+Foreign changes were retained. Plan, snapshots, scripts, logs and screenshots:
+`output/management-booking-20261112/`; compact checkpoint `CHECKPOINT.md`.
+
+### Result and fix
+
+Management APIs create the tested configuration. Manual booking and confirmed AI
+commands use its price/duration, staff eligibility, date-effective hours, exceptions,
+absences and joint room reservations. Successful transfer keeps the approved terms
+and room; conflicts preserve the old appointment and reservation. A room consumed
+after an AI preview blocks execution without another appointment. Missing approval
+is denied; replay creates one reservation. Branch tests cover permission/tenant
+denials, closed locations, cross-location conflicts and historical terms.
+
+One product defect was found in `crm_planner.reference_choices`: active physical
+resources were exposed as specialist candidates to the text planner. The query now
+selects only active `staff` with neither `retired_at` nor `archived_at`. A deterministic
+model response selecting a room is rejected before any executable tool or appointment
+is created. Rooms/equipment remain governed by the existing reservation service.
+No permission, approval, activity, notification, BusinessEvent or execution contract changed.
+
+### Verification and limits
+
+All Python commands used `.venv/Scripts/python.exe` and `scripts.codex_verify.isolated_runtime`
+through `output/management-booking-20261112/check.py`; disposable migrated SQLite only.
+- Existing rooms/effective schedules/AI commands:32 PASS, `test-1794427380038579600.log`.
+- Branch scheduling:10 PASS, `test-1794428067269255400.log`.
+- New bridge10 + dependent text-planner12:22 PASS, `test-1794428505437925500.log`.
+- Final module discovery (same22 tests, no duplicated imported TestCase):22 PASS,
+  `test-1794428672154566400.log`.
+- Django system check and `makemigrations --check --dry-run`: PASS.
+- `.venv/Scripts/python.exe output/management-booking-20261112/browser.py`:1 PASS,
+  `browser-result-1794428240756437000.json`. Real Chromium, RU,1280px, owner; manual
+  create/reschedule followed by UI approvals for AI create/reschedule. Real APIs and
+  persisted results, exactly2 appointments with configured reservations. Only planner
+  response is substituted; no paid provider or live natural-language accuracy claimed.
+
+Retained failures are diagnostic/harness boundaries, not erased: initial27/7 runs
+expected invalid staff to fail at proposal, whereas execution is the authoritative
+booking check; corrected tests prove execution400 and no writes. One reference
+reproducer loaded an obsolete fixture keyword `is_archived` (Resource uses archived_at);
+corrected regression passes. Browser attempts1/2 failed stale ClientPicker selectors
+and an invalid create-active-agent fixture respectively; final uses current picker
+and draft→profile→activate lifecycle. Both failure traces remain in the output folder.
+
+No frontend runtime change: build/types/i18n/full viewport sweep not rerun for test-only
+TS. No migrations or locking/reservation algorithm changed: no additional PostgreSQL
+concurrency/full-project gate. Prior unchanged consumer PASS reused only for unchanged
+inputs; final source hashes and own diff are retained. No working DB writes/migrations,
+provider messages, environment edits, dependency installs or deployment. Own test
+servers and disposable databases are cleaned by their isolated context.
+
+### Closure boundary
+
+No scoped code/local-evidence remainder. Current AI contract
+updated; access/product/CRM/frontend/operations/passports/README/roadmap need no behavior
+change because execution, configuration and approved business rules are unchanged.
+This adds integration evidence, not a new roadmap phase or production acceptance.
+Own-only local commit;Pre-existing foreign outgoing commits block own-only push.
+No push/new CI/deployment or live-model certification claimed.

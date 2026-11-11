@@ -1,3 +1,16 @@
+## MANAGEMENT-BOOKING-20261112 — manual and AI integration verified
+
+Owner asked to verify Management services/staff/rooms/schedules in manual and AI
+create/reschedule and fix errors. All scoped paths verified through configured APIs.
+One fix: crm_planner references only active staff without retirement/archive; no
+physical resource offered as specialist. Booking/approval/reservation rules unchanged.
+32existing +10branch +22bridge/planner PASS; final module discovery22PASS; system/driftPASS.
+Real Chromium/API manual create/transfer and AI create/transfer confirmations PASS.
+Model response substituted; no external provider/workingDB/schema/env/deployment changes.
+Retained harness failures and source ownership in output/management-booking-20261112/CHECKPOINT.md.
+No scoped remainder. Own-only local commit;Foreign outgoing block push/newCI.
+[Evidence](../evidence/management-implementation-20261111.md#management-booking-integration--12112026).
+
 VOICE-ERRORS-20261112: localized speech errors and safe diagnostics locally verified.
 No paid calls; mocked API/provider,17browser RU/KK/EN, backend/system/drift and frontendPASS.
 Explicit retry/countdown/text recovery; bounded metadata only, no audio/text/secrets.
