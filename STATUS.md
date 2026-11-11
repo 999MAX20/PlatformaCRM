@@ -1,3 +1,11 @@
+AI-ANALYTICS-COMPLEX-20261111: verification complete; overallFAIL, openA1–A4.
+Periods/archives/roles tested on35primary+4foreign synthetic tasks; real API/Playwright.
+Confirmed lost date/selected period, wrong own status breakdown, invalid plans, denied-source UX.
+33initialAPI:29PASS/4FAIL; browser confirms findings.52realcalls/127566tokens; no data leak found.
+39tasks preserved/0toolcalls; workingDB/env/productcode unchanged by this task; runtimes stopped.
+Report-only; fixes/reverification remain. Own docs commit;36foreignoutgoing block push/newCI.
+Evidence: docs/testing/evidence/ai-analytics-complex-20261111.md.
+
 BUSINESS-IMPLEMENTATION-20261111: approved six-section workspace implemented locally.
 Company/branches/staff/services/physical resources/schedule use real APIs and existing rules.
 Backend97PASS/1PGskip +PG15 +absence9; system/drift PASS. Eight browser scenarios PASS,

@@ -12727,3 +12727,28 @@ and registry updated; roadmap/setup/access/AI/integration/operations unchanged b
 Task-only local commit,35foreign outgoing after fetch block push/newCI. No foreign work staged.
 Evidence: docs/testing/evidence/business-workspace-20261111.md.
 Commands/hashes/logs/checkpoint: output/business-implementation-20261111.
+
+## AI-ANALYTICS-COMPLEX-20261111
+
+Owner-requested expanded analytics verification: periods, archives, permissions through
+Playwright/API with real AI, no working-data changes. No product repairs authorized/done.
+ffea10e9+source-hash manifest; canonical source,disposableSQLite/eager/noautoreload.
+35primarytasks(27current8archive)+4foreign. Owner/own totals all14periods correct;20
+deterministic checks19PASS/1status-distributionFAIL;13live conversation10PASS/3FAIL.
+Browser reproduces wrong0vs2 on11Nov, invalid1Novplan and ignored selected date/no_data;
+own13+hiddenlookupPASS. Own status expected6open3inprogress4done vsAPI/realAI1/3/1.
+ReadonlySQL proves distinct+defaultordering expands grouping;dict overwrites status groups.
+No-task user gets generic interrupted copy/access_changed; no leaks. Full analystdeny403
+beforemodel/UIredirectstoallowedwork. Invalidrange400;foreignBusiness403;calls0forguards.
+Final24conversationturns+3directhistorical requests;52realcalls/127566tokens. Intermediate
+browser waiter/race diagnostics included in costs/results; all failures retained.
+52logs/citations checked:0hiddenmarkers/foreignrecords;39tasks preserved,0toolcalls.
+Own browsers/backend/frontend stopped,disposableDBabsenceverified. No workingDB/env/
+account/provider-settings/messaging/production effects. Foreignvoice source drift recorded;
+analyticsrouter/history/grounding/access/frontendassistant stable. No source edits by this task.
+Verification complete with openA1–A4; fixes and corresponding checks remain for another
+explicit request. No fullD01/PGqueue/othermodels/locales certificate; no build/fullsuite.
+Docs gates only for evidence updates; previous scopedPASS preserved, broader claim excluded.
+36foreignoutgoing prevent own-onlypush/newCI. Exact commands/results/limits:
+output/playwright/ai-analytics-complex/CHECKPOINT.md and
+docs/testing/evidence/ai-analytics-complex-20261111.md.
