@@ -4,7 +4,7 @@ import { useCallback, useEffect, useId, useState } from "react";
 import { activityEventsApi } from "../../api/activities";
 import { normalizeAppError } from "../../api/appError";
 import { getApiErrorMessage } from "../../api/client";
-import { CrmPagination, CrmWorkspacePage } from "../../components/crm";
+import { CrmWorkspacePage } from "../../components/crm";
 import { OperationalWorkspace } from "../../components/crm/OperationalWorkspace";
 import { Button } from "../../components/ui/Button";
 import { Surface } from "../../components/ui/Card";
@@ -17,6 +17,7 @@ import type { TimelineFilters } from "../../types/timeline";
 import { useAuth } from "../auth/AuthProvider";
 import { TimelineDetails } from "./TimelineDetails";
 import { TimelineEventTable } from "./TimelineEventTable";
+import { TimelinePagination } from "./TimelinePagination";
 import { TimelineToolbar } from "./TimelineToolbar";
 import { readTimelineFilters } from "./timelinePresentation";
 import { useTimelineSearchParams } from "./useTimelineSearchParams";
@@ -120,8 +121,6 @@ export function TimelinePage() {
   )
     return <ForbiddenState />;
   const timeZone = business.timezone || "UTC";
-  const from = total ? (filters.page - 1) * filters.page_size + 1 : 0;
-  const to = Math.min(total, filters.page * filters.page_size);
   return (
     <CrmWorkspacePage
       edgeToEdge
@@ -149,30 +148,19 @@ export function TimelinePage() {
               onReset={reset}
               timeZone={timeZone}
               pagination={
-                <fieldset
+                <TimelinePagination
+                  total={total}
+                  page={filters.page}
+                  pageSize={filters.page_size}
                   disabled={busy || query.isError}
-                  aria-label={t("timeline.range", { from, to, total })}
-                  title={t("timeline.range", { from, to, total })}
-                  className="min-w-0 shrink-0"
-                >
-                  <CrmPagination
-                    variant="toolbar"
-                    className="[&>p]:sr-only xl:[&>p]:not-sr-only [&>div>button]:h-11 [&>div>button]:w-11 [&>div>button]:min-h-11 [&>div>button]:px-0 [&>div>button>span]:sr-only [&>div>button>svg]:block"
-                    shown={rows.length}
-                    total={total}
-                    page={filters.page}
-                    pageSize={filters.page_size}
-                    rangeLabel={`${from}–${to} / ${total}`}
-                    previousLabel={t("pagination.previous")}
-                    nextLabel={t("pagination.next")}
-                    pageSizeAriaLabel={t("timeline.pageSize")}
-                    pageSizeLabel={(size) =>
-                      t("timeline.perPage", { count: size })
-                    }
-                    onPageChange={(page) => changeFilter("page", page)}
-                    onPageSizeChange={(size) => changeFilter("page_size", size)}
-                  />
-                </fieldset>
+                  onPageChange={page => changeFilter("page", page)}
+                  onPageSizeChange={size => setParams(current => {
+                    const next = new URLSearchParams(current);
+                    next.set("page_size", String(size));
+                    next.set("page", String(Math.floor((filters.page - 1) * filters.page_size / size) + 1));
+                    return next;
+                  })}
+                />
               }
               onDateChange={({ from, to }) => setParams(current => {
                 const next = new URLSearchParams(current);

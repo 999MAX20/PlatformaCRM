@@ -1,3 +1,10 @@
+TIMELINE-FLAT-PAGINATION-20261111: approved flat prototype implemented in timeline only.
+Rows select + persistent range + arrows; no panel/page badge; global search width retained.
+Browser1440/390/320, RU/KK, boundaries/zero/size/keyboard PASS; Node9/build/types/i18n/bundle PASS.
+No shared component/backend/workingDB/deploy changes; foreign WIP retained.
+Own local commit only;29pre-existing outgoing commits block own-only push/newCI.
+Evidence: docs/testing/evidence/timeline-fixes-20261111.md#flat-pagination.
+
 TIMELINE-PAGINATION-20261111: search uses global-header width; pagination moved into toolbar.
 Desktop1440 both search controls480px; single-row toolbar; table footer removed.
 Browser320/390/1024/1440 paging/back/size/filter-reset/keyboard PASS; no page overflow.

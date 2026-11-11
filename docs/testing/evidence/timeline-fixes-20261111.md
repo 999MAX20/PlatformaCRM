@@ -122,3 +122,32 @@ existing Taste/AntiSlop direction retained; React review hooks/types/labels/reus
 Task runtimes stopped; normal dev and workingDB untouched. No scoped code/evidence
 remainder. Own local commit only; foreign outgoing prevents own-only push/newCI/deploy.
 Screenshots/starting snapshot/logs: output/timeline-pagination-20261111.
+
+<a id="flat-pagination"></a>
+
+## TIMELINE-FLAT-PAGINATION-20261111
+
+Owner approved second flat prototype and requested timeline implementation, preserved
+search width and desktop/mobile verification. Local TimelinePagination reuses tokens,
+i18n, lucide and native select; no shared CrmPagination changes. No panel/page badge.
+Always-visible range and labeled arrows; pending/error fieldset remains disabled;
+zero data0–0 and boundary arrows correct. Size changes preserve first visible position
+through atomic URL page/page_size update; regular filtering still resets page1.
+Canonical checkout/current branch; starting841e8bfa, foreign commit9d9b7a0d arrived
+without changing task paths. Foreign AI/source/docs WIP retained; own-only staging.
+Chrome real isolated API57785/Vite57786:1440 global/local search480px each; mobile390/320
+no document overflow,44px arrow targets; RU first20→last21–29, next disabled, size10
+retains21–29/page3; Enter back, missing-search0–0/both arrows disabled, resetPASS.
+KK320 range words wrap while numeric interval stays intact (word joiners); screenshot
+and DOM checks PASS. EN translation checked statically/i18n, not new EN browser run.
+Commands: .venv/Scripts/python.exe output/timeline-flat-pagination-20261111/runtime.py;
+.venv/Scripts/python.exe output/timeline-flat-pagination-20261111/build.py (Node presentation9,
+npm run build:types/i18n/app/widget PASS; npm run check:bundle PASS). Final build repeated
+after numeric-range wrap correction. Browser selector timeout during account language
+selection recovered after fresh state; no assertion was weakened. Logs/screenshots in output.
+No backend/API/schema/permission/notification/BusinessEvent/AI/provider changes; no workingDB
+mutation. No full/backend gate for this local component. Test runtimes stopped.
+Frontend contract/existing evidence updated; roadmap/passport/README/other contracts unchanged:
+no domain/setup/roadmap impact. React/Taste/AntiSlop review scoped to accepted component.
+No scoped code/local-verification remainder. Fetch0remote-only/29outgoing at9d9b7a0d;
+foreign range not authorized to publish. Own local commit only; no push/newCI/deployment.

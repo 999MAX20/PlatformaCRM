@@ -1,4 +1,5 @@
 export const timeline: Record<string, string> = {
+  "timeline.compactRange": "{from}–{to} of {total}",
   "timeline.chooseDate": "Choose date",
   "timeline.eventType.client_created": "Client created",
   "timeline.eventType.client_updated": "Client updated",
