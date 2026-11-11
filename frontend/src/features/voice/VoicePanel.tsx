@@ -18,11 +18,11 @@ import type { Id } from "../../types";
 import { voiceCardContext } from "./context";
 import { speechFailure } from "./speechFailure";
 
-export function VoicePanel({ userId, status, currentEntity, currentBranch }: { userId: Id; status: SpeechStatus; currentEntity?: ReturnType<typeof voiceCardContext>; currentBranch?: number }) {
+export function VoicePanel({ userId, status, currentEntity, currentBranch, initialConversation }: { userId: Id; status: SpeechStatus; currentEntity?: ReturnType<typeof voiceCardContext>; currentBranch?: number; initialConversation?: string }) {
   const { t } = useI18n(); const { user } = useAuth();
   const { preferences } = useVoicePreferences(userId);
   const recorder = useVoiceRecorder();
-  const chat = useVoiceConversation(userId, status.business);
+  const chat = useVoiceConversation(userId, status.business, initialConversation);
   const [draft, setDraft] = useState(false);
   const [recorded, setRecorded] = useState<Blob | null>(null);
   const [unsent, setUnsent] = useState<string | null>(null);

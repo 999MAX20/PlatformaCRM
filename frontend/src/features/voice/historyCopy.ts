@@ -3,3 +3,8 @@ export const historyCopy = {
   kk: { search: "Сұрау атауы бойынша іздеу", status: "Күй", all: "Барлық күйлер", from: "Басталу күні", to: "Аяқталу күні", reset: "Сүзгілерді тазалау", empty: "Сұраулар табылмады", original: "Бастапқы сұрау", result: "Сұрау нәтижесі", loading: "Бүкіл тарихтан іздеу…", dates: "Аяқталу күні басталу күнінен ерте болмауы керек", progress: "Орындалған қадамдар", pending: "Әрекет көмекшіде растауды күтуде.", clarification: "Жалғастыру үшін сұрауды нақтылау қажет.", noActions: "Бұл жауапта орындалған CRM әрекеттері жоқ." },
   en: { search: "Search request titles", status: "Status", all: "All statuses", from: "From date", to: "To date", reset: "Reset filters", empty: "No matching requests", original: "Original request", result: "Request result", loading: "Searching all history…", dates: "End date must not precede start date", progress: "Steps completed", pending: "This action awaits confirmation in the assistant.", clarification: "Clarify the request to continue.", noActions: "This response has no executed CRM actions." },
 };
+export const historyActions = {
+  ru: { newRequest: "Новый запрос", open: "Открыть в помощнике" },
+  kk: { newRequest: "Жаңа сұрау", open: "Көмекшіде ашу" },
+  en: { newRequest: "New request", open: "Open in assistant" },
+};

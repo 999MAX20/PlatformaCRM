@@ -13,7 +13,8 @@ import { usePageHeader } from "../../components/layout/PageHeaderContext";
 import { VoiceTurnResult } from "./VoiceTurnResult";
 import { Input } from "../../components/ui/Input";
 import { Select } from "../../components/ui/Select";
-import { historyCopy } from "./historyCopy";
+import { historyActions, historyCopy } from "./historyCopy";
+import { VoiceAssistantTrigger } from "./VoiceAssistantTrigger";
 import { reviewValue } from "../assistant/reviewValue";
 import { DatePickerPanel, isCalendarDate } from "../../components/ui/DateRangePicker";
 
@@ -80,6 +81,7 @@ export default function VoiceHistoryPage() {
         closeCalendar();
       }} onClose={closeCalendar} />}
       {filtered && <Button variant="ghost" onClick={() => setParams({})}>{copy.reset}</Button>}
+      <div className="col-span-2 sm:ml-auto"><VoiceAssistantTrigger label={historyActions[language].newRequest} initialConversation="" /></div>
     </div>
     {invalidDates && <p role="alert" className="text-sm text-platforma-danger">{copy.dates}</p>}
     <div className="grid min-w-0 items-start gap-5 lg:grid-cols-[minmax(260px,360px)_minmax(0,1fr)]">
@@ -100,7 +102,7 @@ export default function VoiceHistoryPage() {
             className={`platforma-focus-ring block space-y-1 rounded-control px-3 py-3 ${selected === thread.id ? "bg-surface-muted" : "hover:bg-surface-muted"}`}>
             <span className="line-clamp-2 break-words text-sm font-medium">{thread.title || t("voice.request")}</span>
             <span className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-platforma-subtle"><time dateTime={thread.updated_at}>{date(thread.updated_at)}</time>
-              <span>{thread.status === "empty" ? t("voice.noResult") : t(`agentChat.status.${thread.status}`)}</span></span>
+              <span className={thread.status === "clarifying" ? "rounded-control bg-amber-50 px-2 py-0.5 text-platforma-warning" : undefined}>{thread.status === "empty" ? t("voice.noResult") : t(`agentChat.status.${thread.status}`)}</span></span>
           </Link></li>)}
         </ul>
         </div>
@@ -114,10 +116,10 @@ export default function VoiceHistoryPage() {
           {detail.hasNextPage && <Button variant="secondary" disabled={detail.isFetchingNextPage} onClick={() => detail.fetchNextPage()}>{t("voice.earlierMessages")}</Button>}
           {turns.map(turn => <article key={turn.id} className="space-y-4 rounded-card border border-platforma-border bg-surface-card p-4 sm:p-5">
             <header className="flex flex-wrap items-center justify-between gap-2 text-xs text-platforma-subtle">
-              <time dateTime={turn.created_at}>{date(turn.created_at)}</time><span>{t(`agentChat.status.${turn.status}`)}</span>
+              <time dateTime={turn.created_at}>{date(turn.created_at)}</time><span className={turn.status === "clarifying" ? "rounded-control bg-amber-50 px-2 py-1 text-platforma-warning ring-1 ring-platforma-warning/[0.24]" : undefined}>{t(`agentChat.status.${turn.status}`)}</span>
             </header>
             <h2 className="text-lg font-semibold">{copy.result}</h2>
-            <div className="rounded-control border border-platforma-border bg-surface-muted p-4">
+            <div className={`rounded-control border p-4 ${turn.status === "clarifying" ? "border-platforma-warning/[0.22] bg-amber-50" : "border-platforma-border bg-surface-muted"}`}>
               <VoiceTurnResult turn={{ ...turn, actions: turn.actions.map(action => action.tool_name === "crm_schedule" ? action : {
                 ...action, input_json: { ...action.input_json,
                   ...Object.fromEntries((["values", "before"] as const).map(side => [side,
@@ -132,6 +134,7 @@ export default function VoiceHistoryPage() {
                 {turn.status === "completed" && !turn.actions.some(action => action.status === "executed") && <p>{copy.noActions}</p>}
               </div>}
             </div>
+            {!turn.redacted && <VoiceAssistantTrigger label={historyActions[language].open} initialConversation={selected} />}
             {!turn.redacted && <section className="space-y-3 border-t border-platforma-border pt-4">
               <h3 className="text-base font-semibold">{copy.original}</h3>
               <p className="whitespace-pre-wrap break-words text-sm leading-6">{turn.message}</p>

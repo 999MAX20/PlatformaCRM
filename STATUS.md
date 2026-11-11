@@ -2011,6 +2011,8 @@ No workingDB/deploy; locally verified change set, push blocked by28foreign outgo
 Evidence: docs/testing/evidence/voice-identity-20261111.md; output/voice-identity-20261111.
 
 VOICE-HISTORY-20261112: requested history UI implemented and locally verified.
+Latest follow-up: new/resume assistant buttons and yellow clarification state added;
+Playwright selected/new/header/keyboard/locales/mobile PASS, zero mutation requests.
 Owner follow-up: shared date-range calendar and untruncated statuses implemented;
 Playwright range apply/cancel/clear and RU/KK/EN320/1440 +build PASS.
 Title search, status/business-timezone date filters, full-list pagination search,

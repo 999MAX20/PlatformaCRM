@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useLocation } from "react-router";
 import { useQuery } from "@tanstack/react-query";
@@ -16,15 +16,16 @@ import type { Id } from "../../types";
 import { voiceBranchContext, voiceCardContext } from "./context";
 
 const VoicePanel = lazy(() => import("./VoicePanel").then(module => ({ default: module.VoicePanel })));
-export function VoiceAssistantTrigger({ currentEntity }: { currentEntity?: ReturnType<typeof voiceCardContext> } = {}) {
+export function VoiceAssistantTrigger({ currentEntity, label, initialConversation }: { currentEntity?: ReturnType<typeof voiceCardContext>; label?: string; initialConversation?: string } = {}) {
   const { user } = useAuth(); const { business } = useActiveBusiness(); const location = useLocation();
   if (!user || !business || !hasPermission(user, business.id, "ai_assistant", "suggest")) return null;
   const reference = currentEntity || voiceCardContext(location.pathname, location.search);
   const card = JSON.stringify(reference);
   const branch = voiceBranchContext(location.pathname, location.search);
-  return <ScopedTrigger key={`${user.id}:${business.id}:${location.pathname}:${card}:${branch}`} userId={user.id} businessId={business.id} currentEntity={reference} currentBranch={branch} />;
+  return <ScopedTrigger key={`${user.id}:${business.id}:${location.pathname}:${card}:${branch}:${initialConversation ?? "resume"}`} userId={user.id} businessId={business.id} currentEntity={reference} currentBranch={branch} label={label} initialConversation={initialConversation} />;
 }
-function ScopedTrigger({ userId, businessId, currentEntity, currentBranch }: { userId: Id; businessId: Id; currentEntity?: ReturnType<typeof voiceCardContext>; currentBranch?: number }) {
+function ScopedTrigger({ userId, businessId, currentEntity, currentBranch, label, initialConversation }: { userId: Id; businessId: Id; currentEntity?: ReturnType<typeof voiceCardContext>; currentBranch?: number; label?: string; initialConversation?: string }) {
+  const panelId = useId();
   const { t } = useI18n(); const { preferences } = useVoicePreferences(userId); const [open, setOpen] = useState(false);
   const button = useRef<HTMLButtonElement>(null); const panel = useRef<HTMLDivElement>(null);
   const status = useQuery({ queryKey: ["voice-status", userId, businessId], queryFn: () => speechApi.status(businessId), enabled: open, retry: false, staleTime: 0 });
@@ -42,16 +43,16 @@ function ScopedTrigger({ userId, businessId, currentEntity, currentBranch }: { u
     document.addEventListener("keydown", escape);
     return () => { document.removeEventListener("pointerdown", outside); document.removeEventListener("keydown", escape); };
   }, [open]);
-  if (!preferences.visible) return null;
-  return <><Button ref={button} variant="ghost" size="icon" aria-label={t("voice.title")} aria-expanded={open} aria-controls={open ? "voice-panel" : undefined}
-    onClick={() => setOpen(value => !value)}><Mic size={20} aria-hidden="true" /></Button>
-    {open && createPortal(<PopoverSurface ref={panel} id="voice-panel" role="dialog" aria-label={t("voice.title")} tabIndex={-1}
+  if (!preferences.visible && !label) return null;
+  return <><Button ref={button} variant={label ? "primary" : "ghost"} size={label ? "md" : "icon"} aria-label={label || t("voice.title")} aria-expanded={open} aria-controls={open ? panelId : undefined}
+    onClick={() => setOpen(value => !value)}><Mic size={20} aria-hidden="true" />{label}</Button>
+    {open && createPortal(<PopoverSurface ref={panel} id={panelId} role="dialog" aria-label={t("voice.title")} tabIndex={-1}
       className="fixed inset-x-2 top-16 z-[80] max-h-[calc(100dvh-5rem)] overflow-y-auto bg-surface-card p-4 shadow-premium sm:left-auto sm:right-4 sm:w-[400px]"
       onKeyDown={event => { if (event.key === "Escape" && !event.defaultPrevented) { event.preventDefault(); event.stopPropagation(); close(); } }}>
       <header className="mb-2 flex items-center justify-between gap-3"><h2 className="text-sm font-medium">{t("voice.title")}</h2>
         <Button size="icon" variant="ghost" aria-label={t("common.close")} onClick={close}><X size={18} aria-hidden="true" /></Button></header>
       {status.isLoading && <LoadingState />}
       {status.error && <ErrorState error={status.error} action={<Button onClick={() => status.refetch()}>{t("common.retry")}</Button>} />}
-      {!status.isError && status.data && <Suspense fallback={<LoadingState />}><VoicePanel key={status.data.business} userId={userId} status={status.data} currentEntity={currentEntity} currentBranch={currentBranch} /></Suspense>}
+      {!status.isError && status.data && <Suspense fallback={<LoadingState />}><VoicePanel key={status.data.business} userId={userId} status={status.data} currentEntity={currentEntity} currentBranch={currentBranch} initialConversation={initialConversation} /></Suspense>}
     </PopoverSurface>, button.current?.closest('[role="dialog"][aria-modal="true"]') || document.body)}</>;
 }

@@ -12973,6 +12973,11 @@ Evidence: docs/testing/evidence/ai-work-crm-complex-20261112.md.
 Commands/logs/snapshots/hashes/attempts: output/playwright/ai-work-crm-complex/CHECKPOINT.md.
 
 VOICE-HISTORY-20261112: user requested completion against supplied image.
+Latest scope: new request + open selected in assistant; yellow clarifying state.
+Optional initialConversation preserves default header resume; opening does not execute.
+Playwright actual selected/new/header/Enter/Escape/RU-KK-EN/mobile PASS, zero mutations.
+Evidence/logs: voice-workflows history section; check-actions.js, actions-browser.log,
+check-action-locales.js, action-locales.log, actions-build-final.log, actions-final.png.
 Follow-up: two date inputs replaced by shared DatePickerPanel; selected/menu status
 labels fully wrap. Scoped Playwright range apply/cancel/clear/Escape, RU/KK/EN320/1440
 and completion build PASS. Scripts/logs: check-period.js, period-browser.log,

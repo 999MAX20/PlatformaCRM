@@ -3,9 +3,13 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { aiConversationsApi, type AgentTurn } from "../../api/aiConversations";
 import type { Id } from "../../types";
 
-export function useVoiceConversation(userId: Id, businessId: Id) {
+export function useVoiceConversation(userId: Id, businessId: Id, initialConversation?: string) {
   const storageKey = `voice-thread:v2:${userId}:${businessId}`;
-  const [selected, setSelected] = useState(() => { try { return sessionStorage.getItem(storageKey) || ""; } catch { return ""; } });
+  const [selected, setSelected] = useState(() => { if (initialConversation !== undefined) return initialConversation; try { return sessionStorage.getItem(storageKey) || ""; } catch { return ""; } });
+  useEffect(() => {
+    if (initialConversation === undefined) return;
+    try { if (initialConversation) sessionStorage.setItem(storageKey, initialConversation); else sessionStorage.removeItem(storageKey); } catch { /* Session storage is optional. */ }
+  }, [initialConversation, storageKey]);
   const selectedRef = useRef(selected);
   const alive = useRef(true);
   useEffect(() => { alive.current = true; return () => { alive.current = false; }; }, []);
