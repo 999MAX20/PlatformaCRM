@@ -1,5 +1,6 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
+import { CalendarDays } from "lucide-react";
 import { Link, useSearchParams } from "react-router";
 import { aiConversationsApi } from "../../api/aiConversations";
 import { Button } from "../../components/ui/Button";
@@ -14,6 +15,7 @@ import { Input } from "../../components/ui/Input";
 import { Select } from "../../components/ui/Select";
 import { historyCopy } from "./historyCopy";
 import { reviewValue } from "../assistant/reviewValue";
+import { DatePickerPanel, isCalendarDate } from "../../components/ui/DateRangePicker";
 
 export default function VoiceHistoryPage() {
   const { user } = useAuth(); const { business } = useActiveBusiness(); const { t, language } = useI18n();
@@ -23,6 +25,11 @@ export default function VoiceHistoryPage() {
   const copy = historyCopy[language];
   const search = params.get("search") || ""; const status = params.get("status") || "";
   const from = params.get("from") || ""; const to = params.get("to") || "";
+  const calendarAnchor = useRef<HTMLButtonElement>(null);
+  const [calendarOpen, setCalendarOpen] = useState(false);
+  const closeCalendar = (restore = true) => { setCalendarOpen(false); if (restore) calendarAnchor.current?.focus(); };
+  const periodDate = (value: string) => isCalendarDate(value) ? new Intl.DateTimeFormat(language, { day: "numeric", month: "numeric", year: "numeric", timeZone: "UTC" }).format(new Date(`${value}T12:00:00Z`)) : value;
+  const periodLabel = from && to ? `${periodDate(from)} – ${periodDate(to)}` : from ? `${copy.from} ${periodDate(from)}` : to ? `${copy.to} ${periodDate(to)}` : t("timeline.chooseDate");
   const filtered = Boolean(search || status || from || to);
   const invalidDates = Boolean(from && to && from > to);
   function filter(key: string, value: string) {
@@ -60,12 +67,18 @@ export default function VoiceHistoryPage() {
     <h1 className="sr-only">{t("voice.history")}</h1>
     <div className="grid grid-cols-2 items-end gap-3 sm:flex sm:flex-wrap">
       <div className="col-span-2 min-w-0 sm:w-[var(--global-search-width,480px)]"><Input label={copy.search} type="search" value={search} onChange={event => filter("search", event.target.value)} /></div>
-      <div className="col-span-2 min-w-0">
-      <Select label={copy.status} value={status} onChange={event => filter("status", event.target.value)} options={[
+      <div className="col-span-2 min-w-0 sm:w-72">
+      <Select label={copy.status} portal className="h-auto min-h-11 py-2 [&>span]:whitespace-normal [&>span]:overflow-visible [&>span]:text-left" value={status} onChange={event => filter("status", event.target.value)} options={[
         { value: "", label: copy.all }, ...["preparing", "clarifying", "awaiting_confirmation", "executing", "completed", "failed", "cancelled", "superseded", "empty"].map(value => ({ value, label: t(value === "empty" ? "voice.noResult" : `agentChat.status.${value}`) }))]} />
       </div>
-      <Input label={copy.from} type="date" value={from} onChange={event => filter("from", event.target.value)} />
-      <Input label={copy.to} type="date" value={to} onChange={event => filter("to", event.target.value)} />
+      <Button ref={calendarAnchor} data-calendar-trigger type="button" variant="secondary" className="col-span-2 min-h-11 min-w-0 max-w-full" aria-label={t("timeline.chooseDate")} aria-haspopup="dialog" aria-expanded={calendarOpen} onClick={() => setCalendarOpen(value => !value)}>
+        <CalendarDays size={17} className="shrink-0" /><span className="whitespace-normal">{periodLabel}</span>
+      </Button>
+      {calendarOpen && <DatePickerPanel anchor={calendarAnchor} label={t("timeline.chooseDate")} value={{ from, to }} today={dateInTimeZone(new Date(), business?.timezone || "UTC")} allowClear onApply={range => {
+        setParams(previous => { const next = new URLSearchParams(previous); next.delete("conversation");
+          for (const key of ["from", "to"] as const) { if (range[key]) next.set(key, range[key]); else next.delete(key); } return next; }, { replace: true });
+        closeCalendar();
+      }} onClose={closeCalendar} />}
       {filtered && <Button variant="ghost" onClick={() => setParams({})}>{copy.reset}</Button>}
     </div>
     {invalidDates && <p role="alert" className="text-sm text-platforma-danger">{copy.dates}</p>}

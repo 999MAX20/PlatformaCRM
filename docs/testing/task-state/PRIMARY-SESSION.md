@@ -12973,6 +12973,10 @@ Evidence: docs/testing/evidence/ai-work-crm-complex-20261112.md.
 Commands/logs/snapshots/hashes/attempts: output/playwright/ai-work-crm-complex/CHECKPOINT.md.
 
 VOICE-HISTORY-20261112: user requested completion against supplied image.
+Follow-up: two date inputs replaced by shared DatePickerPanel; selected/menu status
+labels fully wrap. Scoped Playwright range apply/cancel/clear/Escape, RU/KK/EN320/1440
+and completion build PASS. Scripts/logs: check-period.js, period-browser.log,
+period-build.log. Reference comparison image: period-reference-comparison.png.
 Canonical PlatformaCRM; existing codex/ui-testing-toolkit; initial HEAD1fa364b0.
 Own code: VoiceHistoryPage.tsx and historyCopy.ts. No shell/backend/DB changes.
 Search titles, status/date URL filters; fetch remaining authorized pages for filters;
