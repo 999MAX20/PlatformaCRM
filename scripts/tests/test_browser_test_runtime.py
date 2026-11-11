@@ -33,6 +33,9 @@ class BrowserRuntimeTests(unittest.TestCase):
         self.assertEqual(env["DJANGO_SETTINGS_MODULE"], "config.settings")
         self.assertEqual(Path(env["MEDIA_ROOT"]), self.directory / "media")
         self.assertEqual(env["CONNECTOR_CREDENTIAL_KEYS"], browser_environment(self.env)["CONNECTOR_CREDENTIAL_KEYS"])
+        for name in ("AUTH_REFRESH_COOKIE_NAME", "CSRF_COOKIE_NAME", "SESSION_COOKIE_NAME"):
+            self.assertEqual(env[name], self.env[name])
+            self.assertEqual(browser_environment({**self.env, name: "working-cookie"})[name], env[name])
 
     def test_dotenv_and_external_network_disabled_before_django(self):
         code = '''
@@ -53,11 +56,19 @@ for method in ("connect", "connect_ex"):
             pass
         else:
             raise AssertionError("external network allowed")
-print(json.dumps({"database": settings.DATABASES["default"]["NAME"]}))
+print(json.dumps({"database": settings.DATABASES["default"]["NAME"],
+    "cookies": {key: getattr(settings, key) for key in (
+        "AUTH_REFRESH_COOKIE_NAME", "CSRF_COOKIE_NAME", "SESSION_COOKIE_NAME")},
+    "access_seconds": settings.SIMPLE_JWT["ACCESS_TOKEN_LIFETIME"].total_seconds(),
+    "refresh_seconds": settings.SIMPLE_JWT["REFRESH_TOKEN_LIFETIME"].total_seconds()}))
 '''
         result = subprocess.run([sys.executable, "-c", code], cwd=ROOT, env=self.env, capture_output=True, text=True)
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(Path(json.loads(result.stdout.strip().splitlines()[-1])["database"]), self.directory / "gate.sqlite3")
+        data = json.loads(result.stdout.strip().splitlines()[-1])
+        self.assertEqual(data["cookies"], {key: self.env[key] for key in data["cookies"]})
+        self.assertEqual(data["access_seconds"], 15 * 60)
+        self.assertEqual(data["refresh_seconds"], 7 * 24 * 60 * 60)
 
     def test_direct_python_entrypoints_refuse_ordinary_database(self):
         for entry in ("scripts/browser_test_runtime.py", "frontend/e2e/serve-isolated.py"):

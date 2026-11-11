@@ -1,3 +1,4 @@
+from django.conf import settings
 from datetime import timedelta
 
 import pyotp
@@ -177,7 +178,7 @@ class PrivilegedMfaTests(TestCase):
 
     def test_legacy_privileged_refresh_without_mfa_claim_is_rejected(self):
         raw_refresh = str(RefreshToken.for_user(self.owner))
-        self.client.cookies["zani_refresh"] = raw_refresh
+        self.client.cookies[settings.AUTH_REFRESH_COOKIE_NAME] = raw_refresh
 
         response = self.client.post("/api/auth/token/refresh/", {}, format="json")
 
@@ -319,7 +320,7 @@ class PrivilegedMfaTests(TestCase):
             format="json",
         )
         self.assertEqual(changed.status_code, 200)
-        replacement = RefreshToken(changed.cookies["zani_refresh"].value)
+        replacement = RefreshToken(changed.cookies[settings.AUTH_REFRESH_COOKIE_NAME].value)
         self.assertTrue(replacement["mfa_verified"])
         self.owner.refresh_from_db()
         self.assertTrue(self.owner.check_password(new_password))

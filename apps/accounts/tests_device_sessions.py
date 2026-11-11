@@ -1,3 +1,4 @@
+from django.conf import settings
 from datetime import timedelta
 from unittest.mock import patch
 from uuid import uuid4
@@ -26,7 +27,7 @@ class DeviceSessionTests(TestCase):
         response = client.post("/api/auth/token/", {"email": (user or self.user).email, "password": self.password}, HTTP_USER_AGENT=agent, REMOTE_ADDR="192.0.2.10")
         self.assertEqual(response.status_code, 200, response.data)
         client.credentials(HTTP_AUTHORIZATION=f"Bearer {response.data['access']}")
-        raw = response.cookies["zani_refresh"].value
+        raw = response.cookies[settings.AUTH_REFRESH_COOKIE_NAME].value
         return client, raw, RefreshToken(raw)["sid"]
 
     def revoke(self, client, sid, **data):
@@ -76,7 +77,7 @@ class DeviceSessionTests(TestCase):
         second.credentials()
         response = second.post("/api/auth/token/refresh/", {})
         self.assertEqual(response.status_code, 200)
-        raw = response.cookies["zani_refresh"].value
+        raw = response.cookies[settings.AUTH_REFRESH_COOKIE_NAME].value
         self.assertEqual(RefreshToken(raw)["sid"], sid)
         self.assertNotEqual(raw, old_raw)
         self.assertEqual(AccountSession.objects.count(), 2)

@@ -1,3 +1,4 @@
+import { refreshCookieName } from "./support/auth-cookies";
 import { expect, test } from "@playwright/test";
 import { crmSession } from "./support/crm-workspace";
 
@@ -18,7 +19,7 @@ for (const language of ["ru", "kk", "en"]) for (const failure of ["503", "networ
     const notice = page.getByTestId("logout-status");
     await expect(notice).toContainText({ ru: "Не удалось завершить выход", kk: "Шығу аяқталмады", en: "Sign-out could not be completed" }[language]!);
     await expect(page).toHaveURL(/\/app\/account/);
-    expect((await context.cookies()).some(c => c.name === "zani_refresh")).toBe(true);
+    expect((await context.cookies()).some(c => c.name === refreshCookieName)).toBe(true);
     await expect(notice.getByRole("button")).toBeVisible();
     await page.screenshot({ path: testInfo.outputPath("logout-failure.png") });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
@@ -32,7 +33,7 @@ for (const language of ["ru", "kk", "en"]) for (const failure of ["503", "networ
     await notice.getByRole("button").focus();
     await page.keyboard.press("Enter");
     await expect(page).toHaveURL(/\/login/);
-    expect((await context.cookies()).some(c => c.name === "zani_refresh")).toBe(false);
+    expect((await context.cookies()).some(c => c.name === refreshCookieName)).toBe(false);
     expect(await page.evaluate(() => localStorage.getItem("ai_smb_user_email"))).toBeNull();
     await page.reload();
     await expect(page.locator('form input[type="password"]')).toBeVisible();

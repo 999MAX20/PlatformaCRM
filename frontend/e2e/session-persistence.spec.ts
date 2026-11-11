@@ -1,3 +1,4 @@
+import { refreshCookieName } from "./support/auth-cookies";
 import { expect, test, type Page } from "@playwright/test";
 import { crmSession } from "./support/crm-workspace";
 
@@ -40,7 +41,7 @@ test("two tabs rotate a shared cookie without overlapping requests or clearing i
   await sibling.reload();
   await expect(page.getByTestId("header-account-link")).toBeVisible();
   await expect(sibling.getByTestId("header-account-link")).toBeVisible();
-  expect((await context.cookies()).find(cookie => cookie.name === "zani_refresh")?.httpOnly).toBe(true);
+  expect((await context.cookies()).find(cookie => cookie.name === refreshCookieName)?.httpOnly).toBe(true);
 });
 
 for (const failure of [503, 429, "offline"] as const) test(`refresh ${failure} keeps the account and unsaved form, then recovers`, async ({ page }) => {
@@ -70,12 +71,12 @@ for (const failure of [503, 429, "offline"] as const) test(`refresh ${failure} k
 test("a temporary startup failure preserves the cookie and restores the original route", async ({ page, context }) => {
   await crmSession(page);
   await refresh(page);
-  const before = (await context.cookies()).find(cookie => cookie.name === "zani_refresh")!;
+  const before = (await context.cookies()).find(cookie => cookie.name === refreshCookieName)!;
   await page.route("**/api/auth/token/refresh/", route => route.fulfill({ status: 503, json: { detail: "Unavailable" } }));
   await page.goto("/app/deals?status=all");
   await expect(page.getByTestId("session-recovery")).toBeVisible();
   expect(new URL(page.url()).pathname).toBe("/app/deals");
-  expect((await context.cookies()).find(cookie => cookie.name === "zani_refresh")?.value).toBe(before.value);
+  expect((await context.cookies()).find(cookie => cookie.name === refreshCookieName)?.value).toBe(before.value);
   await page.unroute("**/api/auth/token/refresh/");
   await page.getByTestId("session-recovery").getByRole("button", { name: "Повторить" }).click();
   await expect(page.getByTestId("header-account-link")).toBeVisible();

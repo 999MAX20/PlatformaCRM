@@ -1,3 +1,4 @@
+from django.conf import settings
 from datetime import timedelta
 
 from django.core.cache import cache
@@ -21,7 +22,7 @@ class PersistentSessionTests(TestCase):
         response = client.post("/api/auth/token/", {"email": self.user.email, "password": "StrongPass123!"})
         self.assertEqual(response.status_code, 200, response.data)
         client.credentials(HTTP_AUTHORIZATION=f"Bearer {response.data['access']}")
-        raw = response.cookies["zani_refresh"].value
+        raw = response.cookies[settings.AUTH_REFRESH_COOKIE_NAME].value
         session = AccountSession.objects.get(pk=RefreshToken(raw)["sid"])
         return client, raw, session
 
@@ -37,8 +38,8 @@ class PersistentSessionTests(TestCase):
         session.refresh_from_db()
         self.assertEqual(session.last_seen_at, last_seen)
         self.assertEqual(int(session.expires_at.timestamp()), int(deadline.timestamp()))
-        self.assertEqual(RefreshToken(response.cookies["zani_refresh"].value)["exp"], int(deadline.timestamp()))
-        self.assertLessEqual(response.cookies["zani_refresh"]["max-age"], 24 * 3600)
+        self.assertEqual(RefreshToken(response.cookies[settings.AUTH_REFRESH_COOKIE_NAME].value)["exp"], int(deadline.timestamp()))
+        self.assertLessEqual(response.cookies[settings.AUTH_REFRESH_COOKIE_NAME]["max-age"], 24 * 3600)
 
     def test_foreground_activity_renews_idle_but_not_absolute_deadline(self):
         client, _, session = self.login()
@@ -96,7 +97,7 @@ class PersistentSessionTests(TestCase):
         self.assertEqual(first.status_code, 200)
         second = client.post("/api/auth/token/refresh/", {"refresh": old})
         self.assertEqual(second.status_code, 401)
-        self.assertNotIn("zani_refresh", second.cookies)
+        self.assertNotIn(settings.AUTH_REFRESH_COOKIE_NAME, second.cookies)
         self.assertEqual(client.post("/api/auth/token/refresh/", {}).status_code, 200)
 
     def test_legacy_adoption_preserves_original_absolute_login_time(self):
@@ -106,7 +107,7 @@ class PersistentSessionTests(TestCase):
         client = APIClient()
         response = client.post("/api/auth/token/refresh/", {"refresh": str(refresh), "activity": True}, format="json")
         self.assertEqual(response.status_code, 200, response.data)
-        adopted = RefreshToken(response.cookies["zani_refresh"].value)
+        adopted = RefreshToken(response.cookies[settings.AUTH_REFRESH_COOKIE_NAME].value)
         self.assertEqual(adopted["exp"], refresh["auth_time"] + 30 * 86400)
         session = AccountSession.objects.get(pk=adopted["sid"])
         self.assertEqual(int(session.created_at.timestamp()), refresh["auth_time"])
@@ -117,7 +118,7 @@ class PersistentSessionTests(TestCase):
         refresh["auth_time"] = int((timezone.now() - timedelta(days=31)).timestamp())
         response = APIClient().post("/api/auth/token/refresh/", {"refresh": str(refresh), "activity": True}, format="json")
         self.assertEqual(response.status_code, 401)
-        self.assertNotIn("zani_refresh", response.cookies)
+        self.assertNotIn(settings.AUTH_REFRESH_COOKIE_NAME, response.cookies)
 
     def test_deactivated_account_cannot_renew_foreground_activity(self):
         client, _, session = self.login()

@@ -1,3 +1,12 @@
+TEST-SESSION-ISOLATION-20261112: reproduced and fixed cross-port test-cookie collision.
+Per-disposableDB refresh/CSRF/session names; ordinary defaults/lifetimes unchanged.
+RealHTTP before401/after3coexisting sessionsPASS;84backend/system/drift/runtime/NodePASS.
+25distinct browser scenariosPASS across batches; stale-test/429/startup failures retained.
+Own runtimes stopped; workingDB/browser/env untouched. Own local commit only;
+54foreign/mixed outgoing block own-only push/newCI. Evidence:
+docs/testing/evidence/test-session-isolation-20261112.md.
+Checkpoint: output/test-session-isolation-20261112/CHECKPOINT.md.
+
 MANAGEMENT-BOOKING-20261112: manual/AI booking integration locally verified.
 Management terms, staff eligibility, rooms, schedules/absence, transfer/rollback PASS.
 Fixed text-AI specialist references exposing physical/retired/archived resources.

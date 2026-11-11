@@ -1,3 +1,4 @@
+from django.conf import settings
 import re
 from datetime import timedelta
 from io import StringIO
@@ -49,7 +50,7 @@ class AuthSecurityBaselineTests(TestCase):
 
     def refresh_with(self, raw_token):
         client = APIClient()
-        client.cookies["zani_refresh"] = raw_token
+        client.cookies[settings.AUTH_REFRESH_COOKIE_NAME] = raw_token
         return client.post("/api/auth/token/refresh/", {}, format="json")
 
     def access_status(self, raw_token):
@@ -67,10 +68,10 @@ class AuthSecurityBaselineTests(TestCase):
         self.assertEqual(login_response.status_code, 200)
         self.assertIn("access", login_response.data)
         self.assertNotIn("refresh", login_response.data)
-        self.assertIn("zani_refresh", login_response.cookies)
-        self.assertTrue(login_response.cookies["zani_refresh"]["httponly"])
+        self.assertIn(settings.AUTH_REFRESH_COOKIE_NAME, login_response.cookies)
+        self.assertTrue(login_response.cookies[settings.AUTH_REFRESH_COOKIE_NAME]["httponly"])
 
-        old_refresh = login_response.cookies["zani_refresh"].value
+        old_refresh = login_response.cookies[settings.AUTH_REFRESH_COOKIE_NAME].value
         login_event = LoginHistory.objects.filter(user=self.user).latest("created_at")
         self.assertEqual(login_event.metadata, {"event": "login", "outcome": LoginHistory.Statuses.SUCCESS})
         self.assertNotIn("StrongPass123", str(login_event.metadata))
@@ -80,20 +81,20 @@ class AuthSecurityBaselineTests(TestCase):
         self.assertEqual(refresh_response.status_code, 200)
         self.assertIn("access", refresh_response.data)
         self.assertNotIn("refresh", refresh_response.data)
-        self.assertIn("zani_refresh", refresh_response.cookies)
-        self.assertNotEqual(refresh_response.cookies["zani_refresh"].value, old_refresh)
+        self.assertIn(settings.AUTH_REFRESH_COOKIE_NAME, refresh_response.cookies)
+        self.assertNotEqual(refresh_response.cookies[settings.AUTH_REFRESH_COOKIE_NAME].value, old_refresh)
 
         reused_refresh_response = self.refresh_with(old_refresh)
 
         self.assertEqual(reused_refresh_response.status_code, 401)
         self.assertEqual(reused_refresh_response.data["detail"], "Session expired or invalid.")
         self.assertNotIn(old_refresh, str(reused_refresh_response.data))
-        self.assertNotIn("zani_refresh", reused_refresh_response.cookies)
+        self.assertNotIn(settings.AUTH_REFRESH_COOKIE_NAME, reused_refresh_response.cookies)
 
     def test_refresh_cookie_restores_session_and_logout_revokes_it(self):
         login_response = self.login()
         self.assertEqual(login_response.status_code, 200)
-        raw_refresh = login_response.cookies["zani_refresh"].value
+        raw_refresh = login_response.cookies[settings.AUTH_REFRESH_COOKIE_NAME].value
         refresh_jti = RefreshToken(raw_refresh)["jti"]
 
         refresh_response = self.api.post("/api/auth/token/refresh/", {}, format="json")
@@ -101,8 +102,8 @@ class AuthSecurityBaselineTests(TestCase):
         self.assertEqual(refresh_response.status_code, 200)
         self.assertIn("access", refresh_response.data)
         self.assertNotIn("refresh", refresh_response.data)
-        self.assertIn("zani_refresh", refresh_response.cookies)
-        active_refresh = refresh_response.cookies["zani_refresh"].value
+        self.assertIn(settings.AUTH_REFRESH_COOKIE_NAME, refresh_response.cookies)
+        active_refresh = refresh_response.cookies[settings.AUTH_REFRESH_COOKIE_NAME].value
         active_jti = RefreshToken(active_refresh)["jti"]
         active_access = refresh_response.data["access"]
         self.assertEqual(self.access_status(active_access), 200)
@@ -110,7 +111,7 @@ class AuthSecurityBaselineTests(TestCase):
         logout_response = self.api.post("/api/auth/logout/", {}, format="json")
 
         self.assertEqual(logout_response.status_code, 200)
-        self.assertEqual(logout_response.cookies["zani_refresh"]["max-age"], 0)
+        self.assertEqual(logout_response.cookies[settings.AUTH_REFRESH_COOKIE_NAME]["max-age"], 0)
         self.assertTrue(BlacklistedToken.objects.filter(token__jti=refresh_jti).exists())
         self.assertTrue(BlacklistedToken.objects.filter(token__jti=active_jti).exists())
         self.assertEqual(self.refresh_with(active_refresh).status_code, 401)
@@ -120,18 +121,18 @@ class AuthSecurityBaselineTests(TestCase):
         self.assertNotIn(active_refresh, str(event.metadata))
 
     def test_logout_is_idempotent_for_invalid_or_already_revoked_tokens(self):
-        self.api.cookies["zani_refresh"] = "not-a-token"
+        self.api.cookies[settings.AUTH_REFRESH_COOKIE_NAME] = "not-a-token"
         invalid_response = self.api.post("/api/auth/logout/", {}, format="json")
         self.assertEqual(invalid_response.status_code, 200)
-        self.assertEqual(invalid_response.cookies["zani_refresh"]["max-age"], 0)
+        self.assertEqual(invalid_response.cookies[settings.AUTH_REFRESH_COOKIE_NAME]["max-age"], 0)
 
         login_response = self.login()
-        raw_refresh = login_response.cookies["zani_refresh"].value
+        raw_refresh = login_response.cookies[settings.AUTH_REFRESH_COOKIE_NAME].value
         self.assertEqual(self.api.post("/api/auth/logout/", {}, format="json").status_code, 200)
-        self.api.cookies["zani_refresh"] = raw_refresh
+        self.api.cookies[settings.AUTH_REFRESH_COOKIE_NAME] = raw_refresh
         repeated_response = self.api.post("/api/auth/logout/", {}, format="json")
         self.assertEqual(repeated_response.status_code, 200)
-        self.assertEqual(repeated_response.cookies["zani_refresh"]["max-age"], 0)
+        self.assertEqual(repeated_response.cookies[settings.AUTH_REFRESH_COOKIE_NAME]["max-age"], 0)
 
     def test_refresh_rejects_missing_malformed_and_expired_credentials_safely(self):
         missing_response = APIClient().post("/api/auth/token/refresh/", {}, format="json")
@@ -147,14 +148,14 @@ class AuthSecurityBaselineTests(TestCase):
                 self.assertEqual(response.status_code, 401)
                 self.assertEqual(response.data["detail"], "Session expired or invalid.")
                 self.assertNotIn(raw_token, str(response.data))
-                self.assertNotIn("zani_refresh", response.cookies)
+                self.assertNotIn(settings.AUTH_REFRESH_COOKIE_NAME, response.cookies)
 
     def test_legacy_and_stale_epoch_tokens_are_rejected(self):
         legacy_refresh = RefreshToken.for_user(self.user)
         self.assertEqual(self.access_status(str(legacy_refresh.access_token)), 401)
 
         login_response = self.login()
-        issued_refresh = login_response.cookies["zani_refresh"].value
+        issued_refresh = login_response.cookies[settings.AUTH_REFRESH_COOKIE_NAME].value
         issued_access = login_response.data["access"]
         self.user.auth_epoch += 1
         self.user.save(update_fields=["auth_epoch"])
@@ -182,7 +183,7 @@ class AuthSecurityBaselineTests(TestCase):
         AUTH_REFRESH_COOKIE_SAMESITE="Lax",
     )
     def test_refresh_cookie_has_safe_local_attributes(self):
-        cookie = self.login().cookies["zani_refresh"]
+        cookie = self.login().cookies[settings.AUTH_REFRESH_COOKIE_NAME]
         self.assertTrue(cookie["httponly"])
         self.assertFalse(cookie["secure"])
         self.assertEqual(cookie["samesite"], "Lax")
@@ -194,7 +195,7 @@ class AuthSecurityBaselineTests(TestCase):
         AUTH_REFRESH_COOKIE_SAMESITE="Strict",
     )
     def test_refresh_cookie_has_safe_production_like_attributes(self):
-        cookie = self.login().cookies["zani_refresh"]
+        cookie = self.login().cookies[settings.AUTH_REFRESH_COOKIE_NAME]
         self.assertTrue(cookie["httponly"])
         self.assertTrue(cookie["secure"])
         self.assertEqual(cookie["samesite"], "Strict")
@@ -267,7 +268,7 @@ class AuthSecurityBaselineTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("access", response.data)
         self.assertNotIn("refresh", response.data)
-        self.assertIn("zani_refresh", response.cookies)
+        self.assertIn(settings.AUTH_REFRESH_COOKIE_NAME, response.cookies)
         self.assertTrue(response.data["created"])
         user = User.objects.get(email="social-owner@example.com")
         self.assertEqual(user.role, User.Roles.BUSINESS_OWNER)
@@ -320,7 +321,7 @@ class AuthSecurityBaselineTests(TestCase):
         self.assertEqual(response.status_code, 201)
         self.assertIn("access", response.data)
         self.assertNotIn("refresh", response.data)
-        self.assertIn("zani_refresh", response.cookies)
+        self.assertIn(settings.AUTH_REFRESH_COOKIE_NAME, response.cookies)
         user = User.objects.get(email="new-owner@example.com")
         business = Business.objects.get(owner=user)
         self.assertEqual(user.role, User.Roles.BUSINESS_OWNER)
@@ -377,7 +378,7 @@ class AuthSecurityBaselineTests(TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("zani_refresh", response.cookies)
+        self.assertIn(settings.AUTH_REFRESH_COOKIE_NAME, response.cookies)
         self.user.refresh_from_db()
         self.assertTrue(self.user.check_password("NewStrongPass123"))
 
@@ -386,8 +387,8 @@ class AuthSecurityBaselineTests(TestCase):
         other_client = APIClient()
         current_login = self.login(current_client)
         other_login = self.login(other_client)
-        current_refresh = current_login.cookies["zani_refresh"].value
-        other_refresh = other_login.cookies["zani_refresh"].value
+        current_refresh = current_login.cookies[settings.AUTH_REFRESH_COOKIE_NAME].value
+        other_refresh = other_login.cookies[settings.AUTH_REFRESH_COOKIE_NAME].value
         current_access = current_login.data["access"]
         other_access = other_login.data["access"]
         current_client.credentials(HTTP_AUTHORIZATION=f"Bearer {current_login.data['access']}")
@@ -399,8 +400,8 @@ class AuthSecurityBaselineTests(TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertIn("zani_refresh", response.cookies)
-        replacement_refresh = response.cookies["zani_refresh"].value
+        self.assertIn(settings.AUTH_REFRESH_COOKIE_NAME, response.cookies)
+        replacement_refresh = response.cookies[settings.AUTH_REFRESH_COOKIE_NAME].value
         self.assertNotEqual(replacement_refresh, current_refresh)
         self.assertEqual(self.refresh_with(current_refresh).status_code, 401)
         self.assertEqual(self.refresh_with(other_refresh).status_code, 401)
@@ -490,20 +491,20 @@ class AuthSecurityBaselineTests(TestCase):
         )
 
         self.assertEqual(confirm_response.status_code, 200)
-        self.assertEqual(confirm_response.cookies["zani_refresh"]["max-age"], 0)
+        self.assertEqual(confirm_response.cookies[settings.AUTH_REFRESH_COOKIE_NAME]["max-age"], 0)
         self.user.refresh_from_db()
         self.assertTrue(self.user.check_password("NewStrongPass123"))
 
     def test_password_reset_revokes_all_existing_refresh_sessions(self):
         first_login = self.login(APIClient())
         second_login = self.login(APIClient())
-        first_refresh = first_login.cookies["zani_refresh"].value
-        second_refresh = second_login.cookies["zani_refresh"].value
+        first_refresh = first_login.cookies[settings.AUTH_REFRESH_COOKIE_NAME].value
+        second_refresh = second_login.cookies[settings.AUTH_REFRESH_COOKIE_NAME].value
         self.user.refresh_from_db()
         uid = urlsafe_base64_encode(force_bytes(self.user.pk))
         token = default_token_generator.make_token(self.user)
         reset_client = APIClient()
-        reset_client.cookies["zani_refresh"] = first_refresh
+        reset_client.cookies[settings.AUTH_REFRESH_COOKIE_NAME] = first_refresh
 
         response = reset_client.post(
             "/api/auth/password-reset/confirm/",
@@ -512,7 +513,7 @@ class AuthSecurityBaselineTests(TestCase):
         )
 
         self.assertEqual(response.status_code, 200, response.data)
-        self.assertEqual(response.cookies["zani_refresh"]["max-age"], 0)
+        self.assertEqual(response.cookies[settings.AUTH_REFRESH_COOKIE_NAME]["max-age"], 0)
         self.assertEqual(self.refresh_with(first_refresh).status_code, 401)
         self.assertEqual(self.refresh_with(second_refresh).status_code, 401)
         self.assertEqual(self.access_status(first_login.data["access"]), 401)
@@ -529,8 +530,8 @@ class AuthSecurityBaselineTests(TestCase):
         second_login = self.login(second_client)
         first_access = first_login.data["access"]
         second_access = second_login.data["access"]
-        first_refresh = first_login.cookies["zani_refresh"].value
-        second_refresh = second_login.cookies["zani_refresh"].value
+        first_refresh = first_login.cookies[settings.AUTH_REFRESH_COOKIE_NAME].value
+        second_refresh = second_login.cookies[settings.AUTH_REFRESH_COOKIE_NAME].value
         first_client.credentials(HTTP_AUTHORIZATION=f"Bearer {first_access}")
 
         response = first_client.post("/api/auth/mfa/sessions/revoke/", {}, format="json")

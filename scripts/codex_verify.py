@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import contextlib
+import hashlib
 import json
 import os
 import re
@@ -191,8 +192,14 @@ def safe_environment(
     environment.update(VITE_SAFE_ENV)
     django_url = f"http://127.0.0.1:{django_port}"
     frontend_url = f"http://127.0.0.1:{frontend_port}"
+    # Cookies share a host across ports; the disposable DB identifies a run
+    # even when a later run reuses its ports. Bootstrap rebuilds must agree.
+    cookie_namespace = hashlib.sha256(str(database_path.resolve()).encode("utf-8")).hexdigest()[:20]
     environment.update(
         {
+            "AUTH_REFRESH_COOKIE_NAME": f"zani_test_refresh_{cookie_namespace}",
+            "CSRF_COOKIE_NAME": f"zani_test_csrf_{cookie_namespace}",
+            "SESSION_COOKIE_NAME": f"zani_test_session_{cookie_namespace}",
             "ALLOWED_HOSTS": "localhost,127.0.0.1",
             "CORS_ALLOWED_ORIGINS": frontend_url,
             "CORS_ALLOW_CREDENTIALS": "True",

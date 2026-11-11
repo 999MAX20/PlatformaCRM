@@ -16,6 +16,25 @@ import codex_verify  # noqa: E402
 
 
 class SafeEnvironmentTests(unittest.TestCase):
+    def test_cookie_names_are_isolated_per_database_and_stable_on_rebuild(self) -> None:
+        arguments = dict(python=sys.executable, django_port=18001, frontend_port=15174)
+        path = Path(tempfile.gettempdir()) / "runtime-a" / "gate.sqlite3"
+        first = codex_verify.safe_environment(database_path=path, **arguments)
+        rebuilt = codex_verify.safe_environment(database_path=path, base=first, **arguments)
+        other = codex_verify.safe_environment(
+            database_path=path.parent.parent / "runtime-b" / "gate.sqlite3", **arguments,
+        )
+        defaults = {"AUTH_REFRESH_COOKIE_NAME": "zani_refresh", "CSRF_COOKIE_NAME": "csrftoken", "SESSION_COOKIE_NAME": "sessionid"}
+        for key, default in defaults.items():
+            with self.subTest(cookie=key):
+                self.assertIn(key, first)
+                self.assertNotEqual(first[key], default)
+                self.assertEqual(first[key], rebuilt[key])
+                self.assertNotEqual(first[key], other[key])
+                self.assertRegex(first[key], r"^[a-z0-9_]+$")
+        self.assertNotIn("JWT_ACCESS_TOKEN_MINUTES", first)
+        self.assertNotIn("JWT_REFRESH_TOKEN_DAYS", first)
+
     def test_live_values_are_removed_or_overridden(self) -> None:
         database_path = Path(tempfile.gettempdir()) / "zani-gate-test.sqlite3"
         environment = codex_verify.safe_environment(

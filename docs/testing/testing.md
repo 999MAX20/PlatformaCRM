@@ -395,6 +395,14 @@ reject setup unless `scripts.codex_verify.isolated_runtime` supplies an absolute
 `gate.sqlite3` directly inside its temporary `zani-quality-gate-*` directory,
 `ZANI_QUALITY_GATE=1`, and distinct dedicated loopback ports/origins (not8000/5173).
 Validation precedes migrate/seed; ordinary DB defaults are no longer accepted.
+Test runtimes use per-disposable-database names for refresh, CSRF and Django session
+cookies. Different localhost ports alone do not isolate cookies. The names remain
+stable when the bootstrap rebuilds the same environment and differ for new runs,
+including runs that reuse ports. Browser assertions must read the runtime cookie
+name; never hard-code `zani_refresh` in isolated acceptance tests. Ordinary cookie
+names and session lifetimes remain unchanged. Restart an already-running test
+runtime to adopt this fix; it does not alter a running server's settings.
+
 The Python browser bootstrap rebuilds safe provider/media settings, suppresses
 working `.env` loading and blocks external socket connections. Its synthetic
 connector key lives only inside the disposable directory. The two audit helpers

@@ -1,3 +1,4 @@
+from django.conf import settings
 import pyotp
 from django.contrib import admin
 from django.core.cache import cache
@@ -26,7 +27,7 @@ class AdminMfaTests(TestCase):
     def login(self, code="", **extra):
         self.client.get("/admin/login/")
         data = {"username": self.user.email, "password": self.password, "mfa_code": code,
-                "csrfmiddlewaretoken": self.client.cookies["csrftoken"].value, "next": "/admin/", **extra}
+                "csrfmiddlewaretoken": self.client.cookies[settings.CSRF_COOKIE_NAME].value, "next": "/admin/", **extra}
         return self.client.post("/admin/login/", data, HTTP_ORIGIN="http://testserver")
 
     def test_default_site_is_protected_and_password_only_is_denied(self):
@@ -39,7 +40,7 @@ class AdminMfaTests(TestCase):
     def test_valid_totp_preserves_admin_access_and_logout(self):
         self.assertEqual(self.login(pyotp.TOTP(self.secret).now()).status_code, 302)
         self.assertEqual(self.client.get("/admin/accounts/user/").status_code, 200)
-        response = self.client.post("/admin/logout/", {"csrfmiddlewaretoken": self.client.cookies["csrftoken"].value})
+        response = self.client.post("/admin/logout/", {"csrfmiddlewaretoken": self.client.cookies[settings.CSRF_COOKIE_NAME].value})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(self.client.get("/admin/").status_code, 302)
 

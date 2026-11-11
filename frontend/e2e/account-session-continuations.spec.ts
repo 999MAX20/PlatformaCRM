@@ -1,3 +1,4 @@
+import { refreshCookieName } from "./support/auth-cookies";
 import { expect, test, type Page } from "@playwright/test";
 
 test.beforeEach(() => {
@@ -28,7 +29,7 @@ for (const change of cookieChanges) test(`${change.operation} completes its cook
   const previousAccess = await login(page, "business_owner@example.com");
   await page.getByTestId("header-account-link").click();
   await expect(page.getByTestId("merchant-logout")).toBeVisible();
-  const cookie = (await context.cookies()).find(item => item.name === "zani_refresh")!;
+  const cookie = (await context.cookies()).find(item => item.name === refreshCookieName)!;
   expect(Boolean(cookie)).toBe(true);
   const order: string[] = [];
   let release!: () => void;
@@ -44,7 +45,7 @@ for (const change of cookieChanges) test(`${change.operation} completes its cook
     await held;
     order.push("account-response");
     const value = change.operation === "confirmPasswordReset" ? "; Max-Age=0" : cookie.value;
-    await route.fulfill({ status: 200, headers: { "Set-Cookie": `zani_refresh=${value}; Path=${cookie.path}; HttpOnly; SameSite=Lax` }, json: { ok: true, email: "synthetic-renamed@example.invalid", access: previousAccess } });
+    await route.fulfill({ status: 200, headers: { "Set-Cookie": `${refreshCookieName}=${value}; Path=${cookie.path}; HttpOnly; SameSite=Lax` }, json: { ok: true, email: "synthetic-renamed@example.invalid", access: previousAccess } });
   });
   await page.evaluate(async ({ operation, payload }) => {
     const modulePath = "/src/api/auth.ts";
@@ -53,13 +54,17 @@ for (const change of cookieChanges) test(`${change.operation} completes its cook
   }, change);
   await ready;
   await page.getByTestId("merchant-logout").click();
+  try {
+    await expect(page.getByTestId("logout-status")).toBeVisible();
+    await expect(page).toHaveURL(/\/app\/account/);
+    expect(order).toEqual([]);
+  } finally { release(); }
   await expect(page).toHaveURL(/\/login/);
   await page.locator('form input[type="email"]').fill("foreign_owner@example.com");
   await page.locator('form input[type="password"]').fill(process.env.E2E_PASSWORD || "ZaniTest123!");
   await page.locator('form button[type="submit"]').click();
-  try { expect(order).toEqual([]); } finally { release(); }
   await expect(page.getByTestId("header-account-link")).toBeVisible();
-  expect(await page.evaluate(async () => await Reflect.get(window, "accountCookieOutcome"))).toBe("rejected");
+  expect(await page.evaluate(async () => await Reflect.get(window, "accountCookieOutcome"))).toBe("resolved");
   expect(order).toEqual(["account-response", "logout", "login"]);
   await page.reload();
   await expect(page.getByTestId("header-account-link")).toBeVisible();
