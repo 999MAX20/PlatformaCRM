@@ -12689,3 +12689,23 @@ integrations/operations/README unchanged (no setup/domain/schema/role change).
 Task-onlycommit;33pre-existing outgoing prevent own-onlypush/newCI. Evidence:
 docs/testing/evidence/voice-planner-20261111.md; exact logs/hashes/checkpoint in
 output/voice-planner-20261111. All owned test processes ended; no servers started.
+
+## AI-ANALYTICS-FIXES-20261111
+
+Explicit owner: fix both live findings and repeat Playwright/API with real provider,
+without working-data changes. Separate analytics contract/provider schema + one bounded
+format retry; total_count separate from matched count/shown. Strict parser, permission,
+source scope, cancellation and no-mutation boundaries retained; no API/schema migration.
+Final e67116cd+owned diff:156affected/dependent+26quality=182PASS;system/driftPASS.
+Prior181 aggregate2handoff fixtureFAIL retained; separate VOICE-PLANNER committed their
+configuration fixes, own finalquality26PASS. Intermediate nonexistent test labelERROR
+corrected; no assertions weakened.7real OpenRouter/gpt4o-mini synthetic turnsPASS through
+API/Playwright;15calls/32341tokens,one format retry recovered; API503→RetryPASS.
+2tasks/0toolcalls retained; own browser/backend/frontend stopped and disposableDBremoved.
+No workingDB/env/deploy/provider-settings/notification/BusinessEvent/AIaction changes.
+Scoped code/evidence complete; no fullD01/human/production certification. No frontend
+build/fullproject/PGqueue gate required for bounded backend read/route changes.
+Contracts/passport/roadmap/registry/status/evidence updated; other domain/setup docs unchanged.
+Own-only commit;34foreignoutgoing after fetch block own-onlypush/newCI. No foreign WIP staged.
+Evidence: docs/testing/evidence/ai-analytics-fixes-20261111.md; exact commands/failures/processes:
+output/ai-analytics-fixes-20261111/CHECKPOINT.md;live artifacts output/playwright/ai-analytics-fixed.

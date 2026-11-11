@@ -1,3 +1,11 @@
+AI-ANALYTICS-FIXES-20261111: both live analytics findings fixed and locally verified.
+Strict routing schema + bounded retry; overall totals separated from search matches.
+182backend/system/driftPASS;7real-provider API/Playwright turns incl503/retryPASS.
+15model calls,one format retry recovered;2synthetic tasks retained,0CRMtoolcalls.
+WorkingDB/env/deploy untouched; own runtimes stopped. No scoped code/evidence remainder.
+Own commit only;34foreign outgoing prevent push/newCI. FullD01/production remain open.
+Evidence: docs/testing/evidence/ai-analytics-fixes-20261111.md.
+
 VOICE-PLANNER-20261111: reproduced malformed planner JSON; default model policy fixed.
 Default/tier now resolves before JSON capability; strict parser/direct/replay retained.
 Before1/12FAIL; after24/24real audio→CRM+replayPASS,48JSONmode requests.

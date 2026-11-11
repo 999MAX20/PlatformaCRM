@@ -6,6 +6,14 @@ Default/tier модель теперь определяется до JSON capabi
 Scoped остатка кода/проверок нет; human/fullD01/production остаются открыты.
 [Причина, точные границы и результаты](../testing/evidence/voice-planner-20261111.md).
 
+AI-ANALYTICS-FIXES11.11: отдельный read-only routing и один ограниченный повтор
+неверного формата; поиск различает общие, совпавшие и показанные записи.
+Строгая схема/права/отмена/исторический selector сохранены.182backend и system/driftPASS;
+7запросов API/Playwright с реальным OpenRouter прошли в одноразовой БД,
+включая один автоматический повтор плана и восстановление после API503.
+Рабочие данные не менялись; scoped код/проверки закрыты, fullD01/deploy не закрыты.
+[Scope и текущие доказательства](../testing/evidence/ai-analytics-fixes-20261111.md).
+
 VOICE-RECOGNITION11.11: Scribe v2 и точное преобразование отдельных цифр телефона
 заменили ошибочный Whisper default.10 synthetic STT/API→CRM/replay PASS,118 backend
 и system/driftPASS. Отдельный дефект JSON-режима закрыт срезом VOICE-PLANNER11.11;

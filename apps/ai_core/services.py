@@ -36,6 +36,7 @@ def run_ai_request(
     temperature=None,
     response_language=None,
     response_contract=None,
+    response_schema=None,
 ):
     assert_entitlement_allows(business, EntitlementMetrics.AI_REQUESTS)
     runtime_context = dict(input_json or {})
@@ -91,6 +92,10 @@ def run_ai_request(
         prompt.messages[0]["content"] += response_contract
     if policy.json_output:
         prompt.response_format = {"type": "json_object"}
+        if response_schema:
+            prompt.response_format = {"type": "json_schema", "json_schema": {
+                "name": "analytics_route", "strict": True, "schema": response_schema,
+            }}
     language_name = {"ru": "Russian", "kk": "Kazakh", "en": "English"}.get(response_language)
     if language_name and prompt_type in {"agent_turn_plan", "crm_action_plan"}:
         prompt.messages[0]["content"] += (

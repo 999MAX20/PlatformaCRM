@@ -13,7 +13,8 @@ from apps.ai_core.conversation_memory import staff_memory
 from apps.ai_core.conversation_router import OPERATIONS, resolve_step_target, route_turn
 from apps.ai_core.conversation_state import assert_current_turn, fail_turn, locked_conversation
 from apps.ai_core.crm_planner import plan_command
-from apps.ai_core.crm_tools import ENTITIES, prepare_command, read_entities, serialize_record, target_for_command
+from apps.ai_core.ai_client import AIClientError
+from apps.ai_core.crm_tools import ENTITIES, prepare_command, read_entities, scoped_entities, serialize_record, target_for_command
 from apps.ai_core.models import AgentTurn, AIToolCallLog
 from apps.ai_core.services import run_ai_request
 from apps.ai_core.workflows import assert_workflow_enabled
@@ -101,15 +102,26 @@ def prepare_answer(turn, plan, memory, language):
         return {"response": result["answer"] or conversation_text("no_data", language), "sources": result["sources"],
                 "request_log_id": result.get("log_id"), "context": {"provider_state": result["provider_state"], "period": plan["period"]}}
     context = build_crm_context(thread.business, user=user)
+    answer_contract = None
     if plan.get("read"):
         entity = plan["read"]["entity"]
         found = read_entities(business=thread.business, user=user, entity=entity, query=plan["read"].get("query", ""))
         key = {"leads": "latest_leads", "appointments": "upcoming_appointments"}.get(entity, entity)
         context[key] = found["results"]
         context["summary"]["search"] = {"entity": entity, "query": plan["read"].get("query", ""),
-                                         "count": found["count"], "shown": len(found["results"]), "has_more": found["has_more"]}
+                                         "count": found["count"], "shown": len(found["results"]), "has_more": found["has_more"],
+                                         "total_count": scoped_entities(thread.business, user, entity).count(),
+                                         "coverage": "permitted_non_archived_records"}
+        answer_contract = (
+            " summary.search.total_count is the total of all currently permitted non-archived records of that entity, without the search filter."
+            " summary.search.count is only the number matching query; shown is the bounded page size, never a total."
+            " A question asking for both a total and a named record needs both facts: give total_count as the overall count,"
+            " then explicitly label count as matching the search and identify the record. Never replace the overall count with count or shown."
+            " Cite CRM-summary for these counters and entity sources for record details. These current counters are not historical period totals."
+        )
     result, log = run_ai_request(business=thread.business, user=user, prompt_type="crm_assistant", user_input=turn.message,
-                                input_json={"crm_context": context, "conversation_memory": memory}, response_language=language)
+                                input_json={"crm_context": context, "conversation_memory": memory}, response_language=language,
+                                response_contract=answer_contract)
     prefixes = {"CLIENT": "clients", "LEAD": "leads", "DEAL": "deals", "TASK": "tasks", "APPOINTMENT": "appointments"}
     references = []
     for source in result.sources:
@@ -182,7 +194,16 @@ def prepare_agent_turn(turn_id):
             elif not config["sources"]:
                 plan = {"intent": "answer", "steps": [], "read": None, "period": None}
             else:
-                plan, _ = route_turn(thread=thread, user=thread.owner, message=turn.message, memory=memory, context=turn.context_json, mode=turn.mode, language=language)
+                for attempt in range(2 if turn.mode == "analytics" else 1):
+                    turn.refresh_from_db(fields=["status", "memory_epoch"])
+                    assert_current_turn(staff_conversation(conversation_id=thread.pk, user=thread.owner, write=True), turn)
+                    try:
+                        plan, _ = route_turn(thread=thread, user=thread.owner, message=turn.message, memory=memory,
+                            context=turn.context_json, mode=turn.mode, language=language, format_retry=bool(attempt))
+                        break
+                    except AIClientError as exc:
+                        if turn.mode != "analytics" or attempt or exc.error_code != "invalid_action_plan":
+                            raise
             turn.refresh_from_db(fields=["status", "memory_epoch"])
             assert_current_turn(staff_conversation(conversation_id=thread.pk, user=thread.owner, write=True), turn)
             if plan["intent"] == "actions" and turn.mode == "analytics":
