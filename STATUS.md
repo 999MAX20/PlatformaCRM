@@ -1,3 +1,11 @@
+VOICE-PLANNER-20261111: reproduced malformed planner JSON; default model policy fixed.
+Default/tier now resolves before JSON capability; strict parser/direct/replay retained.
+Before1/12FAIL; after24/24real audio→CRM+replayPASS,48JSONmode requests.
+146dependentPASS +2baseline fixture failures fixed; finalquality/regression30/system/driftPASS.
+No scoped code/evidence remainder; human/fullD01/production open. Foreign WIP preserved.
+Own commit only;33pre-existing outgoing block push/newCI. Evidence:
+docs/testing/evidence/voice-planner-20261111.md.
+
 VOICE-RECOGNITION-20261111: names/phones fixed locally, synthetic corpus verified.
 Scribe v2 default, exact digit-word phone conversion; ZDR/access/direct flow preserved.
 10real STT/model API→CRM+replay PASS;118backend/system/driftPASS. Initial transient

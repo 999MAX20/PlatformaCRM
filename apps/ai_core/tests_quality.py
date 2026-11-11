@@ -279,10 +279,12 @@ class AIWorkflowQualityTests(TestCase):
         message = BotMessage.objects.create(conversation=conversation, direction='inbound', text='Connect me to a manager')
         return conversation, message
 
+    @override_settings(OPENROUTER_API_KEY="synthetic-test-key", OPENROUTER_BASE_URL="https://openrouter.ai/api/v1")
     def test_provider_failure_preserves_inbound_and_hands_off_without_reply(self):
         conversation, message = self._conversation()
-        with patch('apps.conversations.auto_pipeline.qualify_conversation', side_effect=AIClientError()), patch('apps.conversations.auto_pipeline.send_outbound_message') as send:
+        with patch('apps.conversations.auto_pipeline.qualify_conversation', side_effect=AIClientError()) as qualify, patch('apps.conversations.auto_pipeline.send_outbound_message') as send:
             decision = maybe_run_auto_pipeline(conversation=conversation, message=message)
+        qualify.assert_called_once()
         conversation.refresh_from_db()
         self.assertTrue(conversation.handoff_required)
         self.assertFalse(conversation.bot_enabled)
@@ -290,13 +292,15 @@ class AIWorkflowQualityTests(TestCase):
         self.assertEqual(decision.status, 'blocked_fallback')
         send.assert_not_called()
 
+    @override_settings(OPENROUTER_API_KEY="synthetic-test-key", OPENROUTER_BASE_URL="https://openrouter.ai/api/v1")
     def test_complaint_in_triage_hands_off_without_automatic_crm_creation(self):
         from apps.leads.models import Lead
         from apps.tasks.models import Task
         conversation, message = self._conversation()
         qualification = ConversationQualification(intent='complaint', confidence=0.99, summary='Complaint', requires_human_review=True)
-        with patch('apps.conversations.auto_pipeline.qualify_conversation', return_value=(qualification, None)), patch('apps.conversations.auto_pipeline.send_outbound_message') as send:
+        with patch('apps.conversations.auto_pipeline.qualify_conversation', return_value=(qualification, None)) as qualify, patch('apps.conversations.auto_pipeline.send_outbound_message') as send:
             maybe_run_auto_pipeline(conversation=conversation, message=message)
+        qualify.assert_called_once()
         conversation.refresh_from_db()
         self.assertTrue(conversation.handoff_required)
         self.assertFalse(Lead.objects.exists())

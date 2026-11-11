@@ -43,6 +43,8 @@ def generation_policy(*, prompt_type, agent=None, profile=None, configuration=No
         language = (configuration or {}).get("language") or (profile.language if profile else agent.default_language)
         if structured:
             temperature = min(temperature, 0.2)
+    else:
+        model = resolve_model(prompt_type=prompt_type, model=model, model_tier=model_tier)
     short_model = (model or "").removeprefix("openai/")
     return GenerationPolicy(model, model_tier, temperature, language, structured,
                             prompt_type in JSON_STAGES and short_model in JSON_MODELS)

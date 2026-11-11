@@ -1,9 +1,17 @@
+VOICE-PLANNER11.11: воспроизведён неверный JSON field plan при точном STT.
+Default/tier модель теперь определяется до JSON capability; parser/права/replay
+сохранены. До исправления1из12FAIL; после24/24real synthetic API→Client/replayPASS,
+48planner calls в json_object.148сценариев проверены:146PASS сразу,2старых fixtureFAIL
+устранены после old/current сравнения; финальный quality+regression30PASS,system/driftPASS.
+Scoped остатка кода/проверок нет; human/fullD01/production остаются открыты.
+[Причина, точные границы и результаты](../testing/evidence/voice-planner-20261111.md).
+
 ## Точность голосовой диктовки — 11.11.2026
 
 VOICE-RECOGNITION11.11: Scribe v2 и точное преобразование отдельных цифр телефона
 заменили ошибочный Whisper default.10 synthetic STT/API→CRM/replay PASS,118 backend
-и system/driftPASS. Первичный отдельный сбой планировщика не воспроизведён и остаётся
-ограничением; human/KK/mixed/noise/fullD01/production не закрыты.
+и system/driftPASS. Отдельный дефект JSON-режима закрыт срезом VOICE-PLANNER11.11;
+human/KK/mixed/noise/fullD01/production не закрыты.
 [Сравнение, стоимость, проверки и остаток](../testing/evidence/voice-recognition-20261111.md).
 
 ## История действий — 11.11.2026

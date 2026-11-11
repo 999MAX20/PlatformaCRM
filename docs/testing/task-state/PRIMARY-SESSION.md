@@ -12665,3 +12665,27 @@ Contract/passport/capabilities/roadmap updated; access/CRM/integrations/README/o
 unchanged because setup/permissions/domain rules are unchanged (STT config in contract
 and .env.example). Task-only local commit;32foreignoutgoing block push/newCI/deploy.
 Evidence: docs/testing/evidence/voice-recognition-20261111.md.
+
+## VOICE-PLANNER-20261111
+
+Owner requested cause/fix/repeated synthetic audio for prior planner failure.
+Canonical/currentbranch basecf66534b. First12variedPASS; exact-context baseline11PASS/
+1FAIL: JSONDecodeError from captured field-plan output, correct STT/no writes.
+Default model was resolved after JSON capability test, so no saved agent meant
+json_output=false despite actual gpt4o-mini.2line resolve before check fixes policy;
+no model/temp/permissions/parser/newvoice-retry change. New4wire/policy regressionPASS.
+Final24synthetic audio(3files×8)→exactClient/replayPASS;48outbound JSON-mode calls.
+Dependent148:146PASS/2existing handofffixtureFAIL. Old/current both2FAIL; synthetic
+configured fixture2PASS. Fixed only those test settings and asserted mocked
+qualification reached. Finalquality+regression30PASS/system/driftPASS; unchanged
+other dependent results reused, original failures retained. No scoped remainder.
+Foreign analytics source/docs edits preserved and excluded from own commit; reviewed
+new schema branch only applies when schema supplied, voice requests unchanged.
+Original old failing response was not saved; new reproducible defect is proven,
+not a retrospective reconstruction of that exact lost response. No human/fullD01/
+production claim. No workingDB/env/migrations/deploy; no UI/full/PGqueue rerun because
+unchanged. Contracts/passport/capabilities/roadmap/evidence updated; access/CRM/
+integrations/operations/README unchanged (no setup/domain/schema/role change).
+Task-onlycommit;33pre-existing outgoing prevent own-onlypush/newCI. Evidence:
+docs/testing/evidence/voice-planner-20261111.md; exact logs/hashes/checkpoint in
+output/voice-planner-20261111. All owned test processes ended; no servers started.
