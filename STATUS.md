@@ -2009,3 +2009,11 @@ Focused7/dependent128/final9/system-drift PASS; isolated PG12 and Redis/Celery c
 Real synthetic3 +final conflict outcomes/replay PASS; STT digit/name errors retained, human speech OPEN.
 No workingDB/deploy; locally verified change set, push blocked by28foreign outgoing commits.
 Evidence: docs/testing/evidence/voice-identity-20261111.md; output/voice-identity-20261111.
+
+VOICE-HISTORY-20261112: requested history UI implemented and locally verified.
+Title search, status/business-timezone date filters, full-list pagination search,
+day groups, result-first details, named reviews and read-only outcome states.
+Playwright real read-only flow + browser fixtures PASS; RU/KK/EN/mobile/keyboard PASS.
+Header/sidebar dimensions preserved; frontend build/types/i18n PASS; foreign WIP retained.
+No local scoped remainder; foreign outgoing history blocks own-only push/newCI/deployment.
+Evidence: docs/testing/evidence/voice-workflows-20261106.md, history section.

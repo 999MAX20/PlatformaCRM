@@ -12971,3 +12971,18 @@ audit does not change policy or certify fixes. Audit complete; C1–C3 repairs r
 Own docs commit only;46pre-existing foreign outgoing block own-onlypush/newCI.
 Evidence: docs/testing/evidence/ai-work-crm-complex-20261112.md.
 Commands/logs/snapshots/hashes/attempts: output/playwright/ai-work-crm-complex/CHECKPOINT.md.
+
+VOICE-HISTORY-20261112: user requested completion against supplied image.
+Canonical PlatformaCRM; existing codex/ui-testing-toolkit; initial HEAD1fa364b0.
+Own code: VoiceHistoryPage.tsx and historyCopy.ts. No shell/backend/DB changes.
+Search titles, status/date URL filters; fetch remaining authorized pages for filters;
+day groups, result before original, named server review and read-only status details.
+Playwright actual history + controlled browser responses: search/status/date/reset,
+pagination50+, loading/error/retry/empty, review/partial/completed/redaction PASS.
+RU/KK/EN320/1440; RU390/768; keyboard and shell64/48.8 dimensions PASS.
+Build/types/i18n PASS. Early harness timing/CLI quoting failures and expired401
+retained; corrected harness and owner reauthentication yielded final PASS.
+No local scoped remainder; full release/D01/provider checks outside this UI change.
+Foreign working/outgoing changes retained, no own-only publication possible.
+Evidence: docs/testing/evidence/voice-workflows-20261106.md, history section.
+Detailed scripts/logs/screenshots: output/playwright/voice-history-20261112/CHECKPOINT.md.
