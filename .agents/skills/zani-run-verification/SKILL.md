@@ -18,7 +18,7 @@ Treat verification as evidence for the requested behavior, not as a ceremonial c
 ## Preserve test integrity
 
 - Use the existing verification runner's isolated runtime unless the task explicitly requires another environment. Do not reuse ordinary `db.sqlite3` or rely on a few inherited environment overrides.
-- Prevent real external provider calls; mock or disable OpenAI, messaging, email, and connector clients.
+- For ordinary automated checks, prevent real external provider calls; mock or disable OpenAI, messaging, email, and connector clients. Separately authorized live acceptance follows the explicit provider, target and side-effect scope in docs/testing/testing.md; a routine test run does not grant that authorization.
 - For CRM lifecycle changes, require happy path, permission denial, and tenant isolation coverage where applicable.
 - For user-facing changes, verify a reachable API/UI flow, not only backend foundations.
 - For migrations, check drift and verify intentional migrations in an isolated database. Applying migrate or seed/reset to an existing working database requires explicit target/scope authorization.

@@ -11,7 +11,7 @@ description: Implement or review authenticated PlatformaCRM React UI for real bu
 2. Identify the user's role, job, primary action, real data source, and required states before changing layout.
 3. Search shared components, types, API clients, hooks, and i18n keys before creating new ones.
 4. Put network calls in `frontend/src/api/*`; keep components focused on interaction and rendering. Avoid `any` unless justified.
-5. Make every visible authenticated block serve navigation, real data/KPI, action, form, entity view, analytics, status, alert, or a real next-step empty state. Remove invented demo, marketing, and explanatory copy.
+5. Make every visible authenticated block serve navigation, real data/KPI, action, form, entity view, analytics, status, alert, or a real next-step empty state. Do not invent demo, marketing, or explanatory copy unless explicitly requested. Preserve approved help, functional explanations and existing flows; any removal must be justified within the task scope under AGENTS.md section 8.
 6. Treat frontend role hiding as UX only; preserve backend enforcement and handle forbidden responses.
 7. Implement loading, error, empty, forbidden, success, and disabled states as applicable. Check keyboard use, labels, focus, contrast, and desktop/mobile behavior.
 8. Source visible text from existing i18n/constants or approved task copy; update supported locales consistently.

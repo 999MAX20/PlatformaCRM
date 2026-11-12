@@ -31,11 +31,11 @@ Preserve PlatformaCRM as a simple, action-oriented multi-tenant CRM. Follow the 
 1. Define a stable API contract with explicit validation and forbidden states.
 2. Use `frontend/src/api/*`; do not place raw requests in components.
 3. Preserve role guards and loading, error, empty, and forbidden states.
-4. Keep visible text in i18n and avoid decorative or explanatory authenticated-app blocks.
+4. Keep visible text in i18n. Do not invent decorative or explanatory authenticated-app blocks unless explicitly requested. Preserve approved help and functional explanations; apply AGENTS.md section 8 within the authorized scope.
 5. Make AI output source-grounded and require explicit approval for critical actions.
 
 ## Verify and close
 
-Use `$zani-run-verification` to select the gate. Include happy path, permission denial, tenant isolation, and regression coverage where applicable. Update current plans or docs only after implementation and verification agree. Never mark a checklist item complete before its gate passes, and stop after the authorized phase.
+Use `$zani-run-verification` to select the gate. Include happy path, permission denial, tenant isolation, and regression coverage where applicable. Update task state and relevant docs at scope changes, meaningful results and blockers, including unfinished work. Distinguish planned, implemented and verified results; follow the read-only and rule-only maintenance exceptions in AGENTS.md section 7. Never mark a checklist item complete before its gate passes, and stop after the authorized phase.
 
 Report files changed, checks run, checks skipped with reasons, migrations or environment changes, permission impact, notification impact, BusinessEvent or AI impact, and known risks.
