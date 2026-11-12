@@ -57,3 +57,33 @@ class InvitationConcurrencyTests(TransactionTestCase):
         self.assertIsNone(self.invitation.accepted_at)
         self.assertFalse(BusinessMember.objects.filter(business=self.business, user=self.invitee).exists())
         self.assertEqual(self.accept().status_code, 200)
+
+    def race(self, operations):
+        barrier = Barrier(len(operations))
+        def run(operation):
+            close_old_connections()
+            try:
+                barrier.wait(timeout=10)
+                return operation()
+            finally:
+                connections.close_all()
+        with ThreadPoolExecutor(max_workers=len(operations)) as workers:
+            return list(workers.map(run, operations))
+
+    def resend(self):
+        client = APIClient()
+        client.force_authenticate(self.owner)
+        return client.post(f"/api/team/invitations/{self.invitation.pk}/resend/",
+            {"revision": self.invitation.updated_at.isoformat()}, format="json").status_code
+
+    def test_two_resends_rotate_once(self):
+        old_token = self.invitation.token
+        self.assertCountEqual(self.race([self.resend, self.resend]), [200, 409])
+        self.invitation.refresh_from_db()
+        self.assertNotEqual(self.invitation.token, old_token)
+        self.assertEqual(AuditLog.objects.filter(business=self.business, metadata__event="invitation_resent").count(), 1)
+
+    def test_accept_and_resend_have_one_valid_outcome(self):
+        accepted, resent = self.race([lambda: self.accept().status_code, self.resend])
+        self.assertIn((accepted, resent), [(200, 409), (400, 200)])
+        self.assertEqual(BusinessMember.objects.filter(business=self.business, user=self.invitee).count(), int(accepted == 200))

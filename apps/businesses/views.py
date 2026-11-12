@@ -372,19 +372,21 @@ class BusinessInvitationViewSet(TeamAccessMixin, ModelViewSet):
         queryset = self.queryset.filter(business_id__in=self.accessible_business_ids(Actions.VIEW))
         return self.filter_requested_business(queryset)
 
+    http_method_names = ["get", "post", "head", "options"]
+
     def perform_create(self, serializer):
-        business = self.check_team_permission(Actions.MANAGE)
-        assert_entitlement_allows(business, EntitlementMetrics.USERS)
-        role = serializer.validated_data.get("role", BusinessMember.Roles.SPECIALIST)
-        business_role = serializer.validated_data.get("business_role")
-        if business_role is None:
-            business_role = BusinessRole.objects.filter(business=business, preset_key=role, is_active=True).first()
-        instance = serializer.save(
-            invited_by=self.request.user,
-            business_role=business_role,
-            expires_at=timezone.now() + timezone.timedelta(days=7),
-        )
-        write_audit_log(self.request, AuditLog.Actions.CREATE, instance, business=business)
+        from .invitations import issue_invitation
+        issue_invitation(self.request, serializer)
+        serializer.instance.refresh_from_db()
+
+    @action(detail=True, methods=["post"])
+    def resend(self, request, pk=None):
+        from rest_framework import serializers
+        from .invitations import resend_invitation
+        revision = serializers.DateTimeField().run_validation(request.data.get("revision"))
+        invitation = resend_invitation(request, self.get_object(), revision=revision)
+        invitation.refresh_from_db()
+        return Response(self.get_serializer(invitation).data)
 
     @action(detail=True, methods=["post"])
     @transaction.atomic
@@ -403,12 +405,18 @@ class BusinessInvitationViewSet(TeamAccessMixin, ModelViewSet):
 
     @action(detail=False, methods=["get"], url_path="preview/(?P<token>[^/.]+)")
     def preview(self, request, token=None):
+        from uuid import UUID
+        try:
+            token = UUID(str(token))
+        except (ValueError, TypeError, AttributeError):
+            raise ValidationError("Invitation was not found.") from None
         invitation = BusinessInvitation.objects.select_related("business").filter(token=token).first()
         if invitation is None:
             raise ValidationError("Invitation was not found.")
         return Response(
             {
                 "business_name": invitation.business.name,
+                "business": invitation.business_id,
                 "email": invitation.email,
                 "full_name": invitation.full_name,
                 "role": invitation.role,
@@ -466,6 +474,11 @@ class BusinessInvitationViewSet(TeamAccessMixin, ModelViewSet):
                 raise InvitationAccountAuthenticationRequired()
             if request.user.pk != user.pk:
                 raise PermissionDenied("This invitation belongs to another account.")
+        if not user.is_active:
+            raise PermissionDenied("This account is inactive.")
+        from .invitations import assert_available
+        assert_available(invitation)
+        assert_entitlement_allows(invitation.business, EntitlementMetrics.USERS)
         membership, _ = BusinessMember.objects.update_or_create(
             business=invitation.business,
             user=user,

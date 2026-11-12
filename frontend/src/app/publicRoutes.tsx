@@ -94,7 +94,7 @@ export const publicRoutes = [
     element: <PageLoader><AccountRecoveryPage /></PageLoader>,
   },
 {
-    path: "/invite/:token",
+    path: "/invite/:token?",
     errorElement: <RouteErrorBoundary />,
     element: (
       <PageLoader>

@@ -12,6 +12,7 @@ from rest_framework.exceptions import PermissionDenied, ValidationError
 from apps.accounts.models import User
 from apps.accounts.recovery import platform_actor
 from apps.billing.entitlements import EntitlementMetrics, assert_entitlement_allows
+from apps.businesses.invitations import INVITATION_LIFETIME
 from apps.businesses.models import Business, BusinessMember, BusinessInvitation, BusinessRole, EmployeeAccessRepair, RolePermission
 from apps.businesses.ownership import OwnershipConflict, active_actor, role_key
 from apps.core.audit import write_audit_log
@@ -199,8 +200,10 @@ def operate(request, business_id, repair_id, action):
                 raise ValidationError("The invitation team is inactive.")
             target.token = uuid.uuid4()
             target.revoked_at = None
-            target.expires_at = timezone.now() + timedelta(days=7)
-            target.save(update_fields=["token", "revoked_at", "expires_at", "updated_at"])
+            target.expires_at = timezone.now() + INVITATION_LIFETIME
+            target.delivery_status = "not_requested"
+            target.delivery_error = ""
+            target.save(update_fields=["token", "revoked_at", "expires_at", "delivery_status", "delivery_error", "updated_at"])
         item.status = "completed"
         item.completed_at = timezone.now()
         item.executed_by = actor

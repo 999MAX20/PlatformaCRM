@@ -46,8 +46,12 @@ export const teamApi = {
     const { data } = await apiClient.post<BusinessInvitation>(`/api/team/invitations/${id}/revoke/`);
     return data;
   },
+  resendInvitation: async ({ id, revision }: { id: Id; revision: string }) => {
+    const { data } = await apiClient.post<BusinessInvitation>(`/api/team/invitations/${id}/resend/`, { revision });
+    return data;
+  },
   previewInvitation: async (token: string) => {
-    const { data } = await apiClient.get<Pick<BusinessInvitation, "business_name" | "email" | "full_name" | "role" | "status" | "expires_at"> & { requires_authentication: boolean }>(
+    const { data } = await apiClient.get<Pick<BusinessInvitation, "business" | "business_name" | "email" | "full_name" | "role" | "status" | "expires_at"> & { requires_authentication: boolean }>(
       `/api/team/invitations/preview/${token}/`,
     );
     return data;

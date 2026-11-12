@@ -35,6 +35,15 @@ class ConfiguredConsoleRedactionTests(SimpleTestCase):
             self.assertNotIn(secret, json.dumps(result))
         self.assertEqual(result["job_id"], "job-42")
 
+    def test_invitation_urls_are_masked_in_request_and_server_logs(self):
+        bearer = "cba0886e-44c4-437a-bcd8-c7318d4148f4"
+        for path in (f"/api/team/invitations/preview/{bearer}/", f"https://crm.example.invalid/invite/{bearer}"):
+            result = self.emit('GET %s HTTP/1.1', (path,), extra={"path": path, "status_code": 200})
+            self.assertNotIn(bearer, json.dumps(result))
+            self.assertIn("[redacted]", result["path"])
+            self.assertEqual(result["status_code"], 200)
+        self.assertEqual(sanitize_error_text("GET /api/team/invitations/42/resend/"), "GET /api/team/invitations/42/resend/")
+
     def test_exception_chain_preserves_types_frames_and_correlation(self):
         try:
             try:

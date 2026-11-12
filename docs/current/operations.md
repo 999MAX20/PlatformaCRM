@@ -397,7 +397,7 @@ HTTP допускается только localhost/127.0.0.1). Без адрес
 или доставку в ящик. Новая миграция accounts0011 требует отдельной рабочей активации.
 
 ADMIN-04: businesses0013 хранит запросы исправления доступа и личное согласие
-владельца. Рабочая миграция требует отдельного target/scope и backup. Новых env
+владельца. Рабочая миграция требует отдельного target/scope и backup. В support repair новых env
 или каналов отправки нет: перевыпуск меняет ссылку существующего приглашения,
 владелец копирует её в настройках команды. Локальные PostgreSQL/browser проверки
 не означают применение миграции или доставку приглашения в рабочей среде.
@@ -803,3 +803,16 @@ stop unrelated servers. Backend and working database changes are not required.
 Восстановление проверено на синтетическом объекте. Пароль стенда сохранён.
 Для проверки свежести антивирусных баз на локальном ClamAV включена команда VERSION.
 Доказательства, границы проверок и пути отката: `output/observability-storage-20261106/STORAGE-RESULT.txt`.
+
+## Почта приглашений и Resend — 12.11.2026
+
+Merchant email issue/resend использует Django EMAIL_* и HTTPS FRONTEND_URL,
+после commit с тайм-аутом10с, без automatic retry. businesses0015 добавляет
+delivery_status/attempted_at/error; рабочая миграция требует отдельной активации.
+accepted — SMTP acceptance, не Inbox и не принятие приглашения сотрудником.
+Console/file/dummy backend считается неготовым; явный resend заменяет ссылку.
+Resend был подключён на сервере06.11 с подтверждённой Inbox-доставкой synthetic
+письма: smtp.resend.com:587 STARTTLS, sender no-reply@notify.platformacrm.kz.
+12.11 локальная .env остаётся console/без SMTP credentials; актуальная серверная
+конфигурация не подтверждена из-за SSH timeout. Не переносить старый transport
+PASS на новый invite flow. [Доказательства и остаток](../testing/evidence/invitations-24h-20261112.md).

@@ -4,12 +4,13 @@ import { useEffect } from "react";
 import { businessesApi } from "../api/businesses";
 import { useAuth } from "../features/auth/AuthProvider";
 import { setActiveBusinessTimeZone } from "../lib/format";
+import { preferredInvitationBusiness } from "../lib/invitationBusiness";
 
 export function useBusinesses() {
-  const { businesses, isAuthenticated, isLoading, isMerchantUser } = useAuth();
+  const { user, businesses, isAuthenticated, isLoading, isMerchantUser } = useAuth();
 
   return useQuery({
-    queryKey: ["businesses"],
+    queryKey: ["businesses", user?.id],
     queryFn: businessesApi.list,
     enabled: isAuthenticated && isMerchantUser && !isLoading,
     initialData: businesses.length ? businesses : undefined,
@@ -19,9 +20,11 @@ export function useBusinesses() {
 
 export function useActiveBusiness() {
   const query = useBusinesses();
-  const { businesses } = useAuth();
+  const { businesses, user } = useAuth();
   const fallbackBusiness = businesses[0] ?? null;
-  const business = query.data?.[0] ?? fallbackBusiness;
+  const available = query.data ?? businesses;
+  const preferred = preferredInvitationBusiness(user?.id);
+  const business = available.find(item => String(item.id) === preferred) ?? available[0] ?? null;
 
   useEffect(() => {
     setActiveBusinessTimeZone(business?.timezone);

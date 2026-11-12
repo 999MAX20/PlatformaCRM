@@ -339,13 +339,16 @@ class BusinessInvitationSerializer(serializers.ModelSerializer):
             "token",
             "invite_path",
             "expires_at",
+            "delivery_status",
+            "delivery_attempted_at",
+            "delivery_error",
             "accepted_at",
             "revoked_at",
             "status",
             "created_at",
             "updated_at",
         ]
-        read_only_fields = ["token", "invited_by", "expires_at", "accepted_at", "revoked_at", "created_at", "updated_at"]
+        read_only_fields = ["delivery_status", "delivery_attempted_at", "delivery_error", "token", "invited_by", "expires_at", "accepted_at", "revoked_at", "created_at", "updated_at"]
 
     def get_invite_path(self, obj):
         return f"/invite/{obj.token}"

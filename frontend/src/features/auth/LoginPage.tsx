@@ -32,6 +32,7 @@ type FormValues = {
 };
 
 type LoginLocationState = {
+  email?: string;
   from?: {
     pathname?: string;
     search?: string;
@@ -79,7 +80,7 @@ export function LoginPage() {
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: { email: "", password: "" },
+    defaultValues: { email: (location.state as LoginLocationState | null)?.email || "", password: "" },
   });
   const hasSocialLogin = isGoogleConfigured || isAppleConfigured;
   const [sessionExpiredNotice, setSessionExpiredNotice] = useState(() => hasSessionExpiredNotice());

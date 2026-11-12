@@ -1,3 +1,10 @@
+INVITATIONS-24H-20261112: /invite and email issue/resend locally verified.
+24h bound token, own password/existing login, business selection, revoke/rotation.
+84dependent/17PG/15redaction/browser/build/types/i18n/budget/system/drift PASS.
+Historical Resend SMTP+Inbox06Nov confirmed; local console, current server SSH timeout.
+No working migration/live invite/deploy. Evidence: docs/testing/evidence/invitations-24h-20261112.md.
+Checkpoint: output/invitations-24h-20261112/CHECKPOINT.md.
+
 CRM-GLOBAL-RUN-20261112: isolated functional/Computer audit report prepared; NOT full PASS.
 SQLite3329:3249PASS/3FAIL/2ERROR/75SKIP; PG288:287PASS/1FAIL; all75SKIP coveredPG.
 Node304PASS/2FAIL; build/types/i18n/budget/system/drift/dependency auditsPASS.

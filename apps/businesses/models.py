@@ -435,6 +435,12 @@ class BusinessInvitation(TimeStampedModel):
     delivery_channel = models.CharField(max_length=32, choices=DeliveryChannels.choices, default=DeliveryChannels.MANUAL)
     token = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     expires_at = models.DateTimeField()
+    delivery_status = models.CharField(max_length=24, default="not_requested", choices=[
+        ("not_requested", "Not requested"), ("pending", "Pending"),
+        ("accepted", "Accepted by mail service"), ("failed", "Failed"),
+    ])
+    delivery_attempted_at = models.DateTimeField(null=True, blank=True)
+    delivery_error = models.CharField(max_length=32, blank=True)
     accepted_at = models.DateTimeField(null=True, blank=True)
     revoked_at = models.DateTimeField(null=True, blank=True)
 

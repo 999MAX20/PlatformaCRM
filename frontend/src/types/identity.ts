@@ -138,6 +138,9 @@ export type BusinessInvitation = {
   invited_by: Id | null;
   invited_by_email?: string | null;
   delivery_channel: "email" | "whatsapp" | "telegram" | "manual";
+  delivery_status?: "not_requested" | "pending" | "accepted" | "failed";
+  delivery_attempted_at?: string | null;
+  delivery_error?: string;
   token: string;
   invite_path: string;
   expires_at: string;

@@ -177,3 +177,9 @@ Local frontend servers use separate Vite dependency caches per port/mode;
 parallel test servers must use distinct explicit ports. Builds no longer emit a
 JavaScript config beside `vite.config.ts`. Existing-checkout cleanup and restart:
 [development cache isolation](docs/current/operations.md#vite-development-cache-isolation-03112026).
+
+Employee invitations: `/invite/:token` supports new-account passwords and existing
+account sign-in,24h issue/reissue, revoke and email resend with rotation. The owner
+team UI reports mail-service acceptance separately from membership acceptance.
+Local implementation verified; businesses0015 and live SMTP invite activation
+remain target-specific operations. [Checks and Resend configuration boundary](docs/testing/evidence/invitations-24h-20261112.md).

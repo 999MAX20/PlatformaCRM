@@ -1,4 +1,4 @@
-import { ArrowUpRight, ChevronRight, Copy, Plus, Search } from "lucide-react";
+import { ChevronRight, Copy, Plus, Search } from "lucide-react";
 import { useState } from "react";
 import { getApiFieldErrors } from "../../../api/client";
 import { Button } from "../../../components/ui/Button";
@@ -40,19 +40,23 @@ export function TeamSection({ model }: { model: SettingsModel; }) {
   }
   function invitationActions(invitation: BusinessInvitation) {
     const id = Number(invitation.id);
-    const pending = invitation.status === "pending" && new Date(invitation.expires_at).getTime() > Date.now();
+    const canResend = invitation.status === "pending" || invitation.status === "expired";
+    const delivery = invitation.delivery_status || "not_requested";
     return <div className="space-y-2">
+      <p role="status" className="text-sm text-platforma-subtle">{t(`invite.delivery.${delivery}`)}</p>
+      {delivery === "failed" && <p className="text-sm text-platforma-danger">{t("invite.deliveryHelp")}</p>}
+      <p className="text-xs text-platforma-subtle">{t("invite.expires", { date: new Date(invitation.expires_at).toLocaleString(model.locale) })}</p>
       <div className="flex flex-wrap gap-2">
-        {pending && <>
-          <a href={model.inviteShareUrl(invitation)} target="_blank" rel="noreferrer"
-            className="platforma-focus-ring inline-flex min-h-11 items-center justify-center gap-2 rounded-control border border-platforma-border px-3 text-sm font-semibold text-brand-700 hover:bg-brand-50">{t("settings.send")}<ArrowUpRight aria-hidden="true" size={16} /></a>
-          <Button type="button" variant="secondary" onClick={() => { setCopyTarget(id); void model.copyInvitation({ id, invite_path: invitation.invite_path }); }}><Copy size={16} />{model.copiedInviteId === id ? t("settings.copied") : t("settings.copy")}</Button>
-          <Button type="button" variant="danger" disabled={model.revokeInvitationMutation.isPending} onClick={async () => {
-            if (await model.confirmDelete(invitation.full_name || invitation.email, "settings.revoke")) model.revokeInvitationMutation.mutate(invitation.id);
-          }}>{t("settings.revoke")}</Button>
-        </>}
+        {invitation.status === "pending" && new Date(invitation.expires_at).getTime() > Date.now() && <Button type="button" variant="secondary"
+          onClick={() => { setCopyTarget(id); void model.copyInvitation({ id, invite_path: invitation.invite_path }); }}><Copy size={16} />{model.copiedInviteId === id ? t("settings.copied") : t("settings.copy")}</Button>}
+        {canResend && <Button type="button" variant="secondary" disabled={model.resendInvitationMutation.isPending || model.revokeInvitationMutation.isPending}
+          onClick={() => model.resendInvitationMutation.mutate({ id, revision: invitation.updated_at })}>{t("invite.resend")}</Button>}
+        {canResend && <Button type="button" variant="danger" disabled={model.revokeInvitationMutation.isPending || model.resendInvitationMutation.isPending} onClick={async () => {
+          if (await model.confirmDelete(invitation.full_name || invitation.email, "settings.revoke")) model.revokeInvitationMutation.mutate(invitation.id);
+        }}>{t("settings.revoke")}</Button>}
       </div>
       {copyTarget === id && model.copyInviteError && <SettingsFeedback error={new Error(model.copyInviteError)} />}
+      {model.resendInvitationMutation.variables?.id === id && <SettingsFeedback error={model.resendInvitationMutation.error} />}
       {model.revokeInvitationMutation.variables === invitation.id && <SettingsFeedback error={model.revokeInvitationMutation.error} />}
     </div>;
   }
@@ -118,11 +122,7 @@ export function TeamSection({ model }: { model: SettingsModel; }) {
           <Input label={t("settings.loginEmail")} type="email" name="email" required value={inviteForm.email} error={inviteErrors.email?.join(" ")} onChange={event => setInviteForm({ ...inviteForm, email: event.target.value })} />
           <SettingsQueryState queries={[teamRoles]} />
           <Select label={t("settings.role")} value={inviteForm.role} error={inviteErrors.role?.join(" ")} options={editableTeamRoleOptions} onChange={event => setInviteForm({ ...inviteForm, role: event.target.value as BusinessMembershipSummary["role"] })} />
-          <Select label={t("settings.delivery")} value={inviteForm.delivery_channel} error={inviteErrors.delivery_channel?.join(" ")} options={[{ value: "manual", label: t("settings.copyLink") }, { value: "email", label: "Email" }, { value: "whatsapp", label: "WhatsApp" }, { value: "telegram", label: "Telegram" }]}
-            onChange={event => setInviteForm({ ...inviteForm, delivery_channel: event.target.value as typeof inviteForm.delivery_channel })} />
-          {inviteForm.delivery_channel === "whatsapp" && <Input label={t("settings.whatsappPhone")} name="phone" type="tel" required value={inviteForm.phone} error={inviteErrors.phone?.join(" ")} onChange={event => setInviteForm({ ...inviteForm, phone: event.target.value })} />}
-          {inviteForm.delivery_channel === "telegram" && <Input label="Telegram" name="telegram" required value={inviteForm.telegram} error={inviteErrors.telegram?.join(" ")} onChange={event => setInviteForm({ ...inviteForm, telegram: event.target.value })} />}
-          <p className="text-xs leading-5 text-platforma-subtle">{t(`settings.deliveryHelp.${inviteForm.delivery_channel}`)}</p>
+          <p className="text-sm leading-6 text-platforma-subtle">{t("invite.emailHelp")}</p>
           <div className="border-t border-platforma-border pt-4">
             <div className="mb-2 flex flex-wrap items-center justify-between gap-2"><h3 className="text-sm font-bold">{t("settings.redesign.rolePreview")}</h3><Button variant="ghost" type="button" disabled={!inviteRole} onClick={() => configureRole(inviteRole?.id)}>{t("settings.redesign.configureRole")}</Button></div>
             {!teamRoles.isLoading && !teamRoles.isError && <RoleAccessPreview role={inviteRole} />}

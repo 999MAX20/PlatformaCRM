@@ -44,7 +44,7 @@ const [inviteForm, setInviteForm] = useState({
     telegram: "",
     full_name: "",
     role: "operator" as BusinessMembershipSummary["role"],
-    delivery_channel: "whatsapp" as
+    delivery_channel: "email" as
       "email" | "whatsapp" | "telegram" | "manual",
   });
 
@@ -98,10 +98,18 @@ const inviteMutation = useMutation({
         telegram: "",
         full_name: "",
         role: "operator",
-        delivery_channel: "whatsapp",
+        delivery_channel: "email",
       });
       queryClient.invalidateQueries({ queryKey: ["team-invitations"] });
     },
+  });
+
+const resendInvitationMutation = useMutation({
+    mutationFn: teamApi.resendInvitation,
+    onSuccess: (invitation) => {
+      setLastCreatedInvite(current => current?.id === invitation.id ? invitation : current);
+    },
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ["team-invitations"] }),
   });
 
 const revokeInvitationMutation = useMutation({
@@ -211,5 +219,5 @@ async function copyInvitation(invitation: {
       1800,
     );
   }
-return { teamMembers, teamRoles, invitations, inviteForm, setInviteForm, selectedMemberId, setSelectedMemberId, selectedRoleId, setSelectedRoleId, roleEditorSource, setRoleEditorSource, copiedInviteId, setCopiedInviteId, copyInviteError, setCopyInviteError, lastCreatedInvite, setLastCreatedInvite, departments, departmentName, setDepartmentName, updateMemberMutation, inviteMutation, revokeInvitationMutation, departmentMutation, members, roles, canonicalRoleKeys, visibleRoles, selectedMember, selectedMemberRole, selectedRole, translatedTeamRoleOptions, editableTeamRoleOptions, inviteUrl, inviteMessage, inviteShareUrl, copyInvitation };
+return { teamMembers, teamRoles, invitations, inviteForm, setInviteForm, selectedMemberId, setSelectedMemberId, selectedRoleId, setSelectedRoleId, roleEditorSource, setRoleEditorSource, copiedInviteId, setCopiedInviteId, copyInviteError, setCopyInviteError, lastCreatedInvite, setLastCreatedInvite, departments, departmentName, setDepartmentName, updateMemberMutation, inviteMutation, resendInvitationMutation, revokeInvitationMutation, departmentMutation, members, roles, canonicalRoleKeys, visibleRoles, selectedMember, selectedMemberRole, selectedRole, translatedTeamRoleOptions, editableTeamRoleOptions, inviteUrl, inviteMessage, inviteShareUrl, copyInvitation };
 }

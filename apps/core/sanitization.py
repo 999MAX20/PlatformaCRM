@@ -17,6 +17,7 @@ JSON_SECRET_PATTERN = re.compile(
 HEADER_SECRET_PATTERN = re.compile(r"(?i)\b(Bearer|Basic)\s+[A-Za-z0-9._~+/=-]+")
 TELEGRAM_TOKEN_PATTERN = re.compile(r"\b\d{5,}:[A-Za-z0-9_-]{10,}\b")
 USERINFO_PATTERN = re.compile(r"://[^/@\s]+@")
+INVITATION_PATH_PATTERN = re.compile(r"(?i)(/(?:api/team/invitations/preview|invite)/)[^/\s?\#\"'<>]+")
 SENSITIVE_PAYLOAD_KEYS = {
     "api_key",
     "api_secret",
@@ -40,6 +41,7 @@ def sanitize_error_text(value, *, max_length=1000):
     if not text:
         return ""
     text = USERINFO_PATTERN.sub("://[redacted]@", text)
+    text = INVITATION_PATH_PATTERN.sub(lambda match: f"{match.group(1)}[redacted]", text)
     text = QUOTED_SECRET_PATTERN.sub(
         lambda match: f"{match['prefix']}{match['quote']}[redacted]{match['quote']}", text
     )
