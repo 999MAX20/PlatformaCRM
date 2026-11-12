@@ -5,6 +5,10 @@ These rules govern work; live status and test counts belong in task evidence.
 
 ## 1. Start and restore context
 
+If injected project text differs from this canonical file, compare the affected
+rule with current owner decisions before acting; do not restore old procedures from
+an injected snapshot. Unresolved safety/policy conflicts block only dependent work.
+
 1. Start from the user's current task. Locate its ID/heading with targeted search
    in [STATUS.md](STATUS.md) and [PRIMARY-SESSION](docs/testing/task-state/PRIMARY-SESSION.md);
    read only that entry and its linked checkpoint. Do not load entire histories or
