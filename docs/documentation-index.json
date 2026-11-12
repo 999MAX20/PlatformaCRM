@@ -3,6 +3,10 @@
   "asOf": "2026-10-21",
   "archivePolicy": "Historical evidence only; excluded from default search. No task or requirement authority.",
   "documents": [
+    {"path": "docs/testing/evidence/crm-global-run-20261112.md", "role": "evidence"},
+    {"path": "docs/testing/evidence/crm-global-run-20261112-coverage.md", "role": "evidence"},
+    {"path": "docs/testing/evidence/crm-global-run-20261112-routes.md", "role": "evidence"},
+    {"path": "docs/testing/evidence/crm-global-run-20261112-tests.json", "role": "generated-evidence"},
     {"path": "docs/testing/evidence/test-session-isolation-20261112.md", "role": "evidence"},
     {"path": "docs/testing/evidence/voice-errors-20261112.md", "role": "evidence"},
     {"path": "docs/testing/evidence/ai-work-crm-complex-fixes-20261112.md", "role": "evidence"},

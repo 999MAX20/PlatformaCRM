@@ -1,3 +1,13 @@
+CRM-GLOBAL-RUN-20261112: isolated functional/Computer audit report prepared; NOT full PASS.
+SQLite3329:3249PASS/3FAIL/2ERROR/75SKIP; PG288:287PASS/1FAIL; all75SKIP coveredPG.
+Node304PASS/2FAIL; build/types/i18n/budget/system/drift/dependency auditsPASS.
+10confirmed findings;48browser/204case/100route coverage records retain unproven variants.
+No product fixes/real sends/workingDB/env/deploy. Load limited by RAM; S04 incomplete.
+Own runtimes stopped; temporary load folders retained after automatic cleanup rejection.
+Own docs only;55foreign/mixed outgoing block push/newCI. Report:
+docs/testing/evidence/crm-global-run-20261112.md.
+Checkpoint: output/crm-global-run-20261112/CHECKPOINT.md.
+
 TEST-SESSION-ISOLATION-20261112: reproduced and fixed cross-port test-cookie collision.
 Per-disposableDB refresh/CSRF/session names; ordinary defaults/lifetimes unchanged.
 RealHTTP before401/after3coexisting sessionsPASS;84backend/system/drift/runtime/NodePASS.
