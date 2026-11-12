@@ -36,6 +36,7 @@ export const apiModulePolicies = {
   analyticsExports: merchant("analytics:view + export_permissions", "analytics_export_history"),
   billingCommerce: merchant("billing:view/manage or platform_admin + MFA for platform mutations", "billing_order_details"),
   branches: merchant("settings:view/update + branch_access by operation", "branch_or_specialist_settings"),
+  management: merchant("settings:view/update + business and branch scope by operation", "management_catalog_or_editor"),
   connectivity: merchant("public_readiness", "connection_notice"),
   employeeAccess: merchant("platform_admin + MFA + support_case for repair", "platform_employee_access"),
   importWorkspace: merchant("integrations:manage + entity_import_and_write_permissions", "import_workspace"),

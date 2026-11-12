@@ -1,3 +1,13 @@
+CRM-GLOBAL-REMAINING-20261112: T01–T07/O01–O03 resolved within scoped acceptance.
+Provider/money fixtures, registries and SYSTEM reminder replay verified; prior T02/T03 already published.
+Business-local activity time, task from/to history and truthful Inbox retry status fixed.
+New requests route to Appointment; clarification/review/keyboard confirmation verified.
+86domain/75routing/80task/3PG/9Node + realqueue/browser/build/system/drift PASS (overlapping sets).
+Experimental speech excluded; foreign WIP preserved; no workingDB/env/real sends/deploy.
+Full204matrix/load/fullS04/live acceptance remains open; publication/CI tracked in checkpoint.
+Evidence: docs/testing/evidence/crm-global-remaining-20261112.md.
+Checkpoint: output/crm-global-remaining-20261112/CHECKPOINT.md.
+
 BACKEND-CI-FIXES-20261112: existing two test corrections verified for publication.
 Voice client creation requires review/confirmation and replay creates exactly one client.
 Branch migration checks0003 defaults then0006 explicit configuration, preserving history.

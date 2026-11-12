@@ -1,3 +1,12 @@
+## Результат повторной отправки Inbox — 12.11.2026
+
+Send и retry показывают статус ответа API: sent подтверждает отправку;
+failed/delivery_unknown дают предупреждение, queued/accepted — информационный
+статус. Успешный HTTP сам по себе не означает доставку. Существующие idempotency,
+loading/disabled, draft и recovery сохранены. Timeline показывает записанные
+from/to задач; старые события без metadata не дополняются предположениями.
+[RU/KK/EN, keyboard/mobile, ошибки и восстановление](../testing/evidence/crm-global-remaining-20261112.md).
+
 ## Исправления общей проверки CRM — 12.11.2026
 
 Архивная клиентская карточка открывается с include_archived и предлагает

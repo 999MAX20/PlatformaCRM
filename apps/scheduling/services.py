@@ -189,7 +189,7 @@ def sync_appointment_after_update(
             appointment=appointment,
             actor=actor,
             event_type=ActivityEvents.APPOINTMENT_CANCELLED,
-            text=f"Запись отменена: {appointment.start_at:%d.%m.%Y %H:%M}",
+            text=f"Запись отменена: {appointment_activity_time(appointment)}",
             previous_status=previous_status,
         )
         run_appointment_cancelled_automations(appointment)
@@ -200,7 +200,7 @@ def sync_appointment_after_update(
             appointment=appointment,
             actor=actor,
             event_type=ActivityEvents.APPOINTMENT_COMPLETED,
-            text=f"Визит завершён: {appointment.start_at:%d.%m.%Y %H:%M}",
+            text=f"Визит завершён: {appointment_activity_time(appointment)}",
             previous_status=previous_status,
         )
         run_appointment_completed_automations(appointment)
@@ -277,6 +277,10 @@ def mark_appointment_no_show(*, appointment, actor, reason, request=None, expect
         reason=reason,
         expected_updated_at=expected_updated_at,
     )
+
+
+def appointment_activity_time(appointment, value=None):
+    return timezone.localtime(value or appointment.start_at, _business_zone(appointment.business)).strftime("%d.%m.%Y %H:%M")
 
 
 @transaction.atomic
@@ -375,7 +379,7 @@ def reschedule_appointment(*, appointment, actor, start_at, resource=None, branc
         event_type=ActivityEvents.APPOINTMENT_RESCHEDULED,
         instance=appointment,
         category="appointment",
-        text=f"Запись перенесена: {previous_start_at:%d.%m.%Y %H:%M} -> {appointment.start_at:%d.%m.%Y %H:%M}",
+        text=f"Запись перенесена: {appointment_activity_time(appointment, previous_start_at)} -> {appointment_activity_time(appointment)}",
         metadata={
             "event_type": ActivityEvents.APPOINTMENT_RESCHEDULED,
             "lifecycle_action": APPOINTMENT_LIFECYCLE_ACTIONS[ActivityEvents.APPOINTMENT_RESCHEDULED],
@@ -495,7 +499,7 @@ def apply_appointment_status(
         appointment=appointment,
         actor=actor,
         event_type=event_type,
-        text=f"{text}: {appointment.start_at:%d.%m.%Y %H:%M}",
+        text=f"{text}: {appointment_activity_time(appointment)}",
         previous_status=previous_status,
         metadata=transition_metadata or None,
         source=activity_source,

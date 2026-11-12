@@ -49,6 +49,22 @@ class RecordCommandTests(TestCase):
     def create(self, **overrides):
         return self.api.post("/api/appointments/create-record/", {**self.payload, **overrides}, format="json")
 
+    def test_status_activity_text_uses_business_local_appointment_time(self):
+        from zoneinfo import ZoneInfo
+        self.business.timezone = "Asia/Almaty"
+        self.business.save(update_fields=["timezone"])
+        response = self.create()
+        self.assertEqual(response.status_code, 201, response.data)
+        record = Appointment.objects.get(pk=response.data["id"])
+        result = self.api.post(f"/api/appointments/{record.pk}/cancel/", {
+            "expected_updated_at": record.updated_at.isoformat(), "reason": "Client cancellation",
+        }, format="json")
+        self.assertEqual(result.status_code, 200, result.data)
+        event = ActivityEvent.objects.get(business=self.business, entity_type="Appointment",
+                                         entity_id=str(record.pk), event_type="appointment_cancelled")
+        expected = timezone.localtime(record.start_at, ZoneInfo(self.business.timezone)).strftime("%d.%m.%Y %H:%M")
+        self.assertIn(expected, event.text)
+
     def test_default_responsible_and_shared_identity(self):
         response = self.create()
         self.assertEqual(response.status_code, 201, response.data)

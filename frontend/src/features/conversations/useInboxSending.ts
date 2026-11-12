@@ -11,6 +11,7 @@ import { useInboxDraft } from "./hooks/useInboxDraft";
 import type { Dispatch, SetStateAction, RefObject } from "react";
 import type { Translate } from "./conversationTypes";
 import { createIdempotencyKey } from "./inboxIdempotency";
+import { deliveryNotice } from "./deliveryNotice";
 type Args = {
   selected: InboxConversation | null;
   draft: string;
@@ -59,31 +60,18 @@ export function useInboxSending({
       clearSentDraft(variables.draftKey, variables.text);
       if (currentConversationRef.current === Number(variables.conversationId))
         setSuggestedReply("");
-      const noticeKey =
-        result.status === "sent"
-          ? "conversations.replySent"
-          : result.status === "accepted"
-            ? "conversations.deliveryYCloudAccepted"
-            : result.status === "delivery_unknown"
-              ? "conversations.deliveryYCloudUnknown"
-              : result.status === "failed"
-                ? "conversations.deliveryStatusFailed"
-                : "conversations.deliveryStatusQueued";
-      setNotice(
-        t(noticeKey),
-        result.status === "failed" || result.status === "delivery_unknown"
-          ? "warning"
-          : "success",
-      );
+      const notice = deliveryNotice(result.status);
+      setNotice(t(notice.key), notice.tone);
       await invalidateInbox();
     },
     onError: (error) => notifyError(error, { focusTarget: composerRef }),
   });
   const retryMessageMutation = useMutation({
     mutationFn: inboxApi.retryMessage,
-    onSuccess: async (_result, variables) => {
+    onSuccess: async (result, variables) => {
       retryKeys.current.delete(Number(variables.messageId));
-      setNotice(t("conversations.messageRetried"), "success");
+      const notice = deliveryNotice(result.status);
+      setNotice(t(notice.key), notice.tone);
       await invalidateInbox();
     },
     onError: (error) => notifyError(error),

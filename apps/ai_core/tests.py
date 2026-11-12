@@ -218,7 +218,7 @@ class AICoreFoundationTests(TestCase):
         self.assertEqual(latest_lead_ids, {visible_lead.id})
         self.assertNotIn(hidden_lead.message, str(log.input_json["crm_context"]))
 
-    @override_settings(AI_ENABLED=True, AI_PROVIDER="kimi", KIMI_API_KEY="test-key", AI_SMART_MODEL="kimi-k2.6")
+    @override_settings(AI_ENABLED=True, AI_PROVIDER="kimi", KIMI_API_KEY="test-key", KIMI_BASE_URL="https://provider.example.invalid/v1", AI_SMART_MODEL="kimi-k2.6")
     def test_ai_assistant_status_reports_configured_provider(self):
         self.api.force_authenticate(self.owner)
 

@@ -48,6 +48,9 @@ class TaskWorkspaceTests(TestCase):
         self.assertEqual(self.command("complete").data["status"], "done")
         self.assertEqual(self.command("reopen").data["status"], "open")
         self.assertTrue(ActivityEvent.objects.filter(entity_id=str(self.task.id), metadata__lifecycle_action="task_waiting").exists())
+        events = ActivityEvent.objects.filter(business=self.business, entity_type="Task", entity_id=str(self.task.id)).order_by("id")
+        self.assertEqual([(event.metadata.get("from_status"), event.metadata.get("to_status")) for event in events],
+                         [("open", "waiting"), ("waiting", "in_progress"), ("in_progress", "done"), ("done", "open")])
 
     def test_wait_validation_and_cross_tenant_denial(self):
         self.assertEqual(self.command("wait", {"reason": "x"}).status_code, 400)

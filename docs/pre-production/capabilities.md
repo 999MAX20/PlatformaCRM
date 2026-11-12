@@ -4,8 +4,10 @@
 клиента, поиск, причины409, refresh переноса, widget reload/retry, смена пароля,
 demo reset и локализация системных значений. Backend/Node/build/system/drift
 и scoped browser PASS; составной локальный снимок, без real sends/workingDB/deploy.
-Семь других test failures, три provisional observations, непокрытая204-ID матрица
-и S04/load остаются открытыми. Полная CRM/release готовность не заявляется.
+Семь других проверок и три наблюдения закрыты в адресной границе
+[нового среза](../testing/evidence/crm-global-remaining-20261112.md): fixtures/registries,
+SYSTEM reminder, локальное время истории, переходы задач и retry Inbox.
+Непокрытая204-ID матрица, полный S04/load и CRM/release готовность остаются открыты.
 [Исправления, проверки и ограничения](../testing/evidence/crm-global-fixes-20261112.md).
 
 VOICE-PLANNER11.11: воспроизведён неверный JSON field plan при точном STT.

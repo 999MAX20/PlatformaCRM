@@ -106,5 +106,19 @@ def reminder_replay(app, business, owner, dispatch):
     for _ in range(2):
         dispatch(app, "notifications.process_due_notifications", queue="notifications")
     assert TaskReminderDelivery.objects.filter(task=task).count() == 1
-    assert Notification.objects.filter(business=business, text="Напоминание: S04 before restart", status="sent").count() == 1
-    report(real_notification_queue="pass", reminder_replay="pass")
+    rows = Notification.objects.filter(business=business, text="Напоминание: S04 before restart")
+    assert rows.count() == 1
+    notification = rows.get()
+    assert notification.channel == Notification.Channels.SYSTEM
+    assert notification.status == Notification.Statuses.PENDING and notification.attempts == 0
+    assert notification.recipient_id == owner.pk
+    assert notification.recipient_states.get(user=owner).read_at is None
+    from rest_framework.test import APIClient
+    api = APIClient()
+    api.force_authenticate(owner)
+    assert api.get(f"/api/notifications/{notification.pk}/").status_code == 200
+    assert api.post(f"/api/notifications/{notification.pk}/mark-read/").status_code == 200
+    dispatch(app, "notifications.process_due_notifications", queue="notifications")
+    assert rows.count() == 1 and TaskReminderDelivery.objects.filter(task=task).count() == 1
+    assert notification.recipient_states.get(user=owner).read_at is not None
+    report(real_notification_queue="pass", reminder_replay="pass", personal_feed_read="pass", external_delivery="not_applicable_system")

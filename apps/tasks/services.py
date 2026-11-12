@@ -60,29 +60,32 @@ def assert_task_status(task: Task, allowed_statuses: set[str], action: str) -> N
 
 @locked_task_change
 def complete_task(*, task: Task, actor, request=None) -> Task:
+    activity_previous_status = task.status
     assert_task_status(task, OPEN_STATUSES, "complete")
     task.status = Task.Statuses.DONE
     task.completed_at = timezone.now()
     task.completed_by = actor
     task.snoozed_until = None
     task.save(update_fields=["status", "completed_at", "completed_by", "snoozed_until", "updated_at"])
-    write_task_activity(request, ActivityEvents.TASK_COMPLETED, task, text=f"Задача закрыта: {task.title}")
+    write_task_activity(request, ActivityEvents.TASK_COMPLETED, task, text=f"Задача закрыта: {task.title}", metadata={"from_status": activity_previous_status, "to_status": task.status})
     create_task_notification(task, f"Задача выполнена: {task.title}")
     return task
 
 
 @locked_task_change
 def start_task(*, task: Task, actor, request=None) -> Task:
+    activity_previous_status = task.status
     assert_task_status(task, {Task.Statuses.OPEN}, "start")
     task.status = Task.Statuses.IN_PROGRESS
     task.save(update_fields=["status", "updated_at"])
-    write_task_activity(request, ActivityEvents.TASK_STARTED, task, text=f"Задача взята в работу: {task.title}")
+    write_task_activity(request, ActivityEvents.TASK_STARTED, task, text=f"Задача взята в работу: {task.title}", metadata={"from_status": activity_previous_status, "to_status": task.status})
     create_task_notification(task, f"Задача взята в работу: {task.title}")
     return task
 
 
 @locked_task_change
 def cancel_task(*, task: Task, actor, reason: str, request=None) -> Task:
+    activity_previous_status = task.status
     assert_task_status(task, OPEN_STATUSES, "cancel")
     reason = (reason or "").strip()
     if len(reason) < 3:
@@ -93,7 +96,7 @@ def cancel_task(*, task: Task, actor, reason: str, request=None) -> Task:
     task.cancelled_by = actor
     task.cancel_reason = reason
     task.save(update_fields=["status", "cancelled_at", "cancelled_by", "cancel_reason", "updated_at"])
-    write_task_activity(request, ActivityEvents.TASK_CANCELLED, task, text=f"Задача отменена: {task.title}. Причина: {reason}")
+    write_task_activity(request, ActivityEvents.TASK_CANCELLED, task, text=f"Задача отменена: {task.title}. Причина: {reason}", metadata={"from_status": activity_previous_status, "to_status": task.status})
     create_task_notification(task, f"Задача отменена: {task.title}")
     write_task_audit(
         request,
@@ -112,6 +115,7 @@ def cancel_task(*, task: Task, actor, reason: str, request=None) -> Task:
 
 @locked_task_change
 def reopen_task(*, task: Task, actor, request=None) -> Task:
+    activity_previous_status = task.status
     assert_task_status(task, {Task.Statuses.DONE, Task.Statuses.CANCELLED}, "reopen")
     task.status = Task.Statuses.OPEN
     task.completed_at = None
@@ -122,13 +126,14 @@ def reopen_task(*, task: Task, actor, request=None) -> Task:
     task.waiting_reason = ""
     task.waiting_until = None
     task.save(update_fields=["status", "completed_at", "completed_by", "cancelled_at", "cancelled_by", "cancel_reason", "waiting_reason", "waiting_until", "updated_at"])
-    write_task_activity(request, ActivityEvents.TASK_REOPENED, task, text=f"Задача переоткрыта: {task.title}")
+    write_task_activity(request, ActivityEvents.TASK_REOPENED, task, text=f"Задача переоткрыта: {task.title}", metadata={"from_status": activity_previous_status, "to_status": task.status})
     create_task_notification(task, f"Задача возвращена в работу: {task.title}")
     return task
 
 
 @locked_task_change
 def undo_cancel_task(*, task: Task, actor, request=None) -> Task:
+    activity_previous_status = task.status
     if task.status != Task.Statuses.CANCELLED:
         raise InvalidTransition(
             errors={"status": "Only cancelled tasks can be restored from cancellation."}
@@ -154,7 +159,7 @@ def undo_cancel_task(*, task: Task, actor, request=None) -> Task:
     task.cancelled_by = None
     task.cancel_reason = ""
     task.save(update_fields=["status", "cancelled_at", "cancelled_by", "cancel_reason", "updated_at"])
-    write_task_activity(request, ActivityEvents.TASK_REOPENED, task, text=f"Отмена задачи отменена: {task.title}")
+    write_task_activity(request, ActivityEvents.TASK_REOPENED, task, text=f"Отмена задачи отменена: {task.title}", metadata={"from_status": activity_previous_status, "to_status": task.status})
     create_task_notification(task, f"Задача восстановлена: {task.title}")
     write_task_audit(
         request,
@@ -554,6 +559,7 @@ def business_local_datetime(business, *, days: int, hour: int, minute: int = 0):
 
 @locked_task_change
 def wait_task(*, task: Task, actor, reason, waiting_until=None, request=None):
+    activity_previous_status = task.status
     assert_task_status(task, {Task.Statuses.OPEN, Task.Statuses.IN_PROGRESS}, "wait")
     reason = (reason or "").strip()
     if len(reason) < 3:
@@ -566,7 +572,7 @@ def wait_task(*, task: Task, actor, reason, waiting_until=None, request=None):
     task.save(update_fields=["status", "waiting_reason", "waiting_until", "updated_at"])
     write_task_activity(request, ActivityEvents.TASK_UPDATED, task, actor=actor,
                         text=f"Задача ожидает: {task.title}. {reason}",
-                        metadata={"kind": "lifecycle", "lifecycle_action": "task_waiting", "reason": reason,
+                        metadata={"from_status": activity_previous_status, "to_status": task.status, "kind": "lifecycle", "lifecycle_action": "task_waiting", "reason": reason,
                                   "waiting_until": waiting_until.isoformat() if waiting_until else None})
     create_task_notification(task, f"Задача ожидает: {task.title}")
     return task
@@ -574,13 +580,14 @@ def wait_task(*, task: Task, actor, reason, waiting_until=None, request=None):
 
 @locked_task_change
 def resume_task(*, task: Task, actor, request=None):
+    activity_previous_status = task.status
     assert_task_status(task, {Task.Statuses.WAITING}, "resume")
     task.status = Task.Statuses.IN_PROGRESS
     task.waiting_reason = ""
     task.waiting_until = None
     task.save(update_fields=["status", "waiting_reason", "waiting_until", "updated_at"])
     write_task_activity(request, ActivityEvents.TASK_STARTED, task, actor=actor,
-                        text=f"Работа над задачей продолжена: {task.title}")
+                        text=f"Работа над задачей продолжена: {task.title}", metadata={"from_status": activity_previous_status, "to_status": task.status})
     create_task_notification(task, f"Работа над задачей продолжена: {task.title}")
     return task
 

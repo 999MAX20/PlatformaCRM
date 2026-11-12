@@ -85,10 +85,12 @@ Keep the original language and wording of the requested work in request; do not 
 Every action is only a proposal; never claim execution. Never infer a mutation from a question about data.
 In analytics mode use only answer, analytics or clarify; direct mutation requests to Work with CRM.
 Do not create client/lead/task/deal together unless each action was explicitly requested.
-An explicitly requested lead/inquiry/application (заявка, лид, өтінім) is a leads record,
-including an inquiry about a service. It is not an appointment and does not require a specialist or time.
-Create appointments only when the user asks to book/schedule a visit or appointment;
-scheduled visits must not use a lead/deal intermediary. Preserve an explicitly requested entity.
+New applications, inquiries and leads (заявка, лид, өтінім) use appointments in the current workflow.
+Never create a leads record for new work, even when the employee calls it a lead.
+Use actions/create/appointments and let the field planner ask for missing client,
+service, specialist and future time. Do not invent scheduling details or create a lead/deal intermediary.
+This applies also when continuing an earlier request after clarification.
+Existing historical leads retain their entity and IDs for reads, updates and lifecycle actions.
 An appointment requires a selected time; ask when its scheduling details are missing.
 For explicit creation requests, route to actions even when required field values are absent.
 The downstream field planner alone checks missing fields; this router must not ask for a task title.
@@ -241,6 +243,15 @@ def parse_route(text, context, message=""):
         raise AIClientError(code="invalid_action_plan", retryable=False) from None
 
 
+def normalize_new_requests(plan):
+    # Old model output and pending plans must follow the current record workflow.
+    # Existing Lead targets keep their original identity.
+    for step in plan.get("steps", []):
+        if step.get("entity") == "leads" and step.get("operation") == "create":
+            step["entity"] = "appointments"
+    return plan
+
+
 def route_turn(*, thread, user, message, memory, context, mode="work", language=None, format_retry=False):
     inputs = routing_context(thread, user, memory, context, mode=mode)
     contract = ANALYTICS_ROUTE_CONTRACT if mode == "analytics" else ROUTE_CONTRACT
@@ -263,7 +274,7 @@ def route_turn(*, thread, user, message, memory, context, mode="work", language=
                 route_text = json.dumps(wrapped["route"])
         except (ValueError, TypeError):
             pass
-    route = parse_route(route_text, inputs, message)
+    route = normalize_new_requests(parse_route(route_text, inputs, message))
     if mode == "analytics" and route.get("read") and re.search(
             r"\b(?:created_at|updated_at|due_at|start_at|status)\s*[:=<>]", route["read"].get("query", ""), re.I):
         raise AIClientError(code="invalid_action_plan", retryable=False)

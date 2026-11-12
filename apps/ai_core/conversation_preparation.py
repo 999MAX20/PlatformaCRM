@@ -10,7 +10,7 @@ from apps.ai_core.assistant import build_crm_context
 from apps.ai_core.conversation_access import references_visible, staff_conversation
 from apps.ai_core.conversation_copy import conversation_text
 from apps.ai_core.conversation_memory import staff_memory
-from apps.ai_core.conversation_router import OPERATIONS, effective_sources, explicit_target_ids, resolve_step_target, route_turn
+from apps.ai_core.conversation_router import OPERATIONS, effective_sources, explicit_target_ids, normalize_new_requests, resolve_step_target, route_turn
 from apps.ai_core.conversation_state import assert_current_turn, fail_turn, locked_conversation
 from apps.ai_core.crm_planner import plan_command
 from apps.ai_core.ai_client import AIClientError
@@ -48,7 +48,7 @@ def _completed_context(turn):
 
 def prepare_actions(turn, plan, memory, language):
     thread, user = turn.conversation, turn.conversation.owner
-    plan = deepcopy(plan)
+    plan = normalize_new_requests(deepcopy(plan))
     validate_voice_plan(turn.context_json, plan, turn.message)
     if thread.kind == "voice" and any(step["entity"] in {"clients", "appointments"} for step in plan["steps"]):
         from apps.ai_core.speech_numbers import ambiguous_spoken_phone

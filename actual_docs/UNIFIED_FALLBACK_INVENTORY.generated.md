@@ -4,11 +4,11 @@
 
 ## Coverage Summary
 
-- Routes: **57** (derived from the functional certification registry).
-- Distinct frontend API operations: **770** (255 queries, 515 mutations).
+- Routes: **59** (derived from the functional certification registry).
+- Distinct frontend API operations: **780** (257 queries, 523 mutations).
 - Background tasks: **19**.
 - Async/provider status values: **88** across 15 models.
-- Stable backend/API error codes: **31**.
+- Stable backend/API error codes: **33**.
 - Defect precedents applied: `ZD-001`, `ZD-002`, `ZD-003`, `ZD-004`, `ZR-002`, `ZR-004`, `ZR-005`, `ZR-006`, `ZR-007`.
 
 The registry is conservative: only GET operations are automatically retryable. A mutation marked `conditional_idempotency_key` is still not retried automatically until its caller proves and supplies a stable key.
@@ -52,6 +52,8 @@ The registry is conservative: only GET operations are automatically retryable. A
 | module_disabled | permission | fallback.permission.module_disabled | false | never_blindly |
 | not_found | not_found | fallback.not_found.not_found | false | never_blindly |
 | invalid_transition | conflict | fallback.conflict.invalid_transition | false | never_blindly |
+| unfinished_work | conflict | fallback.conflict.unfinished_work | false | never_blindly |
+| future_appointments_conflict | conflict | fallback.conflict.future_appointments_conflict | false | never_blindly |
 | last_active_branch | conflict | fallback.conflict.last_active_branch | false | never_blindly |
 | schedule_conflict | conflict | fallback.conflict.schedule_conflict | false | never_blindly |
 | assignee_unavailable | conflict | fallback.conflict.assignee_unavailable | false | never_blindly |
@@ -116,6 +118,8 @@ Detection records which fallback signals currently exist in the owning page sour
 | AI-AGENT-DETAIL | /app/ai-agents/:id | ai_automation:view | loading:detected; empty:not_detected; denied:guarded; failure:detected; recovery:detected | owning_page_or_action | frontend/src/features/assistant/AIAgentsPage.tsx |
 | OPS-AUTOMATIONS | /app/automations | automations:view | loading:detected; empty:detected; denied:guarded; failure:detected; recovery:detected | owning_page_or_action | frontend/src/features/automations/AutomationsPage.tsx |
 | SETUP-SERVICES | /app/business/services | settings:view | loading:detected; empty:not_detected; denied:guarded; failure:detected; recovery:detected | owning_page_or_action | frontend/src/features/services/ServicesPage.tsx |
+| SETUP-COMPANY | /app/business/company | settings:view | loading:detected; empty:not_detected; denied:guarded; failure:detected; recovery:detected | owning_page_or_action | frontend/src/features/business/CompanyPage.tsx |
+| SETUP-STAFF | /app/business/staff | settings:view | loading:detected; empty:not_detected; denied:guarded; failure:detected; recovery:detected | owning_page_or_action | frontend/src/features/management/ManagementPage.tsx |
 | SETUP-BRANCHES | /app/business/branches | settings:view | loading:detected; empty:not_detected; denied:guarded; failure:detected; recovery:detected | owning_page_or_action | frontend/src/features/business/BranchesPage.tsx |
 | SETUP-RESOURCES | /app/business/resources | settings:view | loading:detected; empty:not_detected; denied:guarded; failure:detected; recovery:detected | owning_page_or_action | frontend/src/features/resources/ResourcesPage.tsx |
 | SETUP-WORKING-HOURS | /app/business/working-hours | settings:view | loading:detected; empty:not_detected; denied:guarded; failure:detected; recovery:detected | owning_page_or_action | frontend/src/features/settings/WorkingHoursPage.tsx |
@@ -181,16 +185,17 @@ Detection records which fallback signals currently exist in the owning page sour
 | POST | /api/ai/speech/ | mutation | ai_assistant:suggest + business_membership | none_proven | no automatic retry | voice_capture | frontend/src/api/speech.ts:14 |
 | POST | /api/ai/tools/:param/execute/ | mutation | ai_assistant:view | none_proven | no automatic retry | ai_action_or_job_details | frontend/src/api/ai.ts:247 |
 | POST | /api/ai/tools/suggest/ | mutation | ai_assistant:view | none_proven | no automatic retry | ai_action_or_job_details | frontend/src/api/ai.ts:221 |
-| GET | /api/analytics-events/ | query | analytics:view | safe_read | safe read only | owning_page | frontend/src/api/analytics.ts:13#list |
-| POST | /api/analytics-events/ | mutation | analytics:view | none_proven | no automatic retry | owning_page | frontend/src/api/analytics.ts:13#create |
-| DELETE | /api/analytics-events/:param/ | mutation | analytics:view | none_proven | no automatic retry | owning_page | frontend/src/api/analytics.ts:13#remove |
-| GET | /api/analytics-events/:param/ | query | analytics:view | safe_read | safe read only | owning_page | frontend/src/api/analytics.ts:13#retrieve |
-| PATCH | /api/analytics-events/:param/ | mutation | analytics:view | none_proven | no automatic retry | owning_page | frontend/src/api/analytics.ts:13#update |
-| POST | /api/analytics-events/:param/archive/ | mutation | analytics:view | none_proven | no automatic retry | owning_page | frontend/src/api/analytics.ts:13#archive |
-| POST | /api/analytics-events/:param/restore/ | mutation | analytics:view | none_proven | no automatic retry | owning_page | frontend/src/api/analytics.ts:13#restore |
-| GET | /api/analytics/owner-dashboard/ | query | analytics:view | safe_read | safe read only | owning_page | frontend/src/api/analytics.ts:17 |
-| GET | /api/analytics/reports/export/ | query | analytics:view + analytics:view + export_permissions | safe_read | safe read only | analytics_export_history + owning_page | frontend/src/api/analytics.ts:35<br>frontend/src/api/analyticsExports.ts:22 |
-| GET | /api/analytics/reports/summary/ | query | analytics:view | safe_read | safe read only | owning_page | frontend/src/api/analytics.ts:29<br>frontend/src/api/analytics.ts:8 |
+| GET | /api/analytics-events/ | query | analytics:view | safe_read | safe read only | owning_page | frontend/src/api/analytics.ts:19#list |
+| POST | /api/analytics-events/ | mutation | analytics:view | none_proven | no automatic retry | owning_page | frontend/src/api/analytics.ts:19#create |
+| DELETE | /api/analytics-events/:param/ | mutation | analytics:view | none_proven | no automatic retry | owning_page | frontend/src/api/analytics.ts:19#remove |
+| GET | /api/analytics-events/:param/ | query | analytics:view | safe_read | safe read only | owning_page | frontend/src/api/analytics.ts:19#retrieve |
+| PATCH | /api/analytics-events/:param/ | mutation | analytics:view | none_proven | no automatic retry | owning_page | frontend/src/api/analytics.ts:19#update |
+| POST | /api/analytics-events/:param/archive/ | mutation | analytics:view | none_proven | no automatic retry | owning_page | frontend/src/api/analytics.ts:19#archive |
+| POST | /api/analytics-events/:param/restore/ | mutation | analytics:view | none_proven | no automatic retry | owning_page | frontend/src/api/analytics.ts:19#restore |
+| GET | /api/analytics/owner-dashboard/ | query | analytics:view | safe_read | safe read only | owning_page | frontend/src/api/analytics.ts:23 |
+| GET | /api/analytics/reports/export/ | query | analytics:view + analytics:view + export_permissions | safe_read | safe read only | analytics_export_history + owning_page | frontend/src/api/analytics.ts:41<br>frontend/src/api/analyticsExports.ts:22 |
+| GET | /api/analytics/reports/records/ | query | analytics:view | safe_read | safe read only | owning_page | frontend/src/api/analytics.ts:14 |
+| GET | /api/analytics/reports/summary/ | query | analytics:view | safe_read | safe read only | owning_page | frontend/src/api/analytics.ts:35<br>frontend/src/api/analytics.ts:8 |
 | GET | /api/api-tokens/ | query | owner_or_administrator | safe_read | safe read only | developer_delivery_details | frontend/src/api/developers.ts:23#list |
 | POST | /api/api-tokens/ | mutation | owner_or_administrator | none_proven | no automatic retry | developer_delivery_details | frontend/src/api/developers.ts:23#create<br>frontend/src/api/developers.ts:25 |
 | DELETE | /api/api-tokens/:param/ | mutation | owner_or_administrator | none_proven | no automatic retry | developer_delivery_details | frontend/src/api/developers.ts:23#remove |
@@ -228,26 +233,26 @@ Detection records which fallback signals currently exist in the owning page sour
 | GET | /api/appointments/workspace/ | query | appointments:view | safe_read | safe read only | calendar_or_appointment_workspace | frontend/src/api/appointments.ts:59 |
 | GET | /api/auth/account-recovery/ | query | platform_admin + MFA for preparation; intended_account/token for confirmation | safe_read | safe read only | account_recovery | frontend/src/api/recovery.ts:30 |
 | POST | /api/auth/account-recovery/ | mutation | platform_admin + MFA for preparation; intended_account/token for confirmation | none_proven | no automatic retry | account_recovery | frontend/src/api/recovery.ts:31 |
-| POST | /api/auth/change-email/confirm/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:148 |
-| POST | /api/auth/change-email/request/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:143 |
-| POST | /api/auth/change-password/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:109 |
+| POST | /api/auth/change-email/confirm/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:166 |
+| POST | /api/auth/change-email/request/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:161 |
+| POST | /api/auth/change-password/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:116 |
 | GET | /api/auth/csrf/ | query | anonymous_or_authenticated | safe_read | safe read only | authentication_flow | frontend/src/api/token.ts:13 |
 | GET | /api/auth/employee-access-confirmations/ | query | platform_admin + MFA + support_case for repair | safe_read | safe read only | platform_employee_access | frontend/src/api/employeeAccess.ts:27 |
 | POST | /api/auth/employee-access-confirmations/:param/ | mutation | platform_admin + MFA + support_case for repair | none_proven | no automatic retry | platform_employee_access | frontend/src/api/employeeAccess.ts:28 |
-| GET | /api/auth/login-history/ | query | authenticated_user | safe_read | safe read only | account_security | frontend/src/api/auth.ts:114 |
+| GET | /api/auth/login-history/ | query | authenticated_user | safe_read | safe read only | account_security | frontend/src/api/auth.ts:132 |
 | POST | /api/auth/logout/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:234 |
-| GET | /api/auth/me/ | query | authenticated_user | safe_read | safe read only | account_security | frontend/src/api/auth.ts:99 |
-| PATCH | /api/auth/me/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:104 |
-| DELETE | /api/auth/me/avatar/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:222 |
-| GET | /api/auth/me/avatar/ | query | authenticated_user | safe_read | safe read only | account_security | frontend/src/api/auth.ts:213 |
-| POST | /api/auth/me/avatar/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:219 |
-| POST | /api/auth/mfa/disable/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:184 |
+| GET | /api/auth/me/ | query | authenticated_user | safe_read | safe read only | account_security | frontend/src/api/auth.ts:105 |
+| PATCH | /api/auth/me/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:110 |
+| DELETE | /api/auth/me/avatar/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:240 |
+| GET | /api/auth/me/avatar/ | query | authenticated_user | safe_read | safe read only | account_security | frontend/src/api/auth.ts:231 |
+| POST | /api/auth/me/avatar/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:237 |
+| POST | /api/auth/mfa/disable/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:202 |
 | POST | /api/auth/mfa/enrollment/confirm/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:272 |
 | POST | /api/auth/mfa/enrollment/start/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:256 |
-| POST | /api/auth/mfa/recovery-codes/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:178 |
-| POST | /api/auth/mfa/sessions/revoke/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:196 |
-| GET | /api/auth/mfa/status/ | query | authenticated_user | safe_read | safe read only | account_security | frontend/src/api/auth.ts:165 |
-| POST | /api/auth/mfa/step-up/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:170 |
+| POST | /api/auth/mfa/recovery-codes/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:196 |
+| POST | /api/auth/mfa/sessions/revoke/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:214 |
+| GET | /api/auth/mfa/status/ | query | authenticated_user | safe_read | safe read only | account_security | frontend/src/api/auth.ts:183 |
+| POST | /api/auth/mfa/step-up/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:188 |
 | POST | /api/auth/mfa/verify/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:287 |
 | GET | /api/auth/ownership-transfers/ | query | platform_admin + MFA + verified_transfer_scope | safe_read | safe read only | platform_ownership_transfer | frontend/src/api/ownership.ts:28 |
 | POST | /api/auth/ownership-transfers/:param/decision/ | mutation | platform_admin + MFA + verified_transfer_scope | none_proven | no automatic retry | platform_ownership_transfer | frontend/src/api/ownership.ts:30 |
@@ -255,8 +260,8 @@ Detection records which fallback signals currently exist in the owning page sour
 | POST | /api/auth/password-reset/request/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:178 |
 | GET | /api/auth/recovery-confirmations/ | query | platform_admin + MFA for preparation; intended_account/token for confirmation | safe_read | safe read only | account_recovery | frontend/src/api/recovery.ts:28 |
 | POST | /api/auth/recovery-confirmations/:param/ | mutation | platform_admin + MFA for preparation; intended_account/token for confirmation | none_proven | no automatic retry | account_recovery | frontend/src/api/recovery.ts:29 |
-| GET | /api/auth/sessions/ | query | authenticated_user | safe_read | safe read only | account_security | frontend/src/api/auth.ts:129<br>frontend/src/api/auth.ts:133 |
-| POST | /api/auth/sessions/:param/revoke/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:139 |
+| GET | /api/auth/sessions/ | query | authenticated_user | safe_read | safe read only | account_security | frontend/src/api/auth.ts:147<br>frontend/src/api/auth.ts:151 |
+| POST | /api/auth/sessions/:param/revoke/ | mutation | authenticated_user | none_proven | no automatic retry | account_security | frontend/src/api/auth.ts:157 |
 | POST | /api/auth/signup/owner/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:169 |
 | POST | /api/auth/social/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:157 |
 | POST | /api/auth/token/ | mutation | anonymous_or_authenticated | none_proven | no automatic retry | authentication_flow | frontend/src/api/token.ts:147 |
@@ -266,22 +271,22 @@ Detection records which fallback signals currently exist in the owning page sour
 | GET | /api/automation-rules/:param/ | query | automations:view | safe_read | safe read only | automation_run_details | frontend/src/api/automations.ts:27#retrieve |
 | PATCH | /api/automation-rules/:param/ | mutation | automations:view | none_proven | no automatic retry | automation_run_details | frontend/src/api/automations.ts:27#update |
 | POST | /api/automation-rules/:param/archive/ | mutation | automations:view | none_proven | no automatic retry | automation_run_details | frontend/src/api/automations.ts:27#archive |
-| PUT | /api/automation-rules/:param/configuration/ | mutation | automations:view | none_proven | no automatic retry | automation_run_details | frontend/src/api/automations.ts:53 |
-| POST | /api/automation-rules/:param/preview/ | mutation | automations:view | none_proven | no automatic retry | automation_run_details | frontend/src/api/automations.ts:49 |
+| PUT | /api/automation-rules/:param/configuration/ | mutation | automations:view | none_proven | no automatic retry | automation_run_details | frontend/src/api/automations.ts:54 |
+| POST | /api/automation-rules/:param/preview/ | mutation | automations:view | none_proven | no automatic retry | automation_run_details | frontend/src/api/automations.ts:50 |
 | POST | /api/automation-rules/:param/restore/ | mutation | automations:view | none_proven | no automatic retry | automation_run_details | frontend/src/api/automations.ts:27#restore |
 | POST | /api/automation-rules/apply-template/ | mutation | automations:view | none_proven | no automatic retry | automation_run_details | frontend/src/api/automations.ts:37 |
-| POST | /api/automation-rules/create-manual/ | mutation | automations:view | none_proven | no automatic retry | automation_run_details | frontend/src/api/automations.ts:57 |
-| POST | /api/automation-rules/preview/ | mutation | automations:view | none_proven | no automatic retry | automation_run_details | frontend/src/api/automations.ts:45 |
+| POST | /api/automation-rules/create-manual/ | mutation | automations:view | none_proven | no automatic retry | automation_run_details | frontend/src/api/automations.ts:58 |
+| POST | /api/automation-rules/preview/ | mutation | automations:view | none_proven | no automatic retry | automation_run_details | frontend/src/api/automations.ts:46 |
 | GET | /api/automation-rules/templates/ | query | automations:view | safe_read | safe read only | automation_run_details | frontend/src/api/automations.ts:33 |
-| GET | /api/automation-runs/ | query | automations:view | safe_read | safe read only | automation_run_details | frontend/src/api/automations.ts:63#list<br>frontend/src/api/automations.ts:65 |
-| POST | /api/automation-runs/ | mutation | automations:view | none_proven | no automatic retry | automation_run_details | frontend/src/api/automations.ts:63#create |
-| DELETE | /api/automation-runs/:param/ | mutation | automations:view | none_proven | no automatic retry | automation_run_details | frontend/src/api/automations.ts:63#remove |
-| GET | /api/automation-runs/:param/ | query | automations:view | safe_read | safe read only | automation_run_details | frontend/src/api/automations.ts:63#retrieve |
-| PATCH | /api/automation-runs/:param/ | mutation | automations:view | none_proven | no automatic retry | automation_run_details | frontend/src/api/automations.ts:63#update |
-| POST | /api/automation-runs/:param/archive/ | mutation | automations:view | none_proven | no automatic retry | automation_run_details | frontend/src/api/automations.ts:63#archive |
-| POST | /api/automation-runs/:param/cancel/ | mutation | automations:view | none_proven | no automatic retry | automation_run_details | frontend/src/api/automations.ts:73 |
-| POST | /api/automation-runs/:param/restore/ | mutation | automations:view | none_proven | no automatic retry | automation_run_details | frontend/src/api/automations.ts:63#restore |
-| POST | /api/automation-runs/:param/retry/ | mutation | automations:view | none_proven | no automatic retry | automation_run_details | frontend/src/api/automations.ts:69 |
+| GET | /api/automation-runs/ | query | automations:view | safe_read | safe read only | automation_run_details | frontend/src/api/automations.ts:64#list<br>frontend/src/api/automations.ts:66 |
+| POST | /api/automation-runs/ | mutation | automations:view | none_proven | no automatic retry | automation_run_details | frontend/src/api/automations.ts:64#create |
+| DELETE | /api/automation-runs/:param/ | mutation | automations:view | none_proven | no automatic retry | automation_run_details | frontend/src/api/automations.ts:64#remove |
+| GET | /api/automation-runs/:param/ | query | automations:view | safe_read | safe read only | automation_run_details | frontend/src/api/automations.ts:64#retrieve |
+| PATCH | /api/automation-runs/:param/ | mutation | automations:view | none_proven | no automatic retry | automation_run_details | frontend/src/api/automations.ts:64#update |
+| POST | /api/automation-runs/:param/archive/ | mutation | automations:view | none_proven | no automatic retry | automation_run_details | frontend/src/api/automations.ts:64#archive |
+| POST | /api/automation-runs/:param/cancel/ | mutation | automations:view | none_proven | no automatic retry | automation_run_details | frontend/src/api/automations.ts:74 |
+| POST | /api/automation-runs/:param/restore/ | mutation | automations:view | none_proven | no automatic retry | automation_run_details | frontend/src/api/automations.ts:64#restore |
+| POST | /api/automation-runs/:param/retry/ | mutation | automations:view | none_proven | no automatic retry | automation_run_details | frontend/src/api/automations.ts:70 |
 | GET | /api/billing/businesses/:param/orders/ | query | billing:view/manage or platform_admin + MFA for platform mutations | safe_read | safe read only | billing_order_details | frontend/src/api/billingCommerce.ts:19 |
 | POST | /api/billing/businesses/:param/orders/ | mutation | billing:view/manage or platform_admin + MFA for platform mutations | none_proven | no automatic retry | billing_order_details | frontend/src/api/billingCommerce.ts:20 |
 | POST | /api/billing/businesses/:param/orders/:param/:param/ | mutation | billing:view/manage or platform_admin + MFA for platform mutations | none_proven | no automatic retry | billing_order_details | frontend/src/api/billingCommerce.ts:21<br>frontend/src/api/billingCommerce.ts:23 |
@@ -339,21 +344,23 @@ Detection records which fallback signals currently exist in the owning page sour
 | POST | /api/bots/:param/pause/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:20 |
 | POST | /api/bots/:param/preview/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:57 |
 | POST | /api/bots/:param/restore/ | mutation | integrations:view | none_proven | no automatic retry | bot_or_channel_details | frontend/src/api/bots.ts:5#restore |
-| GET | /api/branches/ | query | settings:view/update + branch_access by operation | safe_read | safe read only | branch_or_specialist_settings | frontend/src/api/branches.ts:16#list |
-| POST | /api/branches/ | mutation | settings:view/update + branch_access by operation | none_proven | no automatic retry | branch_or_specialist_settings | frontend/src/api/branches.ts:16#create |
-| DELETE | /api/branches/:param/ | mutation | settings:view/update + branch_access by operation | none_proven | no automatic retry | branch_or_specialist_settings | frontend/src/api/branches.ts:16#remove |
-| GET | /api/branches/:param/ | query | settings:view/update + branch_access by operation | safe_read | safe read only | branch_or_specialist_settings | frontend/src/api/branches.ts:16#retrieve |
-| PATCH | /api/branches/:param/ | mutation | settings:view/update + branch_access by operation | none_proven | no automatic retry | branch_or_specialist_settings | frontend/src/api/branches.ts:16#update |
-| POST | /api/branches/:param/archive/ | mutation | settings:view/update + branch_access by operation | none_proven | no automatic retry | branch_or_specialist_settings | frontend/src/api/branches.ts:16#archive |
-| POST | /api/branches/:param/assignments/ | mutation | settings:view/update + branch_access by operation | none_proven | no automatic retry | branch_or_specialist_settings | frontend/src/api/branches.ts:20 |
-| GET | /api/branches/:param/catalog/ | query | settings:view/update + branch_access by operation | safe_read | safe read only | branch_or_specialist_settings | frontend/src/api/branches.ts:18 |
-| GET | /api/branches/:param/configuration/ | query | settings:view/update + branch_access by operation | safe_read | safe read only | branch_or_specialist_settings | frontend/src/api/branches.ts:17 |
-| POST | /api/branches/:param/offers/ | mutation | settings:view/update + branch_access by operation | none_proven | no automatic retry | branch_or_specialist_settings | frontend/src/api/branches.ts:19 |
-| POST | /api/branches/:param/restore/ | mutation | settings:view/update + branch_access by operation | none_proven | no automatic retry | branch_or_specialist_settings | frontend/src/api/branches.ts:16#restore |
-| POST | /api/branches/:param/schedule/ | mutation | settings:view/update + branch_access by operation | none_proven | no automatic retry | branch_or_specialist_settings | frontend/src/api/branches.ts:21 |
-| POST | /api/branches/:param/state/ | mutation | settings:view/update + branch_access by operation | none_proven | no automatic retry | branch_or_specialist_settings | frontend/src/api/branches.ts:23 |
-| POST | /api/branches/:param/travel/ | mutation | settings:view/update + branch_access by operation | none_proven | no automatic retry | branch_or_specialist_settings | frontend/src/api/branches.ts:22 |
-| POST | /api/branches/member-access/ | mutation | settings:view/update + branch_access by operation | none_proven | no automatic retry | branch_or_specialist_settings | frontend/src/api/branches.ts:24 |
+| GET | /api/branches/ | query | settings:view/update + branch_access by operation | safe_read | safe read only | branch_or_specialist_settings | frontend/src/api/branches.ts:17#list |
+| POST | /api/branches/ | mutation | settings:view/update + branch_access by operation | none_proven | no automatic retry | branch_or_specialist_settings | frontend/src/api/branches.ts:17#create |
+| DELETE | /api/branches/:param/ | mutation | settings:view/update + branch_access by operation | none_proven | no automatic retry | branch_or_specialist_settings | frontend/src/api/branches.ts:17#remove |
+| GET | /api/branches/:param/ | query | settings:view/update + branch_access by operation | safe_read | safe read only | branch_or_specialist_settings | frontend/src/api/branches.ts:17#retrieve |
+| PATCH | /api/branches/:param/ | mutation | settings:view/update + branch_access by operation | none_proven | no automatic retry | branch_or_specialist_settings | frontend/src/api/branches.ts:17#update |
+| POST | /api/branches/:param/archive/ | mutation | settings:view/update + branch_access by operation | none_proven | no automatic retry | branch_or_specialist_settings | frontend/src/api/branches.ts:17#archive |
+| POST | /api/branches/:param/assignments/ | mutation | settings:view/update + branch_access by operation | none_proven | no automatic retry | branch_or_specialist_settings | frontend/src/api/branches.ts:22 |
+| GET | /api/branches/:param/catalog/ | query | settings:view/update + branch_access by operation | safe_read | safe read only | branch_or_specialist_settings | frontend/src/api/branches.ts:19 |
+| GET | /api/branches/:param/configuration/ | query | settings:view/update + branch_access by operation | safe_read | safe read only | branch_or_specialist_settings | frontend/src/api/branches.ts:18 |
+| POST | /api/branches/:param/offers/ | mutation | settings:view/update + branch_access by operation | none_proven | no automatic retry | branch_or_specialist_settings | frontend/src/api/branches.ts:21 |
+| POST | /api/branches/:param/resource-requirements/ | mutation | settings:view/update + branch_access by operation | none_proven | no automatic retry | branch_or_specialist_settings | frontend/src/api/branches.ts:20 |
+| POST | /api/branches/:param/restore/ | mutation | settings:view/update + branch_access by operation | none_proven | no automatic retry | branch_or_specialist_settings | frontend/src/api/branches.ts:17#restore |
+| POST | /api/branches/:param/schedule-weekdays/ | mutation | settings:view/update + branch_access by operation | none_proven | no automatic retry | branch_or_specialist_settings | frontend/src/api/branches.ts:24 |
+| POST | /api/branches/:param/schedule/ | mutation | settings:view/update + branch_access by operation | none_proven | no automatic retry | branch_or_specialist_settings | frontend/src/api/branches.ts:23 |
+| POST | /api/branches/:param/state/ | mutation | settings:view/update + branch_access by operation | none_proven | no automatic retry | branch_or_specialist_settings | frontend/src/api/branches.ts:26 |
+| POST | /api/branches/:param/travel/ | mutation | settings:view/update + branch_access by operation | none_proven | no automatic retry | branch_or_specialist_settings | frontend/src/api/branches.ts:25 |
+| POST | /api/branches/member-access/ | mutation | settings:view/update + branch_access by operation | none_proven | no automatic retry | branch_or_specialist_settings | frontend/src/api/branches.ts:27 |
 | GET | /api/business-connectors/ | query | integrations:view | safe_read | safe read only | integration_details | frontend/src/api/connectors.ts:161#list |
 | POST | /api/business-connectors/ | mutation | integrations:view | none_proven | no automatic retry | integration_details | frontend/src/api/connectors.ts:161#create |
 | DELETE | /api/business-connectors/:param/ | mutation | integrations:view | none_proven | no automatic retry | integration_details | frontend/src/api/connectors.ts:161#remove |
@@ -490,34 +497,34 @@ Detection records which fallback signals currently exist in the owning page sour
 | GET | /api/import-workspaces/:param/references/ | query | integrations:manage + entity_import_and_write_permissions | safe_read | safe read only | import_workspace | frontend/src/api/importWorkspace.ts:73 |
 | GET | /api/import-workspaces/:param/rows/ | query | integrations:manage + entity_import_and_write_permissions | safe_read | safe read only | import_workspace | frontend/src/api/importWorkspace.ts:71 |
 | POST | /api/import-workspaces/:param/upload/ | mutation | integrations:manage + entity_import_and_write_permissions | none_proven | no automatic retry | import_workspace | frontend/src/api/importWorkspace.ts:55 |
-| GET | /api/inbox/conversations/ | query | conversations:view | safe_read | safe read only | conversation_delivery_details | frontend/src/api/inbox.ts:190 |
-| GET | /api/inbox/conversations/:param/ | query | conversations:view | safe_read | safe read only | conversation_delivery_details | frontend/src/api/inbox.ts:196 |
-| POST | /api/inbox/conversations/:param/ai-state/ | mutation | conversations:view | none_proven | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:351 |
-| POST | /api/inbox/conversations/:param/assign/ | mutation | conversations:view | none_proven | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:207 |
-| POST | /api/inbox/conversations/:param/close/ | mutation | conversations:view | none_proven | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:229 |
-| GET | /api/inbox/conversations/:param/context/ | query | conversations:view | safe_read | safe read only | conversation_delivery_details | frontend/src/api/inbox.ts:180 |
-| POST | /api/inbox/conversations/:param/create-appointment/ | mutation | conversations:view | conditional_idempotency_key | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:289 |
-| POST | /api/inbox/conversations/:param/create-client/ | mutation | conversations:view | none_proven | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:299 |
-| POST | /api/inbox/conversations/:param/create-deal/ | mutation | conversations:view | none_proven | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:322 |
-| POST | /api/inbox/conversations/:param/create-lead/ | mutation | conversations:view | none_proven | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:318 |
-| POST | /api/inbox/conversations/:param/create-task/ | mutation | conversations:view | conditional_idempotency_key | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:266 |
-| POST | /api/inbox/conversations/:param/handoff/ | mutation | conversations:view | none_proven | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:211 |
-| GET | /api/inbox/conversations/:param/link-candidates/ | query | conversations:view | safe_read | safe read only | conversation_delivery_details | frontend/src/api/inbox.ts:176 |
-| POST | /api/inbox/conversations/:param/link-client/ | mutation | conversations:view | none_proven | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:311 |
-| POST | /api/inbox/conversations/:param/link-deal/ | mutation | conversations:view | none_proven | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:339 |
-| POST | /api/inbox/conversations/:param/link-lead/ | mutation | conversations:view | none_proven | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:345 |
-| POST | /api/inbox/conversations/:param/mark-read/ | mutation | conversations:view | none_proven | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:215 |
-| POST | /api/inbox/conversations/:param/mark-unread/ | mutation | conversations:view | none_proven | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:219 |
-| GET | /api/inbox/conversations/:param/messages/ | query | conversations:view | safe_read | safe read only | conversation_delivery_details | frontend/src/api/inbox.ts:201 |
-| POST | /api/inbox/conversations/:param/messages/ | mutation | conversations:view | conditional_idempotency_key | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:237 |
-| POST | /api/inbox/conversations/:param/qualify/ | mutation | conversations:view | none_proven | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:262 |
-| POST | /api/inbox/conversations/:param/reopen/ | mutation | conversations:view | none_proven | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:233 |
-| POST | /api/inbox/conversations/:param/reset-ai-memory/ | mutation | conversations:view | none_proven | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:183 |
-| POST | /api/inbox/conversations/:param/retry-message/ | mutation | conversations:view | none_proven | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:248 |
-| POST | /api/inbox/conversations/:param/run-pipeline/ | mutation | conversations:view | none_proven | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:326 |
-| POST | /api/inbox/conversations/:param/set-priority/ | mutation | conversations:view | none_proven | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:223 |
-| POST | /api/inbox/conversations/:param/suggest-reply/ | mutation | conversations:view | none_proven | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:256 |
-| GET | /api/inbox/conversations/summary/ | query | conversations:view | safe_read | safe read only | conversation_delivery_details | frontend/src/api/inbox.ts:186 |
+| GET | /api/inbox/conversations/ | query | conversations:view | safe_read | safe read only | conversation_delivery_details | frontend/src/api/inbox.ts:195 |
+| GET | /api/inbox/conversations/:param/ | query | conversations:view | safe_read | safe read only | conversation_delivery_details | frontend/src/api/inbox.ts:201 |
+| POST | /api/inbox/conversations/:param/ai-state/ | mutation | conversations:view | none_proven | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:356 |
+| POST | /api/inbox/conversations/:param/assign/ | mutation | conversations:view | none_proven | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:212 |
+| POST | /api/inbox/conversations/:param/close/ | mutation | conversations:view | none_proven | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:234 |
+| GET | /api/inbox/conversations/:param/context/ | query | conversations:view | safe_read | safe read only | conversation_delivery_details | frontend/src/api/inbox.ts:181 |
+| POST | /api/inbox/conversations/:param/create-appointment/ | mutation | conversations:view | conditional_idempotency_key | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:294 |
+| POST | /api/inbox/conversations/:param/create-client/ | mutation | conversations:view | none_proven | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:304 |
+| POST | /api/inbox/conversations/:param/create-deal/ | mutation | conversations:view | none_proven | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:327 |
+| POST | /api/inbox/conversations/:param/create-lead/ | mutation | conversations:view | none_proven | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:323 |
+| POST | /api/inbox/conversations/:param/create-task/ | mutation | conversations:view | conditional_idempotency_key | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:271 |
+| POST | /api/inbox/conversations/:param/handoff/ | mutation | conversations:view | none_proven | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:216 |
+| GET | /api/inbox/conversations/:param/link-candidates/ | query | conversations:view | safe_read | safe read only | conversation_delivery_details | frontend/src/api/inbox.ts:177 |
+| POST | /api/inbox/conversations/:param/link-client/ | mutation | conversations:view | none_proven | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:316 |
+| POST | /api/inbox/conversations/:param/link-deal/ | mutation | conversations:view | none_proven | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:344 |
+| POST | /api/inbox/conversations/:param/link-lead/ | mutation | conversations:view | none_proven | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:350 |
+| POST | /api/inbox/conversations/:param/mark-read/ | mutation | conversations:view | none_proven | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:220 |
+| POST | /api/inbox/conversations/:param/mark-unread/ | mutation | conversations:view | none_proven | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:224 |
+| GET | /api/inbox/conversations/:param/messages/ | query | conversations:view | safe_read | safe read only | conversation_delivery_details | frontend/src/api/inbox.ts:206 |
+| POST | /api/inbox/conversations/:param/messages/ | mutation | conversations:view | conditional_idempotency_key | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:242 |
+| POST | /api/inbox/conversations/:param/qualify/ | mutation | conversations:view | none_proven | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:267 |
+| POST | /api/inbox/conversations/:param/reopen/ | mutation | conversations:view | none_proven | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:238 |
+| POST | /api/inbox/conversations/:param/reset-ai-memory/ | mutation | conversations:view | none_proven | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:184 |
+| POST | /api/inbox/conversations/:param/retry-message/ | mutation | conversations:view | none_proven | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:253 |
+| POST | /api/inbox/conversations/:param/run-pipeline/ | mutation | conversations:view | none_proven | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:331 |
+| POST | /api/inbox/conversations/:param/set-priority/ | mutation | conversations:view | none_proven | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:228 |
+| POST | /api/inbox/conversations/:param/suggest-reply/ | mutation | conversations:view | none_proven | no automatic retry | conversation_delivery_details | frontend/src/api/inbox.ts:261 |
+| GET | /api/inbox/conversations/summary/ | query | conversations:view | safe_read | safe read only | conversation_delivery_details | frontend/src/api/inbox.ts:187<br>frontend/src/api/inbox.ts:191 |
 | GET | /api/integration-event-logs/ | query | integrations:view | safe_read | safe read only | bot_or_channel_details | frontend/src/api/bots.ts:34 |
 | GET | /api/integrations/ycloud/channels/:param/ | query | integrations:view/manage + business_scope | safe_read | safe read only | ycloud_channel_setup | frontend/src/api/ycloud.ts:19 |
 | POST | /api/integrations/ycloud/channels/:param/ | mutation | integrations:view/manage + business_scope | none_proven | no automatic retry | ycloud_channel_setup | frontend/src/api/ycloud.ts:21<br>frontend/src/api/ycloud.ts:25 |
@@ -557,6 +564,12 @@ Detection records which fallback signals currently exist in the owning page sour
 | POST | /api/leads/:param/take-in-work/ | mutation | leads:view | none_proven | no automatic retry | lead_list_or_workspace | frontend/src/api/leads.ts:80 |
 | POST | /api/leads/check-duplicates/ | mutation | leads:view | none_proven | no automatic retry | lead_list_or_workspace | frontend/src/api/leads.ts:67 |
 | GET | /api/leads/summary/ | query | leads:view | safe_read | safe read only | lead_list_or_workspace | frontend/src/api/leads.ts:41 |
+| GET | /api/management/ | query | settings:view/update + business and branch scope by operation | safe_read | safe read only | management_catalog_or_editor | frontend/src/api/management.ts:16 |
+| POST | /api/management/branches/ | mutation | settings:view/update + business and branch scope by operation | none_proven | no automatic retry | management_catalog_or_editor | frontend/src/api/management.ts:20 |
+| POST | /api/management/lifecycle/ | mutation | settings:view/update + business and branch scope by operation | none_proven | no automatic retry | management_catalog_or_editor | frontend/src/api/management.ts:21 |
+| POST | /api/management/rooms/ | mutation | settings:view/update + business and branch scope by operation | none_proven | no automatic retry | management_catalog_or_editor | frontend/src/api/management.ts:19 |
+| POST | /api/management/services/ | mutation | settings:view/update + business and branch scope by operation | none_proven | no automatic retry | management_catalog_or_editor | frontend/src/api/management.ts:17 |
+| POST | /api/management/staff/ | mutation | settings:view/update + business and branch scope by operation | none_proven | no automatic retry | management_catalog_or_editor | frontend/src/api/management.ts:18 |
 | GET | /api/notes/ | query | analytics:view | safe_read | safe read only | owning_page | frontend/src/api/activities.ts:26#list |
 | POST | /api/notes/ | mutation | analytics:view | none_proven | no automatic retry | owning_page | frontend/src/api/activities.ts:26#create |
 | DELETE | /api/notes/:param/ | mutation | analytics:view | none_proven | no automatic retry | owning_page | frontend/src/api/activities.ts:26#remove |
@@ -722,26 +735,26 @@ Detection records which fallback signals currently exist in the owning page sour
 | PATCH | /api/quick-replies/:param/ | mutation | conversations:view | none_proven | no automatic retry | inbox_composer | frontend/src/api/quickReplies.ts:4#update |
 | POST | /api/quick-replies/:param/archive/ | mutation | conversations:view | none_proven | no automatic retry | inbox_composer | frontend/src/api/quickReplies.ts:4#archive |
 | POST | /api/quick-replies/:param/restore/ | mutation | conversations:view | none_proven | no automatic retry | inbox_composer | frontend/src/api/quickReplies.ts:4#restore |
-| GET | /api/report-widgets/ | query | analytics:view | safe_read | safe read only | owning_page | frontend/src/api/analytics.ts:14#list |
-| POST | /api/report-widgets/ | mutation | analytics:view | none_proven | no automatic retry | owning_page | frontend/src/api/analytics.ts:14#create |
-| DELETE | /api/report-widgets/:param/ | mutation | analytics:view | none_proven | no automatic retry | owning_page | frontend/src/api/analytics.ts:14#remove |
-| GET | /api/report-widgets/:param/ | query | analytics:view | safe_read | safe read only | owning_page | frontend/src/api/analytics.ts:14#retrieve |
-| PATCH | /api/report-widgets/:param/ | mutation | analytics:view | none_proven | no automatic retry | owning_page | frontend/src/api/analytics.ts:14#update |
-| POST | /api/report-widgets/:param/archive/ | mutation | analytics:view | none_proven | no automatic retry | owning_page | frontend/src/api/analytics.ts:14#archive |
-| POST | /api/report-widgets/:param/restore/ | mutation | analytics:view | none_proven | no automatic retry | owning_page | frontend/src/api/analytics.ts:14#restore |
-| GET | /api/resources/ | query | settings:view | safe_read | safe read only | resource_settings | frontend/src/api/resources.ts:27#list<br>frontend/src/api/resources.ts:32 |
-| POST | /api/resources/ | mutation | settings:view | none_proven | no automatic retry | resource_settings | frontend/src/api/resources.ts:27#create |
-| DELETE | /api/resources/:param/ | mutation | settings:view | none_proven | no automatic retry | resource_settings | frontend/src/api/resources.ts:27#remove |
-| GET | /api/resources/:param/ | query | settings:view | safe_read | safe read only | resource_settings | frontend/src/api/resources.ts:27#retrieve |
-| PATCH | /api/resources/:param/ | mutation | settings:view | none_proven | no automatic retry | resource_settings | frontend/src/api/resources.ts:27#update |
-| GET | /api/resources/:param/absences/ | query | settings:view/update + branch_access by operation | safe_read | safe read only | branch_or_specialist_settings | frontend/src/api/branches.ts:27 |
-| POST | /api/resources/:param/absences/ | mutation | settings:view/update + branch_access by operation | none_proven | no automatic retry | branch_or_specialist_settings | frontend/src/api/branches.ts:28 |
-| POST | /api/resources/:param/archive/ | mutation | settings:view | none_proven | no automatic retry | resource_settings | frontend/src/api/resources.ts:27#archive |
-| POST | /api/resources/:param/remove-absence/ | mutation | settings:view/update + branch_access by operation | none_proven | no automatic retry | branch_or_specialist_settings | frontend/src/api/branches.ts:29 |
-| POST | /api/resources/:param/restore/ | mutation | settings:view | none_proven | no automatic retry | resource_settings | frontend/src/api/resources.ts:27#restore |
-| POST | /api/resources/:param/retire/ | mutation | settings:view/update + branch_access by operation | none_proven | no automatic retry | branch_or_specialist_settings | frontend/src/api/branches.ts:31 |
-| GET | /api/resources/:param/retirement-preview/ | query | settings:view/update + branch_access by operation | safe_read | safe read only | branch_or_specialist_settings | frontend/src/api/branches.ts:30 |
-| GET | /api/resources/options/ | query | settings:view | safe_read | safe read only | resource_settings | frontend/src/api/resources.ts:44 |
+| GET | /api/report-widgets/ | query | analytics:view | safe_read | safe read only | owning_page | frontend/src/api/analytics.ts:20#list |
+| POST | /api/report-widgets/ | mutation | analytics:view | none_proven | no automatic retry | owning_page | frontend/src/api/analytics.ts:20#create |
+| DELETE | /api/report-widgets/:param/ | mutation | analytics:view | none_proven | no automatic retry | owning_page | frontend/src/api/analytics.ts:20#remove |
+| GET | /api/report-widgets/:param/ | query | analytics:view | safe_read | safe read only | owning_page | frontend/src/api/analytics.ts:20#retrieve |
+| PATCH | /api/report-widgets/:param/ | mutation | analytics:view | none_proven | no automatic retry | owning_page | frontend/src/api/analytics.ts:20#update |
+| POST | /api/report-widgets/:param/archive/ | mutation | analytics:view | none_proven | no automatic retry | owning_page | frontend/src/api/analytics.ts:20#archive |
+| POST | /api/report-widgets/:param/restore/ | mutation | analytics:view | none_proven | no automatic retry | owning_page | frontend/src/api/analytics.ts:20#restore |
+| GET | /api/resources/ | query | settings:view | safe_read | safe read only | resource_settings | frontend/src/api/resources.ts:29#list<br>frontend/src/api/resources.ts:34 |
+| POST | /api/resources/ | mutation | settings:view | none_proven | no automatic retry | resource_settings | frontend/src/api/resources.ts:29#create |
+| DELETE | /api/resources/:param/ | mutation | settings:view | none_proven | no automatic retry | resource_settings | frontend/src/api/resources.ts:29#remove |
+| GET | /api/resources/:param/ | query | settings:view | safe_read | safe read only | resource_settings | frontend/src/api/resources.ts:29#retrieve |
+| PATCH | /api/resources/:param/ | mutation | settings:view | none_proven | no automatic retry | resource_settings | frontend/src/api/resources.ts:29#update |
+| GET | /api/resources/:param/absences/ | query | settings:view/update + branch_access by operation | safe_read | safe read only | branch_or_specialist_settings | frontend/src/api/branches.ts:30 |
+| POST | /api/resources/:param/absences/ | mutation | settings:view/update + branch_access by operation | none_proven | no automatic retry | branch_or_specialist_settings | frontend/src/api/branches.ts:31 |
+| POST | /api/resources/:param/archive/ | mutation | settings:view | none_proven | no automatic retry | resource_settings | frontend/src/api/resources.ts:29#archive |
+| POST | /api/resources/:param/remove-absence/ | mutation | settings:view/update + branch_access by operation | none_proven | no automatic retry | branch_or_specialist_settings | frontend/src/api/branches.ts:32 |
+| POST | /api/resources/:param/restore/ | mutation | settings:view | none_proven | no automatic retry | resource_settings | frontend/src/api/resources.ts:29#restore |
+| POST | /api/resources/:param/retire/ | mutation | settings:view/update + branch_access by operation | none_proven | no automatic retry | branch_or_specialist_settings | frontend/src/api/branches.ts:34 |
+| GET | /api/resources/:param/retirement-preview/ | query | settings:view/update + branch_access by operation | safe_read | safe read only | branch_or_specialist_settings | frontend/src/api/branches.ts:33 |
+| GET | /api/resources/options/ | query | settings:view | safe_read | safe read only | resource_settings | frontend/src/api/resources.ts:46 |
 | GET | /api/schedule-exceptions/ | query | settings:view | safe_read | safe read only | working_hours_settings | frontend/src/api/workingHours.ts:7#list |
 | POST | /api/schedule-exceptions/ | mutation | settings:view | none_proven | no automatic retry | working_hours_settings | frontend/src/api/workingHours.ts:7#create |
 | DELETE | /api/schedule-exceptions/:param/ | mutation | settings:view | none_proven | no automatic retry | working_hours_settings | frontend/src/api/workingHours.ts:7#remove |
@@ -749,13 +762,13 @@ Detection records which fallback signals currently exist in the owning page sour
 | PATCH | /api/schedule-exceptions/:param/ | mutation | settings:view | none_proven | no automatic retry | working_hours_settings | frontend/src/api/workingHours.ts:7#update |
 | POST | /api/schedule-exceptions/:param/archive/ | mutation | settings:view | none_proven | no automatic retry | working_hours_settings | frontend/src/api/workingHours.ts:7#archive |
 | POST | /api/schedule-exceptions/:param/restore/ | mutation | settings:view | none_proven | no automatic retry | working_hours_settings | frontend/src/api/workingHours.ts:7#restore |
-| GET | /api/scheduled-reports/ | query | analytics:view | safe_read | safe read only | owning_page | frontend/src/api/analytics.ts:15#list |
-| POST | /api/scheduled-reports/ | mutation | analytics:view | none_proven | no automatic retry | owning_page | frontend/src/api/analytics.ts:15#create |
-| DELETE | /api/scheduled-reports/:param/ | mutation | analytics:view | none_proven | no automatic retry | owning_page | frontend/src/api/analytics.ts:15#remove |
-| GET | /api/scheduled-reports/:param/ | query | analytics:view | safe_read | safe read only | owning_page | frontend/src/api/analytics.ts:15#retrieve |
-| PATCH | /api/scheduled-reports/:param/ | mutation | analytics:view | none_proven | no automatic retry | owning_page | frontend/src/api/analytics.ts:15#update |
-| POST | /api/scheduled-reports/:param/archive/ | mutation | analytics:view | none_proven | no automatic retry | owning_page | frontend/src/api/analytics.ts:15#archive |
-| POST | /api/scheduled-reports/:param/restore/ | mutation | analytics:view | none_proven | no automatic retry | owning_page | frontend/src/api/analytics.ts:15#restore |
+| GET | /api/scheduled-reports/ | query | analytics:view | safe_read | safe read only | owning_page | frontend/src/api/analytics.ts:21#list |
+| POST | /api/scheduled-reports/ | mutation | analytics:view | none_proven | no automatic retry | owning_page | frontend/src/api/analytics.ts:21#create |
+| DELETE | /api/scheduled-reports/:param/ | mutation | analytics:view | none_proven | no automatic retry | owning_page | frontend/src/api/analytics.ts:21#remove |
+| GET | /api/scheduled-reports/:param/ | query | analytics:view | safe_read | safe read only | owning_page | frontend/src/api/analytics.ts:21#retrieve |
+| PATCH | /api/scheduled-reports/:param/ | mutation | analytics:view | none_proven | no automatic retry | owning_page | frontend/src/api/analytics.ts:21#update |
+| POST | /api/scheduled-reports/:param/archive/ | mutation | analytics:view | none_proven | no automatic retry | owning_page | frontend/src/api/analytics.ts:21#archive |
+| POST | /api/scheduled-reports/:param/restore/ | mutation | analytics:view | none_proven | no automatic retry | owning_page | frontend/src/api/analytics.ts:21#restore |
 | GET | /api/security/audit/ | query | owner_or_administrator | safe_read | safe read only | account_security | frontend/src/api/security.ts:7 |
 | GET | /api/security/login-history/ | query | owner_or_administrator | safe_read | safe read only | account_security | frontend/src/api/security.ts:11 |
 | GET | /api/security/risk-summary/ | query | owner_or_administrator | safe_read | safe read only | account_security | frontend/src/api/security.ts:15 |
@@ -783,15 +796,15 @@ Detection records which fallback signals currently exist in the owning page sour
 | POST | /api/segments/:param/refresh-count/ | mutation | analytics:view | none_proven | no automatic retry | owning_page | frontend/src/api/activities.ts:45 |
 | POST | /api/segments/:param/restore/ | mutation | analytics:view | none_proven | no automatic retry | owning_page | frontend/src/api/activities.ts:39#restore |
 | GET | /api/service-status/ | query | active_business_member | safe_read | safe read only | service_status_notice | frontend/src/api/serviceStatus.ts:20 |
-| GET | /api/services/ | query | settings:view | safe_read | safe read only | service_settings | frontend/src/api/services.ts:24#list<br>frontend/src/api/services.ts:32 |
-| POST | /api/services/ | mutation | settings:view | none_proven | no automatic retry | service_settings | frontend/src/api/services.ts:24#create |
-| DELETE | /api/services/:param/ | mutation | settings:view | none_proven | no automatic retry | service_settings | frontend/src/api/services.ts:24#remove |
-| GET | /api/services/:param/ | query | settings:view | safe_read | safe read only | service_settings | frontend/src/api/services.ts:24#retrieve |
-| PATCH | /api/services/:param/ | mutation | settings:view | none_proven | no automatic retry | service_settings | frontend/src/api/services.ts:24#update |
-| POST | /api/services/:param/activate/ | mutation | settings:view | none_proven | no automatic retry | service_settings | frontend/src/api/services.ts:44 |
-| POST | /api/services/:param/archive/ | mutation | settings:view | none_proven | no automatic retry | service_settings | frontend/src/api/services.ts:24#archive |
-| POST | /api/services/:param/deactivate/ | mutation | settings:view | none_proven | no automatic retry | service_settings | frontend/src/api/services.ts:48 |
-| POST | /api/services/:param/restore/ | mutation | settings:view | none_proven | no automatic retry | service_settings | frontend/src/api/services.ts:24#restore |
+| GET | /api/services/ | query | settings:view | safe_read | safe read only | service_settings | frontend/src/api/services.ts:25#list<br>frontend/src/api/services.ts:33 |
+| POST | /api/services/ | mutation | settings:view | none_proven | no automatic retry | service_settings | frontend/src/api/services.ts:25#create |
+| DELETE | /api/services/:param/ | mutation | settings:view | none_proven | no automatic retry | service_settings | frontend/src/api/services.ts:25#remove |
+| GET | /api/services/:param/ | query | settings:view | safe_read | safe read only | service_settings | frontend/src/api/services.ts:25#retrieve |
+| PATCH | /api/services/:param/ | mutation | settings:view | none_proven | no automatic retry | service_settings | frontend/src/api/services.ts:25#update |
+| POST | /api/services/:param/activate/ | mutation | settings:view | none_proven | no automatic retry | service_settings | frontend/src/api/services.ts:45 |
+| POST | /api/services/:param/archive/ | mutation | settings:view | none_proven | no automatic retry | service_settings | frontend/src/api/services.ts:25#archive |
+| POST | /api/services/:param/deactivate/ | mutation | settings:view | none_proven | no automatic retry | service_settings | frontend/src/api/services.ts:49 |
+| POST | /api/services/:param/restore/ | mutation | settings:view | none_proven | no automatic retry | service_settings | frontend/src/api/services.ts:25#restore |
 | GET | /api/support/cases/ | query | business_case_scope or platform_support_role by endpoint | safe_read | safe read only | support_case | frontend/src/api/support.ts:9 |
 | POST | /api/support/cases/ | mutation | business_case_scope or platform_support_role by endpoint | none_proven | no automatic retry | support_case | frontend/src/api/support.ts:11 |
 | GET | /api/support/cases/:param/ | query | business_case_scope or platform_support_role by endpoint | safe_read | safe read only | support_case | frontend/src/api/support.ts:10 |
@@ -840,8 +853,8 @@ Detection records which fallback signals currently exist in the owning page sour
 | GET | /api/tasks/summary/ | query | tasks:view | safe_read | safe read only | task_list_or_workspace | frontend/src/api/tasks.ts:166 |
 | GET | /api/tasks/templates/ | query | tasks:view | safe_read | safe read only | task_list_or_workspace | frontend/src/api/tasks.ts:174 |
 | GET | /api/tasks/workload/ | query | tasks:view | safe_read | safe read only | task_list_or_workspace | frontend/src/api/tasks.ts:170 |
-| GET | /api/team/departments/ | query | owner_or_administrator | safe_read | safe read only | team_settings | frontend/src/api/team.ts:15#list<br>frontend/src/api/team.ts:87 |
-| POST | /api/team/departments/ | mutation | owner_or_administrator | none_proven | no automatic retry | team_settings | frontend/src/api/team.ts:15#create<br>frontend/src/api/team.ts:93 |
+| GET | /api/team/departments/ | query | owner_or_administrator | safe_read | safe read only | team_settings | frontend/src/api/team.ts:15#list<br>frontend/src/api/team.ts:91 |
+| POST | /api/team/departments/ | mutation | owner_or_administrator | none_proven | no automatic retry | team_settings | frontend/src/api/team.ts:15#create<br>frontend/src/api/team.ts:97 |
 | DELETE | /api/team/departments/:param/ | mutation | owner_or_administrator | none_proven | no automatic retry | team_settings | frontend/src/api/team.ts:15#remove |
 | GET | /api/team/departments/:param/ | query | owner_or_administrator | safe_read | safe read only | team_settings | frontend/src/api/team.ts:15#retrieve |
 | PATCH | /api/team/departments/:param/ | mutation | owner_or_administrator | none_proven | no automatic retry | team_settings | frontend/src/api/team.ts:15#update |
@@ -853,10 +866,11 @@ Detection records which fallback signals currently exist in the owning page sour
 | GET | /api/team/invitations/:param/ | query | owner_or_administrator | safe_read | safe read only | team_settings | frontend/src/api/team.ts:14#retrieve |
 | PATCH | /api/team/invitations/:param/ | mutation | owner_or_administrator | none_proven | no automatic retry | team_settings | frontend/src/api/team.ts:14#update |
 | POST | /api/team/invitations/:param/archive/ | mutation | owner_or_administrator | none_proven | no automatic retry | team_settings | frontend/src/api/team.ts:14#archive |
+| POST | /api/team/invitations/:param/resend/ | mutation | owner_or_administrator | none_proven | no automatic retry | team_settings | frontend/src/api/team.ts:50 |
 | POST | /api/team/invitations/:param/restore/ | mutation | owner_or_administrator | none_proven | no automatic retry | team_settings | frontend/src/api/team.ts:14#restore |
 | POST | /api/team/invitations/:param/revoke/ | mutation | owner_or_administrator | none_proven | no automatic retry | team_settings | frontend/src/api/team.ts:46 |
-| POST | /api/team/invitations/accept/ | mutation | owner_or_administrator | none_proven | no automatic retry | team_settings | frontend/src/api/team.ts:56 |
-| GET | /api/team/invitations/preview/:param/ | query | owner_or_administrator | safe_read | safe read only | team_settings | frontend/src/api/team.ts:50 |
+| POST | /api/team/invitations/accept/ | mutation | owner_or_administrator | none_proven | no automatic retry | team_settings | frontend/src/api/team.ts:60 |
+| GET | /api/team/invitations/preview/:param/ | query | owner_or_administrator | safe_read | safe read only | team_settings | frontend/src/api/team.ts:54 |
 | GET | /api/team/members/ | query | owner_or_administrator | safe_read | safe read only | team_settings | frontend/src/api/team.ts:12#list<br>frontend/src/api/team.ts:17 |
 | POST | /api/team/members/ | mutation | owner_or_administrator | none_proven | no automatic retry | team_settings | frontend/src/api/team.ts:12#create |
 | DELETE | /api/team/members/:param/ | mutation | owner_or_administrator | none_proven | no automatic retry | team_settings | frontend/src/api/team.ts:12#remove |
@@ -864,18 +878,18 @@ Detection records which fallback signals currently exist in the owning page sour
 | PATCH | /api/team/members/:param/ | mutation | owner_or_administrator | none_proven | no automatic retry | team_settings | frontend/src/api/team.ts:12#update<br>frontend/src/api/team.ts:23 |
 | POST | /api/team/members/:param/archive/ | mutation | owner_or_administrator | none_proven | no automatic retry | team_settings | frontend/src/api/team.ts:12#archive |
 | POST | /api/team/members/:param/restore/ | mutation | owner_or_administrator | none_proven | no automatic retry | team_settings | frontend/src/api/team.ts:12#restore |
-| GET | /api/team/performance/ | query | analytics:view | safe_read | safe read only | owning_page | frontend/src/api/analytics.ts:23 |
-| GET | /api/team/permissions/catalog/ | query | owner_or_administrator | safe_read | safe read only | team_settings | frontend/src/api/team.ts:97 |
-| POST | /api/team/role-permissions/ | mutation | owner_or_administrator | none_proven | no automatic retry | team_settings | frontend/src/api/team.ts:79 |
-| PATCH | /api/team/role-permissions/:param/ | mutation | owner_or_administrator | none_proven | no automatic retry | team_settings | frontend/src/api/team.ts:75 |
-| GET | /api/team/roles/ | query | owner_or_administrator | safe_read | safe read only | team_settings | frontend/src/api/team.ts:13#list<br>frontend/src/api/team.ts:65 |
+| GET | /api/team/performance/ | query | analytics:view | safe_read | safe read only | owning_page | frontend/src/api/analytics.ts:29 |
+| GET | /api/team/permissions/catalog/ | query | owner_or_administrator | safe_read | safe read only | team_settings | frontend/src/api/team.ts:101 |
+| POST | /api/team/role-permissions/ | mutation | owner_or_administrator | none_proven | no automatic retry | team_settings | frontend/src/api/team.ts:83 |
+| PATCH | /api/team/role-permissions/:param/ | mutation | owner_or_administrator | none_proven | no automatic retry | team_settings | frontend/src/api/team.ts:79 |
+| GET | /api/team/roles/ | query | owner_or_administrator | safe_read | safe read only | team_settings | frontend/src/api/team.ts:13#list<br>frontend/src/api/team.ts:69 |
 | POST | /api/team/roles/ | mutation | owner_or_administrator | none_proven | no automatic retry | team_settings | frontend/src/api/team.ts:13#create |
 | DELETE | /api/team/roles/:param/ | mutation | owner_or_administrator | none_proven | no automatic retry | team_settings | frontend/src/api/team.ts:13#remove |
 | GET | /api/team/roles/:param/ | query | owner_or_administrator | safe_read | safe read only | team_settings | frontend/src/api/team.ts:13#retrieve |
-| PATCH | /api/team/roles/:param/ | mutation | owner_or_administrator | none_proven | no automatic retry | team_settings | frontend/src/api/team.ts:13#update<br>frontend/src/api/team.ts:71 |
+| PATCH | /api/team/roles/:param/ | mutation | owner_or_administrator | none_proven | no automatic retry | team_settings | frontend/src/api/team.ts:13#update<br>frontend/src/api/team.ts:75 |
 | POST | /api/team/roles/:param/archive/ | mutation | owner_or_administrator | none_proven | no automatic retry | team_settings | frontend/src/api/team.ts:13#archive |
 | POST | /api/team/roles/:param/restore/ | mutation | owner_or_administrator | none_proven | no automatic retry | team_settings | frontend/src/api/team.ts:13#restore |
-| POST | /api/team/roles/:param/visibility/ | mutation | owner_or_administrator | none_proven | no automatic retry | team_settings | frontend/src/api/team.ts:83 |
+| POST | /api/team/roles/:param/visibility/ | mutation | owner_or_administrator | none_proven | no automatic retry | team_settings | frontend/src/api/team.ts:87 |
 | GET | /api/visit-plans/ | query | appointments permissions + current plan/client_scope | safe_read | safe read only | client_visit_plan | frontend/src/api/visitPlans.ts:19 |
 | POST | /api/visit-plans/ | mutation | appointments permissions + current plan/client_scope | none_proven | no automatic retry | client_visit_plan | frontend/src/api/visitPlans.ts:23 |
 | GET | /api/visit-plans/:param/ | query | appointments permissions + current plan/client_scope | safe_read | safe read only | client_visit_plan | frontend/src/api/visitPlans.ts:21 |

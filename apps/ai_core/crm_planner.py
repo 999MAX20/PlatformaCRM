@@ -31,6 +31,7 @@ PLAN_CONTRACT = (
     ' Put a supplied cancellation/reschedule reason in arguments.reason. Never put a reason or action summary in question.'
     ' When the command is fully specified, question must be an empty string. A nonempty question is only a genuine request for missing information.'
     ' Completing an appointment before its end time requires the employee-provided reason; ask when absent.'
+    ' New applications/inquiries/leads (заявка, лид, өтінім) in the current workflow mean appointments, including pending clarification replies.'
     ' A new appointment needs client, service, specialist resource and future start_at. Never create a lead or deal as a prerequisite.'
     ' For appointment dates use the supplied business timezone and current local reference including UTC offset, not a remembered historic offset.'
     ' question belongs only at the top level, never inside arguments or values.'

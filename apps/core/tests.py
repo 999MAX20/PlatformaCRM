@@ -1,4 +1,5 @@
 from datetime import datetime, time
+from decimal import Decimal
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from zoneinfo import ZoneInfo
@@ -666,7 +667,8 @@ class PlatformDashboardTests(TestCase):
             self.assertEqual(merchants.status_code, 200)
             self.assertGreaterEqual(overview.data["total_businesses"], 2)
             self.assertEqual(overview.data["active_subscriptions"], 1)
-            self.assertEqual(overview.data["mrr_estimate"], "9900")
+            self.assertIsInstance(overview.data["mrr_estimate"], str)
+            self.assertEqual(Decimal(overview.data["mrr_estimate"]), Decimal("9900.00"))
             self.assertEqual(overview.data["bot_count"], 1)
             self.assertEqual(overview.data["active_bot_channels"], 1)
             self.assertEqual(overview.data["ai_requests_30d"], 1)
@@ -676,6 +678,15 @@ class PlatformDashboardTests(TestCase):
             self.assertEqual(merchant["plan"]["name"], self.plan.name)
             self.assertEqual(merchant["subscription_status"], Subscription.Statuses.ACTIVE)
             self.assertTrue(merchant["usage_summary"])
+
+    def test_platform_mrr_preserves_fractional_currency_value(self):
+        self.plan.monthly_price = Decimal("9900.37")
+        self.plan.save(update_fields=["monthly_price"])
+        self.api.force_authenticate(self.platform_admin)
+        response = self.api.get("/api/platform/overview/")
+        self.assertEqual(response.status_code, 200)
+        self.assertIsInstance(response.data["mrr_estimate"], str)
+        self.assertEqual(Decimal(response.data["mrr_estimate"]), Decimal("9900.37"))
 
     def test_merchant_user_cannot_open_platform_dashboard_api(self):
         self.api.force_authenticate(self.owner)
