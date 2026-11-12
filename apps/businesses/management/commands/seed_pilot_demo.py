@@ -10,7 +10,11 @@ from django.utils.text import slugify
 from apps.accounts.models import User
 from apps.ai_core.models import AIToolCallLog
 from apps.crm.models import Deal
-from apps.scheduling.models import Appointment
+from apps.scheduling.models import Appointment, Resource
+from apps.branches.models import (
+    BranchService, BranchTravelTime, ScheduleDay, ServiceResourceRequirement,
+    SpecialistAbsence, SpecialistBranch,
+)
 from apps.businesses.activation import activate_landing_business
 from apps.businesses.models import Business, BusinessMember
 from apps.bots.models import Bot, BotChannel, BotConversation, BotMessage
@@ -121,6 +125,13 @@ class Command(BaseCommand):
             Appointment.objects.filter(business=business).delete()
             Deal.objects.filter(business=business).delete()
             Lead.objects.filter(business=business).delete()
+
+            # Branch configuration protects its references even when the Business
+            # collector also schedules those references for deletion.
+            ServiceResourceRequirement.objects.filter(branch__business=business).delete()
+            for model in (ScheduleDay, SpecialistAbsence, SpecialistBranch, BranchService, BranchTravelTime):
+                model.objects.filter(business=business).delete()
+            Resource.objects.filter(business=business).delete()
 
             # Remaining relations are CASCADE/SET_NULL and are safe to delete
             # together with the business.

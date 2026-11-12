@@ -18,18 +18,20 @@ export type AppErrorCodePolicy = Readonly<{
   code: string;
   retryPolicy: string;
   retryable: boolean;
+  messageKey?: string;
 }>;
 
 function errorCode(
   code: string,
   category: AppErrorCategory,
-  options: { retryable?: boolean; retryPolicy?: string } = {},
+  options: { retryable?: boolean; retryPolicy?: string; messageKey?: string } = {},
 ): AppErrorCodePolicy {
   return {
     code,
     category,
     retryable: options.retryable ?? false,
     retryPolicy: options.retryPolicy || "never_blindly",
+    ...(options.messageKey ? { messageKey: options.messageKey } : {}),
   };
 }
 
@@ -53,9 +55,11 @@ export const appErrorCodeRegistry: readonly AppErrorCodePolicy[] = [
   errorCode("permission_denied", "permission"),
   errorCode("module_disabled", "permission"),
   errorCode("not_found", "not_found"),
-  errorCode("invalid_transition", "conflict"),
-  errorCode("last_active_branch", "conflict"),
-  errorCode("schedule_conflict", "conflict"),
+  errorCode("invalid_transition", "conflict", { messageKey: "actions.errorInvalidTransition" }),
+  errorCode("unfinished_work", "conflict", { messageKey: "actions.errorUnfinishedWork" }),
+  errorCode("future_appointments_conflict", "conflict", { messageKey: "actions.errorFutureAppointments" }),
+  errorCode("last_active_branch", "conflict", { messageKey: "actions.errorLastActiveBranch" }),
+  errorCode("schedule_conflict", "conflict", { messageKey: "actions.errorScheduleConflict" }),
   errorCode("assignee_unavailable", "conflict"),
   errorCode("idempotency_conflict", "conflict"),
   errorCode("ownership_conflict", "conflict"),

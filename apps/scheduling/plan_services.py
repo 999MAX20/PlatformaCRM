@@ -9,7 +9,7 @@ from apps.activities.services import create_activity_event
 from apps.businesses.access import Actions
 from apps.businesses.models import Business
 from apps.core.audit import write_actor_audit_log
-from apps.core.domain_errors import InvalidTransition
+from apps.core.domain_errors import InvalidTransition, UnfinishedWork
 from apps.core.idempotency import CRMCommandResult, run_idempotent_crm_command
 from apps.core.models import AuditLog
 from apps.scheduling.models import VisitPlan, VisitPlanStep, Resource
@@ -117,7 +117,7 @@ def change_plan(*, plan, actor, command, expected_revision, idempotency_key, dat
             if not str(data.get("reason", "")).strip():
                 raise ValidationError({"reason": "Provide a reason."})
             if command == "archive" and plan.steps.filter(appointment__status__in=["created", "confirmed", "rescheduled"], appointment__is_archived=False).exists():
-                raise InvalidTransition("Resolve scheduled visits before archiving the plan.")
+                raise UnfinishedWork("Resolve scheduled visits before archiving the plan.")
             plan.is_archived = command == "archive"
             plan.archived_at = timezone.now() if plan.is_archived else None
             plan.archived_by = actor if plan.is_archived else None

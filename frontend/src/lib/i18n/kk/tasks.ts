@@ -1,4 +1,12 @@
 export const tasks: Record<string, string> = {
+  "taskWorkspace.followUp.cancelled.title": "Бас тартылған #{id} жазбадан кейін хабарласу",
+  "taskWorkspace.followUp.cancelled.description": "Клиентпен бас тартудан кейін хабарласып, келесі қадамды келісіңіз.",
+  "taskWorkspace.followUp.no_show.title": "Клиент келмеген #{id} жазбадан кейін хабарласу",
+  "taskWorkspace.followUp.no_show.description": "Клиентпен хабарласып, қайта жазылуды талқылаңыз.",
+  "taskWorkspace.followUp.completed.title": "Аяқталған #{id} жазбадан кейін хабарласу",
+  "taskWorkspace.followUp.completed.description": "Клиенттің пікірін біліп, ескертпе қосыңыз және қажет болса келесі жазбаны ұсыныңыз.",
+  "taskWorkspace.followUp.reason": "Себебі: {reason}",
+
   "taskWorkspace.actions": "Әрекеттер",
   "taskWorkspace.send": "Жіберу",
   "taskWorkspace.my": "Менің тапсырмаларым",

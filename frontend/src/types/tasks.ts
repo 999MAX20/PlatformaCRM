@@ -5,6 +5,7 @@ export type Task = {
   id: Id;
   business: Id;
   title: string;
+  system_copy?: { kind: "appointment_follow_up"; status: "cancelled" | "no_show" | "completed"; title: boolean; description: boolean; reason: string } | null;
   description: string;
   client: Id | null;
   client_name?: string;

@@ -1,3 +1,15 @@
+## Корректировки общей проверки F01–F10 — 12.11.2026
+
+Client search нормализует телефон только для строк телефонного вида, сохраняя
+буквальный поиск имени/email с цифрами. Доменные409 различают `unfinished_work`,
+`future_appointments_conflict`, `last_active_branch`, `schedule_conflict` и
+`invalid_transition`; это уточняет причину отказа, не меняет инварианты.
+Task representation содержит read-only `system_copy` для исходного системного
+follow-up текста с подтверждённым ActivityEvent. Изменённые пользователем поля
+не переводятся; список событий читается пакетно. Automation apply-template принимает
+`language: ru|kk|en` (default ru) для новых шаблонных правил/action titles;
+существующие правила не переписываются. [Адресная проверка](../testing/evidence/crm-global-fixes-20261112.md).
+
 ## Управление: явные каталоги и помещения — решение 11.11.2026
 
 Первый филиал создаётся обычным Branch при онбординге. Согласованное сохранение

@@ -1,3 +1,5 @@
+import re
+
 from rest_framework import serializers
 from django.db import models
 from django.db.models import BooleanField, Case, CharField, Count, DateTimeField, Exists, F, IntegerField, OuterRef, Q, Subquery, Value, When
@@ -60,7 +62,7 @@ def filter_client_queryset(queryset, request, *, client_ids=None):
     segment_id = request.query_params.get("segment")
 
     if search:
-        normalized_phone = normalize_phone(search)
+        normalized_phone = normalize_phone(search) if re.fullmatch(r"[\d\s()+.\-]+", search) else ""
         normalized_email = normalize_email(search)
         search_query = Q(full_name__icontains=search) | Q(phone__icontains=search) | Q(email__icontains=search)
         if normalized_phone:

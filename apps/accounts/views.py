@@ -77,7 +77,7 @@ class ChangePasswordView(APIView):
             event="password_changed",
             sessions_revoked=revoked_sessions,
         )
-        return set_refresh_cookie(Response({"ok": True}), str(refresh))
+        return set_refresh_cookie(Response({"ok": True, "access": str(refresh.access_token)}), str(refresh))
 
 
 class CurrentUserLoginHistoryView(APIView):

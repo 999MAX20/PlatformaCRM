@@ -1,3 +1,14 @@
+## Website widget recovery — 12.11.2026
+
+Widget сохраняет conversation ID, последние100 подтверждённых пользовательских
+сообщений и draft/name/phone в sessionStorage текущей вкладки. Ключ включает
+API URL, public token и visitor ID; reload продолжает ту же беседу. При недоступном
+storage остаётся работа в памяти. Приватная история CRM не загружается.
+Ввод очищается только после успешного ответа; ошибка сохраняет draft и предлагает
+ручной retry. `language` ru/kk/en опционален, иначе используется язык страницы.
+Нет гарантии exactly-once при потере успешного ответа или межвкладочного transcript sync.
+Origin/tenant/rate limits сохранены. [Изолированные проверки F06/F07](../testing/evidence/crm-global-fixes-20261112.md).
+
 ## Мастер переноса — решение04.11.2026
 
 [Контракт переноса и адаптации представлений](import-workspace.md) фиксирует

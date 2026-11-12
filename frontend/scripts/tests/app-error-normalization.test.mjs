@@ -46,7 +46,7 @@ test("stable backend code takes priority over conflicting HTTP status", () => {
 
   assert.equal(normalized.code, "schedule_conflict");
   assert.equal(normalized.category, "conflict");
-  assert.equal(normalized.messageKey, "actions.errorConflict");
+  assert.equal(normalized.messageKey, "actions.errorScheduleConflict");
   assert.deepEqual(normalized.fieldErrors, {
     start_time: ["This slot is no longer available."],
   });
@@ -128,4 +128,21 @@ test("runtime error-code registry has unique stable codes", () => {
   assert.equal(new Set(codes).size, codes.length);
   assert.ok(codes.includes("ownership_conflict"));
   assert.ok(codes.includes("invitation_account_authentication_required"));
+});
+
+test("domain conflicts explain their cause without rendering backend detail", () => {
+  for (const [code, key] of Object.entries({
+    unfinished_work: "actions.errorUnfinishedWork",
+    future_appointments_conflict: "actions.errorFutureAppointments",
+    last_active_branch: "actions.errorLastActiveBranch",
+    schedule_conflict: "actions.errorScheduleConflict",
+    invalid_transition: "actions.errorInvalidTransition",
+  })) {
+    const error = normalizeAppError(axiosError(409, { code, detail: "secret payload" }));
+    assert.equal(error.messageKey, key);
+    assert.equal(error.retryable, false);
+    assert.equal(JSON.stringify(error).includes("secret payload"), false);
+  }
+  const stale = normalizeAppError(axiosError(409, { code: "invalid_transition", errors: { expected_updated_at: "reload" } }));
+  assert.equal(stale.messageKey, "actions.errorStaleVersion");
 });

@@ -23,6 +23,18 @@ class InvalidTransition(DomainAPIException):
     category = "conflict"
 
 
+class UnfinishedWork(InvalidTransition):
+    error_code = "unfinished_work"
+    default_code = error_code
+    default_detail = "Resolve unfinished work before archiving."
+
+
+class FutureAppointmentsConflict(InvalidTransition):
+    error_code = "future_appointments_conflict"
+    default_code = error_code
+    default_detail = "Reschedule or cancel affected appointments before changing availability."
+
+
 class ScheduleConflict(DomainAPIException):
     status_code = 409
     error_code = "schedule_conflict"

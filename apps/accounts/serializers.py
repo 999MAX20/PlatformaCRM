@@ -4,11 +4,17 @@ from rest_framework import serializers
 from apps.accounts.models import SocialIdentity, User, UserPreference
 from apps.accounts.legal_documents import REQUIRED_DOCUMENT_IDS
 from apps.accounts.passwords import enforce_password_policy
-from apps.businesses.access import effective_permissions_for, owner_business_role, user_is_business_owner
+from apps.businesses.access import ROLE_DISPLAY_NAMES, effective_permissions_for, owner_business_role, user_is_business_owner
 from apps.businesses.capabilities import capability_payload
 from apps.businesses.models import BusinessMember
 from apps.businesses.serializers import BusinessSerializer
 from apps.core.permissions import accessible_businesses
+
+
+def system_role_key(role):
+    if role and role.is_system and role.name == ROLE_DISPLAY_NAMES.get(role.preset_key):
+        return role.preset_key
+    return ""
 
 
 class CurrentUserSerializer(serializers.ModelSerializer):
@@ -59,6 +65,7 @@ class CurrentUserSerializer(serializers.ModelSerializer):
                         "role": BusinessMember.Roles.OWNER,
                         "business_role": business_role.id if business_role else None,
                         "business_role_name": business_role.name if business_role else "",
+                        "business_role_system_key": system_role_key(business_role),
                         "is_active": True,
                     }
                 )
@@ -71,6 +78,7 @@ class CurrentUserSerializer(serializers.ModelSerializer):
                     "role": membership.role,
                     "business_role": membership.business_role_id,
                     "business_role_name": membership.business_role.name if membership.business_role else "",
+                    "business_role_system_key": system_role_key(membership.business_role),
                     "is_active": membership.is_active,
                 }
             )

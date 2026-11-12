@@ -1,4 +1,12 @@
 export const tasks: Record<string, string> = {
+  "taskWorkspace.followUp.cancelled.title": "Follow up cancelled appointment #{id}",
+  "taskWorkspace.followUp.cancelled.description": "Contact the client after cancellation and agree the next step.",
+  "taskWorkspace.followUp.no_show.title": "Follow up no-show appointment #{id}",
+  "taskWorkspace.followUp.no_show.description": "Contact the client after the missed appointment and decide whether to rebook.",
+  "taskWorkspace.followUp.completed.title": "Follow up completed appointment #{id}",
+  "taskWorkspace.followUp.completed.description": "Check satisfaction, add notes and offer the next booking when relevant.",
+  "taskWorkspace.followUp.reason": "Reason: {reason}",
+
   "taskWorkspace.actions": "Actions",
   "taskWorkspace.send": "Send",
   "taskWorkspace.my": "My tasks",

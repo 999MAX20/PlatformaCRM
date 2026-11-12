@@ -2,6 +2,7 @@ from rest_framework import serializers
 from apps.core.client_projection import ClientProjectionMixin, client_label, reader_actor, visible_client
 
 from apps.tasks.models import Task, TaskComment
+from apps.tasks.system_copy import follow_up_copy, follow_up_events
 from apps.tasks.policy import LINK_RESOURCES, can_view_link, task_available_actions, validate_assignment, validate_task_links
 
 
@@ -69,6 +70,13 @@ class TaskDetailsUpdateSerializer(serializers.ModelSerializer):
         return attrs
 
 
+class TaskListSerializer(serializers.ListSerializer):
+    def to_representation(self, data):
+        items = list(data.all() if hasattr(data, "all") else data)
+        self.child._follow_up_events = follow_up_events(items)
+        return super().to_representation(items)
+
+
 class TaskSerializer(ClientProjectionMixin, serializers.ModelSerializer):
     available_actions = serializers.SerializerMethodField()
     relations = serializers.SerializerMethodField()
@@ -93,6 +101,7 @@ class TaskSerializer(ClientProjectionMixin, serializers.ModelSerializer):
 
     class Meta:
         model = Task
+        list_serializer_class = TaskListSerializer
         fields = [
             "id",
             "available_actions",
@@ -270,6 +279,8 @@ class TaskSerializer(ClientProjectionMixin, serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
+        events = getattr(self, "_follow_up_events", None)
+        data["system_copy"] = follow_up_copy(instance, events if events is not None else follow_up_events([instance]))
         actor = reader_actor(self.context)
         for field in LINK_RESOURCES:
             obj = getattr(instance, field, None)

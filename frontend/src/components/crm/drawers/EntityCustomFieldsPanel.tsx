@@ -13,9 +13,9 @@ import { customFieldOptions } from "../../../lib/customFields";
 import { drawerSurfaceClass } from "./shared";
 import type { CrmDrawerEntity } from "./types";
 
-export function EntityCustomFieldsPanel({ data, entity }: { data: CrmCardPayload; entity: CrmDrawerEntity }) {
+export function EntityCustomFieldsPanel({ data, entity, readOnly = false }: { data: CrmCardPayload; entity: CrmDrawerEntity; readOnly?: boolean }) {
   return <CustomFieldsEditor fields={data.custom_fields.filter(field => (field.definition.options_json.display as { in_card?: boolean } | undefined)?.in_card !== false)} entity={entity}
-    businessId={data.client?.business || data.lead?.business || data.deal?.business || data.appointment?.business || 0} />;
+    businessId={data.client?.business || data.lead?.business || data.deal?.business || data.appointment?.business || 0} readOnly={readOnly} />;
 }
 
 export function CustomFieldsEditor({ fields, entity, businessId, onDirtyChange, onPendingChange, readOnly = false }: {

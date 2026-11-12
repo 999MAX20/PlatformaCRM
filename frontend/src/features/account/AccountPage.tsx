@@ -36,7 +36,7 @@ export function AccountPage({ platform = false }: { platform?: boolean }) {
     const frame = requestAnimationFrame(() => document.getElementById(hash.slice(1))?.scrollIntoView());
     return () => cancelAnimationFrame(frame);
   }, [platform, hash, key]);
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const notify = useNotification();
   const queryClient = useQueryClient();
   const { user, refreshUser, logout } = useAuth();
@@ -137,7 +137,7 @@ export function AccountPage({ platform = false }: { platform?: boolean }) {
           <summary className="cursor-pointer text-sm font-semibold">{t("account.loginHistoryTitle")}</summary>
           {loginHistory.isLoading ? <LoadingState /> : loginHistory.error ? <ErrorState error={loginHistory.error} message={getApiErrorMessage(loginHistory.error)} action={<Button size="sm" variant="secondary" onClick={() => void loginHistory.refetch()}>{t("common.retry")}</Button>} /> : <div className="mt-2 divide-y divide-platforma-border">
             {(loginHistory.data || []).slice(0, 5).map((item) => <div key={item.id} className="flex flex-wrap items-center justify-between gap-2 py-2 text-sm">
-              <span>{formatDateTime(item.created_at)}</span><span className="text-platforma-subtle" title={item.user_agent || t("account.noDevice")}>{item.ip_address || t("account.noIp")}</span><span>{t(`status.${item.status}`)}</span>
+              <span>{formatDateTime(item.created_at, user?.preferences?.timezone, false, language)}</span><span className="text-platforma-subtle" title={item.user_agent || t("account.noDevice")}>{item.ip_address || t("account.noIp")}</span><span>{t(`status.${item.status}`)}</span>
             </div>)}
             {!loginHistory.data?.length ? <p className="text-sm text-platforma-subtle">{t("account.noLoginHistory")}</p> : null}
           </div>}

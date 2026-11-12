@@ -55,6 +55,30 @@ class AutomationConfigurationTests(TestCase):
             self.assertEqual(response.status_code, 500)
         self.assertEqual(self.counts(), before)
 
+    def test_template_language_is_saved_without_changing_other_templates_or_rules(self):
+        from apps.automations.views import AUTOMATION_TEMPLATES
+        from copy import deepcopy
+        original = deepcopy(AUTOMATION_TEMPLATES)
+        saved = []
+        for language, title in (("en", "Prepare the client appointment"), ("kk", "Клиенттің жазбасын дайындау"), ("ru", "Подготовить запись клиента")):
+            response = self.api.post("/api/automation-rules/apply-template/", {
+                "business": self.business.pk, "template_key": "appointment_created_prepare", "language": language,
+            }, format="json")
+            self.assertEqual(response.status_code, 201, response.data)
+            rule = AutomationRule.objects.get(pk=response.data["id"])
+            self.assertFalse(rule.is_active)
+            self.assertEqual(rule.actions.get().config["title"], title)
+            saved.append((rule.pk, rule.name))
+        self.assertEqual(AUTOMATION_TEMPLATES, original)
+        for pk, name in saved:
+            self.assertEqual(AutomationRule.objects.get(pk=pk).name, name)
+        before = self.counts()
+        response = self.api.post("/api/automation-rules/apply-template/", {
+            "business": self.business.pk, "template_key": "appointment_created_prepare", "language": "invalid",
+        }, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(self.counts(), before)
+
     def test_active_rule_cannot_lose_its_last_action(self):
         rule = AutomationRule.objects.create(business=self.business, name="Active", trigger_type="lead_created", is_active=True)
         action = AutomationAction.objects.create(rule=rule, action_type="create_task", config={})

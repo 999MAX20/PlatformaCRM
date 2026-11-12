@@ -403,6 +403,12 @@ class AuthSecurityBaselineTests(TestCase):
         self.assertIn(settings.AUTH_REFRESH_COOKIE_NAME, response.cookies)
         replacement_refresh = response.cookies[settings.AUTH_REFRESH_COOKIE_NAME].value
         self.assertNotEqual(replacement_refresh, current_refresh)
+        self.assertEqual(self.access_status(response.data["access"]), 200)
+        self.assertNotIn("refresh", response.data)
+        current_client.credentials(HTTP_AUTHORIZATION=f"Bearer {response.data['access']}")
+        sessions = current_client.get("/api/auth/sessions/")
+        self.assertEqual(sessions.status_code, 200)
+        self.assertEqual(sum(row["is_current"] for row in sessions.data["sessions"]), 1)
         self.assertEqual(self.refresh_with(current_refresh).status_code, 401)
         self.assertEqual(self.refresh_with(other_refresh).status_code, 401)
         self.assertEqual(self.access_status(current_access), 401)

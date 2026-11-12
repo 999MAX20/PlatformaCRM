@@ -1,3 +1,4 @@
+import { taskTitle } from "../../../lib/taskCopy";
 import {
   BriefcaseBusiness,
   CalendarDays,
@@ -251,7 +252,7 @@ export function TasksList({ tasks }: { tasks: Task[] }) {
         >
           <div className="flex items-start justify-between gap-3">
             <p className="min-w-0 truncate text-sm font-bold text-platforma-text">
-              {task.title}
+              {taskTitle(task, t)}
             </p>
             <StatusBadge status={task.priority} />
           </div>

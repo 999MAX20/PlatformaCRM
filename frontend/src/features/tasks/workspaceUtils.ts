@@ -29,6 +29,6 @@ export function taskGroup(task: Task, zone: string, now = new Date()) {
 
 export function taskDateLabel(value: string | null | undefined, zone: string, language: string) {
   return value ? new Intl.DateTimeFormat(language === "kk" ? "kk-KZ" : language, {
-    timeZone: zone, year: "numeric", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit",
+    timeZone: zone, year: "numeric", day: "numeric", month: language.startsWith("kk") ? "numeric" : "short", hour: "2-digit", minute: "2-digit",
   }).format(new Date(value)) : "—";
 }

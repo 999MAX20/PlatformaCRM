@@ -6,7 +6,7 @@ from apps.businesses.access import Actions, Resources, assert_can
 from apps.clients.models import Client
 from apps.conversations.models import Conversation
 from apps.core.archive import archive_instance
-from apps.core.domain_errors import InvalidTransition
+from apps.core.domain_errors import UnfinishedWork
 from apps.crm.models import Deal
 from apps.leads.models import Lead
 from apps.scheduling.models import Appointment, VisitPlan
@@ -60,5 +60,5 @@ def archive_client(*, request, client, reason=""):
     if client.is_archived:
         return client
     if client_has_unfinished_work(client):
-        raise InvalidTransition("Resolve the client's unfinished work before archiving.")
+        raise UnfinishedWork("Resolve the client's unfinished work before archiving.")
     return archive_instance(request, client, reason=reason)

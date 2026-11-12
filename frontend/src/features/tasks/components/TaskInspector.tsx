@@ -1,3 +1,4 @@
+import { taskTitle, taskDescription } from "../../../lib/taskCopy";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowUpRight, Check, Clock, Eye, Maximize2, Pause, Pencil, Play, RotateCcw, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -115,7 +116,7 @@ export function TaskInspector({ id, business, zone, expanded = false, returnTo =
       {taskQuery.isPending ? <LoadingState /> : taskQuery.error ? <ErrorState error={taskQuery.error} action={<Button variant="secondary" onClick={() => void taskQuery.refetch()}>{t("taskWorkspace.refresh")}</Button>} /> : task ? <>
         <div className="space-y-3">
           <div className="flex flex-wrap gap-2"><TaskStatus status={task.status} />{taskGroup(task, zone) === "overdue" ? <Badge size="sm" variant="danger">{t("taskWorkspace.overdue")}</Badge> : null}</div>
-          <h2 ref={heading} tabIndex={-1} className="break-words text-[22px] font-bold leading-[30px] outline-none">{task.title}</h2>
+          <h2 ref={heading} tabIndex={-1} className="break-words text-[22px] font-bold leading-[30px] outline-none">{taskTitle(task, t)}</h2>
           <div className="flex flex-wrap gap-2">
             {allowed("complete") ? <Button disabled={command.isPending} onClick={() => command.mutate({ action: "complete" })}><Check size={17} />{t("taskWorkspace.complete")}</Button> : null}
             {(["start", "resume", "reopen"] as const).filter(allowed).map(action => <Button key={action} variant="secondary" disabled={command.isPending} onClick={() => command.mutate({ action })}>{action === "reopen" ? <RotateCcw size={17} /> : <Play size={17} />}{t(`taskWorkspace.${action}`)}</Button>)}
@@ -130,7 +131,7 @@ export function TaskInspector({ id, business, zone, expanded = false, returnTo =
         {task.status === "waiting" ? <div className="space-y-1 border-l-2 border-platforma-warning pl-3 text-sm"><p className="font-semibold">{t("taskWorkspace.waitingReason")}</p><p className="whitespace-pre-wrap break-words">{task.waiting_reason}</p>{task.waiting_until ? <p className="text-platforma-subtle">{t("taskWorkspace.waitingUntil")}: {format(task.waiting_until)}</p> : null}</div> : null}
         {task.snoozed_until && new Date(task.snoozed_until) > new Date() ? <p className="text-sm text-platforma-subtle">{t("taskWorkspace.snoozedUntil")}: {format(task.snoozed_until)}</p> : null}
         {task.status === "cancelled" ? <p className="whitespace-pre-wrap text-sm"><strong>{t("taskWorkspace.cancelReason")}: </strong>{task.cancel_reason}</p> : null}
-        <section className="space-y-2 border-t border-platforma-border pt-5"><h3 className="text-base font-semibold">{t("taskWorkspace.description")}</h3><p className="whitespace-pre-wrap break-words text-sm leading-[22px] text-platforma-subtle">{task.description || t("taskWorkspace.noDescription")}</p></section>
+        <section className="space-y-2 border-t border-platforma-border pt-5"><h3 className="text-base font-semibold">{t("taskWorkspace.description")}</h3><p className="whitespace-pre-wrap break-words text-sm leading-[22px] text-platforma-subtle">{taskDescription(task, t) || t("taskWorkspace.noDescription")}</p></section>
         <section className="space-y-2 border-t border-platforma-border pt-5"><h3 className="text-base font-semibold">{t("taskWorkspace.links")}</h3>
           {task.relations?.length ? task.relations.map(link => <Link key={link.type} to={link.href} className="flex min-h-11 items-center gap-3 rounded-control px-2 text-sm hover:bg-surface-hover focus-visible:ring-2 focus-visible:ring-brand-500"><span className="w-28 shrink-0 text-platforma-subtle">{t(`taskWorkspace.link.${link.type}`)}</span><span className="min-w-0 flex-1 break-words font-medium">{link.title}{link.at ? <span className="block text-xs text-platforma-subtle">{format(link.at)}</span> : null}</span><ArrowUpRight size={16} className="shrink-0 text-platforma-subtle" /></Link>) : <p className="text-sm text-platforma-subtle">{t("taskWorkspace.noLinks")}</p>}
         </section>

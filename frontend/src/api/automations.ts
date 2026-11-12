@@ -33,11 +33,12 @@ export const automationRulesApi = {
     const { data } = await apiClient.get<AutomationTemplate[]>("/api/automation-rules/templates/");
     return data;
   },
-  applyTemplate: async ({ business, template_key, is_active = false }: { business: Id; template_key: string; is_active?: boolean }) => {
+  applyTemplate: async ({ business, template_key, is_active = false, language = "ru" }: { business: Id; template_key: string; is_active?: boolean; language?: "ru" | "kk" | "en" }) => {
     const { data } = await apiClient.post<AutomationRule>("/api/automation-rules/apply-template/", {
       business,
       template_key,
       is_active,
+      language,
     });
     return data;
   },

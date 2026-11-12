@@ -1,3 +1,22 @@
+## CRM-GLOBAL-FIXES-20261112
+
+Explicit owner scope all ten confirmed F01–F10 from global run; no real sends,
+isolated retest and report update. Canonical/currentbranch start46b5d22d+foreignWIP.
+All ten fixed: archive/read-only/search/domain conflict copy/reschedule refresh,
+widget persistence/retry/password session/demo reset/system localization.
+Backend23/10/92/17/45/56 groups PASS (overlap, not unique sum); Node11+13PASS;
+system/drift/build/types/i18n/bundlePASS; named realAPI and mock-widget browserPASS.
+Extra cookie continuation original2PASS3FAIL; adapted4PASS2FAIL; targeted2PASS.
+Held-click timeout and login429 retained, no product assertions weakened.
+UI screenshots inspected RU/KK/EN1440/390; missed session-date locale corrected/rechecked.
+Own runtimes stopped; workingDB/env/schema/providers/sends/deploy unchanged.
+No scoped code/local-evidence remainder. Original seven other test failures,
+three observations/full204matrix/S04/load/live/release remain open.
+Contracts/passport/report/registry updated; no roadmap phase/acceptance closure.
+Own local commit; foreign outgoing block own-only normalpush/newCI.
+Evidence: docs/testing/evidence/crm-global-fixes-20261112.md.
+Commands/hashes/attempts/cleanup: output/crm-global-fixes-20261112/CHECKPOINT.md.
+
 INVITATIONS-24H-20261112: /invite and email issue/resend locally verified.
 24h bound token, own password/existing login, business selection, revoke/rotation.
 84dependent/17PG/15redaction/browser/build/types/i18n/budget/system/drift PASS.

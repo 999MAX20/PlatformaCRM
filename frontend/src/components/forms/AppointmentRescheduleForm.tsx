@@ -1,8 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 
 import { appointmentsApi, type AppointmentReschedulePayload } from "../../api/appointments";
 import { dateInTimeZone, todayInTimeZone } from "../../lib/format";
+import { refreshAppointmentQueries } from "../../lib/appointmentCache";
 import { useI18n } from "../../lib/i18n";
 import { useBranchBooking } from "../../hooks/useBranchBooking";
 import type { Appointment, Id, Resource } from "../../types";
@@ -33,6 +34,10 @@ export function AppointmentRescheduleForm({
   onDirtyChange?: (dirty: boolean) => void;
 }) {
   const { t, language } = useI18n();
+  const queryClient = useQueryClient();
+  const [refreshedAppointment, setRefreshedAppointment] = useState<Appointment | null>(null);
+  const currentAppointment = refreshedAppointment || appointment;
+  const canReschedule = !currentAppointment.is_archived && ["created", "confirmed", "rescheduled"].includes(currentAppointment.status);
   const { getRecoverableMessage } = useActionFeedback();
   const branch = useBranchBooking(businessId, appointment.branch);
   const locale = language === "en" ? "en-US" : language === "kk" ? "kk-KZ" : "ru-RU";
@@ -64,7 +69,7 @@ export function AppointmentRescheduleForm({
         date,
         exclude_appointment_id: appointment.id,
       }),
-    enabled: Boolean(branch.ready && businessId && appointment.service && resource && date),
+    enabled: Boolean(canReschedule && branch.ready && businessId && appointment.service && resource && date),
   });
 
   const slotOptions = useMemo(
@@ -82,6 +87,7 @@ export function AppointmentRescheduleForm({
       className="space-y-4"
       onSubmit={async (event) => {
         event.preventDefault();
+        if (!canReschedule) return;
         if (!branch.ready || !resource || !slot) {
           setSubmitError(t("appointment.selectSlotError"));
           return;
@@ -104,8 +110,9 @@ export function AppointmentRescheduleForm({
       {branch.requiresSelection && <Select label={t("branches.branch")} value={branch.branchId} onChange={(event) => branch.setBranchId(event.target.value)} options={[{ value: "", label: t("branches.choose") }, ...branch.branches.map((item) => ({ value: item.id, label: `${item.name} · ${item.address}` }))]} />}
       {!branch.loading && !branch.error && branch.enabled && !branch.branches.length && <ErrorState message={t("branches.noBookable")} />}
       <div className="rounded-card border border-platforma-border bg-surface-muted p-3 text-sm font-semibold text-platforma-subtle">
-        {t("appointments.currentTime")}: {new Date(appointment.start_at).toLocaleString(locale, { dateStyle: "medium", timeStyle: "short", timeZone })}
+        {t("appointments.currentTime")}: {new Date(currentAppointment.start_at).toLocaleString(locale, { dateStyle: "medium", timeStyle: "short", timeZone })}
       </div>
+      {!canReschedule && <ErrorState message={`${t("actions.errorInvalidTransition")} ${t("appointment.status")}: ${t(`status.${currentAppointment.status}`)}`} />}
       <div className="grid gap-3 sm:grid-cols-2">
         <Input
           data-testid="appointment-reschedule-date"
@@ -146,7 +153,11 @@ export function AppointmentRescheduleForm({
             setRefreshing(true);
             try {
               const current = await appointmentsApi.get(appointment.id);
-              await slots.refetch({ throwOnError: true });
+              setRefreshedAppointment(current);
+              await refreshAppointmentQueries(queryClient, current);
+              setDate(dateInTimeZone(current.start_at, timeZone));
+              setResource(current.resource ? String(current.resource) : "");
+              branch.setBranchId(current.branch ? String(current.branch) : "");
               setExpectedVersion(current.updated_at);
               setSlot("");
               setSubmitError(null);
@@ -162,7 +173,7 @@ export function AppointmentRescheduleForm({
         <Button type="button" variant="secondary" disabled={isSubmitting} onClick={onCancel}>
           {t("common.cancel")}
         </Button>
-        <Button data-testid="appointment-reschedule-submit" type="submit" isLoading={isSubmitting} disabled={refreshing || !branch.ready || !slot || !resource}>
+        <Button data-testid="appointment-reschedule-submit" type="submit" isLoading={isSubmitting} disabled={!canReschedule || refreshing || !branch.ready || !slot || !resource}>
           {t("appointments.reschedule")}
         </Button>
       </div>

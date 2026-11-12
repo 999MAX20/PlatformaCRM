@@ -47,10 +47,10 @@ export function AutomationTemplates({
                 </span>
               </div>
               <h3 className="text-lg font-bold text-platforma-text">
-                {template.name}
+                {["appointment_created_prepare", "message_received_handoff_task"].includes(template.key) ? t(`automations.template.${template.key}.name`) : template.name}
               </h3>
               <p className="mt-2 text-sm leading-6 text-platforma-subtle">
-                {template.description}
+                {["appointment_created_prepare", "message_received_handoff_task"].includes(template.key) ? t(`automations.template.${template.key}.description`) : template.description}
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
                 <Button

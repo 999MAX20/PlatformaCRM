@@ -8,7 +8,7 @@ from apps.businesses.access import Actions, Resources, assert_can
 from apps.businesses.models import Business
 from apps.core.audit import write_actor_audit_log
 from apps.core.models import AuditLog
-from apps.core.domain_errors import InvalidTransition
+from apps.core.domain_errors import FutureAppointmentsConflict
 from apps.scheduling.models import Resource
 from apps.services.models import Service
 from .access import assert_branch_access
@@ -69,7 +69,7 @@ def save_assignment(*, branch, actor, resource_id, service_ids, is_active=True):
     if is_active:
         affected = affected.exclude(service_id__in=service_ids)
     if affected.exists():
-        raise InvalidTransition("Reassign or cancel affected future visits before removing this assignment or service.")
+        raise FutureAppointmentsConflict("Reassign or cancel affected future visits before removing this assignment or service.")
     link, _ = SpecialistBranch.objects.update_or_create(branch=branch, resource=resource, defaults={
         "business": branch.business, "is_active": is_active})
     link.services.set(services)

@@ -1,4 +1,7 @@
 export const clients: Record<string, string> = {
+  "clients.restoreAction": "Restore client",
+  "clients.restoreConfirmText": "Client {name} will be restored from the archive.",
+  "clients.noticeRestored": "Client restored",
   "clients.card.openPage": "Open page",
   "clients.card.archived": "Archived",
   "clients.card.responsible": "Responsible person",

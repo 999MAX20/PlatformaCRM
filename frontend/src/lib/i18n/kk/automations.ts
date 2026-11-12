@@ -1,4 +1,9 @@
 export const automations: Record<string, string> = {
+  "automations.template.appointment_created_prepare.name": "Жаңа жазба: қабылдауға дайындалу",
+  "automations.template.appointment_created_prepare.description": "Жазба жасалған соң клиентті, қызметті немесе ресурсты дайындау тапсырмасын қосады.",
+  "automations.template.message_received_handoff_task.name": "Жаңа хабарлама: клиентке жауап беру",
+  "automations.template.message_received_handoff_task.description": "Клиент қосылған арнаға жазғанда, CRM қолмен жауап беру тапсырмасын жасайды.",
+
   "automations.runStatus.pending": "Іске қосуды күтуде",
   "automations.runStatus.running": "Орындалуда",
   "automations.runStatus.waiting": "Жалғастыруды күтуде",

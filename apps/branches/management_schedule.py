@@ -1,6 +1,6 @@
 from django.utils import timezone
 
-from apps.core.domain_errors import InvalidTransition
+from apps.core.domain_errors import FutureAppointmentsConflict
 from apps.scheduling.availability import business_zone
 from apps.scheduling.models import Appointment
 from apps.scheduling.resource_booking import ResourceCalendar
@@ -20,9 +20,9 @@ def assert_future_hours(branch, resource=None, *, date=None, weekday=None):
         if resource is not None and resource.pk != visit.resource_id and resource.pk not in {row.pk for row in reserved}:
             continue
         if visit.resource and not any(visit.start_at >= lower and visit.end_at <= upper for lower, upper in _windows(branch, visit.resource, local_date)):
-            raise InvalidTransition("The new hours conflict with future appointments. Reschedule them first.")
+            raise FutureAppointmentsConflict("The new hours conflict with future appointments. Reschedule them first.")
         calendar = ResourceCalendar(branch.business, branch, reserved, date=local_date)
         for room in reserved:
             absent = SpecialistAbsence.objects.filter(resource=room, starts_on__lte=local_date, ends_on__gte=local_date).exists()
             if absent or not any(visit.start_at >= lower and visit.end_at <= upper for lower, upper in calendar.windows(room, local_date)):
-                raise InvalidTransition("The new room hours conflict with future appointments. Reschedule them first.")
+                raise FutureAppointmentsConflict("The new room hours conflict with future appointments. Reschedule them first.")

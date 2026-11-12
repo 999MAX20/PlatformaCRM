@@ -119,7 +119,8 @@ class AutomationRuleViewSet(AtomicConfigurationMixin, TenantModelViewSet):
         if template is None:
             raise ValidationError({"template_key": "Unknown automation template."})
 
-        payload = {key: value for key, value in template.items() if key != "key"}
+        from apps.automations.template_copy import template_payload
+        payload = template_payload(template, serializer.validated_data["language"])
         payload["is_active"] = serializer.validated_data["is_active"]
         rule = save_configuration(request=request, business=business, payload=payload)
 

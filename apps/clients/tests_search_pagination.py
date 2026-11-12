@@ -38,6 +38,23 @@ class ClientSearchPaginationTests(TestCase):
                 self.assertEqual(data["count"], 1)
                 self.assertEqual([row["id"] for row in data["results"]], [self.old.pk])
 
+    def test_digits_in_names_or_emails_do_not_expand_to_phone_matches(self):
+        target = Client.objects.create(
+            business=self.business, full_name="QA Pagination Әлия 01", email="aliya01@example.invalid",
+        )
+        Client.objects.create(business=self.business, full_name="Different name", phone="+77010009999")
+        for term in ["QA Pagination Әлия 01", "Әлия 01", "aliya01@example.invalid"]:
+            with self.subTest(term=term):
+                data = self.get_page(q=term)
+                self.assertEqual(data["count"], 1)
+                self.assertEqual([row["id"] for row in data["results"]], [target.pk])
+
+    def test_formatted_phone_search_still_normalizes_country_prefix(self):
+        for term in ["8 (701) 555-99-99", "+7 701 555 99 99", "555-99-99"]:
+            with self.subTest(term=term):
+                data = self.get_page(q=term)
+                self.assertEqual([row["id"] for row in data["results"]], [self.old.pk])
+
     def test_pagination_visits_all_rows_once(self):
         ids = []
         for page in range(1, 7):

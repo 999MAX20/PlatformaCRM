@@ -1,3 +1,12 @@
+## Смена пароля и системная роль — 12.11.2026
+
+Change-password возвращает `{ok, access}` нового device session; refresh остаётся
+HttpOnly cookie, старые access/refresh отзываются. UI принимает replacement access
+того же пользователя внутри очереди cookie operations; обычный refresh по-прежнему
+отклоняет неожиданный device-session/account switch. TTL и права не расширены.
+CurrentUser.memberships добавляет `business_role_system_key` только для неизменённого
+системного preset; авторское имя роли сохраняется. [Проверки F08/F10](../testing/evidence/crm-global-fixes-20261112.md).
+
 ## Доступ к физическим ресурсам — 09.11.2026
 
 Требования помещения/оборудования к услуге меняются через существующее

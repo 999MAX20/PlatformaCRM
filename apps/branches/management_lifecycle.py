@@ -7,7 +7,7 @@ from rest_framework.exceptions import PermissionDenied, ValidationError
 from apps.activities.services import write_activity_event
 from apps.core.archive import can_hard_delete
 from apps.core.audit import write_audit_log
-from apps.core.domain_errors import InvalidTransition
+from apps.core.domain_errors import FutureAppointmentsConflict, InvalidTransition
 from apps.core.models import AuditLog
 from apps.scheduling.models import Appointment, Resource
 from apps.services.models import Service
@@ -31,7 +31,7 @@ def assert_no_future(item, *, branch=None):
     if branch is not None:
         query = query.filter(branch=branch)
     if query.exists():
-        raise InvalidTransition("Reschedule or cancel future appointments before changing availability.",
+        raise FutureAppointmentsConflict("Reschedule or cancel future appointments before changing availability.",
             errors={"future_appointments": query.count()})
 
 

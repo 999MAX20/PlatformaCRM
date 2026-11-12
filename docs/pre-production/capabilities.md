@@ -1,3 +1,13 @@
+## Общая проверка CRM: исправления — 12.11.2026
+
+Все десять подтверждённых F01–F10 исправлены и адресно проверены: архив/права
+клиента, поиск, причины409, refresh переноса, widget reload/retry, смена пароля,
+demo reset и локализация системных значений. Backend/Node/build/system/drift
+и scoped browser PASS; составной локальный снимок, без real sends/workingDB/deploy.
+Семь других test failures, три provisional observations, непокрытая204-ID матрица
+и S04/load остаются открытыми. Полная CRM/release готовность не заявляется.
+[Исправления, проверки и ограничения](../testing/evidence/crm-global-fixes-20261112.md).
+
 VOICE-PLANNER11.11: воспроизведён неверный JSON field plan при точном STT.
 Default/tier модель теперь определяется до JSON capability; parser/права/replay
 сохранены. До исправления1из12FAIL; после24/24real synthetic API→Client/replayPASS,

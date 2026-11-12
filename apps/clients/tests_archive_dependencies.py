@@ -74,7 +74,7 @@ class ClientArchiveDependencyTests(TestCase):
         before = (AuditLog.objects.count(), ActivityEvent.objects.count())
         response = self.archive(client, route)
         self.assertEqual(response.status_code, 409, response.data)
-        self.assertEqual(response.data["code"], "invalid_transition")
+        self.assertEqual(response.data["code"], "unfinished_work")
         self.assertFalse(response.data["retryable"])
         client.refresh_from_db()
         self.assertFalse(client.is_archived)

@@ -1,10 +1,13 @@
 import "../../src/lib/focusModality";
 import palette from "../../src/theme/semantic-tokens.json";
+import { readWidgetSession, saveWidgetSession, widgetSessionKey } from "./session";
+import { widgetCopy, widgetLanguage } from "./copy";
 
 type PlatformaCRMWidgetOptions = {
   publicToken: string;
   apiUrl?: string;
   position?: "right" | "left";
+  language?: "ru" | "kk" | "en";
 };
 
 type ConversationResponse = {
@@ -67,9 +70,17 @@ class PlatformaCRMWidgetController {
   private nameInput: HTMLInputElement;
   private phoneInput: HTMLInputElement;
   private sendButton: HTMLButtonElement;
+  private status: HTMLDivElement;
+  private visitorId: string;
+  private sessionKey: string;
+  private messages: string[] = [];
+  private copy: typeof widgetCopy[keyof typeof widgetCopy];
 
   constructor(options: PlatformaCRMWidgetOptions) {
     this.options = options;
+    this.visitorId = getVisitorId();
+    this.sessionKey = widgetSessionKey(this.apiUrl(), options.publicToken, this.visitorId);
+    this.copy = widgetCopy[options.language || widgetLanguage(document.documentElement.lang || navigator.language)];
     this.root = document.createElement("div");
     this.panel = document.createElement("div");
     this.body = document.createElement("div");
@@ -77,7 +88,9 @@ class PlatformaCRMWidgetController {
     this.nameInput = document.createElement("input");
     this.phoneInput = document.createElement("input");
     this.sendButton = document.createElement("button");
+    this.status = document.createElement("div");
     this.mount();
+    this.restore();
   }
 
   private mount() {
@@ -89,37 +102,48 @@ class PlatformaCRMWidgetController {
     bubble.className = "platforma-bubble";
     bubble.type = "button";
     bubble.innerHTML = "✦";
-    bubble.ariaLabel = "Open PlatformaCRM chat";
+    bubble.ariaLabel = this.copy.open;
 
     this.panel.className = "platforma-panel";
     this.panel.hidden = true;
     this.panel.innerHTML = `
       <div class="platforma-header">
         <p class="platforma-title">PlatformaCRM chat</p>
-        <p class="platforma-subtitle">Напишите нам, и менеджер увидит сообщение в CRM.</p>
+        <p class="platforma-subtitle">${this.copy.subtitle}</p>
       </div>
     `;
 
     this.body.className = "platforma-body";
     this.panel.appendChild(this.body);
-    this.addMessage("system", "Здравствуйте! Чем можем помочь?");
+    this.addMessage("system", this.copy.greeting);
 
     const form = document.createElement("form");
     form.className = "platforma-form";
     this.nameInput.className = "platforma-input";
-    this.nameInput.placeholder = "Ваше имя";
+    this.nameInput.placeholder = this.copy.name;
+    this.nameInput.ariaLabel = this.copy.name;
+    this.nameInput.maxLength = 255;
     this.phoneInput.className = "platforma-input";
-    this.phoneInput.placeholder = "Телефон";
+    this.phoneInput.placeholder = this.copy.phone;
+    this.phoneInput.ariaLabel = this.copy.phone;
+    this.phoneInput.type = "tel";
+    this.phoneInput.maxLength = 32;
     this.input.className = "platforma-input";
-    this.input.placeholder = "Сообщение...";
+    this.input.placeholder = this.copy.message;
+    this.input.ariaLabel = this.copy.message;
+    this.input.maxLength = 20000;
     this.sendButton.className = "platforma-send";
     this.sendButton.type = "submit";
-    this.sendButton.textContent = "Send";
+    this.sendButton.textContent = this.copy.send;
+    this.status.className = "platforma-message status";
+    this.status.setAttribute("role", "status");
+    this.status.hidden = true;
 
     const actions = document.createElement("div");
     actions.className = "platforma-actions";
     actions.append(this.input, this.sendButton);
-    form.append(this.nameInput, this.phoneInput, actions);
+    form.append(this.nameInput, this.phoneInput, actions, this.status);
+    form.addEventListener("input", () => this.persist());
     form.addEventListener("submit", (event) => {
       event.preventDefault();
       void this.send();
@@ -139,18 +163,50 @@ class PlatformaCRMWidgetController {
     const text = this.input.value.trim();
     if (!text || this.sendButton.disabled) return;
     this.sendButton.disabled = true;
-    this.addMessage("user", text);
-    this.input.value = "";
+    this.input.disabled = true;
+    this.status.hidden = true;
+    this.persist();
 
     try {
       const response = this.conversationId ? await this.appendMessage(text) : await this.createConversation(text);
       this.conversationId = response.conversation_id;
-      this.addMessage("status", "Сообщение отправлено. Мы скоро ответим.");
+      this.messages.push(text);
+      this.addMessage("user", text);
+      this.input.value = "";
+      this.sendButton.textContent = this.copy.send;
+      this.status.textContent = this.copy.sent;
+      this.persist();
     } catch (error) {
-      this.addMessage("status", "Не удалось отправить сообщение. Попробуйте позже.");
+      this.status.textContent = this.copy.failed;
+      this.sendButton.textContent = this.copy.retry;
     } finally {
+      this.status.hidden = false;
       this.sendButton.disabled = false;
+      this.input.disabled = false;
+      this.input.focus();
     }
+  }
+
+  private restore() {
+    try {
+      const session = readWidgetSession(sessionStorage, this.sessionKey);
+      if (!session) return;
+      this.conversationId = session.conversationId;
+      this.messages = session.messages;
+      this.nameInput.value = session.fullName;
+      this.phoneInput.value = session.phone;
+      this.input.value = session.draft;
+      for (const message of session.messages) this.addMessage("user", message);
+    } catch { /* Storage may be disabled by the embedding page's browser policy. */ }
+  }
+
+  private persist() {
+    try {
+      saveWidgetSession(sessionStorage, this.sessionKey, {
+        conversationId: this.conversationId, messages: this.messages,
+        fullName: this.nameInput.value, phone: this.phoneInput.value, draft: this.input.value,
+      });
+    } catch { /* Keep the active conversation usable when storage access is denied. */ }
   }
 
   private async createConversation(message: string) {
@@ -158,14 +214,14 @@ class PlatformaCRMWidgetController {
       full_name: this.nameInput.value.trim(),
       phone: this.phoneInput.value.trim(),
       message,
-      external_user_id: getVisitorId(),
+      external_user_id: this.visitorId,
     });
   }
 
   private async appendMessage(message: string) {
     return this.request<ConversationResponse>(
       `/api/public/website-chat/${this.options.publicToken}/conversations/${this.conversationId}/messages/`,
-      { message, external_user_id: getVisitorId() },
+      { message, external_user_id: this.visitorId },
     );
   }
 
@@ -202,10 +258,12 @@ function injectStyles() {
 
 function getVisitorId() {
   const key = "zani_widget_visitor_id";
-  const current = localStorage.getItem(key);
-  if (current) return current;
+  try {
+    const current = localStorage.getItem(key);
+    if (current) return current;
+  } catch { /* A blocked localStorage still permits an in-memory chat. */ }
   const value = crypto.randomUUID ? crypto.randomUUID() : `visitor-${Date.now()}-${Math.random().toString(16).slice(2)}`;
-  localStorage.setItem(key, value);
+  try { localStorage.setItem(key, value); } catch { /* Visitor identity remains stable in this controller. */ }
   return value;
 }
 

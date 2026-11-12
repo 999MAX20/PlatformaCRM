@@ -15,6 +15,8 @@ from apps.leads.models import Lead, LeadForm
 from apps.notifications.models import Notification
 from apps.services.models import Service
 from apps.tasks.models import Task
+from apps.branches.models import Branch, BranchService, ScheduleDay, ServiceResourceRequirement
+from apps.scheduling.models import Resource
 
 
 class PilotDemoSeedCommandTests(TestCase):
@@ -74,6 +76,16 @@ class PilotDemoSeedCommandTests(TestCase):
         self.assertTrue(Task.objects.filter(business=business, assignee=operator, title__icontains="ответить клиенту").exists())
         self.assertGreaterEqual(QuickReplyTemplate.objects.filter(business=business, is_active=True).count(), 3)
 
+        branch = business.branches.first()
+        self.assertIsNotNone(branch)
+        room = Resource.objects.create(business=business, branch=branch, name="Demo room", resource_type="room")
+        service = Service.objects.filter(business=business).first()
+        BranchService.objects.get_or_create(business=business, branch=branch, service=service, defaults={"duration_minutes": 30})
+        ServiceResourceRequirement.objects.create(branch=branch, service=service, resource=room)
+        foreign = Business.objects.create(owner=owner, name="Keep another business", slug="keep-another-business")
+        foreign_branch = Branch.objects.create(business=foreign, name="Keep branch")
+        foreign_day = ScheduleDay.objects.create(business=foreign, branch=foreign_branch, weekday=0, intervals=[])
+
         # The reset command must be safe to run repeatedly after leads, clients,
         # conversations, notifications and AI tasks already exist.
         call_command(
@@ -90,6 +102,10 @@ class PilotDemoSeedCommandTests(TestCase):
         self.assertEqual(Business.objects.filter(landing_id="demo-test-landing-001").count(), 1)
         business = Business.objects.get(landing_id="demo-test-landing-001")
         self.assertGreaterEqual(Lead.objects.filter(business=business).count(), 3)
+
+        self.assertTrue(Branch.objects.filter(pk=foreign_branch.pk, business=foreign).exists())
+        self.assertTrue(ScheduleDay.objects.filter(pk=foreign_day.pk, intervals=[]).exists())
+        self.assertFalse(Resource.objects.filter(pk=room.pk).exists())
 
     def test_seeded_demo_supports_owner_dashboard_and_inbox_summary(self):
         call_command(

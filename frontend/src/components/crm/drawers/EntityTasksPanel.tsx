@@ -1,3 +1,4 @@
+import { taskTitle, taskDescription } from "../../../lib/taskCopy";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Link } from "react-router";
@@ -32,11 +33,11 @@ export function EntityTasksPanel({ data, entity }: { data: CrmCardPayload; entit
       }} /> : null}
     {data.tasks.map(task => <div key={task.id} className={drawerSurfaceClass}>
       <div className="flex items-center justify-between gap-3">
-        <Link className="platforma-focus-ring font-bold text-platforma-ink" to={`/app/tasks/${task.id}`}>{task.title}</Link>
+        <Link className="platforma-focus-ring font-bold text-platforma-ink" to={`/app/tasks/${task.id}`}>{taskTitle(task, t)}</Link>
         <StatusBadge status={task.status} />
       </div>
       <p className="mt-1 text-xs text-platforma-muted">{t(`taskWorkspace.priority.${task.priority}`)} · {t("crmCard.deadline")} {formatDateTime(task.due_at, business?.timezone, false, language)}</p>
-      {task.description ? <p className="mt-3 text-sm text-platforma-subtle">{task.description}</p> : null}
+      {task.description ? <p className="mt-3 text-sm text-platforma-subtle">{taskDescription(task, t)}</p> : null}
     </div>)}
     {!data.tasks.length ? <EmptyBlock title={t("crmCard.noTasks")} text={t("crmCard.noTasksText")} /> : null}
     {entity.type === "appointment" && data.meta?.has_more.tasks ? <Link className="platforma-focus-ring text-brand-700" to={`/app/tasks?tab=all&appointment_ids=${entity.id}`}>{t("nav.tasks")}</Link> : null}

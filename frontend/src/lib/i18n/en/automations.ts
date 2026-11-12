@@ -1,4 +1,9 @@
 export const automations: Record<string, string> = {
+  "automations.template.appointment_created_prepare.name": "New appointment: prepare the visit",
+  "automations.template.appointment_created_prepare.description": "After an appointment is created, adds a task to prepare the client, service or resource.",
+  "automations.template.message_received_handoff_task.name": "New message: reply to the client",
+  "automations.template.message_received_handoff_task.description": "When a client writes through a connected channel, CRM creates a task for a manual reply.",
+
   "automations.runStatus.pending": "Pending",
   "automations.runStatus.running": "Running",
   "automations.runStatus.waiting": "Waiting to continue",

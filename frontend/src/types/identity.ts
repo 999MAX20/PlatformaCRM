@@ -51,6 +51,7 @@ export type BusinessMembershipSummary = {
   role: "owner" | "admin" | "manager" | "operator" | "specialist" | "marketer" | "accountant" | "support" | "staff" | "doctor";
   business_role: Id | null;
   business_role_name: string;
+  business_role_system_key?: BusinessMembershipSummary["role"] | "";
   is_active: boolean;
 };
 

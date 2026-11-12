@@ -46,7 +46,7 @@ export function RecordsToolbar({ today, params, setParams, filters, summary, res
   const to = params.get("to") || from;
   const formatDay = (day: string) => {
     const date = new Date(`${day}T12:00:00Z`);
-    return Number.isFinite(date.getTime()) ? new Intl.DateTimeFormat(language === "kk" ? "kk-KZ" : language === "en" ? "en-GB" : "ru-RU", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }).format(date) : day;
+    return Number.isFinite(date.getTime()) ? new Intl.DateTimeFormat(language === "kk" ? "kk-KZ" : language === "en" ? "en-GB" : "ru-RU", { day: "numeric", month: language === "kk" ? "numeric" : "short", year: "numeric", timeZone: "UTC" }).format(date) : day;
   };
   const period = from === today && to === today ? `${t("crmFilters.today")}, ${formatDay(today)}` : from && to ? from === to ? formatDay(from) : `${formatDay(from)} — ${formatDay(to)}` : from || to ? `${t(from ? "records.from" : "records.to")} ${formatDay(from || to)}` : t("records.periodAll");
   const openFilters = () => {

@@ -4,6 +4,7 @@ import { automationRulesApi } from "../../api/automations";
 
 import { useActiveBusiness } from "../../hooks/useBusiness";
 import { useAuth } from "../auth/AuthProvider";
+import { useI18n } from "../../lib/i18n";
 
 import type { AutomationRule } from "../../types";
 
@@ -12,6 +13,7 @@ export function useAutomationRules(
 ) {
   const queryClient = useQueryClient();
   const { user } = useAuth();
+  const { language } = useI18n();
   const automationRules = useQuery({
     queryKey: ["automation-rules", "workspace", business?.id, user?.id],
     queryFn: () => automationRulesApi.listPage(business!.id),
@@ -34,6 +36,7 @@ export function useAutomationRules(
         business: business.id,
         template_key: templateKey,
         is_active: isActive,
+          language,
       });
     },
     onSuccess: () =>

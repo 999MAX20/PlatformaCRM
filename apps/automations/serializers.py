@@ -163,6 +163,7 @@ class ApplyAutomationTemplateSerializer(serializers.Serializer):
     business = serializers.IntegerField()
     template_key = serializers.CharField()
     is_active = serializers.BooleanField(default=False)
+    language = serializers.ChoiceField(choices=("ru", "kk", "en"), default="ru")
 
 
 class AutomationConditionInputSerializer(serializers.Serializer):

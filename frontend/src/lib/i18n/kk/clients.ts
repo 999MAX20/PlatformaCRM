@@ -1,4 +1,7 @@
 export const clients: Record<string, string> = {
+  "clients.restoreAction": "Клиентті қалпына келтіру",
+  "clients.restoreConfirmText": "{name} клиенті мұрағаттан қалпына келтіріледі.",
+  "clients.noticeRestored": "Клиент қалпына келтірілді",
   "clients.card.openPage": "Бетті ашу",
   "clients.card.archived": "Мұрағатта",
   "clients.card.responsible": "Жауапты",

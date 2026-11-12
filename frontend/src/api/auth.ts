@@ -28,6 +28,7 @@ import {
   type TokenPair,
 } from "./token";
 import { tokenStorage } from "../lib/storage";
+import { readSessionIdentity, SessionIdentityChangedError } from "./sessionIdentity";
 import type { CurrentUser, LoginHistory } from "../types";
 
 export { confirmMfaEnrollment, isMfaPendingResponse, refreshToken, startMfaEnrollment, verifyMfaLogin };
@@ -44,13 +45,18 @@ export type {
 // Security mutations replace the HttpOnly cookie too. Use the same queue as
 // login/logout, but refresh a rejected credential only after leaving the queue.
 // Using apiClient inside the queue would make its interceptor wait on itself.
-async function authenticatedCookieRequest<T>(request: (options: AxiosRequestConfig) => Promise<T>) {
+async function authenticatedCookieRequest<T>(request: (options: AxiosRequestConfig) => Promise<T>, acceptResponse?: (response: T) => void) {
   const generation = tokenStorage.getGeneration();
-  const send = () => sessionCookieRequest(generation, () => request({
-    baseURL: apiClient.defaults.baseURL, timeout: apiClient.defaults.timeout,
-    withCredentials: true,
-    headers: { Authorization: `Bearer ${tokenStorage.getAccess() || ""}` },
-  }));
+  const send = () => sessionCookieRequest(generation, async () => {
+    const response = await request({
+      baseURL: apiClient.defaults.baseURL, timeout: apiClient.defaults.timeout,
+      withCredentials: true,
+      headers: { Authorization: `Bearer ${tokenStorage.getAccess() || ""}` },
+    });
+    assertCurrentSession(generation);
+    acceptResponse?.(response);
+    return response;
+  });
   try {
     return await send();
   } catch (error) {
@@ -106,7 +112,19 @@ export async function updateCurrentUser(payload: Partial<Pick<CurrentUser, "full
 }
 
 export async function changePassword(payload: { current_password: string; new_password: string; mfa_code?: string }) {
-  const { data } = await authenticatedCookieRequest(options => axios.post<{ ok: boolean }>("/api/auth/change-password/", payload, options));
+  const { data } = await authenticatedCookieRequest(
+    options => axios.post<{ ok: boolean; access: string }>("/api/auth/change-password/", payload, options),
+    ({ data: result }) => {
+      const previous = readSessionIdentity(tokenStorage.getAccess());
+      const replacement = readSessionIdentity(result.access);
+      if (!previous || !replacement || previous.userId !== replacement.userId || replacement.expiresAt <= Date.now()) {
+        throw new SessionIdentityChangedError("Invalid password-change session replacement");
+      }
+      // Commit the replacement before releasing the cookie lock or refetching
+      // account data. Ordinary refresh still rejects a changed device session.
+      tokenStorage.setAccess(result.access);
+    },
+  );
   return data;
 }
 

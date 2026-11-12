@@ -62,6 +62,22 @@ class ArchiveGuardrailTests(TestCase):
         self.client.refresh_from_db()
         self.assertFalse(self.client.is_archived)
 
+    def test_archived_client_card_requires_explicit_read_and_retains_tenant_scope(self):
+        self.client.is_archived = True
+        self.client.save(update_fields=["is_archived"])
+        self.api.force_authenticate(self.owner)
+        path = f"/api/clients/{self.client.pk}/crm-card/"
+        self.assertEqual(self.api.get(path).status_code, 404)
+        card = self.api.get(path, {"include_archived": "true", "business": self.business.pk})
+        self.assertEqual(card.status_code, 200, card.data)
+        self.assertTrue(card.data["client"]["is_archived"])
+        stranger = User.objects.create_user(username="archive-stranger", email="archive-stranger@example.invalid")
+        self.api.force_authenticate(stranger)
+        self.assertIn(self.api.get(path, {"include_archived": "true"}).status_code, [403, 404])
+        self.assertIn(self.api.post(f"/api/clients/{self.client.pk}/restore/").status_code, [403, 404])
+        self.client.refresh_from_db()
+        self.assertTrue(self.client.is_archived)
+
     def test_lost_lead_requires_reason_and_tracks_actor(self):
         lead = Lead.objects.create(
             business=self.business,

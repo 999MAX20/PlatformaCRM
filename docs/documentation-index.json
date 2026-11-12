@@ -3,6 +3,7 @@
   "asOf": "2026-10-21",
   "archivePolicy": "Historical evidence only; excluded from default search. No task or requirement authority.",
   "documents": [
+    {"path": "docs/testing/evidence/crm-global-fixes-20261112.md", "role": "evidence"},
     {"path": "docs/testing/evidence/invitations-24h-20261112.md", "role": "evidence"},
     {"path": "docs/testing/evidence/crm-global-run-20261112.md", "role": "evidence"},
     {"path": "docs/testing/evidence/crm-global-run-20261112-coverage.md", "role": "evidence"},

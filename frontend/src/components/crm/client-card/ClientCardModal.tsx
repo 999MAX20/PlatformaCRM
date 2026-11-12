@@ -1,10 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { Archive, ArrowLeft, ExternalLink, Mail, MessageCircle, Pencil, Phone, Plus, Tag, UserRound } from "lucide-react";
+import { Archive, ArchiveRestore, ArrowLeft, ExternalLink, Mail, MessageCircle, Pencil, Phone, Plus, Tag, UserRound } from "lucide-react";
 import { useId, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { crmCardsApi } from "../../../api/crmCards";
 import { normalizeAppError } from "../../../api/appError";
 import { useAuth } from "../../../features/auth/AuthProvider";
+import { useRestoreClient } from "../../../features/clients/hooks/useRestoreClient";
 import { VoiceAssistantTrigger } from "../../../features/voice/VoiceAssistantTrigger";
 import { PaymentsButton } from "../../../features/payments/PaymentsButton";
 import { useActiveBusiness } from "../../../hooks/useBusiness";
@@ -43,6 +44,7 @@ export function ClientCardModal({ entity, onClose, actions, onOpenEntity, onBack
   const { t, language } = useI18n();
   const { business } = useActiveBusiness();
   const { user } = useAuth();
+  const restoreClient = useRestoreClient();
   const navigate = useNavigate();
   const confirm = useActionConfirm();
   const id = useId();
@@ -69,7 +71,7 @@ export function ClientCardModal({ entity, onClose, actions, onOpenEntity, onBack
     .filter(value => value !== "messages" || hasPermission(user, business?.id, "conversations", "view"));
 
   async function attempt(action: () => void) {
-    if (pending || confirming.current) return;
+    if (pending || restoreClient.isPending || confirming.current) return;
     if (dirty) {
       confirming.current = true;
       const result = await confirm({ title: t("taskWorkspace.discardTitle"), confirmLabel: t("taskWorkspace.discard"), cancelLabel: t("taskWorkspace.keepEditing"), tone: "warning" });
@@ -90,6 +92,7 @@ export function ClientCardModal({ entity, onClose, actions, onOpenEntity, onBack
     if (phone) menu.push({ key: "whatsapp", label: "WhatsApp", icon: MessageCircle, onSelect: () => { window.open(`https://wa.me/${phone}`, "_blank", "noopener,noreferrer"); } });
     if (client.email) menu.push({ key: "email", label: "Email", icon: Mail, onSelect: () => { window.location.href = `mailto:${client.email}`; } });
     if (!client.is_archived && actions?.onArchive && hasPermission(user, client.business, "clients", "delete")) menu.push({ key: "archive", label: t("clients.archiveAction"), icon: Archive, tone: "warning", separatorBefore: true, onSelect: () => void attempt(() => actions.onArchive?.(client)) });
+    if (client.is_archived && hasPermission(user, client.business, "clients", "delete")) menu.push({ key: "restore", label: t("clients.restoreAction"), icon: ArchiveRestore, separatorBefore: true, onSelect: () => void attempt(() => { void restoreClient.restore(client); }) });
   }
   const counts = data?.meta?.related_counts;
   const limited = tab === "tasks" ? data?.meta?.has_more.tasks : tab === "appointments" ? data?.meta?.has_more.appointments : tab === "messages" ? data?.meta?.has_more.conversations : tab === "notes" ? data?.meta?.has_more.notes : false;

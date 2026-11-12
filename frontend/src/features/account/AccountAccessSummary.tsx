@@ -14,7 +14,7 @@ export function AccountAccessSummary() {
   return (
     <details className="mt-4 border-t border-platforma-border pt-3" data-testid="account-access-summary">
       <summary className="cursor-pointer text-sm font-semibold">{t("account.roleAccess")}</summary>
-      <p className="mt-3 text-sm font-semibold">{business?.name} · {membership.business_role_name || businessRoleLabel(membership.role, t)}</p>
+      <p className="mt-3 text-sm font-semibold">{business?.name} · {membership.business_role_system_key ? businessRoleLabel(membership.business_role_system_key, t) : membership.business_role_name || businessRoleLabel(membership.role, t)}</p>
       <p className="mt-3 text-xs text-platforma-subtle">{t("account.availableSections")}</p>
       <dl className="mt-2 grid gap-x-6 gap-y-2 sm:grid-cols-2">
         {resources.map((resource) => (

@@ -32,6 +32,7 @@ import { Modal } from "../../components/ui/Modal";
 import { ErrorState } from "../../components/ui/StateViews";
 import { useI18n } from "../../lib/i18n";
 import { useClientWorkspaceActions } from "./hooks/useClientWorkspaceActions";
+import { useRestoreClient } from "./hooks/useRestoreClient";
 import { PaymentsButton } from "../payments/PaymentsButton";
 import {
   ActionPanel,
@@ -64,6 +65,7 @@ export function ClientWorkspacePage() {
   const { id: routeId } = useParams();
   const clientId = asNumericId(routeId);
   const actions = useClientWorkspaceActions(clientId);
+  const restoreClient = useRestoreClient();
 
   const cardQuery = useQuery({
     queryKey: ["crm-card", "client", clientId, business?.id, user?.id],
@@ -141,8 +143,10 @@ export function ClientWorkspacePage() {
   }
 
   const counts = card?.meta?.related_counts;
+  const canEdit = !client.is_archived && card.available_action_details?.some(action => action.id === "add_note" && action.allowed) === true;
+  const canArchive = hasPermission(user, client.business, "clients", "delete");
   const executableActions = (card.available_action_details || []).filter(
-    (action) => supportedClientActionIds.has(action.id),
+    (action) => !client.is_archived && action.allowed && supportedClientActionIds.has(action.id),
   );
 
   return (
@@ -161,7 +165,7 @@ export function ClientWorkspacePage() {
           actions={
             <>
               <PaymentsButton client={client} />
-              <Button
+              {canEdit && <Button
                 data-testid="client-edit-action"
                 type="button"
                 variant="secondary"
@@ -169,15 +173,15 @@ export function ClientWorkspacePage() {
                 disabled={actions.saveClientMutation.isPending}
               >
                 {t("clients.edit")}
-              </Button>
-              <Button
+              </Button>}
+              {canEdit && <Button
                 type="button"
                 variant="secondary"
                 onClick={() => actions.setTagOpen(true)}
                 disabled={actions.addTagMutation.isPending}
               >
                 {t("clients.addTag")}
-              </Button>
+              </Button>}
               <Button
                 type="button"
                 variant="secondary"
@@ -196,14 +200,19 @@ export function ClientWorkspacePage() {
                 <Phone size={16} />
                 {t("clients.call")}
               </Button>
-              <Button
+              {canArchive && (client.is_archived ? <Button
+                type="button"
+                variant="secondary"
+                isLoading={restoreClient.isPending}
+                onClick={() => void restoreClient.restore(client)}
+              >{t("clients.restoreAction")}</Button> : <Button
                 type="button"
                 variant="warning"
                 isLoading={actions.archiveMutation.isPending}
                 onClick={() => void actions.requestArchiveClient(client)}
               >
                 {t("clients.archiveAction")}
-              </Button>
+              </Button>)}
             </>
           }
         />
@@ -280,7 +289,7 @@ export function ClientWorkspacePage() {
           </EntityWorkspaceAside>
 
           <EntityWorkspaceMain>
-            {card?.custom_fields.length ? <div className="lg:col-span-2"><EntityCustomFieldsPanel data={card} entity={{ type: "client", id: client.id }} /></div> : null}
+            {card?.custom_fields.length ? <div className="lg:col-span-2"><EntityCustomFieldsPanel data={card} entity={{ type: "client", id: client.id }} readOnly={!canEdit} /></div> : null}
             <ClientWorkspaceSection
               title={t("nav.tasks")}
               icon={clientWorkspaceIcons.tasks}
@@ -315,7 +324,7 @@ export function ClientWorkspacePage() {
 
       <Modal
         title={t("clients.editTitle")}
-        open={actions.editOpen}
+        open={actions.editOpen && canEdit}
         onClose={() => actions.setEditOpen(false)}
       >
         {actions.business?.id ? (
@@ -337,7 +346,7 @@ export function ClientWorkspacePage() {
 
       <Modal
         title={t("clients.addTag")}
-        open={actions.tagOpen}
+        open={actions.tagOpen && canEdit}
         onClose={() => actions.setTagOpen(false)}
       >
         <form

@@ -1,3 +1,12 @@
+CRM-GLOBAL-FIXES-20261112: all ten confirmed F01–F10 fixed and locally verified.
+Archive/RO/search/conflicts/reschedule/widget/password/demo reset/system locales.
+Backend focused/dependent, Node, browser RU/KK/EN, build/types/i18n/budget/system/drift PASS.
+Held-response browser harness timeouts/429 retained; diagnostic recovery passed.
+No full matrix/S04/live/deploy claim; seven other test failures and three observations remain.
+Own runtimes stopped; workingDB/env/sends untouched. Own commit only; foreign outgoing blocks push/newCI.
+Evidence: docs/testing/evidence/crm-global-fixes-20261112.md.
+Checkpoint: output/crm-global-fixes-20261112/CHECKPOINT.md.
+
 INVITATIONS-24H-20261112: /invite and email issue/resend locally verified.
 24h bound token, own password/existing login, business selection, revoke/rotation.
 84dependent/17PG/15redaction/browser/build/types/i18n/budget/system/drift PASS.

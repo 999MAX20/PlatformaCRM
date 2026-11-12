@@ -79,13 +79,20 @@ export function entityLabel(entity: string, t: Translate) {
   return entity;
 }
 
-export function auditEventTitle(action: string, entityType: string, t: Translate) {
-  const actionKey = action === "create" || action === "update" || action === "delete" || action === "export" || action === "login" ? action : "change";
+export function auditEntityLabel(entityType: string, t: Translate) {
+  if (entityType === "Service") return t("services.title");
+  if (entityType === "Resource") return t("resources.title");
   const entityKey = entityType === "BusinessMember" ? "BusinessMembership" : entityType;
-  const resources: Record<string, string> = { Client: "clients", Lead: "leads", Deal: "deals", Appointment: "appointments", Task: "tasks", Business: "settings", Subscription: "billing", Notification: "notifications", Bot: "integrations", BotChannel: "integrations", Conversation: "conversations", BotConversation: "conversations" };
-  const entity = ["BusinessRole", "BusinessMembership", "ImportJob", "LeadForm"].includes(entityKey) ? t(`settings.auditEntity.${entityKey}`) : resources[entityType] ? permissionResourceLabel(resources[entityType], t) : entityType;
+  const resources: Record<string, string> = { Client: "clients", Lead: "leads", Deal: "deals", Appointment: "appointments", Task: "tasks", Business: "settings", Subscription: "billing", Notification: "notifications", Bot: "integrations", BotChannel: "integrations", Conversation: "conversations", BotConversation: "conversations", Team: "team", BusinessInvitation: "team", Payment: "billing", CustomFieldValue: "settings", Service: "services", Resource: "resources", Branch: "settings", AutomationRule: "automations" };
+  const entity = ["BusinessRole", "BusinessMembership", "ImportJob", "LeadForm"].includes(entityKey) ? t(`settings.auditEntity.${entityKey}`) : resources[entityType] ? permissionResourceLabel(resources[entityType], t) : t("settings.auditEntity.record");
+  return entity;
+}
+
+export function auditEventTitle(action: string, entityType: string, t: Translate) {
+  const actionKey = ["create", "update", "delete", "export", "login"].includes(action) ? action : "change";
+  const entity = auditEntityLabel(entityType, t);
   return t("settings.auditEventTitle", {
-    action: actionKey === "change" ? action : t(`settings.auditAction.${actionKey}`),
+    action: t(`settings.auditAction.${actionKey}`),
     entity,
   });
 }

@@ -1,3 +1,4 @@
+import { auditEntityLabel } from "../settings/settingsUtils";
 import {
   formatJson,
   canCancelRun,
@@ -69,7 +70,7 @@ export function AutomationRunDetails({
                 {t("automations.runEntity")}
               </p>
               <p className="mt-1 font-semibold text-platforma-text">
-                {selectedRun.entity_type || "-"} #{selectedRun.entity_id || "-"}
+                {auditEntityLabel(selectedRun.entity_type || "", t)} #{selectedRun.entity_id || "-"}
               </p>
             </div>
             <div>
