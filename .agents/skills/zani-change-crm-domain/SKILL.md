@@ -1,11 +1,11 @@
 ---
 name: zani-change-crm-domain
-description: Implement or review ZANI CRM business behavior through domain services, selectors, state machines, audit/activity, API contracts, frontend integration, and tests. Use when changing lead, deal, client, appointment, task, conversation, pipeline, owner, assignee, archive/restore, terminal status, or cross-entity lifecycle behavior.
+description: Implement or review PlatformaCRM business behavior through domain services, selectors, state machines, audit/activity, API contracts, frontend integration, and tests. Use when changing lead, deal, client, appointment, task, conversation, pipeline, owner, assignee, archive/restore, terminal status, or cross-entity lifecycle behavior.
 ---
 
-# Change ZANI CRM Domain Behavior
+# Change PlatformaCRM Domain Behavior
 
-Preserve ZANI as a simple, action-oriented multi-tenant CRM. Follow the repository's layer strategy instead of perfecting one page while business rules remain bypassable.
+Preserve PlatformaCRM as a simple, action-oriented multi-tenant CRM. Follow the repository's layer strategy instead of perfecting one page while business rules remain bypassable.
 
 ## Establish the change contract
 

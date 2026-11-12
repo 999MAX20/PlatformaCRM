@@ -1,9 +1,9 @@
 ---
 name: zani-review-frontend
-description: Implement or review authenticated ZANI React UI for real business data, shared design-system patterns, API-layer separation, role-aware workflows, accessibility, responsive behavior, i18n, and complete loading, error, empty, and forbidden states. Use for frontend/src pages, components, API clients, hooks, navigation, dashboards, CRM drawers, forms, tables, or frontend tests.
+description: Implement or review authenticated PlatformaCRM React UI for real business data, shared design-system patterns, API-layer separation, role-aware workflows, accessibility, responsive behavior, i18n, and complete loading, error, empty, and forbidden states. Use for frontend/src pages, components, API clients, hooks, navigation, dashboards, CRM drawers, forms, tables, or frontend tests.
 ---
 
-# Review ZANI Frontend
+# Review PlatformaCRM Frontend
 
 ## Workflow
 

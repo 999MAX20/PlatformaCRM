@@ -1,7 +1,7 @@
 interface:
-  display_name: "ZANI AI Grounding"
+  display_name: "PlatformaCRM AI Grounding"
   short_description: "Check AI grounding, permissions and approvals"
-  default_prompt: "Use $zani-evaluate-ai-grounding to implement or review source-grounded AI behavior in ZANI."
+  default_prompt: "Use $zani-evaluate-ai-grounding to implement or review source-grounded AI behavior in PlatformaCRM."
 
 policy:
   allow_implicit_invocation: true

@@ -1,7 +1,7 @@
 interface:
-  display_name: "ZANI Observability"
-  short_description: "Plan actionable ZANI production observability"
-  default_prompt: "Use $zani-plan-observability to design or review logs, metrics, traces and alerts for ZANI."
+  display_name: "PlatformaCRM Observability"
+  short_description: "Plan actionable PlatformaCRM production observability"
+  default_prompt: "Use $zani-plan-observability to design or review logs, metrics, traces and alerts for PlatformaCRM."
 
 policy:
   allow_implicit_invocation: true

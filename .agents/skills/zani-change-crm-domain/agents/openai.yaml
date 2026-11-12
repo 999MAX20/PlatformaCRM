@@ -1,7 +1,7 @@
 interface:
-  display_name: "ZANI CRM Domain Change"
+  display_name: "PlatformaCRM Domain Change"
   short_description: "Implement safe CRM lifecycle changes"
-  default_prompt: "Use $zani-change-crm-domain to implement this CRM behavior through ZANI domain services and required safeguards."
+  default_prompt: "Use $zani-change-crm-domain to implement this CRM behavior through PlatformaCRM domain services and required safeguards."
 
 policy:
   allow_implicit_invocation: true

@@ -1,9 +1,9 @@
 ---
 name: zani-handle-incident
-description: Diagnose, contain, recover, and document ZANI staging or production incidents involving outages, elevated errors, tenant data exposure, broken deployments, queues, databases, integrations/webhooks, automations, AI providers, or frontend delivery. Use for incident response, rollback decisions, production debugging, recovery runbooks, and post-incident follow-up; do not mutate live systems without explicit user authorization.
+description: Diagnose, contain, recover, and document PlatformaCRM staging or production incidents involving outages, elevated errors, tenant data exposure, broken deployments, queues, databases, integrations/webhooks, automations, AI providers, or frontend delivery. Use for incident response, rollback decisions, production debugging, recovery runbooks, and post-incident follow-up; do not mutate live systems without explicit user authorization.
 ---
 
-# Handle ZANI Incident
+# Handle PlatformaCRM Incident
 
 ## Workflow
 

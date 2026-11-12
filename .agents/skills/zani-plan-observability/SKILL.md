@@ -1,9 +1,9 @@
 ---
 name: zani-plan-observability
-description: Design or review actionable ZANI production observability across Django APIs, Celery workers, connectors/webhooks, automations, AI providers, and React delivery using safe structured logs, metrics, traces, dashboards, alerts, health checks, and correlation. Use for instrumentation, Sentry, operational dashboards, alerting, SLOs, readiness, or diagnosing visibility gaps.
+description: Design or review actionable PlatformaCRM production observability across Django APIs, Celery workers, connectors/webhooks, automations, AI providers, and React delivery using safe structured logs, metrics, traces, dashboards, alerts, health checks, and correlation. Use for instrumentation, Sentry, operational dashboards, alerting, SLOs, readiness, or diagnosing visibility gaps.
 ---
 
-# Plan ZANI Observability
+# Plan PlatformaCRM Observability
 
 ## Workflow
 

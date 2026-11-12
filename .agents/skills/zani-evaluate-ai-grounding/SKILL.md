@@ -1,9 +1,9 @@
 ---
 name: zani-evaluate-ai-grounding
-description: Implement or review ZANI AI assistant, analyst, recommendation, owner brief, tool-call, and approval behavior for source grounding, tenant and role permissions, safe no-data fallbacks, sanitized logging, provider failures, and explicit confirmation of critical mutations. Use for changes under apps/ai_core, AI-facing APIs, dashboard AI cards, AI tools, prompts, or AI tests.
+description: Implement or review PlatformaCRM AI assistant, analyst, recommendation, owner brief, tool-call, and approval behavior for source grounding, tenant and role permissions, safe no-data fallbacks, sanitized logging, provider failures, and explicit confirmation of critical mutations. Use for changes under apps/ai_core, AI-facing APIs, dashboard AI cards, AI tools, prompts, or AI tests.
 ---
 
-# Evaluate ZANI AI Grounding
+# Evaluate PlatformaCRM AI Grounding
 
 ## Workflow
 

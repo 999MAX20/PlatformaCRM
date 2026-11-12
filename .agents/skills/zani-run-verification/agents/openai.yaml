@@ -1,7 +1,7 @@
 interface:
-  display_name: "ZANI Verification Gate"
-  short_description: "Select and run required ZANI checks"
-  default_prompt: "Use $zani-run-verification to choose and run the verification gate for this ZANI change."
+  display_name: "PlatformaCRM Verification Gate"
+  short_description: "Select and run required PlatformaCRM checks"
+  default_prompt: "Use $zani-run-verification to choose and run the verification gate for this PlatformaCRM change."
 
 policy:
   allow_implicit_invocation: true

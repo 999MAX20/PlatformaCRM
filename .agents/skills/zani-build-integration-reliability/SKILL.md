@@ -1,9 +1,9 @@
 ---
 name: zani-build-integration-reliability
-description: Implement or review ZANI connectors, provider adapters, webhooks, pull syncs, retries, credential handling, normalized BusinessEvents, and merchant integration status for security, idempotency, tenant isolation, recovery, and provider rollout readiness. Use for apps/integrations, provider-specific clients, connector settings, import/sync flows, webhooks, or integration UI and tests.
+description: Implement or review PlatformaCRM connectors, provider adapters, webhooks, pull syncs, retries, credential handling, normalized BusinessEvents, and merchant integration status for security, idempotency, tenant isolation, recovery, and provider rollout readiness. Use for apps/integrations, provider-specific clients, connector settings, import/sync flows, webhooks, or integration UI and tests.
 ---
 
-# Build ZANI Integration Reliability
+# Build PlatformaCRM Integration Reliability
 
 ## Workflow
 

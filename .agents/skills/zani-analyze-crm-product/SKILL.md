@@ -1,9 +1,9 @@
 ---
 name: zani-analyze-crm-product
-description: Analyze implemented ZANI capabilities against practical SMB CRM mechanics and recommend evidence-backed product priorities. Use for audits, gap analysis, roadmap decisions, workflow completeness, competitor-mechanics comparisons, or questions about whether leads, deals, inbox, tasks, appointments, pipelines, dashboards, analytics, integrations, automation, and AI form a usable end-to-end product.
+description: Analyze implemented PlatformaCRM capabilities against practical SMB CRM mechanics and recommend evidence-backed product priorities. Use for audits, gap analysis, roadmap decisions, workflow completeness, competitor-mechanics comparisons, or questions about whether leads, deals, inbox, tasks, appointments, pipelines, dashboards, analytics, integrations, automation, and AI form a usable end-to-end product.
 ---
 
-# Analyze ZANI CRM Product
+# Analyze PlatformaCRM Product
 
 ## Workflow
 

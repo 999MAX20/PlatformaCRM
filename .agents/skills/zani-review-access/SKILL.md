@@ -1,9 +1,9 @@
 ---
 name: zani-review-access
-description: Review ZANI Django and DRF code for Business tenant isolation, backend authorization, IDOR, membership validation, scoped querysets, cross-tenant writes, and permission test coverage. Use for CRM endpoints, serializers, services, selectors, custom actions, bulk operations, background jobs, exports, and any change that reads or mutates merchant data.
+description: Review PlatformaCRM Django and DRF code for Business tenant isolation, backend authorization, IDOR, membership validation, scoped querysets, cross-tenant writes, and permission test coverage. Use for CRM endpoints, serializers, services, selectors, custom actions, bulk operations, background jobs, exports, and any change that reads or mutates merchant data.
 ---
 
-# Review ZANI Access
+# Review PlatformaCRM Access
 
 Treat `AGENTS.md` and repository documentation as authoritative. Use this skill as a focused access-control workflow, not as a replacement for project rules.
 

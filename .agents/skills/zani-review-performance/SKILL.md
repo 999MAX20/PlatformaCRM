@@ -1,9 +1,9 @@
 ---
 name: zani-review-performance
-description: Measure, diagnose, and improve ZANI backend, database, API, worker, and React performance without weakening tenant isolation or correctness. Use for slow endpoints/pages, N+1 queries, expensive aggregates, missing indexes, large payloads, queue bottlenecks, frontend waterfalls, render churn, bundle growth, caching, pagination, or load-readiness work.
+description: Measure, diagnose, and improve PlatformaCRM backend, database, API, worker, and React performance without weakening tenant isolation or correctness. Use for slow endpoints/pages, N+1 queries, expensive aggregates, missing indexes, large payloads, queue bottlenecks, frontend waterfalls, render churn, bundle growth, caching, pagination, or load-readiness work.
 ---
 
-# Review ZANI Performance
+# Review PlatformaCRM Performance
 
 ## Workflow
 

@@ -1,9 +1,9 @@
 ---
 name: zani-run-verification
-description: Select, run, and report the appropriate ZANI verification gate for Django, DRF, React, CRM, integration, AI, migration, documentation, or mixed changes. Use after meaningful implementation, before completing checklist work, when reproducing a regression, or when a scoped or broad test run exposes a possible baseline failure.
+description: Select, run, and report the appropriate PlatformaCRM verification gate for Django, DRF, React, CRM, integration, AI, migration, documentation, or mixed changes. Use after meaningful implementation, before completing checklist work, when reproducing a regression, or when a scoped or broad test run exposes a possible baseline failure.
 ---
 
-# Run ZANI Verification
+# Run PlatformaCRM Verification
 
 Treat verification as evidence for the requested behavior, not as a ceremonial command list.
 
