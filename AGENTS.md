@@ -286,6 +286,9 @@ backlog, не удалять открытые acceptance IDs и не превр�
 
 ## 8. Authenticated UI content
 
+UI skill routing and evidence: [frontend contract](docs/current/frontend.md#применение-ui-скиллов).
+Before reopening work, apply the personal `Preserve completed work` rule and §2.
+
 ### Industry-neutral terminology — owner decision 2026-10-15
 
 The shared CRM interface and platform administration serve businesses in any
