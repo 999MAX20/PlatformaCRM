@@ -5,15 +5,17 @@ These rules govern work; live status and test counts belong in task evidence.
 
 ## 1. Start and restore context
 
-1. Read [STATUS.md](STATUS.md), the selected checkpoint in
-   [PRIMARY-SESSION](docs/testing/task-state/PRIMARY-SESSION.md), and the continuity
-   section of [task template](docs/testing/CODEX_TASK_TEMPLATE.md).
-2. Read the selected task context in [project handoff](actual_docs/PROJECT_HANDOFF.md).
-   The user request defines scope; no chat registry grants implementation rights.
-3. Verify actual repository root, branch, HEAD, staged/unstaged changes and untracked
-   files. Separate task-owned work from user/other work; retain a starting snapshot.
-4. Read the relevant contracts below and compare existing code/tests/closure evidence
-   before creating models, endpoints, services or components. An old plan is not a new task.
+1. Start from the user's current task. Locate its ID/heading with targeted search
+   in [STATUS.md](STATUS.md) and [PRIMARY-SESSION](docs/testing/task-state/PRIMARY-SESSION.md);
+   read only that entry and its linked checkpoint. Do not load entire histories or
+   select another task because it is first/latest. A new task needs no historical match.
+2. Read the continuity section of [task template](docs/testing/CODEX_TASK_TEMPLATE.md).
+   Consult [project handoff](actual_docs/PROJECT_HANDOFF.md) only for a relevant explicit
+   transfer or missing decision; historical chat roles grant no implementation rights.
+3. Verify canonical root, branch/HEAD, staged/unstaged/untracked files; retain the
+   starting snapshot and separate task-owned work from others' changes.
+4. Read relevant contracts below and existing code/tests/closure evidence before
+   adding models, endpoints, services or components. An old plan is not a new task.
 
 Only `C:\Users\user\Desktop\PlatformaCRM` is a writable source checkout (owner decision
 2026-09-21; canonical folder renamed with explicit owner approval 2026-09-28).
@@ -26,32 +28,22 @@ checkout to match a remembered revision. Resolve concrete affected-path conflict
 with the user before continuing the affected operation.
 See [consolidation evidence](archive_docs/2026-10-07/docs/testing/task-state/CONSOLIDATION-2026-09-21.md).
 
-## Работа по поручению пользователя — решение 14.10.2026
+## Task scope and continuity
 
-Каждый чат выполняет явное поручение пользователя в согласованном объёме и
-отчитывается пользователю в этом же чате. Название чата не определяет его роль
-или право выполнять задачу. Межчатовая координация, назначение/освобождение writer,
-согласования с primary, обязательные отчёты другим чатам и ожидание их ответа отменены.
-Не назначать другим чатам работу, не опрашивать их и не создавать межчатовые
-напоминания или автоматические продолжения без отдельного поручения пользователя.
+The current user task defines scope; clarifications/status questions supplement it,
+not replace it. Keep unfinished requirements until explicit cancellation/change of
+goal. Instructions, skills, old plans and chat names grant no new work. Report in
+this chat; no inter-chat assignments, polling, writer registry, approval chains,
+reminders, automation or delegation without an explicit request. Unrelated WIP or
+an open chat is not a blocker; stop only a concrete conflicting operation.
 
-Перед изменениями сверить Git и затронутые файлы, сохранить чужие изменения.
-При конкретном конфликте в изменяемом участке остановить только затронутую
-операцию и сообщить пользователю. Открытый чат или чужой несвязанный diff сами
-по себе не требуют согласования. Правила проверок, Git и канонической папки сохраняются.
-
-При явном поручении передать задачу в другой чат передать подробное описание:
-цель и разрешённый объём, требования и решения пользователя, что сделано,
-что осталось, точные файлы, branch/HEAD и незакоммиченные изменения, выполненные
-проверки с результатами, ошибки/блокеры, собственные незавершённые процессы и
-следующий шаг. Не включать секреты. Передачу незавершённой задачи описывать честно:
-полное завершение, публикация или зелёный CI не являются условием передачи контекста.
-Переданная задача больше не продолжается отправителем без нового поручения.
-Не нужны подтверждения владения, смена реестра, цепочка согласований или ответный отчёт.
-Создание/архивация чатов и фоновые расписания не входят в обычную передачу.
-
-После сжатия контекста восстановить ту же задачу по checkpoint и продолжить
-согласованный объём. Сжатие не запускает передачу, создание чатов или следующий этап.
+After compaction, restore the selected checkpoint, Git delta, evidence and attempt
+history, then continue the same authorized scope. Do not restart closed work or
+create/transfer/archive chats. On explicit handoff include scope/decisions, done/
+remaining work, exact files, branch/HEAD/dirty ownership, checks/failures/blockers,
+owned processes and next step without secrets. Incomplete work can be handed off;
+no green CI/publication/ownership handshake is required. The sender stops that work
+until newly instructed; chat creation/archival/schedules are separate actions.
 
 Run servers from the canonical folder. Before trusting localhost, verify backend,
 frontend and worker source roots and build/profile. Do not stop others' processes.
@@ -170,7 +162,9 @@ still follow section 2. Archiving does not close open acceptance or approve prop
 
 ## 5. Verification proportional to the change
 
-[Testing guide](docs/testing/testing.md) owns exact commands and the matrix.
+[Testing guide](docs/testing/testing.md) owns exact commands, the risk matrix and
+full proportional-verification policy; this root keeps only project boundaries.
+Apply that policy even when personal Codex instructions are unavailable.
 Use cross-platform `scripts/codex_verify.py`; Bash is not required. Select gates
 before implementation; do not lower acceptance after a failure.
 
@@ -200,44 +194,6 @@ commands, results, skipped checks/reasons, environment, coverage and commit or d
 snapshot. Distinguish implemented, verified, committed, integrated and deployed.
 If `.git` is absent, say branch/publication operations cannot be proven locally.
 
-### Proportional verification — owner decision 2026-10-02
-
-Choose checks by behavior, blast radius and failure impact, not file count. Before
-implementation record a short plan: changed behavior, risk, focused checks and
-completion checks. These are verification levels, not extra approval phases.
-
-- Docs/rules: diff hygiene, links, examples and consistency only; no app installs,
-  builds, database or browser suites just for Markdown.
-- Local visual/copy change: inspect existing tokens, typography, spacing, sizes
-  and layout; verify the affected component/page at relevant viewport/locale and
-  keyboard states. Do not audit/redesign unrelated pages or create E2E tests that
-  merely mirror CSS. Run frontend build/types once at completion where required.
-- Functional frontend: targeted component/interaction tests and the changed
-  reachable flow, including applicable loading/error/empty/recovery states.
-  Use targeted browser tests for critical flows, not the whole E2E suite.
-- Backend: after each coherent service/API/state transition, run focused automated
-  tests before building dependent behavior. Never defer backend validation until
-  the entire backend or a large phase is written. At completion run affected and
-  dependent suites plus required system/schema/migration checks in isolation.
-  Prove happy path and invalid input; where applicable prove role denial, tenant
-  isolation, lifecycle invariants, transaction rollback, money/stock correctness,
-  concurrency, idempotency, retries and recovery. UI screenshots do not prove these.
-- Shared tokens/components/contracts: inspect callers and test representative
-  affected consumers. Broaden only for demonstrated shared impact; auth, permissions,
-  payments, migrations and shared infrastructure are high risk even in a one-line diff.
-- Full-project/E2E gates: release candidates, explicitly authorized comprehensive
-  certification, or a documented cross-cutting risk needing that scope. A routine
-  task completion, commit, push or context restoration alone is not that reason.
-
-Reuse PASS only while relevant code, dependencies, configuration and fixtures are
-unchanged. Run affected checks again after relevant fixes; do not repeat unaffected
-suites. Do not reinstall dependencies locally if the validated environment and lock
-inputs are unchanged; retain deterministic installation in clean CI. Prefer concise
-success summaries and bounded failure logs. Read the selected checkpoint and relevant
-contracts, not entire historical records. Keep required failures visible; these rules
-do not waive existing release acceptance or retroactively turn a failed gate green.
-
-
 ## 6. Verified commit and normal push
 
 Standing owner authorization (2026-09-21): after an approved implementation/docs
@@ -247,7 +203,13 @@ and unresolved target/safety questions override it. This is not an automatic hoo
 
 1. Verify canonical root, branch/HEAD, task-owned diff, pre-existing
    WIP and agreed target. Missing/ambiguous upstream blocks publication, not permission
-   to choose one. Keep the branch; use agreed PR/branch only when requested.
+   to choose one. Keep the current branch. The approved remote destination is `main`;
+   it does not authorize checkout/rename/rebase or a new PR/branch. Publication from
+   the current branch is allowed only when the entire outgoing range is authorized
+   and fast-forwards the agreed destination. If foreign/unverified commits are in
+   that range, retain the task-only local commit and report the exact blocker; do
+   not push them, cherry-pick around them or create another source tree. Integration
+   of others' commits needs explicit owner authorization and applicable checks.
 2. Review the entire intended commit and outgoing range, including untracked files,
    for secrets, private data and unrelated work. Stage explicit reviewed paths/hunks.
 3. Make a meaningful conventional commit; fetch the agreed target and prove normal
@@ -276,7 +238,9 @@ docs after meaningful changes; update the CRM plan when its scope/status changes
 README only for setup/behavior/public-status changes. Preserve closed evidence/archive
 bodies and unresolved approved contracts; do not archive unfinished work as complete.
 Never store secrets/full chats or duplicate changing counts across indexes.
-Strict read-only work reports context without writing files.
+Strict read-only work reports context without writing files. Rule-only maintenance
+records its scope/checks in the final response; it does not edit product STATUS,
+roadmap or another task's checkpoint solely to record policy housekeeping.
 
 Compaction restores the same task in the same chat after Git/evidence checks.
 It does not authorize ownership transfer, new tasks, commits, worktrees, scope expansion
