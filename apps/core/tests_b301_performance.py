@@ -23,18 +23,22 @@ from apps.tasks.models import Task
 
 
 REPRESENTATIVE_ROWS = 60
+# Fresh test databases otherwise hide the payload cost of production-sized IDs.
+REPRESENTATIVE_ID_BASE = 1_000_000
 
 
 class B301MeasuredPerformanceTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.owner = User.objects.create_user(
+            id=REPRESENTATIVE_ID_BASE,
             username="b301-owner",
             email="b301-owner@example.com",
             password="pass12345",
             role=User.Roles.BUSINESS_OWNER,
         )
         cls.business = Business.objects.create(
+            id=REPRESENTATIVE_ID_BASE,
             owner=cls.owner,
             name="B301 Performance Clinic",
             slug="b301-performance-clinic",
@@ -51,27 +55,32 @@ class B301MeasuredPerformanceTests(TestCase):
             ),
         )
         cls.client_record = Client.objects.create(
+            id=REPRESENTATIVE_ID_BASE,
             business=cls.business,
             full_name="B301 Client",
             phone="+77000000301",
         )
         cls.service = Service.objects.create(
+            id=REPRESENTATIVE_ID_BASE,
             business=cls.business,
             name="B301 Service",
             duration_minutes=30,
             price_from=1000,
         )
         cls.resource = Resource.objects.create(
+            id=REPRESENTATIVE_ID_BASE,
             business=cls.business,
             name="B301 Resource",
             linked_user=cls.owner,
         )
         cls.pipeline = Pipeline.objects.create(
+            id=REPRESENTATIVE_ID_BASE,
             business=cls.business,
             name="B301 Pipeline",
             slug="b301-pipeline",
         )
         cls.stage = PipelineStage.objects.create(
+            id=REPRESENTATIVE_ID_BASE,
             business=cls.business,
             pipeline=cls.pipeline,
             name="B301 Open",
@@ -79,6 +88,7 @@ class B301MeasuredPerformanceTests(TestCase):
             sla_minutes=15,
         )
         cls.bot = Bot.objects.create(
+            id=REPRESENTATIVE_ID_BASE,
             business=cls.business,
             name="B301 Bot",
             status=Bot.Statuses.ACTIVE,
@@ -87,6 +97,7 @@ class B301MeasuredPerformanceTests(TestCase):
         cls.leads = Lead.objects.bulk_create(
             [
                 Lead(
+                    id=REPRESENTATIVE_ID_BASE + index,
                     business=cls.business,
                     client=cls.client_record,
                     responsible_user=cls.owner,
@@ -102,6 +113,7 @@ class B301MeasuredPerformanceTests(TestCase):
         cls.deals = Deal.objects.bulk_create(
             [
                 Deal(
+                    id=REPRESENTATIVE_ID_BASE + index,
                     business=cls.business,
                     client=cls.client_record,
                     lead=cls.leads[index],
@@ -117,6 +129,7 @@ class B301MeasuredPerformanceTests(TestCase):
         cls.appointments = Appointment.objects.bulk_create(
             [
                 Appointment(
+                    id=REPRESENTATIVE_ID_BASE + index,
                     business=cls.business,
                     client=cls.client_record,
                     lead=cls.leads[index],
@@ -136,6 +149,7 @@ class B301MeasuredPerformanceTests(TestCase):
         cls.conversations = BotConversation.objects.bulk_create(
             [
                 BotConversation(
+                    id=REPRESENTATIVE_ID_BASE + index,
                     business=cls.business,
                     bot=cls.bot,
                     channel=BotConversation.Channels.WEBSITE,
@@ -155,18 +169,20 @@ class B301MeasuredPerformanceTests(TestCase):
         BotMessage.objects.bulk_create(
             [
                 BotMessage(
+                    id=REPRESENTATIVE_ID_BASE + conversation_index * 2 + message_index,
                     conversation=conversation,
                     direction=BotMessage.Directions.INBOUND,
                     sender_type=BotMessage.SenderTypes.CLIENT,
                     text=f"B301 message {message_index}",
                 )
-                for conversation in cls.conversations
+                for conversation_index, conversation in enumerate(cls.conversations)
                 for message_index in range(2)
             ]
         )
         Task.objects.bulk_create(
             [
                 Task(
+                    id=REPRESENTATIVE_ID_BASE + index,
                     business=cls.business,
                     title=f"B301 Task {index}",
                     client=cls.client_record,
@@ -185,6 +201,7 @@ class B301MeasuredPerformanceTests(TestCase):
         ActivityEvent.objects.bulk_create(
             [
                 ActivityEvent(
+                    id=REPRESENTATIVE_ID_BASE + index,
                     business=cls.business,
                     client=cls.client_record,
                     actor=cls.owner,
@@ -199,6 +216,7 @@ class B301MeasuredPerformanceTests(TestCase):
         Note.objects.bulk_create(
             [
                 Note(
+                    id=REPRESENTATIVE_ID_BASE + index,
                     business=cls.business,
                     client=cls.client_record,
                     author=cls.owner,

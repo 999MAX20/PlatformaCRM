@@ -1,9 +1,45 @@
 from django.test import SimpleTestCase
 
-from apps.ai_core.speech_numbers import normalize_spoken_phone
+from apps.ai_core.speech_numbers import ambiguous_spoken_phone, normalize_spoken_phone
 
 
 class SpokenPhoneTests(SimpleTestCase):
+    def test_phone_before_date_keeps_date_and_every_digit(self):
+        phone = "плюс семь семь ноль екі екі екі екі екі екі екі екі"
+        for suffix in (", 10 ноября 2030 года в 12 часов.", ", 9 қарашада сағат 12-де.",
+                       "; 8 November 2030 at 10.", ", 10.11.2030 в 12:00."):
+            before = "Телефон " + phone + suffix
+            with self.subTest(suffix=suffix):
+                self.assertEqual(normalize_spoken_phone(before), "Телефон +77022222222" + suffix)
+                self.assertFalse(ambiguous_spoken_phone(before))
+
+    def test_numeric_continuation_is_not_assumed_to_be_a_date(self):
+        phone = "Телефон плюс семь семь ноль екі екі екі екі екі екі екі екі"
+        for suffix in (", 10 11 12", ", 10 добавочный", ", 99 ноября", " 10 ноября", ", два ноября"):
+            with self.subTest(suffix=suffix):
+                self.assertEqual(normalize_spoken_phone(phone + suffix), phone + suffix)
+        for count in (6, 16):
+            text = "Телефон " + " ".join(["два"] * count) + ", 10 ноября 2030."
+            self.assertEqual(normalize_spoken_phone(text), text)
+
+    def test_typographic_label_separator_preserves_every_mixed_digit(self):
+        for separator in ("—", "–", "-"):
+            before = f"Жаңа клиент қос: имя — Әлихан Омаров, телефон {separator} плюс семь семь ноль бес бір два үш четыре бес шесть жеті."
+            after = f"Жаңа клиент қос: имя — Әлихан Омаров, телефон {separator} +77051234567."
+            with self.subTest(separator=separator):
+                self.assertEqual(normalize_spoken_phone(before), after)
+                self.assertFalse(ambiguous_spoken_phone(before))
+        ambiguous = "Телефон — плюс семь семь ноль один двести тридцать четыре"
+        self.assertEqual(normalize_spoken_phone(ambiguous), ambiguous)
+        self.assertTrue(ambiguous_spoken_phone(ambiguous))
+
+    def test_phone_word_count_is_not_completed_or_shortened_to_a_national_length(self):
+        for repetitions in (6, 8):
+            before = "Телефон нөмірі — плюс жеті жеті нөл бір " + " ".join(["екі"] * repetitions) + "."
+            expected = "Телефон нөмірі — +7701" + "2" * repetitions + "."
+            with self.subTest(repetitions=repetitions):
+                self.assertEqual(normalize_spoken_phone(before), expected)
+
     def test_digit_fidelity_and_names(self):
         cases = [
             ("Запиши Ивана Иванова телефон плюс семь семь ноль два два два два два два два два на консультацию к Анне",

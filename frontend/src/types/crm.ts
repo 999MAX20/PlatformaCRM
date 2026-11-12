@@ -215,7 +215,10 @@ export type CrmCardPayload = {
   deals: Deal[];
   appointments: Appointment[];
   tasks: Task[];
-  conversations: Omit<BotConversation, "ai_safety">[];
+  conversations: Pick<BotConversation,
+    "id" | "business" | "channel" | "client" | "lead" | "deal" | "status" |
+    "unread_count" | "last_message_at" | "last_message" | "updated_at"
+  >[];
   timeline: ActivityEvent[];
   notes: Note[];
   tags: TaggedObject[];

@@ -33,7 +33,16 @@ NOTES_LIMIT = 50
 
 class CrmCardConversationSerializer(InboxConversationSerializer):
     class Meta(InboxConversationSerializer.Meta):
-        fields = [field for field in InboxConversationSerializer.Meta.fields if field != "ai_safety"]
+        fields = [
+            "id", "business", "channel", "client", "lead", "deal", "status",
+            "unread_count", "last_message_at", "last_message", "updated_at",
+        ]
+
+    def to_representation(self, instance):
+        # Apply Inbox's current linked-entity permissions before projecting the
+        # card preview; full metadata and handoff state belong to the Inbox API.
+        data = super().to_representation(instance)
+        return {field: data[field] for field in self.Meta.fields}
 
 
 ACTION_DEFINITIONS = {

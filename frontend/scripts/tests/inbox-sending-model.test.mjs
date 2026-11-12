@@ -3,10 +3,12 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 import test from 'node:test';
 import ts from 'typescript';
+import { deliveryNotice } from '../../src/features/conversations/deliveryNotice.ts';
 function harness() {
  const refs=[], mutations=[], calls=[], cleared=[], notices=[], errors=[];let cursor=0;
  const api={sendMessage:async p=>p,retryMessage:async p=>p};
  const imports={react:{useRef:value=>refs[cursor++]??={current:value}},'@tanstack/react-query':{useMutation:options=>{const value={...options,isPending:false,mutate:payload=>calls.push(payload)};mutations.push(value);return value;}},'../../api/inbox':{inboxApi:api},'./inboxIdempotency':{createIdempotencyKey:scope=>scope+':'+(calls.length+1)}};
+ imports['./deliveryNotice']={deliveryNotice};
  const source=fs.readFileSync(new URL('../../src/features/conversations/useInboxSending.ts',import.meta.url),'utf8');const exports={};
  vm.runInNewContext(ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText,{exports,require:name=>{assert.ok(imports[name],name);return imports[name];}});
  const args={selected:{id:11,status:'open'},draft:' hello ',draftKey:'u:1:b:2:c:11',canUpdate:true,clearSentDraft:(...x)=>cleared.push(x),currentConversationRef:{current:11},setSuggestedReply:x=>calls.push({suggestion:x}),setNotice:(...x)=>notices.push(x),t:x=>x,invalidateInbox:async()=>{},notifyError:(...x)=>errors.push(x),composerRef:{current:null}};

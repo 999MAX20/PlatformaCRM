@@ -10,7 +10,7 @@ from django.core.files.base import ContentFile
 from apps.activities.models import ActivityEvent, Note
 from apps.activities.taxonomy import ActivityEvents
 from apps.bots.models import Bot, BotConversation, BotMessage
-from apps.businesses.models import Business, BusinessMember
+from apps.businesses.models import Business, BusinessMember, BusinessRole, RolePermission
 from apps.clients.models import Client
 from apps.crm.models import Deal, Pipeline, PipelineStage
 from apps.core.models import FileAttachment
@@ -185,6 +185,63 @@ class CrmCardEndpointTests(TestCase):
         self.assertEqual(consents[OutreachConsent.Channels.WHATSAPP]["status"], OutreachConsent.Statuses.OPTED_IN)
         self.assertEqual(consents[OutreachConsent.Channels.WHATSAPP]["source"], "lead_form")
         self.assertEqual(consents[OutreachConsent.Channels.TELEGRAM]["status"], OutreachConsent.Statuses.UNKNOWN)
+
+    def test_card_conversation_preview_excludes_inbox_state_without_changing_inbox(self):
+        self.api.force_authenticate(self.owner)
+        self.conversation.metadata_json = {"provider_context": "large-context-" * 10_000}
+        self.conversation.handoff_reason = "Operator requested"
+        self.conversation.unread_count = 3
+        self.conversation.save(update_fields=["metadata_json", "handoff_reason", "unread_count"])
+
+        response = self.api.get(f"/api/clients/{self.client.pk}/crm-card/")
+
+        self.assertEqual(response.status_code, 200)
+        preview = response.data["conversations"][0]
+        self.assertEqual(preview["channel"], self.conversation.channel)
+        self.assertEqual(preview["status"], self.conversation.status)
+        self.assertEqual(preview["unread_count"], 3)
+        self.assertEqual(preview["last_message"]["text"], "Hello")
+        self.assertEqual(preview["client"], self.client.pk)
+        self.assertEqual(preview["lead"], self.lead.pk)
+        self.assertIn("last_message_at", preview)
+        self.assertIn("updated_at", preview)
+        self.assertNotIn("metadata_json", preview)
+        self.assertNotIn("handoff_reason", preview)
+        self.assertNotIn("attachments", preview)
+        self.assertNotIn("ai_safety", preview)
+        self.assertLess(len(response.content), 150_000)
+
+        inbox = self.api.get(f"/api/inbox/conversations/{self.conversation.pk}/")
+        self.assertEqual(inbox.status_code, 200)
+        self.assertEqual(inbox.data["metadata_json"], self.conversation.metadata_json)
+        self.assertEqual(inbox.data["handoff_reason"], self.conversation.handoff_reason)
+        self.assertIn("ai_safety", inbox.data)
+
+    def test_card_conversation_preview_keeps_current_link_denials(self):
+        self.conversation.deal = self.deal
+        self.conversation.save(update_fields=["deal"])
+        role = BusinessRole.objects.create(business=self.business, name="Card conversation reader")
+        for resource in ("clients", "conversations", "leads", "deals"):
+            RolePermission.objects.create(
+                business_role=role, resource=resource, action="view", scope="business",
+                is_allowed=resource in ("clients", "conversations"),
+            )
+        BusinessMember.objects.filter(business=self.business, user=self.support_user).update(business_role=role)
+        self.api.force_authenticate(self.support_user)
+
+        response = self.api.get(f"/api/clients/{self.client.pk}/crm-card/")
+
+        self.assertEqual(response.status_code, 200)
+        preview = response.data["conversations"][0]
+        self.assertEqual(preview["client"], self.client.pk)
+        self.assertIsNone(preview["lead"])
+        self.assertIsNone(preview["deal"])
+        self.assertNotIn("metadata_json", preview)
+        RolePermission.objects.filter(business_role=role, resource="conversations").update(is_allowed=False)
+        denied = self.api.get(f"/api/clients/{self.client.pk}/crm-card/")
+        self.assertEqual(denied.status_code, 200)
+        self.assertEqual(denied.data["conversations"], [])
+        self.assertEqual(denied.data["meta"]["related_counts"]["conversations"], 0)
 
     def test_client_crm_card_action_details_are_user_scoped(self):
         self.api.force_authenticate(self.support_user)

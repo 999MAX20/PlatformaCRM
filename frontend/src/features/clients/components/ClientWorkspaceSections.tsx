@@ -300,7 +300,9 @@ export function AppointmentsList({
 export function ConversationsList({
   conversations,
 }: {
-  conversations: BotConversation[];
+  conversations: Pick<BotConversation,
+    "id" | "status" | "channel" | "last_message" | "last_message_at" | "updated_at"
+  >[];
 }) {
   const { t } = useI18n();
   if (!conversations.length)

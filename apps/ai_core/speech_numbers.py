@@ -8,12 +8,18 @@ _DIGITS.update(zip("нөл бір екі үш төрт бес алты жеті 
 _DIGITS.update(zip("zero one two three four five six seven eight nine".split(), "0123456789"))
 _DIGITS["нуль"] = "0"
 _WORD = "(?:" + "|".join(_DIGITS) + ")"
-_LABEL = r"\b(?:телефон(?:ы|і)?(?:\s+(?:номер[іа]?|нөмірі))?|нөмірі|phone(?: number)?)\s*:?\s*"
+_LABEL = r"\b(?:телефон(?:ы|і)?(?:\s+(?:номер[іа]?|нөмірі))?|нөмірі|phone(?: number)?)\s*[:—–-]?\s*"
+_MONTH = (
+    r"(?:января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября|декабря|"
+    r"(?:қаңтар|ақпан|наурыз|сәуір|мамыр|маусым|шілде|тамыз|қыркүйек|қазан|қараша|желтоқсан)(?:да|де)?|"
+    r"January|February|March|April|May|June|July|August|September|October|November|December)\b"
+)
+_DATE_AFTER_SEPARATOR = r"[,;]\s*(?:0?[1-9]|[12][0-9]|3[01])(?:\s+" + _MONTH + r"|\.(?:0?[1-9]|1[0-2])\.[0-9]{4}\b)"
 _PHONE = re.compile(
     r"(?P<label>" + _LABEL + r")"
     r"(?P<plus>(?:плюс|plus|\+)\s*)?"
     r"(?P<digits>" + _WORD + r"(?:[\s,\-]+" + _WORD + r"){6,14})"
-    r"(?=\s*[,;]?\s*(?:[.!?]|$|\b(?:на|к|для|at|for)\b))",
+    r"(?=\s*(?:" + _DATE_AFTER_SEPARATOR + r"|[,;]?\s*(?:[.!?]|$|\b(?:на|к|для|at|for)\b)))",
     re.IGNORECASE,
 )
 
