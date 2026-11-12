@@ -26,8 +26,10 @@ class InitialLocationMigrationTests(TransactionTestCase):
             service = state.get_model("services", "Service").objects.create(business=business, name="Visit", duration_minutes=30, price_from=100)
             resource = state.get_model("scheduling", "Resource").objects.create(business=business, name="Specialist", resource_type="staff")
             state.get_model("scheduling", "WorkingHours").objects.create(business=business, weekday=0, start_time=time(9), end_time=time(18))
-            MigrationExecutor(connection).migrate(leaves)
-            state = MigrationExecutor(connection).loader.project_state(leaves).apps
+            initial = ("branches", "0003_automatic_initial_location")
+            MigrationExecutor(connection).migrate([initial])
+            executor = MigrationExecutor(connection)
+            state = executor.loader.project_state(list(executor.loader.applied_migrations)).apps
             Branch = state.get_model("branches", "Branch")
             primary = Branch.objects.get(business_id=business.pk)
             self.assertTrue(primary.uses_business_defaults)
@@ -35,6 +37,11 @@ class InitialLocationMigrationTests(TransactionTestCase):
             self.assertEqual(Branch.objects.filter(business_id=archived_business.pk).count(), 1)
             self.assertFalse(Branch.objects.get(pk=archived.pk).is_active)
             self.assertFalse(Branch.objects.get(pk=archived.pk).uses_business_defaults)
+            MigrationExecutor(connection).migrate(leaves)
+            state = MigrationExecutor(connection).loader.project_state(leaves).apps
+            primary = state.get_model("branches", "Branch").objects.get(pk=primary.pk)
+            self.assertFalse(primary.uses_business_defaults)
+            self.assertEqual(state.get_model("branches", "BranchService").objects.get(branch_id=primary.pk).price_from, 100)
             client = state.get_model("clients", "Client").objects.create(business_id=business.pk, full_name="History client")
             start = datetime(2030, 1, 7, 12, tzinfo=timezone.utc)
             visit = state.get_model("scheduling", "Appointment").objects.create(business_id=business.pk,

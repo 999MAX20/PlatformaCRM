@@ -120,3 +120,35 @@ Roadmap phase/acceptance IDs не закрывались; README/setup, operatio
 никакие чужие процессы не останавливались. Git receipt и cleanup boundary в checkpoint.
 Только собственный локальный коммит; normal push заблокирован чужим исходящим
 диапазоном текущей ветки. Новые remote CI/deployment этим запуском не инициированы.
+
+## Backend CI corrections — 12.11.2026
+
+Owner separately authorized publication of all62 existing commits, then repair of
+both failed backend tests, preserving local work, with green remote CI acceptance.
+Published31fe3115; run43223669616: frontend PASS, backend3329 tests/2FAIL/77SKIP.
+The two failures were outdated expectations already corrected in local test files;
+this task reviewed and verified those existing edits without claiming authorship.
+
+- VoicePlannerWireTests now asserts awaiting_confirmation and zero clients before
+  explicit approval; confirmation and replay leave exactly one client with correct
+  values. JSON-mode and malformed-output assertions remain.
+- InitialLocationMigrationTests checks uses_business_defaults at historical0003,
+  then0006 converts to explicit configuration; archived branches, service price,
+  reverse migration, specialist schedule and appointment history remain asserted.
+
+Base34f79b30. No production behavior, permission, notification, BusinessEvent,
+AI policy, schema or working-DB changes. Contracts already describe these decisions;
+roadmap/passport/UI/setup changes are not required. No general acceptance closed.
+
+Isolated runner `output/backend-ci-fixes-20261112/verify.py` loads dirty Python
+ dependencies from base Git blobs in memory, except the two selected test files.
+No source checkout replacement or other writer edits. External sockets disabled.
+Commands: `.venv/Scripts/python.exe output/backend-ci-fixes-20261112/verify.py`:
+
+- `--name baseline apps.ai_core.tests_planner_json_mode apps.branches.tests_initial_location_migration`:5PASS. Despite name, this is candidate evidence; the isolated environment stripped the attempted baseline flag. Before-fix evidence is the remote failed run above.
+- `--name dependent apps.ai_core.tests_voice_policy apps.ai_core.tests_voice_direct apps.ai_core.tests_approval_binding apps.branches.tests_management_transition apps.branches.tests_single_location`:64PASS.
+- `--name system --checks`:Django check and migration drift PASS.
+
+No local frontend rerun: test-only change; remote configured frontend job still runs.
+Full remoteCI and push receipt are recorded in the checkpoint after publication;
+local scoped PASS alone does not claim green remoteCI or deployment.

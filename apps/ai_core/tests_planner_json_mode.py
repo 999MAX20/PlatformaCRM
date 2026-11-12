@@ -68,7 +68,16 @@ class VoicePlannerWireTests(TestCase):
         plan = {"tool": "crm_create", "arguments": {"entity": "clients",
             "values": {"full_name": "Мария Соколова", "phone": "+77012345678"}}, "question": ""}
         turn = self.run_plan(json.dumps(plan))
-        self.assertEqual(turn.status, "completed", turn.error_code)
+        self.assertEqual(turn.status, "awaiting_confirmation", turn.error_code)
+        self.assertFalse(Client.objects.exists())
+        from apps.ai_core.conversation_actions import confirm_turn
+        from apps.ai_core.tool_registry import tool_call_fingerprint
+        log = turn.tool_calls.get()
+        confirmation = dict(conversation_id=turn.conversation_id, turn_id=turn.pk, user=self.owner,
+            expected_revision=turn.sequence, actions=[{"id": log.pk, "fingerprint": tool_call_fingerprint(log)}])
+        completed, _ = confirm_turn(**confirmation)
+        self.assertEqual(completed.status, "completed", completed.error_code)
+        confirm_turn(**confirmation)
         self.assertEqual(Client.objects.count(), 1)
         self.assertEqual(Client.objects.get().phone, "+77012345678")
         self.assertEqual(Client.objects.get().full_name, "Мария Соколова")

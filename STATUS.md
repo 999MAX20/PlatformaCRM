@@ -1,3 +1,11 @@
+BACKEND-CI-FIXES-20261112: existing two test corrections verified for publication.
+Voice client creation requires review/confirmation and replay creates exactly one client.
+Branch migration checks0003 defaults then0006 explicit configuration, preserving history.
+5focused+64dependent/system/drift PASS with committed dependencies, isolatedDB/no sends.
+No product/schema/UI changes; all other local work preserved. Prior62commits published31fe3115.
+Publication and exact remoteCI result: output/backend-ci-fixes-20261112/CHECKPOINT.md.
+Evidence: docs/testing/evidence/crm-global-fixes-20261112.md#backend-ci-corrections--12112026.
+
 CRM-GLOBAL-FIXES-20261112: all ten confirmed F01–F10 fixed and locally verified.
 Archive/RO/search/conflicts/reschedule/widget/password/demo reset/system locales.
 Backend focused/dependent, Node, browser RU/KK/EN, build/types/i18n/budget/system/drift PASS.
