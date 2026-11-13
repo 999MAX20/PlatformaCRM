@@ -16,6 +16,12 @@ template/duplicate titles; minimal chat with3short suggestion rows and compact i
 19distinct scoped/dependent browser cases PASS; localized/200%/recovery/axe/build/bundle PASS.
 No scoped local remainder. Final logs output/ai-agents-compact-20261113; same checkpoint
 holds publication/CI. Backend/workingDB/provider/deployment unchanged.
+Next owner correction complete: centered overview, three preparation cards without
+counter, compact channel cards/logos, distinct status and selected-channel setup.
+Conversation metrics preserved; 8 scoped/dependent browser cases PASS. RU/KK/EN,
+200% text, permissions/recovery/keyboard/axe/build/bundle PASS; screenshots inspected.
+No scoped local remainder. Logs output/ai-agents-overview-20261113; publication/CI
+in the same checkpoint. Backend/workingDB/provider/deployment unchanged.
 
 
 NOTIFICATIONS-SERVER-FIXES-20261113: all six server defects fixed and locally verified.

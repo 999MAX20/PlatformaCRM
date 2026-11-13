@@ -203,3 +203,83 @@ Scripts/logs: `output/ai-agents-compact-20261113/`; screenshots:
 `output/playwright/ai-agents-compact-20261113/`. Publication and cleanup receipt:
 `output/ai-agents-redesign-20261113/CHECKPOINT.md`. No new roadmap phase is closed;
 README/AI/access/operations/CRM contracts need no change for this UI-only follow-up.
+
+## Owner correction: overview cards
+
+Base `c87939f5`, canonical checkout/current branch. Approved scope: centered overview
+bounded to 880 px, three clickable preparation cards without counter, compact
+channel cards with existing logos, truthful statuses and a selected-channel setup
+link. Conversation metrics and their Inbox filters stay unchanged.
+
+Preparation cards retain their links when complete and change the action label to
+an explicit completed state. Channel draft/active/paused/error have separate labels;
+action text distinguishes finish setup, open settings and check connection.
+The overview passes the channel name in the existing editor route. The setup panel
+opens only for an existing permitted channel; closing consumes the parameter and
+returns focus. Invalid/missing channel and read-only roles never create/open setup.
+The shared channel list uses the same status labels. Visual inspection reproduced
+an overlap of longer labels at 200% text; its narrow rows now place status below
+identity and allow actions to wrap. No provider connection or domain rule changed.
+
+Local acceptance PASS:
+
+- New persistent overview regression: 2 desktop/mobile cases; three card targets,
+  selected setup, Escape/focus, query cleanup/reload and invalid query.
+- Existing affected atomic-save, draft-navigation and keyboard cases: 6 PASS.
+- Browser CLI: 40 interaction checks, 55 localized/layout/completion checks,
+  14 loading/error/retry/empty/read-only/denied checks and 6 affected channel-action
+  checks PASS. Four additional channel layouts inspected. Repeated runs are not
+  additional independent coverage.
+- RU/KK/EN at 320/768/1440, 390 px at 200% text, incomplete/complete cards,
+  all four channel states, empty and error screenshots captured and representative
+  affected areas visually inspected. Nine overview axe scans and the channel
+  consumer scan have zero WCAG A/AA findings. Keyboard/Enter/Escape/focus and
+  bottom-action reachability checked independently.
+- Final build: i18n 7308 keys, TypeScript, app and widget PASS; bundle budget PASS.
+  Existing RU/KK chunk-size warnings remain. No full-release certification.
+
+Evidence uses the project's disposable SQLite runtime with dedicated ports and
+synthetic data. Actual API creates/listing, UI navigation and saves were exercised;
+channel status combinations, readiness completion, permission presentation and
+failure responses were injected for deterministic UI checks. No live provider
+call, ordinary working DB or new server authorization change is certified here.
+
+Retained failed attempts: fixture login omitted CSRF (replaced by the app's normal
+API client); browser cleanup initially used an ambiguous Cancel selector and left
+a beforeunload guard (scoped to save bar, guard handled, full run then passed).
+The initial persistent test used WhatsApp already owned by the visual fixture;
+its ownership-conflict response is retained. The reusable test now uses a per-agent
+website channel, keeping all navigation assertions; all four messenger setup
+flows were separately exercised. Initial 200% overview overflow and visual channel
+overlap were fixed and rechecked; no acceptance threshold was reduced.
+
+Anti Slop during delivery gate, within this change:
+
+- Geometry/mobile PASS: bounded centered overview, three columns to phone stack,
+  compact one/two-column channel grid, long localized statuses and 200% reflow.
+- Purpose/content PASS: cards navigate to real settings and report API readiness;
+  metrics still use the existing Inbox API. No decorative, demo or marketing blocks.
+- Interaction/state PASS: real links, explicit action labels, loading/error/retry,
+  empty state, safe read-only behavior, preserved drafts and setup focus return.
+- Accessibility PASS: native links/buttons, labels, visible keyboard focus,
+  44 px phone actions, text reflow and scoped contrast/axe checks above.
+- Visual/copy PASS: existing neutral/emerald tokens and Manrope/Noto typography;
+  existing provider assets, no new theme/dependency. Icons reuse section meanings,
+  arrows identify navigation, check marks convey completion. Equal preparation
+  cards follow the explicit owner composition; status color accompanies text.
+- Dials and craftsmanship PASS: ENERGY/RHYTHM/MOTION 1/1/1, next setup actions are
+  the focal point, whitespace separates preparation/metrics/channels. No invented
+  claims or fields. Theme switching, hero media, marketing and field-performance
+  claims are N/A to this scoped authenticated screen.
+- React/frontend review PASS: existing API/query layers, typed props, derived URL
+  selection without an opening effect, functional query cleanup and no new fetch
+  or external effect. Only the affected status consumer needed responsive changes.
+
+Current frontend contract and CRM-agent passport match this result. No roadmap
+phase or D01 acceptance advanced; README/AI/access/operations/CRM contracts need
+no change because their behavior is unchanged. No scoped code/local-evidence or
+owner-decision remainder. Live provider/deployment remains outside this task.
+Commands, hashes, attempts and publication receipt:
+`output/ai-agents-redesign-20261113/CHECKPOINT.md`; scripts/logs:
+`output/ai-agents-overview-20261113/`; screenshots:
+`output/playwright/ai-agents-overview-20261113/`.

@@ -206,7 +206,7 @@ export function AIAgentsWorkspace({
                 action={<Button type="button" variant="secondary" onClick={onRetrySection}>{t("common.retry")}</Button>}
               />
             ) : activeSection === "overview" ? (
-              <CustomerAgentOverview bot={selectedBot} onboardingSteps={onboardingSteps} channels={channels} canViewChannels={canViewChannels} />
+              <CustomerAgentOverview bot={selectedBot} onboardingSteps={onboardingSteps} channels={channels} canViewChannels={canViewChannels} canManageChannels={canManageChannels} />
             ) : activeSection === "instructions" ? (
               <InstructionsSection scenario={selectedBot.scenario} botDraft={botDraft} setBotDraft={setBotDraft} form={profileForm} setForm={setProfileForm} canManage={canManage} />
             ) : activeSection === "advanced" ? (

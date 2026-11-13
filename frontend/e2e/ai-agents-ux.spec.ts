@@ -33,6 +33,38 @@ test.beforeEach(() => {
   test.setTimeout(120_000);
 });
 
+test("overview preparation links and selected channel setup preserve editor navigation", async ({ page }, info) => {
+  const session = await crmSession(page);
+  const bot = await createAgent(page, session, { name: `Overview ${info.project.name}`, status: "draft" });
+  await session.action(`bots/${bot.id}/channels/ensure`, { channel: "website" });
+  await page.goto(`/app/ai-agents/${bot.id}/overview`);
+  const overview = page.getByTestId("agent-overview");
+  const preparation = overview.getByRole("navigation");
+  await expect(preparation.getByRole("link")).toHaveCount(3);
+  await expect(preparation).not.toContainText(/\d\s*\/\s*3/);
+  for (const [section, action] of [["profile", "Заполнить профиль"], ["knowledge", "Добавить знания"], ["channels", "Подключить канал"]]) {
+    await preparation.getByRole("link", { name: new RegExp(action) }).click();
+    await expect(page).toHaveURL(new RegExp(`/${bot.id}/${section}$`));
+    await openSection(page, "Обзор");
+  }
+  const channel = overview.getByRole("article").filter({ has: page.getByRole("heading", { name: "Сайт", exact: true }) });
+  await expect(channel.getByText("Требуется настройка", { exact: true })).toBeVisible();
+  await channel.getByRole("link", { name: "Завершить подключение", exact: true }).click();
+  await expect(page).toHaveURL(new RegExp(`/${bot.id}/channels\\?channel=website$`));
+  const dialog = page.getByRole("dialog");
+  await expect(dialog.getByRole("heading", { name: /Сайт/ }).first()).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(dialog).toBeHidden();
+  await expect(page).toHaveURL(new RegExp(`/${bot.id}/channels$`));
+  await expect(page.locator(`[data-focus-return-id="ai-agent-channel-${bot.id}-website"]`)).toBeFocused();
+  await page.reload();
+  await expect(page.locator("#ai-agent-editor-panel-channels")).toBeVisible();
+  await expect(dialog).toHaveCount(0);
+  await page.goto(`/app/ai-agents/${bot.id}/channels?channel=invalid`);
+  await expect(page.locator("#ai-agent-editor-panel-channels")).toBeVisible();
+  await expect(dialog).toHaveCount(0);
+});
+
 test("visible instructions without template retain navigation draft protection", async ({ page }, info) => {
   const session = await crmSession(page);
   const bot = await createAgent(page, session, { name: `UX ${info.project.name}`, status: "draft" });

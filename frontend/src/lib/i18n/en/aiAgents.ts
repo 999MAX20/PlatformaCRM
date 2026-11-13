@@ -269,7 +269,7 @@ export const aiAgents: Record<string, string> = {
   "aiAgents.status.draft": "Draft",
   "aiAgents.status.connected": "Connected",
   "aiAgents.status.notConnected": "Not connected",
-  "aiAgents.status.setup": "Setup",
+  "aiAgents.status.setup": "Setup required",
   "aiAgents.status.error": "Error",
   "aiAgents.connectedChannels": "Active channels",
   "aiAgents.channelsMetric": "Channels",
@@ -425,6 +425,13 @@ export const aiAgents: Record<string, string> = {
   "aiAgents.launchControlTitle": "Launch agent",
   "aiAgents.launchControlText":
     "Enable the agent after checking profile, knowledge, channel and a test dialog.",
+  "aiAgents.checklist.fillProfile": "Fill in profile",
+  "aiAgents.checklist.addKnowledge": "Add knowledge",
+  "aiAgents.checklist.connectChannel": "Connect a channel",
+  "aiAgents.channel.paused": "Paused",
+  "aiAgents.channel.finishSetup": "Finish setup",
+  "aiAgents.channel.checkConnection": "Check connection",
+  "aiAgents.channel.openSettings": "Open settings",
   "aiAgents.checklist.profile": "Profile is filled",
   "aiAgents.checklist.profileText":
     "The agent knows its role, tone and handoff rules.",

@@ -107,11 +107,12 @@ export function channelStatus(channel: BotChannel | undefined, t: (key: string) 
   if (!channel) return t("aiAgents.status.notConnected");
   if (channel.status === "active") return t("aiAgents.status.connected");
   if (channel.status === "error") return t("aiAgents.status.error");
+  if (channel.status === "paused") return t("aiAgents.channel.paused");
   return t("aiAgents.status.setup");
 }
 
 export function channelStatusClass(channel?: BotChannel) {
-  if (!channel) return "bg-surface-muted text-platforma-subtle ring-platforma-border";
+  if (!channel || channel.status === "paused") return "bg-surface-muted text-platforma-subtle ring-platforma-border";
   if (channel.status === "active") return "bg-[var(--platforma-success-soft)] text-platforma-success ring-platforma-success/20";
   if (channel.status === "error") return "bg-[var(--platforma-danger-soft)] text-platforma-danger ring-platforma-danger/20";
   return "bg-[var(--platforma-warning-soft)] text-platforma-warning ring-platforma-warning/20";
@@ -138,9 +139,9 @@ export function getOnboardingSteps({
   t: (key: string) => string;
 }): OnboardingStep[] {
   return [
-    { done: profileReady, title: t("aiAgents.checklist.profile"), text: t("aiAgents.checklist.profileText"), href: `/app/ai-agents/${botId}/profile` },
-    { done: hasKnowledge, title: t("aiAgents.checklist.knowledge"), text: t("aiAgents.checklist.knowledgeText"), href: `/app/ai-agents/${botId}/knowledge` },
-    { done: hasActiveChannel, title: t("aiAgents.checklist.channel"), text: t("aiAgents.checklist.channelText"), href: `/app/ai-agents/${botId}/channels` },
+    { done: profileReady, title: t("aiAgents.section.profile"), text: t(profileReady ? "aiAgents.checklist.profile" : "aiAgents.checklist.fillProfile"), href: `/app/ai-agents/${botId}/profile` },
+    { done: hasKnowledge, title: t("aiAgents.section.knowledgeSimple"), text: t(hasKnowledge ? "aiAgents.checklist.knowledge" : "aiAgents.checklist.addKnowledge"), href: `/app/ai-agents/${botId}/knowledge` },
+    { done: hasActiveChannel, title: t("aiAgents.section.channels"), text: t(hasActiveChannel ? "aiAgents.checklist.channel" : "aiAgents.checklist.connectChannel"), href: `/app/ai-agents/${botId}/channels` },
   ];
 }
 

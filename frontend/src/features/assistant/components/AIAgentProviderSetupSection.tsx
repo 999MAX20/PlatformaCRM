@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useSearchParams } from "react-router";
 import { useMutation } from "@tanstack/react-query";
 
 import { botChannelsApi } from "../../../api/bots";
@@ -56,7 +57,8 @@ function ChannelsSection({
   toggleChannel: ReturnType<typeof useMutation<BotChannel, Error, { channel: BotChannel; status: BotChannel["status"] }>>;
 }) {
   const { t } = useI18n();
-  const [setupChannel, setSetupChannel] = useState<BotChannel["channel"] | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [selectedChannel, setSetupChannel] = useState<BotChannel["channel"] | null>(null);
   const [createdChannel, setCreatedChannel] = useState<BotChannel | null>(null);
   const [connectingChannel, setConnectingChannel] = useState<BotChannel["channel"] | null>(null);
   const channelCards: Array<{ key: BotChannel["channel"]; title: string; description: string; logo?: string }> = [
@@ -65,6 +67,8 @@ function ChannelsSection({
     { key: "whatsapp", title: "WhatsApp", description: t("aiAgents.channel.whatsappText"), logo: "/integrations_logos/whatsapp.png" },
     { key: "instagram", title: "Instagram", description: t("aiAgents.channel.instagramText"), logo: "/integrations_logos/instagram.png" },
   ];
+  const requestedChannel = channelCards.find(item => item.key === searchParams.get("channel"))?.key;
+  const setupChannel = canManage ? selectedChannel || (requestedChannel && channelByName(requestedChannel) ? requestedChannel : null) : null;
   const activeChannel = setupChannel
     ? channelByName(setupChannel) || (createdChannel?.channel === setupChannel ? createdChannel : undefined)
     : undefined;
@@ -79,7 +83,7 @@ function ChannelsSection({
           const channel = channelByName(item.key);
           const connected = channel?.status === "active";
           return (
-            <article key={item.key} className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3 border-b border-platforma-border px-1 py-3 sm:grid-cols-[minmax(0,1fr)_145px_180px] sm:px-3">
+            <article key={item.key} className="grid grid-cols-1 items-start gap-3 border-b border-platforma-border px-1 py-3 min-[480px]:grid-cols-[minmax(0,1fr)_auto] sm:grid-cols-[minmax(0,1fr)_145px_180px] sm:px-3">
               <div className="flex min-w-0 items-start gap-3">
                 <LogoMark compact logo={item.logo} label={item.title} />
                 <div className="min-w-0">
@@ -90,10 +94,10 @@ function ChannelsSection({
                   </details>
                 </div>
               </div>
-              <span className={cn("mt-1 w-fit rounded-full px-2 py-0.5 text-xs font-semibold ring-1", channelStatusClass(channel))}>
+              <span className={cn("mt-1 w-fit max-w-full break-words rounded-full px-2 py-0.5 text-xs font-semibold ring-1", channelStatusClass(channel))}>
                 {channelStatus(channel, t)}
               </span>
-              <div className="col-span-2 flex min-h-10 items-center gap-2 sm:col-span-1">
+              <div className="flex min-h-10 flex-wrap items-center gap-2 min-[480px]:col-span-2 sm:col-span-1">
                   <Button
                     type="button"
                     className="min-h-11 min-w-[120px] sm:min-h-10"
@@ -138,7 +142,13 @@ function ChannelsSection({
       <Modal
         title={setupChannel ? t("aiAgents.connectionTitle", { title: channelCards.find((item) => item.key === setupChannel)?.title || "" }) : t("aiAgents.connection")}
         open={Boolean(setupChannel)}
-        onClose={() => { setSetupChannel(null); setCreatedChannel(null); }}
+        onClose={() => {
+          setSetupChannel(null);
+          setCreatedChannel(null);
+          if (searchParams.has("channel")) {
+            setSearchParams(previous => { const next = new URLSearchParams(previous); next.delete("channel"); return next; }, { replace: true });
+          }
+        }}
         focusReturnId={setupChannel ? `ai-agent-channel-${bot.id}-${setupChannel}` : undefined}
       >
         {setupChannel === "telegram" ? (

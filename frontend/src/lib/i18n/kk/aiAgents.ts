@@ -267,7 +267,7 @@ export const aiAgents: Record<string, string> = {
   "aiAgents.status.draft": "Черновик",
   "aiAgents.status.connected": "Қосылған",
   "aiAgents.status.notConnected": "Қосылмаған",
-  "aiAgents.status.setup": "Баптау",
+  "aiAgents.status.setup": "Баптау қажет",
   "aiAgents.status.error": "Қате",
   "aiAgents.connectedChannels": "Белсенді арналар",
   "aiAgents.channelsMetric": "Арналар",
@@ -424,6 +424,13 @@ export const aiAgents: Record<string, string> = {
   "aiAgents.launchControlTitle": "Агентті іске қосу",
   "aiAgents.launchControlText":
     "Профильді, білімді, арнаны және тест диалогын тексергеннен кейін агентті қосыңыз.",
+  "aiAgents.checklist.fillProfile": "Профильді толтыру",
+  "aiAgents.checklist.addKnowledge": "Білім қосу",
+  "aiAgents.checklist.connectChannel": "Арнаны қосу",
+  "aiAgents.channel.paused": "Тоқтатылған",
+  "aiAgents.channel.finishSetup": "Қосуды аяқтау",
+  "aiAgents.channel.checkConnection": "Қосылымды тексеру",
+  "aiAgents.channel.openSettings": "Баптауларды ашу",
   "aiAgents.checklist.profile": "Профиль толтырылған",
   "aiAgents.checklist.profileText":
     "Агент рөлін, тонын және менеджерге беру ережелерін біледі.",

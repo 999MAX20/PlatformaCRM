@@ -269,7 +269,7 @@ export const aiAgents: Record<string, string> = {
   "aiAgents.status.draft": "Черновик",
   "aiAgents.status.connected": "Подключен",
   "aiAgents.status.notConnected": "Не подключен",
-  "aiAgents.status.setup": "Настройка",
+  "aiAgents.status.setup": "Требуется настройка",
   "aiAgents.status.error": "Ошибка",
   "aiAgents.connectedChannels": "Активные каналы",
   "aiAgents.channelsMetric": "Каналы",
@@ -425,6 +425,13 @@ export const aiAgents: Record<string, string> = {
   "aiAgents.launchControlTitle": "Запуск агента",
   "aiAgents.launchControlText":
     "Включайте агента после проверки профиля, знаний, канала и тестового диалога.",
+  "aiAgents.checklist.fillProfile": "Заполнить профиль",
+  "aiAgents.checklist.addKnowledge": "Добавить знания",
+  "aiAgents.checklist.connectChannel": "Подключить канал",
+  "aiAgents.channel.paused": "Приостановлен",
+  "aiAgents.channel.finishSetup": "Завершить подключение",
+  "aiAgents.channel.checkConnection": "Проверить подключение",
+  "aiAgents.channel.openSettings": "Открыть настройки",
   "aiAgents.checklist.profile": "Профиль заполнен",
   "aiAgents.checklist.profileText":
     "Агент знает свою роль, тон общения и правила передачи менеджеру.",
