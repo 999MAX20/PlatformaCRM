@@ -52,6 +52,18 @@ businesses/{id}/booking-responsible-options/ отдаёт только допу�
 
 # Настройки и уведомления
 
+NOTIFICATIONS-SERVER-FIXES-20261113: шесть подтверждённых серверных дефектов
+исправлены и локально проверены, включая конкурентность PostgreSQL.
+Detail/read/unread согласованы с персональной лентой без лишнего VIEW;
+delivery-действия закрыты для SYSTEM. Ручной retry захватывает конкретную failed
+попытку атомарно и пишет audit; зависший sending завершается как неизвестный failed
+без автоматической пересылки. Окончательные исключения и отрицательные ответы
+провайдера создают одинаковые атомарные failure/activity/оповещения. Монитор
+оценивает внешнюю очередь, а не уже опубликованные внутренние события.
+Сценарии объявлений, fixed audience, source access, внешнего consent и backoff
+сохранены; схема не меняется. Проверки, срез, публикация и оставшиеся ограничения:
+[checkpoint](../testing/task-state/PRIMARY-SESSION.md#notifications-server-fixes-20261113).
+
 CONNECTIONS-SETTINGS-20261105: «Подключения» перенесены из основного desktop/mobile
 меню во вкладку настроек. Вход settings.update OR integrations.view; права каждой
 секции сохранены. Старые ссылки перенаправляются. [Scoped UI evidence](../testing/evidence/connections-settings-20261105.md); publication заблокирована.

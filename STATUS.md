@@ -1,3 +1,10 @@
+NOTIFICATIONS-SERVER-FIXES-20261113: all six server defects fixed and locally verified.
+Personal access/internal history, atomic retry, stale delivery, failure alerts and monitor.
+27 new regressions; affected212:205SQLitePASS + all7concurrencyPASS on disposablePG17.
+System/drift PASS; no schema/UI/workingDB/live-send change; foreign WIP preserved.
+No scoped code/local-evidence remainder. Publication/actual CI: checkpoint.
+Evidence: docs/testing/task-state/PRIMARY-SESSION.md#notifications-server-fixes-20261113.
+
 PAGE-LOADING-20261113: scoped implementation and local UI acceptance complete.
 One initial loader; visible queries only; local refresh preserves content/drafts.
 Inbox list geometry, retry/403, hidden settings, cache, portal focus verified.

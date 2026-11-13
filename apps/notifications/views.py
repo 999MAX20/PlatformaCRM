@@ -3,11 +3,12 @@ from django.db.models import Case, DateTimeField, F, OuterRef, Q, Subquery, When
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.decorators import action
+from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 
 from apps.businesses.access import Actions, assert_can
 from apps.core.viewsets import TenantModelViewSet
-from apps.notifications.delivery import deliver_notification
+from apps.notifications.delivery import retry_notification
 from apps.notifications.models import Notification, NotificationPreference, NotificationRecipient
 from apps.businesses.models import Business
 from apps.notifications.announcement_api import AnnouncementActions, reject_state_payload
@@ -44,6 +45,16 @@ class NotificationViewSet(AnnouncementActions, TenantModelViewSet):
 
     def get_serializer_context(self):
         return {**super().get_serializer_context(), "personal_feed": True}
+
+    def get_object(self):
+        instance = GenericAPIView.get_object(self)
+        # SYSTEM rows have already passed the current personal/source boundary.
+        # Applying generic notification VIEW here would deny valid recipients.
+        if instance.channel != Notification.Channels.SYSTEM:
+            assert_can(self.request.user, instance.business, self.get_access_resource(), Actions.VIEW, obj=instance)
+            if self.action in {"update", "partial_update"}:
+                assert_can(self.request.user, instance.business, self.get_access_resource(), Actions.UPDATE, obj=instance)
+        return instance
 
     def get_queryset(self):
         business = self.selected_personal_business()
@@ -87,7 +98,7 @@ class NotificationViewSet(AnnouncementActions, TenantModelViewSet):
     @action(detail=True, methods=["post"], url_path="mark-sent")
     def mark_sent(self, request, pk=None):
         notification = self.get_object()
-        self.reject_announcement_delivery_action(notification)
+        self.reject_internal_delivery_action(notification)
         assert_can(request.user, notification.business, self.get_access_resource(), Actions.MANAGE, obj=notification)
         notification.status = Notification.Statuses.SENT
         notification.delivered_at = timezone.now()
@@ -98,7 +109,7 @@ class NotificationViewSet(AnnouncementActions, TenantModelViewSet):
     @action(detail=True, methods=["post"])
     def cancel(self, request, pk=None):
         notification = self.get_object()
-        self.reject_announcement_delivery_action(notification)
+        self.reject_internal_delivery_action(notification)
         assert_can(request.user, notification.business, self.get_access_resource(), Actions.MANAGE, obj=notification)
         notification.status = Notification.Statuses.CANCELLED
         notification.locked_at = None
@@ -109,27 +120,17 @@ class NotificationViewSet(AnnouncementActions, TenantModelViewSet):
     @action(detail=True, methods=["post"])
     def retry(self, request, pk=None):
         notification = self.get_object()
-        self.reject_announcement_delivery_action(notification)
-        assert_can(request.user, notification.business, self.get_access_resource(), Actions.MANAGE, obj=notification)
-        if notification.status != Notification.Statuses.FAILED:
-            return Response({"detail": "Only failed notifications can be retried.", "notification": self.get_serializer(notification).data}, status=400)
-        notification.status = Notification.Statuses.PENDING
-        notification.send_at = timezone.now()
-        notification.attempts = 0
-        notification.next_retry_at = None
-        notification.failed_at = None
-        notification.last_error = ""
-        notification.save(
-            update_fields=["status", "send_at", "attempts", "next_retry_at", "failed_at", "last_error", "updated_at"]
-        )
-        result = deliver_notification(notification)
+        self.reject_internal_delivery_action(notification)
+        result = retry_notification(notification, actor=request.user)
         notification.refresh_from_db()
+        if result is None:
+            return Response({"detail": "Only failed notifications can be retried.", "notification": self.get_serializer(notification).data}, status=400)
         return Response({"result": result, "notification": self.get_serializer(notification).data})
 
     @staticmethod
-    def reject_announcement_delivery_action(notification):
-        if notification.kind == Notification.Kinds.ANNOUNCEMENT:
-            raise ValidationError("Use the announcement revoke action; published content is immutable.")
+    def reject_internal_delivery_action(notification):
+        if notification.channel == Notification.Channels.SYSTEM or notification.kind == Notification.Kinds.ANNOUNCEMENT:
+            raise ValidationError("Internal notifications are server-owned. Use the revoke action for announcements.")
 
     @action(detail=True, methods=["post"], url_path="mark-read")
     def mark_read(self, request, pk=None):

@@ -14,6 +14,7 @@ from apps.automations.models import AutomationRun
 from apps.businesses.models import Business, BusinessMember
 from apps.core.models import ExportJob, FileAttachment, ServiceComponentState
 from apps.notifications.models import Notification
+from apps.notifications.delivery_selectors import overdue_external_deliveries
 from apps.notifications.routing import filter_notification_recipients
 
 
@@ -54,9 +55,6 @@ def overdue_work_counts(business, *, now):
     """Bounded counts, no customer text, entity IDs or external probes."""
     automation_cutoff = now - timedelta(seconds=settings.AUTOMATION_STALE_LOCK_SECONDS)
     export_cutoff = now - timedelta(seconds=settings.EXPORT_STALE_SECONDS)
-    # In-app delivery normally runs each minute; use the existing 15-minute
-    # internal runtime deadline before classifying a delay as an incident.
-    notification_cutoff = now - timedelta(seconds=settings.AUTOMATION_STALE_LOCK_SECONDS)
     file_cutoff = now - timedelta(seconds=settings.FILE_SCAN_LEASE_SECONDS)
     return {
         "automations": AutomationRun.objects.filter(business=business).filter(
@@ -66,12 +64,7 @@ def overdue_work_counts(business, *, now):
             | Q(status="running", locked_at__lte=automation_cutoff)
             | Q(status="running", locked_at__isnull=True, created_at__lte=automation_cutoff)
         ).count(),
-        "notifications": Notification.objects.filter(business=business, channel="system").filter(
-            Q(status="pending", send_at__lte=notification_cutoff)
-            | Q(status="retry_scheduled", next_retry_at__lte=notification_cutoff)
-            | Q(status="sending", locked_at__lte=notification_cutoff)
-            | Q(status="sending", locked_at__isnull=True, send_at__lte=notification_cutoff)
-        ).count(),
+        "notifications": overdue_external_deliveries(now=now).filter(business=business).count(),
         "exports": ExportJob.objects.filter(business=business).filter(
             Q(status="pending", created_at__lte=export_cutoff)
             | Q(status="running", started_at__lte=export_cutoff)

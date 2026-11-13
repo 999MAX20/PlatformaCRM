@@ -1,3 +1,83 @@
+## NOTIFICATIONS-SERVER-FIXES-20261113
+
+Mode implementation; code gap. Owner explicitly requested all six confirmed
+server defects fixed with regression tests, preserving scenarios/foreign work.
+Canonical root C:/Users/user/Desktop/PlatformaCRM; branch codex/ui-testing-toolkit;
+base d92080e5233e5a2927b9f15c18338ae157d7c3de. Initial index empty; foreign WIP
+and shared-document baselines retained in output/notifications-server-fixes-20261113.
+Prior personal-feed/SSE closure -> six reproducible audit failures on this base
+-> minimal API/delivery/monitoring corrections; no redesign or adjacent audit work.
+
+Acceptance: (1) overlapping retry claims cause at most one new send; (2) active
+personal recipients can detail/read/unread/open/ack per current source access even
+without notifications VIEW; (3) stale external sending is recoverable without
+automatic ambiguous resend; (4) published internal events do not degrade the queue
+monitor; (5) terminal exception and returned failure both alert once with atomic
+state/activity; (6) external delivery actions cannot cancel/change internal history.
+Reuse Notification/Recipient, personal selectors, provider layer, actor audit,
+service-status collector and isolated_runtime. No permissions framework/schema,
+working DB/config, live send, AI or BusinessEvent changes. Manual retry stays MANAGE;
+uncertain stale sends fail for operator review, preserving explicit manual retry.
+
+Skills: zani-change-crm-domain, zani-review-access, zani-run-verification;
+requirements: current actor/Business scope, atomic transitions and audit, provider
+effects outside DB locks, unchanged personal/audience/publication contracts.
+Anti Slop visual gate N/A: backend-only, no UI/copy/layout implementation.
+Slices: personal API/internal guards -> focused API tests; delivery transitions,
+recovery/failure effects -> focused delivery tests; monitor -> focused status tests.
+Completion: affected notifications, scheduling delivery, outreach, task reminders,
+service/operations suites; system/drift; PostgreSQL retry/recovery/personal races;
+reachable API flow and docs/diff hygiene. No frontend build/browser/full release
+gate unless evidence shows shared frontend impact. Commit task-owned changes and
+normal-push only after gates and authorized outgoing range checks; inspect actual CI.
+Documentation: update access/operations and notification passport; other contracts
+only if their behavior is affected. No roadmap phase is advanced by this fix.
+Implementation complete; all six acceptance items locally verified. Personal
+detail/read/unread reuse the recipient/source boundary; external VIEW/UPDATE and
+MANAGE checks remain. SYSTEM cancel/mark-sent/retry reject without state/audit
+changes. Manual retry compares failed updated_at/failed_at/attempts, claims sending
+and audits atomically before provider I/O. Recovery uses the configurable900s
+deadline (minimum60s), fails uncertain external claims without automatic resend,
+and fences late worker results. Failure status/activity/recipient alert commit
+together for exceptions and returned failures. Monitor counts only external
+pending/retry/sending deadlines; existing false internal incidents recover on the
+next observation without rewriting notification or recipient history.
+
+Verification from canonical root with existing .venv, disposable SQLite via
+scripts.codex_verify.isolated_runtime; provider calls mocked, no working data:
+- `manage.py test apps.notifications.tests_personal_api apps.notifications.tests_mark_all_access -v 2`:
+  32 PASS, personal-api.log.
+- `manage.py test apps.notifications.tests_delivery_lifecycle apps.notifications.tests apps.scheduling.tests_settings_delivery -v 2`:
+  43 PASS, delivery-focused.log; rollback, backoff, consent/scheduling claim fencing.
+- `manage.py test apps.notifications.tests_delivery_monitoring apps.core.tests_service_status.ServiceObservationTests -v 2`:
+  14 PASS, monitor-focused.log.
+- `manage.py check` and `makemigrations --check --dry-run`: PASS, system.log/drift.log.
+- `manage.py test apps.notifications apps.core.tests_service_status apps.core.tests_platform_operations apps.scheduling.tests_settings_delivery apps.outreach.tests apps.tasks.tests_reminders -v 2`:
+  212 discovered,205 PASS/7 PostgreSQL-only skips, affected.log. All seven covered below.
+- `.venv/Scripts/python.exe scripts/verify_ycloud.py --postgres-bin "C:/Program Files/PostgreSQL/17/bin" apps.notifications.tests_delivery_concurrency apps.notifications.tests_personal_concurrency apps.core.tests_service_status.ServiceObservationConcurrencyTests`:
+  system/drift and7 concurrent tests PASS on disposablePG17, postgres-concurrency.log.
+  Two API retry requests produce one send and200/400; loser completes while
+  provider is held (no row lock during I/O). Periodic worker cannot claim manual
+  sending; overlapping recoveries produce one failure/activity/alert. Existing
+  publication/ack/read-all and service-observation races still pass. OwnedPG stopped.
+All logs/command/snapshot receipts: output/notifications-server-fixes-20261113.
+27 new regression tests; focused counts overlap the affected run. No failed tests
+or unproven scoped local acceptance. No frontend changes: build/browser/visual
+gate N/A; actual API client flows cover the affected UI contract. Live providers,
+deployed Redis/worker readiness, full-project release certification and load tests
+are outside this backend fix; prior historical checks are not reused as new PASS.
+
+Docs reconciled: access, operations and settings-notifications passport. Roadmap,
+CRM/product/AI/integration contracts and README need no change: no roadmap phase,
+provider protocol, domain-event, UI or setup-command change; optional timeout is
+documented in operations. New default does not edit any working environment.
+Base/main initially identical after fetch; current branch retained. Task-only
+commit/publication requires the final diff/range checks; remote SHA and actual CI
+readback are retained in output/notifications-server-fixes-20261113/publication.json
+and the final response. Foreign shared-document changes are staged out via the
+saved pre-task baselines. No scope remains in code or local evidence; deployment
+is not performed or claimed.
+
 PAGE-LOADING-20261113: scoped implementation and local UI acceptance complete.
 One initial loader; visible queries only; local refresh preserves content/drafts.
 Inbox list geometry, retry/403, hidden settings, cache, portal focus verified.

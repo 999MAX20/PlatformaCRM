@@ -140,7 +140,7 @@ class ServiceObservationTests(TestCase):
     def test_sources_count_overdue_work_and_ignore_scheduled_or_terminal_records(self):
         old = self.now - timedelta(hours=1)
         AutomationRun.objects.create(business=self.business, trigger_type="lead_created", status="pending", run_after=old)
-        Notification.objects.create(business=self.business, channel="system", text="Private notification", send_at=old)
+        Notification.objects.create(business=self.business, channel="email", text="Private notification", send_at=old)
         file = FileAttachment.objects.create(business=self.business, original_name="Private file", size=1,
                                              entity_type="client", entity_id="42", scan_status="error")
         FileAttachment.objects.filter(pk=file.pk).update(created_at=old)

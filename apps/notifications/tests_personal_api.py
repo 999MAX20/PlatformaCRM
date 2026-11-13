@@ -1,9 +1,11 @@
 from uuid import uuid4
 
 from django.test import TestCase
+from django.utils import timezone
 from rest_framework.test import APIClient
 
-from apps.businesses.models import BusinessMember
+from apps.businesses.models import BusinessMember, BusinessRole, RolePermission
+from apps.core.models import AuditLog
 from apps.notifications.models import Notification
 from apps.notifications.tests_personal_services import PersonalNotificationFixtures
 from apps.tasks.models import Task
@@ -33,6 +35,57 @@ class PersonalNotificationAPITests(PersonalNotificationFixtures, TestCase):
         self.assertIsNone(response.data["opened_at"])
         self.assertIsNone(response.data["acknowledged_at"])
         self.assertEqual(self.api.get(self.url("summary/")).data["unread"], 0)
+
+    def deny_notification_view(self):
+        role = BusinessRole.objects.create(business=self.business, name="No notification VIEW")
+        RolePermission.objects.create(business_role=role, resource="notifications", action="view",
+                                      is_allowed=False, scope="none")
+        BusinessMember.objects.filter(business=self.business, user=self.staff).update(business_role=role)
+
+    def test_http_announcement_flow_does_not_require_notification_view(self):
+        self.deny_notification_view()
+        notification = self.publish()
+        self.assertEqual(self.api.get(self.url()).data["count"], 1)
+        self.assertEqual(self.api.get(self.url(f"{notification.pk}/")).status_code, 200)
+        for action in ("mark-read", "mark-unread", "open", "acknowledge"):
+            with self.subTest(action=action):
+                response = self.api.post(self.url(f"{notification.pk}/{action}/"))
+                self.assertEqual(response.status_code, 200, response.data)
+        self.assertIsNotNone(self.state(notification).acknowledged_at)
+        self.assertIsNone(self.state(notification, self.peer).read_at)
+        self.assertEqual(self.api.get(self.url(f"{notification.pk}/announcement-recipients/")).status_code, 403)
+
+    def test_http_work_uses_source_access_even_without_notification_view(self):
+        self.deny_notification_view()
+        task = Task.objects.create(business=self.business, title="Own task", assignee=self.staff)
+        notification = self.work(action_url=f"/app/tasks?task={task.pk}")
+        self.assertEqual(self.api.get(self.url(f"{notification.pk}/")).status_code, 200)
+        self.assertEqual(self.api.post(self.url(f"{notification.pk}/mark-read/")).status_code, 200)
+        Task.objects.filter(pk=task.pk).update(assignee=self.peer)
+        for method, suffix in ((self.api.get, ""), (self.api.post, "mark-unread/"), (self.api.post, "open/")):
+            self.assertEqual(method(self.url(f"{notification.pk}/{suffix}")).status_code, 404)
+
+    def test_personal_access_does_not_bypass_external_notification_permissions(self):
+        self.deny_notification_view()
+        notification = self.work(channel=Notification.Channels.EMAIL)
+        self.assertEqual(self.api.get(self.url(f"{notification.pk}/")).status_code, 404)
+        for action in ("mark-read", "mark-unread", "retry", "cancel", "mark-sent"):
+            self.assertEqual(self.api.post(self.url(f"{notification.pk}/{action}/")).status_code, 404)
+
+    def test_delivery_actions_cannot_change_shared_work_or_recipient_history(self):
+        notification = Notification.objects.create(business=self.business, text="Shared work", send_at=timezone.now())
+        before = Notification.objects.values().get(pk=notification.pk)
+        receipts = list(notification.recipient_states.order_by("pk").values())
+        audit_count = AuditLog.objects.count()
+        self.api.force_authenticate(self.owner)
+        for action in ("cancel", "mark-sent", "retry"):
+            response = self.api.post(self.url(f"{notification.pk}/{action}/"))
+            self.assertEqual(response.status_code, 400, response.data)
+        self.assertEqual(Notification.objects.values().get(pk=notification.pk), before)
+        self.assertEqual(list(notification.recipient_states.order_by("pk").values()), receipts)
+        self.assertEqual(AuditLog.objects.count(), audit_count)
+        self.api.force_authenticate(self.staff)
+        self.assertEqual(self.api.get(self.url(f"{notification.pk}/")).status_code, 200)
 
     def test_http_read_all_ignores_display_filters_and_never_acknowledges(self):
         first = self.publish(priority="normal")

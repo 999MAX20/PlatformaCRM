@@ -1,14 +1,21 @@
 import logging
 
 from django.core.mail import send_mail
+from django.db import transaction
 from django.db.models import F, Q
 from django.utils import timezone
+from rest_framework.exceptions import ValidationError
 
 from apps.activities.services import create_activity_event
 from apps.bots.models import BotChannel
+from apps.businesses.access import Actions, Resources, assert_can
+from apps.core.audit import write_actor_audit_log
+from apps.core.models import AuditLog
 from apps.integrations.providers import send_message
 from apps.integrations.sanitization import sanitize_error_payload, sanitize_error_text
 from apps.notifications.models import Notification
+from apps.notifications.delivery_selectors import stale_external_deliveries
+from apps.notifications.personal_selectors import personal_business
 from apps.notifications.routing import MANAGER_ROLES, TECHNICAL_ROLES, create_role_notification
 from apps.scheduling.models import Appointment
 from apps.scheduling.services import cancel_appointment, confirm_appointment
@@ -24,7 +31,10 @@ RESCHEDULE_WORDS = {"перенести", "перенос", "другое вре
 
 
 def process_due_notifications(*, limit=100):
+    if limit <= 0:
+        return []
     now = timezone.now()
+    results = recover_stale_notifications(now=now, limit=limit)
     notification_ids = list(
         Notification.objects.filter(
             Q(status=Notification.Statuses.PENDING, send_at__lte=now)
@@ -32,14 +42,55 @@ def process_due_notifications(*, limit=100):
         )
         .exclude(channel=Notification.Channels.SYSTEM)
         .order_by("send_at", "id")
-        .values_list("id", flat=True)[:limit]
+        .values_list("id", flat=True)[:limit - len(results)]
     )
-    results = []
     for notification_id in notification_ids:
         notification = claim_notification(notification_id, now=now)
         if notification is not None:
             results.append(deliver_notification(notification, claimed=True))
     return results
+
+
+def recover_stale_notifications(*, now=None, limit=100):
+    now = now or timezone.now()
+    if limit <= 0:
+        return []
+    candidates = stale_external_deliveries(now=now).select_related("business", "client", "appointment").order_by("pk")[:limit]
+    results = []
+    reason = "Delivery result is unknown after the worker lock expired. Check the provider before retrying."
+    for notification in candidates:
+        result = {"reason": reason, "delivery_outcome": "unknown", "recovered": True}
+        status = _record_delivery_failure(notification, reason=reason, retryable=False, result=result)
+        if status != "skipped":
+            results.append({"notification_id": notification.pk, "status": status, "reason": reason})
+    return results
+
+
+def retry_notification(notification, *, actor):
+    business = personal_business(actor=actor, business_id=notification.business_id)
+    assert_can(actor, business, Resources.NOTIFICATIONS, Actions.VIEW, obj=notification)
+    assert_can(actor, business, Resources.NOTIFICATIONS, Actions.MANAGE, obj=notification)
+    if notification.channel == Notification.Channels.SYSTEM or notification.kind == Notification.Kinds.ANNOUNCEMENT:
+        raise ValidationError("Internal notifications cannot be retried through external delivery.")
+    now = timezone.now()
+    with transaction.atomic():
+        # Compare the failure generation too: a stale request must not retry a
+        # newer failure produced by another request which has already sent.
+        changed = Notification.objects.filter(
+            pk=notification.pk, business=business, status=Notification.Statuses.FAILED,
+            updated_at=notification.updated_at, failed_at=notification.failed_at,
+            attempts=notification.attempts,
+        ).exclude(channel=Notification.Channels.SYSTEM).update(
+            status=Notification.Statuses.SENDING, send_at=now, attempts=1,
+            locked_at=now, last_attempt_at=now, next_retry_at=None,
+            failed_at=None, last_error="", updated_at=now,
+        )
+        if not changed:
+            return None
+        claimed = Notification.objects.select_related("business", "client", "appointment").get(pk=notification.pk)
+        write_actor_audit_log(actor=actor, action=AuditLog.Actions.UPDATE, instance=claimed,
+                              metadata={"kind": "notification_manual_retry", "previous_attempts": notification.attempts})
+    return deliver_notification(claimed, claimed=True)
 
 
 def claim_notification(notification_id, *, now=None):
@@ -114,7 +165,6 @@ def deliver_notification(notification, *, claimed=False):
         logger.exception("notifications.delivery_failed", extra={"notification_id": notification.id})
         reason = sanitize_error_text(exc)
         status = _record_delivery_failure(notification, reason=reason, retryable=True)
-        _write_delivery_activity(notification, status=status, result={"reason": reason})
         return {"notification_id": notification.id, "status": status, "reason": reason}
 
     if result.get("ok"):
@@ -136,14 +186,12 @@ def deliver_notification(notification, *, claimed=False):
 
     safe_result = sanitize_error_payload(result)
     reason = sanitize_error_text(safe_result.get("reason") or safe_result.get("error") or "Delivery failed.")
-    status = _record_delivery_failure(notification, reason=reason, retryable=_is_retryable_result(result))
-    if status == Notification.Statuses.FAILED:
-        _notify_delivery_failure(notification, safe_result)
-    _write_delivery_activity(notification, status=status, result=safe_result)
+    status = _record_delivery_failure(notification, reason=reason, retryable=_is_retryable_result(result), result=safe_result)
     return {"notification_id": notification.id, "status": status, "result": safe_result}
 
 
-def _record_delivery_failure(notification, *, reason, retryable):
+@transaction.atomic
+def _record_delivery_failure(notification, *, reason, retryable, result=None):
     claim = _owned_claim(notification)
     notification.last_error = reason
     notification.locked_at = None
@@ -158,7 +206,13 @@ def _record_delivery_failure(notification, *, reason, retryable):
         notification.failed_at = timezone.now()
     changed = claim.update(status=notification.status, last_error=notification.last_error, locked_at=None,
         next_retry_at=notification.next_retry_at, failed_at=notification.failed_at, updated_at=timezone.now())
-    return notification.status if changed else "skipped"
+    if not changed:
+        return "skipped"
+    result = result or {"reason": reason}
+    if notification.status == Notification.Statuses.FAILED:
+        _notify_delivery_failure(notification, result)
+    _write_delivery_activity(notification, status=notification.status, result=result)
+    return notification.status
 
 
 def _owned_claim(notification):
