@@ -1,6 +1,14 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { notificationContent, notificationDedupeKey } from "../../src/components/notifications/notificationPolicy.ts";
+import { appErrorNoticeTone } from "../../src/components/ui/statusNoticePolicy.ts";
+
+test("implicit error tone deduplicates with its explicit semantic equivalent", () => {
+  const item = { title: "Unavailable", appError: { category: "not_found", messageKey: "actions.errorUnavailable" } };
+  assert.equal(appErrorNoticeTone(item.appError), "info");
+  assert.equal(notificationDedupeKey(item), notificationDedupeKey({ ...item, tone: "info" }));
+  assert.notEqual(notificationDedupeKey(item), notificationDedupeKey({ ...item, tone: "danger" }));
+});
 
 test("one server request or explicit event has one notification identity", () => {
   const first = { appError: { requestId: "r1", code: "internal_error" } };

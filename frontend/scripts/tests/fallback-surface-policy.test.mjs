@@ -16,6 +16,7 @@ const connectivityBanner = read("src/components/ui/ConnectivityBanner.tsx");
 const fieldErrorSummary = read("src/components/ui/FieldErrorSummary.tsx");
 const recoveryDetails = read("src/components/ui/RecoveryDetails.tsx");
 const statusNotice = read("src/components/ui/StatusNotice.tsx");
+const statusNoticePolicy = read("src/components/ui/statusNoticePolicy.ts");
 const notificationProvider = read("src/components/notifications/NotificationProvider.tsx");
 const stateViews = read("src/components/ui/StateViews.tsx");
 const importPanel = read("src/features/integrations/components/ImportPanel.tsx");
@@ -33,7 +34,8 @@ test("shared fallback family consumes AppError and exports every required surfac
   assert.match(notificationProvider, /export function ActionFeedbackToast/);
   assert.match(stateViews, /export \{ InlineFallback, PageFallback, PermissionFallback \}/);
 
-  for (const source of [fallbackSurfaces, connectivityBanner, fieldErrorSummary, recoveryDetails, statusNotice]) {
+  assert.match(statusNotice, /export \{ appErrorNoticeTone, type StatusNoticeTone \} from "\.\/statusNoticePolicy"/);
+  for (const source of [fallbackSurfaces, connectivityBanner, fieldErrorSummary, recoveryDetails, statusNoticePolicy]) {
     assert.match(source, /AppError/);
   }
 });

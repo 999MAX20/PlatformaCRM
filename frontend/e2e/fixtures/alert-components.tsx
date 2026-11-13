@@ -13,7 +13,8 @@ import { StatusNotice } from "../../src/components/ui/StatusNotice";
 import { FieldErrorSummary } from "../../src/components/ui/FieldErrorSummary";
 import { InlineFallback, PermissionFallback } from "../../src/components/ui/FallbackSurfaces";
 import { Button } from "../../src/components/ui/Button";
-import { normalizeAppError } from "../../src/api/appError";
+import { useActionFeedback } from "../../src/components/actions/useActionFeedback";
+import { appErrorCategories, appErrorCodeRegistry, normalizeAppError } from "../../src/api/appError";
 import { I18nProvider, useI18n } from "../../src/lib/i18n";
 import "@fontsource-variable/manrope";
 import "../../src/styles.css";
@@ -27,6 +28,12 @@ const user: CurrentUser = { id: 77, email: "alerts@example.test", role: "operato
 function Controls() {
   const { t } = useI18n();
   const notify = useNotification();
+  const { notifyError } = useActionFeedback();
+  const [errorCategory, setErrorCategory] = useState(failure.category);
+  const rawError = errorCategory === "offline" ? { isAxiosError: true } : {
+    isAxiosError: true, response: { status: 400, data: { code: appErrorCodeRegistry.find(policy => policy.category === errorCategory)!.code } },
+  };
+  const currentError = normalizeAppError(rawError);
   const undo = useUndoToast();
   const [dialog, setDialog] = useState(false);
   const [drawer, setDrawer] = useState(false);
@@ -54,6 +61,16 @@ function Controls() {
         }}>{t("common.open")}</Button>
         <Button data-testid="long" onClick={() => notify({ title: "A".repeat(100), description: t("fallback.recovery.help").repeat(5), durationMs: 60_000 })}>{t("common.open")}</Button>
         <Button data-testid="queue" onClick={() => { for (let n = 0; n < 5; n++) notify({ title: `Queue ${n}`, durationMs: 60_000 }); }}>{t("common.open")}</Button>
+        <Button data-testid="queued-short" onClick={() => notify({ title: "Pending short", durationMs: 800 })}>{t("common.open")}</Button>
+        <Button data-testid="delayed-queue" onClick={() => window.setTimeout(() => {
+          for (let n = 0; n < 5; n++) notify({ title: `Burst ${n}`, durationMs: 60_000 });
+        }, 500)}>{t("common.open")}</Button>
+        <select data-testid="error-category" aria-label="Fixture error category" value={errorCategory} onChange={event => setErrorCategory(event.target.value as typeof errorCategory)}>
+          {appErrorCategories.map(category => <option key={category}>{category}</option>)}
+        </select>
+        <Button data-testid="error-direct" onClick={() => notify({ appError: currentError })}>{t("common.open")}</Button>
+        <Button data-testid="error-feedback" onClick={() => notifyError(rawError)}>{t("common.open")}</Button>
+        <Button data-testid="error-override" onClick={() => notifyError(rawError, { tone: "danger" })}>{t("common.open")}</Button>
         <Button data-testid="chat" onClick={() => queryClient.setQueryData(["inbox-summary", 77], { unread_messages: 2 })}>{t("header.openMessages")}</Button>
         {!removeOpener ? <Button data-testid="remove-opener" onClick={() => { show(); setRemoveOpener(true); }}>{t("common.open")}</Button> : null}
         <Button data-testid="short" onClick={() => notify({ message: t("common.saved"), durationMs: 800 })}>{t("common.saved")}</Button>
@@ -65,6 +82,7 @@ function Controls() {
         <Button data-testid="drawer" onClick={() => setDrawer(true)}>{t("common.open")}</Button>
       </div>
       <InlineFallback error={failure} onRetry={async () => { count(0); throw failure; }} />
+      <div data-testid="error-inline"><InlineFallback error={currentError} /></div>
       <FieldErrorSummary error={validation} fieldLabels={{ name: t("common.name") }} onFieldSelect={() => document.querySelector<HTMLInputElement>('[data-testid="draft"]')?.focus()} />
       <PermissionFallback error={denied} />
       <StatusNotice tone="info" title={t("integrations.card.readOnly")} />

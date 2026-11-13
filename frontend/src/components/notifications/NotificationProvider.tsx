@@ -4,7 +4,7 @@ import { createContext, useCallback, useContext, useEffect, useLayoutEffect, use
 import type { AppError } from "../../api/appError";
 import { Button } from "../ui/Button";
 import { useI18n } from "../../lib/i18n";
-import { StatusNotice, type StatusNoticeTone } from "../ui/StatusNotice";
+import { appErrorNoticeTone, StatusNotice, type StatusNoticeTone } from "../ui/StatusNotice";
 import { RecoveryDetails } from "../ui/RecoveryDetails";
 import { useRecoveryDelay } from "../actions/useRecoveryDelay";
 import { canShowSupportDetails } from "../actions/actionFeedbackPolicy";
@@ -42,7 +42,7 @@ export function ActionFeedbackToast({ item, onDismiss, dismissAfterAction = true
   const opener = useRef(document.activeElement instanceof HTMLElement ? document.activeElement : null);
   const pending = useRef(false);
   const delay = useRecoveryDelay(item.appError);
-  const tone = item.tone || (item.appError ? "danger" : "info");
+  const tone = item.tone || (item.appError ? appErrorNoticeTone(item.appError) : "info");
   const content = notificationContent(item, item.appError ? t(item.appError.messageKey) : t("actions.errorGeneric"));
   const dismiss = useCallback(() => {
     restoreNoticeFocus(card.current, opener.current);
@@ -145,10 +145,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     setItems((current) => {
       const key = notificationDedupeKey(options);
       if (key && current.some(item => notificationDedupeKey(item) === key)) return current;
-      return [
-        item,
-        ...current,
-      ].slice(0, 4);
+      return [...current, item];
     });
   }, []);
 
@@ -158,7 +155,8 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     <NotificationContext.Provider value={value}>
       {children}
       <NotificationPortal group="notifications">
-        {items.map((item) => (
+        {/* Pending notices mount only when a slot opens, starting their full reading interval. */}
+        {items.slice(0, 4).reverse().map((item) => (
           <ActionFeedbackToast key={item.id} item={item} onDismiss={dismiss} />
         ))}
       </NotificationPortal>

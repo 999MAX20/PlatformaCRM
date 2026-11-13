@@ -13161,3 +13161,14 @@ No local scoped remainder; full release/D01/provider checks outside this UI chan
 Foreign working/outgoing changes retained, no own-only publication possible.
 Evidence: docs/testing/evidence/voice-workflows-20261106.md, history section.
 Detailed scripts/logs/screenshots: output/playwright/voice-history-20261112/CHECKPOINT.md.
+
+## NOTIFICATION-QUEUE-20261113
+
+Owner requested active notification protection and consistent error colors, preserving
+card design and completing browser acceptance. Base1421a111, current canonical branch.
+Existing eviction reproduced in Chromium. FIFO pending admission and shared semantic
+mapping implemented and verified:38 distinct browser scenarios,22 Node, build/types/
+i18n/bundle and npm audit PASS. RU/KK/EN,320–1440px, keyboard,200% text, recovery.
+No scoped local remainder; no backend/DB/provider changes. Publication/CI in checkpoint.
+Evidence: docs/testing/evidence/notification-queue-20261113.md.
+Scope, WIP ownership, gates: output/notification-queue-20261113/CHECKPOINT.md.

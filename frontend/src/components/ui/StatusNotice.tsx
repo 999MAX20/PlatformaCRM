@@ -1,10 +1,10 @@
 import { AlertCircle, AlertTriangle, CheckCircle2, Info, type LucideIcon } from "lucide-react";
 import type { HTMLAttributes, ReactNode } from "react";
 
-import type { AppError } from "../../api/appError";
 import { cn } from "../../lib/cn";
+import type { StatusNoticeTone } from "./statusNoticePolicy";
 
-export type StatusNoticeTone = "success" | "info" | "warning" | "danger";
+export { appErrorNoticeTone, type StatusNoticeTone } from "./statusNoticePolicy";
 
 type ToneDefinition = {
   Icon: LucideIcon;
@@ -34,14 +34,6 @@ export const statusNoticeTones: Record<StatusNoticeTone, ToneDefinition> = {
     icon: "text-platforma-danger",
   },
 };
-
-export function appErrorNoticeTone(error: AppError): StatusNoticeTone {
-  if (error.category === "not_found") return "info";
-  if (["authentication", "permission", "conflict", "rate_limit", "offline", "provider"].includes(error.category)) {
-    return "warning";
-  }
-  return "danger";
-}
 
 type StatusNoticeProps = Omit<HTMLAttributes<HTMLDivElement>, "title"> & {
   action?: ReactNode;

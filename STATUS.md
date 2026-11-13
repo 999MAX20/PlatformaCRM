@@ -2091,3 +2091,10 @@ Playwright real read-only flow + browser fixtures PASS; RU/KK/EN/mobile/keyboard
 Header/sidebar dimensions preserved; frontend build/types/i18n PASS; foreign WIP retained.
 No local scoped remainder; foreign outgoing history blocks own-only push/newCI/deployment.
 Evidence: docs/testing/evidence/voice-workflows-20261106.md, history section.
+
+NOTIFICATION-QUEUE-20261113: active toast protection and error colors locally verified.
+Four visible cards, pending FIFO, shared AppError mapping; current design retained.
+38 distinct browser scenarios,22 Node checks, build/types/i18n/bundle and audit PASS.
+No scoped local remainder; publication/CI receipt in checkpoint.
+Evidence: docs/testing/evidence/notification-queue-20261113.md.
+Checkpoint: output/notification-queue-20261113/CHECKPOINT.md.

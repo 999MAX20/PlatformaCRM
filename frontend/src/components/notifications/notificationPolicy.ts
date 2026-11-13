@@ -1,4 +1,5 @@
 import type { AppError } from "../../api/appError";
+import { appErrorNoticeTone } from "../ui/statusNoticePolicy.ts";
 
 type NotificationIdentity = {
   appError?: AppError;
@@ -15,7 +16,7 @@ export function notificationDedupeKey(item: NotificationIdentity) {
   if (item.appError?.requestId) return `request:${item.appError.requestId}:${item.appError.code}`;
   // Equal generic text does not prove that two actionable operations are equal.
   if (item.onAction || !(item.message || item.title || item.description)) return undefined;
-  return `notice:${JSON.stringify([item.tone || (item.appError ? "danger" : "info"), item.title, item.description, item.message, item.appError?.messageKey])}`;
+  return `notice:${JSON.stringify([item.tone || (item.appError ? appErrorNoticeTone(item.appError) : "info"), item.title, item.description, item.message, item.appError?.messageKey])}`;
 }
 
 export function notificationContent(item: NotificationIdentity, fallback: string) {

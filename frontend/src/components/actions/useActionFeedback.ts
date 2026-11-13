@@ -3,6 +3,7 @@ import { useCallback, type RefObject } from "react";
 import { normalizeAppError } from "../../api/appError";
 import { useI18n } from "../../lib/i18n";
 import { useNotification } from "../notifications/NotificationProvider";
+import { appErrorNoticeTone } from "../ui/statusNoticePolicy";
 import {
   canOfferActionRecovery,
   canUseActionFallback,
@@ -74,7 +75,7 @@ export function useActionFeedback() {
         : undefined;
       showNotification({
         ...(fallbackMessage ? { message: fallbackMessage } : { appError }),
-        tone: options.tone || (["permission", "not_found"].includes(appError.category) ? "warning" : "danger"),
+        tone: options.tone || appErrorNoticeTone(appError),
         durationMs: retry ? 10_000 : 7_000,
         actionLabel: retry ? options.actionLabel || t("common.retry") : undefined,
         onAction: retry,

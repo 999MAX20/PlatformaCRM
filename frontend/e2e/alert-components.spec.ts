@@ -2,7 +2,7 @@ import { expect, test, type Page } from "@playwright/test";
 import fs from "node:fs/promises";
 import path from "node:path";
 
-const evidence = path.resolve("../output/alert-components-20261102");
+const evidence = path.resolve(process.env.ALERT_EVIDENCE_DIR || "../output/alert-components-20261102");
 async function open(page: Page, language = "ru") {
   await page.addInitScript(language => localStorage.setItem("ai_smb_language", language), language);
   await page.route("**/ready/", route => route.fulfill({ json: { status: "ok" } }));
@@ -65,19 +65,33 @@ test("long text stays inside the card and controls remain reachable", async ({ p
   await expect(page.getByTestId("long")).toBeFocused();
 });
 
-test("queue keeps four newest ordinary notices and missing opener has a usable focus return", async ({ page }) => {
+test("queue retains visible notices and admits pending FIFO without losing focus", async ({ page }) => {
   await open(page);
   await page.getByTestId("queue").click();
   const host = page.getByTestId("notification-host");
   await expect(host.getByTestId("action-feedback")).toHaveCount(4);
-  await expect(host).not.toContainText("Queue 0");
-  await expect(host.getByTestId("action-feedback").first()).toContainText("Queue 4");
+  await expect(host).toContainText("Queue 0");
+  await expect(host).not.toContainText("Queue 4");
+  await expect(host.getByTestId("action-feedback").first()).toContainText("Queue 3");
   await page.getByTestId("remove-opener").click();
   const close = host.getByTestId("action-feedback").first().getByRole("button");
   await close.focus();
   await page.keyboard.press("Enter");
-  await expect(host.getByTestId("action-feedback")).toHaveCount(3);
+  await expect(host.getByTestId("action-feedback")).toHaveCount(4);
+  await expect(host.getByTestId("action-feedback").first()).toContainText("Queue 4");
+  await expect(host).not.toContainText("Queue 3");
   expect(await page.evaluate(() => document.activeElement?.tagName)).not.toBe("BODY");
+});
+
+test("dismiss returns usable focus when the original opener was removed", async ({ page }) => {
+  await open(page);
+  await page.getByTestId("remove-opener").click();
+  await expect(page.getByTestId("remove-opener")).toHaveCount(0);
+  const card = page.getByTestId("action-feedback");
+  await card.getByRole("button").focus();
+  await page.keyboard.press("Enter");
+  await expect(card).toHaveCount(0);
+  await expect(page.getByTestId("draft")).toBeFocused();
 });
 
 test("unread chat notice joins the host, pauses for focus and opens the inbox", async ({ page }) => {
@@ -99,6 +113,112 @@ test("unread chat notice joins the host, pauses for focus and opens the inbox", 
   await expect(page.getByTestId("route")).toHaveText("/app/conversations?unread=true");
   await page.clock.runFor(201);
   await expect(notice).toHaveCount(0);
+});
+
+for (const interaction of ["hover", "focus", "action"] as const) {
+  test(`overflow preserves ${interaction} and pending messages do not expire unseen`, async ({ page }) => {
+    await open(page);
+    await page.clock.install();
+    await page.clock.pauseAt(new Date());
+    await page.getByTestId(interaction === "action" ? "retry" : "short").click();
+    await page.clock.runFor(250);
+    const active = page.getByTestId("action-feedback").filter({ hasText: interaction === "action" ? "Повторить" : "Сохранено" });
+    await page.getByTestId("delayed-queue").click();
+    if (interaction === "hover") await active.hover();
+    if (interaction === "focus") await active.getByRole("button").focus();
+    if (interaction === "action") {
+      await active.getByTestId("action-feedback-action").click();
+      await page.getByTestId("draft").focus();
+      await page.mouse.move(0, 0);
+    }
+    await page.clock.runFor(2000);
+    await expect(active).toBeVisible();
+    await expect(page.getByTestId("action-feedback")).toHaveCount(4);
+    await expect(page.getByTestId("notification-host")).not.toContainText("Burst 3");
+    if (interaction === "focus") await expect(active.getByRole("button")).toBeFocused();
+    if (interaction === "action") {
+      await expect(page.getByTestId("counts")).toHaveText("1,0,0");
+      await page.getByTestId("release").click();
+    } else {
+      await active.getByRole("button").click();
+    }
+    await page.clock.runFor(201);
+    await expect(active).toHaveCount(0);
+    await expect(page.getByTestId("notification-host")).toContainText("Burst 3");
+  });
+}
+
+test("queued duplicates collapse and reading time starts on admission", async ({ page }) => {
+  await open(page);
+  await page.clock.install();
+  await page.clock.pauseAt(new Date());
+  await page.getByTestId("queue").click();
+  await page.getByTestId("queued-short").click();
+  await page.getByTestId("queued-short").click();
+  await page.clock.runFor(2000);
+  const cards = page.getByTestId("action-feedback");
+  const pending = cards.filter({ hasText: "Pending short" });
+  await expect(pending).toHaveCount(0);
+  await cards.filter({ hasText: "Queue 3" }).getByRole("button").click();
+  await page.clock.runFor(201);
+  await expect(cards.first()).toContainText("Queue 4");
+  await cards.filter({ hasText: "Queue 2" }).getByRole("button").click();
+  await page.clock.runFor(201);
+  await expect(pending).toBeVisible();
+  await page.mouse.move(0, 0);
+  await page.getByTestId("draft").focus();
+  await page.clock.runFor(799);
+  await expect(pending.locator("..")).not.toHaveAttribute("data-leaving", "true");
+  await page.clock.runFor(2);
+  await expect(pending.locator("..")).toHaveAttribute("data-leaving", "true");
+  await page.clock.runFor(201);
+  await expect(pending).toHaveCount(0);
+  await expect(cards).toHaveCount(3);
+});
+
+for (const language of ["ru", "kk", "en"]) {
+  test(`error classification matches inline and toast ${language}`, async ({ page }) => {
+    await page.setViewportSize({ width: language === "ru" ? 1440 : language === "kk" ? 768 : 390, height: 1000 });
+    await open(page, language);
+    for (const category of ["authentication", "permission", "conflict", "rate_limit", "offline", "provider", "not_found", "validation", "internal", "temporary"]) {
+      await page.getByTestId("error-category").selectOption(category);
+      const tone = category === "not_found" ? "info" : ["validation", "internal", "temporary"].includes(category) ? "danger" : "warning";
+      await expect(page.getByTestId("error-inline").locator("[data-notice-tone]")).toHaveAttribute("data-notice-tone", tone);
+      for (const source of ["error-direct", "error-feedback", "error-override"]) {
+        await page.getByTestId(source).click();
+        const toast = page.getByTestId("action-feedback");
+        await expect(toast).toHaveAttribute("data-notice-tone", source === "error-override" ? "danger" : tone);
+        if (category === "conflict" && source === "error-direct") {
+          await page.screenshot({ path: path.join(evidence, `error-${language}.png`), animations: "disabled" });
+        }
+        await toast.getByRole("button").first().click();
+        await expect(toast).toHaveCount(0);
+      }
+    }
+  });
+}
+
+test("enlarged notification text reflows at 320px and closes by keyboard", async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 640 });
+  await open(page);
+  await page.getByTestId("long").click();
+  await page.addStyleTag({ content: ".platforma-notice-title,.platforma-notice-description { font-size: 28px; line-height: 42px; }" });
+  const card = page.getByTestId("action-feedback");
+  expect(await card.evaluate(node => node.scrollWidth <= node.clientWidth)).toBe(true);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await card.getByRole("button").focus();
+  await expect(card.getByRole("button")).toBeInViewport();
+  await page.screenshot({ path: path.join(evidence, "text200-320.png"), animations: "disabled" });
+  const host = page.getByTestId("notification-host");
+  await host.evaluate(node => { node.scrollTop = node.scrollHeight; });
+  expect(await card.locator(".platforma-notice-description").evaluate(node =>
+    node.getBoundingClientRect().bottom <= node.closest('[data-testid="notification-host"]')!.getBoundingClientRect().bottom,
+  )).toBe(true);
+  await page.screenshot({ path: path.join(evidence, "text200-bottom-320.png"), animations: "disabled" });
+  await card.getByRole("button").focus();
+  await page.keyboard.press("Enter");
+  await expect(card).toHaveCount(0);
+  await expect(page.getByTestId("long")).toBeFocused();
 });
 
 test("full reading interval resumes after hover and focus, followed by exit", async ({ page }) => {
