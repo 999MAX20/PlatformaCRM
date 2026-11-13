@@ -145,10 +145,6 @@ export function ConversationListPane({
         </div>
       ) : null}
 
-      {connectorReadinessLoading ? (
-        <div data-testid="inbox-provider-status-loading"><LoadingState /></div>
-      ) : null}
-
       {connectorReadinessError ? (
         <StatusNotice
           compact
@@ -222,8 +218,8 @@ export function ConversationListPane({
         </div>
       ) : null}
 
-      <div className="min-h-0 flex-1 overflow-y-auto">
-        {loading ? <div className="p-5"><LoadingState /></div> : null}
+      <div className="min-h-0 flex-1 overflow-y-auto" data-testid="inbox-conversation-list" aria-busy={loading || connectorReadinessLoading}>
+        {loading && !items.length ? <LoadingState /> : null}
         {!loading && !items.length ? (
           <div className="pointer-events-none absolute inset-0 grid place-items-center px-5 text-center">
             <div className="relative w-full">

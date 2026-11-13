@@ -66,7 +66,7 @@ export function BusinessEmployeeAccessPanel({ business, params, update, onDraft 
     mutation.mutate({ type, item });
   }
   const error = mutation.error ? normalizeAppError(mutation.error) : null;
-  if (query.isPending) return <LoadingState />;
+  if (query.isPending) return <LoadingState initial />;
   if (!query.data || (query.isError && !retainSupportData(query.error)) || error?.category === "permission") return <PlatformLoadError error={query.error || mutation.error} message={t("platform.merchantDetail.error")} onRetry={() => void refresh()} />;
   const data = query.data;
   const choices: AccessAction[] = !target || target.row.protected ? [] : target.kind === "member"

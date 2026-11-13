@@ -6,11 +6,14 @@ import { cn } from "../../lib/cn";
 import { useI18n } from "../../lib/i18n";
 import { InlineFallback, PermissionFallback } from "./FallbackSurfaces";
 import { LoadingIndicator } from "./LoadingIndicator";
+import { useLocalLoadingScope, usePageLoading } from "./PageLoadingBoundary";
 
-export function LoadingState({ label, scope = "block" }: { label?: string; scope?: "block" | "page" }) {
+export function LoadingState({ label, scope = "block", initial = false }: { label?: string; scope?: "block" | "page"; initial?: boolean }) {
   const { t } = useI18n();
+  usePageLoading(initial || scope === "page");
+  const localScope = useLocalLoadingScope(scope);
   const resolvedLabel = label || t("common.loadingData");
-  return <LoadingIndicator label={resolvedLabel} scope={scope} />;
+  return <LoadingIndicator label={resolvedLabel} scope={localScope} />;
 }
 
 export function ErrorState({ error, message, action }: { error?: unknown; message?: string; action?: React.ReactNode }) {

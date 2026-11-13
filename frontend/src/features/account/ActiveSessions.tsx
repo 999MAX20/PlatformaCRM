@@ -7,6 +7,7 @@ import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
 import { Modal } from "../../components/ui/Modal";
 import { ErrorState, LoadingState } from "../../components/ui/StateViews";
+import { usePageLoading } from "../../components/ui/PageLoadingBoundary";
 import { formatDateTime } from "../../lib/format";
 import { useI18n } from "../../lib/i18n";
 import { useAuth } from "../auth/AuthProvider";
@@ -22,6 +23,7 @@ export function ActiveSessions() {
   const { user } = useAuth();
   const client = useQueryClient();
   const sessions = useQuery({ queryKey: ["account-sessions", user?.id], queryFn: getAccountSessions, enabled: Boolean(user?.id), refetchInterval: 60_000 });
+  usePageLoading(sessions.isLoading);
   const mfa = useQuery({ queryKey: ["mfa-status"], queryFn: getMfaStatus });
   const [target, setTarget] = useState<AccountSession | "others" | null>(null);
   const [code, setCode] = useState("");

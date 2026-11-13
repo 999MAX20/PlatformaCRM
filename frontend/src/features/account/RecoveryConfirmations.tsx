@@ -26,7 +26,7 @@ export function RecoveryConfirmations() {
   return <section className="space-y-3" data-testid="recovery-confirmations" aria-label={t("recovery.title")}>
     <h2 className="font-semibold">{t("recovery.title")}</h2>
     {mutation.isPending && <TaskDraftGuard dirty={false} pending />}
-    {query.isPending && <LoadingState />}
+    {query.isLoading && <LoadingState initial />}
     {query.error && <ErrorState error={query.error} action={<Button onClick={() => query.refetch()}>{t("common.retry")}</Button>} />}
     {mutation.error && <ErrorState error={mutation.error} />}
     {!query.isError && query.data?.map(item => <RecoverySummary key={item.id} item={item}>

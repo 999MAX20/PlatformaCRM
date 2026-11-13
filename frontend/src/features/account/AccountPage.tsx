@@ -9,6 +9,7 @@ import { useNotification } from "../../components/notifications/NotificationProv
 import { Button } from "../../components/ui/Button";
 import { Card } from "../../components/ui/Card";
 import { ErrorState, LoadingState } from "../../components/ui/StateViews";
+import { usePageLoading } from "../../components/ui/PageLoadingBoundary";
 import { Input } from "../../components/ui/Input";
 import { Modal } from "../../components/ui/Modal";
 import { formatDateTime } from "../../lib/format";
@@ -61,6 +62,7 @@ export function AccountPage({ platform = false }: { platform?: boolean }) {
     enabled: Boolean(user?.id),
   });
   const mfaStatus = useQuery({ queryKey: ["mfa-status"], queryFn: getMfaStatus, enabled: Boolean(user?.id) });
+  usePageLoading(loginHistory.isLoading || mfaStatus.isLoading);
 
   useEffect(() => {
     setProfileForm({

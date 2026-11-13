@@ -31,7 +31,7 @@ const fields = businessDetailsFields;
 export function BusinessDetailsForm(props: Props) {
   const { t } = useI18n();
   const query = useQuery({ queryKey: ["platform-business-details", props.business], queryFn: () => platformApi.details(props.business), gcTime: 0, retry: false, refetchOnWindowFocus: false });
-  if (query.isPending) return <LoadingState />;
+  if (query.isPending) return <LoadingState initial />;
   if (!query.data || query.isError) return <PlatformLoadError error={query.error} message={t("platform.merchantDetail.error")} onRetry={() => query.refetch()} />;
   return <DetailsEditor {...props} initial={query.data} />;
 }

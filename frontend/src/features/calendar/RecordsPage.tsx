@@ -15,6 +15,7 @@ import { usePageHeader } from "../../components/layout/PageHeaderContext";
 import { Button } from "../../components/ui/Button";
 import { Modal } from "../../components/ui/Modal";
 import { EmptyState, ErrorState, LoadingState } from "../../components/ui/StateViews";
+import { usePageLoading } from "../../components/ui/PageLoadingBoundary";
 import { useActiveBusiness } from "../../hooks/useBusiness";
 import { refreshAppointmentQueries } from "../../lib/appointmentCache";
 import { todayInTimeZone } from "../../lib/format";
@@ -70,6 +71,7 @@ function RecordsListPage() {
     placeholderData: (previous, previousQuery) => previousQuery?.queryKey[2] === user?.id &&
       (previousQuery?.queryKey[3] as { business?: number } | undefined)?.business === business?.id ? previous : undefined });
   const customTable = useCustomColumns(business?.id || 0, "appointment", (records.data?.results || []).map(record => record.id));
+  usePageLoading(!periodReady || records.isLoading);
   const update = (key: string, value: string) => setParams(current => {
     const next = new URLSearchParams(current);
     if (value) next.set(key, value); else next.delete(key);

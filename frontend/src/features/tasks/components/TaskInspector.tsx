@@ -13,6 +13,7 @@ import { Button } from "../../../components/ui/Button";
 import { Input } from "../../../components/ui/Input";
 import { Modal } from "../../../components/ui/Modal";
 import { ErrorState, LoadingState } from "../../../components/ui/StateViews";
+import { usePageLoading } from "../../../components/ui/PageLoadingBoundary";
 import { Textarea } from "../../../components/ui/Textarea";
 import { useI18n } from "../../../lib/i18n";
 import { useBodyScrollLock } from "../../../hooks/useBodyScrollLock";
@@ -47,6 +48,7 @@ export function TaskInspector({ id, business, zone, expanded = false, returnTo =
   const heading = useRef<HTMLHeadingElement>(null);
   const taskQuery = useQuery({ queryKey: ["task", business, id], queryFn: () => tasksApi.getForBusiness(id, business) });
   const task = taskQuery.data;
+  usePageLoading(expanded && taskQuery.isLoading);
   const comments = useQuery({ queryKey: ["task-comments", business, id], queryFn: () => tasksApi.comments(id), enabled: Boolean(task) && tab === "comments" });
   const history = useQuery({ queryKey: ["task-activity", business, id], queryFn: () => activityEventsApi.listForEntity({ entity_type: "Task", entity_id: id }), enabled: Boolean(task) && tab === "history" });
   const invalidate = async (updated?: Task) => {

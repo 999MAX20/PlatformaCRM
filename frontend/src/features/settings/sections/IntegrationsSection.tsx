@@ -8,6 +8,6 @@ const IntegrationsPage = lazy(() => import("../../integrations/IntegrationsPage"
 export function IntegrationsSection({ model }: { model: SettingsModel }) {
   if (model.activeSettingsSection !== "integrations") return null;
   return <SettingsSection id="integrations" active={model.activeSettingsSection} title={model.t("nav.integrations")}>
-    <Suspense fallback={<LoadingState scope="block" />}><IntegrationsPage embedded /></Suspense>
+    <Suspense fallback={<LoadingState initial />}><IntegrationsPage embedded /></Suspense>
   </SettingsSection>;
 }

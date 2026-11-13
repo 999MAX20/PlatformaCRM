@@ -11,6 +11,7 @@ import { useEffect, useRef, useState } from "react";
 import { Navigate, Link, useNavigate, useParams, useSearchParams } from "react-router";
 
 import { getApiErrorMessage, getApiFieldErrors } from "../../api/client";
+import { normalizeAppError } from "../../api/appError";
 
 import { inboxApi, inboxWriteNoticeKey, inboxQueryKeys, type InboxConversation, type InboxFilters, type InboxMessage, type PaginatedInboxMessageResponse, type PipelineAction, type PipelineConfirmation } from "../../api/inbox";
 import { ClientLinkConfirmation } from "./components/ClientLinkConfirmation";
@@ -24,6 +25,8 @@ import { Dialog, Drawer } from "../../components/ui/Overlay";
 
 import { StatusBadge } from "../../components/ui/StatusBadge";
 import { EmptyState, ErrorState, LoadingState } from "../../components/ui/StateViews";
+import { usePageLoading } from "../../components/ui/PageLoadingBoundary";
+import { StatusNotice } from "../../components/ui/StatusNotice";
 
 import { cn } from "../../lib/cn";
 import { useI18n } from "../../lib/i18n";
@@ -776,11 +779,17 @@ export function ConversationsPage() {
     onError: (error) => notifyError(error),
   });
 
-  const pageError =
-    summary.error ||
-    conversations.error ||
-    selectedConversation.error ||
-    messages.error;
+  const failedQueries = [summary, conversations, selectedConversation, messages].filter(query => query.error);
+  const pageError = failedQueries.find(query => query.data === undefined ||
+    !["offline", "temporary", "provider", "rate_limit"].includes(normalizeAppError(query.error).category))?.error;
+  const refreshError = !pageError ? failedQueries[0]?.error : undefined;
+  const threadLoading = selectedConversation.isLoading || messages.isLoading || Boolean(selectedId && !selected && !pageError);
+  usePageLoading(!pageError && (
+    summary.isLoading || conversations.isLoading ||
+    Boolean(items.length && !selectedId) ||
+    ((desktopThread || mobileThreadOpen) && threadLoading) ||
+    (desktopInspector && inspectorOpen && context.isLoading)
+  ));
   const unavailableChannelCount = (communicationConnectors.data || []).filter(
     (connector) =>
       connector.capability === "communications" &&
@@ -1075,7 +1084,8 @@ export function ConversationsPage() {
   const customerContext = (
     <InboxCustomerContext
       data={context.data}
-      loading={context.isLoading}
+      loading={context.isLoading || threadLoading}
+      showLoadingIndicator={!threadLoading}
       error={context.error}
       retrying={context.isFetching}
       menuItems={contextMenu}
@@ -1093,12 +1103,16 @@ export function ConversationsPage() {
   return (
     <div
       data-testid="inbox-workspace-ready"
-      className="h-[calc(100dvh-var(--app-header-height)-var(--inbox-mobile-nav))] overflow-hidden"
+      className="flex h-[calc(100dvh-var(--app-header-height)-var(--inbox-mobile-nav))] flex-col overflow-hidden"
     >
+      {refreshError && <StatusNotice compact tone="warning" data-testid="inbox-refresh-error"
+        className="shrink-0 rounded-none" title={getApiErrorMessage(refreshError)}
+        action={<Button variant="secondary" size="sm" onClick={() => { void Promise.all(failedQueries.map(query => query.refetch())); }}
+          isLoading={failedQueries.some(query => query.isFetching)}>{t("common.retry")}</Button>} />}
       <WorkQueueLayout
         edgeToEdge
         className={cn(
-          "lg:grid-cols-[288px_minmax(0,1fr)]",
+          "h-auto flex-1 lg:grid-cols-[288px_minmax(0,1fr)]",
           inspectorOpen
             ? "min-[90rem]:grid-cols-[288px_minmax(0,1fr)_320px]"
             : "min-[90rem]:grid-cols-[288px_minmax(0,1fr)]",
@@ -1126,7 +1140,7 @@ export function ConversationsPage() {
           items={items}
           sortedItems={sortedItems}
           selectedId={selected?.id}
-          loading={conversations.isLoading || selectedConversation.isLoading}
+          loading={conversations.isLoading}
           bulkMode={bulkMode}
           selectedIds={selectedIds}
           onSelectVisible={selectVisibleConversations}
@@ -1268,7 +1282,7 @@ export function ConversationsPage() {
           onMobileClose={() => setMobileThreadOpen(false)}
           messageScrollRef={messageScrollRef}
           messageEndRef={messageEndRef}
-          messagesLoading={messages.isLoading || selectedConversation.isLoading}
+          messagesLoading={threadLoading}
           messageList={messageList}
           canLoadMoreMessages={canLoadMoreMessages}
           isFetchingNextPage={messages.isFetchingNextPage}

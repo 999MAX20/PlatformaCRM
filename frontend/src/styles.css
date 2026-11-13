@@ -135,6 +135,30 @@
 }
 
 @layer utilities {
+  .platforma-page-content {
+    display: contents;
+  }
+  .platforma-page-content[hidden] {
+    display: none;
+  }
+  .platforma-page-loading {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    min-height: 100dvh;
+    background: var(--color-surface-default);
+  }
+  [data-workspace-content]:has(> .platforma-page-loading) {
+    display: flex;
+    flex-direction: column;
+  }
+  [data-workspace-content] > .platforma-page-loading {
+    flex: 1;
+    min-height: calc(100dvh - var(--app-header-height, 57px) - var(--inbox-mobile-nav, 0px) - 2rem);
+  }
+  .platforma-page-loading > .platforma-loading--page {
+    min-height: 0;
+  }
   .platforma-loading {
     display: grid;
     place-items: center;
@@ -146,6 +170,19 @@
 
   .platforma-loading--page {
     min-height: 100dvh;
+  }
+  .platforma-loading--block {
+    min-height: 3rem;
+    padding: 0.75rem;
+  }
+  .platforma-loading--block .platforma-loading__content {
+    flex-direction: row;
+    gap: 0.5rem;
+  }
+  .platforma-loading--block .platforma-loading__ring {
+    width: 1rem;
+    height: 1rem;
+    flex-shrink: 0;
   }
 
   /* Fill the real content box, including its existing header/nav padding. */

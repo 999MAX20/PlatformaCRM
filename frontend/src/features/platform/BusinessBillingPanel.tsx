@@ -48,7 +48,7 @@ export function BusinessBillingPanel({ business, onDraft }: { business: string; 
     if (!(await confirm({ title, description: `${selected?.plan} · ${amount || selected?.amount} ${currency || selected?.currency} · ${selected?.id}`, confirmLabel: title, tone: "warning" })).confirmed) return;
     mutation.mutate();
   }
-  if (query.isLoading) return <LoadingState />;
+  if (query.isLoading) return <LoadingState initial />;
   if (query.isError || !query.data) return <ErrorState error={query.error} action={<Button onClick={() => void query.refetch()}>{t("common.refresh")}</Button>} />;
   const data = query.data; const error = mutation.error ? normalizeAppError(mutation.error) : null;
   return <div className="space-y-4" data-testid="platform-billing">

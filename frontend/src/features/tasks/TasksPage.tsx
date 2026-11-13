@@ -10,6 +10,7 @@ import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
 import { Select } from "../../components/ui/Select";
 import { EmptyState, ErrorState, ForbiddenState, LoadingState } from "../../components/ui/StateViews";
+import { usePageLoading } from "../../components/ui/PageLoadingBoundary";
 import { useActiveBusiness } from "../../hooks/useBusiness";
 import { useClientCreateIntent } from "../../hooks/useClientCreateIntent";
 import { useDebouncedValue } from "../../hooks/useDebouncedValue";
@@ -24,6 +25,7 @@ import { taskDateLabel, taskGroup } from "./workspaceUtils";
 
 export function TasksPage() {
   const { business, isLoading, error } = useActiveBusiness();
+  usePageLoading(isLoading);
   return business ? <TaskQueue key={business.id} business={business.id} zone={business.timezone || "UTC"} /> : isLoading ? <LoadingState /> : error ? <ErrorState error={error} /> : <ForbiddenState />;
 }
 
@@ -58,6 +60,7 @@ function TaskQueue({ business, zone }: { business: Id; zone: string }) {
   const list = useInfiniteQuery(taskWorkspaceQuery(listParams));
   const summary = useQuery({ queryKey: ["task-summary", base], queryFn: () => tasksApi.summary(base) });
   const team = useQuery({ queryKey: ["task-workload", base], queryFn: () => tasksApi.workload({ ...base, business }), enabled: view === "team" && canTeam });
+  usePageLoading(summary.isLoading || (view === "team" && canTeam ? team.isLoading : list.isLoading));
   const assignees = useQuery({ queryKey: ["task-assignees", business], queryFn: () => tasksApi.assignees(business), enabled: filters && canUpdate });
   useEffect(() => {
     setPageHeader({ title: t("tasks.title"), primaryAction: canCreate ? { label: t("taskWorkspace.create"), icon: Plus, onClick: openCreate, disabled: inspectorBusy, showOnMobile: true, focusReturnId: "task-create-trigger" } : undefined });

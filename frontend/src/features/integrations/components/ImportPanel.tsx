@@ -134,8 +134,8 @@ function ImportPanelBody({ businessId, userId, normalizedEntities, entity, setEn
       </div>
 
       {importError ? <ErrorState error={importError} message={getApiErrorMessage(importError)} action={jobsQuery.isError ? <Button variant="secondary" onClick={() => jobsQuery.refetch()}>{t("common.retry")}</Button> : undefined} /> : null}
-      {jobsQuery.isPending ? <LoadingState /> : null}
-      {history.detail.isFetching ? <LoadingState /> : null}
+      {jobsQuery.isLoading ? <LoadingState initial /> : null}
+      {history.detail.isLoading ? <LoadingState initial /> : null}
       {history.detail.isError && !jobsQuery.isError ? <ErrorState error={history.detail.error} action={<Button variant="secondary" onClick={() => history.detail.refetch()}>{t("common.retry")}</Button>} /> : null}
 
       <div className="rounded-card border border-platforma-border bg-surface-card p-4 shadow-xs">

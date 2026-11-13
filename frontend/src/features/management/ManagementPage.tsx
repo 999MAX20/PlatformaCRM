@@ -54,7 +54,7 @@ function ManagementCatalogPage({ section }: { section: Exclude<ManagementSection
     }
   }, [data, requestedEntity, requestedAbsence, section]);
   const closeEditor = () => { setEditor(null); setAbsence(null); setParams(previous => { const next = new URLSearchParams(previous); next.delete("service"); next.delete("resource"); next.delete("absence"); return next; }, { replace: true }); };
-  if (query.isPending) return <LoadingState />;
+  if (query.isPending) return <LoadingState initial />;
   if (query.error || !data || !business) return <ErrorState error={query.error} action={<Button onClick={() => void query.refetch()}>{t("common.retry")}</Button>} />;
   const currentBranches = data.branches.filter(row => !row.archived_at);
   const branchId = data.branches.find(row => String(row.id) === params.get("branch"))?.id || (currentBranches.length === 1 ? currentBranches[0].id : undefined);

@@ -6,6 +6,7 @@ import { platformClinicApi } from "../../api/platformClinic";
 import { Button } from "../../components/ui/Button";
 import { Card, CardHeader } from "../../components/ui/Card";
 import { EmptyState, LoadingState } from "../../components/ui/StateViews";
+import { usePageLoading } from "../../components/ui/PageLoadingBoundary";
 import { useI18n } from "../../lib/i18n";
 import { SupportError, retainSupportData, supportDate } from "../support/SupportUI";
 import { ClinicPager, useClinicReadDenial } from "./ClinicReadUI";
@@ -24,6 +25,7 @@ export function ClinicAccessHistory({ business, timezone, onDenied }: { business
   const [page, setPage] = useState(1);
   const list = useQuery({ queryKey: ["platform-clinic-access", business, page], queryFn: () => platformClinicApi.access(business, page), gcTime: 0, retry: false });
   useClinicReadDenial(list.error, onDenied);
+  usePageLoading(list.isLoading);
   return <Card data-testid="clinic-access-history">
     <CardHeader><div className="flex flex-wrap items-center justify-between gap-3"><h2 className="font-semibold">{t("clinicCrm.accessHistory")}</h2><Button variant="secondary" onClick={() => list.refetch()} isLoading={list.isFetching}>{t("common.refresh")}</Button></div></CardHeader>
     {user && <p className="break-words border-b border-platforma-border px-4 pb-3 text-sm text-platforma-subtle">{user.full_name || user.email} · {user.role === "platform_admin" || user.role === "platform_manager" ? t(`clinicCrm.value.${user.role}`) : t("platform.title")}</p>}

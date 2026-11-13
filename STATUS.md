@@ -1,3 +1,12 @@
+PAGE-LOADING-20261113: scoped implementation and local UI acceptance complete.
+One initial loader; visible queries only; local refresh preserves content/drafts.
+Inbox list geometry, retry/403, hidden settings, cache, portal focus verified.
+Loading23PASS; dependent19 scenarios verified across retained runs; Node/build/bundlePASS.
+RU/KK/EN320–1536 and text200% inspected; no backend/workingDB/provider/deploy changes.
+No scoped code/local-evidence remainder. Publication and actual CI: checkpoint.
+Evidence: docs/testing/evidence/page-loading-20261113.md.
+Checkpoint: output/page-loading-20261113/CHECKPOINT.md.
+
 CRM-GLOBAL-REMAINING-20261112: T01–T07/O01–O03 resolved within scoped acceptance.
 Provider/money fixtures, registries and SYSTEM reminder replay verified; prior T02/T03 already published.
 Business-local activity time, task from/to history and truthful Inbox retry status fixed.

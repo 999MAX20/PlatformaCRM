@@ -72,7 +72,7 @@ function ClinicRecordList({ business, timezone, kind, params, update, kindSelect
     </div>
     {client && <p className="text-sm">{t("clinicCrm.field.client")} #{client}</p>}
     {list.isError && <SupportError error={list.error} retry={() => list.refetch()} />}
-    {list.isPending ? <LoadingState /> : list.isError && (!list.data || !retainSupportData(list.error)) ? null : list.data && <Card variant="outlined">
+    {list.isPending ? <LoadingState initial /> : list.isError && (!list.data || !retainSupportData(list.error)) ? null : list.data && <Card variant="outlined">
       {kind === "clients" && <div className="hidden grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1.5fr)] gap-3 border-b border-platforma-border bg-surface-muted px-4 py-3 text-xs text-platforma-subtle sm:grid" aria-hidden="true">{["full_name", "phone", "email"].map(field => <span key={field}>{t(`clinicCrm.field.${field}`)}</span>)}</div>}
       {!list.data.results.length ? <EmptyState title={t("clinicCrm.empty")} /> : <ul className="divide-y divide-platforma-border">{list.data.results.map(row => {
         const next = new URLSearchParams(params); next.set("record", String(row.id));
@@ -103,7 +103,7 @@ function ClinicRecordDetail({ business, timezone, kind, record, enabled, params,
   return <div className="space-y-4" data-testid="clinic-record-detail">
     <div className="flex flex-wrap items-center justify-between gap-3"><Link className="platforma-focus-ring text-sm font-medium text-brand-700" to={`${location.pathname}?${back}`} state={location.state}>{t("clinicCrm.back")}</Link><Button variant="secondary" onClick={() => detail.refetch()} isLoading={detail.isFetching}>{t("common.refresh")}</Button></div>
     {detail.isError && <SupportError error={detail.error} retry={() => detail.refetch()} />}
-    {detail.isPending ? <LoadingState /> : detail.isError && (!detail.data || !retainSupportData(detail.error)) ? null : detail.data && <>
+    {detail.isPending ? <LoadingState initial /> : detail.isError && (!detail.data || !retainSupportData(detail.error)) ? null : detail.data && <>
       <Card variant="outlined"><CardBody className="space-y-4 p-4"><h2 ref={heading} tabIndex={-1} className="platforma-focus-ring rounded-control break-words text-lg font-semibold">{kind === "channels" ? <ClinicValueView name="channel" value={detail.data.title} timezone={timezone} /> : detail.data.title} <span className="text-sm font-normal text-platforma-faint">#{record}</span></h2>
         <dl className="grid gap-3 sm:grid-cols-2">{fields.filter(isPrimary).map(renderField)}
         {detail.data.people.map(person => <div className="min-w-0" key={person.field}><dt className="text-xs text-platforma-faint">{t(`clinicCrm.field.${person.field}`)}</dt><dd className="mt-1 break-words text-sm">{person.name}{!person.active && ` · ${t("clinicCrm.inactive")}`}</dd></div>)}</dl>
@@ -127,7 +127,7 @@ function ClinicRecordChildren({ business, timezone, record, onAccessError }: { b
     <section role="tabpanel" id={`clinic-children-panel-${section}`} aria-labelledby={`clinic-children-tab-${section}`}>
       <div className="flex justify-end p-3"><Button variant="secondary" onClick={() => list.refetch()} isLoading={list.isFetching}>{t("common.refresh")}</Button></div>
       {list.isError && <SupportError error={list.error} retry={() => list.refetch()} />}
-      {list.isPending ? <LoadingState /> : list.isError && (!list.data || !retainSupportData(list.error)) ? null : list.data && <>
+      {list.isPending ? <LoadingState initial /> : list.isError && (!list.data || !retainSupportData(list.error)) ? null : list.data && <>
         {!list.data.results.length ? <EmptyState title={t("clinicCrm.empty")} /> : <ul className="divide-y divide-platforma-border">{list.data.results.map(item => <li className="space-y-2 p-4" key={item.id}>
           <div className="flex flex-wrap gap-2 text-xs text-platforma-faint"><span>{supportDate(item.created_at, language, timezone)}</span>{item.author && <span>{item.author}</span>}{["direction", "sender_type", "status"].map(name => item[name as keyof typeof item] ? <span key={name}><ClinicValueView name={name} value={item[name as "direction" | "sender_type" | "status"]} timezone={timezone} /></span> : null)}</div>
           {item.label && <p className="break-words text-sm font-medium">{item.label}</p>}{"value" in item && <p className="whitespace-pre-wrap break-words text-sm"><ClinicValueView name="value" value={item.value} timezone={timezone} /></p>}{item.text && <p className="whitespace-pre-wrap break-words text-sm">{item.text}</p>}

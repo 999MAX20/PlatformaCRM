@@ -1,6 +1,7 @@
-import { Suspense, useEffect, useState } from "react";
+import { isValidElement, Suspense, useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router";
 import { PermissionGate } from "../components/auth/PermissionGate";
+import { PageLoadingBoundary } from "../components/ui/PageLoadingBoundary";
 
 import { ForbiddenState, LoadingState } from "../components/ui/StateViews";
 import { clearSessionExpiredReturnTo, getSessionExpiredReturnTo, isSafeInternalReturnPath } from "../api/client";
@@ -55,9 +56,11 @@ export function PublicRoute({ children }: { children: React.ReactNode }) {
 }
 export function PageLoader({ children }: { children: React.ReactNode }) {
   return (
-    <Suspense fallback={<LoadingState scope="page" />}>
-      {children}
-    </Suspense>
+    <PageLoadingBoundary identity={isValidElement(children) ? children.type : undefined}>
+      <Suspense fallback={<LoadingState scope="page" />}>
+        {children}
+      </Suspense>
+    </PageLoadingBoundary>
   );
 }
 export function PermissionRoute({

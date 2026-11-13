@@ -3,6 +3,7 @@ import { useId, type ReactNode } from "react";
 import { Card } from "../../../components/ui/Card";
 import { Drawer } from "../../../components/ui/Overlay";
 import { ErrorState } from "../../../components/ui/StateViews";
+import { PageLoadingScope } from "../../../components/ui/PageLoadingBoundary";
 import { useI18n } from "../../../lib/i18n";
 
 export function SettingsSection({ id, active, title, actions, children }: { id: string; active: string; title: string; actions?: ReactNode; children: ReactNode; }) {
@@ -11,7 +12,7 @@ export function SettingsSection({ id, active, title, actions, children }: { id: 
       <h1 className="text-[22px] font-bold leading-[30px] text-platforma-text">{title}</h1>
       {actions}
     </header>
-    {children}
+    <PageLoadingScope active={active === id}>{children}</PageLoadingScope>
   </Card>;
 }
 

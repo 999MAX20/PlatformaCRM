@@ -11,6 +11,7 @@ import { Card } from "../../components/ui/Card";
 import { Select } from "../../components/ui/Select";
 import { Modal } from "../../components/ui/Modal";
 import { EmptyState, ForbiddenState, LoadingState } from "../../components/ui/StateViews";
+import { usePageLoading } from "../../components/ui/PageLoadingBoundary";
 import { useActiveBusiness } from "../../hooks/useBusiness";
 import { useI18n } from "../../lib/i18n";
 import { hasPermission } from "../../lib/permissions";
@@ -43,6 +44,7 @@ function WorkspacePage({ businessId, timezone }: { businessId: number; timezone:
   const workspace = useQuery({ queryKey: ["import-workspace", businessId, user?.id, id], queryFn: () => importWorkspaceApi.get(id!), enabled: !!id, refetchInterval: query => ["pending", "running"].includes(query.state.data?.operation?.status || "") ? 2000 : false });
   const history = useQuery({ queryKey: ["import-workspaces", businessId, user?.id, historyPage], queryFn: () => importWorkspaceApi.list(businessId, historyPage) });
   const data = !workspace.isError && workspace.data?.business === businessId ? workspace.data : undefined;
+  usePageLoading(workspace.isLoading || history.isLoading);
   const operationBusy = ["pending", "running"].includes(data?.operation?.status || "");
   const busy = requestBusy || operationBusy;
   const canRefresh = Boolean(workspace.error || history.error || (error && id && ["conflict", "temporary", "offline", "internal"].includes(normalizeAppError(error).category)));

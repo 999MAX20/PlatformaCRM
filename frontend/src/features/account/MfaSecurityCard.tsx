@@ -99,7 +99,7 @@ export function MfaSecurityCard() {
         <SecuritySettingRow icon={<ShieldCheck size={18} />} title={t("mfa.accountTitle")}
           value={mfa ? <span className={mfa.enabled ? "text-platforma-success" : "text-platforma-subtle"}>{mfa.enabled ? t("mfa.enabled") : mfa.required ? t("mfa.required") : t("mfa.notEnabled")}</span> : undefined}
           action={statusQuery.isLoading ? null : mfa ? <Button size="sm" variant="secondary" aria-label={t(mfa.enabled ? "mfa.accountEyebrow" : "mfa.setup")} isLoading={startMutation.isPending} onClick={() => mfa.enabled ? setManageOpen(value => !value) : startMutation.mutate()}>{t(mfa.enabled ? "account.securityManage" : "account.securityConnect")}</Button> : <Button size="sm" variant="secondary" onClick={() => void statusQuery.refetch()}>{t("common.retry")}</Button>} />
-        {statusQuery.isLoading ? <LoadingState /> : null}
+        {statusQuery.isLoading ? <LoadingState initial /> : null}
         {statusQuery.error || startMutation.error ? <div className="mt-2"><ErrorState error={statusQuery.error || startMutation.error} message={getApiErrorMessage(statusQuery.error || startMutation.error)} /></div> : null}
         {mfa?.enabled && manageOpen ? <div className="pb-3 pl-12">
           <div className="my-3 flex flex-wrap gap-x-4 gap-y-2 text-xs text-platforma-subtle"><span>{t("mfa.recoveryRemaining")}: {mfa.recovery_codes_remaining}</span></div>

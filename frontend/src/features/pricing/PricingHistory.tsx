@@ -64,7 +64,7 @@ export function PricingHistory({
           ]}
         />
       </div>
-      {changeLogsQuery.isLoading ? <LoadingState /> : null}
+      {changeLogsQuery.isLoading ? <LoadingState initial /> : null}
       <div className="mt-4 overflow-hidden rounded-2xl border border-platforma-border">
         {changeLogs.map((log) => (
           <article

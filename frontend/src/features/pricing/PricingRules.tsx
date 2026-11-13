@@ -145,7 +145,7 @@ export function PricingRules({
           {t("pricing.disableAutopilotSelected")}
         </label>
       </div>
-      {rulesQuery.isLoading ? <LoadingState /> : null}
+      {rulesQuery.isLoading ? <LoadingState initial /> : null}
       <div className="mt-4 grid gap-3">
         {rules.map((rule) => {
           const latest = latestRecommendations.get(String(rule.id));

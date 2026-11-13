@@ -10,6 +10,7 @@ import { useI18n } from "../../../lib/i18n";
 type Props = {
   data?: InboxContext;
   loading: boolean;
+  showLoadingIndicator?: boolean;
   error: unknown;
   retrying: boolean;
   menuItems: ActionMenuItem[];
@@ -20,7 +21,7 @@ type Props = {
   onLinkClient: () => void;
 };
 
-export function InboxCustomerContext({ data, loading, error, retrying, menuItems, inDrawer, onRetry, onClose, onNavigate, onLinkClient }: Props) {
+export function InboxCustomerContext({ data, loading, showLoadingIndicator = true, error, retrying, menuItems, inDrawer, onRetry, onClose, onNavigate, onLinkClient }: Props) {
   const { t, language } = useI18n();
   const client = data?.client.data;
   const appointments = data?.appointments;
@@ -52,7 +53,7 @@ export function InboxCustomerContext({ data, loading, error, retrying, menuItems
       <Button variant="icon" size="icon" onClick={onClose} aria-label={t("conversations.closeContext")}><X size={18} /></Button>
     </header>
     <div className="min-h-0 flex-1 overflow-y-auto px-4" aria-busy={loading}>
-      {loading ? <div className="py-5"><LoadingState /></div> : error ? <div className="py-5"><ErrorState error={error} message={t("conversations.contextLoadError")} action={<Button variant="secondary" size="sm" onClick={onRetry} isLoading={retrying}>{t("common.retry")}</Button>} /></div> : data ? <>
+      {loading ? (showLoadingIndicator ? <LoadingState /> : null) : error ? <div className="py-5"><ErrorState error={error} message={t("conversations.contextLoadError")} action={<Button variant="secondary" size="sm" onClick={onRetry} isLoading={retrying}>{t("common.retry")}</Button>} /></div> : data ? <>
         <section className="py-3" aria-label={t("common.client")}>
           {client ? <>
             <div className="flex items-start gap-3">

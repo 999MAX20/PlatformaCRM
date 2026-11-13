@@ -35,6 +35,7 @@ export function ConversationItem({
   return (
     <div
       role="button"
+      data-conversation-id={conversation.id}
       aria-current={active ? "true" : undefined}
       tabIndex={0}
       onClick={onClick}

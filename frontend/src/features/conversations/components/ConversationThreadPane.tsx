@@ -103,7 +103,7 @@ export function ConversationThreadPane({
       className="min-w-0"
       mobileDetailOpen={mobileThreadOpen}
     >
-      {!selected ? (
+      {!selected && messagesLoading ? <div className="grid flex-1 place-items-center"><LoadingState /></div> : !selected ? (
         <div className="grid flex-1 place-items-center p-8">
           <div className="relative text-center">
             <div className="absolute inset-x-0 bottom-full mb-4 flex justify-center text-brand-600">

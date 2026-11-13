@@ -33,7 +33,7 @@ export function OwnershipConfirmations() {
   return <section id="ownership" data-testid="account-ownership" className="scroll-mt-36 space-y-3 lg:scroll-mt-24" aria-label={t("ownership.title")}>
     {mutation.isPending && <TaskDraftGuard dirty={false} pending />}
     <div className="flex flex-wrap items-center justify-between gap-2"><h2 className="font-semibold">{t("ownership.title")}</h2><Button variant="secondary" disabled={mutation.isPending} isLoading={list.isFetching} onClick={() => { mutation.reset(); void list.refetch(); }}>{t("common.refresh")}</Button></div>
-    {list.isPending && <LoadingState />}
+    {list.isLoading && <LoadingState initial />}
     {list.error && <ErrorState error={list.error} action={<Button onClick={() => list.refetch()}>{t("common.retry")}</Button>} />}
     {mutation.error && <ErrorState error={mutation.error} />}
     {conflict && <p role="alert" className="text-sm text-platforma-warning">{t("ownership.conflict")}</p>}

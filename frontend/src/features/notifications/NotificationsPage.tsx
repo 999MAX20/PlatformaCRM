@@ -6,6 +6,7 @@ import { notificationsApi } from "../../api/notifications";
 import { usePageHeader } from "../../components/layout/PageHeaderContext";
 import { Button } from "../../components/ui/Button";
 import { EmptyState, ErrorState, ForbiddenState, LoadingState } from "../../components/ui/StateViews";
+import { usePageLoading } from "../../components/ui/PageLoadingBoundary";
 import { useActiveBusiness } from "../../hooks/useBusiness";
 import { formatDateTime } from "../../lib/format";
 import { useI18n } from "../../lib/i18n";
@@ -17,6 +18,7 @@ import { NotificationInspector, notificationText } from "./NotificationInspector
 
 export function NotificationsPage() {
   const { business, isLoading, error } = useActiveBusiness();
+  usePageLoading(isLoading);
   const { user } = useAuth();
   return business && user ? <PersonalNotificationPage key={`${business.id}:${user.id}`} business={business.id} />
     : isLoading ? <LoadingState /> : error ? <ErrorState error={error} /> : <ForbiddenState />;
@@ -38,6 +40,7 @@ function PersonalNotificationPage({ business }: { business: Id }) {
     queryFn: () => notificationsApi.personalPage(business, page), enabled: tab === "feed",
     refetchInterval: realtimeIntervals.notificationsMs, refetchOnWindowFocus: true, retry: false });
   const readAll = useMutation({ mutationFn: () => notificationsApi.markAllRead({ business, surface: "bell" }), onSuccess: () => invalidateNotificationReceipts(client) });
+  usePageLoading(summary.isLoading || feed.isLoading);
   const canManage = !summary.isError && summary.data?.can_manage_announcements;
   const managementVisible = tab === "announcements" && canManage;
   useEffect(() => { if (!canManage && tab === "announcements") setTab("feed"); }, [canManage, tab]);

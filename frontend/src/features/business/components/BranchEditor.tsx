@@ -7,6 +7,7 @@ import { resourcesApi } from "../../../api/resources";
 import { Button } from "../../../components/ui/Button";
 import { useActionConfirm } from "../../../components/actions/ActionConfirmProvider";
 import { ErrorState, LoadingState } from "../../../components/ui/StateViews";
+import { usePageLoading } from "../../../components/ui/PageLoadingBoundary";
 import { useI18n } from "../../../lib/i18n";
 import { BranchDetailsForm } from "../BranchesPage";
 import { BranchCatalogEditor } from "./BranchCatalogEditor";
@@ -37,6 +38,7 @@ export function BranchEditor({ branch, branches }: { branch: Branch; branches: B
     await Promise.all(["branches", "branch-configuration", "branch-catalog", "available-slots"].map(key => client.invalidateQueries({ queryKey: [key] })));
   } });
   const save = (operation: () => Promise<unknown>) => mutation.mutateAsync(operation);
+  usePageLoading((automatic || tab !== "details") && (query.isLoading || services.isLoading || resources.isLoading));
   const disabled = !branch.can_manage || !!branch.archived_at || mutation.isPending;
   const open = (section: string) => {
     if (branch.archived_at) { selectTab(section); return; }

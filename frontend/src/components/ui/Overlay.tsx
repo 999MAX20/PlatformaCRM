@@ -13,6 +13,7 @@ import {
 import { useBodyScrollLock } from "../../hooks/useBodyScrollLock";
 import { cn } from "../../lib/cn";
 import { useI18n } from "../../lib/i18n";
+import { usePageVisible } from "./PageLoadingBoundary";
 
 type OverlaySize = "sm" | "md" | "lg" | "xl";
 type DrawerSize = "detail" | "complex" | "custom";
@@ -238,10 +239,12 @@ export function Dialog({
 }) {
   const titleId = useId();
   const dialogRef = useRef<HTMLElement>(null);
-  useBodyScrollLock(open);
-  useDialogFocus(open, onClose, dialogRef, focusReturnId);
+  const visible = usePageVisible();
+  const shown = open && visible;
+  useBodyScrollLock(shown);
+  useDialogFocus(shown, onClose, dialogRef, focusReturnId);
 
-  if (!open) return null;
+  if (!shown) return null;
 
   return createPortal(
     <div
@@ -308,10 +311,12 @@ export function Drawer({
   testId?: string;
 }) {
   const drawerRef = useRef<HTMLElement>(null);
-  useBodyScrollLock(open);
-  useDialogFocus(open, onClose, drawerRef);
+  const visible = usePageVisible();
+  const shown = open && visible;
+  useBodyScrollLock(shown);
+  useDialogFocus(shown, onClose, drawerRef);
 
-  if (!open) return null;
+  if (!shown) return null;
 
   return createPortal(
     <div

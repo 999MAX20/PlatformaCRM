@@ -19,7 +19,7 @@ type Props = { business: string; onDraft: (value: { dirty: boolean; pending: boo
 export function BusinessOwnershipPanel(props: Props) {
   const { t } = useI18n();
   const query = useQuery({ queryKey: ["platform-ownership", props.business], queryFn: () => ownershipApi.get(props.business), retry: false, gcTime: 0, refetchOnWindowFocus: false });
-  if (query.isPending) return <LoadingState />;
+  if (query.isPending) return <LoadingState initial />;
   if (query.isError || !query.data) return <PlatformLoadError error={query.error} message={t("platform.merchantDetail.error")} onRetry={() => query.refetch()} />;
   return <OwnershipEditor {...props} data={query.data} reload={() => query.refetch()} />;
 }

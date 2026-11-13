@@ -6,5 +6,5 @@ export function SettingsQueryState({ queries }: { queries: Array<{ isLoading: bo
   const { t } = useI18n();
   const error = queries.find((query) => query.error)?.error;
   if (error) return <ErrorState error={error} message={getApiErrorMessage(error)} action={<Button type="button" variant="secondary" onClick={() => { void Promise.all(queries.map((query) => query.refetch())); }}>{t("common.retry")}</Button>} />;
-  return queries.some((query) => query.isLoading) ? <LoadingState /> : null;
+  return queries.some((query) => query.isLoading) ? <LoadingState initial /> : null;
 }

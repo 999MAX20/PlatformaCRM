@@ -192,7 +192,7 @@ export function AIAgentsWorkspace({
             {activeSection === "channels" && !canViewChannels ? (
               <ErrorState message={t("aiAgents.channelsPermissionDenied")} />
             ) : sectionLoading ? (
-              <LoadingState />
+              <LoadingState initial />
             ) : sectionError ? (
               <ErrorState
                 error={sectionError} message={getApiErrorMessage(sectionError)}

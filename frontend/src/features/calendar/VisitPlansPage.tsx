@@ -15,6 +15,7 @@ import { Modal } from "../../components/ui/Modal";
 import { Select } from "../../components/ui/Select";
 import { Textarea } from "../../components/ui/Textarea";
 import { EmptyState, ErrorState, LoadingState } from "../../components/ui/StateViews";
+import { usePageLoading } from "../../components/ui/PageLoadingBoundary";
 import { useActiveBusiness } from "../../hooks/useBusiness";
 import { refreshAppointmentQueries } from "../../lib/appointmentCache";
 import { formatDateTime } from "../../lib/format";
@@ -56,6 +57,7 @@ export function VisitPlansPage() {
   const list = useQuery({ queryKey: ["visit-plans", "list", business?.id, user?.id, clientId, page, archived], queryFn: () => visitPlansApi.list({ business: business!.id, client: clientId, page, archived }), enabled: !!business && !id });
   const detail = useQuery({ queryKey: ["visit-plans", "detail", business?.id, user?.id, id], queryFn: () => visitPlansApi.get(business!.id, id!), enabled: !!business && !!id });
   const plan = detail.data;
+  usePageLoading(id ? detail.isLoading : list.isLoading);
   const client = useQuery({ queryKey: ["clients", "plan", business?.id, user?.id, plan?.client], queryFn: () => clientsApi.get(plan!.client), enabled: !!plan && dialog?.kind === "schedule" });
   const update = (key: string, value: string) => setParams(current => {
     const next = new URLSearchParams(current);

@@ -158,7 +158,7 @@ export function PricingCatalog({
           ]}
         />
       </div>
-      {catalogQuery.isLoading ? <LoadingState /> : null}
+      {catalogQuery.isLoading ? <LoadingState initial /> : null}
       <div className="mt-4 grid gap-3">
         {catalogItems.map((item) => (
           <article

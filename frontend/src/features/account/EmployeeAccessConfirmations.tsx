@@ -26,7 +26,7 @@ export function EmployeeAccessConfirmations() {
   return <section className="space-y-3" data-testid="employee-access-confirmations" aria-label={t("employeeAccess.title")}>
     <h2 className="font-semibold">{t("employeeAccess.title")}</h2>
     {mutation.isPending && <TaskDraftGuard dirty={false} pending />}
-    {query.isPending && <LoadingState />}
+    {query.isLoading && <LoadingState initial />}
     {query.error && <ErrorState error={query.error} action={<Button onClick={() => query.refetch()}>{t("common.retry")}</Button>} />}
     {mutation.error && <ErrorState error={mutation.error} action={<Button disabled={mutation.isPending} onClick={() => { mutation.reset(); void query.refetch(); }}>{t("common.refresh")}</Button>} />}
     {!query.isError && query.data?.map(item => <EmployeeAccessSummary key={item.id} item={item}>

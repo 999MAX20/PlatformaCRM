@@ -8,6 +8,7 @@ import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
 import { Select } from "../../components/ui/Select";
 import { ErrorState, LoadingState } from "../../components/ui/StateViews";
+import { usePageLoading } from "../../components/ui/PageLoadingBoundary";
 import { usePageHeader } from "../../components/layout/PageHeaderContext";
 import { useActiveBusiness } from "../../hooks/useBusiness";
 import { useI18n } from "../../lib/i18n";
@@ -29,6 +30,7 @@ export function BranchesPage() {
   const client = useQueryClient();
   const query = useQuery({ queryKey: ["branches", business?.id], queryFn: () => branchesApi.listAll({ business: business!.id }), enabled: !!business });
   const branches = query.data || [];
+  usePageLoading(query.isLoading);
   const archived = params.get("archived") === "1";
   const visibleBranches = branches.filter(branch => Boolean(branch.archived_at) === archived);
   const selectionKey = archived ? "archived_branch" : "branch";

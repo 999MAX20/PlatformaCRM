@@ -109,7 +109,8 @@ export function AppLayout() {
   const isAgentWorkspace = /^\/app\/ai-agents(?:\/|$)/.test(location.pathname);
   const usesEdgeToEdgeCrm = /^\/app\/(leads|deals)\/?$/.test(location.pathname) || isAgentWorkspace;
   const aiAgentWorkspaceKey = location.pathname.match(/^\/app\/ai-agents(?:\/[^/]+)?/)?.[0];
-  const workspaceAnimationKey = aiAgentWorkspaceKey || location.pathname;
+  const inboxWorkspaceKey = /^\/(?:app\/)?(?:conversations|inbox)(?:\/|$)/.test(location.pathname) ? "inbox" : undefined;
+  const workspaceAnimationKey = inboxWorkspaceKey || aiAgentWorkspaceKey || location.pathname;
 
   return (
     <div className="min-h-screen bg-surface text-ink [--app-header-height:57px] lg:[--app-header-height:49px] [--account-content-width:min(960px,calc(100vw_-_2rem))] [--global-search-width:calc(var(--account-content-width)*0.5)] sm:[--account-content-width:min(960px,calc(100vw_-_3rem))] lg:[--account-content-width:min(960px,calc(100vw_-_7rem))]">

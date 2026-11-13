@@ -28,7 +28,7 @@ export function MerchantBilling({ business }: { business: string }) {
   } });
   const dirty = Boolean(offer || buyer.name || buyer.email || buyer.tax_id);
   const changeBuyer = (values: Partial<BillingBuyer>) => { setBuyer(current => ({ ...current, ...values })); requestId.current = crypto.randomUUID(); };
-  if (query.isLoading) return <LoadingState />;
+  if (query.isLoading) return <LoadingState initial />;
   if (query.isError || !query.data) return <ErrorState error={query.error} action={<Button onClick={() => void query.refetch()}>{t("common.refresh")}</Button>} />;
   const data = query.data; const pending = mutation.isPending || query.isFetching;
   return <div className="space-y-4 p-4" data-testid="merchant-billing">

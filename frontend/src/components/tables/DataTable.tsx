@@ -4,6 +4,7 @@ import { Fragment } from "react";
 import { CRM_TABLE_ROW_HEIGHT } from "../crm";
 import { surfaceClass } from "../ui/Card";
 import { EmptyState, SkeletonBlock } from "../ui/StateViews";
+import { usePageLoading } from "../ui/PageLoadingBoundary";
 import { useI18n } from "../../lib/i18n";
 import { cn } from "../../lib/cn";
 
@@ -67,6 +68,7 @@ export function DataTable<T>({
   contentClassName?: string;
 }) {
   const { t } = useI18n();
+  usePageLoading(isLoading);
   const resolvedEmptyDescription = emptyDescription || t("table.emptyDescription");
   if (isLoading) {
     return (

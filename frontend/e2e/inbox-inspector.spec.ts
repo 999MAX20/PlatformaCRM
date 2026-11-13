@@ -99,9 +99,9 @@ test("real client, appointment, lead and deal links preserve the unsent reply", 
   }
   panel = await openContext(page);
   await panel.getByRole("button", { name: ru["conversations.bookClient"], exact: true }).click();
-  const booking = page.getByRole("dialog", { name: ru["calendar.newBooking"], exact: true });
+  const booking = page.getByRole("dialog", { name: ru["appointments.create"], exact: true });
   await expect(booking).toBeVisible();
-  await expect(booking.getByRole("combobox", { name: /Inspector customer/ })).toBeVisible();
+  await expect(booking.getByRole("textbox", { name: ru["common.client"], exact: true })).toHaveValue("Inspector customer");
   await page.goBack();
   await expect(composer).toHaveValue("Unsent reply  ");
   for (const [locale, copy] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
@@ -151,7 +151,8 @@ test("direct entry marks read once and explicit unread survives context refresh"
   await page.getByRole("menuitem", { name: ru["conversations.markUnreadAction"], exact: true }).click();
   await expect.poll(async () => (await session.read(`inbox/conversations/${conversation.id}`)).unread_count).toBeGreaterThan(0);
   await page.getByRole("button", { name: ru["conversations.dialogActions"], exact: true }).click();
-  await page.getByRole("menuitem", { name: `${ru["conversations.priority"]}: ${ru["status.high"]}`, exact: true }).click();
+  await page.getByRole("menuitem", { name: ru["conversations.priority"], exact: true }).click();
+  await page.getByRole("dialog", { name: ru["conversations.priority"], exact: true }).getByRole("button", { name: ru["taskWorkspace.priority.high"], exact: true }).click();
   await expect.poll(async () => (await session.read(`inbox/conversations/${conversation.id}`)).priority).toBe("high");
   expect((await session.read(`inbox/conversations/${conversation.id}`)).unread_count).toBeGreaterThan(0);
   expect(reads).toBe(1);
@@ -247,17 +248,18 @@ test("AI inserts an editable draft and delivery retry uses the failed message an
 });
 
 test("booking shortcut preselects the client and link search recovers without losing the draft", async ({ page }) => {
+  const customerName = `Booking shortcut customer ${Date.now()}`;
   const session = await crmSession(page);
   const conversation = (await session.list<InboxConversation>("inbox/conversations"))[0];
-  const customer = await session.create<{ id: number }>("clients", { full_name: "Booking shortcut customer" });
+  const customer = await session.create<{ id: number }>("clients", { full_name: customerName });
   const initialLink = await session.action(`inbox/conversations/${conversation.id}/link-client`, { client_id: customer.id });
   if (initialLink.requires_confirmation) await session.action(`inbox/conversations/${conversation.id}/link-client`, { client_id: customer.id, confirmation_token: initialLink.confirmation_token });
   await page.goto(`/app/conversations/${conversation.id}`);
   await page.getByTestId("inbox-action-composer").fill("Book after confirming");
   let panel = await openContext(page);
   await panel.getByRole("button", { name: ru["conversations.bookClient"], exact: true }).click();
-  await expect(page).toHaveURL(/\/app\/calendar/);
-  await expect(page.getByRole("dialog").getByRole("combobox", { name: /^Клиент / })).toContainText("Booking shortcut customer");
+  await expect(page).toHaveURL(/\/app\/appointments\?create=1/);
+  await expect(page.getByRole("dialog").getByRole("textbox", { name: ru["common.client"], exact: true })).toHaveValue(customerName);
   await page.goBack();
   await expect(page.getByTestId("inbox-action-composer")).toHaveValue("Book after confirming");
   panel = await openContext(page);
@@ -275,9 +277,9 @@ test("booking shortcut preselects the client and link search recovers without lo
   await expect(dialog.getByText(ru["conversations.noLinkCandidates"], { exact: true })).toHaveCount(0);
   fail = false;
   await dialog.getByRole("button", { name: ru["common.retry"], exact: true }).click();
-  await dialog.getByPlaceholder(ru["conversations.linkSearchPlaceholder"]).fill("Booking shortcut customer");
-  await expect(dialog.getByRole("button", { name: "Booking shortcut customer", exact: true })).toBeVisible();
-  await dialog.getByRole("button", { name: "Booking shortcut customer", exact: true }).click();
+  await dialog.getByPlaceholder(ru["conversations.linkSearchPlaceholder"]).fill(customerName);
+  await expect(dialog.getByRole("button", { name: customerName, exact: true })).toBeVisible();
+  await dialog.getByRole("button", { name: customerName, exact: true }).click();
   await expect(dialog).not.toBeVisible();
 });
 
@@ -313,7 +315,12 @@ test("CRM menu opens preview and requires granular confirmation before execution
   await preview.getByRole("button", { name: ru["conversations.confirmPipelineTitle"], exact: true }).click();
   const confirmation = page.getByRole("dialog", { name: ru["conversations.confirmPipelineTitle"], exact: true });
   expect(executions).toHaveLength(0);
-  await confirmation.getByRole("checkbox", { name: ru["conversations.confirmPipeline.create_deal"] }).uncheck();
+  await expect(confirmation.getByRole("checkbox", { name: ru["conversations.confirmPipeline.create_deal"] })).toHaveCount(0);
+  const taskAction = confirmation.getByRole("checkbox", { name: ru["conversations.confirmPipeline.create_task"] });
+  await taskAction.uncheck();
+  await expect(confirmation.getByRole("button", { name: ru["conversations.confirmPipelineSubmit"], exact: true })).toBeDisabled();
+  expect(executions).toHaveLength(0);
+  await taskAction.check();
   await confirmation.getByRole("button", { name: ru["conversations.confirmPipelineSubmit"], exact: true }).click();
   await expect.poll(() => executions.length).toBe(1);
   expect(executions[0]).toMatchObject({ confirmed_actions: ["create_task"], create_lead: false, create_deal: false, create_task: true, preview_id: previewId, apply_ai_decisions: false });
@@ -370,10 +377,11 @@ test("switching conversations preserves each draft and a late send cannot clear 
 });
 
 test("unlinked inspector offers one client action and links a scoped existing customer", async ({ page }) => {
+  const customerName = `Selected existing client ${Date.now()}`;
   const session = await crmSession(page);
   const conversation = (await session.list<InboxConversation>("inbox/conversations"))[0];
   const context: InboxContext = await session.read(`inbox/conversations/${conversation.id}/context`);
-  const client = await session.create<{ id: number }>("clients", { full_name: "Selected existing client" });
+  const client = await session.create<{ id: number }>("clients", { full_name: customerName });
   let linked = false;
   await page.route(`**/api/inbox/conversations/${conversation.id}/context/`, route => linked ? route.continue() : route.fulfill({ json: {
     ...context, client: { state: "empty", data: null }, lead: { state: "empty", data: null }, deal: { state: "empty", data: null }, task: null,
@@ -384,14 +392,18 @@ test("unlinked inspector offers one client action and links a scoped existing cu
   const panel = await openContext(page);
   await expect(panel.getByRole("button", { name: ru["conversations.linkClientAction"], exact: true })).toHaveCount(1);
   await expect(panel.getByRole("button", { name: ru["conversations.createClient"], exact: true })).toHaveCount(0);
-  await expect(panel.getByRole("button", { name: ru["conversations.addLink"], exact: true })).toBeVisible();
+  await expect(panel.getByRole("button", { name: ru["conversations.addLink"], exact: true })).toHaveCount(0);
   await expect(panel.locator("a")).toHaveCount(0);
   await panel.getByRole("button", { name: ru["conversations.linkClientAction"], exact: true }).click();
   const dialog = page.getByRole("dialog", { name: ru["conversations.linkClientTitle"], exact: true });
   await expect(dialog.getByRole("button", { name: ru["conversations.createClient"], exact: true })).toBeVisible();
-  await dialog.getByPlaceholder(ru["conversations.linkSearchPlaceholder"]).fill("Selected existing client");
+  await dialog.getByPlaceholder(ru["conversations.linkSearchPlaceholder"]).fill(customerName);
   linked = true;
-  await dialog.getByRole("button", { name: "Selected existing client", exact: true }).click();
+  const linkResponse = page.waitForResponse(response => response.request().method() === "POST" && response.url().endsWith(`/inbox/conversations/${conversation.id}/link-client/`));
+  await dialog.getByRole("button", { name: customerName, exact: true }).click();
+  if ((await (await linkResponse).json()).requires_confirmation) {
+    await page.getByRole("button", { name: ru["conversations.clientReplacement.confirm"], exact: true }).click();
+  }
   await expect(dialog).not.toBeVisible();
   await expect(panel.locator(`a[href="/app/clients/${client.id}"]`)).toBeVisible();
   expect((await session.read(`inbox/conversations/${conversation.id}/context`)).client.data.id).toBe(client.id);

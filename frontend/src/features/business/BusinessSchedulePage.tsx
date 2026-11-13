@@ -11,6 +11,7 @@ import { Input } from "../../components/ui/Input";
 import { Modal } from "../../components/ui/Modal";
 import { Select } from "../../components/ui/Select";
 import { ErrorState, LoadingState } from "../../components/ui/StateViews";
+import { usePageLoading } from "../../components/ui/PageLoadingBoundary";
 import { Tabs } from "../../components/ui/Tabs";
 import { useActiveBusiness } from "../../hooks/useBusiness";
 import { cn } from "../../lib/cn";
@@ -34,6 +35,7 @@ export function BusinessSchedulePage({ embedded = false }: { embedded?: boolean 
   const branches = useQuery({ queryKey: ["branches", business?.id], queryFn: () => branchesApi.listAll({ business: business!.id }), enabled: !!business });
   useEffect(() => { setPageHeader({ title: t("nav.business") }); return () => setPageHeader(null); }, [setPageHeader, t]);
   const available = (branches.data || []).filter(branch => !branch.archived_at && (branch.can_work || branch.can_manage));
+  usePageLoading(branches.isLoading);
   const selected = available.find(branch => String(branch.id) === params.get("branch")) || available[0];
   return <div className="min-w-0 space-y-4">
     {!embedded && <BusinessWorkspaceNav />}
@@ -74,7 +76,7 @@ function ScheduleWorkspace({ branch, branches, timeZone, embedded }: { branch: B
   const view = ["opening", "physical"].includes(params.get("view") || "") ? params.get("view")! : "staff";
   const setDate = (value: string) => setParams(previous => { const next = new URLSearchParams(previous); next.set("date", value); return next; });
   const error = config.error || resources.error || (branch.uses_business_defaults && (hours.error || exceptions.error));
-  if (config.isPending || resources.isPending || (branch.uses_business_defaults && (hours.isPending || exceptions.isPending))) return <LoadingState />;
+  if (config.isPending || resources.isPending || (branch.uses_business_defaults && (hours.isPending || exceptions.isPending))) return <LoadingState initial />;
   if (error) return <ErrorState error={error} action={<Button onClick={() => void Promise.all([config.refetch(), resources.refetch(), ...(branch.uses_business_defaults ? [hours.refetch(), exceptions.refetch()] : [])])}>{t("common.retry")}</Button>} />;
   if (!config.data) return null;
   const targets: ScheduleTarget[] = view === "opening" ? [{ id: null, name: branch.name, kind: "opening", active: branch.is_active }] : (resources.data || [])

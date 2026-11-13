@@ -25,6 +25,7 @@ import { Input } from "../../components/ui/Input";
 import { Select } from "../../components/ui/Select";
 import { Textarea } from "../../components/ui/Textarea";
 import { ErrorState, LoadingState } from "../../components/ui/StateViews";
+import { usePageLoading } from "../../components/ui/PageLoadingBoundary";
 import { PlatformMetric, PlatformRecordedSignals, PlatformServiceBadge, platformDate } from "./PlatformData";
 import { useI18n } from "../../lib/i18n";
 import { incidentPath } from "../support/SupportIncidents";
@@ -48,6 +49,7 @@ function PlatformMerchantContent({ id }: { id: string }) {
   const [readDenied, setReadDenied] = useState<unknown>(null);
   const history = useQuery({ queryKey: ["platform-support-history", id, historyPage], queryFn: () => platformApi.supportActions(id, historyPage), enabled: Boolean(id) && section === "access", gcTime: 0 });
   const queryClient = useQueryClient();
+  usePageLoading(history.isLoading);
   const [note, setNote] = useState("");
   const [detailsDraft, setDetailsDraft] = useState({ dirty: false, pending: false });
   const [mfaCode, setMfaCode] = useState("");

@@ -5,6 +5,7 @@ import { aiApi } from "../../api/ai";
 import { analyticsApi } from "../../api/analytics";
 import { workQueuesQuery } from "./dashboardQueries";
 import { ErrorState, PageSkeleton } from "../../components/ui/StateViews";
+import { usePageLoading } from "../../components/ui/PageLoadingBoundary";
 import { useActiveBusiness } from "../../hooks/useBusiness";
 import { useI18n } from "../../lib/i18n";
 import { hasPermission } from "../../lib/permissions";
@@ -34,6 +35,7 @@ export function DashboardPage() {
     enabled: Boolean(business && isOwnerView && canViewAiAnalyst),
   });
 
+  usePageLoading(businessLoading || workQueues.isLoading || metrics.isLoading);
   if (businessLoading) return <PageSkeleton />;
   if (!business) return <ErrorState message={t("dashboard.noBusiness")} />;
   return <div className="space-y-4 pb-8" data-testid="dashboard-workspace-ready">

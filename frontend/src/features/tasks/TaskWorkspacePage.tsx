@@ -14,7 +14,7 @@ export function TaskWorkspacePage() {
   const { t } = useI18n();
   const { setPageHeader } = usePageHeader();
   useEffect(() => { setPageHeader({ title: t("tasks.title") }); return () => setPageHeader(null); }, [setPageHeader, t]);
-  if (!business) return isLoading ? <LoadingState /> : error ? <ErrorState error={error} /> : <ForbiddenState />;
+  if (!business) return isLoading ? <LoadingState scope="page" /> : error ? <ErrorState error={error} /> : <ForbiddenState />;
   if (!id || !/^\d+$/.test(id)) return <ErrorState message={t("actions.errorUnavailable")} />;
   const requestedReturn = location.state?.returnTo;
   const returnTo = typeof requestedReturn === "string" && /^\/app\/tasks(?:\?|$)/.test(requestedReturn) ? requestedReturn : "/app/tasks";

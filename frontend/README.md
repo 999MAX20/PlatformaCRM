@@ -18,3 +18,10 @@ RU/EN используют Manrope, KK — Noto Sans. API и скрытая кн
 [Действующий UI-контракт](../docs/current/frontend.md),
 [карта возможностей](../docs/pre-production/capabilities.md),
 [Storybook и безопасный visual workflow](../docs/testing/ui-testing-toolkit.md).
+
+Начальная загрузка маршрута объединяется в `PageLoadingBoundary`. Обязательные
+видимые данные подключаются через `usePageLoading(isLoading)` или
+`LoadingState initial`; `scope="page"` подключается автоматически. Обычный
+`LoadingState` предназначен для локального ожидания. Не регистрировать polling,
+скрытые формы или необязательные AI-запросы. Правила и проверки —
+[UI-контракт](../docs/current/frontend.md#начальная-загрузка-страницы--13112026).

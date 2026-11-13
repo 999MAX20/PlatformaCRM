@@ -21,6 +21,7 @@ import { Button } from "../../components/ui/Button";
 import { CrmEntityDrawer } from "../../components/crm/CrmEntityDrawer";
 
 import { ErrorState, LoadingState } from "../../components/ui/StateViews";
+import { PageLoadPending } from "../../components/ui/PageLoadingBoundary";
 import { dateInTimeZone, todayInTimeZone } from "../../lib/format";
 import { useI18n } from "../../lib/i18n";
 import { hasPermission } from "../../lib/permissions";
@@ -527,7 +528,7 @@ export function CalendarPage() {
   return (
     <>
       {toolbar}
-      {isCalendarDataLoading && <LoadingState />}
+      <PageLoadPending pending={isCalendarDataLoading} />
       <section
         data-testid={
           isCalendarDataLoading ? undefined : "calendar-workspace-ready"

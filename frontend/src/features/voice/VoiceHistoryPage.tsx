@@ -86,7 +86,7 @@ export default function VoiceHistoryPage() {
     {invalidDates && <p role="alert" className="text-sm text-platforma-danger">{copy.dates}</p>}
     <div className="grid min-w-0 items-start gap-5 lg:grid-cols-[minmax(260px,360px)_minmax(0,1fr)]">
       <nav aria-label={t("voice.requests")} className={`min-w-0 space-y-3 ${selected ? "hidden lg:block" : ""}`}>
-        {list.isLoading && <LoadingState />}
+        {list.isLoading && <LoadingState initial />}
         {searching && <p role="status" className="text-sm text-platforma-subtle">{copy.loading}</p>}
         {list.error && <ErrorState error={list.error} action={<Button onClick={() => list.refetch()}>{t("common.retry")}</Button>} />}
         {!list.isLoading && !searching && !list.isError && !conversations.length && <EmptyState title={filtered ? copy.empty : t("voice.historyEmpty")} />}
@@ -111,7 +111,7 @@ export default function VoiceHistoryPage() {
       <section className="min-w-0 space-y-4" aria-label={t("voice.results")}>
         {selected && <Link to={selection()} className="platforma-focus-ring inline-flex min-h-11 items-center text-sm underline lg:hidden">{t("voice.requests")}</Link>}
         {!selected ? <p className="py-3 text-sm text-platforma-subtle">{t("voice.selectRequest")}</p> : <>
-          {detail.isLoading && <LoadingState />}
+          {detail.isLoading && <LoadingState initial />}
           {detail.error && <ErrorState error={detail.error} action={<Button onClick={() => detail.refetch()}>{t("common.retry")}</Button>} />}
           {detail.hasNextPage && <Button variant="secondary" disabled={detail.isFetchingNextPage} onClick={() => detail.fetchNextPage()}>{t("voice.earlierMessages")}</Button>}
           {turns.map(turn => <article key={turn.id} className="space-y-4 rounded-card border border-platforma-border bg-surface-card p-4 sm:p-5">
