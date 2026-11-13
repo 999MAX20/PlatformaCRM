@@ -20,10 +20,10 @@ export function CustomerAgentActivity({ bot }: { bot: Bot }) {
     {summary.isLoading ? <LoadingState /> : summary.error ? <ErrorState error={summary.error}
       action={<Button variant="secondary" onClick={() => void summary.refetch()}>{t("common.retry")}</Button>} />
       : summary.data && <>
-        <dl className="flex flex-wrap gap-x-6 gap-y-3">
-          {(["total", "unread", "handoff_required"] as const).map(key => <div key={key}>
+        <dl className="grid grid-cols-1 gap-x-6 gap-y-4 text-center sm:grid-cols-3">
+          {(["total", "unread", "handoff_required"] as const).map(key => <div key={key} className="min-w-0">
             <dt className="text-sm text-platforma-subtle">{t(`aiAgents.activity.${key}`)}</dt>
-            <dd><Link className="platforma-focus-ring text-lg font-semibold underline" to={`/app/conversations?bot=${bot.id}&preset=all${key === "total" ? "" : `&status=open&${key}=true`}`}
+            <dd><Link className="platforma-focus-ring inline-flex min-h-11 min-w-11 items-center justify-center text-lg font-semibold underline" to={`/app/conversations?bot=${bot.id}&preset=all${key === "total" ? "" : `&status=open&${key}=true`}`}
               aria-label={`${t(`aiAgents.activity.${key}`)}: ${summary.data[key]}`}>{summary.data[key]}</Link></dd>
           </div>)}
         </dl>

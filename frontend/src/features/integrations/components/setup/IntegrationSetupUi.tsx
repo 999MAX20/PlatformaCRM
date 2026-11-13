@@ -16,13 +16,11 @@ const providerLogos = new Set(
 
 export function LogoMark({ logo, label, compact = false }: { logo?: string; label: string; compact?: boolean }) {
   const containerClassName = compact ? "h-9 w-9 rounded-control" : "h-11 w-11 rounded-control";
-  const imageClassName = compact ? "h-6 w-6" : "h-7 w-7";
 
   if (logo && providerLogos.has(logo)) {
     return (
-      <div className={cn("grid shrink-0 place-items-center overflow-hidden border border-platforma-border bg-surface-card shadow-xs", containerClassName)}>
-        <img src={logo} alt="" className={cn("object-contain", imageClassName)} />
-      </div>
+      <img src={logo} alt="" width={compact ? 36 : 44} height={compact ? 36 : 44}
+        className={cn("shrink-0 object-contain", compact ? "h-9 w-9" : "h-11 w-11")} />
     );
   }
   return (

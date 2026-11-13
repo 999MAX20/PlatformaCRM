@@ -425,6 +425,11 @@ export const aiAgents: Record<string, string> = {
   "aiAgents.launchControlTitle": "Launch agent",
   "aiAgents.launchControlText":
     "Enable the agent after checking profile, knowledge, channel and a test dialog.",
+  "aiAgents.preparation.title": "Prepare your agent for work",
+  "aiAgents.preparation.requiredSteps": "Fill in the profile, add knowledge and connect a channel. All three steps are required before launching the agent.",
+  "aiAgents.preparation.allComplete": "All required preparation steps are complete.",
+  "aiAgents.preparation.complete": "Completed",
+  "aiAgents.preparation.required": "Required step",
   "aiAgents.checklist.fillProfile": "Fill in profile",
   "aiAgents.checklist.addKnowledge": "Add knowledge",
   "aiAgents.checklist.connectChannel": "Connect a channel",

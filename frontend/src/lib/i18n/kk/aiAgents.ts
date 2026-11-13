@@ -424,6 +424,11 @@ export const aiAgents: Record<string, string> = {
   "aiAgents.launchControlTitle": "Агентті іске қосу",
   "aiAgents.launchControlText":
     "Профильді, білімді, арнаны және тест диалогын тексергеннен кейін агентті қосыңыз.",
+  "aiAgents.preparation.title": "Агентті жұмысқа дайындаңыз",
+  "aiAgents.preparation.requiredSteps": "Профильді толтырыңыз, білім қосыңыз және арнаны қосыңыз. Агентті іске қосу алдында үш қадамның бәрін орындау қажет.",
+  "aiAgents.preparation.allComplete": "Дайындықтың барлық міндетті қадамдары орындалды.",
+  "aiAgents.preparation.complete": "Орындалды",
+  "aiAgents.preparation.required": "Міндетті қадам",
   "aiAgents.checklist.fillProfile": "Профильді толтыру",
   "aiAgents.checklist.addKnowledge": "Білім қосу",
   "aiAgents.checklist.connectChannel": "Арнаны қосу",

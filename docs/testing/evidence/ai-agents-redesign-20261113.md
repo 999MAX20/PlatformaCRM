@@ -283,3 +283,56 @@ Commands, hashes, attempts and publication receipt:
 `output/ai-agents-redesign-20261113/CHECKPOINT.md`; scripts/logs:
 `output/ai-agents-overview-20261113/`; screenshots:
 `output/playwright/ai-agents-overview-20261113/`.
+
+## Owner refinement: preparation CTA, centered metrics and full-size logos
+
+Base `3baf814f`, canonical checkout/current branch; unrelated WIP preserved.
+Owner explicitly requested stronger completed/required states, an explanation
+above preparation, centered conversation metrics kept on the overview, and logos
+filling their icon area across channels and connections. This supersedes only the
+previous preparation presentation; navigation/readiness/metrics behavior is retained.
+
+Completed cards use the existing success surface, check mark and explicit Completed
+label. Required cards have an explicit Required step label and a solid action area;
+the whole card remains one native link. The requested intro explains that all three
+steps precede launch. Completion copy acknowledges preparation, not activation or
+live-provider readiness. RU/KK/EN use the same meaning and server readiness inputs.
+Metrics use three centered columns and a centered phone stack; API counts, empty/
+loading/error handling, retry and exact Inbox URL filters remain unchanged.
+
+Shared LogoMark now renders the original image at the full 36/44 px icon size,
+without an extra frame, shadow or padding. Object-contain preserves asset proportions;
+explicit dimensions reserve space. Existing initials are retained for providers
+without an image. Callers reviewed: overview, channel list, messenger setup header
+and integrations ProviderCard. No new assets, dependencies or provider operations.
+
+Local acceptance PASS: 4 affected desktop/mobile overview-navigation and atomic-save
+regressions; 64 browser visual/state/keyboard checks; 31 shared-consumer/metrics
+checks. Overview RU/KK/EN320/768/1440 and390px at200% text captured; mixed and complete
+states visually inspected. Nine scoped axe scans report zero violations. Full-size
+WhatsApp/Telegram/Instagram logos were checked in list and setup at320/1440;
+1C in the reachable integrations catalog at both sizes. Representative captures
+visually inspected. All three setup windows close with Escape and return focus.
+Metric loading/failure never display invented zeros, retry restores real data,
+and all three nonempty metric links retain their filters. No failed acceptance run.
+
+Final build/types/i18n7313/app/widget and bundle PASS. Existing RU/KK chunk warnings
+remain. The disposable project runtime and synthetic fixtures were used; mixed
+readiness is real fixture data, all-complete readiness and metric503 are response
+injections. No working DB, live provider, deployment or full-release gate in scope.
+
+Anti Slop during delivery: purpose/copy PASS (owner-requested explanation, explicit
+real states/actions, no activation promise); geometry/responsive PASS (centered
+metrics, reflow, full icon bounds); accessibility PASS (native links, visible focus,
+text+icon states,44px metric/CTA targets, scoped contrast/axe and200%); craftsmanship
+PASS (existing tokens/fonts,1/1/1 dials, required actions are the focal point,
+unchanged brand assets and source proportions). Theme/marketing/media/performance
+field measurements N/A. React/frontend review PASS: simple derived state, no new
+requests/effects/dependencies; existing API/permissions and save/navigation retained.
+
+Frontend contract and CRM-agent passport updated. README, roadmap/D01 and AI/access/
+CRM/integrations/operations contracts need no change: no domain, policy, endpoint,
+provider setup behavior or environment changed. No scoped code/evidence/environment/
+owner-decision remainder. Logs/scripts: `output/ai-agents-cta-20261114/`; screenshots:
+`output/playwright/ai-agents-cta-20261114/`. Exact commands, hashes, publication/CI
+and cleanup: `output/ai-agents-redesign-20261113/CHECKPOINT.md`.

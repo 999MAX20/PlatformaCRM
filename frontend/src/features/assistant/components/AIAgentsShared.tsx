@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { Link } from "react-router";
-import { ArrowUpRight, BookOpen, Bot, CheckCircle2, Plus, Radio, Sparkles } from "lucide-react";
+import { ArrowRight, BookOpen, Bot, CheckCircle2, Circle, Plus, Radio, Sparkles } from "lucide-react";
 
 import { Card, CardBody } from "../../../components/ui/Card";
 import { Button } from "../../../components/ui/Button";
@@ -54,24 +54,34 @@ export function FieldHint({ children }: { children: ReactNode }) {
 export function OnboardingProgress({ steps }: { steps: OnboardingStep[] }) {
   const { t } = useI18n();
   const icons = [Bot, BookOpen, Radio];
+  const complete = steps.every(step => step.done);
   return (
-    <nav aria-label={t("aiAgents.firstLaunchTitle")} className="grid gap-3 sm:grid-cols-3">
+    <section className="space-y-4">
+      <div>
+        <h3 className="text-base font-semibold text-platforma-ink">{t("aiAgents.preparation.title")}</h3>
+        <p className="mt-1 text-sm leading-6 text-platforma-subtle">{t(complete ? "aiAgents.preparation.allComplete" : "aiAgents.preparation.requiredSteps")}</p>
+      </div>
+      <nav aria-label={t("aiAgents.firstLaunchTitle")} className="grid gap-3 sm:grid-cols-3">
       {steps.map((step, index) => {
         const Icon = icons[index];
         return <Link key={step.href} to={step.href} className={cn(
-          "platforma-focus-ring group flex min-w-0 flex-col gap-3 rounded-xl border p-4 transition-colors hover:border-brand-700 hover:bg-brand-50",
-          step.done ? "border-platforma-border bg-white" : "border-brand-200 bg-brand-50/50",
+          "platforma-focus-ring flex min-w-0 flex-col gap-3 rounded-xl border p-4 transition-colors hover:border-brand-800",
+          step.done ? "border-platforma-success/30 bg-[var(--platforma-success-soft)]" : "border-brand-700 bg-white hover:bg-brand-50",
         )}>
-          <span className="flex items-center justify-between gap-2">
-            <Icon aria-hidden="true" size={20} className={step.done ? "text-platforma-subtle" : "text-brand-800"} />
-            {step.done ? <CheckCircle2 aria-hidden="true" size={18} className="text-platforma-success" /> : <ArrowUpRight aria-hidden="true" size={18} className="text-brand-800" />}
+          <span className={cn("flex items-center gap-2 text-xs font-semibold", step.done ? "text-platforma-success" : "text-platforma-subtle")}>
+            {step.done ? <CheckCircle2 aria-hidden="true" size={18} className="shrink-0" /> : <Circle aria-hidden="true" size={18} className="shrink-0" />}
+            {t(step.done ? "aiAgents.preparation.complete" : "aiAgents.preparation.required")}
           </span>
-          <span className="min-w-0 break-words">
-            <span className="block text-sm font-semibold text-platforma-ink">{step.title}</span>
-            <span className={cn("mt-1 block text-sm leading-5", step.done ? "text-platforma-subtle" : "font-medium text-brand-800")}>{step.text}</span>
+          <span className="flex min-w-0 items-center gap-2 text-sm font-semibold text-platforma-ink">
+            <Icon aria-hidden="true" size={20} className="shrink-0" />{step.title}
+          </span>
+          <span className={cn("mt-auto flex min-h-11 items-center justify-between gap-2 rounded-control text-sm font-semibold leading-5", step.done ? "text-platforma-success" : "bg-brand-800 px-3 py-2 text-white")}>
+            <span className="min-w-0 break-words">{step.text}</span>
+            {!step.done && <ArrowRight aria-hidden="true" size={18} className="shrink-0" />}
           </span>
         </Link>;
       })}
-    </nav>
+      </nav>
+    </section>
   );
 }
