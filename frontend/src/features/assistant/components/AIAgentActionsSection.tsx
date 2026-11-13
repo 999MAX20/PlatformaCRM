@@ -29,7 +29,7 @@ export function AgentActionsSection({
   const toolEnabled = (tool: string) => form.allowed_tools.includes(tool);
   const proposesWork = runtime.enabled && (runtime.mode === "lead_task" || runtime.mode === "draft_deal");
   return (
-    <div className="space-y-5">
+    <div className="max-w-2xl space-y-4">
       <section className="border-b border-platforma-border pb-5 last:border-0">
         <div>
           <h3 className="text-base font-semibold text-midnight">{t("aiAgents.authority.title")}</h3>
@@ -86,9 +86,9 @@ function ControlSection({ botDraft, setBotDraft, canManage }: { botDraft: BotDra
           <p className="mt-1 text-sm font-semibold text-platforma-faint">{t("aiAgents.control.pipelineText")}</p>
         </div>
 
-        <div className="grid items-end gap-x-5 gap-y-1 lg:grid-cols-[minmax(240px,480px)_minmax(0,1fr)]">
+        <div className="grid max-w-md gap-1">
         <Select
-          className="sm:min-h-10"
+          density="compact" className="min-h-11 sm:min-h-9 sm:py-1"
           label={t("aiAgents.control.mode")}
           value={config.mode}
           disabled={!canManage}
@@ -106,8 +106,8 @@ function ControlSection({ botDraft, setBotDraft, canManage }: { botDraft: BotDra
         <FieldHint>{t("aiAgents.hint.pipelineMode")}</FieldHint>
         </div>
 
-        <div className="mt-3 max-w-xl">
-          <Select label={t("aiAgents.creationPolicy")} value={config.creation_policy} disabled={!canManage || !config.enabled || config.mode === "triage"}
+        <div className="mt-3 max-w-md">
+          <Select density="compact" className="min-h-11 sm:min-h-9 sm:py-1" label={t("aiAgents.creationPolicy")} value={config.creation_policy} disabled={!canManage || !config.enabled || config.mode === "triage"}
             onChange={event => setConfig(current => ({ ...current, creation_policy: event.target.value }))}
             options={[
               { value: "staff_confirmation", label: t("aiAgents.authority.staffConfirmation") },
@@ -161,6 +161,7 @@ function ControlSection({ botDraft, setBotDraft, canManage }: { botDraft: BotDra
               </div>
               <div>
                 <Input
+                  className="sm:min-h-9"
                   label={t("aiAgents.control.maxReplyChars")}
                   type="number"
                   min={120}

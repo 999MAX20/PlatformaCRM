@@ -33,7 +33,7 @@ test.beforeEach(() => {
   test.setTimeout(120_000);
 });
 
-test("visible instructions, deliberate template and navigation draft protection", async ({ page }, info) => {
+test("visible instructions without template retain navigation draft protection", async ({ page }, info) => {
   const session = await crmSession(page);
   const bot = await createAgent(page, session, { name: `UX ${info.project.name}`, status: "draft" });
   await session.create("ai/agent-profiles", { bot: bot.id, name: "Legacy profile name", is_active: true, role_description: "Existing role", system_prompt: "Keep this instruction", allowed_tools_json: { tools: [] } });
@@ -41,16 +41,11 @@ test("visible instructions, deliberate template and navigation draft protection"
   const editor = page.getByTestId("ai-agent-editor");
   await expect(editor.getByRole("textbox", { name: "Главная инструкция", exact: true })).toBeVisible();
   await expect(editor.getByLabel("Название профиля", { exact: true })).toHaveCount(0);
-  await editor.getByRole("button", { name: "Шаблон: администратор бизнеса", exact: true }).click();
+  await expect(editor.getByRole("button", { name: "Шаблон: администратор бизнеса", exact: true })).toHaveCount(0);
+  await expect(editor.getByRole("heading", { name: "Инструкции", exact: true })).toHaveCount(0);
   const dialog = page.getByRole("dialog");
-  await expect(dialog.getByText(/Он заменит описание роли/)).toBeVisible();
-  await dialog.getByRole("button", { name: "Отмена", exact: true }).click();
   await expect(editor.getByRole("textbox", { name: "Главная инструкция", exact: true })).toHaveValue("Keep this instruction");
-  await editor.getByRole("button", { name: "Шаблон: администратор бизнеса", exact: true }).click();
-  await dialog.getByRole("button", { name: "Заполнить по шаблону" }).click();
-  await expect(editor.getByRole("textbox", { name: "Описание роли", exact: true })).toHaveValue("Администратор бизнеса");
-  await expect(editor.getByRole("textbox", { name: "Главная инструкция", exact: true })).toHaveValue(/Ты администратор бизнеса\./);
-  await expect(editor.getByRole("textbox", { name: "Главная инструкция", exact: true })).toHaveValue(/Не ставь диагнозы и не назначай лечение/);
+  await editor.getByRole("textbox", { name: "Главная инструкция", exact: true }).fill("Edited instruction");
   await page.locator('a[href="/app/conversations"]:visible').first().click();
   await expect(page.getByRole("dialog", { name: "Несохранённые изменения" })).toBeVisible();
   await dialog.getByRole("button", { name: "Отмена", exact: true }).click();
@@ -60,7 +55,7 @@ test("visible instructions, deliberate template and navigation draft protection"
   await expect(page).toHaveURL(/\/app\/conversations(?:\?|$)/);
   await page.goto(`/app/ai-agents/${bot.id}/instructions`);
   await expect(editor.getByRole("textbox", { name: "Главная инструкция", exact: true })).toHaveValue("Keep this instruction");
-  await page.screenshot({ path: info.outputPath("profile-template-guard.png"), fullPage: true });
+  await page.screenshot({ path: info.outputPath("instructions-draft-guard.png"), fullPage: true });
 });
 
 test("knowledge explains requirements, rejects whitespace, retains failed save and persists retry", async ({ page }, info) => {
@@ -285,6 +280,35 @@ test("test chat overlays the editor below the global header and retains retry/hi
   await page.getByTestId("header-account-link").focus();
   await expect(panel).toBeHidden();
   await expect(page.getByTestId("header-account-link")).toBeFocused();
+});
+
+test("branch scope saves selected locations and restores all future branches", async ({ page }, info) => {
+  const session = await crmSession(page);
+  const run = `${info.project.name} ${Date.now()}`;
+  const firstName = `Scope first ${run}`, secondName = `Scope second ${run}`;
+  const first = await session.create<{ id: number }>("branches", { name: firstName, address: "First address" });
+  const second = await session.create<{ id: number }>("branches", { name: secondName, address: "Second address" });
+  const bot = await createAgent(page, session, { name: "Branch scope", status: "draft", settings_json: { branch_ids: [first.id, second.id] } });
+  await session.create("ai/agent-profiles", { bot: bot.id, name: bot.name, is_active: true, system_prompt: "Keep saved scope" });
+  await page.goto(`/app/ai-agents/${bot.id}/profile`);
+  const firstChoice = page.getByRole("checkbox", { name: `${firstName} · First address`, exact: true });
+  const secondChoice = page.getByRole("checkbox", { name: `${secondName} · Second address`, exact: true });
+  await expect(firstChoice).toBeChecked();
+  await expect(secondChoice).toBeChecked();
+  await secondChoice.uncheck();
+  await choose(page, "Филиалы для клиентского AI-агента", "Выбранные филиалы");
+  await expect(secondChoice).not.toBeChecked();
+  await page.getByRole("button", { name: "Сохранить изменения", exact: true }).click();
+  await expect.poll(async () => (await session.read(`bots/${bot.id}`)).settings_json.branch_ids).toEqual([first.id]);
+  await page.reload();
+  await expect(firstChoice).toBeChecked();
+  await expect(secondChoice).not.toBeChecked();
+  await choose(page, "Филиалы для клиентского AI-агента", "Все текущие и будущие филиалы");
+  await page.getByRole("button", { name: "Сохранить изменения", exact: true }).click();
+  await expect.poll(async () => (await session.read(`bots/${bot.id}`)).settings_json.branch_ids).toBeNull();
+  await page.reload();
+  await expect(firstChoice).toHaveCount(0);
+  await expect(page.getByRole("combobox", { name: /Филиалы для клиентского AI-агента Все текущие/ })).toBeVisible();
 });
 
 test("agent picker paints above the advanced editor fields", async ({ page }, info) => {

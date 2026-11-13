@@ -1,4 +1,6 @@
 export const aiAgents: Record<string, string> = {
+  "aiAgents.selectedBranches": "Selected branches",
+  "aiAgents.previewMessage": "Message",
   "aiAgents.section.instructions": "Instructions",
   "aiAgents.section.advanced": "Advanced",
   "aiAgents.openPreview": "Test chat",

@@ -39,20 +39,20 @@ export function CustomerSafetySettings({ botDraft, setBotDraft, canManage }: {
       <ToggleSwitch label={t("customerSafety.firstReply")} checked={config.allow_first_off_topic} disabled={!canManage}
         onChange={value => change({ allow_first_off_topic: value })} />
     </div>
-    <Select label={t("customerSafety.offTopicLimit")} value={String(config.off_topic_handoff_after)} disabled={!canManage}
+    <Select density="compact" className="min-h-11 sm:min-h-9 sm:py-1" label={t("customerSafety.offTopicLimit")} value={String(config.off_topic_handoff_after)} disabled={!canManage}
       onChange={event => change({ off_topic_handoff_after: Number(event.target.value) })}
       options={[1, 2, 3].map(value => ({ value: String(value), label: t(`customerSafety.offTopic${value}`) }))} />
     <p className="text-sm text-platforma-subtle">{t("customerSafety.offTopicHint")}</p>
     <details>
       <summary className="platforma-focus-ring min-h-11 cursor-pointer py-3 text-sm font-semibold">{t("customerSafety.processingLimits")}</summary>
       <div className="grid gap-4 pt-3 sm:grid-cols-2">
-      <Input type="number" min={1} max={30} step={1} label={t("customerSafety.callLimit")} disabled={!canManage}
+      <Input className="sm:min-h-9" type="number" min={1} max={30} step={1} label={t("customerSafety.callLimit")} disabled={!canManage}
         value={config.calls_per_24h} onChange={event => change({ calls_per_24h: Number(event.target.value) })} />
-      <Input type="number" min={3} max={30} step={1} label={t("customerSafety.messageRate")} disabled={!canManage}
+      <Input className="sm:min-h-9" type="number" min={3} max={30} step={1} label={t("customerSafety.messageRate")} disabled={!canManage}
         value={config.messages_per_minute} onChange={event => change({ messages_per_minute: Number(event.target.value) })} />
-      <Input type="number" min={2} max={10} step={1} label={t("customerSafety.repeatLimit")} disabled={!canManage}
+      <Input className="sm:min-h-9" type="number" min={2} max={10} step={1} label={t("customerSafety.repeatLimit")} disabled={!canManage}
         value={config.repeat_handoff_after} onChange={event => change({ repeat_handoff_after: Number(event.target.value) })} />
-      <Input type="number" min={256} max={8000} step={1} label={t("customerSafety.messageLength")} disabled={!canManage}
+      <Input className="sm:min-h-9" type="number" min={256} max={8000} step={1} label={t("customerSafety.messageLength")} disabled={!canManage}
         value={config.max_message_chars} onChange={event => change({ max_message_chars: Number(event.target.value) })} />
       </div>
       <p className="mt-3 text-sm text-platforma-subtle">{t("customerSafety.budgetHint")}</p>

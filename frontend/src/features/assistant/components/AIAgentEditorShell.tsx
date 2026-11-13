@@ -7,7 +7,7 @@ import { cn } from "../../../lib/cn";
 import { useI18n } from "../../../lib/i18n";
 import type { Bot } from "../../../types";
 import type { AgentSection } from "../aiAgentsTypes";
-import { agentStatusLabel, sectionsForAgent } from "../aiAgentsUtils";
+import { agentStatusLabel } from "../aiAgentsUtils";
 import { AgentSectionNavigation } from "./AgentSectionNavigation";
 
 export function AIAgentEditorShell({
@@ -38,7 +38,6 @@ export function AIAgentEditorShell({
 }) {
   const { t } = useI18n();
   const runtimeBlocked = bot.status === "active" && Boolean(bot.readiness && !bot.readiness.is_ready);
-  const section = sectionsForAgent(bot.scenario).find(item => item.id === activeSection);
   return (
     <section className="ai-agent-editor grid min-w-0 gap-5 lg:grid-cols-[216px_minmax(0,1fr)] lg:gap-8"
       aria-label={t("aiAgents.editorAria", { name: bot.name })} data-testid="ai-agent-editor">
@@ -66,8 +65,7 @@ export function AIAgentEditorShell({
         </header>
         <div className="min-w-0">
           <div className="min-w-0">
-            <div id={`ai-agent-editor-panel-${activeSection}`} className="min-w-0 py-6">
-              <h3 className="mb-5 text-lg font-semibold text-platforma-ink">{t(section?.labelKey || "aiAgents.section.test")}</h3>
+            <div id={`ai-agent-editor-panel-${activeSection}`} className="min-w-0 py-4">
               <fieldset disabled={isSaving} className="min-w-0 w-full">{children}</fieldset>
             </div>
             {canManage && showFooter && <footer className={cn("bottom-[calc(4.375rem_+_max(0.25rem,env(safe-area-inset-bottom)))] z-10 flex flex-wrap items-center justify-between gap-3 border-t border-platforma-border bg-surface py-4 lg:sticky lg:bottom-0", dirty ? "sticky" : "relative bottom-auto")} data-testid="agent-save-bar">

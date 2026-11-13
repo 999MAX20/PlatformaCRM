@@ -1,4 +1,6 @@
 export const aiAgents: Record<string, string> = {
+  "aiAgents.selectedBranches": "Таңдалған филиалдар",
+  "aiAgents.previewMessage": "Хабарлама",
   "aiAgents.section.instructions": "Нұсқаулар",
   "aiAgents.section.advanced": "Қосымша",
   "aiAgents.openPreview": "Сынақ чаты",

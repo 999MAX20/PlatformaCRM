@@ -10,8 +10,12 @@ Other listed UI corrections deferred to next scoped step; receipt in same checkp
 Next owner correction complete: inner messages button removed; Test chat overlays right
 side below global header without reflow. Picker/editor stacking defect reproduced/fixed.
 Scoped8PASS plus affected4PASS; browser26+interaction16+large-text6PASS; build/bundlePASS.
-Screenshots RU/KK/EN320–1440 and200% inspected. Other field/branch/template/title ideas
-remain deferred. Receipt/checkpoint unchanged; logs output/ai-agents-chat-panel-20261113.
+Screenshots RU/KK/EN320–1440 and200% inspected. Logs output/ai-agents-chat-panel-20261113.
+Next correction complete: compact fields/selectors, named branch choice, no instruction
+template/duplicate titles; minimal chat with3short suggestion rows and compact input.
+19distinct scoped/dependent browser cases PASS; localized/200%/recovery/axe/build/bundle PASS.
+No scoped local remainder. Final logs output/ai-agents-compact-20261113; same checkpoint
+holds publication/CI. Backend/workingDB/provider/deployment unchanged.
 
 
 NOTIFICATIONS-SERVER-FIXES-20261113: all six server defects fixed and locally verified.

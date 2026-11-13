@@ -88,8 +88,9 @@ on all sections and raise the existing content. This supersedes their original
 presentation above; backend readiness and activation APIs were not changed.
 The now-unused page mutation/props were removed. No replacement activation UI was
 added. Agent name, scenario and status badge remain. Other requested changes
-(field widths, branch selector, template button, duplicate section headings and
-processing-limit disclosure) await the next scoped step. Message-button removal and
+(field widths, branch selector, template button and duplicate section headings)
+are completed in the compact-configuration follow-up below. Processing-limit
+disclosure remains outside that follow-up. Message-button removal and
 test-chat overlay were completed in the follow-up below.
 
 Base `1247e507`; canonical checkout/current branch, foreign WIP preserved.
@@ -137,4 +138,68 @@ fixture profile lacked business; direct cookie-auth token request returned HTML.
 Corrected selector and existing UI save flow passed; no assertion was weakened.
 No scoped code/evidence remainder. Fullrelease/live/deployment not run.
 Logs/scripts/hashes: `output/ai-agents-chat-panel-20261113/`; same checkpoint holds
-publication and cleanup. Remaining prior ideas are listed above, not implemented here.
+publication and cleanup. The compact-configuration follow-up below supersedes the
+earlier pending field/branch/template/title items.
+
+## Owner correction: compact configuration and minimal test chat
+
+Base `ebe8f2ab`; canonical checkout/current branch, unrelated WIP preserved.
+Owner requested narrower/shorter fields, branch choice, removal of the instruction
+template and duplicate headings, and a minimal test composer from the supplied
+screenshot. Existing design tokens, saved configuration and preview API retained.
+
+Profile/advanced forms are bounded to576px and instruction/action forms to672px;
+desktop inputs/selectors use36px, phone targets44px. Textareas are shorter and
+remain editable/resizable. Section navigation supplies context without repeating
+the heading above the form. The manual instruction-template button/modal is gone;
+existing saved instructions and default agent creation are unchanged.
+
+Branch choice uses existing branch_ids: null means current/future branches;
+explicit selection shows named checkboxes. Re-selecting the current mode does not
+change the subset. Atomic save/reload retains the subset or null. Loading, failure
+with retry and an honest empty list are shown. Backend scope checks are unchanged.
+
+The empty test panel now shows three short message suggestions directly above a
+single-row message field and icon send action. No introductory copy or large
+warning/result cards. Suggestions fill and focus the editable field. Messages
+appear after testing; reset appears only with history. If reply is absent, the
+server summary becomes the compact response. Dirty/permission reasons and errors
+remain short inline text; pending disables duplicates; failed input survives retry.
+
+Focused browser regressions cover instruction preservation/navigation guards,
+atomic-save recovery, keyboard focus, chat error/retry/history/close and actual
+branch subset/all save/reload on desktop and phone. Localized visual checks cover
+RU/KK/EN320/768/1440, long branch values, 200% text, empty/pending/history/dirty chat,
+branch loading/error/retry/empty and no-reply handoff. Representative captures were
+visually inspected. Final coverage:16 distinct desktop/mobile UX cases and3 desktop
+customer/CRM/staff scenarios PASS across retained runs; browser118 checks, state16
+and final7 PASS. Final build/types/i18n7301/app/widget and bundle PASS; unchanged
+RU/KK chunk warnings remain. Four editor sections and chat have zero scoped axe
+violations. Final results/commands/hashes are in the existing checkpoint.
+
+Preserved attempts: one dependent fixture POST hit SQLite database-locked during
+simultaneous browser/test work. Its traceback is retained; final serial retry PASS.
+Repeated branch fixtures initially collided on unique names; run-specific names
+fixed the harness, and subset/re-select/save/reload/all checks passed twice. The
+customer-creation scenario still expected the deliberately removed template;
+its assertion now checks absence while retaining default-instruction assertions.
+The corrected scenario PASS; no product assertion or threshold was weakened.
+Visual inspection caught branch fieldset intrinsic-width clipping and a200% chat
+composer overflow. Explicit min-width containment and fixed44px icon targets fix
+those cases; final geometry and screenshots verify the controls and labels fit.
+The preliminary build preceded these adjustments; final build is the completion gate.
+
+Delivery gate: existing neutral/emerald brand and fonts; no assets/theme/dependencies;
+all new controls use real data/actions and localized labels. Small suggestion rows
+follow the owner's explicit compact-height request (minimum28px); primary touch
+controls remain44px. Keyboard, focus, recovery, geometry and scoped axe checks are
+recorded and PASS. React/frontend review retains API-layer calls, functional draft updates,
+query reuse, bounded state and existing permission guards; no backend, notification,
+BusinessEvent or provider policy changes. Handoff summaries stay outside the sent
+conversation history. No scoped code/local-evidence remainder. Fullrelease/live/
+deployment are out of scope.
+
+Scripts/logs: `output/ai-agents-compact-20261113/`; screenshots:
+`output/playwright/ai-agents-compact-20261113/`. Publication and cleanup receipt:
+`output/ai-agents-redesign-20261113/CHECKPOINT.md`. No new roadmap phase is closed;
+README/AI/access/operations/CRM contracts need no change for this UI-only follow-up.
