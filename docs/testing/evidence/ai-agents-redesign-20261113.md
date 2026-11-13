@@ -336,3 +336,54 @@ provider setup behavior or environment changed. No scoped code/evidence/environm
 owner-decision remainder. Logs/scripts: `output/ai-agents-cta-20261114/`; screenshots:
 `output/playwright/ai-agents-cta-20261114/`. Exact commands, hashes, publication/CI
 and cleanup: `output/ai-agents-redesign-20261113/CHECKPOINT.md`.
+
+
+## Instruction editor — 14.11.2026
+
+Owner selected only the first instruction-audit phase: explain role/main instruction/
+reply-rule purposes, link to Actions and expand the main instruction while preserving
+current design. Existing user text/default prompts and backend behavior are unchanged.
+Inline expansion shares the original field/value; collapse and Escape retain edits,
+Escape returns focus, including view-only use. The Actions link stays within the
+selected agent and retains all editor drafts. Hints are programmatically associated
+with fields. Customer and CRM action explanations reflect their different scopes.
+RU/KK/EN use existing typography/tokens/components; no assets or dependencies added.
+
+10 distinct desktop/mobile browser cases verified across final and serial runs:
+customer/CRM expansion, keyboard/Escape, long/empty input, Actions/back, real atomic
+save/readback/reload/cancel, exit guard, failed-save recovery and focused field visibility.
+The initial batch retained two stale language-selector failures; existing foreign
+profile WIP renamed Language to Fallback language. The selector now accepts either
+exact label prefix; assertions are unchanged. The second batch had one SQLite-lock
+failure during CRM fixture creation; the four affected expansion cases passed serially
+after closing the visual browser. Logs and traces retained, not relabelled as PASS.
+
+CLI visual-final:84 checks PASS, including nine scoped axe scans with zero violations,
+RU/KK/EN320/768/1440, expanded/compact states and200% text. States:13 checks PASS for
+no extra saves/AI calls, pending disable, retained failed-save input/expansion, actual
+retry/readback and view-only controls/navigation. Screenshots captured and representative
+compact/expanded desktop/mobile/tablet,200%, failure and view-only images inspected.
+Initial fixed13px expand-button text did not scale at200%; changed to shared text-sm
+and rechecked. Keyboard handler covers the field and its toggle.
+
+Anti Slop during delivery: purpose/copy PASS (requested field guidance/navigation,
+no fabricated business facts); geometry/responsive PASS (bounded form, wrapped controls,
+long text and200%); accessibility PASS (labels/descriptions, keyboard/focus, scoped axe);
+craftsmanship PASS (one draft/save path, recovery and view-only behavior). Existing
+neutral/emerald direction, fonts and1/1/1 dials retained. New media/theme/motion N/A.
+React/frontend review: local expansion state and refs, stable IDs, no new effects,
+network layer or runtime permissions. Build/types/i18n/widget/bundle receipt and
+source hashes are recorded in the checkpoint after final completion.
+
+Evidence boundary: canonical checkout, base d2e3518d plus reviewed task delta and
+preserved foreign WIP; disposable SQLite, dedicated ports, mocked providers. The
+view-only UI case uses permission-response injection. No backend/full-release/live
+provider/working-DB/deployment certification. No code/UI-evidence remainder in this
+selected phase; draft-before-apply, version history and other audit proposals are
+not implemented or implicitly authorized. Current frontend contract/passport/status
+updated; roadmap/D01, README, AI/access/operations/CRM contracts unchanged in this
+scope because domain/API/policy/setup behavior did not change.
+
+Commands and publication/CI: output/ai-agents-redesign-20261113/CHECKPOINT.md.
+Logs/scripts: output/ai-agents-instructions-20261114/.
+Screenshots: output/playwright/ai-agents-instructions-20261114/.

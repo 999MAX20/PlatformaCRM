@@ -1,4 +1,6 @@
-import { type Dispatch, type SetStateAction } from "react";
+import { useId, useRef, useState, type Dispatch, type SetStateAction } from "react";
+import { Link } from "react-router";
+import { Button } from "../../../components/ui/Button";
 import { Input } from "../../../components/ui/Input";
 import { Select } from "../../../components/ui/Select";
 import { Textarea } from "../../../components/ui/Textarea";
@@ -49,26 +51,60 @@ export function ProfileManagerSection({ botDraft, setBotDraft, form, setForm, ca
   );
 }
 
-export function InstructionsSection({ form, setForm, canManage }: ProfileProps) {
+export function InstructionsSection({ form, setForm, canManage, botId, scenario }: ProfileProps & { botId: Bot["id"] }) {
   const { t } = useI18n();
+  const id = useId();
+  const [expanded, setExpanded] = useState(false);
+  const instructionRef = useRef<HTMLTextAreaElement>(null);
+  const expandRef = useRef<HTMLButtonElement>(null);
+  const hintClass = "mt-2 text-xs font-semibold leading-5 text-platforma-faint";
   return (
     <div className="max-w-2xl space-y-4">
       <section>
         <Textarea className="!min-h-16 py-2" rows={2} label={t("aiAgents.roleDescription")} value={form.role_description} disabled={!canManage}
+          aria-describedby={`${id}-role-hint`}
           onChange={event => setForm(current => ({ ...current, role_description: event.target.value }))} />
+        <p id={`${id}-role-hint`} className={hintClass}>{t("aiAgents.hint.role")}</p>
       </section>
 
       <section>
         <div id="ai-agent-quality-settings" className="space-y-3">
-            <div>
-              <Textarea className="min-h-40 py-2" rows={6} label={t("aiAgents.systemPrompt")} value={form.system_prompt} disabled={!canManage}
+            <div onKeyDown={event => {
+              if (event.key === "Escape" && expanded) {
+                event.preventDefault();
+                event.stopPropagation();
+                setExpanded(false);
+                expandRef.current?.focus({ preventScroll: true });
+              }
+            }}>
+              <div className="mb-2 flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+                <label htmlFor={`${id}-instruction`} className="text-sm font-semibold text-platforma-subtle">{t("aiAgents.systemPrompt")}</label>
+                <Button ref={expandRef} type="button" variant="ghost" size="sm" className="min-h-11 text-sm sm:min-h-9"
+                  aria-expanded={expanded} aria-controls={`${id}-instruction`}
+                  onClick={() => {
+                    setExpanded(current => !current);
+                    if (!expanded) instructionRef.current?.focus({ preventScroll: true });
+                  }}>
+                  {t(expanded ? "aiAgents.instructions.collapse" : "aiAgents.instructions.expand")}
+                </Button>
+              </div>
+              <Textarea ref={instructionRef} id={`${id}-instruction`} className={`${expanded ? "min-h-64" : "min-h-40"} py-2`} rows={6}
+                style={{ height: expanded ? "min(60dvh, 36rem)" : undefined }}
+                aria-describedby={`${id}-instruction-hint`} value={form.system_prompt} disabled={!canManage}
                 onChange={event => setForm(current => ({ ...current, system_prompt: event.target.value }))} />
-              <FieldHint>{t("aiAgents.hint.systemPrompt")}</FieldHint>
+              <p id={`${id}-instruction-hint`} className={hintClass}>{t("aiAgents.hint.systemPrompt")}</p>
             </div>
               <div>
                 <Textarea className="!min-h-20 py-2" rows={3} label={t("aiAgents.rules")} value={form.rules_text} disabled={!canManage}
+                  aria-describedby={`${id}-rules-hint ${id}-actions-hint`}
                   onChange={event => setForm(current => ({ ...current, rules_text: event.target.value }))} />
-                <FieldHint>{t("aiAgents.hint.rules")}</FieldHint>
+                <p id={`${id}-rules-hint`} className={hintClass}>{t("aiAgents.hint.rules")}</p>
+              </div>
+              <div>
+                <p id={`${id}-actions-hint`} className={hintClass}>{t(scenario === "crm" ? "aiAgents.instructions.actionsHintCrm" : "aiAgents.instructions.actionsHint")}</p>
+                <Link to={`/app/ai-agents/${botId}/actions`} className="platforma-focus-ring inline-flex min-h-11 items-center rounded-control text-sm font-semibold text-brand-800 underline hover:text-brand-900">
+                  {t("aiAgents.instructions.openActions")}
+                </Link>
               </div>
           </div>
       </section>

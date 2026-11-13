@@ -23,7 +23,7 @@ for (const scenario of ["inbox", "crm"] as const) {
     await choose(page, editor, "Тон", "Формальный");
     if (scenario === "inbox") await editor.locator("summary").filter({ hasText: "Дополнительные настройки" }).click();
     await choose(page, editor, "Режим ответов", "Экономный режим");
-    for (const [label, value] of [["Описание роли", "AUDIT_ROLE: business receptionist"], ["Главная инструкция", "AUDIT_INSTRUCTION: explain only supplied business facts"], ["Правила", "AUDIT_RULE_ONE\nAUDIT_RULE_TWO"]]) {
+    for (const [label, value] of [["Роль агента", "AUDIT_ROLE: business receptionist"], ["Главная инструкция", "AUDIT_INSTRUCTION: explain only supplied business facts"], ["Правила ответов", "AUDIT_RULE_ONE\nAUDIT_RULE_TWO"]]) {
       await editor.getByRole("textbox", { name: label, exact: true }).fill(value);
     }
     const freedom = editor.getByRole("slider");
@@ -41,9 +41,9 @@ for (const scenario of ["inbox", "crm"] as const) {
     expect(profile).toMatchObject({ language: "en", tone: "formal", role_description: "AUDIT_ROLE: business receptionist", system_prompt: "AUDIT_INSTRUCTION: explain only supplied business facts", rules_json: { items: ["AUDIT_RULE_ONE", "AUDIT_RULE_TWO"] } });
     await page.reload();
     if (scenario === "inbox") await editor.locator("summary").filter({ hasText: "Дополнительные настройки" }).click();
-    await expect(editor.getByRole("textbox", { name: "Описание роли", exact: true })).toHaveValue(profile.role_description);
+    await expect(editor.getByRole("textbox", { name: "Роль агента", exact: true })).toHaveValue(profile.role_description);
     await expect(editor.getByRole("textbox", { name: "Главная инструкция", exact: true })).toHaveValue(profile.system_prompt);
-    await expect(editor.getByRole("textbox", { name: "Правила", exact: true })).toHaveValue("AUDIT_RULE_ONE\nAUDIT_RULE_TWO");
+    await expect(editor.getByRole("textbox", { name: "Правила ответов", exact: true })).toHaveValue("AUDIT_RULE_ONE\nAUDIT_RULE_TWO");
     await expect(editor.getByRole("slider")).toHaveValue("0.2");
     await expect(editor.getByRole("switch", { name: "Память диалогов", exact: true })).not.toBeChecked();
     await editor.getByRole("textbox", { name: "Название", exact: true }).fill("   ");

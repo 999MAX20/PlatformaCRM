@@ -82,7 +82,7 @@ test("centered agent workspace keeps natural flow and all five sections usable a
           const preset = await editor.getByRole("button", { name: "Шаблон: администратор бизнеса", exact: true }).boundingBox();
           expect(preset!.height).toBeGreaterThanOrEqual(36);
           expect(preset!.height).toBeLessThanOrEqual(40);
-          const role = editor.getByRole("textbox", { name: "Описание роли", exact: true });
+          const role = editor.getByRole("textbox", { name: "Роль агента", exact: true });
           expect((await role.boundingBox())!.height).toBe(80);
           expect(await role.evaluate(element => getComputedStyle(element).resize)).toBe("vertical");
           for (const name of ["Название", "Язык", "Тон"]) {

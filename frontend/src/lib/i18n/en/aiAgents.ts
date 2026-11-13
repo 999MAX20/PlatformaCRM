@@ -190,9 +190,9 @@ export const aiAgents: Record<string, string> = {
   "aiAgents.bot": "Bot",
   "aiAgents.tone": "Tone",
   "aiAgents.language": "Language",
-  "aiAgents.roleDescription": "Role description",
+  "aiAgents.roleDescription": "Agent role",
   "aiAgents.systemPrompt": "Main instruction",
-  "aiAgents.rules": "Rules",
+  "aiAgents.rules": "Reply rules",
   "aiAgents.escalationRules": "Escalation rules",
   "aiAgents.toolsPlaceholder":
     "Agent actions are enabled only after manager confirmation.",
@@ -489,11 +489,16 @@ export const aiAgents: Record<string, string> = {
   "aiAgents.hint.tone":
     "Tone sets reply style. For sales use Friendly or Sales; for support use Support.",
   "aiAgents.hint.role":
-    "Describe the agent in plain language: sales manager, booking administrator or support assistant.",
+    "Describe who the agent is and whom it helps. For example: an administrator who advises customers about the business's services.",
   "aiAgents.hint.systemPrompt":
-    "Main instruction for every reply. Avoid long technical prompts; use 2-4 clear rules.",
+    "Describe the conversation goal and sequence: what to clarify, how to help and which next step to offer.",
   "aiAgents.hint.rules":
-    "Rules the agent must always follow: do not promise discounts, clarify service, keep replies short.",
+    "Set reply limits and format, one rule per line. For example: ask one question at a time; do not promise discounts without business data.",
+  "aiAgents.instructions.expand": "Expand editor",
+  "aiAgents.instructions.collapse": "Collapse editor",
+  "aiAgents.instructions.actionsHint": "Instructions guide replies within system limits. Configure allowed actions and staff handoff conditions in Actions.",
+  "aiAgents.instructions.actionsHintCrm": "Instructions guide replies within system limits. Configure allowed CRM operations in Actions.",
+  "aiAgents.instructions.openActions": "Go to actions",
   "aiAgents.hint.escalation":
     "When the agent should call a person: complaint, price dispute, legal question or unusual request.",
   "aiAgents.hint.responseMode":

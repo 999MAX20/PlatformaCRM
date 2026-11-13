@@ -90,6 +90,64 @@ test("visible instructions without template retain navigation draft protection",
   await page.screenshot({ path: info.outputPath("instructions-draft-guard.png"), fullPage: true });
 });
 
+for (const scenario of ["inbox", "crm"]) {
+  test(`${scenario}: expanded instruction and actions link preserve the shared draft`, async ({ page }, info) => {
+    const session = await crmSession(page);
+    const bot = await createAgent(page, session, { name: `Instruction editor ${scenario}`, scenario });
+    await page.goto(`/app/ai-agents/${bot.id}/instructions`);
+    const role = page.getByRole("textbox", { name: "Роль агента", exact: true });
+    const instruction = page.getByRole("textbox", { name: "Главная инструкция", exact: true });
+    const rules = page.getByRole("textbox", { name: "Правила ответов", exact: true });
+    await expect(role).toHaveAccessibleDescription(/кем выступает агент/);
+    await expect(instruction).toHaveAccessibleDescription(/цель разговора и порядок общения/);
+    await expect(rules).toHaveAccessibleDescription(/по одному правилу на строку/);
+    const initial = await instruction.inputValue();
+    const shortHeight = (await instruction.boundingBox())!.height;
+    await role.fill("Помощник поддержки");
+    await role.press("Tab");
+    const expand = page.getByRole("button", { name: "Развернуть редактор", exact: true });
+    await expect(expand).toBeFocused();
+    await expand.press("Enter");
+    await expect(instruction).toBeFocused();
+    await expect(instruction).toHaveValue(initial);
+    expect((await instruction.boundingBox())!.height).toBeGreaterThan(shortHeight);
+    const draft = "Уточни запрос клиента.\n".repeat(30) + "Предложи следующий шаг.";
+    await instruction.fill(draft);
+    await instruction.press("Escape");
+    await expect(expand).toBeFocused();
+    await expect(expand).toHaveAttribute("aria-expanded", "false");
+    await expect(instruction).toHaveValue(draft);
+    await rules.fill("Один вопрос за раз\nНе выдумывай условия");
+    const actions = page.getByRole("link", { name: "Перейти к действиям", exact: true });
+    await expect(actions).toHaveAttribute("href", `/app/ai-agents/${bot.id}/actions`);
+    await actions.click();
+    await expect(page).toHaveURL(new RegExp(`/${bot.id}/actions$`));
+    await expect(page.getByRole("dialog", { name: "Несохранённые изменения" })).toHaveCount(0);
+    await openSection(page, "Инструкции");
+    await expect(role).toHaveValue("Помощник поддержки");
+    await expect(instruction).toHaveValue(draft);
+    await expect(rules).toHaveValue("Один вопрос за раз\nНе выдумывай условия");
+    await expand.click();
+    await page.screenshot({ path: info.outputPath(`${scenario}-expanded-instructions.png`), fullPage: true });
+    await page.getByRole("button", { name: "Свернуть редактор", exact: true }).click();
+    await page.getByRole("button", { name: "Сохранить изменения", exact: true }).click();
+    await expect(page.getByRole("button", { name: "Сохранить изменения", exact: true })).toBeDisabled();
+    const profiles = (await session.read("ai/agent-profiles")).results;
+    expect(profiles.find((profile: { bot: number }) => profile.bot === bot.id)).toMatchObject({
+      role_description: "Помощник поддержки", system_prompt: draft,
+      rules_json: { items: ["Один вопрос за раз", "Не выдумывай условия"] },
+    });
+    await page.reload();
+    await expect(instruction).toHaveValue(draft);
+    await expand.click();
+    await instruction.fill("");
+    await instruction.press("Escape");
+    await expect(instruction).toHaveValue("");
+    await page.getByTestId("agent-save-bar").getByRole("button", { name: "Отмена", exact: true }).click();
+    await expect(instruction).toHaveValue(draft);
+  });
+}
+
 test("knowledge explains requirements, rejects whitespace, retains failed save and persists retry", async ({ page }, info) => {
   const session = await crmSession(page);
   const bot = await createAgent(page, session, { name: "Knowledge UX", status: "draft" });
@@ -146,13 +204,13 @@ test("configuration survives section changes and a failed atomic save", async ({
   await page.goto(`/app/ai-agents/${bot.id}/profile`);
   await expect(page.getByRole("textbox", { name: "Главная инструкция", exact: true })).toHaveCount(0);
   await page.getByRole("textbox", { name: "Название", exact: true }).fill("Сохранённый агент");
-  await choose(page, "Язык", "English");
+  await choose(page, "(?:Язык|Запасной язык)", "English");
   await choose(page, "Тон", "Формальный");
   await openSection(page, "Инструкции");
   await expect(page.getByRole("textbox", { name: "Главная инструкция", exact: true })).toHaveValue("Исходная инструкция");
-  await page.getByRole("textbox", { name: "Описание роли", exact: true }).fill("Новая роль");
+  await page.getByRole("textbox", { name: "Роль агента", exact: true }).fill("Новая роль");
   await page.getByRole("textbox", { name: "Главная инструкция", exact: true }).fill("Новая инструкция");
-  await page.getByRole("textbox", { name: "Правила", exact: true }).fill("Новое правило");
+  await page.getByRole("textbox", { name: "Правила ответов", exact: true }).fill("Новое правило");
   await page.getByRole("button", { name: "Тестовый чат", exact: true }).click();
   const preview = page.getByTestId("agent-preview-panel");
   await expect(preview).toBeVisible();
@@ -246,7 +304,9 @@ test("keyboard focus keeps the instruction above fixed navigation and the dirty 
   const session = await crmSession(page);
   const bot = await createAgent(page, session, { name: "Keyboard focus", status: "draft" });
   await page.goto(`/app/ai-agents/${bot.id}/instructions`);
-  await page.getByRole("textbox", { name: "Описание роли", exact: true }).fill("Unsaved role");
+  await page.getByRole("textbox", { name: "Роль агента", exact: true }).fill("Unsaved role");
+  await page.keyboard.press("Tab");
+  await expect(page.getByRole("button", { name: "Развернуть редактор", exact: true })).toBeFocused();
   await page.keyboard.press("Tab");
   const instruction = page.getByRole("textbox", { name: "Главная инструкция", exact: true });
   await expect(instruction).toBeFocused();

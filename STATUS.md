@@ -27,6 +27,10 @@ requested launch-preparation intro, centered metrics, full-size shared provider 
 4 affected regressions +64 visual/state +31 consumer/recovery checks PASS; build,
 bundle, RU/KK/EN/mobile/200%/axe PASS, screenshots inspected. No scoped local remainder.
 Logs output/ai-agents-cta-20261114; publication/CI in the same checkpoint.
+Instruction phase14.11: clear field purposes, Actions link and inline expansion.
+10distinct scoped browser cases verified; RU/KK/EN320–1440/200% and recovery/view-only
+checks PASS, screenshots inspected. No next audit phase/backend/workingDB scope.
+Final build/publication/CI: same checkpoint; logs output/ai-agents-instructions-20261114.
 
 
 NOTIFICATIONS-SERVER-FIXES-20261113: all six server defects fixed and locally verified.

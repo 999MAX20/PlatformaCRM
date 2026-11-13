@@ -123,7 +123,7 @@ test("customer creation keeps its own interface and duplicate CRM choice is disa
   await expect(editor.locator("#agent-section-links").getByRole("button", { name: "Работа с CRM", exact: true })).toHaveCount(0);
   await expect(editor.getByRole("switch", { name: "Изменить статус агента Customer inbox" })).toHaveCount(0);
   await expect(editor.getByRole("button", { name: "Шаблон: администратор бизнеса" })).toHaveCount(0);
-  await expect(editor.getByRole("textbox", { name: "Описание роли", exact: true })).toHaveValue("Администратор бизнеса");
+  await expect(editor.getByRole("textbox", { name: "Роль агента", exact: true })).toHaveValue("Администратор бизнеса");
   await expect(editor.getByRole("textbox", { name: "Главная инструкция", exact: true })).toHaveValue(/Только|Используй только данные бизнеса/);
   await page.screenshot({ path: info.outputPath("customer-profile.png"), fullPage: true });
 });
