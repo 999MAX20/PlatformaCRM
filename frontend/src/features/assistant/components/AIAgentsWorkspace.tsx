@@ -17,7 +17,6 @@ import type {
 import type { AgentFormState, AgentSection, BotDraftState } from "../aiAgentsTypes";
 import { getOnboardingSteps } from "../aiAgentsUtils";
 import { AIAgentEditorShell } from "./AIAgentEditorShell";
-import { AgentReadiness } from "./AgentReadiness";
 import { AgentPreviewPanel } from "./AgentPreviewPanel";
 import { InstructionsSection, ModelsSection } from "./AIAgentConfigSection";
 import { CustomerAgentOverview } from "./AIAgentRuntimeSection";
@@ -71,7 +70,6 @@ export function AIAgentsWorkspace({
   onRetrySection,
   onSave,
   onSetNewAgentName,
-  onToggleStatus,
   pageError,
   profileForm,
   saveState,
@@ -120,7 +118,6 @@ export function AIAgentsWorkspace({
   onRetrySection: () => void;
   onSave: () => void;
   onSetNewAgentName: Dispatch<SetStateAction<string>>;
-  onToggleStatus: (active: boolean) => void;
   pageError: unknown;
   profileForm: AgentFormState;
   saveState: ComponentProps<typeof AIAgentEditorShell>["saveState"];
@@ -156,8 +153,6 @@ export function AIAgentsWorkspace({
   const channels = botChannels.filter((channel) => channel.bot === selectedBot?.id);
   const activeChannelsCount = channels.filter((channel) => channel.status === "active").length;
   const activeKnowledgeCount = knowledgeItems.filter((item) => item.is_active).length;
-  const launchReady = selectedBot?.readiness?.is_ready
-    ?? Boolean(selectedProfile?.is_active && activeChannelsCount > 0 && activeKnowledgeCount > 0);
   const onboardingSteps = selectedBot
     ? getOnboardingSteps({
         botId: selectedBot.id,
@@ -184,12 +179,10 @@ export function AIAgentsWorkspace({
             bot={selectedBot}
             activeSection={activeSection}
             canManage={canManage}
-            activationBlocked={selectedBot.status !== "active" && !launchReady}
             dirty={dirty}
             hasUserEdits={hasUserEdits}
             profileExists={Boolean(selectedProfile)}
             navigation={navigation}
-            readiness={<AgentReadiness key={selectedBot.id} bot={selectedBot} dirty={hasUserEdits} onRefresh={onRetry} />}
             previewOpen={showPreview}
             onOpenPreview={() => setPreviewOpen(!previewOpen)}
             preview={selectedBot.scenario !== "crm" && activeSection !== "test" ? <AgentPreviewPanel key={selectedBot.id} open={showPreview} onClose={() => setPreviewOpen(false)}>
@@ -199,7 +192,6 @@ export function AIAgentsWorkspace({
             isSaving={isSaving}
             saveState={saveState}
             onSectionChange={onNavigateSection}
-            onToggleStatus={onToggleStatus}
             onOpenMessages={onOpenMessages}
             onReset={onReset}
             onSave={onSave}

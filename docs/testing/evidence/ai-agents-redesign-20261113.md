@@ -17,11 +17,12 @@ after required acceptance. Current state: scoped implementation and local accept
 - Customer overview contains existing Inbox activity and channel status. Context
   testing uses the saved configuration, with no client send or CRM write.
 - CRM work, analytics and staff-only access retain the existing runtime.
-- Compact readiness with full diagnostic disclosure; truthful profile/dirty states.
+- Header retains agent identity, scenario and status; truthful profile/dirty states.
+  Readiness disclosure and activation switch were removed by the owner correction below.
 - Effective permissions precede action settings; saved unavailable permissions stay.
 - Knowledge has a complete read-only view, independent editor and explicit shared
   attachment. Client visibility and knowledge ownership remain separate.
-- Existing create/delete, channel setup/OAuth, activation and aliases remain reachable.
+- Existing create/delete, channel setup/OAuth and aliases remain reachable.
 
 ## Verification boundary
 
@@ -78,3 +79,29 @@ remain conditional. No new permission, notification, BusinessEvent or AI policy.
 Full release certification, live providers, production and wider roadmap acceptance
 are outside this UI change. AI/access/operations contracts and README need no
 behavior/setup edits; frontend contract and module passport describe the new UI.
+
+## Owner correction: compact header
+
+Explicit follow-up scope: remove readiness and on/off switch from the inner header
+on all sections and raise the existing content. This supersedes their original
+presentation above; backend readiness and activation APIs were not changed.
+The now-unused page mutation/props were removed. No replacement activation UI was
+added. Agent name, scenario and status badge remain. Other requested changes
+(message button, test-chat overlay, field widths, branch selector, template button,
+duplicate section headings and processing-limit disclosure) await the next scoped step.
+
+Base `1247e507`; canonical checkout/current branch, foreign WIP preserved.
+Follow-up checks: build/types/i18n/application/widget PASS; save/retry and keyboard
+focus 4 PASS; customer/CRM/staff scenarios 3 PASS. The CRM fixture activates through
+the existing API, then tests the same confirmation/runtime behavior; absence of the
+removed switch is asserted. Browser matrix 21 section/locale/viewport combinations
+PASS (RU1440/KK320/EN768), screenshots captured and visually inspected. Desktop
+capture was repeated after the loading transition settled. Geometry, retained
+identity and absence of readiness/switch passed; no horizontal overflow.
+
+Follow-up delivery gate PASS: existing tokens/identity, fewer header controls,
+responsive geometry, retained keyboard and save recovery. No copy/theme/media,
+backend or new state behavior; their broader gates are not rerun for this removal.
+Full release/live/deployment not run. No remainder in this first requested step.
+Commands/results/failures: `output/ai-agents-header-20261113/`; publication receipt:
+`output/ai-agents-redesign-20261113/CHECKPOINT.md`.

@@ -57,7 +57,9 @@ test("creation requires purpose; CRM settings drive work, approval and analytics
   expect(saved.rules_json.sources).toEqual(["knowledge", "tasks"]);
   expect(saved.allowed_tools_json.tools).toEqual(["crm_read", "crm_create"]);
   expect(saved.system_prompt).toBe("Use only enabled sources and show the evidence.");
-  await editor.getByRole("switch", { name: "Изменить статус агента CRM workspace" }).click();
+  await expect(editor.getByRole("switch", { name: "Изменить статус агента CRM workspace" })).toHaveCount(0);
+  await session.action(`bots/${bot.id}/activate`);
+  await page.reload();
   await expect.poll(async () => (await session.read(`bots/${bot.id}`)).status).toBe("active");
   await openAgentSection(page, "Работа с CRM");
   await editor.locator("summary").filter({ hasText: "Действия с CRM" }).click();
@@ -119,7 +121,7 @@ test("customer creation keeps its own interface and duplicate CRM choice is disa
   await expect(editor.locator("#agent-section-links").getByRole("button", { name: "Каналы", exact: true, includeHidden: true })).toHaveCount(1);
   await openAgentSection(page, "Инструкции");
   await expect(editor.locator("#agent-section-links").getByRole("button", { name: "Работа с CRM", exact: true })).toHaveCount(0);
-  await expect(editor.getByRole("switch", { name: "Изменить статус агента Customer inbox" })).toBeDisabled();
+  await expect(editor.getByRole("switch", { name: "Изменить статус агента Customer inbox" })).toHaveCount(0);
   await expect(editor.getByRole("button", { name: "Шаблон: администратор бизнеса" })).toBeVisible();
   await expect(editor.getByRole("textbox", { name: "Описание роли", exact: true })).toHaveValue("Администратор бизнеса");
   await expect(editor.getByRole("textbox", { name: "Главная инструкция", exact: true })).toHaveValue(/Только|Используй только данные бизнеса/);

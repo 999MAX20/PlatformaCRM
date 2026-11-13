@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router";
 
 import { agentProfilesApi, businessKnowledgeApi } from "../../api/ai";
-import { botChannelsApi, botLifecycleApi, botsApi, ensureBotChannel, saveAgentConfiguration } from "../../api/bots";
+import { botChannelsApi, botsApi, ensureBotChannel, saveAgentConfiguration } from "../../api/bots";
 import { usePageHeader } from "../../components/layout/PageHeaderContext";
 import { ErrorState, LoadingState } from "../../components/ui/StateViews";
 import { useAuth } from "../auth/AuthProvider";
@@ -161,14 +161,6 @@ function CustomerAgentsPage() {
     ]),
   });
 
-  const toggleBotStatus = useMutation({
-    mutationFn: (active: boolean) => {
-      if (!selectedBot) throw new Error("Agent is not selected.");
-      return active ? botLifecycleApi.activate(selectedBot.id) : botLifecycleApi.pause(selectedBot.id);
-    },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["bots"] }),
-  });
-
   const saveEditorDrafts = useCallback(async () => {
     if (!selectedBot || !canManage || !botDraft.name.trim()) return false;
     setIsSavingEditor(true);
@@ -220,7 +212,7 @@ function CustomerAgentsPage() {
     : activeSection === "knowledge"
       ? knowledge.isLoading
       : false;
-  const mutationError = createBot.error || saveConfiguration.error || addChannel.error || toggleChannel.error || toggleBotStatus.error;
+  const mutationError = createBot.error || saveConfiguration.error || addChannel.error || toggleChannel.error;
 
   const closeNavigationGuard = () => {
     if (navigationBlocker.state === "blocked") navigationBlocker.reset();
@@ -250,7 +242,7 @@ function CustomerAgentsPage() {
         canManage={canManage}
         deleteControl={selectedBot && canDelete ? <AgentDeleteControl key={selectedBot.id} bot={selectedBot}
           onPendingChange={setIsDeleting}
-          disabled={isSavingEditor || saveConfiguration.isPending || toggleBotStatus.isPending}
+          disabled={isSavingEditor || saveConfiguration.isPending}
           onDeleted={() => {
             discardDeletedAgent();
             queryClient.setQueryData<BotType[]>(["bots"], current => current?.filter(bot => bot.id !== selectedBot.id));
@@ -264,7 +256,7 @@ function CustomerAgentsPage() {
         createError={createBot.error}
         createOpen={createOpen}
         dirty={editorDirty}
-        isSaving={isSavingEditor || saveConfiguration.isPending || toggleBotStatus.isPending || isDeleting}
+        isSaving={isSavingEditor || saveConfiguration.isPending || isDeleting}
         knowledgeItems={(knowledge.data || []).filter(item => item.business === business.id)}
         mutationError={mutationError}
         navigationBlocked={navigationBlocker.state === "blocked"}
@@ -293,7 +285,6 @@ function CustomerAgentsPage() {
         ])}
         onSave={() => void saveEditorDrafts().catch(() => undefined)}
         onSetNewAgentName={setNewAgentName}
-        onToggleStatus={(active) => toggleBotStatus.mutate(active)}
         pageError={pageError}
         profileForm={profileForm}
         saveState={saveState}

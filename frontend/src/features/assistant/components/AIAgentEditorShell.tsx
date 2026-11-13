@@ -3,7 +3,6 @@ import type { ReactNode } from "react";
 
 import { Badge } from "../../../components/ui/Badge";
 import { Button } from "../../../components/ui/Button";
-import { Switch } from "../../../components/ui/Switch";
 import { cn } from "../../../lib/cn";
 import { useI18n } from "../../../lib/i18n";
 import type { Bot } from "../../../types";
@@ -12,15 +11,14 @@ import { agentStatusLabel, sectionsForAgent } from "../aiAgentsUtils";
 import { AgentSectionNavigation } from "./AgentSectionNavigation";
 
 export function AIAgentEditorShell({
-  bot, activeSection, canManage, activationBlocked, dirty, hasUserEdits, profileExists,
-  saveDisabled, isSaving, saveState, onSectionChange, onToggleStatus,
+  bot, activeSection, canManage, dirty, hasUserEdits, profileExists,
+  saveDisabled, isSaving, saveState, onSectionChange,
   onOpenMessages, onReset, onSave, showFooter, children, afterFooter,
-  navigation, readiness, preview, previewOpen, onOpenPreview,
+  navigation, preview, previewOpen, onOpenPreview,
 }: {
   bot: Bot;
   activeSection: AgentSection;
   canManage: boolean;
-  activationBlocked: boolean;
   dirty: boolean;
   hasUserEdits: boolean;
   profileExists: boolean;
@@ -28,7 +26,6 @@ export function AIAgentEditorShell({
   isSaving: boolean;
   saveState: "idle" | "saved";
   onSectionChange: (section: AgentSection) => void;
-  onToggleStatus: (active: boolean) => void;
   onOpenMessages: () => void;
   onReset: () => void;
   onSave: () => void;
@@ -36,7 +33,6 @@ export function AIAgentEditorShell({
   children: ReactNode;
   afterFooter?: ReactNode;
   navigation: ReactNode;
-  readiness: ReactNode;
   preview?: ReactNode;
   previewOpen: boolean;
   onOpenPreview: () => void;
@@ -72,15 +68,6 @@ export function AIAgentEditorShell({
                 </Button>
               </>}
             </div>
-          </div>
-          <div className="mt-3 flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
-            <div className="min-w-0 basis-full sm:flex-1 sm:basis-auto">{readiness}</div>
-            <label className="flex min-h-11 items-center gap-3 text-sm text-platforma-subtle">
-              <span>{t(bot.status === "active" ? "aiAgents.activityOn" : "aiAgents.activityOff")}</span>
-              <Switch checked={bot.status === "active"} disabled={!canManage || activationBlocked || (dirty && bot.status !== "active")}
-                isLoading={isSaving} label={t("aiAgents.statusSwitch", { name: bot.name })} onChange={onToggleStatus} size="dense" tone="brand"
-                title={activationBlocked ? t("aiAgents.activationBlocked") : dirty && bot.status !== "active" ? t("aiSetup.saveBeforeTest") : undefined} />
-            </label>
           </div>
         </header>
         <div className={cn("grid min-w-0 gap-6", previewOpen && "xl:grid-cols-[minmax(0,1fr)_360px]")}>

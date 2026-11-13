@@ -3,7 +3,7 @@
 Owner-approved redesign implemented in canonical checkout, branch codex/ui-testing-toolkit;
 start1421a111, precommit cd4e0a23. Foreign WIP preserved and excluded from own commit.
 Named picker/local navigation, split configuration, customer overview/context test,
-compact readiness/actions/full knowledge view. Existing atomic save/drafts/permissions retained.
+actions/full knowledge view. Existing atomic save/drafts/permissions retained.
 UX12+focus2PASS; dependent continuity2/isolation2/scenarios6PASS. Browser26views,
 preview22/picker15/channel8 checksPASS; axe customer7sections +CRM localesPASS.
 Final build/types/i18n7299/widget/bundlePASS. RU/KK/EN320–1440 and200% screenshots inspected.
@@ -13,6 +13,12 @@ Frontend contract/passport/evidence/registry updated; roadmap/D01 and other cont
 Publication/CI receipt, source hashes, commands and cleanup:
 output/ai-agents-redesign-20261113/CHECKPOINT.md.
 Evidence: docs/testing/evidence/ai-agents-redesign-20261113.md.
+
+Owner follow-up after1247e507: remove header readiness/activation switch and raise content.
+Implemented, build/types/i18n PASS; save/focus4 +scenario3 PASS; 21view checks PASS.
+RU1440/KK320/EN768 screenshots inspected; no first-step remainder. Other requested
+layout/chat/field/branch/template/title/disclosure changes deferred by owner priority.
+Follow-up logs: output/ai-agents-header-20261113; same checkpoint holds publication.
 
 ## NOTIFICATIONS-SERVER-FIXES-20261113
 
