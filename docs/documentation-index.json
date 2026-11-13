@@ -30,6 +30,7 @@
     {"path": "docs/testing/evidence/voice-planner-20261111.md", "role": "evidence"},
     {"path": "docs/testing/evidence/voice-recognition-20261111.md", "role": "evidence"},
     {"path": "docs/testing/evidence/ai-agents-fixes-20261111.md", "role": "evidence"},
+    {"path": "docs/testing/evidence/ai-agents-redesign-20261113.md", "role": "evidence"},
     {"path": "docs/testing/crm-global-plan-20261111/README.md", "role": "procedure"},
     {"path": "docs/testing/crm-global-plan-20261111/browser.md", "role": "procedure"},
     {"path": "docs/testing/crm-global-plan-20261111/inventory.json", "role": "generated-evidence"},

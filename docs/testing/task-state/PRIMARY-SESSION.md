@@ -1,3 +1,19 @@
+## AI-AGENTS-REDESIGN-20261113
+
+Owner-approved redesign implemented in canonical checkout, branch codex/ui-testing-toolkit;
+start1421a111, precommit cd4e0a23. Foreign WIP preserved and excluded from own commit.
+Named picker/local navigation, split configuration, customer overview/context test,
+compact readiness/actions/full knowledge view. Existing atomic save/drafts/permissions retained.
+UX12+focus2PASS; dependent continuity2/isolation2/scenarios6PASS. Browser26views,
+preview22/picker15/channel8 checksPASS; axe customer7sections +CRM localesPASS.
+Final build/types/i18n7299/widget/bundlePASS. RU/KK/EN320–1440 and200% screenshots inspected.
+Initial fixture/selector/HMR failures retained; final matching checks passed without weakened assertions.
+No scoped code/local-evidence remainder. No backend/workingDB/live-provider/deploy scope.
+Frontend contract/passport/evidence/registry updated; roadmap/D01 and other contracts not changed.
+Publication/CI receipt, source hashes, commands and cleanup:
+output/ai-agents-redesign-20261113/CHECKPOINT.md.
+Evidence: docs/testing/evidence/ai-agents-redesign-20261113.md.
+
 ## NOTIFICATIONS-SERVER-FIXES-20261113
 
 Mode implementation; code gap. Owner explicitly requested all six confirmed

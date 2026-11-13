@@ -1,3 +1,10 @@
+AI-AGENTS-REDESIGN-20261113: approved editor redesign implemented; scoped local acceptance PASS.
+Named picker/local sections, split configuration, overview/context test, readiness and full knowledge view.
+Atomic save, independent knowledge/channels, draft/permission/runtime guards preserved.
+UX14 and dependent10 browser cases PASS; localized/responsive/keyboard/recovery/axe and build/bundle PASS.
+No scoped local remainder; no backend/workingDB/provider/deployment changes. Publication/CI receipt:
+output/ai-agents-redesign-20261113/CHECKPOINT.md; docs/testing/evidence/ai-agents-redesign-20261113.md.
+
 NOTIFICATIONS-SERVER-FIXES-20261113: all six server defects fixed and locally verified.
 Personal access/internal history, atomic retry, stale delivery, failure alerts and monitor.
 27 new regressions; affected212:205SQLitePASS + all7concurrencyPASS on disposablePG17.

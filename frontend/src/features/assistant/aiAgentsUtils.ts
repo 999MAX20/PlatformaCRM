@@ -6,18 +6,20 @@ import type { AgentFormState, AgentSection, AutoPipelineMode, OnboardingStep } f
 export const defaultAllowedTools = ["create_client", "create_lead", "create_appointment", "handoff_to_manager"];
 
 export const sections: Array<{ id: AgentSection; labelKey: string; titleKey: string; icon: typeof Settings }> = [
+  { id: "overview", labelKey: "aiAgents.section.overview", titleKey: "aiAgents.section.overview", icon: MessageSquareText },
   { id: "profile", labelKey: "aiAgents.section.profile", titleKey: "aiAgents.profileTitle", icon: Bot },
+  { id: "instructions", labelKey: "aiAgents.section.instructions", titleKey: "aiAgents.section.instructions", icon: BookOpen },
   { id: "knowledge", labelKey: "aiAgents.section.knowledgeSimple", titleKey: "aiAgents.knowledgeTitle", icon: BookOpen },
   { id: "actions", labelKey: "aiAgents.section.actions", titleKey: "aiAgents.actionsTitle", icon: FunctionSquare },
   { id: "channels", labelKey: "aiAgents.section.channels", titleKey: "aiAgents.channelsTitle", icon: Radio },
-  { id: "test", labelKey: "aiAgents.section.test", titleKey: "aiAgents.testTitle", icon: MessageSquareText },
+  { id: "advanced", labelKey: "aiAgents.section.advanced", titleKey: "aiAgents.section.advanced", icon: Settings },
 ];
 
 const legacySectionMap: Record<string, AgentSection> = {
-  overview: "test",
+  test: "test",
   settings: "profile",
-  prompting: "profile",
-  models: "profile",
+  prompting: "instructions",
+  models: "advanced",
   integrations: "knowledge",
   control: "actions",
   functions: "actions",
@@ -143,7 +145,13 @@ export function getOnboardingSteps({
 }
 
 export function sectionsForAgent(scenario?: string) {
-  return scenario === "crm" ? [...sections.filter(section => !["channels", "test"].includes(section.id)),
+  return scenario === "crm" ? [
     { id: "work" as const, labelKey: "aiScenario.work", titleKey: "aiScenario.work", icon: MessageSquareText },
-    { id: "analytics" as const, labelKey: "aiScenario.analytics", titleKey: "aiScenario.analytics", icon: BookOpen }] : sections;
+    { id: "analytics" as const, labelKey: "aiScenario.analytics", titleKey: "aiScenario.analytics", icon: BookOpen },
+    ...sections.filter(section => !["channels", "overview"].includes(section.id))] : sections;
+}
+
+export function defaultAgentSection(bot: BotType): AgentSection {
+  if (!bot.readiness?.profile_ready) return "profile";
+  return bot.scenario === "crm" ? "work" : "overview";
 }

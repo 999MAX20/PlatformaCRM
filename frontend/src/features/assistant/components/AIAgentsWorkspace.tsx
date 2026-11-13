@@ -1,6 +1,6 @@
 import { CRMAgentRuntime } from "./CRMAgentRuntime";
 import { CRMAgentSettings } from "./CRMAgentSettings";
-import type { ComponentProps, Dispatch, ReactNode, SetStateAction } from "react";
+import { useEffect, useState, type ComponentProps, type Dispatch, type ReactNode, type SetStateAction } from "react";
 
 import { getApiErrorMessage } from "../../../api/client";
 import { CrmWorkspacePage } from "../../../components/crm";
@@ -18,6 +18,9 @@ import type { AgentFormState, AgentSection, BotDraftState } from "../aiAgentsTyp
 import { getOnboardingSteps } from "../aiAgentsUtils";
 import { AIAgentEditorShell } from "./AIAgentEditorShell";
 import { AgentReadiness } from "./AgentReadiness";
+import { AgentPreviewPanel } from "./AgentPreviewPanel";
+import { InstructionsSection, ModelsSection } from "./AIAgentConfigSection";
+import { CustomerAgentOverview } from "./AIAgentRuntimeSection";
 import { CreateAgentModal, UnsavedAgentChangesModal } from "./AIAgentModals";
 import {
   AgentActionsSection,
@@ -45,6 +48,8 @@ export function AIAgentsWorkspace({
   createError,
   createOpen,
   dirty,
+  hasUserEdits,
+  navigation,
   isSaving,
   knowledgeItems,
   mutationError,
@@ -92,6 +97,8 @@ export function AIAgentsWorkspace({
   createError: unknown;
   createOpen: boolean;
   dirty: boolean;
+  hasUserEdits: boolean;
+  navigation: ReactNode;
   isSaving: boolean;
   knowledgeItems: BusinessKnowledgeItem[];
   mutationError: unknown;
@@ -127,6 +134,9 @@ export function AIAgentsWorkspace({
   deleteControl?: ReactNode;
 }) {
   const { t } = useI18n();
+  const [previewOpen, setPreviewOpen] = useState(false);
+  useEffect(() => setPreviewOpen(false), [selectedBot?.id]);
+  const showPreview = previewOpen && selectedBot?.scenario !== "crm" && activeSection !== "test";
 
   if (pageError) {
     return (
@@ -162,9 +172,9 @@ export function AIAgentsWorkspace({
   return (
     <CrmWorkspacePage
       edgeToEdge
-      className="px-3 py-5 sm:px-6 sm:py-6"
+      className="px-4 pt-5 pb-24 sm:px-6 sm:pt-6 lg:pb-6"
       heightClassName="h-auto min-h-0"
-      maxWidthClassName="max-w-[960px]"
+      maxWidthClassName="max-w-[1520px]"
       testId="ai-agents-workspace-ready"
     >
       <div className="min-w-0">
@@ -176,6 +186,15 @@ export function AIAgentsWorkspace({
             canManage={canManage}
             activationBlocked={selectedBot.status !== "active" && !launchReady}
             dirty={dirty}
+            hasUserEdits={hasUserEdits}
+            profileExists={Boolean(selectedProfile)}
+            navigation={navigation}
+            readiness={<AgentReadiness key={selectedBot.id} bot={selectedBot} dirty={hasUserEdits} onRefresh={onRetry} />}
+            previewOpen={showPreview}
+            onOpenPreview={() => setPreviewOpen(!previewOpen)}
+            preview={selectedBot.scenario !== "crm" && activeSection !== "test" ? <AgentPreviewPanel key={selectedBot.id} open={showPreview} onClose={() => setPreviewOpen(false)}>
+              <TestAndLaunchSection bot={selectedBot} dirty={dirty || isSaving} canTest={canManage && canSuggest} />
+            </AgentPreviewPanel> : undefined}
             saveDisabled={!botDraft.name.trim()}
             isSaving={isSaving}
             saveState={saveState}
@@ -184,10 +203,9 @@ export function AIAgentsWorkspace({
             onOpenMessages={onOpenMessages}
             onReset={onReset}
             onSave={onSave}
-            showFooter={dirty || activeSection === "profile" || activeSection === "actions" || (selectedBot.scenario === "crm" && activeSection === "knowledge")}
-            afterFooter={activeSection === "profile" ? deleteControl : undefined}
+            showFooter={hasUserEdits || ["profile", "instructions", "advanced", "actions"].includes(activeSection) || (selectedBot.scenario === "crm" && activeSection === "knowledge")}
+            afterFooter={activeSection === "advanced" ? deleteControl : undefined}
           >
-            <AgentReadiness bot={selectedBot} dirty={dirty} onRefresh={onRetry} />
             {mutationError ? <ErrorState error={mutationError} message={getApiErrorMessage(mutationError)} /> : null}
             {activeSection === "channels" && !canViewChannels ? (
               <ErrorState message={t("aiAgents.channelsPermissionDenied")} />
@@ -198,8 +216,15 @@ export function AIAgentsWorkspace({
                 error={sectionError} message={getApiErrorMessage(sectionError)}
                 action={<Button type="button" variant="secondary" onClick={onRetrySection}>{t("common.retry")}</Button>}
               />
+            ) : activeSection === "overview" ? (
+              <CustomerAgentOverview bot={selectedBot} onboardingSteps={onboardingSteps} channels={channels} canViewChannels={canViewChannels} />
+            ) : activeSection === "instructions" ? (
+              <InstructionsSection scenario={selectedBot.scenario} botDraft={botDraft} setBotDraft={setBotDraft} form={profileForm} setForm={setProfileForm} canManage={canManage} />
+            ) : activeSection === "advanced" ? (
+              <ModelsSection draft={botDraft} setDraft={setBotDraft} canManage={canManage} readiness={selectedBot.readiness} />
             ) : activeSection === "profile" ? (
               <ProfileManagerSection
+                scenario={selectedBot.scenario}
                 botDraft={botDraft}
                 setBotDraft={setBotDraft}
                 form={profileForm}
@@ -234,8 +259,6 @@ export function AIAgentsWorkspace({
             ) : (
               <TestAndLaunchSection
                 bot={selectedBot}
-                onboardingSteps={onboardingSteps}
-                launchReady={launchReady}
                 dirty={dirty}
                 canTest={canManage && canSuggest}
               />
@@ -243,6 +266,7 @@ export function AIAgentsWorkspace({
           </AIAgentEditorShell>
         ) : (
           <div className="space-y-3">
+            {navigation}
             {mutationError ? <ErrorState error={mutationError} message={getApiErrorMessage(mutationError)} /> : null}
             <EmptyAgentsState canManage={canManage} onCreate={onOpenCreate} />
           </div>

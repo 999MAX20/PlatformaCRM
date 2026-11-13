@@ -328,8 +328,19 @@
   #root:has(.settings-workspace),
   html:has(.platforma-calendar-toolbar),
   body:has(.platforma-calendar-toolbar),
-  #root:has(.platforma-calendar-toolbar) {
+  #root:has(.platforma-calendar-toolbar),
+  html:has(.ai-agent-editor),
+  body:has(.ai-agent-editor),
+  #root:has(.ai-agent-editor) {
     overflow-x: clip;
+  }
+
+  html:has(.ai-agent-editor) {
+    scroll-padding-block: 5rem 14rem;
+  }
+
+  .ai-agent-editor :is(input, textarea, select, button) {
+    scroll-margin-block: 5rem 14rem;
   }
 
   html[data-scroll-lock='true'],

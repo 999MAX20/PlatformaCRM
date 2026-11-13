@@ -22,7 +22,7 @@ export function AIAgentPreview({ botId, blocked, canTest }: { botId: number; blo
   const disabled = blocked || !canTest || preview.isPending;
   return (
     <section className="flex flex-col gap-3">
-        <h3 className="text-base font-semibold">{t("aiSetup.previewTitle")}</h3>
+        <p className="text-sm font-semibold text-platforma-ink">{t("aiAgents.previewSavedConfiguration")}</p>
         <p className="text-sm text-platforma-subtle">{t("aiSetup.previewScope")}</p>
         {!canTest ? <ErrorState message={t("aiSetup.previewForbidden")} /> : blocked ? (
           <StatusNotice compact tone="warning" title={t("aiSetup.saveBeforeTest")} />
@@ -52,13 +52,13 @@ export function AIAgentPreview({ botId, blocked, canTest }: { botId: number; blo
           </ul> : null}
         </div> : null}
         {preview.error ? <ErrorState error={preview.error} message={getApiErrorMessage(preview.error)} /> : null}
-        <form className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end" onSubmit={(event) => {
+        <form className="grid gap-3" onSubmit={(event) => {
           event.preventDefault();
           if (!disabled && text.trim()) preview.mutate([...messages.slice(-14), { direction: "inbound", text: text.trim() }]);
         }}>
           <Textarea className="min-h-20 py-2" rows={2} label={t("aiSetup.message")} value={text} maxLength={2000} disabled={disabled} onChange={(event) => setText(event.target.value)} />
           <div className="flex flex-wrap gap-2">
-            <Button type="submit" className="min-h-11 sm:min-h-10" variant="ai" disabled={disabled || !text.trim()} isLoading={preview.isPending}>{t("aiSetup.testReply")}</Button>
+            <Button type="submit" className="min-h-11" disabled={disabled || !text.trim()} isLoading={preview.isPending}>{t("aiSetup.testReply")}</Button>
             <Button type="button" className="min-h-11 sm:min-h-10" variant="secondary" disabled={preview.isPending} onClick={() => { setMessages([]); setText(""); preview.reset(); }}>{t("aiSetup.resetTest")}</Button>
           </div>
         </form>

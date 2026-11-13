@@ -1,6 +1,6 @@
 import type { AgentProfile, Id } from "../../types";
 
-export type AgentSection = "profile" | "channels" | "knowledge" | "actions" | "test" | "work" | "analytics";
+export type AgentSection = "overview" | "profile" | "instructions" | "advanced" | "channels" | "knowledge" | "actions" | "test" | "work" | "analytics";
 
 export type AgentFormState = {
   id: Id | null;

@@ -19,27 +19,21 @@ type ProfileProps = {
   setForm: Dispatch<SetStateAction<AgentFormState>>;
   canManage: boolean;
   readiness?: Bot["readiness"];
+  scenario?: Bot["scenario"];
 };
 
-export function ProfileManagerSection({ botDraft, setBotDraft, form, setForm, canManage, readiness }: ProfileProps) {
+export function ProfileManagerSection({ botDraft, setBotDraft, form, setForm, canManage, scenario }: ProfileProps) {
   const { t } = useI18n();
-  const [templateOpen, setTemplateOpen] = useState(false);
-  const applyTemplate = () => {
-    setForm(current => ({ ...current, role_description: t("aiSetup.dentalRole"), system_prompt: t("aiSetup.dentalPrompt"), rules_text: t("aiAgents.defaultRules"), escalation_text: t("aiSetup.dentalEscalation") }));
-    setTemplateOpen(false);
-  };
-
   return (
     <div className="divide-y divide-platforma-border">
-      {botDraft.settings_json.scenario !== "crm" && <AgentBranchScope draft={botDraft} setDraft={setBotDraft} disabled={!canManage} />}
       <section className="pb-5">
         <h3 className="mb-3 text-base font-semibold text-platforma-ink">{t("aiAgents.generalSettings")}</h3>
-        <div className="grid items-start gap-4 sm:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)]">
-          <Input className="sm:min-h-10" label={t("aiAgents.name")} value={botDraft.name} disabled={!canManage} onChange={event => {
+        <div className="grid items-start gap-4 sm:grid-cols-2">
+          <div className="sm:col-span-2"><Input className="sm:min-h-10" label={t("aiAgents.name")} value={botDraft.name} disabled={!canManage} onChange={event => {
             const name = event.target.value;
             setBotDraft(current => ({ ...current, name }));
             setForm(current => ({ ...current, name }));
-          }} />
+          }} /></div>
           <Select className="sm:min-h-10" label={t("aiAgents.language")} value={botDraft.default_language} disabled={!canManage} onChange={event => {
             const language = event.target.value;
             setBotDraft(current => ({ ...current, default_language: language }));
@@ -54,34 +48,41 @@ export function ProfileManagerSection({ botDraft, setBotDraft, form, setForm, ca
             options={["friendly", "expert", "formal", "sales", "support"].map(value => ({ value, label: t(`aiAgents.tone.${value}`) }))} />
         </div>
       </section>
+      {scenario !== "crm" && <AgentBranchScope draft={botDraft} setDraft={setBotDraft} disabled={!canManage} />}
+    </div>
+  );
+}
 
-      <section className="py-5">
+export function InstructionsSection({ form, setForm, canManage, scenario }: ProfileProps) {
+  const { t } = useI18n();
+  const [templateOpen, setTemplateOpen] = useState(false);
+  const applyTemplate = () => {
+    setForm(current => ({ ...current, role_description: t("aiSetup.dentalRole"), system_prompt: t("aiSetup.dentalPrompt"), rules_text: t("aiAgents.defaultRules"), escalation_text: t("aiSetup.dentalEscalation") }));
+    setTemplateOpen(false);
+  };
+  return (
+    <div className="space-y-5">
+      <section>
         <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
           <h3 className="text-base font-semibold text-platforma-ink">{t("aiAgents.instructionTitle")}</h3>
-          {botDraft.settings_json.scenario !== "crm" && <Button type="button" className="min-h-11 w-fit sm:min-h-10" variant="secondary" disabled={!canManage} onClick={() => setTemplateOpen(true)}>{t("aiWorkspace.template")}</Button>}
+          {scenario !== "crm" && <Button type="button" className="min-h-11 w-fit sm:min-h-10" variant="secondary" disabled={!canManage} onClick={() => setTemplateOpen(true)}>{t("aiWorkspace.template")}</Button>}
         </div>
         <Textarea className="h-20 !min-h-20 py-2" rows={3} label={t("aiAgents.roleDescription")} value={form.role_description} disabled={!canManage}
           onChange={event => setForm(current => ({ ...current, role_description: event.target.value }))} />
       </section>
 
-      <section className="pt-4">
+      <section>
         <div id="ai-agent-quality-settings" className="space-y-3">
             <div>
-              <Textarea className="min-h-20 py-2" rows={3} label={t("aiAgents.systemPrompt")} value={form.system_prompt} disabled={!canManage}
+              <Textarea className="min-h-64 py-3" rows={12} label={t("aiAgents.systemPrompt")} value={form.system_prompt} disabled={!canManage}
                 onChange={event => setForm(current => ({ ...current, system_prompt: event.target.value }))} />
               <FieldHint>{t("aiAgents.hint.systemPrompt")}</FieldHint>
             </div>
-            <details open={botDraft.settings_json.scenario === "crm" ? true : undefined}>
-              <summary className="platforma-focus-ring min-h-11 cursor-pointer py-3 text-sm font-semibold text-platforma-ink">{t("aiSetup.advanced")}</summary>
-              <div className="grid items-start gap-5 pt-3 lg:grid-cols-2">
               <div>
                 <Textarea className="min-h-24 py-2" rows={4} label={t("aiAgents.rules")} value={form.rules_text} disabled={!canManage}
                   onChange={event => setForm(current => ({ ...current, rules_text: event.target.value }))} />
                 <FieldHint>{t("aiAgents.hint.rules")}</FieldHint>
               </div>
-              <ModelsSection draft={botDraft} setDraft={setBotDraft} canManage={canManage} readiness={readiness} />
-              </div>
-            </details>
           </div>
       </section>
       <Modal title={t("aiWorkspace.template")} open={templateOpen} onClose={() => setTemplateOpen(false)}>
@@ -95,7 +96,7 @@ export function ProfileManagerSection({ botDraft, setBotDraft, form, setForm, ca
   );
 }
 
-function ModelsSection({ draft, setDraft, canManage, readiness }: { draft: BotDraftState; setDraft: React.Dispatch<React.SetStateAction<BotDraftState>>; canManage: boolean; readiness?: Bot["readiness"] }) {
+export function ModelsSection({ draft, setDraft, canManage, readiness }: { draft: BotDraftState; setDraft: React.Dispatch<React.SetStateAction<BotDraftState>>; canManage: boolean; readiness?: Bot["readiness"] }) {
   const { t } = useI18n();
   const model = String(draft.settings_json.model || "");
   const temperature = Number(draft.settings_json.temperature ?? 0.4);

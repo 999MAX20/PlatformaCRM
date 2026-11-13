@@ -1,4 +1,14 @@
 export const aiAgents: Record<string, string> = {
+  "aiAgents.section.instructions": "Инструкции",
+  "aiAgents.section.advanced": "Дополнительно",
+  "aiAgents.openPreview": "Проверить",
+  "aiAgents.previewPanelTitle": "Проверка агента",
+  "aiAgents.previewSavedConfiguration": "Используется сохранённая конфигурация",
+  "aiAgents.activityOn": "Агент включён",
+  "aiAgents.activityOff": "Агент выключен",
+  "aiAgents.profileNotSaved": "Профиль ещё не сохранён",
+  "aiAgents.profileInactive": "Сохраните профиль для использования агентом",
+  "aiAgents.configurationSaved": "Настройки сохранены",
   "aiAgents.readiness.needsAttention": "Готовность агента: есть ограничения",
   "aiAgents.readiness.configurationComplete": "Настройки агента заполнены",
   "aiAgents.readiness.savedConfiguration": "Ниже показана сохранённая конфигурация. Сохраните изменения для повторной проверки.",
@@ -508,11 +518,11 @@ export const aiAgents: Record<string, string> = {
   "aiAgents.hint.knowledgeContent":
     "Пишите конкретные факты: цены, ограничения, адрес, условия записи. Чем точнее текст, тем меньше выдумок.",
   "aiAgents.hint.knowledgeActive":
-    "Активные знания доступны AI всей компании. Для каждого ответа выбирается ограниченный набор подходящих записей, а не вся база. Выключенная запись остаётся в базе, но не используется в ответах.",
+    "Агент использует свои активные материалы и подключённые общие знания. Ответы клиентам используют только материалы с разрешением для клиентов. Выключенный материал сохраняется, но не используется в ответах.",
   "aiAgents.authority.staffConfirmation": "После подтверждения сотрудником",
   "aiAgents.authority.staffBooking": "Запись выполняет сотрудник",
   "aiAgents.authority.title": "Полномочия агента",
-  "aiAgents.authority.text": "Итог текущих настроек выше. Изменения начнут действовать после сохранения. Для работы нужны готовый включённый агент и активный канал.",
+  "aiAgents.authority.text": "Итог текущих настроек. Изменения начнут действовать после сохранения. Для работы нужны готовый включённый агент и активный канал.",
   "aiAgents.authority.suggestions": "Ответы и квалификация",
   "aiAgents.authority.leadTask": "Заявка и задача",
   "aiAgents.authority.draftDeal": "Черновик сделки",

@@ -1,3 +1,4 @@
+import { openAgentSection } from "./support/agent-navigation";
 import { expect, test } from "@playwright/test";
 import { crmSession } from "./support/crm-workspace";
 import type { Bot, BusinessKnowledgeItem } from "../src/types";
@@ -10,7 +11,7 @@ test.beforeEach(({ page }) => {
 
 test("new agents isolate private knowledge and explicitly connect shared materials", async ({ page }, info) => {
   const session = await crmSession(page);
-  const shared = await session.create<BusinessKnowledgeItem>("ai/knowledge-items", { title: "Legacy shared material", content: "Shared only when connected" });
+  const shared = await session.create<BusinessKnowledgeItem>("ai/knowledge-items", { title: `Legacy shared material ${Date.now()}`, content: "Shared only when connected" });
   const first = await session.create<Bot>("bots", { name: "Isolated First" });
   const second = await session.create<Bot>("bots", { name: "Isolated Second" });
   await session.create("ai/agent-profiles", { bot: first.id, name: first.name, system_prompt: "First agent private instructions" });
@@ -43,21 +44,22 @@ test("new agents isolate private knowledge and explicitly connect shared materia
   await page.screenshot({ path: info.outputPath("explicit-knowledge.png"), fullPage: true });
   if (await page.getByTestId("agent-picker-trigger").count()) await page.getByTestId("agent-picker-trigger").click();
   await page.getByTestId("agent-navigation").getByRole("option", { name: /Isolated Second/ }).click();
+  await openAgentSection(page, "Инструкции");
   await expect(editor.getByRole("textbox", { name: "Главная инструкция", exact: true })).not.toHaveValue("First agent private instructions");
-  await editor.getByRole("tab", { name: "Знания", exact: true }).click();
+  await openAgentSection(page, "Знания");
   await expect(editor.getByText(privateTitle, { exact: true })).toHaveCount(0);
   await expect(editor.getByText(shared.title, { exact: true })).toHaveCount(0);
   await expect.poll(async () => (await session.read("ai/knowledge-items", { agent: second.id })).count).toBe(0);
   if (await page.getByTestId("agent-picker-trigger").count()) await page.getByTestId("agent-picker-trigger").click();
   await page.getByTestId("agent-navigation").getByRole("option", { name: /Isolated First/ }).click();
-  await editor.getByRole("tab", { name: "Знания", exact: true }).click();
+  await openAgentSection(page, "Знания");
   await expect(editor.getByText(shared.title, { exact: true })).toBeVisible();
   await editor.getByRole("button", { name: "Отключить", exact: true }).click();
   await expect(editor.getByText(shared.title, { exact: true })).toHaveCount(0);
   await page.reload();
   await expect(editor.getByText(privateTitle, { exact: true })).toBeVisible();
   await expect(editor.getByText(shared.title, { exact: true })).toHaveCount(0);
-  await editor.getByRole("tab", { name: "Профиль", exact: true }).click();
+  await openAgentSection(page, "Дополнительно");
   await editor.getByRole("button", { name: "Удалить агента", exact: true }).click();
   await dialog.getByRole("button", { name: "Удалить агента", exact: true }).click();
   await expect(page).not.toHaveURL(new RegExp(`/ai-agents/${first.id}/`));

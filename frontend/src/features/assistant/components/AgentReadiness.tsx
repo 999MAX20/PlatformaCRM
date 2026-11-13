@@ -9,9 +9,14 @@ export function AgentReadiness({ bot, dirty, onRefresh }: { bot: Bot; dirty: boo
   if (!readiness?.provider) return null;
   const provider = readiness.provider;
   const warning = !readiness.is_ready || Boolean(readiness.booking?.missing.length);
-  return <details className="mt-3 text-sm" data-testid="agent-readiness" open={warning ? true : undefined}>
+  const firstMissing = readiness.missing[0];
+  const reason = firstMissing ? t(`aiAgents.readiness.missing.${firstMissing}`)
+    : !provider.configuration_ready ? t(`aiAgents.readiness.provider.${provider.state}`)
+    : readiness.booking?.missing[0] ? t(`aiAgents.readiness.booking.${readiness.booking.missing[0]}`) : null;
+  return <details className="text-sm" data-testid="agent-readiness">
     <summary className="platforma-focus-ring min-h-11 cursor-pointer py-3 font-semibold text-platforma-ink">
       {t(warning ? "aiAgents.readiness.needsAttention" : "aiAgents.readiness.configurationComplete")}
+      {reason && <span className="mt-1 block font-normal text-platforma-subtle">{reason}</span>}
     </summary>
     <div className="space-y-2 pb-3 text-platforma-subtle">
       {dirty && <p>{t("aiAgents.readiness.savedConfiguration")}</p>}

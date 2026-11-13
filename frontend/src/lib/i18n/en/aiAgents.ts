@@ -1,4 +1,14 @@
 export const aiAgents: Record<string, string> = {
+  "aiAgents.section.instructions": "Instructions",
+  "aiAgents.section.advanced": "Advanced",
+  "aiAgents.openPreview": "Test agent",
+  "aiAgents.previewPanelTitle": "Agent test",
+  "aiAgents.previewSavedConfiguration": "Uses the saved configuration",
+  "aiAgents.activityOn": "Agent is on",
+  "aiAgents.activityOff": "Agent is off",
+  "aiAgents.profileNotSaved": "Profile has not been saved",
+  "aiAgents.profileInactive": "Save the profile to make it available to the agent",
+  "aiAgents.configurationSaved": "Settings saved",
   "aiAgents.readiness.needsAttention": "Agent readiness: limitations apply",
   "aiAgents.readiness.configurationComplete": "Agent configuration is complete",
   "aiAgents.readiness.savedConfiguration": "This is the saved configuration. Save your changes to check it again.",
@@ -508,11 +518,11 @@ export const aiAgents: Record<string, string> = {
   "aiAgents.hint.knowledgeContent":
     "Write concrete facts: prices, limits, address, booking terms. More precise text means fewer invented details.",
   "aiAgents.hint.knowledgeActive":
-    "Active knowledge is available to AI across the company. Each reply uses a limited selection of relevant entries, not the entire library. Disabled entries stay in the library but are excluded from replies.",
+    "The agent uses its own active materials and connected shared knowledge. Customer replies use only materials approved for customers. Disabled materials stay saved but are excluded from replies.",
   "aiAgents.authority.staffConfirmation": "After staff confirmation",
   "aiAgents.authority.staffBooking": "Staff creates the appointment",
   "aiAgents.authority.title": "Agent authority",
-  "aiAgents.authority.text": "Summary of the current settings above. Changes take effect after saving. Operation requires a ready, enabled agent and an active channel.",
+  "aiAgents.authority.text": "Summary of the current settings. Changes take effect after saving. Operation requires a ready, enabled agent and an active channel.",
   "aiAgents.authority.suggestions": "Replies and qualification",
   "aiAgents.authority.leadTask": "Lead and task",
   "aiAgents.authority.draftDeal": "Draft deal",

@@ -1,50 +1,32 @@
-import { MessageSquareText } from "lucide-react";
-import { useLayoutEffect, useRef, type ReactNode } from "react";
+import { MessageSquareText, PanelRightOpen } from "lucide-react";
+import type { ReactNode } from "react";
 
 import { Badge } from "../../../components/ui/Badge";
 import { Button } from "../../../components/ui/Button";
 import { Switch } from "../../../components/ui/Switch";
-import { Tabs } from "../../../components/ui/Tabs";
+import { cn } from "../../../lib/cn";
 import { useI18n } from "../../../lib/i18n";
-import type { Bot as BotType } from "../../../types";
+import type { Bot } from "../../../types";
 import type { AgentSection } from "../aiAgentsTypes";
 import { agentStatusLabel, sectionsForAgent } from "../aiAgentsUtils";
-
-type SaveState = "idle" | "saved";
-
-function statusVariant(status: BotType["status"], runtimeBlocked: boolean) {
-  if (runtimeBlocked) return "warning" as const;
-  if (status === "active") return "success" as const;
-  if (status === "paused") return "warning" as const;
-  return "neutral" as const;
-}
+import { AgentSectionNavigation } from "./AgentSectionNavigation";
 
 export function AIAgentEditorShell({
-  bot,
-  activeSection,
-  canManage,
-  activationBlocked,
-  dirty,
-  saveDisabled,
-  isSaving,
-  saveState,
-  onSectionChange,
-  onToggleStatus,
-  onOpenMessages,
-  onReset,
-  onSave,
-  showFooter,
-  children,
-  afterFooter,
+  bot, activeSection, canManage, activationBlocked, dirty, hasUserEdits, profileExists,
+  saveDisabled, isSaving, saveState, onSectionChange, onToggleStatus,
+  onOpenMessages, onReset, onSave, showFooter, children, afterFooter,
+  navigation, readiness, preview, previewOpen, onOpenPreview,
 }: {
-  bot: BotType;
+  bot: Bot;
   activeSection: AgentSection;
   canManage: boolean;
   activationBlocked: boolean;
   dirty: boolean;
+  hasUserEdits: boolean;
+  profileExists: boolean;
   saveDisabled?: boolean;
   isSaving: boolean;
-  saveState: SaveState;
+  saveState: "idle" | "saved";
   onSectionChange: (section: AgentSection) => void;
   onToggleStatus: (active: boolean) => void;
   onOpenMessages: () => void;
@@ -53,102 +35,74 @@ export function AIAgentEditorShell({
   showFooter: boolean;
   children: ReactNode;
   afterFooter?: ReactNode;
+  navigation: ReactNode;
+  readiness: ReactNode;
+  preview?: ReactNode;
+  previewOpen: boolean;
+  onOpenPreview: () => void;
 }) {
   const { t } = useI18n();
-  const headerRef = useRef<HTMLElement>(null);
   const runtimeBlocked = bot.status === "active" && Boolean(bot.readiness && !bot.readiness.is_ready);
-  const statusLabel = agentStatusLabel(bot, t);
-  const sections = sectionsForAgent(bot.scenario);
-  const nextSection = sections[sections.findIndex((section) => section.id === activeSection) + 1];
-  useLayoutEffect(() => {
-    const list = headerRef.current?.querySelector<HTMLElement>('[role="tablist"]');
-    const tab = list?.querySelector<HTMLElement>('[aria-selected="true"]');
-    if (!list || !tab) return;
-    const parent = list.getBoundingClientRect();
-    const selected = tab.getBoundingClientRect();
-    if (selected.right > parent.right) list.scrollLeft += selected.right - parent.right;
-    else if (selected.left < parent.left) list.scrollLeft += selected.left - parent.left;
-  }, [activeSection]);
-
+  const section = sectionsForAgent(bot.scenario).find(item => item.id === activeSection);
   return (
-    <section
-      className="min-w-0"
-      aria-label={t("aiAgents.editorAria", { name: bot.name })}
-      data-testid="ai-agent-editor"
-    >
-      <header ref={headerRef}>
-        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
-          <div className="flex min-w-0 flex-1 basis-full items-center gap-3 sm:basis-auto">
-            <h2 className="min-w-0 truncate text-lg font-semibold text-platforma-ink" title={bot.name}>{bot.name}</h2>
-            <Badge size="sm" variant="neutral">{t(`aiScenario.${bot.scenario || "inbox"}`)}</Badge>
-            <Badge size="sm" variant={statusVariant(bot.status, runtimeBlocked)}>{statusLabel}</Badge>
-          </div>
-
-          <div className="flex shrink-0 flex-wrap items-center gap-2">
-            {bot.scenario !== "crm" && <Button type="button" size="sm" className="min-h-11 sm:min-h-9" variant="secondary" onClick={onOpenMessages}>
-              <MessageSquareText aria-hidden="true" size={16} />
-              {t("aiAgents.openMessages")}
-            </Button>}
-            <div className="flex min-h-11 items-center gap-2 sm:min-h-9">
-              <Switch
-                checked={bot.status === "active"}
-                disabled={!canManage || activationBlocked || (dirty && bot.status !== "active")}
-                isLoading={isSaving}
-                label={t("aiAgents.statusSwitch", { name: bot.name })}
-                onChange={onToggleStatus}
-                size="dense"
-                tone="ai"
-                title={activationBlocked ? t("aiAgents.activationBlocked") : undefined}
-              />
+    <section className="ai-agent-editor grid min-w-0 gap-5 lg:grid-cols-[216px_minmax(0,1fr)] lg:gap-8"
+      aria-label={t("aiAgents.editorAria", { name: bot.name })} data-testid="ai-agent-editor">
+      <aside className="min-w-0 space-y-4 lg:sticky lg:top-[calc(var(--app-header-height)+1.5rem)] lg:self-start" aria-label={t("aiAgents.allAgents")}>
+        {navigation}
+        <AgentSectionNavigation scenario={bot.scenario} value={activeSection} onChange={onSectionChange} />
+      </aside>
+      <div className="min-w-0">
+        <header className="border-b border-platforma-border pb-4">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div className="min-w-0 flex-1 basis-60">
+              <h2 className="break-words text-xl font-semibold text-platforma-ink">{bot.name}</h2>
+              <div className="mt-2 flex flex-wrap items-center gap-2">
+                <span className="text-sm text-platforma-subtle">{t(`aiScenario.${bot.scenario || "inbox"}`)}</span>
+                <Badge size="sm" variant={runtimeBlocked ? "warning" : bot.status === "active" ? "success" : "neutral"}>{agentStatusLabel(bot, t)}</Badge>
+              </div>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              {bot.scenario !== "crm" && <>
+                {activeSection !== "test" && <Button type="button" variant="secondary" className="min-h-11" disabled={isSaving}
+                  data-focus-return-id="agent-preview-trigger" aria-expanded={previewOpen} onClick={onOpenPreview}>
+                  <PanelRightOpen size={16} aria-hidden="true" />{t("aiAgents.openPreview")}
+                </Button>}
+                <Button type="button" className="min-h-11" variant="secondary" aria-label={t("aiAgents.openMessages")} title={t("aiAgents.openMessages")} onClick={onOpenMessages}>
+                  <MessageSquareText aria-hidden="true" size={16} /><span className="hidden sm:inline">{t("aiAgents.openMessages")}</span>
+                </Button>
+              </>}
             </div>
           </div>
-        </div>
-
-        <Tabs
-          ariaLabel={t("aiAgents.editorTabsAria")}
-          idPrefix="ai-agent-editor"
-          className="mt-4 [&_[role=tab]]:min-h-11 sm:[&_[role=tab]]:min-h-10"
-          tone="ai"
-          appearance="underline"
-          value={activeSection}
-          onChange={onSectionChange}
-          options={sections.map((section) => ({
-            value: section.id,
-            label: t(section.labelKey),
-          }))}
-        />
-      </header>
-
-      <div
-        id={`ai-agent-editor-panel-${activeSection}`}
-        role="tabpanel"
-        aria-labelledby={`ai-agent-editor-tab-${activeSection}`}
-        className="min-w-0 py-5"
-      >
-        <fieldset disabled={isSaving} className="min-w-0 w-full">{children}</fieldset>
-      </div>
-
-      {canManage && (showFooter || nextSection) ? (
-        <footer className="flex flex-wrap items-center justify-end gap-x-3 gap-y-2 border-t border-platforma-border pt-4">
-          <p className="mr-auto text-xs font-medium text-platforma-subtle" aria-live="polite">
-            {dirty
-              ? t("aiAgents.unsavedIndicator")
-              : saveState === "saved"
-                ? t("aiAgents.savedIndicator")
-                : ""}
-          </p>
-          <div className="flex flex-wrap justify-end gap-2">
-            {showFooter ? <><Button type="button" className="min-h-11 sm:min-h-10" variant="secondary" disabled={!dirty || isSaving} onClick={onReset}>
-              {t("common.cancel")}
-            </Button>
-            <Button type="button" className="min-h-11 sm:min-h-10" disabled={!dirty || saveDisabled} isLoading={isSaving} onClick={onSave}>
-              {t("aiAgents.saveChanges")}
-            </Button></> : null}
-            {nextSection ? <Button type="button" className="min-h-11 sm:min-h-10" variant="secondary" disabled={isSaving} onClick={() => onSectionChange(nextSection.id)}>{t("aiSetup.next", { section: t(nextSection.labelKey) })}</Button> : null}
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
+            <div className="min-w-0 basis-full sm:flex-1 sm:basis-auto">{readiness}</div>
+            <label className="flex min-h-11 items-center gap-3 text-sm text-platforma-subtle">
+              <span>{t(bot.status === "active" ? "aiAgents.activityOn" : "aiAgents.activityOff")}</span>
+              <Switch checked={bot.status === "active"} disabled={!canManage || activationBlocked || (dirty && bot.status !== "active")}
+                isLoading={isSaving} label={t("aiAgents.statusSwitch", { name: bot.name })} onChange={onToggleStatus} size="dense" tone="brand"
+                title={activationBlocked ? t("aiAgents.activationBlocked") : dirty && bot.status !== "active" ? t("aiSetup.saveBeforeTest") : undefined} />
+            </label>
           </div>
-        </footer>
-      ) : null}
-      {afterFooter}
+        </header>
+        <div className={cn("grid min-w-0 gap-6", previewOpen && "xl:grid-cols-[minmax(0,1fr)_360px]")}>
+          <div className="min-w-0">
+            <div id={`ai-agent-editor-panel-${activeSection}`} className="min-w-0 py-6">
+              <h3 className="mb-5 text-lg font-semibold text-platforma-ink">{t(section?.labelKey || "aiAgents.section.test")}</h3>
+              <fieldset disabled={isSaving} className="min-w-0 w-full">{children}</fieldset>
+            </div>
+            {canManage && showFooter && <footer className={cn("bottom-[calc(4.375rem_+_max(0.25rem,env(safe-area-inset-bottom)))] z-10 flex flex-wrap items-center justify-between gap-3 border-t border-platforma-border bg-surface py-4 lg:sticky lg:bottom-0", dirty ? "sticky" : "relative bottom-auto")} data-testid="agent-save-bar">
+              <p className="text-sm text-platforma-subtle" aria-live="polite">
+                {hasUserEdits ? t("aiAgents.unsavedIndicator") : dirty ? t(profileExists ? "aiAgents.profileInactive" : "aiAgents.profileNotSaved") : saveState === "saved" ? t("aiAgents.savedIndicator") : t("aiAgents.configurationSaved")}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <Button type="button" className="min-h-11" variant="secondary" disabled={!hasUserEdits || isSaving} onClick={onReset}>{t("common.cancel")}</Button>
+                <Button type="button" className="min-h-11" disabled={!dirty || saveDisabled} isLoading={isSaving} onClick={onSave}>{t("aiAgents.saveChanges")}</Button>
+              </div>
+            </footer>}
+            {afterFooter}
+          </div>
+          {preview}
+        </div>
+      </div>
     </section>
   );
 }

@@ -16,7 +16,7 @@ import type { AgentProfile, Bot as BotType, BotChannel, BusinessKnowledgeItem } 
 import { AIAgentsWorkspace } from "./components/AIAgentsWorkspace";
 import { AgentNavigation } from "./components/AgentNavigation";
 import { AgentDeleteControl } from "./components/AgentDeleteControl";
-import { jsonFromLines } from "./aiAgentsUtils";
+import { defaultAgentSection, jsonFromLines } from "./aiAgentsUtils";
 import { useAIAgentEditorDrafts } from "./useAIAgentEditorDrafts";
 import { useCanonicalAIAgentRoute } from "./useCanonicalAIAgentRoute";
 import { useMetaOAuthCallbackBridge } from "./useMetaOAuthCallbackBridge";
@@ -71,7 +71,7 @@ function CustomerAgentsPage() {
   );
   const [isSavingEditor, setIsSavingEditor] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const loadChannels = Boolean(business && canViewChannels && ["channels", "test"].includes(activeSection));
+  const loadChannels = Boolean(business && canViewChannels && ["channels", "overview"].includes(activeSection));
   const botChannels = useQuery<BotChannel[]>({
     queryKey: ["bot-channels"],
     queryFn: () => botChannelsApi.list(),
@@ -192,7 +192,10 @@ function CustomerAgentsPage() {
       isLoading={isPageLoading || Boolean(canonicalRoute) || isDeleting} error={bots.error || profiles.error}
       canCreate={canManage} dirty={hasUserEdits} onCreate={() => setCreateOpen(true)}
       onRetry={() => void Promise.all([bots.refetch(), profiles.refetch()])}
-      onSelect={id => navigate(`/app/ai-agents/${id}/profile`)}
+      onSelect={id => {
+        const bot = botList.find(item => item.id === id);
+        navigate(`/app/ai-agents/${id}/${bot ? defaultAgentSection(bot) : "profile"}`);
+      }}
     />
   );
 
@@ -207,20 +210,16 @@ function CustomerAgentsPage() {
   }
 
   const pageError = bots.error || profiles.error;
-  const sectionError = activeSection === "channels"
+  const sectionError = ["channels", "overview"].includes(activeSection)
     ? botChannels.error
     : activeSection === "knowledge"
       ? knowledge.error
-      : activeSection === "test"
-        ? botChannels.error || knowledge.error
-        : null;
-  const sectionLoading = activeSection === "channels"
-    ? botChannels.isLoading
+      : null;
+  const sectionLoading = ["channels", "overview"].includes(activeSection)
+    ? loadChannels && botChannels.isLoading
     : activeSection === "knowledge"
       ? knowledge.isLoading
-      : activeSection === "test"
-        ? (loadChannels && botChannels.isLoading) || knowledge.isLoading
-        : false;
+      : false;
   const mutationError = createBot.error || saveConfiguration.error || addChannel.error || toggleChannel.error || toggleBotStatus.error;
 
   const closeNavigationGuard = () => {
@@ -240,8 +239,9 @@ function CustomerAgentsPage() {
 
   return (
     <>
-      {navigation}
       <AIAgentsWorkspace
+        navigation={navigation}
+        hasUserEdits={hasUserEdits}
         activeSection={activeSection}
         addChannel={addChannel}
         botChannels={botChannels.data || []}
@@ -289,7 +289,7 @@ function CustomerAgentsPage() {
         ])}
         onRetrySection={() => void Promise.all([
           ...(loadChannels ? [botChannels.refetch()] : []),
-          ...(["knowledge", "test"].includes(activeSection) ? [knowledge.refetch()] : []),
+          ...(activeSection === "knowledge" ? [knowledge.refetch()] : []),
         ])}
         onSave={() => void saveEditorDrafts().catch(() => undefined)}
         onSetNewAgentName={setNewAgentName}

@@ -1,4 +1,14 @@
 export const aiAgents: Record<string, string> = {
+  "aiAgents.section.instructions": "Нұсқаулар",
+  "aiAgents.section.advanced": "Қосымша",
+  "aiAgents.openPreview": "Тексеру",
+  "aiAgents.previewPanelTitle": "Агентті тексеру",
+  "aiAgents.previewSavedConfiguration": "Сақталған конфигурация қолданылады",
+  "aiAgents.activityOn": "Агент қосулы",
+  "aiAgents.activityOff": "Агент өшірулі",
+  "aiAgents.profileNotSaved": "Профиль әлі сақталмаған",
+  "aiAgents.profileInactive": "Агент пайдалануы үшін профильді сақтаңыз",
+  "aiAgents.configurationSaved": "Баптаулар сақталған",
   "aiAgents.readiness.needsAttention": "Агенттің дайындығы: шектеулер бар",
   "aiAgents.readiness.configurationComplete": "Агент баптаулары толтырылған",
   "aiAgents.readiness.savedConfiguration": "Төменде сақталған баптаулар көрсетілген. Қайта тексеру үшін өзгерістерді сақтаңыз.",
@@ -506,11 +516,11 @@ export const aiAgents: Record<string, string> = {
   "aiAgents.hint.knowledgeContent":
     "Нақты фактілерді жазыңыз: баға, шектеу, мекенжай, жазылу шарттары. Нақты мәтін ойдан шығаруды азайтады.",
   "aiAgents.hint.knowledgeActive":
-    "Белсенді білім компанияның AI жүйесіне қолжетімді. Әр жауап үшін бүкіл база емес, сәйкес жазбалардың шектеулі жиынтығы таңдалады. Өшірілген жазба базада қалады, бірақ жауаптарда қолданылмайды.",
+    "Агент өзінің белсенді материалдарын және қосылған ортақ білімді пайдаланады. Клиенттерге жауап беру үшін тек клиенттерге рұқсат етілген материалдар қолданылады. Өшірілген материал сақталады, бірақ жауаптарда қолданылмайды.",
   "aiAgents.authority.staffConfirmation": "Қызметкер растағаннан кейін",
   "aiAgents.authority.staffBooking": "Қабылдауға қызметкер жазады",
   "aiAgents.authority.title": "Агент өкілеттіктері",
-  "aiAgents.authority.text": "Жоғарыдағы ағымдағы баптаулардың қорытындысы. Өзгерістер сақталғаннан кейін күшіне енеді. Жұмыс үшін дайын әрі қосылған агент және белсенді арна қажет.",
+  "aiAgents.authority.text": "Ағымдағы баптаулардың қорытындысы. Өзгерістер сақталғаннан кейін күшіне енеді. Жұмыс үшін дайын әрі қосылған агент және белсенді арна қажет.",
   "aiAgents.authority.suggestions": "Жауаптар мен біліктілік",
   "aiAgents.authority.leadTask": "Өтінім және тапсырма",
   "aiAgents.authority.draftDeal": "Мәміле жобасы",
