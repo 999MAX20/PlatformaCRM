@@ -14,8 +14,9 @@ after required acceptance. Current state: scoped implementation and local accept
 - Named agent picker, direct local section navigation, responsive section menu.
 - Separate profile, instructions and advanced settings; existing atomic save,
   field values and JSON retained; draft guards remain.
-- Customer overview contains existing Inbox activity and channel status. Context
-  testing uses the saved configuration, with no client send or CRM write.
+- Customer overview contains existing Inbox activity and channel status. Test chat
+  overlays the right side below the global header without reflow; it uses the saved
+  configuration, with no client send or CRM write. The inner messages button is removed.
 - CRM work, analytics and staff-only access retain the existing runtime.
 - Header retains agent identity, scenario and status; truthful profile/dirty states.
   Readiness disclosure and activation switch were removed by the owner correction below.
@@ -87,8 +88,9 @@ on all sections and raise the existing content. This supersedes their original
 presentation above; backend readiness and activation APIs were not changed.
 The now-unused page mutation/props were removed. No replacement activation UI was
 added. Agent name, scenario and status badge remain. Other requested changes
-(message button, test-chat overlay, field widths, branch selector, template button,
-duplicate section headings and processing-limit disclosure) await the next scoped step.
+(field widths, branch selector, template button, duplicate section headings and
+processing-limit disclosure) await the next scoped step. Message-button removal and
+test-chat overlay were completed in the follow-up below.
 
 Base `1247e507`; canonical checkout/current branch, foreign WIP preserved.
 Follow-up checks: build/types/i18n/application/widget PASS; save/retry and keyboard
@@ -105,3 +107,34 @@ backend or new state behavior; their broader gates are not rerun for this remova
 Full release/live/deployment not run. No remainder in this first requested step.
 Commands/results/failures: `output/ai-agents-header-20261113/`; publication receipt:
 `output/ai-agents-redesign-20261113/CHECKPOINT.md`.
+
+## Owner correction: test chat and picker layers
+
+Base `ef316d6e`, same canonical checkout/branch. Removed inner messages button;
+RU/KK/EN trigger and title now say Test chat. Fixed right-side portal uses the actual
+global-header bottom, one-third viewport width on desktop (minimum360px) and full
+phone width; opening does not resize or shift the editor. Escape/close restores
+focus; moving focus outside dismisses the nonmodal panel. Local question/history
+survive close/reopen for the same agent. Conversation scrolls to new responses;
+large text retains readable history with additional panel scrolling.
+
+The supplied picker defect was reproduced by restoring the former stacking classes
+temporarily in the browser:99 sampled popup points hit editor content. With the fix,
+zero points did. Navigation paints above the isolated editor layer; no menu redesign.
+
+Final scoped regressions8PASS (desktop/mobile), followed by affected save/chat4PASS
+after the large-text adjustment. Browser matrix26 assertions PASS, interaction16
+PASS (pending/repeat suppression, multi-turn history, resize, keyboard, axe), final
+large-text6PASS. RU1440/KK320/EN768 and200% screenshots captured and visually inspected.
+Chat and picker axe WCAG A/AA scans reported zero violations. Final build/types/
+i18n7299/app/widget and bundle PASS; unchanged locale chunk warnings remain.
+
+Delivery gate PASS within scope: shared tokens and truthful test-only content,
+functional controls/recovery, no header overlap/reflow, menu hit-testing, responsive
+and keyboard access. No new assets/theme/provider/backend/permission policy.
+Initial harness failures retained: mobile link name included unread count; direct
+fixture profile lacked business; direct cookie-auth token request returned HTML.
+Corrected selector and existing UI save flow passed; no assertion was weakened.
+No scoped code/evidence remainder. Fullrelease/live/deployment not run.
+Logs/scripts/hashes: `output/ai-agents-chat-panel-20261113/`; same checkpoint holds
+publication and cleanup. Remaining prior ideas are listed above, not implemented here.

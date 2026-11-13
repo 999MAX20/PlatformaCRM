@@ -1,4 +1,4 @@
-import { MessageSquareText, PanelRightOpen } from "lucide-react";
+import { MessageSquareText } from "lucide-react";
 import type { ReactNode } from "react";
 
 import { Badge } from "../../../components/ui/Badge";
@@ -13,7 +13,7 @@ import { AgentSectionNavigation } from "./AgentSectionNavigation";
 export function AIAgentEditorShell({
   bot, activeSection, canManage, dirty, hasUserEdits, profileExists,
   saveDisabled, isSaving, saveState, onSectionChange,
-  onOpenMessages, onReset, onSave, showFooter, children, afterFooter,
+  onReset, onSave, showFooter, children, afterFooter,
   navigation, preview, previewOpen, onOpenPreview,
 }: {
   bot: Bot;
@@ -26,7 +26,6 @@ export function AIAgentEditorShell({
   isSaving: boolean;
   saveState: "idle" | "saved";
   onSectionChange: (section: AgentSection) => void;
-  onOpenMessages: () => void;
   onReset: () => void;
   onSave: () => void;
   showFooter: boolean;
@@ -43,11 +42,11 @@ export function AIAgentEditorShell({
   return (
     <section className="ai-agent-editor grid min-w-0 gap-5 lg:grid-cols-[216px_minmax(0,1fr)] lg:gap-8"
       aria-label={t("aiAgents.editorAria", { name: bot.name })} data-testid="ai-agent-editor">
-      <aside className="min-w-0 space-y-4 lg:sticky lg:top-[calc(var(--app-header-height)+1.5rem)] lg:self-start" aria-label={t("aiAgents.allAgents")}>
+      <aside className="relative z-20 min-w-0 space-y-4 lg:sticky lg:top-[calc(var(--app-header-height)+1.5rem)] lg:self-start" aria-label={t("aiAgents.allAgents")}>
         {navigation}
         <AgentSectionNavigation scenario={bot.scenario} value={activeSection} onChange={onSectionChange} />
       </aside>
-      <div className="min-w-0">
+      <div className="relative z-0 min-w-0">
         <header className="border-b border-platforma-border pb-4">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="min-w-0 flex-1 basis-60">
@@ -58,19 +57,14 @@ export function AIAgentEditorShell({
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-2">
-              {bot.scenario !== "crm" && <>
-                {activeSection !== "test" && <Button type="button" variant="secondary" className="min-h-11" disabled={isSaving}
-                  data-focus-return-id="agent-preview-trigger" aria-expanded={previewOpen} onClick={onOpenPreview}>
-                  <PanelRightOpen size={16} aria-hidden="true" />{t("aiAgents.openPreview")}
-                </Button>}
-                <Button type="button" className="min-h-11" variant="secondary" aria-label={t("aiAgents.openMessages")} title={t("aiAgents.openMessages")} onClick={onOpenMessages}>
-                  <MessageSquareText aria-hidden="true" size={16} /><span className="hidden sm:inline">{t("aiAgents.openMessages")}</span>
-                </Button>
-              </>}
+              {bot.scenario !== "crm" && activeSection !== "test" && <Button type="button" variant="secondary" className="min-h-11" disabled={isSaving}
+                data-focus-return-id="agent-preview-trigger" aria-expanded={previewOpen} aria-controls="agent-preview-panel" onClick={onOpenPreview}>
+                <MessageSquareText size={16} aria-hidden="true" />{t("aiAgents.openPreview")}
+              </Button>}
             </div>
           </div>
         </header>
-        <div className={cn("grid min-w-0 gap-6", previewOpen && "xl:grid-cols-[minmax(0,1fr)_360px]")}>
+        <div className="min-w-0">
           <div className="min-w-0">
             <div id={`ai-agent-editor-panel-${activeSection}`} className="min-w-0 py-6">
               <h3 className="mb-5 text-lg font-semibold text-platforma-ink">{t(section?.labelKey || "aiAgents.section.test")}</h3>

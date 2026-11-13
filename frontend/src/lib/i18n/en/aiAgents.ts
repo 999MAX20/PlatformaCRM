@@ -1,8 +1,8 @@
 export const aiAgents: Record<string, string> = {
   "aiAgents.section.instructions": "Instructions",
   "aiAgents.section.advanced": "Advanced",
-  "aiAgents.openPreview": "Test agent",
-  "aiAgents.previewPanelTitle": "Agent test",
+  "aiAgents.openPreview": "Test chat",
+  "aiAgents.previewPanelTitle": "Test chat",
   "aiAgents.previewSavedConfiguration": "Uses the saved configuration",
   "aiAgents.activityOn": "Agent is on",
   "aiAgents.activityOff": "Agent is off",

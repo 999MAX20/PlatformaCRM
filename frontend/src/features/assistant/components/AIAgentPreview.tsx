@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { botAiApi, type AgentPreviewMessage } from "../../../api/bots";
 import { getApiErrorMessage } from "../../../api/client";
@@ -8,10 +8,11 @@ import { StatusNotice } from "../../../components/ui/StatusNotice";
 import { ErrorState } from "../../../components/ui/StateViews";
 import { useI18n } from "../../../lib/i18n";
 
-export function AIAgentPreview({ botId, blocked, canTest }: { botId: number; blocked: boolean; canTest: boolean }) {
+export function AIAgentPreview({ botId, blocked, canTest, fillHeight = false }: { botId: number; blocked: boolean; canTest: boolean; fillHeight?: boolean }) {
   const { t } = useI18n();
   const [text, setText] = useState("");
   const [messages, setMessages] = useState<AgentPreviewMessage[]>([]);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const preview = useMutation({
     mutationFn: (history: AgentPreviewMessage[]) => botAiApi.preview(botId, history),
     onSuccess: (result, history) => {
@@ -20,8 +21,12 @@ export function AIAgentPreview({ botId, blocked, canTest }: { botId: number; blo
     },
   });
   const disabled = blocked || !canTest || preview.isPending;
+  useEffect(() => {
+    if (fillHeight && scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+  }, [fillHeight, messages, preview.error]);
   return (
-    <section className="flex flex-col gap-3">
+    <section className={`flex flex-col gap-3 ${fillHeight ? "min-h-0 flex-1 overflow-y-auto overscroll-contain" : ""}`}>
+      <div ref={scrollRef} className={`space-y-3 ${fillHeight ? "min-h-32 flex-1 overflow-y-auto overscroll-contain" : ""}`}>
         <p className="text-sm font-semibold text-platforma-ink">{t("aiAgents.previewSavedConfiguration")}</p>
         <p className="text-sm text-platforma-subtle">{t("aiSetup.previewScope")}</p>
         {!canTest ? <ErrorState message={t("aiSetup.previewForbidden")} /> : blocked ? (
@@ -34,7 +39,7 @@ export function AIAgentPreview({ botId, blocked, canTest }: { botId: number; blo
             </Button>
           ))}
         </div>
-        <div role="log" aria-label={t("aiSetup.previewTitle")} className={`max-h-80 space-y-3 overflow-y-auto overscroll-contain rounded-control bg-surface-muted ${messages.length ? "min-h-32 p-3" : "h-0"}`}>
+        <div role="log" aria-label={t("aiSetup.previewTitle")} className={`${fillHeight ? "" : "max-h-80 overflow-y-auto overscroll-contain"} space-y-3 rounded-control bg-surface-muted ${messages.length ? "min-h-32 p-3" : "h-0"}`}>
           {messages.map((message, index) => (
             <div key={index} className="border-b border-platforma-border pb-2 last:border-0 last:pb-0">
               <p className="text-xs font-semibold text-platforma-subtle">{t(message.direction === "inbound" ? "aiAgents.client" : "aiAgents.reply")}</p>
@@ -52,7 +57,8 @@ export function AIAgentPreview({ botId, blocked, canTest }: { botId: number; blo
           </ul> : null}
         </div> : null}
         {preview.error ? <ErrorState error={preview.error} message={getApiErrorMessage(preview.error)} /> : null}
-        <form className="grid gap-3" onSubmit={(event) => {
+      </div>
+        <form className={`grid shrink-0 gap-3 ${fillHeight ? "border-t border-platforma-border pt-3" : ""}`} onSubmit={(event) => {
           event.preventDefault();
           if (!disabled && text.trim()) preview.mutate([...messages.slice(-14), { direction: "inbound", text: text.trim() }]);
         }}>

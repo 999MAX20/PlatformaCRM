@@ -7,10 +7,10 @@ import { AIAgentPreview } from "./AIAgentPreview";
 import { CustomerAgentActivity } from "./CustomerAgentActivity";
 import { channelStatus } from "../aiAgentsUtils";
 
-export function TestAndLaunchSection({ bot, dirty, canTest }: {
-  bot: Bot; dirty: boolean; canTest: boolean;
+export function TestAndLaunchSection({ bot, dirty, canTest, fillHeight = false }: {
+  bot: Bot; dirty: boolean; canTest: boolean; fillHeight?: boolean;
 }) {
-  return <AIAgentPreview key={`${bot.id}-${bot.updated_at}`} botId={bot.id} blocked={dirty || !bot.readiness?.profile_ready} canTest={canTest} />;
+  return <AIAgentPreview key={`${bot.id}-${bot.updated_at}`} botId={bot.id} blocked={dirty || !bot.readiness?.profile_ready} canTest={canTest} fillHeight={fillHeight} />;
 }
 
 export function CustomerAgentOverview({ bot, onboardingSteps, channels, canViewChannels }: {

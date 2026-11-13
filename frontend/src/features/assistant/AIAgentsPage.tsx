@@ -272,7 +272,6 @@ function CustomerAgentsPage() {
           void saveAndContinue().catch(() => undefined);
         }}
         onNavigateSection={(section) => navigate(`/app/ai-agents/${selectedBot?.id}/${section}`)}
-        onOpenMessages={() => navigate(`/app/conversations?bot=${selectedBot?.id}&preset=all`)}
         onOpenCreate={() => setCreateOpen(true)}
         onReset={resetEditorDrafts}
         onRetry={() => void Promise.all([

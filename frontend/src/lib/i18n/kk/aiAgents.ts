@@ -1,8 +1,8 @@
 export const aiAgents: Record<string, string> = {
   "aiAgents.section.instructions": "Нұсқаулар",
   "aiAgents.section.advanced": "Қосымша",
-  "aiAgents.openPreview": "Тексеру",
-  "aiAgents.previewPanelTitle": "Агентті тексеру",
+  "aiAgents.openPreview": "Сынақ чаты",
+  "aiAgents.previewPanelTitle": "Сынақ чаты",
   "aiAgents.previewSavedConfiguration": "Сақталған конфигурация қолданылады",
   "aiAgents.activityOn": "Агент қосулы",
   "aiAgents.activityOff": "Агент өшірулі",

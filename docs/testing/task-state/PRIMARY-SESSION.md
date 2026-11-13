@@ -20,6 +20,12 @@ RU1440/KK320/EN768 screenshots inspected; no first-step remainder. Other request
 layout/chat/field/branch/template/title/disclosure changes deferred by owner priority.
 Follow-up logs: output/ai-agents-header-20261113; same checkpoint holds publication.
 
+Next owner correction complete: inner messages button removed; Test chat overlays right
+side below global header without reflow. Picker/editor stacking defect reproduced/fixed.
+Scoped8PASS plus affected4PASS; browser26+interaction16+large-text6PASS; build/bundlePASS.
+Screenshots RU/KK/EN320–1440 and200% inspected. Other field/branch/template/title ideas
+remain deferred. Receipt/checkpoint unchanged; logs output/ai-agents-chat-panel-20261113.
+
 ## NOTIFICATIONS-SERVER-FIXES-20261113
 
 Mode implementation; code gap. Owner explicitly requested all six confirmed

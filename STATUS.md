@@ -7,6 +7,12 @@ output/ai-agents-redesign-20261113/CHECKPOINT.md; docs/testing/evidence/ai-agent
 Owner follow-up: readiness and activation switch removed from inner header; content raised.
 Header acceptance: build +7 browser regressions +21 localized viewport checks PASS.
 Other listed UI corrections deferred to next scoped step; receipt in same checkpoint.
+Next owner correction complete: inner messages button removed; Test chat overlays right
+side below global header without reflow. Picker/editor stacking defect reproduced/fixed.
+Scoped8PASS plus affected4PASS; browser26+interaction16+large-text6PASS; build/bundlePASS.
+Screenshots RU/KK/EN320–1440 and200% inspected. Other field/branch/template/title ideas
+remain deferred. Receipt/checkpoint unchanged; logs output/ai-agents-chat-panel-20261113.
+
 
 NOTIFICATIONS-SERVER-FIXES-20261113: all six server defects fixed and locally verified.
 Personal access/internal history, atomic retry, stale delivery, failure alerts and monitor.

@@ -63,7 +63,6 @@ export function AIAgentsWorkspace({
   onDiscardAndContinue,
   onSaveAndContinue,
   onNavigateSection,
-  onOpenMessages,
   onOpenCreate,
   onReset,
   onRetry,
@@ -111,7 +110,6 @@ export function AIAgentsWorkspace({
   onDiscardAndContinue: () => void;
   onSaveAndContinue: () => void;
   onNavigateSection: (section: AgentSection) => void;
-  onOpenMessages: () => void;
   onOpenCreate: () => void;
   onReset: () => void;
   onRetry: () => void;
@@ -186,13 +184,12 @@ export function AIAgentsWorkspace({
             previewOpen={showPreview}
             onOpenPreview={() => setPreviewOpen(!previewOpen)}
             preview={selectedBot.scenario !== "crm" && activeSection !== "test" ? <AgentPreviewPanel key={selectedBot.id} open={showPreview} onClose={() => setPreviewOpen(false)}>
-              <TestAndLaunchSection bot={selectedBot} dirty={dirty || isSaving} canTest={canManage && canSuggest} />
+              <TestAndLaunchSection bot={selectedBot} dirty={dirty || isSaving} canTest={canManage && canSuggest} fillHeight />
             </AgentPreviewPanel> : undefined}
             saveDisabled={!botDraft.name.trim()}
             isSaving={isSaving}
             saveState={saveState}
             onSectionChange={onNavigateSection}
-            onOpenMessages={onOpenMessages}
             onReset={onReset}
             onSave={onSave}
             showFooter={hasUserEdits || ["profile", "instructions", "advanced", "actions"].includes(activeSection) || (selectedBot.scenario === "crm" && activeSection === "knowledge")}
