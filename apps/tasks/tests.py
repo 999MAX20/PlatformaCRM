@@ -1205,14 +1205,14 @@ class TasksAndNotificationsPolishTests(TestCase):
             business=self.business,
             client=self.client,
             appointment=self.appointment,
-            channel=Notification.Channels.SYSTEM,
+            channel=Notification.Channels.EMAIL,
             text="Reminder",
             send_at=datetime(2026, 5, 13, 9, 0, tzinfo=ZoneInfo("Asia/Almaty")),
         )
-        Notification.objects.create(
+        foreign_notification = Notification.objects.create(
             business=self.other_business,
             client=self.other_client,
-            channel=Notification.Channels.SYSTEM,
+            channel=Notification.Channels.EMAIL,
             text="Hidden",
             send_at=datetime(2026, 5, 13, 9, 0, tzinfo=ZoneInfo("Asia/Almaty")),
         )
@@ -1220,10 +1220,15 @@ class TasksAndNotificationsPolishTests(TestCase):
 
         summary_response = self.api.get("/api/notifications/summary/")
         mark_response = self.api.post(f"/api/notifications/{own_notification.id}/mark-sent/")
+        foreign_mark_response = self.api.post(f"/api/notifications/{foreign_notification.id}/mark-sent/")
         list_response = self.api.get("/api/notifications/")
 
         self.assertEqual(summary_response.status_code, 200)
         self.assertEqual(summary_response.data["pending"], 1)
         self.assertEqual(mark_response.status_code, 200)
         self.assertEqual(mark_response.data["status"], Notification.Statuses.SENT)
+        self.assertEqual(foreign_mark_response.status_code, 404)
+        foreign_notification.refresh_from_db()
+        self.assertEqual(foreign_notification.status, Notification.Statuses.PENDING)
+        self.assertIsNone(foreign_notification.delivered_at)
         self.assertEqual(list_response.data["count"], 1)

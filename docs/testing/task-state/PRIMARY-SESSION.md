@@ -71,6 +71,21 @@ Docs reconciled: access, operations and settings-notifications passport. Roadmap
 CRM/product/AI/integration contracts and README need no change: no roadmap phase,
 provider protocol, domain-event, UI or setup-command change; optional timeout is
 documented in operations. New default does not edit any working environment.
+CI follow-up: scoped PASS -> push CI86670d3f found one dependent test using
+SYSTEM as a manual external-delivery fixture -> correct that fixture to EMAIL,
+retain successful mark-sent/list/summary assertions and add explicit foreign
+mark-sent404/unchanged-state assertions. No product behavior change. Risk: test
+coverage loss; focused reproducer then TasksAndNotificationsPolishTests plus
+notification personal API tests, system/drift and static checks. Preserve the
+existing SYSTEM rejection regression. CI failure/log retained under task output.
+Follow-up reproduced the exact400-vs200 failure locally (ci-reproducer.log).
+Corrected fixture and explicit foreign404/unchanged-state checks:55PASS via
+`manage.py test apps.tasks.tests.TasksAndNotificationsPolishTests apps.notifications.tests_personal_api -v 2`.
+System/drift PASS in isolated_runtime (ci-followup-*.log). No production code,
+schema, UI or contract changed; existing212-test/PG evidence remains applicable.
+First push CI: frontend PASS; backend3369 tests,1 failure/80 skips from this stale
+fixture. Preserve that failed run; follow-up publication/CI is in publication.json.
+
 Base/main initially identical after fetch; current branch retained. Task-only
 commit/publication requires the final diff/range checks; remote SHA and actual CI
 readback are retained in output/notifications-server-fixes-20261113/publication.json
