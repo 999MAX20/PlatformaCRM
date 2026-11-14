@@ -496,8 +496,6 @@ export const aiAgents: Record<string, string> = {
   "aiAgents.hint.rules":
     "Set reply limits and format, one rule per line.",
   "aiAgents.hint.rulesExample": "For example: ask one question at a time; do not promise discounts without business data.",
-  "aiAgents.instructions.expand": "Expand editor",
-  "aiAgents.instructions.collapse": "Collapse editor",
   "aiAgents.instructions.actionsHint": "Instructions guide replies within system limits. Configure allowed actions and staff handoff conditions in Actions.",
   "aiAgents.instructions.actionsHintCrm": "Instructions guide replies within system limits. Configure allowed CRM operations in Actions.",
   "aiAgents.instructions.openActions": "Go to actions",

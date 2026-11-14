@@ -496,8 +496,6 @@ export const aiAgents: Record<string, string> = {
   "aiAgents.hint.rules":
     "Задайте ограничения и формат ответов, по одному правилу на строку.",
   "aiAgents.hint.rulesExample": "Например: задавай один вопрос за раз; не обещай скидки без данных бизнеса.",
-  "aiAgents.instructions.expand": "Развернуть редактор",
-  "aiAgents.instructions.collapse": "Свернуть редактор",
   "aiAgents.instructions.actionsHint": "Инструкции управляют ответами в пределах системных ограничений. Разрешённые действия и условия передачи сотруднику настраиваются в разделе «Действия».",
   "aiAgents.instructions.actionsHintCrm": "Инструкции управляют ответами в пределах системных ограничений. Разрешённые операции с CRM настраиваются в разделе «Действия».",
   "aiAgents.instructions.openActions": "Перейти к действиям",

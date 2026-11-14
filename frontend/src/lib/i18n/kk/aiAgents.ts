@@ -494,8 +494,6 @@ export const aiAgents: Record<string, string> = {
   "aiAgents.hint.rules":
     "Жауап шектеулері мен пішімін белгілеңіз, әр ережені жаңа жолға жазыңыз.",
   "aiAgents.hint.rulesExample": "Мысалы: бір уақытта бір сұрақ қой; бизнес деректері болмаса, жеңілдік уәде етпе.",
-  "aiAgents.instructions.expand": "Редакторды кеңейту",
-  "aiAgents.instructions.collapse": "Редакторды ықшамдау",
   "aiAgents.instructions.actionsHint": "Нұсқаулықтар жүйе шектеулері аясында жауаптарды бағыттайды. Рұқсат етілген әрекеттер мен қызметкерге беру шарттарын «Әрекеттер» бөлімінде баптаңыз.",
   "aiAgents.instructions.actionsHintCrm": "Нұсқаулықтар жүйе шектеулері аясында жауаптарды бағыттайды. CRM жүйесіндегі рұқсат етілген әрекеттерді «Әрекеттер» бөлімінде баптаңыз.",
   "aiAgents.instructions.openActions": "Әрекеттерге өту",

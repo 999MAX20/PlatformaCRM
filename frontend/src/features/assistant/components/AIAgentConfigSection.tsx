@@ -1,6 +1,5 @@
-import { useId, useRef, useState, type Dispatch, type SetStateAction } from "react";
+import { useId, type Dispatch, type SetStateAction } from "react";
 import { Link } from "react-router";
-import { Button } from "../../../components/ui/Button";
 import { Input } from "../../../components/ui/Input";
 import { Select } from "../../../components/ui/Select";
 import { Textarea } from "../../../components/ui/Textarea";
@@ -54,9 +53,6 @@ export function ProfileManagerSection({ botDraft, setBotDraft, form, setForm, ca
 export function InstructionsSection({ form, setForm, canManage, botId, scenario }: ProfileProps & { botId: Bot["id"] }) {
   const { t } = useI18n();
   const id = useId();
-  const [expanded, setExpanded] = useState(false);
-  const instructionRef = useRef<HTMLTextAreaElement>(null);
-  const expandRef = useRef<HTMLButtonElement>(null);
   const rowClass = "grid max-w-2xl items-start gap-x-6 gap-y-2 @min-[60rem]:max-w-none @min-[60rem]:grid-cols-[minmax(0,42rem)_minmax(16rem,18rem)]";
   const hintClass = "min-w-0 space-y-2 text-sm leading-5 text-platforma-subtle @min-[60rem]:pt-7";
   return (
@@ -73,32 +69,11 @@ export function InstructionsSection({ form, setForm, canManage, botId, scenario 
 
       <section>
         <div id="ai-agent-quality-settings" className="space-y-3">
-          <div className={rowClass} onKeyDown={event => {
-            if (event.key === "Escape" && expanded) {
-              event.preventDefault();
-              event.stopPropagation();
-              setExpanded(false);
-              expandRef.current?.focus({ preventScroll: true });
-            }
-          }}>
-            <div className="min-w-0">
-              <div className="mb-2 flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
-                <label htmlFor={`${id}-instruction`} className="text-sm font-semibold text-platforma-subtle">{t("aiAgents.systemPrompt")}</label>
-                <Button ref={expandRef} type="button" variant="ghost" size="sm" className="min-h-11 text-sm sm:min-h-9"
-                  aria-expanded={expanded} aria-controls={`${id}-instruction`}
-                  onClick={() => {
-                    setExpanded(current => !current);
-                    if (!expanded) instructionRef.current?.focus({ preventScroll: true });
-                  }}>
-                  {t(expanded ? "aiAgents.instructions.collapse" : "aiAgents.instructions.expand")}
-                </Button>
-              </div>
-              <Textarea ref={instructionRef} id={`${id}-instruction`} className={`${expanded ? "min-h-64" : "min-h-40"} py-2`} rows={6}
-                style={{ height: expanded ? "min(60dvh, 36rem)" : undefined }}
+          <div className={rowClass}>
+              <Textarea id={`${id}-instruction`} label={t("aiAgents.systemPrompt")} className="min-h-40 py-2" rows={6}
                 aria-describedby={`${id}-instruction-hint ${id}-actions-hint`} value={form.system_prompt} disabled={!canManage}
                 onChange={event => setForm(current => ({ ...current, system_prompt: event.target.value }))} />
-            </div>
-            <div className={`${hintClass} @min-[60rem]:pt-11`}>
+            <div className={hintClass}>
               <p id={`${id}-instruction-hint`}>{t("aiAgents.hint.systemPrompt")}</p>
               <p id={`${id}-actions-hint`}>{t(scenario === "crm" ? "aiAgents.instructions.actionsHintCrm" : "aiAgents.instructions.actionsHint")}</p>
               <Link to={`/app/ai-agents/${botId}/actions`} className="platforma-focus-ring inline-flex min-h-11 items-center rounded-control text-sm font-semibold text-brand-800 underline hover:text-brand-900">

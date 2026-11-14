@@ -35,6 +35,10 @@ Side hints14.11: guidance beside fields on wide forms, below on narrow screens;
 examples separated, Actions guidance next to main instruction. Final10browser
 regressions/build/types/i18n/bundle PASS; localized320–1440/200% images inspected.
 No scoped local remainder. Receipt: same checkpoint; logs ai-agents-side-hints-20261114.
+Owner correction14.11: expand button/state/keys removed; native resize and side hints
+retained.10UI regressions +build/types/i18n/bundle PASS; desktop/mobile inspected.
+14server tests PASS confirm saved instruction reaches provider input (mocked model,
+local dirty server snapshot, not deployed/live-model compliance). Receipt: checkpoint.
 
 
 NOTIFICATIONS-SERVER-FIXES-20261113: all six server defects fixed and locally verified.

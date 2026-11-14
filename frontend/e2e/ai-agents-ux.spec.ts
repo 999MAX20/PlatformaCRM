@@ -91,7 +91,7 @@ test("visible instructions without template retain navigation draft protection",
 });
 
 for (const scenario of ["inbox", "crm"]) {
-  test(`${scenario}: expanded instruction and actions link preserve the shared draft`, async ({ page }, info) => {
+  test(`${scenario}: instruction and actions link preserve the shared draft without expansion`, async ({ page }, info) => {
     const session = await crmSession(page);
     const bot = await createAgent(page, session, { name: `Instruction editor ${scenario}`, scenario });
     await page.goto(`/app/ai-agents/${bot.id}/instructions`);
@@ -102,20 +102,16 @@ for (const scenario of ["inbox", "crm"]) {
     await expect(instruction).toHaveAccessibleDescription(/цель разговора и порядок общения/);
     await expect(rules).toHaveAccessibleDescription(/по одному правилу на строку/);
     const initial = await instruction.inputValue();
-    const shortHeight = (await instruction.boundingBox())!.height;
     await role.fill("Помощник поддержки");
     await role.press("Tab");
     const expand = page.getByRole("button", { name: "Развернуть редактор", exact: true });
-    await expect(expand).toBeFocused();
-    await expand.press("Enter");
+    await expect(expand).toHaveCount(0);
     await expect(instruction).toBeFocused();
     await expect(instruction).toHaveValue(initial);
-    expect((await instruction.boundingBox())!.height).toBeGreaterThan(shortHeight);
     const draft = "Уточни запрос клиента.\n".repeat(30) + "Предложи следующий шаг.";
     await instruction.fill(draft);
     await instruction.press("Escape");
-    await expect(expand).toBeFocused();
-    await expect(expand).toHaveAttribute("aria-expanded", "false");
+    await expect(instruction).toBeFocused();
     await expect(instruction).toHaveValue(draft);
     await rules.fill("Один вопрос за раз\nНе выдумывай условия");
     const actions = page.getByRole("link", { name: "Перейти к действиям", exact: true });
@@ -127,9 +123,7 @@ for (const scenario of ["inbox", "crm"]) {
     await expect(role).toHaveValue("Помощник поддержки");
     await expect(instruction).toHaveValue(draft);
     await expect(rules).toHaveValue("Один вопрос за раз\nНе выдумывай условия");
-    await expand.click();
-    await page.screenshot({ path: info.outputPath(`${scenario}-expanded-instructions.png`), fullPage: true });
-    await page.getByRole("button", { name: "Свернуть редактор", exact: true }).click();
+    await page.screenshot({ path: info.outputPath(`${scenario}-instructions.png`), fullPage: true });
     await page.getByRole("button", { name: "Сохранить изменения", exact: true }).click();
     await expect(page.getByRole("button", { name: "Сохранить изменения", exact: true })).toBeDisabled();
     const profiles = (await session.read("ai/agent-profiles")).results;
@@ -139,7 +133,6 @@ for (const scenario of ["inbox", "crm"]) {
     });
     await page.reload();
     await expect(instruction).toHaveValue(draft);
-    await expand.click();
     await instruction.fill("");
     await instruction.press("Escape");
     await expect(instruction).toHaveValue("");
@@ -306,8 +299,7 @@ test("keyboard focus keeps the instruction above fixed navigation and the dirty 
   await page.goto(`/app/ai-agents/${bot.id}/instructions`);
   await page.getByRole("textbox", { name: "Роль агента", exact: true }).fill("Unsaved role");
   await page.keyboard.press("Tab");
-  await expect(page.getByRole("button", { name: "Развернуть редактор", exact: true })).toBeFocused();
-  await page.keyboard.press("Tab");
+  await expect(page.getByRole("button", { name: "Развернуть редактор", exact: true })).toHaveCount(0);
   const instruction = page.getByRole("textbox", { name: "Главная инструкция", exact: true });
   await expect(instruction).toBeFocused();
   const field = (await instruction.boundingBox())!;

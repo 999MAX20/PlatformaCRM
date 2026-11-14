@@ -430,3 +430,36 @@ coverage rerun; screen-reader, fullrelease, liveAI and backend certification not
 No scoped code/local-evidence remainder. Frontend contract/passport/status updated;
 roadmap/D01 and README/API/AI/access/operations/CRM policy unchanged by this layout.
 Publication, exact commands, source hashes and cleanup: existing redesign checkpoint.
+
+
+## Remove expand control, 14.11.2026
+
+Owner requested removal and no further UI phase. Removed expand/collapse button,
+state, refs, Escape handler and unused RU/KK/EN keys. Main instruction uses the
+shared labeled textarea with its compact height and native vertical resize; side
+hints and same-agent Actions link retained. Existing tests now assert absence and
+direct role-to-instruction focus; save/readback/draft/recovery assertions preserved.
+10desktop/mobile scenarios PASS; build/types/i18n7322/app/widget/bundle PASS.
+CUA actual1440/390 screenshots captured and inspected; isolated mobile regression
+image also inspected. Working stand showed an unrelated connection alert during
+mobile inspection; no working data changed and successful flow checks used isolated
+runtime. No claim of working-server connectivity recovery. No new styles/colors/
+copy beyond removed keys; prior localized hint content/contrast remains unchanged.
+
+Owner also asked whether instruction affects server behavior. Existing
+apps.ai_core.tests_settings_certification and apps.bots.tests_preview:14PASS on
+isolated SQLite, system check clean, provider mocked. Certification saves two
+versions through the configuration API and checks each version reaches the real
+Inbox suggestion/CRM chat generation boundary, including the system message;
+old version absent. Preview uses the shared reply path with saved profile settings.
+This proves configuration propagation, not real-model adherence to arbitrary text.
+Instruction applies after save; mandatory safety/grounding and action permissions
+still constrain it. No external model/send, backend code edit or deployed claim.
+Server snapshot includes pre-existing foreign changes; hashes/log retained in
+output/ai-agents-remove-expand-20261114. Full backend/migration/release gates not
+required for this UI correction and read-only server verification.
+
+Current frontend/passport assertions updated; historical expansion evidence above
+remains its original snapshot. STATUS/checkpoint updated. No roadmap/README/domain/
+AI policy delta. AntiSlop applicable purpose/geometry/keyboard/draft gates PASS;
+no scoped local remainder. Publication/CI/cleanup in the existing checkpoint.
