@@ -110,6 +110,7 @@ export function ConversationsPage() {
   const [quickReplySearch, setQuickReplySearch] = useState("");
 
   const [taskModalOpen, setTaskModalOpen] = useState(false);
+  const [taskFocusReturnId, setTaskFocusReturnId] = useState("inbox-dialog-actions");
   const taskIdempotencyRef = useRef<{ signature: string; key: string } | null>(
     null,
   );
@@ -635,8 +636,10 @@ export function ConversationsPage() {
 
   const createClientMutation = useMutation({
     mutationFn: inboxApi.createClient,
-    onSuccess: async (result) => {
+    onSuccess: async (result, variables) => {
+      if (currentConversationRef.current !== variables.conversationId) return;
       if (result.requires_confirmation && result.duplicates.length) {
+        setCrmLinkModal("client");
         setNotice(
           result.duplicates.some((item) => item.id !== null)
             ? t("conversations.duplicateClientShort", {
@@ -826,8 +829,9 @@ export function ConversationsPage() {
     window.requestAnimationFrame(() => composerRef.current?.focus());
   }
 
-  function createLinkedTask() {
+  function createLinkedTask(focusReturnId = "inbox-dialog-actions") {
     if (!selected) return;
+    setTaskFocusReturnId(focusReturnId);
     taskIdempotencyRef.current = null;
     setTaskDraft({
       title: t("conversations.followUpTaskTitle", {
@@ -1097,6 +1101,12 @@ export function ConversationsPage() {
         navigate(href);
       }}
       onLinkClient={() => openCrmLinkModal("client")}
+      onCreateClient={() => {
+        if (selected && !createClientMutation.isPending) createClientMutation.mutate({ conversationId: selected.id });
+      }}
+      creatingClient={createClientMutation.isPending}
+      createClientError={createClientMutation.error}
+      onCreateTask={() => createLinkedTask("inbox-unlinked-task")}
     />
   );
 
@@ -1572,6 +1582,7 @@ export function ConversationsPage() {
       <InboxTaskDialog
         t={t}
         taskModalOpen={taskModalOpen}
+        focusReturnId={taskFocusReturnId}
         setTaskModalOpen={setTaskModalOpen}
         taskDraft={taskDraft}
         setTaskDraft={setTaskDraft}

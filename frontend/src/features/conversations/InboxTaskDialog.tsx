@@ -11,6 +11,7 @@ import type { Dispatch, SetStateAction } from "react";
 type Props = {
   t: ReturnType<typeof useI18n>["t"];
   taskModalOpen: boolean;
+  focusReturnId?: string;
   setTaskModalOpen: Dispatch<SetStateAction<boolean>>;
   taskDraft: {
     title: string;
@@ -32,6 +33,7 @@ type Props = {
 export function InboxTaskDialog({
   t,
   taskModalOpen,
+  focusReturnId = "inbox-dialog-actions",
   setTaskModalOpen,
   taskDraft,
   setTaskDraft,
@@ -41,7 +43,7 @@ export function InboxTaskDialog({
   return (
     <Dialog
       title={t("conversations.createTaskTitle")}
-      focusReturnId="inbox-dialog-actions"
+      focusReturnId={focusReturnId}
       open={taskModalOpen}
       onClose={() => setTaskModalOpen(false)}
       size="md"

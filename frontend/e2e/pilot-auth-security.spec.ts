@@ -49,7 +49,8 @@ test("MFA enrollment, recovery-code login and authorized disable persist through
   await page.locator('form input[type="password"]').fill(password);
   await page.locator('form button[type="submit"]').click();
   await expect(page).toHaveURL(/\/mfa$/);
-  await page.getByLabel("Код подтверждения", { exact: true }).fill(codes[0]);
+  await page.getByRole("button", { name: "Использовать резервный код", exact: true }).click();
+  await page.getByLabel("Резервный код", { exact: true }).fill(codes[0]);
   const verified = page.waitForResponse(response => response.request().method() === "POST" && response.url().endsWith("/api/auth/mfa/verify/"));
   await page.getByRole("button", { name: "Войти", exact: true }).click();
   expect((await verified).ok()).toBeTruthy();
@@ -104,7 +105,8 @@ test("existing MFA account returns to its invitation and accepts the intended bu
   await page.locator('form input[type="password"]').fill(password);
   await page.locator('form button[type="submit"]').click();
   await expect(page).toHaveURL(/\/mfa$/);
-  await page.getByLabel("Код подтверждения", { exact: true }).fill(codes[0]);
+  await page.getByRole("button", { name: "Использовать резервный код", exact: true }).click();
+  await page.getByLabel("Резервный код", { exact: true }).fill(codes[0]);
   const verified = page.waitForResponse(response => response.request().method() === "POST" && response.url().endsWith("/api/auth/mfa/verify/"));
   await page.getByRole("button", { name: "Войти", exact: true }).click();
   const session = await (await verified).json();
@@ -114,6 +116,7 @@ test("existing MFA account returns to its invitation and accepts the intended bu
   const acceptedResponse = await accepted;
   expect(acceptedResponse.ok()).toBeTruthy();
   expect((await acceptedResponse.json()).business).toBe(inviter.business.id);
+  await page.getByRole("button", { name: "Открыть бизнес", exact: true }).click();
   await expect(page).toHaveURL(/\/app/);
   const members = await page.request.get(`${api}/api/team/members/?business=${inviter.business.id}`, { headers: { Authorization: `Bearer ${inviter.access}` } });
   expect(members.ok()).toBeTruthy();
@@ -121,9 +124,8 @@ test("existing MFA account returns to its invitation and accepts the intended bu
   const membership = (payload.results || payload).filter((member: { user: { email: string } }) => member.user.email === email);
   expect(membership).toHaveLength(1);
   expect(membership[0].role).toBe("operator");
-  // Acceptance must leave the mixed owner/operator workspace usable, not just
-  // create the membership while its unfiltered tenant lists fail in the shell.
-  for (const path of ["/api/tasks/", "/api/notifications/summary/?surface=bell"]) {
+  // Keep the mixed owner/operator workspace and its selected-business bell usable.
+  for (const path of ["/api/tasks/", `/api/notifications/summary/?surface=bell&business=${inviter.business.id}`]) {
     const workspace = await page.request.get(`${api}${path}`, { headers: { Authorization: `Bearer ${session.access}` } });
     expect(workspace.status()).toBe(200);
   }

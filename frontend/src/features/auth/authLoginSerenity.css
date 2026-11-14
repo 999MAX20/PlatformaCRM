@@ -739,6 +739,19 @@
   text-decoration: underline;
 }
 
+.serenity-login--mfa .serenity-login__links {
+  align-items: center;
+  justify-content: center;
+  margin-top: 16px;
+  text-align: center;
+}
+
+.serenity-login--mfa .serenity-login__links a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+}
+
 .serenity-login__password-toggle {
   display: grid;
   width: 30px;

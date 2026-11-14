@@ -1,5 +1,8 @@
 export const inbox: Record<string, string> = {
   "conversations.aboutClient": "About the client",
+  "conversations.clientUnlinked": "No linked client",
+  "conversations.clientUnlinkedActions": "Create a client record for this contact or link an existing client.",
+  "conversations.clientUnlinkedReadOnly": "This conversation does not have a linked client record yet.",
   "conversations.contextActions": "Linked record actions",
   "conversations.dialogActions": "Conversation actions",
   "conversations.closeContext": "Close client details",

@@ -18,6 +18,7 @@ import { StatusNotice } from "../../components/ui/StatusNotice";
 import { useI18n } from "../../lib/i18n";
 import { useAuth } from "./AuthProvider";
 import { AuthenticatorEnrollment } from "./AuthenticatorEnrollment";
+import { MfaCodeInput } from "./MfaCodeInput";
 import { getAuthReturnPathFromState, getPostAuthReturnPath } from "./authReturnPath";
 import "./authLoginSerenity.css";
 
@@ -38,15 +39,12 @@ export function MfaPage() {
   const pending = useMemo(readPending, []);
   const [enrollment, setEnrollment] = useState<MfaEnrollment | null>(null);
   const [code, setCode] = useState("");
+  const [recoveryMode, setRecoveryMode] = useState(false);
   const [verified, setVerified] = useState(false);
   const [enrollmentAttempt, setEnrollmentAttempt] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const continueButton = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    if (verified && !loading) continueButton.current?.focus();
-  }, [verified, loading]);
+  const submitting = useRef(false);
 
   useEffect(() => {
     if (!pending || pending.code !== "mfa_enrollment_required") return;
@@ -78,31 +76,32 @@ export function MfaPage() {
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
-    if (!pending) return;
+    if (!pending || submitting.current) return;
+    submitting.current = true;
     setError(null);
     setLoading(true);
     try {
       if (pending.code === "mfa_enrollment_required") {
         await confirmMfaEnrollment(pending.challenge_token, code);
-        setVerified(true);
-        setEnrollment(null);
-        setCode("");
-        sessionStorage.removeItem("zani_mfa_pending");
       } else {
         await verifyMfaLogin(pending.challenge_token, code);
-        setVerified(true);
-        setCode("");
-        sessionStorage.removeItem("zani_mfa_pending");
-        await finishSession();
       }
+      setVerified(true);
+      setEnrollment(null);
+      setCode("");
+      sessionStorage.removeItem("zani_mfa_pending");
+      await finishSession();
     } catch (err) {
       setError(getApiErrorMessage(err));
     } finally {
       setLoading(false);
+      submitting.current = false;
     }
   }
 
   async function continueSignIn() {
+    if (submitting.current) return;
+    submitting.current = true;
     setError(null);
     setLoading(true);
     try {
@@ -111,11 +110,12 @@ export function MfaPage() {
       setError(getApiErrorMessage(err));
     } finally {
       setLoading(false);
+      submitting.current = false;
     }
   }
 
-  const title = !pending ? t("mfa.sessionExpiredTitle") : verified ? t("mfa.confirmedTitle") : t("mfa.title");
-  const description = !pending ? t("mfa.sessionExpiredText") : verified ? t("mfa.confirmedText") : pending.code === "mfa_enrollment_required" ? t("mfa.addAuthenticator") : t("mfa.text");
+  const title = !pending ? t("mfa.sessionExpiredTitle") : t("mfa.title");
+  const description = !pending ? t("mfa.sessionExpiredText") : verified ? t("mfa.completingText") : pending.code === "mfa_enrollment_required" ? t("mfa.addAuthenticator") : t("mfa.text");
 
   return (
     <main className="serenity-login serenity-login--signal-field serenity-login--mfa">
@@ -143,28 +143,32 @@ export function MfaPage() {
             {!pending ? (
               <Link className="serenity-login__signup-link" to="/login">{t("mfa.backToLogin")}</Link>
             ) : verified ? (
-              <Button ref={continueButton} className="serenity-login__primary" type="button" isLoading={loading} onClick={() => void continueSignIn()}>
-                {t("auth.submit")}<ArrowRight size={18} />
-              </Button>
+              error ? <Button className="serenity-login__primary" type="button" isLoading={loading} autoFocus onClick={() => void continueSignIn()}>
+                {t("common.retry")}
+              </Button> : <p role="status" className="text-center text-sm text-platforma-muted">{t("common.loading")}</p>
             ) : (
               <form className="serenity-login__form" onSubmit={submit}>
                 {pending.code === "mfa_enrollment_required" && enrollment ? <AuthenticatorEnrollment enrollment={enrollment} /> : null}
-                <div className={pending.code === "mfa_enrollment_required" ? "mx-auto w-48 max-w-full text-center" : undefined}>
-                <Input
-                  label={t("mfa.codeLabel")}
+                {recoveryMode ? <Input
+                  label={t("mfa.recoveryCodeLabel")}
                   value={code}
                   onChange={(event) => setCode(event.target.value)}
-                  autoComplete="one-time-code"
-                  inputMode="numeric"
-                  placeholder={pending.code === "mfa_enrollment_required" ? "000000" : t("mfa.codePlaceholder")}
-                  pattern={pending.code === "mfa_enrollment_required" ? "[0-9]{6}" : undefined}
-                  maxLength={pending.code === "mfa_enrollment_required" ? 6 : undefined}
-                  className={pending.code === "mfa_enrollment_required" ? "text-center font-mono text-lg tracking-[0.25em]" : undefined}
-                  disabled={loading || (pending.code === "mfa_enrollment_required" && !enrollment)}
+                  autoComplete="off"
+                  autoFocus
+                  disabled={loading}
                   required
-                />
-                </div>
-                {pending.code !== "mfa_enrollment_required" ? <p className="text-xs font-semibold leading-5 text-platforma-faint">{t("mfa.recoveryHint")}</p> : null}
+                /> : <MfaCodeInput
+                  label={t("mfa.codeLabel")}
+                  value={code}
+                  onChange={setCode}
+                  disabled={loading || (pending.code === "mfa_enrollment_required" && !enrollment)}
+                />}
+                {pending.code !== "mfa_enrollment_required" ? <div className="text-center">
+                  <Button type="button" variant="ghost" disabled={loading} onClick={() => {
+                    setRecoveryMode(mode => !mode); setCode(""); setError(null);
+                  }}>{t(recoveryMode ? "mfa.useAuthenticator" : "mfa.useRecoveryCode")}</Button>
+                  {recoveryMode ? <p className="mt-1 text-xs leading-5 text-platforma-muted">{t("mfa.recoveryHint")}</p> : null}
+                </div> : null}
                 {error && pending.code === "mfa_enrollment_required" && !enrollment ? (
                   <Button type="button" variant="secondary" disabled={loading} onClick={() => setEnrollmentAttempt((attempt) => attempt + 1)}>{t("common.retry")}</Button>
                 ) : null}
@@ -174,7 +178,7 @@ export function MfaPage() {
                 </Button>
               </form>
             )}
-            {pending && !verified ? <div className="serenity-login__links mt-4"><Link to="/login">{t("mfa.backToLogin")}</Link></div> : null}
+            {pending && !verified ? <div className="serenity-login__links"><Link to="/login">{t("mfa.backToLogin")}</Link></div> : null}
           </div>
         </section>
       </div>

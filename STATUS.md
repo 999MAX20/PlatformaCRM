@@ -1,3 +1,12 @@
+MFA-INBOX-20261114: six-cell MFA and automatic entry implemented and locally verified.
+Return link centered with16px gap on desktop/mobile; recovery and profile retry retained.
+Unlinked Inbox actions create/link client and create task use real existing server writes.
+75distinct backend/11browser/15Node cases verified across retained runs; build/types/i18n/bundle PASS.
+RU/KK/EN320–1440, keyboard, form200% and affected axe checks PASS; screenshots inspected.
+No scoped code/local-evidence remainder; no backend policy/schema/workingDB/provider/deploy changes.
+Publication/CI receipt: output/mfa-inbox-20261114/CHECKPOINT.md.
+Evidence: docs/testing/task-state/PRIMARY-SESSION.md#mfa-inbox-20261114.
+
 AI-AGENTS-REDESIGN-20261113: approved editor redesign implemented; scoped local acceptance PASS.
 Named picker/local sections, split configuration, overview/context test and full knowledge view.
 Atomic save, independent knowledge/channels, draft/permission/runtime guards preserved.

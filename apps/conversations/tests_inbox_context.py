@@ -1,5 +1,6 @@
 from datetime import timedelta
 from decimal import Decimal
+from unittest.mock import patch
 
 from django.test import TestCase
 from django.utils import timezone
@@ -216,6 +217,64 @@ class InboxContextTests(TestCase):
         self.assertTrue(data["actions"]["link_client"])
         self.assertFalse(data["actions"]["book"])
         self.assertEqual(data["appointments"]["state"], "empty")
+
+    def test_create_client_persists_link_and_repeated_request_is_noop(self):
+        BotConversation.objects.filter(pk=self.conversation.pk).update(client=None, lead=None, deal=None)
+        url = f"/api/inbox/conversations/{self.conversation.pk}/create-client/"
+        before = Client.objects.filter(business=self.business).count()
+        first = self.api.post(url, {}, format="json")
+        self.assertEqual(first.status_code, 201)
+        client = Client.objects.get(pk=first.data["client"]["id"])
+        self.conversation.refresh_from_db()
+        self.assertEqual(client.business_id, self.business.pk)
+        self.assertEqual(client.full_name, self.conversation.external_user_id)
+        self.assertEqual(self.conversation.client_id, client.pk)
+        second = self.api.post(url, {}, format="json")
+        self.assertEqual(second.status_code, 200)
+        self.assertFalse(second.data["created"])
+        self.assertEqual(second.data["client"]["id"], client.pk)
+        self.assertEqual(Client.objects.filter(business=self.business).count(), before + 1)
+        self.assertEqual(ActivityEvent.objects.filter(
+            business=self.business, actor=self.owner, event_type=ActivityEvents.CLIENT_CREATED,
+            entity_id=str(client.pk), metadata__conversation_id=self.conversation.pk,
+        ).count(), 1)
+
+    def test_create_client_requires_both_client_create_and_conversation_update(self):
+        BotConversation.objects.filter(pk=self.conversation.pk).update(client=None, lead=None, deal=None)
+        self.api.force_authenticate(self.operator)
+        before = Client.objects.count()
+        for denied_resource, denied_action in ((Resources.CLIENTS, Actions.CREATE), (Resources.CONVERSATIONS, Actions.UPDATE)):
+            with self.subTest(resource=denied_resource):
+                self.permission(Resources.CLIENTS, action=Actions.CREATE)
+                self.permission(Resources.CONVERSATIONS, action=Actions.UPDATE)
+                self.permission(denied_resource, action=denied_action, allowed=False)
+                response = self.api.post(f"/api/inbox/conversations/{self.conversation.pk}/create-client/", {}, format="json")
+                self.assertEqual(response.status_code, 403)
+                self.assertEqual(Client.objects.count(), before)
+                self.conversation.refresh_from_db()
+                self.assertIsNone(self.conversation.client_id)
+
+    def test_create_client_rejects_foreign_conversation_and_invalid_data(self):
+        BotConversation.objects.filter(pk=self.conversation.pk).update(client=None, lead=None, deal=None)
+        url = f"/api/inbox/conversations/{self.conversation.pk}/create-client/"
+        before = Client.objects.count()
+        self.api.force_authenticate(self.other_owner)
+        self.assertEqual(self.api.post(url, {}, format="json").status_code, 404)
+        self.api.force_authenticate(self.owner)
+        self.assertEqual(self.api.post(url, {"email": "not-an-email"}, format="json").status_code, 400)
+        self.assertEqual(Client.objects.count(), before)
+        self.conversation.refresh_from_db()
+        self.assertIsNone(self.conversation.client_id)
+
+    def test_create_client_activity_failure_rolls_back_client_and_link(self):
+        BotConversation.objects.filter(pk=self.conversation.pk).update(client=None, lead=None, deal=None)
+        before = Client.objects.count()
+        with patch("apps.conversations.inbox_views.record_inbox_crm_activity", side_effect=RuntimeError("Synthetic activity failure")):
+            response = self.api.post(f"/api/inbox/conversations/{self.conversation.pk}/create-client/", {}, format="json")
+        self.assertEqual(response.status_code, 500)
+        self.assertEqual(Client.objects.count(), before)
+        self.conversation.refresh_from_db()
+        self.assertIsNone(self.conversation.client_id)
 
     def test_task_is_only_unfinished_visible_work_of_this_conversation(self):
         Task.objects.create(business=self.business, conversation=self.conversation, title="Hidden task", assignee=self.owner)

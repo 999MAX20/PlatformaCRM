@@ -1,5 +1,8 @@
 export const inbox: Record<string, string> = {
   "conversations.aboutClient": "Клиент туралы",
+  "conversations.clientUnlinked": "Клиент байланыстырылмаған",
+  "conversations.clientUnlinkedActions": "Сұхбаттасушыға клиент картасын жасаңыз немесе бар клиентті байланыстырыңыз.",
+  "conversations.clientUnlinkedReadOnly": "Бұл диалогқа клиент картасы әлі байланыстырылмаған.",
   "conversations.contextActions": "Байланыс әрекеттері",
   "conversations.dialogActions": "Диалог әрекеттері",
   "conversations.closeContext": "Клиент мәліметтерін жабу",

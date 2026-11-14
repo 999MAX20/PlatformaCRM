@@ -1,4 +1,4 @@
-import { ArrowUpRight, BriefcaseBusiness, CalendarDays, CalendarPlus, CheckSquare, Inbox, Link2, UserRound, X } from "lucide-react";
+import { ArrowUpRight, BriefcaseBusiness, CalendarDays, CalendarPlus, CheckSquare, Inbox, Link2, UserPlus, UserRound, X } from "lucide-react";
 
 import type { InboxContext } from "../../../api/inbox";
 import { ActionMenu, type ActionMenuItem } from "../../../components/ui/ActionMenu";
@@ -19,9 +19,13 @@ type Props = {
   onClose: () => void;
   onNavigate: (href: string) => void;
   onLinkClient: () => void;
+  onCreateClient: () => void;
+  creatingClient: boolean;
+  createClientError: unknown;
+  onCreateTask: () => void;
 };
 
-export function InboxCustomerContext({ data, loading, showLoadingIndicator = true, error, retrying, menuItems, inDrawer, onRetry, onClose, onNavigate, onLinkClient }: Props) {
+export function InboxCustomerContext({ data, loading, showLoadingIndicator = true, error, retrying, menuItems, inDrawer, onRetry, onClose, onNavigate, onLinkClient, onCreateClient, creatingClient, createClientError, onCreateTask }: Props) {
   const { t, language } = useI18n();
   const client = data?.client.data;
   const appointments = data?.appointments;
@@ -66,8 +70,17 @@ export function InboxCustomerContext({ data, loading, showLoadingIndicator = tru
               </div>
             </div>
             {client.notes ? <p className="mt-3 line-clamp-3 whitespace-pre-wrap border-l-2 border-platforma-border pl-3 text-xs leading-5 text-platforma-muted [overflow-wrap:anywhere]">{client.notes}</p> : null}
-          </> : data.client.state === "forbidden" ? unavailable("client") : data.actions.link_client || data.actions.create_client ?
-            <Button variant="secondary" size="sm" onClick={onLinkClient}><Link2 size={16} />{t("conversations.linkClientAction")}</Button> : null}
+          </> : data.client.state === "forbidden" ? unavailable("client") : <div className="mx-auto flex max-w-sm flex-col items-center gap-3 py-8 text-center" data-testid="inbox-unlinked-client">
+            <UserRound size={28} aria-hidden="true" className="text-platforma-muted" />
+            <h3 className="text-base font-semibold text-platforma-text">{t("conversations.clientUnlinked")}</h3>
+            <p className="text-sm leading-6 text-platforma-muted">{t(data.actions.create_client && data.actions.link_client ? "conversations.clientUnlinkedActions" : "conversations.clientUnlinkedReadOnly")}</p>
+            <div className="mt-1 flex w-full flex-col gap-2">
+              {data.actions.create_client ? <Button onClick={onCreateClient} isLoading={creatingClient} className="w-full"><UserPlus size={16} aria-hidden="true" />{t("conversations.createClient")}</Button> : null}
+              {data.actions.link_client ? <Button variant="secondary" onClick={onLinkClient} disabled={creatingClient} className="w-full"><Link2 size={16} aria-hidden="true" />{t("conversations.linkClientAction")}</Button> : null}
+              {data.actions.create_task ? <Button data-focus-return-id="inbox-unlinked-task" variant="ghost" onClick={onCreateTask} disabled={creatingClient} className="w-full"><CheckSquare size={16} aria-hidden="true" />{t("conversations.createTask")}</Button> : null}
+            </div>
+            {createClientError ? <div className="w-full text-left"><ErrorState error={createClientError} /></div> : null}
+          </div>}
         </section>
         {appointments?.state === "forbidden" ? <section className={sectionClass}>{unavailable("appointments")}</section> : appointments?.items.length ? <section className={sectionClass} aria-label={t("calendar.title")}>
           <h3 className={headingClass}><CalendarDays size={16} aria-hidden="true" className="shrink-0" />{t(appointments.kind === "conversation" ? "conversations.contextAppointments" : "conversations.clientUpcomingAppointments")}</h3>

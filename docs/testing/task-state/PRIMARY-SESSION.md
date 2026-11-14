@@ -1,3 +1,63 @@
+## MFA-INBOX-20261114
+
+Owner requested six-cell MFA, QR only for first enrollment, immediate entry after
+valid code, and useful centered actions for an unlinked Inbox contact. Follow-up:
+center the return link below Sign in with spacing; verify actual server behavior.
+Canonical checkout C:/Users/user/Desktop/PlatformaCRM; retained codex/ui-testing-toolkit,
+original HEADdea1bb8f, completion base62e9e5e8 already on origin/main. Foreign staged
+Meta/legal and other WIP preserved; only owned paths/hunks belong to this task.
+
+MfaCodeInput preserves native paste/arrows/backspace/one-time-code semantics;
+recovery uses a separate field. Enrollment and login now complete automatically,
+with a profile-only retry after an accepted code. QR never starts for enrolled login.
+Return link uses a scoped16px gap, centered alignment and44px target. Shared login
+layout and backend MFA/session/role rules remain unchanged.
+Inbox reuses existing create-client/link-client/create-task endpoints. A new client
+is linked immediately, named by external contact ID until edited; contacts are not
+inferred from messages. Existing-client search and conflict confirmation remain.
+Task form retains message/priority and uses an idempotency key. Forbidden actions
+are hidden from server capabilities and still denied by backend authorization.
+
+Verification on isolated disposableSQLite/API/Vite, no workingDB or real sends:
+- `output/mfa-inbox-20261114/backend-check.py`:75tests,74PASS and one test-fixture
+  assertionFAIL (API exception handler converts injected failure into HTTP500).
+  Corrected assertion preserves rollback/count checks; focused
+  `backend-check.py apps.conversations.tests_inbox_context`:19PASS. Thus75distinct
+  scenarios verified across the two retained runs. Includes MFA/recovery/replay,
+  access/tenant denial, client retry/duplicate/activity/rollback and task idempotency.
+- `browser.py mfa`:5PASS after footer change. Initial missing-challenge failure
+  during HMR retained; stable rerun passed with no product change to that path.
+- `browser.py inbox inbox-unlinked.spec.ts`:4PASS, RU/KK/EN creation, linking and
+  task persistence via realHTTP;320/390/768/1440 screenshots, draft/focus/Escape,
+  context/create-error retry and unavailable actions. Initial viewport/label timing
+  failures corrected in test selectors, no assertions removed.
+- Focused RU MFA/inbox accessibility check: MFA PASS incl.axe and form200% CSS zoom;
+  Inbox axe PASS but retry scenario initially expected raw503 text instead of the
+  translated alert, then attempted to click through the dismissible alert. Final
+  `browser.py inbox inbox-unlinked.spec.ts --grep 'retained draft ru'` with
+  TASK_RUN_LABEL=inbox-retry-dismiss PASS: close alert, retained draft, no premature
+  task, successful retry and actual create/link persistence. No forced clicks.
+- `browser.py inbox pilot-auth-security.spec.ts`: recovery enrollment/disablePASS;
+  invitation test updated for existing Open business action and business-scoped
+  notification bell (actual400 response identified). Final invitation-only rerun
+  PASS; intended business/membership/workspace confirmed. Total11distinct browser cases.
+- `build.py`: i18n/types/Vite/widget/bundle and15login-policy Node tests PASS.
+  Locale chunk-size warnings retained; app-shell budgetPASS. Product code unchanged
+  after this build; subsequent edits only tests/docs.
+
+Anti Slop during(owner preference): approved identity/tokens retained; no new assets,
+decorative blocks or unrelated redesign. Geometry/localized screenshots visually
+inspected; form200% focused link remains reachable (CSS-zoom simulation is not a
+whole-page/browser-zoom certification). Native labels/focus and affected axe WCAG2A/AA
+PASS. Empty/loading/error/recovery and real actions verified within affected scope.
+No new backend policy/API/migration/env/AI/notification behavior. Full-project gate,
+live-provider delivery, real-device keyboard and deployment not claimed. System checks
+passed in backend runs; migration drift not rerun for frontend/test-only changes.
+Frontend contract and Inbox passport updated; access/CRM/AI contracts, roadmap,
+README and registry need no change: no new policy/setup/stage/document introduced.
+No scoped code/local-evidence remainder. Source hashes, artifacts, command logs,
+publication/CI and process cleanup: output/mfa-inbox-20261114/CHECKPOINT.md.
+
 ## AI-AGENTS-REDESIGN-20261113
 
 Owner-approved redesign implemented in canonical checkout, branch codex/ui-testing-toolkit;
