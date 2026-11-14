@@ -149,7 +149,7 @@ def schedule_outbound_delivery(message):
     if message.status not in CLAIMABLE_STATUSES:
         return message
     if getattr(settings, "OUTBOUND_MESSAGES_RUN_INLINE", True):
-        if BotChannel.objects.filter(bot_id=message.conversation.bot_id, channel="whatsapp", config_json__provider_mode="ycloud").exists():
+        if BotChannel.objects.filter(bot_id=message.conversation.bot_id, channel="whatsapp", config_json__provider_mode__in=["ycloud", "meta_cloud"]).exists():
             # Persist the outbox before making a non-idempotent provider request.
             transaction.on_commit(lambda: deliver_outbound_message(message.id))
             return message
@@ -239,25 +239,40 @@ def deliver_outbound_message(message_id):
             },
         )
 
+    meta_attempt_id = None
+    if channel.channel == "whatsapp" and (channel.config_json or {}).get("provider_mode") == "meta_cloud":
+        from apps.integrations.whatsapp.meta_delivery import begin_attempt
+
+        try:
+            meta_attempt_id = begin_attempt(message, channel)
+        except ValidationError as exc:
+            return _finish_delivery(message, result={"ok": False, "reason": str(exc.detail), "retryable": False})
     try:
         result = send_message(
             channel,
             conversation.external_user_id,
             message.text,
-            payload={"zani_message_id": message.id},
+            payload={"zani_message_id": message.id, **({"meta_attempt_id": meta_attempt_id} if meta_attempt_id else {})},
         )
     except Exception as exc:
         logger.exception("bots.outbound_delivery_failed", extra={"message_id": message.id})
         result = {
             "ok": False,
             "reason": sanitize_error_text(exc),
-            "retryable": True,
+            "retryable": not bool(meta_attempt_id),
+            "delivery_unknown": bool(meta_attempt_id),
         }
+    if meta_attempt_id:
+        result = {**result, "meta_attempt_id": meta_attempt_id}
     return _finish_delivery(message, result=result)
 
 
 @transaction.atomic
 def _finish_delivery(message, *, result):
+    if result.get("meta_attempt_id"):
+        from apps.integrations.whatsapp.meta_delivery import finish_attempt
+
+        return finish_attempt(message, result)
     if result.get("transport") == "ycloud":
         # The adapter persists a durable attempt and monotonic provider state itself.
         # Never overwrite a status webhook which arrived before the HTTP response.
@@ -396,6 +411,14 @@ def recover_stale_outbound_messages(*, now=None):
         direction=BotMessage.Directions.OUTBOUND,
         status=BotMessage.Statuses.DELIVERING,
         delivery_locked_at__lt=stale_before,
+    )
+    # A committed Meta intent may already have reached the provider before a crash.
+    base.filter(payload_json__meta_attempt__isnull=False).exclude(
+        payload_json__meta_attempt__state__in=["rejected", "rate_limited", "failed"],
+    ).update(
+        status=BotMessage.Statuses.DELIVERY_UNKNOWN,
+        delivery_next_retry_at=None, delivery_locked_at=None,
+        error_text="WhatsApp delivery outcome is unknown. Wait for provider confirmation.",
     )
     failed = base.filter(delivery_attempts__gte=F("delivery_max_attempts")).update(
         status=BotMessage.Statuses.FAILED,

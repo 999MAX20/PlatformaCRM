@@ -1,0 +1,21 @@
+@media (max-width: 480px) {
+  .header .brand-divider,
+  .header .brand-product {
+    display: none;
+  }
+
+  .header .brand img {
+    width: clamp(88px, 26vw, 125px);
+  }
+
+  .header-actions {
+    gap: 6px;
+  }
+
+  .header .language select,
+  .header .login-button,
+  .header .menu-toggle {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}

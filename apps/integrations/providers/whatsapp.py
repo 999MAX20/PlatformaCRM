@@ -4,6 +4,7 @@ import json
 import logging
 from datetime import timedelta
 from urllib import request as urllib_request
+from urllib.error import HTTPError
 
 from django.conf import settings
 from django.utils import timezone
@@ -98,7 +99,7 @@ class BaseWhatsAppAdapter(BaseChannelProvider):
                     continue
                 message = messages[0]
                 contacts = value.get("contacts") or []
-                contact = contacts[0] if contacts else {}
+                contact = next((item for item in contacts if item.get("wa_id") == message.get("from")), {})
                 metadata = value.get("metadata") or {}
                 text = ""
                 if message.get("type") == "text":
@@ -229,7 +230,13 @@ class WhatsAppProvider(BaseWhatsAppAdapter):
             return {"ok": False, "mock": False, "provider": self.provider, "reason": reason, "requires_template": True}
 
         try:
+            from apps.integrations.whatsapp.sandbox_recipients import meta_test_recipient
+
+            wire_recipient = meta_test_recipient(phone_number_id, recipient_id)
             message_payload = self._meta_cloud_message_payload(recipient_id, text, payload=payload)
+            message_payload["to"] = wire_recipient
+            if (payload or {}).get("meta_attempt_id"):
+                message_payload["biz_opaque_callback_data"] = payload["meta_attempt_id"]
             url = self._graph_url(phone_number_id, "messages")
             request = urllib_request.Request(
                 url,
@@ -242,7 +249,13 @@ class WhatsAppProvider(BaseWhatsAppAdapter):
             )
             with urllib_request.urlopen(request, timeout=15) as response:
                 result = json.loads(response.read().decode("utf-8"))
+            if wire_recipient != recipient_id:
+                contacts = result.get("contacts") if isinstance(result, dict) else None
+                if not isinstance(contacts, list) or len(contacts) != 1 or not isinstance(contacts[0], dict) or contacts[0].get("wa_id") != recipient_id:
+                    raise ValueError("Meta test alias did not confirm the intended recipient.")
             provider_message_id = self._provider_message_id(result)
+            if not isinstance(provider_message_id, str) or not 0 < len(provider_message_id) <= 255:
+                raise ValueError("Meta response did not identify the accepted message.")
             self.log_event(
                 business=business,
                 channel=channel.channel,
@@ -261,7 +274,27 @@ class WhatsAppProvider(BaseWhatsAppAdapter):
                 status=IntegrationEventLog.Statuses.FAILED,
                 error=reason,
             )
-            return {"ok": False, "mock": False, "provider": self.provider, "reason": reason}
+            return {"ok": False, "mock": False, "provider": self.provider, "reason": reason, "retryable": False}
+        except HTTPError as exc:
+            # Retry only an explicit rate-limit rejection; 5xx can follow acceptance.
+            unknown = exc.code >= 500 or exc.code == 408
+            code = None
+            try:
+                error = json.loads(exc.read(65536)).get("error") or {}
+                code = error.get("code")
+                if not isinstance(code, int):
+                    code = None
+            except (ValueError, TypeError, AttributeError, OSError):
+                pass
+            retryable = not unknown and (code in {4, 80007, 130429, 131056} or (code is None and exc.code == 429))
+            reason = f"WhatsApp API HTTP {exc.code}."
+            if isinstance(code, int):
+                reason += f" Error code {code}."
+            self.log_event(business=business, channel=channel.channel,
+                direction=IntegrationEventLog.Directions.OUTBOUND, payload=event_payload,
+                status=IntegrationEventLog.Statuses.FAILED, error=reason)
+            return {"ok": False, "mock": False, "provider": self.provider, "reason": reason,
+                "retryable": retryable, "delivery_unknown": unknown}
         except Exception as exc:
             logger.exception("integrations.whatsapp.send_message_failed", extra={"channel_id": channel.id})
             self.log_event(
@@ -272,7 +305,8 @@ class WhatsAppProvider(BaseWhatsAppAdapter):
                 status=IntegrationEventLog.Statuses.FAILED,
                 error=str(exc),
             )
-            return {"ok": False, "mock": False, "provider": self.provider, "reason": SAFE_PROVIDER_FAILURE_DETAIL}
+            return {"ok": False, "mock": False, "provider": self.provider, "reason": SAFE_PROVIDER_FAILURE_DETAIL,
+                "retryable": False, "delivery_unknown": True}
 
     def _meta_cloud_message_payload(self, recipient_id, text, payload=None):
         payload = payload or {}
@@ -377,7 +411,7 @@ class WhatsAppProvider(BaseWhatsAppAdapter):
         messages = result.get("messages") if isinstance(result, dict) else []
         if not messages:
             return ""
-        return str((messages[0] or {}).get("id") or "")
+        return (messages[0] or {}).get("id") or ""
 
     def _within_customer_service_window(self, channel, recipient_id):
         from apps.bots.models import BotConversation

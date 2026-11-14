@@ -129,6 +129,48 @@ generic channel messages, deduplication and existing credential storage remain.
 Local102-test evidence: OFFICIAL-03-20261028 in PRIMARY-SESSION. No provider rollout,
 real delivery, working credentials or live readiness is implied.
 
+META-DELIVERY-20261114 extends direct Meta text delivery locally. The webhook
+preflights the entire envelope, then handles every message and status across
+entries/changes in one transaction. Per-message copies retain only the matching
+contact and authenticated business route; replay reuses the inbound message and
+does not repeat its CRM effects. The response retains the legacy single-message
+IDs and adds a list for batches. Unsupported media still rejects the packet;
+media download/transcription is not part of this change.
+
+Inbox Meta sends commit an attempt ID in the existing outbox before HTTP and
+echo it through `biz_opaque_callback_data`. API acceptance is `accepted`; a signed
+receipt establishes sent/delivered/read. Ambiguous POST results or a stale worker
+with a committed send intent become `delivery_unknown`, without automatic or
+manual resend. Explicit rate-limit rejections use bounded delayed retries; other
+definite rejections fail. Receipts remain tenant/recipient/attempt-bound and do
+not regress read/delivered state or overwrite a newer attempt. Missing receipts
+leave an unknown result unresolved; this is not an exactly-once provider promise.
+The original local-only change did not include deployment. Under subsequent
+META-PILOT-20261114 authorization, its seven runtime files were deployed to the
+test stand, a temporary credential was refreshed, and the Meta app was published.
+AI/autoreplies remain off; no schema change or Embedded Signup deployment was
+included. Live inbound and duplicate replay passed; one manual reply was delivered
+using a process-local workaround for Meta's test-recipient formatting. Ordinary
+queued sending with that workaround and durable credentials remain separate gates.
+Scope, exact frozen candidate checks and rollback: META-PILOT-20261114 in
+PRIMARY-SESSION. Publication is not proof of Advanced Access or client onboarding.
+
+META-PILOT-STABLE-20261114 adds an opt-in server setting
+`WHATSAPP_META_TEST_RECIPIENT_ALIASES`, default `{}`. Its JSON shape is
+`{"sender_phone_id":{"canonical_recipient":"meta_test_recipient"}}`.
+Only an explicitly listed Kazakhstan recipient (11 ASCII digits starting76/77)
+can use the demonstrated Meta test-list variant with national8 after country7.
+Other sender IDs and recipients retain their original addresses. Arbitrary
+forwarding aliases fail before HTTP. This is not a general number-normalization
+rule and must not be populated from customer input or copied to live-number setup.
+An operator must first verify the test list's generated request and a signed
+callback identifying the same canonical recipient. The aliased API response must
+confirm that canonical `wa_id`; missing/mismatched identity leaves delivery unknown
+and forbids blind resend. Conversation identity, service window, tenant routing
+and receipt matching remain canonical. Remove the entry when the test-list defect
+is resolved or the sender is replaced. Deployment/acceptance status is recorded
+under the same task in PRIMARY-SESSION.
+
 OFFICIAL-09: catalog ingestion of Service metadata uses the same SETTINGS UPDATE
 and all-current-branches boundary as ordinary Service changes, in addition to
 existing INTEGRATIONS admission. Existing inactive/archive flags remain unchanged;

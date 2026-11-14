@@ -829,3 +829,44 @@ Resend был подключён на сервере06.11 с подтвержд�
 12.11 локальная .env остаётся console/без SMTP credentials; актуальная серверная
 конфигурация не подтверждена из-за SSH timeout. Не переносить старый transport
 PASS на новый invite flow. [Доказательства и остаток](../testing/evidence/invitations-24h-20261112.md).
+
+## Закрытый текстовый пилот Meta: 14.11.2026
+
+На platformacrm.kz поверх release20261113-v4 развёрнуты семь проверенных файлов
+обработки пакетов WhatsApp и исходящей доставки. Миграций нет; AI/автоответы
+выключены. Две страницы /landing/pilot-privacy.html и
+/landing/pilot-data-deletion.html с точным списком их ресурсов доступны публично
+только по GET/HEAD; остальная CRM и API сохраняют stand-auth. Общие юридические
+черновики не опубликованы. Meta app опубликовано после сохранения этих URL.
+Входящее, дедупликация и одна исходящая доставка подтверждены; стабильная
+отправка обычным worker ещё проверяется. Публикация не равна Advanced Access.
+Проверки, предупреждения среды, срок временного токена и откат записаны в
+META-PILOT-20261114 в docs/testing/task-state/PRIMARY-SESSION.md.
+
+### Closed Meta text pilot: integrations worker, 14Nov2026
+The deployed crm-worker now persistently includes `integrations` through
+`/etc/systemd/system/crm-worker.service.d/20-integrations-queue.conf`; existing
+queues and concurrency remain unchanged. Unit verification, restart and Celery
+active_queues passed. The authorized Inbox retry was consumed automatically;
+Redis queue/unacked returned to zero. Beat and AI automatic replies remain off.
+Live inbound and signed duplicate replay passed without an additional message.
+Follow-up: the same control reply39 was delivered at14Nov09:04:55UTC after a
+bounded process-local sandbox-recipient alias diagnostic. Meta's generated test
+request used[verified sandbox alias] but its delivery callback identified[verified recipient ending3652];
+the owner also confirmed the separate official hello_world message arrived.
+The queue fix and this one delivery are verified; the process-local diagnostic
+did not fix future ordinary sends. An opt-in server mapping scoped to the exact
+sender/recipient is deployed with canonical contact validation. Three runtime
+files and the explicit test mapping changed; no schema/UI change. Focused46,
+PostgreSQL202 and full frozen backend3340PASS/78skips; current-index focused46PASS.
+Readiness200, anonymous API401, invalid webhook403 and actual worker configuration
+plus integrations queue PASS. A fresh normal queued reply still needs a valid token.
+Backup: /root/platforma-meta-pilot-20261114/before-stable-pilot. Restore its original
+settings/provider and crm.env, remove only the new sandbox helper and restart
+web/worker/events to roll back; no database rollback is needed.
+System user platformacrm has Employee access to the pilot app and test WhatsApp
+asset plus its WABA only (partial template-read; no full management).
+Token wizard is prepared for60days and the two WhatsApp scopes;
+final generation requires owner handoff, validation/encrypted storage still pending.
+The earlier temporary token has expired. No customer onboarding is certified.
+See META-PILOT-STABLE-20261114 in the primary checkpoint for current evidence.

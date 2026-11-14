@@ -53,47 +53,13 @@ def process_whatsapp_statuses(payload, auth_context=None):
 
 
 def _process_whatsapp_status_batch(channel, statuses, payload):
+    from apps.integrations.whatsapp.receipts import apply_receipt
+
     business = channel.bot.business
     safe_payload = sanitize_config(payload)
     processed = 0
     for item in statuses:
-        message_id = str(item.get("id") or "")
-        status = str(item.get("status") or "")
-        if not message_id:
-            continue
-        message = BotMessage.objects.filter(
-            conversation__business=business,
-            conversation__bot=channel.bot,
-            conversation__channel=BotConversation.Channels.WHATSAPP,
-            direction=BotMessage.Directions.OUTBOUND,
-            external_message_id=message_id,
-        ).first()
-        if not message:
-            continue
-        timestamp = _whatsapp_timestamp(item.get("timestamp"))
-        update_fields = ["payload_json"]
-        payload_json = dict(message.payload_json or {})
-        payload_json["whatsapp_status"] = sanitize_config(item)
-        message.payload_json = payload_json
-        if status == "sent":
-            message.status = BotMessage.Statuses.SENT
-            message.sent_at = message.sent_at or timestamp
-            update_fields.extend(["status", "sent_at"])
-        elif status == "delivered":
-            message.status = BotMessage.Statuses.SENT
-            message.delivered_at = message.delivered_at or timestamp
-            update_fields.extend(["status", "delivered_at"])
-        elif status == "read":
-            message.status = BotMessage.Statuses.SENT
-            message.read_at = message.read_at or timestamp
-            message.delivered_at = message.delivered_at or timestamp
-            update_fields.extend(["status", "read_at", "delivered_at"])
-        elif status == "failed":
-            message.status = BotMessage.Statuses.FAILED
-            message.error_text = _whatsapp_status_error(item)
-            update_fields.extend(["status", "error_text"])
-        message.save(update_fields=list(dict.fromkeys(update_fields)))
-        processed += 1
+        processed += apply_receipt(channel, item)
 
     IntegrationEventLog.objects.create(
         business=business,
@@ -127,6 +93,10 @@ def save_whatsapp_inbound_message(payload, auth_context=None, headers=None):
     routes = verified_whatsapp_routes(payload, auth_context)
     channel, _, payload = next((route for route in routes if route[1].get("messages")), routes[0])
     parsed = parse_inbound_message(payload, headers=headers)
+    return _save_parsed_inbound_message(channel, payload, parsed)
+
+
+def _save_parsed_inbound_message(channel, payload, parsed):
     safe_payload = sanitize_config(payload)
     business = channel.bot.business
 

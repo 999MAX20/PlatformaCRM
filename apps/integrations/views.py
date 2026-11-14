@@ -77,7 +77,7 @@ from apps.integrations.view_actions import (
 )
 from apps.integrations.webhooks import deliver_webhook_event
 from apps.integrations.instagram import save_instagram_inbound_message, verify_instagram_secret
-from apps.integrations.whatsapp import process_whatsapp_statuses, save_whatsapp_inbound_message, verify_whatsapp_secret
+from apps.integrations.whatsapp import verify_whatsapp_secret
 
 
 class IntegrationEventLogViewSet(ReadOnlyModelViewSet):
@@ -570,22 +570,14 @@ class WhatsAppWebhookView(APIView):
 
     def post(self, request):
         auth_context = verify_whatsapp_secret(request)
-        status_result = process_whatsapp_statuses(request.data, auth_context=auth_context)
-        if status_result is not None:
-            return Response({"ok": True, **status_result}, status=200)
-        conversation, message = save_whatsapp_inbound_message(
+        from apps.integrations.whatsapp.batches import process_whatsapp_webhook
+
+        result = process_whatsapp_webhook(
             request.data,
             auth_context,
             headers={key: value for key, value in request.META.items() if key.startswith("HTTP_")},
         )
-        return Response(
-            {
-                "ok": True,
-                "conversation_id": conversation.id,
-                "message_id": message.id,
-            },
-            status=200,
-        )
+        return Response({"ok": True, **result}, status=200)
 
 
 class InstagramWebhookView(APIView):

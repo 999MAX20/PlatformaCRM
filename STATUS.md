@@ -2166,3 +2166,25 @@ Four visible cards, pending FIFO, shared AppError mapping; current design retain
 No scoped local remainder; publication/CI receipt in checkpoint.
 Evidence: docs/testing/evidence/notification-queue-20261113.md.
 Checkpoint: output/notification-queue-20261113/CHECKPOINT.md.
+
+META-PILOT-20261114: seven-step Meta plan reconciled and recorded in roadmap CRM-R03.
+Owner subsequently authorized necessary pilot deployment/Meta actions. Verified
+Meta text batch/outbox fixes deployed to test stand;
+pilot-only privacy/deletion RU/KK/EN published, URLs saved, Meta app Published.
+AI/autoreplies off. Full frozen backend3333PASS/78skips, PostgreSQL195PASS,
+frozen frontend build/types PASS. Live inbound/replay and one delivered manual
+reply verified. The reply required a process-local Meta sandbox recipient alias;
+ordinary sends are not yet closed. Integrations worker subscription fixed.
+General CRM legal v0.3,
+Advanced Access, Signup deployment/client onboarding remain open. Exact evidence,
+existing environment warnings and rollback: META-PILOT-20261114 in PRIMARY-SESSION.
+
+META-PILOT-STABLE-20261114 in progress: explicit sender/recipient-scoped test alias
+and canonical response-identity validation deployed to the pilot stand.
+Focused46, PostgreSQL202 and full frozen backend3340PASS/78skips; current-index
+focused46PASS. Three-file/runtime-config deployment, readiness/auth boundaries
+and actual worker configuration/integrations queue PASS; no schema/UI change.
+Meta policy accepted and Employee/scoped assets saved under owner approval.
+Token wizard prepared60days/two WhatsApp scopes; final generation awaits owner
+handoff, followed by validation/encrypted storage. Earlier temporary token expired.
+Completion needs ordinary queued Inbox reply with real delivery and suitable token.

@@ -133,13 +133,14 @@ class WhatsAppTenantBindingTests(TestCase):
         response = self.post(self.payload(self.value("external-alias")))
         self.assertEqual(response.status_code, 200, response.data)
 
-    def test_signed_inbound_retains_only_selected_change(self):
+    def test_signed_inbound_retains_only_its_business_change(self):
         response = self.post(self.payload(self.value(), self.value("other-phone")), signed=True)
         self.assertEqual(response.status_code, 200, response.data)
-        message = BotMessage.objects.get()
-        self.assertEqual(message.conversation.business_id, self.business.id)
-        self.assertNotIn("other-phone", json.dumps(message.payload_json))
-        self.assertNotIn("other-phone", json.dumps(list(IntegrationEventLog.objects.values_list("payload_json", flat=True))))
+        self.assertEqual(BotMessage.objects.count(), 2)
+        for business, forbidden in ((self.business, "other-phone"), (self.other_business, "dev-phone")):
+            message = BotMessage.objects.get(conversation__business=business)
+            self.assertNotIn(forbidden, json.dumps(message.payload_json))
+            self.assertNotIn(forbidden, json.dumps(list(IntegrationEventLog.objects.filter(business=business).values_list("payload_json", flat=True))))
 
     def test_signed_later_unknown_route_rejects_before_status_effect(self):
         message = self.outbound(self.bot)
