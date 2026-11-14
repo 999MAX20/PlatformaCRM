@@ -387,3 +387,46 @@ scope because domain/API/policy/setup behavior did not change.
 Commands and publication/CI: output/ai-agents-redesign-20261113/CHECKPOINT.md.
 Logs/scripts: output/ai-agents-instructions-20261114/.
 Screenshots: output/playwright/ai-agents-instructions-20261114/.
+
+
+## Side hints, 14.11.2026
+
+Owner approved moving the instruction guidance beside the fields, preserving the
+existing design. Container threshold60rem keeps the form stacked until a field up to42rem
+and a16–18rem hint fit. Each row aligns its own field/hint; examples are separate
+paragraphs, existing text retained in RU/KK/EN. Main instruction now owns the Actions
+explanation/link and its accessible description; short reply rules retain their own
+hint. This grouping reduced the first side-layout prototype from688 to588px in the
+observed RU desktop form; this is not a measured comparison with the previous commit.
+No backend, prompt default, permission or save behavior changed.
+
+Final10 existing desktop/mobile regressions PASS: inbox/CRM expansion, Escape/focus,
+Actions/back and draft retention, real save/readback/reload/cancel, failed-save retry,
+exit guard and field visibility. Initial10PASS overlapped the grouping edits and is
+not final evidence; final rerun after all source edits also10PASS. Build/types/i18n7324,
+app/widget and bundle gate PASS; existing RU/KK chunk warnings remain within policy.
+
+Chrome extension CUA inspected actual page and isolated fixtures. Measured RU/KK/EN
+wide hints stay beside672px fields;1280/768/390/320 layouts stack with no horizontal
+overflow. English/KK/RU desktop and narrow screenshots captured and visually inspected,
+including expanded KK editor and lower English/Russian fields.200% root font verified
+as28px hints at1440/390 with reflow, visible focus and reachable lower content.
+Text color #4f5e58 on #f6f8f7 measured6.40:1. Browser geometry/details/images:
+output/ai-agents-side-hints-20261114/browser-layout.json and sibling JPGs.
+
+A full-page CDP screenshot timed out; documented diagnostics and changed capture
+mode restored normal target-page screenshots. OS text-scale emulation did not change
+actual desktop font size, so it is NOT200% evidence; a temporary root-font override
+provided verified200% evidence and was removed. One early1280 screenshot captured a
+stale paint after resizing;1280 geometry and later tablet/mobile images are separate
+proof. No screenshot error was represented as loss of page access. Test-only account
+locale was restored to RU; viewport reset; only own extra tabs closed. Working data
+and user's original browser tab preserved. No new dependencies, assets or theme.
+
+Anti Slop delivery: purpose/readability, per-field grouping, responsive geometry,
+keyboard/descriptions/contrast and functional regression PASS within this boundary.
+No new fetching/error/permission state was introduced. Existing10-scenario recovery
+coverage rerun; screen-reader, fullrelease, liveAI and backend certification not claimed.
+No scoped code/local-evidence remainder. Frontend contract/passport/status updated;
+roadmap/D01 and README/API/AI/access/operations/CRM policy unchanged by this layout.
+Publication, exact commands, source hashes and cleanup: existing redesign checkpoint.

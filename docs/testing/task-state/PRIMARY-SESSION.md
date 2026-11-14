@@ -44,6 +44,10 @@ Instruction phase14.11: clear field purposes, Actions link and inline expansion.
 10distinct scoped browser cases verified; RU/KK/EN320–1440/200% and recovery/view-only
 checks PASS, screenshots inspected. No next audit phase/backend/workingDB scope.
 Final build/publication/CI: same checkpoint; logs output/ai-agents-instructions-20261114.
+Side hints14.11: guidance beside fields on wide forms, below on narrow screens;
+examples separated, Actions guidance next to main instruction. Final10browser
+regressions/build/types/i18n/bundle PASS; localized320–1440/200% images inspected.
+No scoped local remainder. Receipt: same checkpoint; logs ai-agents-side-hints-20261114.
 
 ## NOTIFICATIONS-SERVER-FIXES-20261113
 

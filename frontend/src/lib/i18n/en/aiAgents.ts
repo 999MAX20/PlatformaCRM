@@ -489,11 +489,13 @@ export const aiAgents: Record<string, string> = {
   "aiAgents.hint.tone":
     "Tone sets reply style. For sales use Friendly or Sales; for support use Support.",
   "aiAgents.hint.role":
-    "Describe who the agent is and whom it helps. For example: an administrator who advises customers about the business's services.",
+    "Describe who the agent is and whom it helps.",
+  "aiAgents.hint.roleExample": "For example: an administrator who advises customers about the business's services.",
   "aiAgents.hint.systemPrompt":
     "Describe the conversation goal and sequence: what to clarify, how to help and which next step to offer.",
   "aiAgents.hint.rules":
-    "Set reply limits and format, one rule per line. For example: ask one question at a time; do not promise discounts without business data.",
+    "Set reply limits and format, one rule per line.",
+  "aiAgents.hint.rulesExample": "For example: ask one question at a time; do not promise discounts without business data.",
   "aiAgents.instructions.expand": "Expand editor",
   "aiAgents.instructions.collapse": "Collapse editor",
   "aiAgents.instructions.actionsHint": "Instructions guide replies within system limits. Configure allowed actions and staff handoff conditions in Actions.",

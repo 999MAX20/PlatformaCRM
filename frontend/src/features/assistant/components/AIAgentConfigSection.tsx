@@ -57,26 +57,31 @@ export function InstructionsSection({ form, setForm, canManage, botId, scenario 
   const [expanded, setExpanded] = useState(false);
   const instructionRef = useRef<HTMLTextAreaElement>(null);
   const expandRef = useRef<HTMLButtonElement>(null);
-  const hintClass = "mt-2 text-xs font-semibold leading-5 text-platforma-faint";
+  const rowClass = "grid max-w-2xl items-start gap-x-6 gap-y-2 @min-[60rem]:max-w-none @min-[60rem]:grid-cols-[minmax(0,42rem)_minmax(16rem,18rem)]";
+  const hintClass = "min-w-0 space-y-2 text-sm leading-5 text-platforma-subtle @min-[60rem]:pt-7";
   return (
-    <div className="max-w-2xl space-y-4">
-      <section>
+    <div className="@container max-w-[62rem] space-y-4">
+      <section className={rowClass}>
         <Textarea className="!min-h-16 py-2" rows={2} label={t("aiAgents.roleDescription")} value={form.role_description} disabled={!canManage}
           aria-describedby={`${id}-role-hint`}
           onChange={event => setForm(current => ({ ...current, role_description: event.target.value }))} />
-        <p id={`${id}-role-hint`} className={hintClass}>{t("aiAgents.hint.role")}</p>
+        <div id={`${id}-role-hint`} className={hintClass}>
+          <p className="font-semibold">{t("aiAgents.hint.role")}</p>
+          <p>{t("aiAgents.hint.roleExample")}</p>
+        </div>
       </section>
 
       <section>
         <div id="ai-agent-quality-settings" className="space-y-3">
-            <div onKeyDown={event => {
-              if (event.key === "Escape" && expanded) {
-                event.preventDefault();
-                event.stopPropagation();
-                setExpanded(false);
-                expandRef.current?.focus({ preventScroll: true });
-              }
-            }}>
+          <div className={rowClass} onKeyDown={event => {
+            if (event.key === "Escape" && expanded) {
+              event.preventDefault();
+              event.stopPropagation();
+              setExpanded(false);
+              expandRef.current?.focus({ preventScroll: true });
+            }
+          }}>
+            <div className="min-w-0">
               <div className="mb-2 flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
                 <label htmlFor={`${id}-instruction`} className="text-sm font-semibold text-platforma-subtle">{t("aiAgents.systemPrompt")}</label>
                 <Button ref={expandRef} type="button" variant="ghost" size="sm" className="min-h-11 text-sm sm:min-h-9"
@@ -90,23 +95,27 @@ export function InstructionsSection({ form, setForm, canManage, botId, scenario 
               </div>
               <Textarea ref={instructionRef} id={`${id}-instruction`} className={`${expanded ? "min-h-64" : "min-h-40"} py-2`} rows={6}
                 style={{ height: expanded ? "min(60dvh, 36rem)" : undefined }}
-                aria-describedby={`${id}-instruction-hint`} value={form.system_prompt} disabled={!canManage}
+                aria-describedby={`${id}-instruction-hint ${id}-actions-hint`} value={form.system_prompt} disabled={!canManage}
                 onChange={event => setForm(current => ({ ...current, system_prompt: event.target.value }))} />
-              <p id={`${id}-instruction-hint`} className={hintClass}>{t("aiAgents.hint.systemPrompt")}</p>
             </div>
-              <div>
-                <Textarea className="!min-h-20 py-2" rows={3} label={t("aiAgents.rules")} value={form.rules_text} disabled={!canManage}
-                  aria-describedby={`${id}-rules-hint ${id}-actions-hint`}
-                  onChange={event => setForm(current => ({ ...current, rules_text: event.target.value }))} />
-                <p id={`${id}-rules-hint`} className={hintClass}>{t("aiAgents.hint.rules")}</p>
-              </div>
-              <div>
-                <p id={`${id}-actions-hint`} className={hintClass}>{t(scenario === "crm" ? "aiAgents.instructions.actionsHintCrm" : "aiAgents.instructions.actionsHint")}</p>
-                <Link to={`/app/ai-agents/${botId}/actions`} className="platforma-focus-ring inline-flex min-h-11 items-center rounded-control text-sm font-semibold text-brand-800 underline hover:text-brand-900">
-                  {t("aiAgents.instructions.openActions")}
-                </Link>
-              </div>
+            <div className={`${hintClass} @min-[60rem]:pt-11`}>
+              <p id={`${id}-instruction-hint`}>{t("aiAgents.hint.systemPrompt")}</p>
+              <p id={`${id}-actions-hint`}>{t(scenario === "crm" ? "aiAgents.instructions.actionsHintCrm" : "aiAgents.instructions.actionsHint")}</p>
+              <Link to={`/app/ai-agents/${botId}/actions`} className="platforma-focus-ring inline-flex min-h-11 items-center rounded-control text-sm font-semibold text-brand-800 underline hover:text-brand-900">
+                {t("aiAgents.instructions.openActions")}
+              </Link>
+            </div>
           </div>
+          <div className={rowClass}>
+            <Textarea className="!min-h-20 py-2" rows={3} label={t("aiAgents.rules")} value={form.rules_text} disabled={!canManage}
+              aria-describedby={`${id}-rules-hint`}
+              onChange={event => setForm(current => ({ ...current, rules_text: event.target.value }))} />
+            <div id={`${id}-rules-hint`} className={hintClass}>
+              <p className="font-semibold">{t("aiAgents.hint.rules")}</p>
+              <p>{t("aiAgents.hint.rulesExample")}</p>
+            </div>
+          </div>
+        </div>
       </section>
     </div>
   );
