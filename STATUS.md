@@ -2174,17 +2174,18 @@ pilot-only privacy/deletion RU/KK/EN published, URLs saved, Meta app Published.
 AI/autoreplies off. Full frozen backend3333PASS/78skips, PostgreSQL195PASS,
 frozen frontend build/types PASS. Live inbound/replay and one delivered manual
 reply verified. The reply required a process-local Meta sandbox recipient alias;
-ordinary sends are not yet closed. Integrations worker subscription fixed.
+ordinary sends are now verified in META-PILOT-STABLE below. Integrations worker subscription fixed.
 General CRM legal v0.3,
 Advanced Access, Signup deployment/client onboarding remain open. Exact evidence,
 existing environment warnings and rollback: META-PILOT-20261114 in PRIMARY-SESSION.
 
-META-PILOT-STABLE-20261114 in progress: explicit sender/recipient-scoped test alias
+META-PILOT-STABLE-20261114 scoped acceptance PASS: explicit sender/recipient-scoped test alias
 and canonical response-identity validation deployed to the pilot stand.
 Focused46, PostgreSQL202 and full frozen backend3340PASS/78skips; current-index
 focused46PASS. Three-file/runtime-config deployment, readiness/auth boundaries
 and actual worker configuration/integrations queue PASS; no schema/UI change.
-Meta policy accepted and Employee/scoped assets saved under owner approval.
-Token wizard prepared60days/two WhatsApp scopes; final generation awaits owner
-handoff, followed by validation/encrypted storage. Earlier temporary token expired.
-Completion needs ordinary queued Inbox reply with real delivery and suitable token.
+Meta SYSTEM_USER token validated and stored encrypted; expiry13Jan2027 23:35 Asia/Qyzylorda.
+Owner explicitly approved full access only to test WABA after code10 denial.
+Normal Inbox->worker reply40 delivered14Nov23:43:08 local; same-row retry, no duplicate.
+Signed actual receipt replay200, counts3->3. Code8585aa27 published; its CI PASS.
+No remaining code/evidence/input gap in this closed test scope; client onboarding remains separate.

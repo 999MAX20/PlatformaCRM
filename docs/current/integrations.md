@@ -151,7 +151,8 @@ test stand, a temporary credential was refreshed, and the Meta app was published
 AI/autoreplies remain off; no schema change or Embedded Signup deployment was
 included. Live inbound and duplicate replay passed; one manual reply was delivered
 using a process-local workaround for Meta's test-recipient formatting. Ordinary
-queued sending with that workaround and durable credentials remain separate gates.
+queued sending with the persistent opt-in setting and a validated SYSTEM_USER token
+subsequently passed on14Nov18:43:08UTC (reply40); actual signed receipt replay made no duplicate.
 Scope, exact frozen candidate checks and rollback: META-PILOT-20261114 in
 PRIMARY-SESSION. Publication is not proof of Advanced Access or client onboarding.
 

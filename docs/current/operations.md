@@ -839,7 +839,7 @@ PASS на новый invite flow. [Доказательства и остато�
 только по GET/HEAD; остальная CRM и API сохраняют stand-auth. Общие юридические
 черновики не опубликованы. Meta app опубликовано после сохранения этих URL.
 Входящее, дедупликация и одна исходящая доставка подтверждены; стабильная
-отправка обычным worker ещё проверяется. Публикация не равна Advanced Access.
+отправка обычным worker подтверждена со служебным токеном. Публикация не равна Advanced Access.
 Проверки, предупреждения среды, срок временного токена и откат записаны в
 META-PILOT-20261114 в docs/testing/task-state/PRIMARY-SESSION.md.
 
@@ -860,13 +860,18 @@ sender/recipient is deployed with canonical contact validation. Three runtime
 files and the explicit test mapping changed; no schema/UI change. Focused46,
 PostgreSQL202 and full frozen backend3340PASS/78skips; current-index focused46PASS.
 Readiness200, anonymous API401, invalid webhook403 and actual worker configuration
-plus integrations queue PASS. A fresh normal queued reply still needs a valid token.
+plus integrations queue PASS. A fresh Inbox reply40 passed the normal queue and
+was delivered14Nov2026 18:43:08UTC. Actual signed receipt replay returned200
+without another message; total conversation messages remained3.
 Backup: /root/platforma-meta-pilot-20261114/before-stable-pilot. Restore its original
 settings/provider and crm.env, remove only the new sandbox helper and restart
 web/worker/events to roll back; no database rollback is needed.
 System user platformacrm has Employee access to the pilot app and test WhatsApp
-asset plus its WABA only (partial template-read; no full management).
-Token wizard is prepared for60days and the two WhatsApp scopes;
-final generation requires owner handoff, validation/encrypted storage still pending.
-The earlier temporary token has expired. No customer onboarding is certified.
+asset plus its WABA only. Following error10 on the first ordinary send, the owner
+explicitly approved full access to this test WABA; app/phone partial roles stayed unchanged.
+The same message was retried from Inbox and delivered without an inline override.
+The owner-generated SYSTEM_USER token passed app/user/scopes/phone/subscription checks,
+is stored encrypted with audit, and expires13Jan2027 18:35:54UTC. Temporary plaintext
+copies were removed; backup before-system-user-token-20261114.dump verified.
+Renew before expiry. No customer onboarding or Advanced Access is certified.
 See META-PILOT-STABLE-20261114 in the primary checkpoint for current evidence.
