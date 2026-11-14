@@ -52,6 +52,14 @@ Owner correction14.11: expand button/state/keys removed; native resize and side 
 retained.10UI regressions +build/types/i18n/bundle PASS; desktop/mobile inspected.
 14server tests PASS confirm saved instruction reaches provider input (mocked model,
 local dirty server snapshot, not deployed/live-model compliance). Receipt: checkpoint.
+Actions audit14.11 complete, no product edits:116isolated server tests PASS,
+including10audit reproductions; desktop Actions inspected, draft cancelled.
+A-A01 P1: model reason can impersonate fallback and bypass required handoff when
+fallback review is off. A-A02–07: live legacy Lead/Deal, misleading threshold/
+policy copy, hidden channel overrides, unclear off-topic counts and redundant control.
+Findings remain open; audit PASS is not product acceptance. Full map/explanations:
+docs/testing/evidence/ai-agents-redesign-20261113.md#actions-audit--14112026.
+No next implementation/live-provider/workingDB scope; publication in checkpoint.
 
 ## NOTIFICATIONS-SERVER-FIXES-20261113
 
