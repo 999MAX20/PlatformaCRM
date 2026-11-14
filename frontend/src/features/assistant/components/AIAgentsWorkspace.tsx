@@ -239,6 +239,7 @@ export function AIAgentsWorkspace({
               <CRMAgentSettings section="actions" form={profileForm} setForm={setProfileForm} canManage={canManage} />
             ) : activeSection === "actions" ? (
               <AgentActionsSection
+                channels={channels}
                 botDraft={botDraft}
                 setBotDraft={setBotDraft}
                 form={profileForm}

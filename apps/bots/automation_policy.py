@@ -25,6 +25,12 @@ def authorize_configuration(bot, settings, tools, actor):
     if pipeline.get("creation_policy") == "automatic":
         assert_can(actor, bot.business, Resources.AI_AUTOMATION, Actions.MANAGE)
         for tool in tools:
+            if pipeline.get("mode") == "customer_actions" and (
+                tool in {"create_lead", "create_deal"}
+                or (tool == "create_task" and pipeline.get("task_creation_policy") != "automatic")
+                or (tool == "create_appointment" and pipeline.get("appointment_creation_policy") != "automatic")
+            ):
+                continue
             if tool in CREATE_RESOURCES:
                 assert_can(actor, bot.business, CREATE_RESOURCES[tool], Actions.CREATE)
         value["_automatic_actor_id"] = actor.id
@@ -49,7 +55,7 @@ def automatic_creation_actor(conversation, actions, *, expected_fingerprint=None
     conversation.bot.refresh_from_db()
     channel = conversation.bot.channels.filter(channel=conversation.channel).first()
     config = resolve_auto_pipeline_config(conversation=conversation, channel=channel)
-    # A channel override can restrict behavior; it cannot grant autonomous creation.
+    # Consent belongs to the agent even when an old channel supplies runtime settings.
     own = (conversation.bot.settings_json or {}).get("auto_crm_pipeline") or {}
     if own.get("creation_policy") != "automatic" or not config.enabled or config.mode == "off":
         raise PermissionDenied("Automatic creation is not enabled.")
@@ -61,6 +67,13 @@ def automatic_creation_actor(conversation, actions, *, expected_fingerprint=None
     assert_can(actor, conversation.business, Resources.AI_AUTOMATION, Actions.MANAGE)
     assert_can(actor, conversation.business, Resources.CONVERSATIONS, Actions.UPDATE, obj=conversation)
     for action in actions:
+        if config.mode == "customer_actions":
+            if action in {"create_lead", "create_deal"}:
+                raise PermissionDenied("Legacy creation is unavailable for customer actions.")
+            if action == "create_task" and config.task_creation_policy != "automatic":
+                raise PermissionDenied("Task creation requires staff confirmation.")
+            if action == "create_appointment" and config.appointment_creation_policy != "automatic":
+                raise PermissionDenied("Booking requires staff confirmation.")
         if action not in CREATE_RESOURCES or action not in tools:
             raise PermissionDenied("The agent capability is disabled.")
         if action == "create_appointment" and not config.create_appointment:

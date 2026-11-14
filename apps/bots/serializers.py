@@ -42,6 +42,11 @@ class BotSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError("Automatic consent must be saved through agent configuration.")
             if (value.get("auto_crm_pipeline") or {}).get("creation_policy") == "automatic" and (current.get("auto_crm_pipeline") or {}).get("creation_policy") != "automatic":
                 raise serializers.ValidationError("Use agent configuration to enable automatic creation.")
+            incoming = value.get("auto_crm_pipeline") or {}
+            previous = current.get("auto_crm_pipeline") or {}
+            for field in ("task_creation_policy", "appointment_creation_policy"):
+                if incoming.get(field) == "automatic" and previous.get(field, previous.get("creation_policy")) != "automatic":
+                    raise serializers.ValidationError("Use agent configuration to enable automatic creation.")
         return value
 
     class Meta:

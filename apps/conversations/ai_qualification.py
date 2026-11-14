@@ -34,6 +34,7 @@ class ConversationQualification:
     reason: str = ""
     requires_human_review: bool = False
     request_kind: str = "business"
+    is_fallback: bool = False
 
     def to_dict(self):
         return asdict(self)
@@ -131,6 +132,7 @@ def qualify_conversation(*, conversation: BotConversation, user=None, allow_mock
         if not result.is_mock:
             raise AIClientError(code="invalid_qualification", retryable=False)
         qualification = _fallback_qualification(conversation=conversation, messages=message_context, services=services)
+        qualification.is_fallback = True
         qualification.reason = f"Fallback qualification used because AI output was not valid JSON. Provider={result.provider}."
     return qualification, log
 

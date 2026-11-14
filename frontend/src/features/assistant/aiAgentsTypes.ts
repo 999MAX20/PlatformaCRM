@@ -24,7 +24,7 @@ export type BotDraftState = {
   settings_json: Record<string, unknown>;
 };
 
-export type AutoPipelineMode = "off" | "triage" | "lead_task" | "draft_deal";
+export type AutoPipelineMode = "off" | "triage" | "lead_task" | "draft_deal" | "customer_actions";
 
 export type OnboardingStep = {
   done: boolean;

@@ -3,7 +3,7 @@ import { BookOpen, Bot, FunctionSquare, MessageSquareText, Radio, Settings } fro
 import type { AgentProfile, Bot as BotType, BotChannel, Id } from "../../types";
 import type { AgentFormState, AgentSection, AutoPipelineMode, OnboardingStep } from "./aiAgentsTypes";
 
-export const defaultAllowedTools = ["create_client", "create_lead", "create_appointment", "handoff_to_manager"];
+export const defaultAllowedTools = ["create_client", "create_appointment", "handoff_to_manager"];
 
 export const sections: Array<{ id: AgentSection; labelKey: string; titleKey: string; icon: typeof Settings }> = [
   { id: "overview", labelKey: "aiAgents.section.overview", titleKey: "aiAgents.section.overview", icon: MessageSquareText },
@@ -81,9 +81,9 @@ export function autoPipelineFromSettings(settings: Record<string, unknown>) {
     : {};
   const legacyModes: Record<string, AutoPipelineMode> = { suggest_only: "triage", auto_lead_task: "lead_task", draft_deal: "draft_deal", appointment_explicit: "lead_task" };
   const legacyMode = typeof raw.confirmation_mode === "string" ? legacyModes[raw.confirmation_mode] : undefined;
-  const mode = legacyMode || (typeof raw.mode === "string" && ["off", "triage", "lead_task", "draft_deal"].includes(raw.mode)
+  const mode = typeof raw.mode === "string" && ["off", "triage", "lead_task", "draft_deal", "customer_actions"].includes(raw.mode)
     ? raw.mode as AutoPipelineMode
-    : "off");
+    : legacyMode || "off";
   return {
     enabled: Boolean(raw.enabled ?? mode !== "off"),
     creation_policy: raw.creation_policy === "automatic" ? "automatic" : "staff_confirmation",

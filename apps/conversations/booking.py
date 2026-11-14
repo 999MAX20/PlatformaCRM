@@ -61,8 +61,9 @@ def maybe_create_appointment_from_reply(*, conversation: BotConversation, messag
     slot = _select_offered_slot(conversation=conversation, text=message.text)
     if not slot:
         return BookingResult(status="skipped", reason="No offered slot matched the client reply.")
-    own = (conversation.bot.settings_json or {}).get("auto_crm_pipeline") or {}
-    if own.get("creation_policy") == "automatic":
+    from apps.conversations.auto_pipeline import resolve_auto_pipeline_config
+    config = resolve_auto_pipeline_config(conversation=conversation)
+    if config.appointment_creation_policy == "automatic":
         return _commit_selected_slot(conversation=conversation, message=message, slot=slot)
     # A client reply selects a preference; only staff may commit a booking.
     _save_booking_meta(conversation, status="requires_staff", slot=slot,

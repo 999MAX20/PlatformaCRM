@@ -677,3 +677,82 @@ Knowledge UI не принадлежат аудиту и не включаютс
 этапа; этот отчёт не разрешает его автоматически. Roadmap/контракты/паспорт не
 переписаны: аудит фиксирует разрыв реализации и UI, не меняет принятые требования
 или прежнюю scoped-готовность. Ссылка в STATUS/checkpoint сохраняет открытые выводы.
+
+
+## Actions implementation — 14.11.2026
+
+Owner approved the complete corrective plan after the actions audit. A-A01–07
+are addressed within the local scope: trusted fallback provenance; customer,
+task and Appointment actions; separate task/booking consent; explicit legacy
+adoption; agent settings authoritative across channels; clear client creation
+and cumulative off-topic behavior; mandatory handoff shown as policy.
+
+The server ignores a model-provided fallback flag/reason as provenance. The new
+`customer_actions` mode cannot automatically create Lead/Deal. Existing entities,
+links and history remain intact. Earlier saved modes retain compatibility until
+an explicit action update and atomic save; reading the form or saving unrelated
+instructions does not migrate them. Processing and auto-send are not silently
+enabled. New actions retain permissions, current actor/config checks, exact slot
+selection, revalidation, rollback, replay protection and existing audit/events.
+
+The form removes legacy Lead/Deal controls, confidence sliders, fallback-review
+switch and redundant authority summary/handoff toggle. Task and appointment each
+have off/staff/automatic choices. Five processing limits and escalation rules
+remain. RU/KK/EN labels wrap; off-topic choices explain the sequence and preserve
+a previous no-first-answer variant until edited. A tall editor save bar becomes
+part of normal page flow so it does not obscure fields with enlarged text.
+
+Verification on canonical dirty snapshot based on dea1bb8f:
+
+- 140 selected backend tests PASS on disposable SQLite with provider mocks;
+  final log `verify-1794648234739182000-0.log`. Covers forged fallback, modern
+  no-Lead/Deal behavior, unchanged legacy records/links, per-action consent,
+  invalid settings/rollback, ownership/permissions, lifecycle changes, recovery,
+  no-data, busy/stale slots and replay. The modern booking class also runs the
+  existing booking scenarios. No real model compliance or delivery claimed.
+- 81 additional legacy/confirmation/pause tests PASS, log
+  `verify-1794648837457983500-0.log`; command targets `apps.bots.tests`,
+  `apps.conversations.tests_ai_confirmation`, `apps.bots.tests_pause_inbound`.
+  These verify compatibility callers of the changed fallback/mode boundary;
+  final selected server coverage is 221 tests across the two final runs.
+- System check and migration drift PASS (`verify-1794648114610281600-{0,1}.log`),
+  no schema change by this task, no migration on a working database.
+- 20 distinct browser cases across scoped runs PASS: desktop/mobile real isolated
+  API save/readback, explicit adoption, failed-save retained draft/retry, failed
+  load/recovery, manager denial, instruction navigation, focus and preview-panel
+  compatibility; six locale/layout cases include RU/KK/EN390/1440, RU200% text,
+  keyboard Select/Escape/focus return, no horizontal overflow and scoped axe.
+  Relevant logs: `regressions.log`, `regressions-recovery.log`,
+  `regressions-shell.log`, `regressions-actions-layout-final.log`.
+- Affected screenshots captured and visually inspected across locales, sizes,
+  ordinary and enlarged text, controls/limits/footer. Earlier full-page captures
+  placed fixed chrome over the stitched page; acceptance uses final viewport
+  captures. An observed tall sticky footer and truncated labels were fixed and
+  rechecked; initial pictures are retained, not counted as final visual PASS.
+- Final `npm run build` includes i18n/types/app/widget PASS; bundle budget PASS.
+  Existing RU/KK chunk-size warnings remain. These checks include unrelated local
+  WIP, which is excluded from this task's publication.
+
+Anti Slop during: purpose/meaning, existing tokens and controls, geometry,
+keyboard/labels/focus, retained drafts/recovery and localized responsive layout
+PASS within the affected scope. No new media/theme/marketing/navigation scope.
+React checklist: functional state updates; derived config; measurement observer
+cleanup; shared primitives; no component API calls or new dependencies.
+
+Attempts retained: the first booking regression exposed an over-restrictive
+capability branch; corrected and covered for partially/all revoked tools. An
+initial new history test used the wrong fixture field (`name` instead of
+`full_name`); corrected and passed alone then in the final140. No assertions
+weakened. Live provider, full release gate, deployment and ordinary DB writes are
+outside this task. No scoped code/local evidence remainder. Publication and CI
+are recorded separately in the existing task checkpoint and output receipt.
+
+Contracts: current AI/frontend and customer-agent passport updated. CRM-agent
+passport, product/CRM/access/integration contracts and README need no change:
+no new CRM-employee actions, permissions, setup, provider or schema. Roadmap phase
+not advanced; this is a scoped correction of the completed editor, not D01/live
+acceptance. Historical audit remains above as the superseded pre-fix snapshot.
+
+Artifacts and exact command lists:
+`output/ai-agents-actions-implementation-20261114/`;
+`output/ai-agents-redesign-20261113/CHECKPOINT.md`.

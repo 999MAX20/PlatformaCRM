@@ -47,6 +47,14 @@ policy copy, hidden channel overrides, unclear off-topic counts and redundant co
 Findings remain open; audit PASS is not product acceptance. Full map/explanations:
 docs/testing/evidence/ai-agents-redesign-20261113.md#actions-audit--14112026.
 No next implementation/live-provider/workingDB scope; publication in checkpoint.
+Actions implementation14.11: A-A01–07 corrected in the approved local scope.
+Trusted fallback marker; Client/Task/Appointment controls and separate consent;
+explicit legacy adoption preserves history, new mode ignores channel overrides.
+221server tests +20distinct scoped browser cases PASS; system/drift/build/types/
+i18n/bundle PASS. RU/KK/EN390/1440,200%text, keyboard/axe inspected. No scoped code/
+local-evidence remainder; no workingDB/liveprovider/deployment claim.
+Publication/actualCI: output/ai-agents-actions-implementation-20261114/RESULT.json
+and existing redesign checkpoint. Evidence: ai-agents-redesign-20261113.md#actions-implementation--14112026.
 
 
 NOTIFICATIONS-SERVER-FIXES-20261113: all six server defects fixed and locally verified.

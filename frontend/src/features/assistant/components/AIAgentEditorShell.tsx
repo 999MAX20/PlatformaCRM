@@ -1,5 +1,5 @@
 import { MessageSquareText } from "lucide-react";
-import type { ReactNode } from "react";
+import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
 
 import { Badge } from "../../../components/ui/Badge";
 import { Button } from "../../../components/ui/Button";
@@ -37,6 +37,18 @@ export function AIAgentEditorShell({
   onOpenPreview: () => void;
 }) {
   const { t } = useI18n();
+  const footerRef = useRef<HTMLElement>(null);
+  const [footerTooTall, setFooterTooTall] = useState(false);
+  useLayoutEffect(() => {
+    const footer = footerRef.current;
+    if (!footer) return;
+    const measure = () => setFooterTooTall(footer.getBoundingClientRect().height > window.innerHeight / 3);
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(footer);
+    window.addEventListener("resize", measure);
+    return () => { observer.disconnect(); window.removeEventListener("resize", measure); };
+  }, [canManage, showFooter]);
   const runtimeBlocked = bot.status === "active" && Boolean(bot.readiness && !bot.readiness.is_ready);
   return (
     <section className="ai-agent-editor grid min-w-0 gap-5 lg:grid-cols-[216px_minmax(0,1fr)] lg:gap-8"
@@ -68,7 +80,9 @@ export function AIAgentEditorShell({
             <div id={`ai-agent-editor-panel-${activeSection}`} className="min-w-0 py-4">
               <fieldset disabled={isSaving} className="min-w-0 w-full">{children}</fieldset>
             </div>
-            {canManage && showFooter && <footer className={cn("bottom-[calc(4.375rem_+_max(0.25rem,env(safe-area-inset-bottom)))] z-10 flex flex-wrap items-center justify-between gap-3 border-t border-platforma-border bg-surface py-4 lg:sticky lg:bottom-0", dirty ? "sticky" : "relative bottom-auto")} data-testid="agent-save-bar">
+            {canManage && showFooter && <footer ref={footerRef}
+              style={footerTooTall ? { position: "relative", bottom: "auto" } : undefined}
+              className={cn("bottom-[calc(4.375rem_+_max(0.25rem,env(safe-area-inset-bottom)))] z-10 flex flex-wrap items-center justify-between gap-3 border-t border-platforma-border bg-surface py-4 lg:sticky lg:bottom-0", dirty ? "sticky" : "relative bottom-auto")} data-testid="agent-save-bar">
               <p className="text-sm text-platforma-subtle" aria-live="polite">
                 {hasUserEdits ? t("aiAgents.unsavedIndicator") : dirty ? t(profileExists ? "aiAgents.profileInactive" : "aiAgents.profileNotSaved") : saveState === "saved" ? t("aiAgents.savedIndicator") : t("aiAgents.configurationSaved")}
               </p>

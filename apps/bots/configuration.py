@@ -33,6 +33,11 @@ def save_agent_configuration(*, bot, actor, data):
         raise ValidationError({"profile": "Profile does not belong to this agent."})
     bot_input = BotSerializer(bot, data=data["bot"], partial=True)
     bot_input.is_valid(raise_exception=True)
+    settings = bot_input.validated_data.get("settings_json", bot.settings_json)
+    if (settings.get("auto_crm_pipeline") or {}).get("mode") == "customer_actions":
+        allowed = profile_data.get("allowed_tools_json", profile.allowed_tools_json if profile else {})
+        if isinstance(allowed, dict) and isinstance(allowed.get("tools"), list):
+            profile_data["allowed_tools_json"] = {**allowed, "tools": [tool for tool in allowed["tools"] if tool not in {"create_lead", "create_deal"}]}
     language = bot_input.validated_data.get("default_language", bot.default_language)
     profile_input = AgentProfileSerializer(profile, data={**profile_data, "business": bot.business_id, "bot": bot.id, "language": language}, partial=profile is not None)
     profile_input.is_valid(raise_exception=True)

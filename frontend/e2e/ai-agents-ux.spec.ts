@@ -213,7 +213,7 @@ test("configuration survives section changes and a failed atomic save", async ({
   await page.getByRole("switch", { name: "Память диалогов", exact: true }).click();
   await page.getByRole("slider").press("End");
   await openSection(page, "Действия");
-  await choose(page, "Что делать после диалога", "Только оценить обращение");
+  await page.getByRole("switch", { name: "Обработка обращений", exact: true }).click();
   const configurationUrl = `**/api/bots/${bot.id}/configuration/`;
   await page.route(configurationUrl, route => route.fulfill({ status: 503, json: { detail: "Synthetic configuration failure" } }));
   await page.getByRole("button", { name: "Сохранить изменения", exact: true }).click();
@@ -226,7 +226,7 @@ test("configuration survives section changes and a failed atomic save", async ({
   expect((await saved).ok()).toBeTruthy();
   await expect(page.getByRole("button", { name: "Сохранить изменения", exact: true })).toBeDisabled();
   const persisted = await session.read(`bots/${bot.id}`);
-  expect(persisted).toMatchObject({ name: "Сохранённый агент", status: "draft", default_language: "en", settings_json: { memory_enabled: false, temperature: 1, auto_crm_pipeline: { mode: "triage" } } });
+  expect(persisted).toMatchObject({ name: "Сохранённый агент", status: "draft", default_language: "en", settings_json: { memory_enabled: false, temperature: 1, auto_crm_pipeline: { mode: "customer_actions", enabled: true } } });
   const profiles = (await session.read("ai/agent-profiles")).results;
   expect(profiles.find((profile: { bot: number }) => profile.bot === bot.id)).toMatchObject({
     role_description: "Новая роль", system_prompt: "Новая инструкция", tone: "formal",
@@ -411,4 +411,40 @@ test("agent picker paints above the advanced editor fields", async ({ page }, in
   await page.screenshot({ path: info.outputPath("agent-picker-layer.png") });
   await page.keyboard.press("Escape");
   await expect(page.getByTestId("agent-picker-trigger")).toBeFocused();
+});
+
+test("customer actions adopt legacy settings explicitly and retain separate consent after reload", async ({ page }, info) => {
+  const session = await crmSession(page);
+  const bot = await createAgent(page, session, { name: "Действия", status: "draft", settings_json: {
+    memory_enabled: false, auto_crm_pipeline: { mode: "lead_task", enabled: true, auto_send_reply: false,
+      creation_policy: "staff_confirmation", create_appointment: true, min_lead_confidence: .9, require_review_on_fallback: false },
+  } });
+  await session.create("ai/agent-profiles", { bot: bot.id, name: bot.name, is_active: true, role_description: "Администратор",
+    allowed_tools_json: { tools: ["create_client", "create_lead", "create_task", "create_appointment", "create_deal", "handoff_to_manager"] } });
+  await page.goto(`/app/ai-agents/${bot.id}/actions`);
+  const editor = page.getByTestId("ai-agent-editor");
+  await expect(page.getByRole("button", { name: "Сохранить изменения", exact: true })).toBeDisabled();
+  await expect(editor.getByRole("slider")).toHaveCount(0);
+  await expect(editor.getByRole("switch", { name: /заявк|сделк|неуверенные|Передать менеджеру/i })).toHaveCount(0);
+  await page.getByRole("button", { name: "Обновить действия", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Обновить действия", exact: true })).toHaveCount(0);
+  await choose(page, "Создание задачи", "Автоматически по разрешению бизнеса");
+  await choose(page, "Запись в календарь", "После подтверждения сотрудником");
+  const save = page.waitForResponse(r => r.request().method() === "PUT" && r.url().endsWith(`/bots/${bot.id}/configuration/`));
+  await page.getByRole("button", { name: "Сохранить изменения", exact: true }).click();
+  expect((await save).ok()).toBeTruthy();
+  const persisted = await session.read(`bots/${bot.id}`);
+  expect(persisted.settings_json).toMatchObject({ memory_enabled: false, auto_crm_pipeline: {
+    mode: "customer_actions", enabled: true, auto_send_reply: false, task_creation_policy: "automatic", appointment_creation_policy: "staff_confirmation",
+  } });
+  expect(persisted.settings_json.auto_crm_pipeline).not.toHaveProperty("min_lead_confidence");
+  expect(persisted.settings_json.auto_crm_pipeline).not.toHaveProperty("require_review_on_fallback");
+  const profiles = await session.list<{ bot: number; allowed_tools_json: { tools: string[] } }>("ai/agent-profiles");
+  expect(profiles.find(p => p.bot === bot.id)?.allowed_tools_json.tools).toEqual(["create_client", "handoff_to_manager", "create_task", "create_appointment"]);
+  await page.reload();
+  await expect(page.getByRole("combobox", { name: /^Создание задачи / })).toContainText("Автоматически");
+  await expect(page.getByRole("combobox", { name: /^Запись в календарь / })).toContainText("После подтверждения сотрудником");
+  await page.getByText("Лимиты обработки", { exact: true }).click();
+  await expect(page.getByRole("spinbutton")).toHaveCount(5);
+  await page.screenshot({ path: info.outputPath("actions-saved.png"), fullPage: true });
 });

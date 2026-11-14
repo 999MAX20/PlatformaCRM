@@ -1,7 +1,6 @@
-import type { Dispatch, SetStateAction } from "react";
+import type { Dispatch, SetStateAction, ReactNode } from "react";
 import { Input } from "../../../components/ui/Input";
 import { Select } from "../../../components/ui/Select";
-import { ToggleSwitch } from "../../../components/ui/Switch";
 import { useI18n } from "../../../lib/i18n";
 import type { BotDraftState } from "../aiAgentsTypes";
 
@@ -24,8 +23,9 @@ function readSettings(settings: Record<string, unknown>): SafetySettings {
   };
 }
 
-export function CustomerSafetySettings({ botDraft, setBotDraft, canManage }: {
+export function CustomerSafetySettings({ botDraft, setBotDraft, canManage, children }: {
   botDraft: BotDraftState; setBotDraft: Dispatch<SetStateAction<BotDraftState>>; canManage: boolean;
+  children?: ReactNode;
 }) {
   const { t } = useI18n();
   const config = readSettings(botDraft.settings_json);
@@ -34,18 +34,22 @@ export function CustomerSafetySettings({ botDraft, setBotDraft, canManage }: {
   }));
   return <section aria-labelledby="customer-safety-title" className="space-y-4 border-b border-platforma-border pb-5">
     <h3 id="customer-safety-title" className="text-base font-semibold text-midnight">{t("customerSafety.title")}</h3>
-    <div className="flex items-center justify-between gap-4">
-      <span className="text-sm">{t("customerSafety.firstReply")}</span>
-      <ToggleSwitch label={t("customerSafety.firstReply")} checked={config.allow_first_off_topic} disabled={!canManage}
-        onChange={value => change({ allow_first_off_topic: value })} />
-    </div>
-    <Select density="compact" className="min-h-11 sm:min-h-9 sm:py-1" label={t("customerSafety.offTopicLimit")} value={String(config.off_topic_handoff_after)} disabled={!canManage}
-      onChange={event => change({ off_topic_handoff_after: Number(event.target.value) })}
-      options={[1, 2, 3].map(value => ({ value: String(value), label: t(`customerSafety.offTopic${value}`) }))} />
-    <p className="text-sm text-platforma-subtle">{t("customerSafety.offTopicHint")}</p>
+    <Select density="compact" className="min-h-11 sm:min-h-9 sm:py-1 [&>span]:whitespace-normal [&>span]:text-clip" label={t("customerSafety.offTopicLimit")}
+      value={config.off_topic_handoff_after === 1 ? "1:0" : `${config.off_topic_handoff_after}:${Number(config.allow_first_off_topic)}`} disabled={!canManage}
+      onChange={event => {
+        const [count, reply] = event.target.value.split(":").map(Number);
+        change({ off_topic_handoff_after: count, allow_first_off_topic: Boolean(reply) });
+      }}
+      options={[
+        ...[1, 2, 3].map(count => ({ value: `${count}:${count === 1 ? 0 : 1}`, label: t(`aiAgents.actions.offTopic${count}`) })),
+        ...(!config.allow_first_off_topic && config.off_topic_handoff_after !== 1
+          ? [{ value: `${config.off_topic_handoff_after}:0`, label: t("aiAgents.actions.offTopicSaved", { count: config.off_topic_handoff_after }) }] : []),
+      ]} />
+    <p className="text-sm text-platforma-subtle">{t("aiAgents.actions.offTopicHint")}</p>
     <details>
       <summary className="platforma-focus-ring min-h-11 cursor-pointer py-3 text-sm font-semibold">{t("customerSafety.processingLimits")}</summary>
       <div className="grid gap-4 pt-3 sm:grid-cols-2">
+      {children}
       <Input className="sm:min-h-9" type="number" min={1} max={30} step={1} label={t("customerSafety.callLimit")} disabled={!canManage}
         value={config.calls_per_24h} onChange={event => change({ calls_per_24h: Number(event.target.value) })} />
       <Input className="sm:min-h-9" type="number" min={3} max={30} step={1} label={t("customerSafety.messageRate")} disabled={!canManage}

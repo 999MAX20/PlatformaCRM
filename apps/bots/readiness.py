@@ -13,8 +13,8 @@ def booking_readiness(bot, profile):
 
     config = resolve_auto_pipeline_config(conversation=BotConversation(bot=bot, business=bot.business))
     tools = (profile.allowed_tools_json or {}).get("tools", []) if profile else []
-    enabled = (config.enabled and config.mode in {"lead_task", "draft_deal"}
-               and config.creation_policy == "automatic" and config.create_appointment
+    enabled = (config.enabled and config.mode in {"lead_task", "draft_deal", "customer_actions"}
+               and config.appointment_creation_policy == "automatic" and config.create_appointment
                and "create_appointment" in tools)
     missing = []
     if enabled:

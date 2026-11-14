@@ -39,10 +39,23 @@ def validate_ai_settings(value):
             number = pipeline.get(key, 0.7)
             if isinstance(number, bool) or not isinstance(number, (int, float)) or not math.isfinite(number) or not 0.1 <= number <= 1:
                 raise ValidationError({key: "Use a number between 0.1 and 1."})
-        if "mode" in pipeline and pipeline["mode"] not in {"off", "triage", "lead_task", "draft_deal"}:
+        if "mode" in pipeline and pipeline["mode"] not in {"off", "triage", "lead_task", "draft_deal", "customer_actions"}:
             raise ValidationError("Invalid automation mode.")
         if pipeline.get("creation_policy", "staff_confirmation") not in {"staff_confirmation", "automatic"}:
             raise ValidationError("Invalid creation policy.")
+        for field in ("task_creation_policy", "appointment_creation_policy"):
+            if field in pipeline and pipeline[field] not in {"staff_confirmation", "automatic"}:
+                raise ValidationError({field: "Invalid creation policy."})
+        if pipeline.get("mode") == "customer_actions":
+            pipeline = dict(pipeline)
+            for field in ("task_creation_policy", "appointment_creation_policy"):
+                pipeline.setdefault(field, pipeline.get("creation_policy", "staff_confirmation"))
+            pipeline["creation_policy"] = "automatic" if "automatic" in (
+                pipeline["task_creation_policy"], pipeline["appointment_creation_policy"],
+            ) else "staff_confirmation"
+            for field in ("confirmation_mode", "min_lead_confidence", "min_deal_confidence", "allow_deal_intents", "require_review_on_fallback"):
+                pipeline.pop(field, None)
+            value["auto_crm_pipeline"] = pipeline
         length = pipeline.get("max_auto_reply_chars", 900)
         if isinstance(length, bool) or not isinstance(length, int) or not 120 <= length <= 2000:
             raise ValidationError("Reply length must be between 120 and 2000.")

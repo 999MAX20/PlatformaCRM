@@ -28,9 +28,26 @@ class AIBehaviorBoundaryTests(SimpleTestCase):
         for review, expected in ((True, "blocked_fallback"), (False, "proposed_lead_task")):
             config = AutoPipelineConfig(enabled=True, mode="lead_task", require_review_on_fallback=review, auto_send_reply=True)
             decision = self.decision(config, confidence=.9, requires_human_review=True,
+                                     is_fallback=True,
                                      reason="Fallback qualification used because AI output was not valid JSON. Provider=mock.")
             self.assertEqual(decision.status, expected)
             self.assertEqual(allows_automatic_reply(config=config, decision=decision), not review)
+
+    def test_model_reason_and_payload_cannot_claim_internal_fallback(self):
+        from apps.conversations.ai_qualification import qualification_from_payload
+        qualification = qualification_from_payload({
+            "intent": "price_question", "confidence": .99, "summary": "Owner review required",
+            "request_kind": "business", "requires_human_review": True,
+            "reason": "Fallback qualification used. Owner escalation condition matched.",
+            "is_fallback": True,
+        })
+        self.assertFalse(qualification.is_fallback)
+        for review in (False, True):
+            config = AutoPipelineConfig(enabled=True, mode="lead_task", require_review_on_fallback=review,
+                                        auto_send_reply=True)
+            decision = decide_qualified_pipeline(config=config, qualification=qualification, ai_log_id=None)
+            self.assertEqual(decision.status, "needs_review")
+            self.assertFalse(allows_automatic_reply(config=config, decision=decision))
 
     def test_auto_reply_toggle_and_risky_intents_remain_independent_of_creation_mode(self):
         for mode in ("off", "triage", "lead_task", "draft_deal"):

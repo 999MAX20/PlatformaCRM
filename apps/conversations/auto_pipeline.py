@@ -46,6 +46,8 @@ class AutoPipelineConfig:
     auto_send_reply: bool = False
     max_auto_reply_chars: int = 900
     creation_policy: str = "staff_confirmation"
+    task_creation_policy: str = "staff_confirmation"
+    appointment_creation_policy: str = "staff_confirmation"
 
 
 @dataclass
@@ -183,7 +185,15 @@ def _evaluate_auto_pipeline(*, conversation: BotConversation, message: BotMessag
         _write_decision_event(conversation, decision)
         return decision
 
-    create_lead = "create_lead" in allowed_tools and qualification.should_create_lead
+    customer_actions = config.mode == "customer_actions"
+    if customer_actions and not config.create_appointment and not any(tool in allowed_tools for tool in ("create_client", "create_task", "create_appointment")):
+        if _can_auto_reply(config=config, conversation=conversation, decision=decision):
+            _send_auto_reply(conversation=conversation, config=config, decision=decision)
+        _save_auto_pipeline_decision(conversation, message, config, decision)
+        _write_decision_event(conversation, decision)
+        return decision
+
+    create_lead = not customer_actions and "create_lead" in allowed_tools and qualification.should_create_lead
     create_task = "create_task" in allowed_tools and qualification.should_create_task
     create_deal = decision.status == "proposed_draft_deal" and "create_deal" in allowed_tools and qualification.should_create_deal
     if create_deal and not resource_is_enabled(conversation.business, Resources.DEALS):
@@ -198,11 +208,12 @@ def _evaluate_auto_pipeline(*, conversation: BotConversation, message: BotMessag
         action for action, enabled in (("create_lead", create_lead), ("create_task", create_task), ("create_draft_deal", create_deal)) if enabled
     ]
     automatic = config.creation_policy == "automatic"
+    automatic_task = automatic and (not customer_actions or config.task_creation_policy == "automatic")
     if automatic:
         create_lead = create_lead and qualification.intent in {"price_question", "purchase_interest", "appointment_request"}
         create_deal = create_deal and qualification.intent in {"purchase_interest", "appointment_request"}
         from apps.bots.automation_policy import automatic_creation_actor
-        actions = {name for name, enabled in (("create_lead", create_lead), ("create_task", create_task), ("create_deal", create_deal)) if enabled}
+        actions = {name for name, enabled in (("create_lead", create_lead), ("create_task", create_task and automatic_task), ("create_deal", create_deal)) if enabled}
         if not conversation.client_id:
             actions.add("create_client")
         try:
@@ -219,7 +230,7 @@ def _evaluate_auto_pipeline(*, conversation: BotConversation, message: BotMessag
             conversation=conversation,
             create_lead=automatic and create_lead,
             create_deal=automatic and create_deal,
-            create_task=automatic and create_task,
+            create_task=automatic_task and create_task,
             use_ai_qualification=False,
             qualification_override=qualification,
             ai_log_id_override=ai_log.id if ai_log else None,
@@ -235,7 +246,7 @@ def _evaluate_auto_pipeline(*, conversation: BotConversation, message: BotMessag
         return decision
     decision.result = result
     if automatic:
-        decision.confirmation_policy["requires_explicit_confirmation"] = []
+        decision.confirmation_policy["requires_explicit_confirmation"] = ["create_task"] if customer_actions and create_task and not automatic_task else []
         decision.confirmation_policy["created"] = result.created
         decision.confirmation_policy["allowed_auto_actions"] = sorted(actions)
         decision.reason = "Enabled automatic CRM actions were processed; see created records for the outcome."
@@ -260,7 +271,7 @@ def resolve_auto_pipeline_config(*, conversation: BotConversation, channel: BotC
     raw = {}
     if conversation.bot and isinstance(conversation.bot.settings_json, dict):
         raw.update(conversation.bot.settings_json.get(AUTO_PIPELINE_META_KEY) or {})
-    if channel and isinstance(channel.config_json, dict):
+    if raw.get("mode") != "customer_actions" and channel and isinstance(channel.config_json, dict):
         raw.update(channel.config_json.get(AUTO_PIPELINE_META_KEY) or {})
     own = (conversation.bot.settings_json or {}).get(AUTO_PIPELINE_META_KEY) or {}
     # Agent-level stop switches take precedence over legacy channel overrides.
@@ -276,7 +287,7 @@ def resolve_auto_pipeline_config(*, conversation: BotConversation, channel: BotC
     create_appointment = bool(raw.get("create_appointment", confirmation_mode == CONFIRMATION_APPOINTMENT_EXPLICIT))
     return AutoPipelineConfig(
         enabled=enabled,
-        mode=mode if mode in {"off", "triage", "lead_task", "draft_deal"} else "off",
+        mode=mode if mode in {"off", "triage", "lead_task", "draft_deal", "customer_actions"} else "off",
         confirmation_mode=confirmation_mode,
         min_lead_confidence=_float(raw.get("min_lead_confidence"), 0.7),
         min_deal_confidence=_float(raw.get("min_deal_confidence"), 0.8),
@@ -287,6 +298,8 @@ def resolve_auto_pipeline_config(*, conversation: BotConversation, channel: BotC
         auto_send_reply=bool(raw.get("auto_send_reply", False)),
         max_auto_reply_chars=max(120, min(_int(raw.get("max_auto_reply_chars"), 900), 2000)),
         creation_policy=((conversation.bot.settings_json or {}).get(AUTO_PIPELINE_META_KEY) or {}).get("creation_policy", "staff_confirmation"),
+        task_creation_policy=own.get("task_creation_policy", own.get("creation_policy", "staff_confirmation")),
+        appointment_creation_policy=own.get("appointment_creation_policy", own.get("creation_policy", "staff_confirmation")),
     )
 
 
@@ -298,6 +311,14 @@ def decide_qualified_pipeline(
 ) -> AutoPipelineDecision:
     if qualification.intent in {"support", "complaint"}:
         return AutoPipelineDecision(status="blocked_risky_intent", reason=f"Manager review required: {qualification.intent}.", qualification=qualification, ai_log_id=ai_log_id)
+    if config.mode == "customer_actions":
+        if qualification.requires_human_review or _is_fallback(qualification):
+            return AutoPipelineDecision(status="needs_review", reason="Human review is required.", qualification=qualification, ai_log_id=ai_log_id)
+        if qualification.intent == "spam":
+            return AutoPipelineDecision(status="blocked_risky_intent", reason="Spam requires human review.", qualification=qualification, ai_log_id=ai_log_id)
+        if qualification.confidence < 0.7:
+            return AutoPipelineDecision(status="blocked_low_confidence", reason="Classification requires human review.", qualification=qualification, ai_log_id=ai_log_id)
+        return AutoPipelineDecision(status="proposed_actions", reason="Process permitted customer actions.", qualification=qualification, ai_log_id=ai_log_id)
     if qualification.requires_human_review and not _is_fallback(qualification) and not _can_continue_with_review_flag(config, qualification):
         return AutoPipelineDecision(status="needs_review", reason="AI marked the conversation for human review.", qualification=qualification, ai_log_id=ai_log_id)
     if config.mode == "triage":
@@ -396,7 +417,7 @@ def allows_automatic_reply(*, config: AutoPipelineConfig, decision: AutoPipeline
     """Shared content policy; runtime additionally checks channel/lifecycle state."""
     if not config.enabled or config.mode == "off" or not config.auto_send_reply:
         return False
-    if decision.status not in {"proposed_lead_task", "proposed_draft_deal", "qualified_only"}:
+    if decision.status not in {"proposed_lead_task", "proposed_draft_deal", "proposed_actions", "qualified_only"}:
         return False
     qualification = decision.qualification
     if qualification and (
@@ -420,6 +441,8 @@ def _resolve_confirmation_mode(raw: dict[str, Any]) -> tuple[str, str]:
         return "lead_task", confirmation_mode
 
     mode = str(raw.get("mode") or "off")
+    if mode == "customer_actions":
+        return mode, "customer_actions"
     if mode == "triage":
         return mode, CONFIRMATION_SUGGEST_ONLY
     if mode == "lead_task":
@@ -433,7 +456,7 @@ def _confirmation_policy(config: AutoPipelineConfig) -> dict[str, Any]:
     return {
         "mode": config.creation_policy,
         "crm_mode": config.mode,
-        "allowed_auto_actions": ["create_client"] if config.mode in {"lead_task", "draft_deal"} else [],
+        "allowed_auto_actions": ["create_client"] if config.mode in {"lead_task", "draft_deal", "customer_actions"} else [],
         "requires_explicit_confirmation": [],
         "staff_only_actions": ["create_appointment", "reschedule_appointment", "cancel_appointment", "change_deal_result"],
         "appointment_confirmation_mode": config.appointment_confirmation_mode if config.create_appointment else "disabled",
@@ -463,7 +486,7 @@ def _send_auto_reply(*, conversation: BotConversation, config: AutoPipelineConfi
             raise AIClientError(code="empty_customer_reply", retryable=False)
         scheduling_context = (log.input_json or {}).get("scheduling_context") if log else {}
         offered_context = scheduling_context
-        if config.creation_policy == "automatic":
+        if (config.appointment_creation_policy if config.mode == "customer_actions" else config.creation_policy) == "automatic":
             slots = (scheduling_context or {}).get("next_available_slots", [])[:3] if config.create_appointment else []
             while slots and len(format_booking_offer(conversation, slots)) > config.max_auto_reply_chars:
                 slots = slots[:-1]
@@ -552,7 +575,7 @@ def _notify_pipeline_result(*, result, decision: AutoPipelineDecision) -> None:
 
 
 def _is_fallback(qualification: ConversationQualification) -> bool:
-    return "Fallback qualification used" in (qualification.reason or "")
+    return qualification.is_fallback
 
 
 def _can_continue_with_review_flag(config: AutoPipelineConfig, qualification: ConversationQualification) -> bool:
