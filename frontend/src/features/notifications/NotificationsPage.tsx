@@ -77,7 +77,6 @@ function PersonalNotificationPage({ business }: { business: Id }) {
     </div>
     {managementVisible ? <div role="tabpanel" id="notification-tabs-panel-announcements" aria-labelledby="notification-tabs-tab-announcements" className="py-4"><AnnouncementManager business={business} /></div> : <div role="tabpanel" id="notification-tabs-panel-feed" aria-labelledby="notification-tabs-tab-feed">
       {readAll.isError || read.isError ? <ErrorState error={readAll.error || read.error} /> : null}
-      {readAll.isSuccess ? <p role="status" className="px-4 py-2 text-sm text-platforma-subtle">{t("notification.readAllResult", { count: readAll.data.updated })}</p> : null}
       <div className={`grid min-h-[65vh] min-w-0 md:grid-cols-[13rem_minmax(0,1fr)] ${selected && wide ? "xl:grid-cols-[13rem_minmax(0,1fr)_minmax(19rem,0.85fr)]" : ""}`}>
         <aside className="border-b border-platforma-border p-3 md:border-b-0 md:border-r md:py-5" aria-label={t("notification.filters")}>
           <Button variant="ghost" className="min-h-11 w-full justify-between md:hidden" aria-expanded={showFilters} aria-controls="notification-filter-controls" onClick={() => setShowFilters(value => !value)}>
@@ -88,9 +87,14 @@ function PersonalNotificationPage({ business }: { business: Id }) {
         <section className="min-w-0" aria-label={t("notification.myFeed")}>
           <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-4">
             <h2 ref={listTitle} tabIndex={-1} className="text-lg font-semibold text-platforma-ink">{t(`notification.filter.${view}`)}</h2>
-            <div className="w-40"><Select aria-label={t("notification.order")} value={filters.order || "newest"}
-              onChange={event => changeFilters({ ...filters, order: event.target.value as PersonalFeedFilters["order"] })}
-              options={["newest", "oldest"].map(value => ({ value, label: t(`notification.order.${value}`) }))} /></div>
+            <div className="grid w-full grid-cols-2 grid-rows-[auto_auto] gap-x-2 break-words sm:w-auto sm:grid-cols-[10rem_12rem] [&>div]:row-span-2 [&>div]:grid [&>div]:grid-rows-subgrid" data-testid="notification-list-controls">
+              <Select label={t("notification.period")} className="[&>span]:whitespace-normal [&>span]:break-words" value={filters.period || "all"}
+                onChange={event => changeFilters({ ...filters, period: event.target.value as PersonalFeedFilters["period"] })}
+                options={["all", "7d", "30d"].map(value => ({ value, label: t(`notification.period.${value}`) }))} />
+              <Select label={t("notification.order")} className="[&>span]:whitespace-normal [&>span]:break-words" value={filters.order || "newest"}
+                onChange={event => changeFilters({ ...filters, order: event.target.value as PersonalFeedFilters["order"] })}
+                options={["newest", "oldest"].map(value => ({ value, label: t(`notification.order.${value}`) }))} />
+            </div>
           </div>
           {feed.isPending ? <LoadingState /> : feed.isError ? <ErrorState error={feed.error}
             action={<Button variant="secondary" onClick={() => void feed.refetch()}>{t("common.retry")}</Button>} /> : <>

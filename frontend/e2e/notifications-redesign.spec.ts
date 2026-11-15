@@ -63,6 +63,13 @@ for (const [language, width, copy] of [["ru", 1440, ru], ["kk", 390, kk], ["en",
   test(`reference layout and receipt actions ${language} ${width}`, async ({ page }, info) => {
     await page.setViewportSize({ width, height: 900 });
     const { writes } = await setup(page, language);
+    const controls = page.getByTestId("notification-list-controls");
+    const periodBox = await controls.getByRole("combobox", { name: copy["notification.period"] }).boundingBox();
+    const orderBox = await controls.getByRole("combobox", { name: copy["notification.order"] }).boundingBox();
+    expect(Math.abs(periodBox!.y - orderBox!.y)).toBeLessThan(2);
+    expect(periodBox!.x + periodBox!.width).toBeLessThan(orderBox!.x);
+    await expect(page.getByTestId("notification-filters").getByRole("combobox")).toHaveCount(0);
+    await page.screenshot({ path: info.outputPath(`header-${language}-${width}.png`), fullPage: true });
     const bell = page.getByTestId("header-notifications-trigger");
     await bell.focus(); await page.keyboard.press("Enter");
     await expect(page.getByTestId("notification-menu-row")).toHaveCount(6);
@@ -89,7 +96,8 @@ for (const [language, width, copy] of [["ru", 1440, ru], ["kk", 390, kk], ["en",
     await expect(page.getByRole("button", { name: copy["notification.publishAnnouncement"], exact: true })).toBeVisible();
     await page.getByRole("tab", { name: copy["notification.myFeed"] }).click();
     await page.getByRole("button", { name: copy["header.markAllRead"], exact: true }).click();
-    await expect(page.getByRole("status").filter({ hasText: copy["notification.readAllResult"].replace("{count}", "9") })).toBeVisible();
+    await expect(page.getByRole("button", { name: copy["header.markAllRead"], exact: true })).toBeDisabled();
+    await expect(page.getByText(copy["notification.readAllResult"].replace("{count}", "9"), { exact: true })).toHaveCount(0);
     expect(writes.filter(path => path.endsWith("/open/"))).toHaveLength(1);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBeTruthy();
   });
@@ -106,7 +114,7 @@ test("server filters, pagination, failures, recovery and access loss", async ({ 
   await page.getByRole("combobox", { name: ru["notification.order"] }).click();
   await page.getByRole("option", { name: ru["notification.order.oldest"] }).click();
   await expect(page.getByTestId("notification-feed-row").first()).toContainText("Обновление задачи 7");
-  await filters.getByRole("combobox", { name: ru["notification.period"] }).click();
+  await page.getByRole("combobox", { name: ru["notification.period"] }).click();
   await page.getByRole("option", { name: ru["notification.period.7d"] }).click();
   await expect(page.getByTestId("notification-feed-row")).toHaveCount(1);
   await filters.getByRole("button", { name: ru["notification.filter.awaiting"], exact: true }).click();
@@ -125,7 +133,7 @@ test("server filters, pagination, failures, recovery and access loss", async ({ 
   state.listFailure = false;
   await page.getByRole("button", { name: ru["common.retry"], exact: true }).click();
   await expect(page.getByTestId("notification-feed-row")).toHaveCount(2);
-  await filters.getByRole("combobox", { name: ru["notification.period"] }).click();
+  await page.getByRole("combobox", { name: ru["notification.period"] }).click();
   await page.getByRole("option", { name: ru["notification.period.all"] }).click();
   await expect(page.getByTestId("notification-feed-row")).toHaveCount(5);
   await page.getByRole("button", { name: ru["notification.next"], exact: true }).click();
@@ -162,6 +170,22 @@ test("narrow layout, long content, mobile filters, zoom and announcement dialog"
   notices[0].text = "Проверка длинного уведомления: " + "расписание команды и перенос задачи ".repeat(50);
   await page.reload();
   await expect(page.getByTestId("notification-feed-row").first()).toBeVisible();
+  const periodControl = page.getByRole("combobox", { name: ru["notification.period"] });
+  await periodControl.focus();
+  await page.keyboard.press("ArrowDown");
+  await page.keyboard.press("End");
+  await page.keyboard.press("Enter");
+  await expect(periodControl).toContainText(ru["notification.period.30d"]);
+  await page.keyboard.press("ArrowDown");
+  await page.keyboard.press("Home");
+  await page.keyboard.press("Enter");
+  await expect(periodControl).toContainText(ru["notification.period.all"]);
+  const orderControl = page.getByRole("combobox", { name: ru["notification.order"] });
+  for (const control of [periodControl, orderControl]) {
+    expect(await control.locator("span").first().evaluate(element => element.scrollWidth <= element.clientWidth + 1)).toBeTruthy();
+  }
+  expect(Math.abs((await periodControl.boundingBox())!.y - (await orderControl.boundingBox())!.y)).toBeLessThan(2);
+  await page.screenshot({ path: info.outputPath("header-ru-320.png"), fullPage: true });
   const filters = page.getByTestId("notification-filters");
   await expect(filters).toBeHidden();
   await page.getByRole("button", { name: ru["notification.filters"], exact: true }).click();

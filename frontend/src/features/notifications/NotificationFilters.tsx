@@ -1,6 +1,5 @@
 import { CheckSquare, Tag, Layers, MessageSquare, Settings, ShieldAlert, Wallet } from "lucide-react";
 import type { PersonalFeedFilters } from "../../api/notifications";
-import { Select } from "../../components/ui/Select";
 import { useI18n } from "../../lib/i18n";
 
 export type FeedView = "all" | "unread" | "awaiting";
@@ -39,11 +38,6 @@ export function NotificationFilters({ view, filters, unread, onView, onFilters }
         onClick={() => onFilters({ ...filters, category: filters.category === value ? undefined : value })}>
         <Icon size={18} aria-hidden="true" />{t(`notification.category.${key}`)}
       </button>)}
-    </div>
-    <div className="border-t border-platforma-border pt-4">
-      <Select label={t("notification.period")} value={filters.period || "all"}
-        onChange={event => onFilters({ ...filters, period: event.target.value as PersonalFeedFilters["period"] })}
-        options={["all", "7d", "30d"].map(value => ({ value, label: t(`notification.period.${value}`) }))} />
     </div>
   </div>;
 }

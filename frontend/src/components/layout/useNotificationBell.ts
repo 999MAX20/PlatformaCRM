@@ -26,9 +26,9 @@ export function useNotificationBell({
   const queryClient = useQueryClient();
   const notificationsRef = useRef<HTMLDivElement | null>(null);
   const notifications = useQuery({
-    queryKey: ["notifications", "bell", business?.id, user?.id],
+    queryKey: ["notifications", "bell", business?.id, user?.id, "unread"],
     queryFn: () =>
-      notificationsApi.list({ surface: "bell", business: business?.id }),
+      notificationsApi.list({ surface: "bell", business: business?.id, order: "unread" }),
     enabled: Boolean(user && business) && showNotifications,
     ...realtimeQueryOptions,
   });

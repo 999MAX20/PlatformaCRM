@@ -1,4 +1,8 @@
 NOTIFICATIONS-REDESIGN-20261114: approved compact bell and notification center implemented.
+15.11 follow-up complete: period beside sort; read-all result line removed. Bell now
+prioritizes personal unread rows before server pagination. Fresh74 backend/system/drift,
+13browser cases +8affected post-wrap rerun, build/types/i18n/bundle PASS.
+RU/KK/EN320–1440 screenshots inspected; realHTTP receipt/permission/retry checks PASS.
 Personal filters, responsive details, read/unread/read-all and acknowledgement retained.
 Backend 73 distinct scenarios, system/drift, build/types/i18n/bundle and browser 10/10 PASS.
 RU/KK/EN screenshots inspected; 320px/200% text footer overlap corrected and rechecked.

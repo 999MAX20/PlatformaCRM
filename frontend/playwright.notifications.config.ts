@@ -9,7 +9,7 @@ const baseURL = `http://127.0.0.1:${frontendPort}`;
 
 export default defineConfig({
   testDir: "./e2e",
-  testMatch: ["notifications-redesign.spec.ts", "notification-refactor.spec.ts"],
+  testMatch: ["notifications-redesign.spec.ts", "notification-refactor.spec.ts", "notifications-server.spec.ts"],
   timeout: 30000,
   expect: { timeout: 8000 },
   workers: 1,

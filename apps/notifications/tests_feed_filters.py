@@ -46,6 +46,19 @@ class PersonalFeedFilterTests(PersonalNotificationFixtures, TestCase):
         self.assertEqual(self.ids({"awaiting_ack": "true", "unread": "true", "category": "system"}), [waiting.pk])
         self.assertEqual(self.ids({"awaiting_ack": "true", "category": "tasks"}), [])
 
+    def test_bell_unread_priority_is_personal_and_applied_before_pagination(self):
+        oldest, second, newest = self.publish(), self.publish(), self.publish()
+        now = timezone.now()
+        for index, notification in enumerate((newest, second, oldest)):
+            Notification.objects.filter(pk=notification.pk).update(send_at=now - timedelta(days=index))
+        self.change(second, "read")
+        self.change(newest, "read")
+        self.change(oldest, "read", actor=self.peer)
+        with patch("rest_framework.pagination.PageNumberPagination.page_size", 2):
+            self.assertEqual(self.ids({"order": "unread"}), [oldest.pk, newest.pk])
+            self.assertEqual(self.ids({"order": "unread", "page": 2}), [second.pk])
+            self.assertEqual(self.ids({"order": "newest"}), [newest.pk, second.pk])
+
     def test_period_is_inclusive_and_applied_before_pagination(self):
         now = timezone.now()
         boundary, outside, recent, last_month = [self.work() for _ in range(4)]

@@ -12,10 +12,10 @@ export async function crmSession(page: Page, email = "business_owner@example.com
   const login = await pending;
   expect(login.ok()).toBeTruthy();
   const headers = { Authorization: `Bearer ${(await login.json()).access}` };
+  await expect(page.getByTestId("header-account-link")).toBeVisible();
   const me = await page.request.get(`${api}/api/auth/me/`, { headers });
   expect(me.ok()).toBeTruthy();
   const profile = await me.json();
-  await expect(page.getByTestId("header-account-link")).toBeVisible();
   return {
     headers, business: profile.businesses[0].id as number, userId: profile.id as number,
     async create<T>(resource: string, data: Record<string, unknown>): Promise<T> {

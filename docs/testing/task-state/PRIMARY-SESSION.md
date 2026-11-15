@@ -1,5 +1,14 @@
 ## NOTIFICATIONS-REDESIGN-20261114
 
+15.11 follow-up at base bc27ed5a complete: period beside sort, read-all result line
+removed; server unread-first ordering fixes old unread rows missing from the bell.
+Fresh74 backend/system/drift and13browser cases PASS; final8affected cases/build/
+types/i18n/bundle PASS after narrow value wrapping. RU/KK/EN320–1440 screenshots
+captured and inspected, keyboard/axe/200% text checked. RealHTTP filters/pagination,
+read-all scope, personal receipts, permission/tenant denial, revoke and retry PASS.
+No scoped code/local-evidence remainder; no workingDB/provider/deployment change.
+Same checkpoint records scope/publication/CI; prior closure below is historical evidence.
+
 Owner approved two reference images and requested implementation with browser checks.
 Canonical root retained: C:/Users/user/Desktop/PlatformaCRM; branch
 codex/ui-testing-toolkit, base 4f83b4a6. Foreign WIP preserved and excluded from commit.
