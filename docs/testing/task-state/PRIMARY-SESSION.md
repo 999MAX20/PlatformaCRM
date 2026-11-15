@@ -1,5 +1,14 @@
 ## NOTIFICATIONS-REDESIGN-20261114
 
+15.11 owner correction at e26fa34d complete: modal detail on all widths without blur;
+visible period/order labels removed, accessible names retained. Existing authorized
+metadata/source/receipt actions reused.13browser PASS +4final affected reruns,
+build/types/i18n/bundle/axe PASS. Final RU/KK/EN and320/200% screenshots inspected;
+title clipping found during visual review fixed with scoped wrapping. RealHTTP
+source navigation, read/ack/private receipts and access loss preserved. No scoped
+code/local-evidence remainder; backend74 evidence reused unchanged, no new backend
+or workingDB/provider/deployment changes. Publication/CI in the same checkpoint.
+
 15.11 follow-up at base bc27ed5a complete: period beside sort, read-all result line
 removed; server unread-first ordering fixes old unread rows missing from the bell.
 Fresh74 backend/system/drift and13browser cases PASS; final8affected cases/build/

@@ -46,6 +46,17 @@ test("real feed periods, ordering, category, pagination and read-all scope", asy
   expect(initial.results.some((row: Notification) => fixture.excluded.includes(Number(row.id)))).toBeFalsy();
   expect(initial.results.find((row: Notification) => row.id === fixture.work).text).toBe("");
   await expect(page.getByText("PRIVATE WORK SNAPSHOT")).toHaveCount(0);
+  await feed.first().getByRole("button").first().click();
+  const dialog = page.getByTestId("notification-inspector");
+  await expect(dialog).toHaveAttribute("role", "dialog");
+  await expect(dialog.getByText("PRIVATE WORK SNAPSHOT")).toHaveCount(0);
+  const source = dialog.getByRole("link", { name: ru["common.open"], exact: true });
+  await expect(source).toHaveAttribute("href", `/app/tasks?task=${fixture.task}`);
+  await source.click();
+  await expect(page).toHaveURL(new RegExp(`/app/tasks\\?task=${fixture.task}`));
+  await expect(dialog).toHaveCount(0);
+  await page.goto("/app/notifications");
+  await expect(feed).toHaveCount(50);
   await page.getByRole("button", { name: ru["notification.next"], exact: true }).click();
   await expect(feed).toHaveCount(6);
   await select(page, "notification.period", "notification.period.7d");

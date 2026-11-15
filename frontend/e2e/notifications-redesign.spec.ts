@@ -64,6 +64,8 @@ for (const [language, width, copy] of [["ru", 1440, ru], ["kk", 390, kk], ["en",
     await page.setViewportSize({ width, height: 900 });
     const { writes } = await setup(page, language);
     const controls = page.getByTestId("notification-list-controls");
+    await expect(controls.getByText(copy["notification.period"], { exact: true })).toHaveCount(0);
+    await expect(controls.getByText(copy["notification.order"], { exact: true })).toHaveCount(0);
     const periodBox = await controls.getByRole("combobox", { name: copy["notification.period"] }).boundingBox();
     const orderBox = await controls.getByRole("combobox", { name: copy["notification.order"] }).boundingBox();
     expect(Math.abs(periodBox!.y - orderBox!.y)).toBeLessThan(2);
@@ -81,6 +83,12 @@ for (const [language, width, copy] of [["ru", 1440, ru], ["kk", 390, kk], ["en",
     const row = page.getByTestId("notification-feed-row").first().getByRole("button").first();
     await row.click();
     const inspector = page.getByTestId("notification-inspector");
+    await expect(inspector).toHaveAttribute("role", "dialog");
+    await expect(inspector).toHaveAttribute("aria-modal", "true");
+    expect(await inspector.evaluate(element => getComputedStyle(element.parentElement!).backdropFilter)).toBe("none");
+    await inspector.getByRole("button", { name: copy["common.close"], exact: true }).focus();
+    await page.keyboard.press("Shift+Tab");
+    expect(await inspector.evaluate(element => element.contains(document.activeElement))).toBeTruthy();
     await expect(inspector.getByRole("button", { name: copy["notification.acknowledge"], exact: true })).toBeEnabled();
     await expect(inspector.getByRole("button", { name: copy["notification.markUnread"], exact: true })).toBeVisible();
     await page.screenshot({ path: info.outputPath(`center-${language}-${width}.png`), fullPage: true });
@@ -92,13 +100,16 @@ for (const [language, width, copy] of [["ru", 1440, ru], ["kk", 390, kk], ["en",
     await inspector.getByRole("button", { name: copy["notification.acknowledge"], exact: true }).click();
     await expect(inspector.getByRole("status")).toContainText(copy["notification.acknowledged"]);
     await page.keyboard.press("Escape"); await expect(inspector).toHaveCount(0); await expect(row).toBeFocused();
+    await row.click();
+    await inspector.getByRole("button", { name: copy["common.close"], exact: true }).click();
+    await expect(inspector).toHaveCount(0); await expect(row).toBeFocused();
     await page.getByRole("tab", { name: copy["notification.announcements"] }).click();
     await expect(page.getByRole("button", { name: copy["notification.publishAnnouncement"], exact: true })).toBeVisible();
     await page.getByRole("tab", { name: copy["notification.myFeed"] }).click();
     await page.getByRole("button", { name: copy["header.markAllRead"], exact: true }).click();
     await expect(page.getByRole("button", { name: copy["header.markAllRead"], exact: true })).toBeDisabled();
     await expect(page.getByText(copy["notification.readAllResult"].replace("{count}", "9"), { exact: true })).toHaveCount(0);
-    expect(writes.filter(path => path.endsWith("/open/"))).toHaveLength(1);
+    expect(writes.filter(path => path.endsWith("/open/"))).toHaveLength(2);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBeTruthy();
   });
 }
@@ -210,10 +221,22 @@ test("narrow layout, long content, mobile filters, zoom and announcement dialog"
   await page.screenshot({ path: info.outputPath("bell-text-200-320.png"), fullPage: true });
   await page.getByTestId("notification-menu").getByRole("link", { name: ru["notification.openCenter"] }).click();
   await expect(page.getByTestId("notification-menu")).toHaveCount(0);
+  await page.getByTestId("notification-feed-row").first().getByRole("button").first().click();
+  await expect(inspector.getByRole("button", { name: ru["notification.acknowledge"], exact: true })).toBeEnabled();
+  await inspector.getByRole("button", { name: ru["notification.acknowledge"], exact: true }).scrollIntoViewIfNeeded();
+  expect(await inspector.getByRole("heading", { name: ru["header.notifications"], exact: true }).evaluate(element =>
+    element.scrollWidth <= element.clientWidth + 1 && element.scrollHeight <= element.clientHeight + 1)).toBeTruthy();
+  await page.screenshot({ path: info.outputPath("detail-actions-text-200-320.png"), fullPage: true });
+  expect(await inspector.evaluate(element => element.scrollWidth <= element.clientWidth + 1)).toBeTruthy();
+  await inspector.getByRole("button", { name: ru["notification.acknowledge"], exact: true }).click();
+  await expect(inspector.getByRole("status")).toContainText(ru["notification.acknowledged"]);
+  await inspector.getByRole("button", { name: ru["common.close"], exact: true }).click();
+  await expect(inspector).toHaveCount(0);
   await page.evaluate(() => { document.documentElement.style.fontSize = ""; });
   await page.getByRole("tab", { name: ru["notification.announcements"] }).click();
   await page.getByRole("button", { name: ru["notification.publishAnnouncement"], exact: true }).click();
   const composer = page.getByTestId("announcement-composer");
+  expect(await composer.evaluate(element => getComputedStyle(element.parentElement!).backdropFilter)).not.toBe("none");
   await expect(composer.getByRole("button", { name: ru["notification.publish"], exact: true })).toBeDisabled();
   await composer.getByRole("textbox", { name: ru["notification.announcementText"] }).fill("Проверка формы объявления");
   await expect(composer.getByRole("button", { name: ru["notification.publish"], exact: true })).toBeEnabled();

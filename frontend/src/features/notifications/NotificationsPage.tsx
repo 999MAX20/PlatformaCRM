@@ -11,7 +11,6 @@ import { Tabs } from "../../components/ui/Tabs";
 import { EmptyState, ErrorState, ForbiddenState, LoadingState } from "../../components/ui/StateViews";
 import { usePageLoading } from "../../components/ui/PageLoadingBoundary";
 import { useActiveBusiness } from "../../hooks/useBusiness";
-import { useMediaQuery } from "../../hooks/useMediaQuery";
 import { formatDateTime } from "../../lib/format";
 import { useI18n } from "../../lib/i18n";
 import { realtimeIntervals } from "../../lib/realtime";
@@ -40,7 +39,6 @@ function PersonalNotificationPage({ business }: { business: Id }) {
   const [view, setView] = useState<FeedView>("all");
   const [filters, setFilters] = useState<PersonalFeedFilters>({ period: "all", order: "newest" });
   const [showFilters, setShowFilters] = useState(false);
-  const wide = useMediaQuery("(min-width: 1280px)");
   const lastTrigger = useRef<HTMLButtonElement | null>(null);
   const listTitle = useRef<HTMLHeadingElement | null>(null);
   useEffect(() => { setPageHeader({ title: t("header.notifications") }); return () => setPageHeader(null); }, [setPageHeader, t]);
@@ -77,7 +75,7 @@ function PersonalNotificationPage({ business }: { business: Id }) {
     </div>
     {managementVisible ? <div role="tabpanel" id="notification-tabs-panel-announcements" aria-labelledby="notification-tabs-tab-announcements" className="py-4"><AnnouncementManager business={business} /></div> : <div role="tabpanel" id="notification-tabs-panel-feed" aria-labelledby="notification-tabs-tab-feed">
       {readAll.isError || read.isError ? <ErrorState error={readAll.error || read.error} /> : null}
-      <div className={`grid min-h-[65vh] min-w-0 md:grid-cols-[13rem_minmax(0,1fr)] ${selected && wide ? "xl:grid-cols-[13rem_minmax(0,1fr)_minmax(19rem,0.85fr)]" : ""}`}>
+      <div className="grid min-h-[65vh] min-w-0 md:grid-cols-[13rem_minmax(0,1fr)]">
         <aside className="border-b border-platforma-border p-3 md:border-b-0 md:border-r md:py-5" aria-label={t("notification.filters")}>
           <Button variant="ghost" className="min-h-11 w-full justify-between md:hidden" aria-expanded={showFilters} aria-controls="notification-filter-controls" onClick={() => setShowFilters(value => !value)}>
             {t("notification.filters")}<SlidersHorizontal size={18} aria-hidden="true" />
@@ -87,11 +85,11 @@ function PersonalNotificationPage({ business }: { business: Id }) {
         <section className="min-w-0" aria-label={t("notification.myFeed")}>
           <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-4">
             <h2 ref={listTitle} tabIndex={-1} className="text-lg font-semibold text-platforma-ink">{t(`notification.filter.${view}`)}</h2>
-            <div className="grid w-full grid-cols-2 grid-rows-[auto_auto] gap-x-2 break-words sm:w-auto sm:grid-cols-[10rem_12rem] [&>div]:row-span-2 [&>div]:grid [&>div]:grid-rows-subgrid" data-testid="notification-list-controls">
-              <Select label={t("notification.period")} className="[&>span]:whitespace-normal [&>span]:break-words" value={filters.period || "all"}
+            <div className="grid w-full grid-cols-2 gap-2 break-words sm:w-auto sm:grid-cols-[10rem_12rem]" data-testid="notification-list-controls">
+              <Select aria-label={t("notification.period")} className="h-full [&>span]:whitespace-normal [&>span]:break-words" value={filters.period || "all"}
                 onChange={event => changeFilters({ ...filters, period: event.target.value as PersonalFeedFilters["period"] })}
                 options={["all", "7d", "30d"].map(value => ({ value, label: t(`notification.period.${value}`) }))} />
-              <Select label={t("notification.order")} className="[&>span]:whitespace-normal [&>span]:break-words" value={filters.order || "newest"}
+              <Select aria-label={t("notification.order")} className="h-full [&>span]:whitespace-normal [&>span]:break-words" value={filters.order || "newest"}
                 onChange={event => changeFilters({ ...filters, order: event.target.value as PersonalFeedFilters["order"] })}
                 options={["newest", "oldest"].map(value => ({ value, label: t(`notification.order.${value}`) }))} />
             </div>
@@ -121,7 +119,7 @@ function PersonalNotificationPage({ business }: { business: Id }) {
             <div className="p-4"><NotificationPagination page={page} previous={Boolean(feed.data?.previous)} next={Boolean(feed.data?.next)} onPage={setPage} /></div>
           </>}
         </section>
-        {selected ? <NotificationInspector key={`${business}:${selected}`} id={selected} business={business} onClose={closeDetail} inline={wide} /> : null}
+        {selected ? <NotificationInspector key={`${business}:${selected}`} id={selected} business={business} onClose={closeDetail} /> : null}
       </div>
     </div>}
   </div>;

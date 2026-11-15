@@ -220,6 +220,7 @@ export function Dialog({
   testId,
   focusReturnId,
   presentation = "dialog",
+  backdropBlur = true,
   headerActions,
   footer,
 }: {
@@ -234,6 +235,7 @@ export function Dialog({
   testId?: string;
   focusReturnId?: string;
   presentation?: "dialog" | "entity";
+  backdropBlur?: boolean;
   headerActions?: ReactNode;
   footer?: ReactNode;
 }) {
@@ -249,7 +251,7 @@ export function Dialog({
   return createPortal(
     <div
       className="platforma-overlay-backdrop fixed inset-0 grid place-items-center p-3 sm:p-5"
-      style={{ zIndex: presentation === "entity" ? "var(--platforma-z-drawer)" : "var(--platforma-z-modal)", ...(presentation === "entity" ? { backdropFilter: "none" } : {}) }}
+      style={{ zIndex: presentation === "entity" ? "var(--platforma-z-drawer)" : "var(--platforma-z-modal)", ...(presentation === "entity" || !backdropBlur ? { backdropFilter: "none" } : {}) }}
       onMouseDown={closeOnBackdrop ? onClose : undefined}
     >
       <section

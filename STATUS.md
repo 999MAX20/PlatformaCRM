@@ -1,4 +1,7 @@
 NOTIFICATIONS-REDESIGN-20261114: approved compact bell and notification center implemented.
+15.11 modal correction complete: no-blur dialog on all widths, source/metadata and
+personal receipt actions retained; visible filter labels removed, accessible names kept.
+13browser PASS +4final localized/320/200% reruns; build/types/i18n/bundle/axe PASS.
 15.11 follow-up complete: period beside sort; read-all result line removed. Bell now
 prioritizes personal unread rows before server pagination. Fresh74 backend/system/drift,
 13browser cases +8affected post-wrap rerun, build/types/i18n/bundle PASS.
