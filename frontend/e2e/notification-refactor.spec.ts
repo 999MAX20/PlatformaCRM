@@ -21,13 +21,15 @@ for (const [language, width, copy] of [["ru", 1440, ru], ["kk", 390, kk]] as con
    if(url.pathname.endsWith('/summary/')){summaryReads++;return route.fulfill({json:{unread:notices.filter(n=>!n.read_at).length,due:0,urgent:0,pending:0,failed:0,by_category:{system:2},can_manage_announcements:false}});}
    return route.fulfill({json:{count:2,next:null,previous:null,results:notices}});
   });
-  await page.evaluate(value=>localStorage.setItem('ai_smb_language',value),language);await page.reload();
+  await page.evaluate(value=>localStorage.setItem('ai_smb_language',value),language);await page.goto('/app/notifications');
+  await expect(page.getByTestId('notification-feed-row')).toHaveCount(2);
+  const menu=page.getByTestId('notification-menu');
   const bell=page.getByTestId('header-notifications-trigger');await expect(bell).toContainText('2');await bell.focus();await page.keyboard.press('Enter');
-  await expect(page.getByText('Refactor notice 1',{exact:true})).toBeVisible();
+  await expect(menu.getByText('Refactor notice 1',{exact:true})).toBeVisible();
   await page.screenshot({path:info.outputPath(`notification-bell-${language}.png`),fullPage:true});
-  await page.getByRole('button',{name:copy['notification.read'],exact:true}).first().click();await expect(page.getByRole('alert').first()).toBeVisible();
-  readFailure=false;await page.getByRole('button',{name:copy['notification.read'],exact:true}).first().click();await expect(bell).toContainText('1');
-  await page.getByRole('button',{name:copy['header.markAllRead'],exact:true}).click();await expect(bell).not.toContainText('1');
+  await menu.getByRole('button',{name:copy['notification.markRead'],exact:true}).first().click();await expect(menu.getByRole('alert').first()).toBeVisible();
+  readFailure=false;await menu.getByRole('button',{name:copy['notification.markRead'],exact:true}).first().click();await expect(bell).toContainText('1');
+  await menu.getByRole('button',{name:copy['header.markAllRead'],exact:true}).click();await expect(bell).not.toContainText('1');
   await page.keyboard.press('Escape');await expect(page.getByRole('link',{name:copy['notification.openCenter'],exact:true})).toHaveCount(0);
   await bell.click();await page.getByRole('link',{name:copy['notification.openCenter'],exact:true}).click();await expect(page).toHaveURL(/\/app\/notifications/);
   expect(writes).toHaveLength(3);expect(summaryReads).toBeGreaterThanOrEqual(3);

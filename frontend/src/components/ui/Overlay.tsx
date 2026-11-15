@@ -269,7 +269,7 @@ export function Dialog({
         )}
         onMouseDown={(event) => event.stopPropagation()}
       >
-        <header className="flex h-16 shrink-0 items-center justify-between gap-3 border-b border-platforma-border bg-surface-card px-4 sm:px-5">
+        <header role="presentation" className="flex h-16 shrink-0 items-center justify-between gap-3 border-b border-platforma-border bg-surface-card px-4 sm:px-5">
           <h2 id={titleId} className="min-w-0 truncate text-lg font-semibold text-platforma-ink">
             {title}
           </h2>

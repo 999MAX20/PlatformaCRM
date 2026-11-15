@@ -103,7 +103,7 @@ export const core: Record<string, string> = {
   "header.notifications": "Уведомления",
   "header.notificationsSummary":
     "{due} требуют внимания сейчас · {urgent} срочных",
-  "header.markAllRead": "Всё прочитано",
+  "header.markAllRead": "Прочитать все",
   "header.openTasks": "Открыть задачи",
   "header.noNotifications":
     "Уведомлений пока нет. Напоминания по записям и CRM-события будут появляться здесь.",

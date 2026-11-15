@@ -1,3 +1,41 @@
+## NOTIFICATIONS-REDESIGN-20261114
+
+Owner approved two reference images and requested implementation with browser checks.
+Canonical root retained: C:/Users/user/Desktop/PlatformaCRM; branch
+codex/ui-testing-toolkit, base 4f83b4a6. Foreign WIP preserved and excluded from commit.
+
+Compact bell has six rows, unread count, separate read actions and a fixed footer.
+Personal center has underline tabs, category/period/read/acknowledgement filters,
+newest/oldest order, pagination and a detail panel on wide screens; smaller screens
+use the existing dialog and collapsible filters. Existing announcement management,
+source access, receipt semantics, cache invalidation and Business scope remain.
+Backend filters run before pagination. No new permissions, schema, environment,
+BusinessEvent, AI, external messages or working-DB changes.
+
+Verification on disposable SQLite/API and production frontend preview:
+- Backend completion: 72 PASS; final filter suite: 8 PASS (7 overlap, 73 distinct).
+  System checks and migration drift PASS. Tenant/source/recipient access, combined
+  filtering, pagination, private acknowledgement and unchanged read-all covered.
+- Browser final: 10/10 PASS, including real API publication/open/read/acknowledgement,
+  RU/KK/EN, 320/390/768/1440 widths, keyboard/focus, loading/empty/error/recovery,
+  permission loss, pagination recovery and safe receipt retry before navigation.
+- i18n/types/Vite/widget build and app-shell bundle budget PASS; existing RU/KK
+  locale chunk-size warnings remain. No dependencies added.
+
+Anti Slop during: approved composition and existing tokens retained; no decorative
+blocks/assets. Affected screenshots captured AND inspected. Visual review found
+mobile-footer overlap and heading/count collision at 200% root text size; corrected
+menu height/wrapping and added actual footer click plus geometry assertion.
+Scoped axe and contrast PASS; minimum measured normal text contrast 5.35:1.
+Shared Dialog header role correction checked with detail and announcement dialogs.
+Real-device/browser-native zoom, full-project release certification, live provider
+and deployment are outside this boundary. Synthetic browser text is test data.
+
+Frontend contract and notification passport updated. Roadmap, README, access/CRM/AI
+contracts and registry need no change: no stage/setup/policy/new document introduced.
+No scoped code/local-evidence remainder. Exact commands, failed attempts, source
+snapshot, process cleanup and publication/CI: output/notifications-redesign-20261114/CHECKPOINT.md.
+
 ## MFA-INBOX-20261114
 
 Owner requested six-cell MFA, QR only for first enrollment, immediate entry after

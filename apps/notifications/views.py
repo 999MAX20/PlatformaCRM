@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from apps.businesses.access import Actions, assert_can
 from apps.core.viewsets import TenantModelViewSet
 from apps.notifications.delivery import retry_notification
+from apps.notifications.feed_filters import filter_personal_feed
 from apps.notifications.models import Notification, NotificationPreference, NotificationRecipient
 from apps.businesses.models import Business
 from apps.notifications.announcement_api import AnnouncementActions, reject_state_payload
@@ -93,6 +94,8 @@ class NotificationViewSet(AnnouncementActions, TenantModelViewSet):
             queryset = queryset.filter(
                 channel=Notification.Channels.SYSTEM, send_at__lte=timezone.now(),
             ).exclude(status=Notification.Statuses.CANCELLED)
+            if self.action == "list":
+                queryset = filter_personal_feed(queryset, self.request.query_params)
         return queryset
 
     @action(detail=True, methods=["post"], url_path="mark-sent")

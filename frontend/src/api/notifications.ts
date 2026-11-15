@@ -13,6 +13,14 @@ export type NotificationSummary = {
   can_manage_announcements?: boolean;
 };
 
+export type PersonalFeedFilters = {
+  unread?: boolean;
+  awaiting_ack?: boolean;
+  category?: Notification["category"];
+  period?: "all" | "7d" | "30d";
+  order?: "newest" | "oldest";
+};
+
 export type Announcement = {
   id: Id;
   business: Id;
@@ -66,8 +74,8 @@ export const notificationsApi = {
     const { data } = await apiClient.post<{ updated: number }>("/api/notifications/mark-all-read/", {}, { params });
     return data;
   },
-  personalPage: async (business: Id, page = 1) => {
-    const { data } = await apiClient.get<PaginatedResponse<Notification>>("/api/notifications/", { params: { business, surface: "bell", page } });
+  personalPage: async (business: Id, page = 1, filters: PersonalFeedFilters = {}) => {
+    const { data } = await apiClient.get<PaginatedResponse<Notification>>("/api/notifications/", { params: { ...filters, business, surface: "bell", page } });
     return data;
   },
   personalDetail: async (id: Id, business: Id) => {

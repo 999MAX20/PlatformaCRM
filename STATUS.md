@@ -1,3 +1,10 @@
+NOTIFICATIONS-REDESIGN-20261114: approved compact bell and notification center implemented.
+Personal filters, responsive details, read/unread/read-all and acknowledgement retained.
+Backend 73 distinct scenarios, system/drift, build/types/i18n/bundle and browser 10/10 PASS.
+RU/KK/EN screenshots inspected; 320px/200% text footer overlap corrected and rechecked.
+No scoped code/local-evidence remainder. Publication/CI receipt and exact limits:
+output/notifications-redesign-20261114/CHECKPOINT.md.
+
 MFA-INBOX-20261114: six-cell MFA and automatic entry implemented and locally verified.
 Return link centered with16px gap on desktop/mobile; recovery and profile retry retained.
 Unlinked Inbox actions create/link client and create task use real existing server writes.

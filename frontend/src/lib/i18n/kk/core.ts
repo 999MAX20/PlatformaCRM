@@ -102,7 +102,7 @@ export const core: Record<string, string> = {
   "common.openNavigation": "Навигацияны ашу",
   "header.notifications": "Хабарламалар",
   "header.notificationsSummary": "{due} қазір назар қажет · {urgent} шұғыл",
-  "header.markAllRead": "Барлығы оқылды",
+  "header.markAllRead": "Барлығын оқылды деп белгілеу",
   "header.openTasks": "Тапсырмаларды ашу",
   "header.noNotifications":
     "Хабарламалар әзірге жоқ. Жазбалар мен CRM оқиғалары туралы ескертулер осында пайда болады.",
