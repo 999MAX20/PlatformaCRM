@@ -1,4 +1,6 @@
 import { BookOpen, Bot, FunctionSquare, MessageSquareText, Radio, Settings } from "lucide-react";
+import { channelConnectionState } from "../integrations/channelConnectionState";
+import { badgeVariants } from "../../components/ui/Badge";
 
 import type { AgentProfile, Bot as BotType, BotChannel, Id } from "../../types";
 import type { AgentFormState, AgentSection, AutoPipelineMode, OnboardingStep } from "./aiAgentsTypes";
@@ -104,18 +106,12 @@ export function canonicalSection(value?: string): AgentSection {
 }
 
 export function channelStatus(channel: BotChannel | undefined, t: (key: string) => string) {
-  if (!channel) return t("aiAgents.status.notConnected");
-  if (channel.status === "active") return t("aiAgents.status.connected");
-  if (channel.status === "error") return t("aiAgents.status.error");
-  if (channel.status === "paused") return t("aiAgents.channel.paused");
-  return t("aiAgents.status.setup");
+  return t(channelConnectionState(channel).key);
 }
 
 export function channelStatusClass(channel?: BotChannel) {
-  if (!channel || channel.status === "paused") return "bg-surface-muted text-platforma-subtle ring-platforma-border";
-  if (channel.status === "active") return "bg-[var(--platforma-success-soft)] text-platforma-success ring-platforma-success/20";
-  if (channel.status === "error") return "bg-[var(--platforma-danger-soft)] text-platforma-danger ring-platforma-danger/20";
-  return "bg-[var(--platforma-warning-soft)] text-platforma-warning ring-platforma-warning/20";
+  const tone = channelConnectionState(channel).tone;
+  return badgeVariants[tone === "progress" ? "info" : tone];
 }
 
 export function agentStatusLabel(bot: BotType, t: (key: string) => string) {

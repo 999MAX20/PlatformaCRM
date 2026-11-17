@@ -91,7 +91,5 @@ COPY = {
 
 
 def safety_text(conversation, code):
-    from apps.ai_core.models import AgentProfile
-    language = AgentProfile.objects.filter(business_id=conversation.business_id,
-        bot_id=conversation.bot_id, is_active=True).order_by("-updated_at", "-id").values_list("language", flat=True).first()
-    return COPY.get(language or conversation.bot.default_language, COPY["ru"])[code]
+    from apps.bots.customer_language import customer_reply_language
+    return COPY[customer_reply_language(conversation)][code]

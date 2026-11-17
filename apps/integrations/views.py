@@ -197,6 +197,7 @@ class BusinessConnectorViewSet(TenantModelViewSet):
                 redirect_uri=redirect_uri,
                 phone_number_id=serializer.validated_data["phone_number_id"],
                 waba_id=serializer.validated_data.get("waba_id", ""),
+                registration_pin=serializer.validated_data["registration_pin"],
                 display_phone_number=serializer.validated_data.get("display_phone_number", ""),
                 request=request,
             )

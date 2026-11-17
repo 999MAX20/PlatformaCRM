@@ -3,7 +3,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { DatabaseZap, RefreshCw, ShieldCheck } from "lucide-react";
 
 import { businessConnectorsApi } from "../../../../api/connectors";
-import { getApiErrorMessage } from "../../../../api/client";
 import { Button } from "../../../../components/ui/Button";
 import { ErrorState } from "../../../../components/ui/StateViews";
 import { StatusNotice } from "../../../../components/ui/StatusNotice";
@@ -60,7 +59,7 @@ export function WildberriesInlineSetup({
   const testConnection = useMutation({
     mutationFn: () => businessConnectorsApi.wildberriesTestConnection(Number(connector?.id)),
     onSuccess: (data) => {
-      setNotice(data.ok ? (data.mock ? t("integrations.mock.connectionChecked") : t("integrations.wildberries.connectionChecked")) : merchantSafeIntegrationError(data.reason, t), data.ok ? "success" : "warning");
+      setNotice(data.ok ? (data.mock ? t("integrations.mock.connectionChecked") : t("integrations.wildberries.connectionChecked")) : merchantSafeIntegrationError(data.reason, t, canManage), data.ok ? "success" : "warning");
       queryClient.invalidateQueries({ queryKey: ["business-connectors"] });
       queryClient.invalidateQueries({ queryKey: ["wildberries-status", connector?.id] });
     },
@@ -69,7 +68,7 @@ export function WildberriesInlineSetup({
   const syncData = useMutation({
     mutationFn: () => businessConnectorsApi.wildberriesSync(Number(connector?.id)),
     onSuccess: (data) => {
-      setNotice(data.ok ? (data.mock ? t("integrations.mock.syncLoaded", { count: data.events.length }) : t("integrations.wildberries.dataLoaded", { count: data.events.length })) : merchantSafeIntegrationError(data.reason, t), data.ok ? "success" : "warning");
+      setNotice(data.ok ? (data.mock ? t("integrations.mock.syncLoaded", { count: data.events.length }) : t("integrations.wildberries.dataLoaded", { count: data.events.length })) : merchantSafeIntegrationError(data.reason, t, canManage), data.ok ? "success" : "warning");
       queryClient.invalidateQueries({ queryKey: ["business-events"] });
       queryClient.invalidateQueries({ queryKey: ["business-connectors"] });
       queryClient.invalidateQueries({ queryKey: ["connector-sync-runs"] });
@@ -87,7 +86,7 @@ export function WildberriesInlineSetup({
 
   return (
     <div className="w-full space-y-4 rounded-card border border-platforma-border bg-surface-muted p-4">
-      {error ? <ErrorState message={merchantSafeIntegrationError(getApiErrorMessage(error), t)} /> : null}
+      {error ? <ErrorState message={merchantSafeIntegrationError(error, t, canManage)} /> : null}
 
       <div className="grid gap-2 sm:grid-cols-3">
         <div className="rounded-2xl bg-white p-3">

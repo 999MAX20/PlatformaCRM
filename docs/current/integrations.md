@@ -69,6 +69,50 @@ actor/Business и действующим VIEW/capability соответству�
 
 ## Connector boundary
 
+### Direct Meta Embedded Signup, local implementation 14.11.2026
+
+The standard Cloud API flow uses the Facebook SDK authorization code. The server
+checks a signed, single-use attempt bound to the actor, business, channel and setup
+revision; validates token app, WhatsApp scopes, expiry and WABA phone membership;
+then requires success from WABA `subscribed_apps` and phone `register` before
+activating the channel. The display number comes from Graph, never the browser.
+Completion requires `waba_id` and a six-digit `registration_pin`. Access token and
+PIN use encrypted connector credentials; finite token/data-access expiry is saved.
+The UI requests a standard Cloud flow, not Business App coexistence.
+The v4 launch collects PIN before opening Meta and submits completion as soon as
+both the SDK code and verified account callback arrive. No second confirmation
+delays the 30-second code exchange. An incomplete callback expires locally after
+20 seconds; a failed/consumed attempt requires a new explicit launch, retaining PIN.
+The login URL requests only the two WhatsApp scopes. v4 is selected by a new
+Cloud API product configuration in Meta, not by `sessionInfoVersion`.
+
+Signed Meta `account_update` notifications are accepted separately from phone
+messages. Allowlisted account metadata is written to IntegrationEventLog; no
+activation, credential change or message is triggered. Events preceding local
+onboarding, or with ambiguous tenant ownership, remain business-null. Provider
+business IDs never choose a CRM tenant. Enable this subscription only after the
+new handler is deployed. Repeated notifications may produce separate audit rows.
+
+Migration `integrations0011` adds durable attempts and a unique phone reservation
+between signup attempts. Invalid credentials do not reserve a phone. A remote
+failure consumes the attempt and preserves the previous working connection;
+fresh explicit signup can retry on the same channel. Ambiguous registration can
+leave a provider-side effect, so local rollback does not imply Meta rollback.
+An interrupted operation blocks overlapping signup for 30 minutes. Existing
+manual/BSP connection paths and their verification contracts remain separate.
+
+Local acceptance uses mocked Graph/SDK responses and an isolated test database.
+It does not prove Advanced Access, correct Facebook Login configuration, billing,
+number eligibility, real delivery or production acceptance. Isolated PostgreSQL
+Signup locking passed on17Nov2026; this is not deployed-database evidence. Deployment
+must apply the migration and supply app ID/secret, Embedded Signup config ID,
+approved domains/HTTPS and webhook subscription configuration. Real client
+onboarding and inbound/manual reply require separate authorized live acceptance.
+Business App coexistence and number/provider migration are not implemented by
+this standard direct-Meta flow. Evidence: `META-SIGNUP-20261114` and
+`META-V4-20261117` in PRIMARY-SESSION; the onboarding/reviewer runbook is in
+[operations](operations.md#meta-v4-and-app-review-preparation-17112026).
+
 ### YCloud TP Lite — первый этап
 
 Существующие BotChannel/BusinessConnector и WhatsApp Inbox переиспользуются.

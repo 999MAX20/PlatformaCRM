@@ -1,17 +1,16 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { CheckCircle2, RefreshCw, ShieldCheck } from "lucide-react";
 
 import { botChannelsApi, telegramChannelApi } from "../../../../api/bots";
-import { getApiErrorMessage } from "../../../../api/client";
 import { Button } from "../../../../components/ui/Button";
 import { ErrorState } from "../../../../components/ui/StateViews";
-import { Input } from "../../../../components/ui/Input";
+import { CredentialInput } from "./CredentialInput";
+import { channelConnectionState } from "../../channelConnectionState";
 import { useNotification } from "../../../../components/notifications/NotificationProvider";
 import { useI18n } from "../../../../lib/i18n";
 import type { BotChannel } from "../../../../types";
 import { merchantSafeIntegrationError } from "../../utils";
-import { MessengerSetupShell } from "./IntegrationSetupUi";
+import { MessengerSetupShell, SetupInstructions } from "./IntegrationSetupUi";
 
 export function TelegramInlineSetup({
   canManage,
@@ -24,6 +23,8 @@ export function TelegramInlineSetup({
   const showNotification = useNotification();
   const queryClient = useQueryClient();
   const [botToken, setBotToken] = useState("");
+  const [replacingToken, setReplacingToken] = useState(false);
+  const [checkFailure, setCheckFailure] = useState<string | null>(null);
 
   function setNotice(message: string | null, tone: "success" | "info" | "warning" | "danger" = "success") {
     if (!message) return;
@@ -40,6 +41,8 @@ export function TelegramInlineSetup({
     mutationFn: () => telegramChannelApi.configure({ channelId: Number(channel?.id), botToken }),
     onSuccess: () => {
       setBotToken("");
+      setReplacingToken(false);
+      setCheckFailure(null);
       setNotice(t("integrations.telegram.tokenSavedNotice"));
       queryClient.invalidateQueries({ queryKey: ["bot-channels"] });
       queryClient.invalidateQueries({ queryKey: ["telegram-status", channel?.id] });
@@ -50,7 +53,8 @@ export function TelegramInlineSetup({
   const testConnection = useMutation({
     mutationFn: () => telegramChannelApi.testConnection(Number(channel?.id)),
     onSuccess: (data) => {
-      setNotice(data.ok ? t("integrations.telegram.connectionChecked") : merchantSafeIntegrationError(data.reason, t), data.ok ? "success" : "warning");
+      setCheckFailure(data.ok ? null : data.reason || "");
+      setNotice(data.ok ? t("integrations.telegram.connectionChecked") : merchantSafeIntegrationError(data.reason, t, canManage), data.ok ? "success" : "warning");
       queryClient.invalidateQueries({ queryKey: ["bot-channels"] });
       queryClient.invalidateQueries({ queryKey: ["telegram-status", channel?.id] });
       queryClient.invalidateQueries({ queryKey: ["business-connectors"] });
@@ -63,7 +67,8 @@ export function TelegramInlineSetup({
       return telegramChannelApi.setWebhook({ channelId: Number(channel?.id), webhookUrl: current.webhook_url });
     },
     onSuccess: (data) => {
-      setNotice(data.ok ? t("integrations.telegram.inboundConnected") : merchantSafeIntegrationError(data.reason, t), data.ok ? "success" : "warning");
+      setCheckFailure(data.ok ? null : data.reason || "");
+      setNotice(data.ok ? t("integrations.telegram.inboundConnected") : merchantSafeIntegrationError(data.reason, t, canManage), data.ok ? "success" : "warning");
       queryClient.invalidateQueries({ queryKey: ["bot-channels"] });
       queryClient.invalidateQueries({ queryKey: ["telegram-status", channel?.id] });
       queryClient.invalidateQueries({ queryKey: ["integration-event-logs"] });
@@ -82,17 +87,13 @@ export function TelegramInlineSetup({
   });
 
   const error = saveToken.error || testConnection.error || setWebhook.error || toggleChannel.error || status.error;
+  const providerFailure = checkFailure ?? (status.data?.status === "error" ? status.data.last_error : null);
   const tokenConfigured = Boolean(status.data?.token_configured);
   const tokenVerified = Boolean(status.data?.token_verified);
   const webhookConfigured = Boolean(status.data?.webhook_configured);
-  const inboundReady = Boolean(status.data?.inbound_ready);
-  const canSaveToken = botToken.trim().length >= 9;
-  const connectionStatus = inboundReady || webhookConfigured
-    ? t("integrations.status.connected")
-    : tokenConfigured
-      ? t("integrations.status.providerConfiguring")
-      : t("integrations.status.notConnected");
-  const connectionTone = inboundReady ? "success" : tokenVerified || tokenConfigured ? "progress" : "neutral";
+  const canSaveToken = /^\d+:[A-Za-z0-9_-]+$/.test(botToken.trim());
+  const connection = channelConnectionState(channel);
+  const busy = saveToken.isPending || testConnection.isPending || setWebhook.isPending || toggleChannel.isPending;
 
   if (!channel) {
     return <ErrorState message={t("aiAgents.channelSetupUnavailable")} />;
@@ -102,53 +103,53 @@ export function TelegramInlineSetup({
     <MessengerSetupShell
       logo="/integrations_logos/telegram.png"
       title="Telegram"
-      description={t("integrations.telegram.inlineDescription")}
-      status={connectionStatus}
-      statusTone={connectionTone}
-      error={error ? <ErrorState message={merchantSafeIntegrationError(getApiErrorMessage(error), t)} /> : null}
-      canManage={canManage}
+      description={t("integrations.setup.telegramDescription")}
+      status={t(connection.key)}
+      statusTone={connection.tone}
+      loading={status.isPending}
+      error={error || providerFailure != null ? <ErrorState message={merchantSafeIntegrationError(error || providerFailure, t, canManage)} action={status.isError ? <Button type="button" onClick={() => void status.refetch()}>{t("common.retry")}</Button> : undefined} /> : null}
+      canManage={canManage && !busy && !status.isError}
       inboxChannel="telegram"
       channelToggleVisible={webhookConfigured}
       channelEnabled={channel.status === "active"}
       channelToggleLoading={toggleChannel.isPending}
       onToggleChannel={(checked) => toggleChannel.mutate(checked ? "active" : "paused")}
+      instructions={!status.isError && (!webhookConfigured || replacingToken) ? <SetupInstructions
+        steps={[t("integrations.setup.telegramStep1"), t("integrations.setup.telegramStep2"), t("integrations.setup.telegramStep3")]}
+        note={tokenConfigured && !webhookConfigured ? t("integrations.setup.telegramFinish") : undefined} /> : null}
+      actions={!status.isError ? <>
+        {webhookConfigured && !replacingToken ? <>
+          <Button type="button" variant="secondary" disabled={!canManage || busy} onClick={() => setReplacingToken(true)}>{t("integrations.setup.replaceKey")}</Button>
+          <Button type="button" variant="secondary" disabled={!canManage || busy} isLoading={testConnection.isPending} onClick={() => testConnection.mutate()}>{t("integrations.telegram.testConnection")}</Button>
+        </> : <>
+          {replacingToken ? <Button type="button" variant="ghost" disabled={busy} onClick={() => { setBotToken(""); setReplacingToken(false); }}>{t("common.cancel")}</Button> : null}
+          {botToken || !tokenConfigured || replacingToken ? <Button type="button" disabled={!canManage || busy || !canSaveToken} isLoading={saveToken.isPending} onClick={() => saveToken.mutate()}>
+            {replacingToken ? t("integrations.telegram.saveKey") : t("aiAgents.connect")}
+          </Button> : !tokenVerified ? <Button type="button" disabled={!canManage || busy} isLoading={testConnection.isPending} onClick={() => testConnection.mutate()}>
+            {t("integrations.telegram.testConnection")}
+          </Button> : <Button type="button" disabled={!canManage || busy || status.isFetching} isLoading={setWebhook.isPending} onClick={() => setWebhook.mutate()}>
+            {t("integrations.telegram.connectInbound")}
+          </Button>}
+        </>}
+      </> : null}
     >
-      {!webhookConfigured ? (
-        <div className="space-y-4">
-          <div>
-            <p className="text-sm font-black text-midnight">{t("integrations.telegram.botKey")}</p>
-            <p className="mt-1 text-xs font-semibold text-platforma-faint">
-              {tokenConfigured ? t("integrations.telegram.tokenSavedPrivate") : t("integrations.telegram.tokenInstruction")}
-            </p>
-          </div>
-          <Input
-            label=""
+      {!status.isError && <>
+      {!webhookConfigured || replacingToken ? (
+        <div className="space-y-2">
+          <CredentialInput
+            label={t("integrations.telegram.botKey")}
             aria-label={t("integrations.telegram.botKey")}
+            revealable
             value={botToken}
             onChange={(event) => setBotToken(event.target.value)}
-            placeholder={tokenConfigured ? t("integrations.telegram.tokenReplacePlaceholder") : t("integrations.telegram.tokenInputPlaceholder")}
-            type="password"
-            autoComplete="off"
+            placeholder={tokenConfigured ? t("integrations.telegram.tokenReplacePlaceholder") : t("integrations.setup.telegramPlaceholder")}
+            disabled={!canManage || busy}
           />
-          <div className="mt-3 flex flex-wrap gap-2">
-            {canSaveToken ? (
-              <Button type="button" disabled={!canManage} isLoading={saveToken.isPending} onClick={() => saveToken.mutate()}>
-                <ShieldCheck size={16} /> {t("integrations.telegram.saveKey")}
-              </Button>
-            ) : null}
-            {tokenConfigured && !tokenVerified && !canSaveToken ? (
-              <Button type="button" disabled={!canManage} isLoading={testConnection.isPending} onClick={() => testConnection.mutate()}>
-                <RefreshCw size={16} /> {t("integrations.telegram.testConnection")}
-              </Button>
-            ) : null}
-            {tokenVerified ? (
-              <Button type="button" disabled={!canManage || setWebhook.isPending || status.isFetching} isLoading={setWebhook.isPending} onClick={() => setWebhook.mutate()}>
-                <CheckCircle2 size={16} /> {t("integrations.telegram.connectInbound")}
-              </Button>
-            ) : null}
-          </div>
+          <p className="text-sm leading-5 text-platforma-subtle">{tokenConfigured ? t("integrations.telegram.tokenSavedPrivate") : t("integrations.setup.keyPrivate")}</p>
+          {botToken && !canSaveToken && <p role="alert" className="mt-2 text-sm text-platforma-danger">{t("integrations.setup.invalidTelegramKey")}</p>}
         </div>
       ) : null}
+      </>}
     </MessengerSetupShell>
   );
 }

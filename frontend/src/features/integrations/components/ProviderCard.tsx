@@ -3,7 +3,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowUpRight, RefreshCw, Send, ShieldCheck } from "lucide-react";
 
 import { businessConnectorsApi, connectorSyncRunsApi, type BusinessConnectorPayload } from "../../../api/connectors";
-import { getApiErrorMessage } from "../../../api/client";
 import { Badge, type BadgeVariant } from "../../../components/ui/Badge";
 import { Button } from "../../../components/ui/Button";
 import { ErrorState } from "../../../components/ui/StateViews";
@@ -86,8 +85,8 @@ function deriveProviderStatus({
   return "draft";
 }
 
-function readableConnectorError(message: string, t: Translate) {
-  return merchantSafeIntegrationError(message, t);
+function readableConnectorError(message: string, t: Translate, canManage: boolean) {
+  return merchantSafeIntegrationError(message, t, canManage);
 }
 
 export function ProviderCard({
@@ -258,7 +257,7 @@ export function ProviderCard({
           className="mt-2"
           compact
           tone="danger"
-          title={readableConnectorError(connector.last_error, t)}
+          title={readableConnectorError(connector.last_error, t, canManage)}
         />
       ) : null}
 
@@ -293,7 +292,7 @@ export function ProviderCard({
                 className="mt-2"
                 compact
                 tone="danger"
-                title={readableConnectorError(latestRun.error, t)}
+                title={readableConnectorError(latestRun.error, t, canManage)}
               />
             ) : null}
           </div>
@@ -304,7 +303,7 @@ export function ProviderCard({
         ) : null
       ) : null}
 
-      {error ? <div className="mt-2"><ErrorState message={merchantSafeIntegrationError(getApiErrorMessage(error), t)} /></div> : null}
+      {error ? <div className="mt-2"><ErrorState message={merchantSafeIntegrationError(error, t, canManage)} /></div> : null}
     </>
   );
 

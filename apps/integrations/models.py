@@ -4,10 +4,26 @@ from django.utils import timezone
 import hashlib
 import hmac
 import secrets
+import uuid
 
 from apps.businesses.models import Business
 from apps.core.sanitization import SanitizedErrorFieldsMixin
 from apps.integrations.ycloud.models import YCloudConnection, YCloudEvent, YCloudDispatch  # noqa: F401
+
+
+class WhatsAppSignupAttempt(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    channel = models.ForeignKey("bots.BotChannel", on_delete=models.CASCADE, related_name="signup_attempts")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    channel_revision = models.DateTimeField()
+    channel_fingerprint = models.CharField(max_length=64)
+    created_at = models.DateTimeField(auto_now_add=True)
+    consumed_at = models.DateTimeField(null=True)
+    finished_at = models.DateTimeField(null=True)
+    succeeded = models.BooleanField(default=False)
+    # A failed remote registration may still have taken effect. Only the same
+    # channel may reclaim this reservation on a fresh, explicit attempt.
+    phone_number_id = models.CharField(max_length=255, null=True, unique=True)
 
 
 class IntegrationEventLog(SanitizedErrorFieldsMixin, models.Model):

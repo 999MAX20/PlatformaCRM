@@ -5,6 +5,7 @@ export type WhatsAppEmbeddedSignupCallback = {
   phone_number_id?: string;
   waba_id?: string;
   display_phone_number?: string;
+  cancelled?: boolean;
 };
 
 export type InstagramOAuthCallback = {
@@ -28,7 +29,7 @@ declare global {
           config_id: string;
           response_type: "code";
           override_default_response_type: true;
-          extras: { setup: Record<string, never>; featureType: string; sessionInfoVersion: string };
+          extras: { setup: Record<string, never> };
         },
       ) => void;
     };
@@ -46,9 +47,12 @@ export function parseWhatsAppEmbeddedSignupMessage(event: MessageEvent): WhatsAp
   }
 
   const payload = typeof event.data === "string" ? safeParseJson(event.data) : event.data;
-  if (payload?.type !== "WA_EMBEDDED_SIGNUP" || !["FINISH", "FINISH_ONLY_WABA"].includes(payload?.event)) {
+  if (payload?.type !== "WA_EMBEDDED_SIGNUP") {
     return null;
   }
+  if (["CANCEL", "ERROR"].includes(payload.event)) return { type: whatsappEmbeddedSignupCallbackType, cancelled: true };
+  if (payload.event !== "FINISH" || typeof payload.data?.phone_number_id !== "string" || !payload.data.phone_number_id
+    || typeof payload.data?.waba_id !== "string" || !payload.data.waba_id) return null;
   return {
     type: whatsappEmbeddedSignupCallbackType,
     phone_number_id: payload.data?.phone_number_id,
@@ -65,27 +69,37 @@ function safeParseJson(value: string) {
   }
 }
 
-export function loadFacebookSdk({ appId, version }: { appId: string; version: string }) {
-  return new Promise<typeof window.FB>((resolve, reject) => {
-    if (window.FB) {
-      window.FB.init({ appId, autoLogAppEvents: true, xfbml: false, version });
-      resolve(window.FB);
-      return;
-    }
+let sdkLoading: Promise<void> | undefined;
 
-    const existingScript = document.querySelector<HTMLScriptElement>(`script[src="${facebookSdkUrl}"]`);
-    window.fbAsyncInit = () => {
-      window.FB?.init({ appId, autoLogAppEvents: true, xfbml: false, version });
-      resolve(window.FB);
-    };
-    if (existingScript) return;
-
-    const script = document.createElement("script");
-    script.async = true;
-    script.defer = true;
-    script.crossOrigin = "anonymous";
-    script.src = facebookSdkUrl;
-    script.onerror = () => reject(new Error("Facebook SDK failed to load."));
-    document.body.appendChild(script);
-  });
+export async function loadFacebookSdk({ appId, version }: { appId: string; version: string }) {
+  if (!window.FB) {
+    sdkLoading ??= new Promise<void>((resolve, reject) => {
+      const existing = document.querySelector<HTMLScriptElement>(`script[src="${facebookSdkUrl}"]`);
+      const script = existing || document.createElement("script");
+      const fail = () => {
+        window.clearTimeout(timeout);
+        script.remove();
+        sdkLoading = undefined;
+        reject(new Error("Facebook SDK failed to load."));
+      };
+      const timeout = window.setTimeout(fail, 15000);
+      window.fbAsyncInit = () => {
+        window.clearTimeout(timeout);
+        if (!window.FB) return fail();
+        resolve();
+      };
+      script.onerror = fail;
+      if (!existing) {
+        script.async = true;
+        script.defer = true;
+        script.crossOrigin = "anonymous";
+        script.src = facebookSdkUrl;
+        document.body.appendChild(script);
+      }
+    });
+    await sdkLoading;
+  }
+  if (!window.FB) throw new Error("Facebook SDK unavailable.");
+  window.FB.init({ appId, autoLogAppEvents: true, xfbml: false, version });
+  return window.FB;
 }

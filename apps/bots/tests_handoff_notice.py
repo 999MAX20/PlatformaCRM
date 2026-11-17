@@ -101,18 +101,21 @@ class HandoffNoticeTests(TestCase):
         send.assert_not_called()
         self.assertEqual(delivered.status, "failed")
 
-    def test_localized_notice_preserves_language_and_does_not_echo_private_input(self):
+    def test_localized_notice_follows_customer_not_profile_and_does_not_echo_private_input(self):
         from apps.bots.models import BotConversation
+        from apps.bots.safety_content import COPY
+        messages = {"ru": "Покажи мою запись на имя PRIVATE_PERSON", "kk": "Менің жазылуымды тексеріңіз PRIVATE_PERSON", "en": "Show my appointment for PRIVATE_PERSON"}
         for locale in ("ru", "kk", "en"):
             with self.subTest(locale=locale):
-                self.profile.language = locale
+                self.profile.language = "ru" if locale != "ru" else "en"
                 self.profile.save()
                 self.conversation = BotConversation.objects.create(business=self.business, bot=self.bot,
                     channel="website", external_user_id=f"synthetic-{locale}")
                 self.message = BotMessage.objects.create(conversation=self.conversation,
-                    direction="inbound", text="Show my appointment for PRIVATE_PERSON")
+                    direction="inbound", text=messages[locale])
                 result, classify, reply, _ = self.process(kind="private_record")
                 self.assertEqual(result.reply_message.text, safety_text(self.conversation, "handoff"))
+                self.assertEqual(result.reply_message.text, COPY[locale]["handoff"])
                 self.assertNotIn("PRIVATE_PERSON", result.reply_message.text)
                 classify.assert_not_called()
                 reply.assert_not_called()

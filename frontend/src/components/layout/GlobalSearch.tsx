@@ -226,6 +226,9 @@ export function GlobalSearch() {
         <Search size={18} className="shrink-0 text-platforma-faint" />
         <input
           ref={inputRef}
+          type="search"
+          name="crm-global-search"
+          autoComplete="off"
           className="min-w-0 flex-1 bg-transparent text-sm font-semibold text-platforma-text outline-hidden placeholder:text-platforma-faint"
           aria-label={t("search.aria")}
           placeholder={placeholder}

@@ -170,8 +170,9 @@ class ChannelSetupConsistencyTests(ChannelOwnershipFixture):
                     if provider == "whatsapp":
                         state = build_embedded_signup_state(business=self.business, user=self.owner, redirect_uri=redirect, bot_channel=channel)
                         stack.enter_context(patch("apps.integrations.whatsapp.embedded_signup.exchange_code_for_access_token", return_value={"access_token": "new-token"}))
-                        stack.enter_context(patch("apps.integrations.whatsapp.embedded_signup.validate_signup_phone_number", return_value=None))
-                        _, result = complete_embedded_signup(**common, state=state, phone_number_id="own-phone")
+                        stack.enter_context(patch("apps.integrations.whatsapp.embedded_signup.validate_signup_assets", return_value=({"display_phone_number": "+77010000000"}, None)))
+                        stack.enter_context(patch("apps.integrations.whatsapp.embedded_signup.activate_signup_number"))
+                        _, result = complete_embedded_signup(**common, state=state, phone_number_id="own-phone", waba_id="own-waba", registration_pin="123456")
                     else:
                         _, state = build_instagram_oauth_url(business=self.business, user=self.owner, redirect_uri=redirect, bot_channel=channel)
                         stack.enter_context(patch("apps.integrations.instagram_oauth.exchange_code_for_instagram_access_token", return_value={"access_token": "user-token"}))
@@ -185,9 +186,9 @@ class ChannelSetupConsistencyTests(ChannelOwnershipFixture):
     def test_oauth_account_rejection_preserves_existing_setup(self):
         channel = BotChannel.objects.create(bot=self.bot, channel="whatsapp", status="draft", config_json={"safe": True})
         state = build_embedded_signup_state(business=self.business, user=self.owner, redirect_uri="https://example.com/oauth", bot_channel=channel)
-        with patch("apps.integrations.whatsapp.embedded_signup.exchange_code_for_access_token", return_value={"access_token": "test-token"}), patch("apps.integrations.whatsapp.embedded_signup.validate_signup_phone_number", side_effect=ValueError("Denied")):
+        with patch("apps.integrations.whatsapp.embedded_signup.exchange_code_for_access_token", return_value={"access_token": "test-token"}), patch("apps.integrations.whatsapp.embedded_signup.validate_signup_assets", side_effect=ValueError("Denied")):
             with self.assertRaises(ValueError):
-                complete_embedded_signup(business=self.business, user=self.owner, redirect_uri="https://example.com/oauth", state=state, code="test", phone_number_id="foreign-phone")
+                complete_embedded_signup(business=self.business, user=self.owner, redirect_uri="https://example.com/oauth", state=state, code="test", phone_number_id="foreign-phone", waba_id="own-waba", registration_pin="123456")
         channel.refresh_from_db()
         self.assertEqual(channel.config_json, {"safe": True})
         self.assertEqual(channel.status, "draft")

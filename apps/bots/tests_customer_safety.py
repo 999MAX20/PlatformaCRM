@@ -42,7 +42,7 @@ class CustomerBoundaryTests(TestCase):
         self.assertEqual(replay.reply_message.pk, decision.reply_message.pk)
         second = self.run_message(self.incoming("Help with a homework question"), "off_topic")
         self.assertEqual(second.reason, "boundary_reply")
-        self.assertIn("компании", second.reply_message.text)
+        self.assertIn("company", second.reply_message.text)
         third = self.run_message(self.incoming("Write an unrelated poem"), "off_topic")
         self.assertEqual(third.status, "safety_handoff")
         self.conversation.refresh_from_db()

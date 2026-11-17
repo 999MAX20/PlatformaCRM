@@ -29,6 +29,7 @@ SENSITIVE_PAYLOAD_KEYS = {
     "bot_token",
     "client_secret",
     "password",
+    "registration_pin",
     "refresh_token",
     "secret",
     "token",

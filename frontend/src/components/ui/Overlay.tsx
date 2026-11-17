@@ -2,6 +2,8 @@ import { X } from "lucide-react";
 import { createPortal } from "react-dom";
 import {
   HTMLAttributes,
+  createContext,
+  useContext,
   forwardRef,
   useEffect,
   useId,
@@ -17,6 +19,12 @@ import { usePageVisible } from "./PageLoadingBoundary";
 
 type OverlaySize = "sm" | "md" | "lg" | "xl";
 type DrawerSize = "detail" | "complex" | "custom";
+
+const OverlayBlurContext = createContext(true);
+
+export function OverlayBackdropProvider({ blur, children }: { blur: boolean; children: ReactNode }) {
+  return <OverlayBlurContext.Provider value={blur}>{children}</OverlayBlurContext.Provider>;
+}
 
 const dialogSizeClass: Record<OverlaySize, string> = {
   sm: "max-w-lg",
@@ -224,7 +232,7 @@ export function Dialog({
   headerActions,
   footer,
 }: {
-  title: string;
+  title: ReactNode;
   open: boolean;
   onClose: () => void;
   children: React.ReactNode;
@@ -240,6 +248,7 @@ export function Dialog({
   footer?: ReactNode;
 }) {
   const titleId = useId();
+  const blur = useContext(OverlayBlurContext);
   const dialogRef = useRef<HTMLElement>(null);
   const visible = usePageVisible();
   const shown = open && visible;
@@ -251,7 +260,7 @@ export function Dialog({
   return createPortal(
     <div
       className="platforma-overlay-backdrop fixed inset-0 grid place-items-center p-3 sm:p-5"
-      style={{ zIndex: presentation === "entity" ? "var(--platforma-z-drawer)" : "var(--platforma-z-modal)", ...(presentation === "entity" || !backdropBlur ? { backdropFilter: "none" } : {}) }}
+      style={{ zIndex: presentation === "entity" ? "var(--platforma-z-drawer)" : "var(--platforma-z-modal)", ...(presentation === "entity" || !blur || !backdropBlur ? { backdropFilter: "none" } : {}) }}
       onMouseDown={closeOnBackdrop ? onClose : undefined}
     >
       <section
@@ -313,6 +322,7 @@ export function Drawer({
   testId?: string;
 }) {
   const drawerRef = useRef<HTMLElement>(null);
+  const blur = useContext(OverlayBlurContext);
   const visible = usePageVisible();
   const shown = open && visible;
   useBodyScrollLock(shown);
@@ -323,7 +333,7 @@ export function Drawer({
   return createPortal(
     <div
       className={cn("platforma-overlay-backdrop fixed inset-0", backdropClassName)}
-      style={{ zIndex: "var(--platforma-z-drawer)" }}
+      style={{ zIndex: "var(--platforma-z-drawer)", ...(!blur ? { backdropFilter: "none" } : {}) }}
       onMouseDown={closeOnBackdrop ? onClose : undefined}
     >
       <aside

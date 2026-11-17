@@ -54,6 +54,15 @@ class AutomaticBookingTests(TestCase):
         self.assertEqual(BotMessage.objects.filter(sender_type="system").count(), 1)
         self.assertEqual(result.appointment.client_id, self.client.id)
 
+    def test_confirmation_uses_customer_language_after_numeric_selection(self):
+        self.message.text = "Сәлеметсіз бе, жазылғым келеді"
+        self.message.save(update_fields=["text"])
+        self.reply.text = "1"
+        self.reply.save(update_fields=["text"])
+        result = self.book()
+        self.assertEqual(result.status, "booked", result.reason)
+        self.assertTrue(result.confirmation_message.text.startswith("Жазылу жасалды:"))
+
     def test_questions_negation_and_incidental_numbers_are_not_consent(self):
         for text in ["не подходит 1 вариант", "цена 1 услуги?", "1 октября", "10:00", "да", "какое время?"]:
             with self.subTest(text=text):

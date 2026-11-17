@@ -31,7 +31,8 @@ export function ProfileManagerSection({ botDraft, setBotDraft, form, setForm, ca
             setBotDraft(current => ({ ...current, name }));
             setForm(current => ({ ...current, name }));
           }} /></div>
-          <Select density="compact" className="min-h-11 sm:min-h-9 sm:py-1" label={t("aiAgents.language")} value={botDraft.default_language} disabled={!canManage} onChange={event => {
+          <div>
+          <Select density="compact" className="min-h-11 sm:min-h-9 sm:py-1" label={t(scenario === "crm" ? "aiAgents.language" : "aiAgents.fallbackLanguage")} value={botDraft.default_language} disabled={!canManage} onChange={event => {
             const language = event.target.value;
             setBotDraft(current => ({ ...current, default_language: language }));
             setForm(current => ({ ...current, language }));
@@ -40,6 +41,8 @@ export function ProfileManagerSection({ botDraft, setBotDraft, form, setForm, ca
             { value: "kk", label: t("language.kk") },
             { value: "en", label: t("language.en") },
           ]} />
+          {scenario !== "crm" && <FieldHint>{t("aiAgents.customerLanguageHint")}</FieldHint>}
+          </div>
           <Select density="compact" className="min-h-11 sm:min-h-9 sm:py-1" label={t("aiAgents.tone")} value={form.tone} disabled={!canManage}
             onChange={event => setForm(current => ({ ...current, tone: event.target.value as AgentProfile["tone"] }))}
             options={["friendly", "expert", "formal", "sales", "support"].map(value => ({ value, label: t(`aiAgents.tone.${value}`) }))} />

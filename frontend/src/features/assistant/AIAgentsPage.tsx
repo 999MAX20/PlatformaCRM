@@ -7,6 +7,7 @@ import { agentProfilesApi, businessKnowledgeApi } from "../../api/ai";
 import { botChannelsApi, botsApi, ensureBotChannel, saveAgentConfiguration } from "../../api/bots";
 import { usePageHeader } from "../../components/layout/PageHeaderContext";
 import { ErrorState, LoadingState } from "../../components/ui/StateViews";
+import { OverlayBackdropProvider } from "../../components/ui/Overlay";
 import { useAuth } from "../auth/AuthProvider";
 import { useActiveBusiness } from "../../hooks/useBusiness";
 import { useEntityData } from "../../hooks/useEntityData";
@@ -25,7 +26,7 @@ export function AIAgentsPage() {
   const { user } = useAuth();
   const { business, isLoading } = useActiveBusiness();
   if (isLoading) return <LoadingState scope="page" />;
-  return hasPermission(user, business?.id, "ai_automation", "view") ? <CustomerAgentsPage /> : <CRMStaffAgentsPage />;
+  return <OverlayBackdropProvider blur={false}>{hasPermission(user, business?.id, "ai_automation", "view") ? <CustomerAgentsPage /> : <CRMStaffAgentsPage />}</OverlayBackdropProvider>;
 }
 
 function CustomerAgentsPage() {
@@ -70,6 +71,7 @@ function CustomerAgentsPage() {
     [profiles.data, selectedBot?.id],
   );
   const [isSavingEditor, setIsSavingEditor] = useState(false);
+  const [knowledgeDraftDirty, setKnowledgeDraftDirty] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const loadChannels = Boolean(business && canViewChannels && ["channels", "overview"].includes(activeSection));
   const botChannels = useQuery<BotChannel[]>({
@@ -95,7 +97,7 @@ function CustomerAgentsPage() {
     setBotDraft,
     setProfileForm,
     setSaveState,
-  } = useAIAgentEditorDrafts({ selectedBot, selectedProfile, t });
+  } = useAIAgentEditorDrafts({ selectedBot, selectedProfile, t, knowledgeDraftDirty });
 
   const createBot = useMutation({
     mutationFn: () =>
@@ -232,6 +234,11 @@ function CustomerAgentsPage() {
   return (
     <>
       <AIAgentsWorkspace
+        knowledgeDraftDirty={knowledgeDraftDirty}
+        onKnowledgeDirtyChange={setKnowledgeDraftDirty}
+        onDiscardKnowledgeNavigation={() => {
+          if (navigationBlocker.state === "blocked" && !hasUserEdits) navigationBlocker.proceed();
+        }}
         navigation={navigation}
         hasUserEdits={hasUserEdits}
         activeSection={activeSection}

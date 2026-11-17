@@ -1,172 +1,29 @@
-import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ExternalLink, RefreshCw, ShieldCheck } from "lucide-react";
-
 import { botChannelsApi, whatsappChannelApi } from "../../../../api/bots";
-import { businessConnectorsApi } from "../../../../api/connectors";
-import { getApiErrorMessage } from "../../../../api/client";
 import { Button } from "../../../../components/ui/Button";
 import { ErrorState } from "../../../../components/ui/StateViews";
-import { Input } from "../../../../components/ui/Input";
 import { useNotification } from "../../../../components/notifications/NotificationProvider";
 import { useI18n } from "../../../../lib/i18n";
 import type { BotChannel, Id } from "../../../../types";
 import { merchantSafeIntegrationError } from "../../utils";
-import { MessengerSetupShell } from "./IntegrationSetupUi";
-import { loadFacebookSdk, parseWhatsAppEmbeddedSignupMessage, type WhatsAppEmbeddedSignupCallback } from "./metaCallbacks";
+import { AccountSelectionHint, MessengerSetupShell, SetupInstructions } from "./IntegrationSetupUi";
+import { useWhatsAppSignup } from "./useWhatsAppSignup";
 import { YCloudSetup } from "./YCloudSetup";
+import { CredentialInput } from "./CredentialInput";
+import { channelConnectionState } from "../../channelConnectionState";
 
-export function WhatsAppInlineSetup({
-  businessId,
-  canManage,
-  channel,
-}: {
-  businessId: Id;
-  canManage: boolean;
-  channel?: BotChannel;
+export function WhatsAppInlineSetup({ businessId, canManage, channel }: {
+  businessId: Id; canManage: boolean; channel?: BotChannel;
 }) {
   const { t } = useI18n();
   const showNotification = useNotification();
   const queryClient = useQueryClient();
-  const [preferYCloud, setPreferYCloud] = useState(false);
-  const [phoneNumberId, setPhoneNumberId] = useState("");
-  const [accessToken, setAccessToken] = useState("");
-  const [businessAccountId, setBusinessAccountId] = useState("");
-  const [displayPhoneNumber, setDisplayPhoneNumber] = useState("");
-  const [showManualSetup, setShowManualSetup] = useState(false);
-  const [signupCode, setSignupCode] = useState("");
-  const [signupState, setSignupState] = useState("");
-  const [signupRedirectUri, setSignupRedirectUri] = useState("");
-  const [signupPhoneNumberId, setSignupPhoneNumberId] = useState("");
-  const [signupWabaId, setSignupWabaId] = useState("");
-  const [signupDisplayPhone, setSignupDisplayPhone] = useState("");
-  const metaRedirectUri = `${window.location.origin}${window.location.pathname}?zani_provider=whatsapp`;
-
-  function setNotice(message: string | null, tone: "success" | "info" | "warning" | "danger" = "info") {
-    if (!message) return;
-    showNotification({ message, tone });
-  }
-
-  useEffect(() => {
-    const applyCallback = (payload: WhatsAppEmbeddedSignupCallback) => {
-      if (payload.code) setSignupCode(payload.code);
-      if (payload.state) setSignupState(payload.state);
-      if (payload.phone_number_id) setSignupPhoneNumberId(payload.phone_number_id);
-      if (payload.waba_id) setSignupWabaId(payload.waba_id);
-      if (payload.display_phone_number) setSignupDisplayPhone(payload.display_phone_number);
-      setNotice(t("integrations.whatsapp.metaDataReturned"));
-    };
-
-    const handleMessage = (event: MessageEvent) => {
-      const payload = parseWhatsAppEmbeddedSignupMessage(event);
-      if (payload) applyCallback(payload);
-    };
-
-    window.addEventListener("message", handleMessage);
-    return () => window.removeEventListener("message", handleMessage);
-  }, [t]);
-
+  const signup = useWhatsAppSignup(businessId, channel?.id,
+    key => showNotification({ message: t(key), tone: "info" }));
   const status = useQuery({
     queryKey: ["whatsapp-status", channel?.id],
     queryFn: () => whatsappChannelApi.status(Number(channel?.id)),
-    enabled: Boolean(channel?.id),
-  });
-
-  const saveCredentials = useMutation({
-    mutationFn: () => whatsappChannelApi.configure({
-      channelId: Number(channel?.id),
-      providerMode: "meta_cloud",
-      phoneNumberId,
-      accessToken,
-      businessAccountId,
-      displayPhoneNumber,
-    }),
-    onSuccess: () => {
-      setPhoneNumberId("");
-      setAccessToken("");
-      setBusinessAccountId("");
-      setDisplayPhoneNumber("");
-      setNotice(t("integrations.whatsapp.accessSaved"));
-      queryClient.invalidateQueries({ queryKey: ["bot-channels"] });
-      queryClient.invalidateQueries({ queryKey: ["whatsapp-status", channel?.id] });
-      queryClient.invalidateQueries({ queryKey: ["business-connectors"] });
-    },
-  });
-
-  const testConnection = useMutation({
-    mutationFn: () => whatsappChannelApi.testConnection(Number(channel?.id)),
-    onSuccess: (data) => {
-      setNotice(data.ok ? t("integrations.whatsapp.connectionChecked") : merchantSafeIntegrationError(data.reason, t), data.ok ? "success" : "warning");
-      queryClient.invalidateQueries({ queryKey: ["bot-channels"] });
-      queryClient.invalidateQueries({ queryKey: ["whatsapp-status", channel?.id] });
-      queryClient.invalidateQueries({ queryKey: ["business-connectors"] });
-    },
-  });
-
-	  const startEmbeddedSignup = useMutation({
-	    mutationFn: () => businessConnectorsApi.startWhatsAppEmbeddedSignup({
-	      business: businessId,
-	      redirectUri: metaRedirectUri,
-	      botChannel: channel?.id,
-	    }),
-    onSuccess: async (data) => {
-      setSignupState(data.state);
-      setSignupRedirectUri(data.redirect_uri);
-      if (!data.app_configured || !data.config_id_configured) {
-        setNotice(t("integrations.whatsapp.metaOpenFailed"));
-        return;
-      }
-
-      try {
-        const sdk = await loadFacebookSdk({ appId: data.app_id, version: data.graph_api_version || "v25.0" });
-        sdk?.login(
-          (response) => {
-            const code = response.authResponse?.code;
-            if (!code) {
-              setNotice(t("integrations.whatsapp.metaAccessDenied"));
-              return;
-            }
-            setSignupCode(code);
-            setNotice(t("integrations.whatsapp.metaConfirmed"));
-          },
-          {
-            config_id: data.config_id,
-            response_type: "code",
-            override_default_response_type: true,
-            extras: {
-              setup: {},
-              featureType: "whatsapp_business_app_onboarding",
-              sessionInfoVersion: "3",
-            },
-          },
-        );
-      } catch {
-        setNotice(t("integrations.whatsapp.metaFallbackOpened"));
-        window.open(data.authorization_url, "zani_whatsapp_meta_signup", "width=720,height=820");
-      }
-    },
-  });
-
-	  const completeEmbeddedSignup = useMutation({
-	    mutationFn: () => businessConnectorsApi.completeWhatsAppEmbeddedSignup({
-	      business: businessId,
-	      code: signupCode,
-	      state: signupState,
-	      redirect_uri: signupRedirectUri || metaRedirectUri,
-	      phone_number_id: signupPhoneNumberId,
-      waba_id: signupWabaId,
-      display_phone_number: signupDisplayPhone,
-    }),
-    onSuccess: () => {
-      setSignupCode("");
-      setSignupPhoneNumberId("");
-      setSignupWabaId("");
-      setSignupDisplayPhone("");
-      setNotice(t("integrations.whatsapp.connectedNotice"));
-      queryClient.invalidateQueries({ queryKey: ["bot-channels"] });
-      queryClient.invalidateQueries({ queryKey: ["whatsapp-status", channel?.id] });
-      queryClient.invalidateQueries({ queryKey: ["business-connectors"] });
-    },
+    enabled: Boolean(channel?.id) && channel?.config_json?.provider_mode !== "ycloud",
   });
   const toggleChannel = useMutation({
     mutationFn: (nextStatus: BotChannel["status"]) => {
@@ -174,97 +31,37 @@ export function WhatsAppInlineSetup({
       return botChannelsApi.update({ id: channel.id, payload: { status: nextStatus } });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["bot-channels"] });
-      queryClient.invalidateQueries({ queryKey: ["business-connectors"] });
+      void queryClient.invalidateQueries({ queryKey: ["bot-channels"] });
+      void queryClient.invalidateQueries({ queryKey: ["business-connectors"] });
     },
   });
-
-  const error = saveCredentials.error || testConnection.error || startEmbeddedSignup.error || completeEmbeddedSignup.error || toggleChannel.error || status.error;
-  const credentialsConfigured = Boolean(status.data?.phone_number_id_configured && status.data?.access_token_configured);
-  const hasSignupResult = Boolean(signupCode || signupPhoneNumberId);
-  const connectionStatus = channel?.status === "active" ? t("integrations.status.connected")
-    : channel?.status === "paused" ? t("integrations.status.paused")
-    : channel?.status === "error" ? t("integrations.status.error")
-    : credentialsConfigured ? t("integrations.status.providerConfiguring")
-    : hasSignupResult ? t("integrations.whatsapp.finishConnection")
-    : t("integrations.status.notConnected");
-  const connectionTone = channel?.status === "active" ? "success" : channel?.status === "error" ? "warning"
-    : channel?.status === "paused" ? "neutral" : credentialsConfigured || hasSignupResult ? "progress" : "neutral";
-
-  if (!channel) {
-    return <ErrorState message={t("aiAgents.channelSetupUnavailable")} />;
-  }
-
-  if (preferYCloud || channel.config_json?.provider_mode === "ycloud") {
-    return <YCloudSetup channel={channel} canManage={canManage} onBack={channel.config_json?.provider_mode === "ycloud" ? undefined : () => setPreferYCloud(false)} />;
-  }
-
-  return (
-    <MessengerSetupShell
-      logo="/integrations_logos/whatsapp.png"
-      title="WhatsApp"
-      description={t("integrations.whatsapp.inlineDescription")}
-      status={connectionStatus}
-      statusTone={connectionTone}
-      error={error ? <ErrorState message={merchantSafeIntegrationError(getApiErrorMessage(error), t)} /> : null}
-      canManage={canManage}
-      inboxChannel="whatsapp"
-      channelToggleVisible={["active", "paused"].includes(channel.status)}
-      channelEnabled={channel.status === "active"}
-      channelToggleLoading={toggleChannel.isPending}
-      onToggleChannel={(checked) => toggleChannel.mutate(checked ? "active" : "paused")}
-      advancedOpen={showManualSetup}
-      onToggleAdvanced={() => setShowManualSetup((value) => !value)}
-      advanced={
-        <div className="space-y-3">
-          <div className="grid gap-3 md:grid-cols-2">
-            <Input label={t("integrations.whatsapp.phoneNumberId")} value={phoneNumberId} onChange={(event) => setPhoneNumberId(event.target.value)} placeholder={status.data?.phone_number_id_configured ? t("integrations.whatsapp.phoneNumberIdSaved") : "1234567890"} />
-            <Input label={t("integrations.card.accessKey")} value={accessToken} onChange={(event) => setAccessToken(event.target.value)} placeholder={status.data?.access_token_configured ? t("integrations.card.accessKeyReplacePlaceholder") : t("integrations.card.accessKeyPlaceholder")} type="password" autoComplete="off" />
-            <Input label={t("integrations.whatsapp.businessAccountId")} value={businessAccountId} onChange={(event) => setBusinessAccountId(event.target.value)} placeholder={t("common.optional")} />
-            <Input label={t("integrations.whatsapp.customerPhoneNumber")} value={displayPhoneNumber} onChange={(event) => setDisplayPhoneNumber(event.target.value)} placeholder="+770..." />
-          </div>
-          <div className="grid gap-3 md:grid-cols-2">
-            <Button type="button" disabled={!canManage || (!phoneNumberId.trim() && !accessToken.trim())} isLoading={saveCredentials.isPending} onClick={() => saveCredentials.mutate()}>
-              <ShieldCheck size={16} /> {credentialsConfigured ? t("integrations.whatsapp.updateAccess") : t("integrations.whatsapp.saveAccess")}
-            </Button>
-            <Button type="button" variant="secondary" disabled={!canManage || !credentialsConfigured} isLoading={testConnection.isPending} onClick={() => testConnection.mutate()}>
-              <RefreshCw size={16} /> {t("integrations.card.check")}
-            </Button>
-          </div>
-        </div>
-      }
-    >
-      {channel.status !== "active" && channel.status !== "paused" && !credentialsConfigured ? <Button variant="secondary" className="mb-4" disabled={!canManage} onClick={() => setPreferYCloud(true)}>{t("integrations.ycloud.connect")}</Button> : null}
-      {!credentialsConfigured ? (
-        <div className="space-y-4">
-          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-            <div className="min-w-0">
-              <p className="text-sm font-black text-midnight">{t("integrations.whatsapp.metaConnection")}</p>
-              <p className="mt-1 text-sm font-semibold leading-6 text-platforma-faint">
-                {t("integrations.whatsapp.metaDescription")}
-              </p>
-            </div>
-            <Button type="button" disabled={!canManage} isLoading={startEmbeddedSignup.isPending} onClick={() => startEmbeddedSignup.mutate()}>
-              <ExternalLink size={16} /> {t("integrations.whatsapp.connectWithMeta")}
-            </Button>
-          </div>
-          {hasSignupResult ? (
-            <div className="rounded-2xl bg-[var(--platforma-info-soft)] p-3">
-              <p className="text-sm font-black text-platforma-info">{t("integrations.whatsapp.metaConfirmed")}</p>
-            </div>
-          ) : null}
-          {hasSignupResult ? (
-            <Button
-              type="button"
-              disabled={!canManage || !signupCode.trim() || !signupState.trim() || !signupPhoneNumberId.trim()}
-              isLoading={completeEmbeddedSignup.isPending}
-              onClick={() => completeEmbeddedSignup.mutate()}
-            >
-              <ShieldCheck size={16} /> {t("integrations.whatsapp.completeConnection")}
-            </Button>
-          ) : null}
-        </div>
-      ) : null}
-    </MessengerSetupShell>
-  );
+  if (!channel) return <ErrorState message={t("aiAgents.channelSetupUnavailable")} />;
+  if (channel.config_json?.provider_mode === "ycloud") return <YCloudSetup channel={channel} canManage={canManage} />;
+  const connection = channelConnectionState(channel);
+  const error = signup.start.error || signup.complete.error || toggleChannel.error || status.error;
+  const busy = toggleChannel.isPending || signup.start.isPending || signup.waiting || signup.complete.isPending;
+  const configured = Boolean(status.data?.phone_number_id_configured && status.data?.access_token_configured);
+  return <MessengerSetupShell logo="/integrations_logos/whatsapp.png" title="WhatsApp" description={t("integrations.setup.whatsappDescription")}
+    status={t(connection.key)} statusTone={connection.tone} loading={status.isPending}
+    error={error ? <ErrorState message={merchantSafeIntegrationError(error, t, canManage)}
+      action={status.isError ? <Button onClick={() => void status.refetch()}>{t("common.retry")}</Button> : undefined} /> : null}
+    canManage={canManage && !busy && !status.isError} inboxChannel="whatsapp"
+    channelToggleVisible={["active", "paused"].includes(channel.status)} channelEnabled={channel.status === "active"}
+    channelToggleLoading={toggleChannel.isPending} onToggleChannel={checked => toggleChannel.mutate(checked ? "active" : "paused")}
+    instructions={!status.isError && !configured && !signup.hasResult ? <SetupInstructions
+      steps={[t("integrations.setup.externalStep1"), t("integrations.setup.whatsappStep2"), t("integrations.setup.whatsappStep3")]}
+      note={t("integrations.setup.whatsappPinNote")} /> : null}
+    actions={!status.isError && !configured ? <>
+      {signup.waiting ? <Button type="button" variant="secondary" onClick={signup.cancel}>{t("common.cancel")}</Button> : null}
+      <Button type="button" variant="primary" disabled={!canManage || busy || !signup.canStart} isLoading={signup.start.isPending || signup.complete.isPending}
+        onClick={() => { signup.complete.reset(); signup.start.mutate(); }}>{t("aiAgents.connect")}</Button>
+    </> : null}>
+    {!status.isError && !configured ? <div className="space-y-4">
+      <AccountSelectionHint kind="phone" label={t("integrations.setup.whatsappNumber")} hint={t("integrations.setup.whatsappLoginHint")} />
+      <CredentialInput label={t("integrations.whatsapp.registrationPin")} inputMode="numeric" maxLength={6}
+          value={signup.pin} onChange={event => signup.setPin(event.target.value.replace(/[^0-9]/g, ""))}
+          disabled={!canManage || busy} />
+      {signup.complete.isPending ? <p role="status" className="text-sm text-platforma-subtle">{t("integrations.whatsapp.metaDataReturned")}</p> : null}
+    </div> : null}
+  </MessengerSetupShell>;
 }

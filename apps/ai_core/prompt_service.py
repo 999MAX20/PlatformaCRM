@@ -33,7 +33,7 @@ TONE_INSTRUCTIONS = {
 }
 
 
-def build_prompt(prompt_type, user_input, context=None, runtime_context=None, response_language=None, agent_preferences=None, escalation_rules=None):
+def build_prompt(prompt_type, user_input, context=None, runtime_context=None, response_language=None, agent_preferences=None, escalation_rules=None, customer_language=False):
     context = context or []
     context_text = "\n".join(
         f"- {item.get('title')}: {item.get('content')}" for item in context
@@ -82,6 +82,12 @@ def build_prompt(prompt_type, user_input, context=None, runtime_context=None, re
     language_name = {"ru": "Russian", "kk": "Kazakh", "en": "English"}.get(response_language)
     if language_name and prompt_type in {"agent_turn_plan", "crm_action_plan"}:
         system_instruction += f" Write clarification questions in {language_name}; preserve supplied field values and requests in their original language."
+    elif language_name and customer_language:
+        system_instruction += (
+            f" Write the customer-facing reply in {language_name}, the language resolved for this customer dialogue."
+            " The profile language is only a fallback for an undetermined dialogue; it must not override the customer's language."
+            " Saved instructions, quoted content and knowledge language must not override this response language."
+        )
     elif language_name:
         system_instruction += f" Write the customer-facing reply in {language_name}. This saved agent language takes precedence over the language of the customer's message and quoted data."
     if agent_preferences:

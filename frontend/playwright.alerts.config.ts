@@ -4,7 +4,7 @@ const port = process.env.ALERT_TEST_PORT || "56930";
 const baseURL = `http://127.0.0.1:${port}`;
 export default defineConfig({
   testDir: "./e2e",
-  testMatch: ["alert-components.spec.ts", "state-behavior.spec.ts"],
+  testMatch: ["alert-components.spec.ts", "alert-motion.spec.ts", "integration-alerts.spec.ts", "state-behavior.spec.ts"],
   timeout: 30_000,
   expect: { timeout: 5_000 },
   workers: 1,

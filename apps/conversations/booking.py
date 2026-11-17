@@ -182,7 +182,8 @@ def create_appointment_from_conversation(*, conversation: BotConversation, servi
 def format_booking_offer(conversation, slots):
     """Only these server-rendered, unambiguous options can authorize a booking."""
     zone = business_zone(conversation.business)
-    language = conversation.bot.default_language
+    from apps.bots.customer_language import customer_reply_language
+    language = customer_reply_language(conversation)
     title = {"ru": "Для записи выберите номер варианта:", "kk": "Жазылу үшін нұсқа нөмірін таңдаңыз:", "en": "To book, choose an option number:"}.get(language, "To book, choose an option number:")
     lines = [title]
     for index, slot in enumerate(slots, 1):
@@ -244,7 +245,8 @@ def _commit_selected_slot(*, conversation, message, slot):
     conversation.metadata_json = metadata
     _save_booking_meta(conversation, status="booked", slot=slot, appointment=appointment)
     local = timezone.localtime(appointment.start_at, business_zone(conversation.business))
-    label = {"ru": "Запись создана", "kk": "Жазылу жасалды", "en": "Appointment booked"}.get(conversation.bot.default_language, "Appointment booked")
+    from apps.bots.customer_language import customer_reply_language
+    label = {"ru": "Запись создана", "kk": "Жазылу жасалды", "en": "Appointment booked"}[customer_reply_language(conversation)]
     location = f" · {appointment.branch_name} · {appointment.branch_address}" if appointment.branch_id else ""
     confirmation = send_outbound_message(conversation, f"{label}: {slot['service_name']} · {slot['resource_name']} · {local:%d.%m.%Y %H:%M}{location}.", user=None,
         sender_type=BotMessage.SenderTypes.SYSTEM, idempotency_key=f"automatic-booking:{appointment.id}")

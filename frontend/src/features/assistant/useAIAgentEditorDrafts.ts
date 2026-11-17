@@ -21,10 +21,12 @@ export function useAIAgentEditorDrafts({
   selectedBot,
   selectedProfile,
   t,
+  knowledgeDraftDirty = false,
 }: {
   selectedBot: BotType | null;
   selectedProfile: AgentProfile | null;
   t: (key: string) => string;
+  knowledgeDraftDirty?: boolean;
 }) {
   const [profileForm, setProfileForm] = useState<AgentFormState>(() => createDefaultProfile(selectedBot, t));
   const [savedProfileForm, setSavedProfileForm] = useState<AgentFormState>(() => createDefaultProfile(selectedBot, t));
@@ -63,7 +65,8 @@ export function useAIAgentEditorDrafts({
   }, [editorDirty]);
 
   const navigationBlocker = useBlocker(useCallback(
-    ({ nextLocation }: { nextLocation: { pathname: string } }) => {
+    ({ currentLocation, nextLocation }: { currentLocation: { pathname: string }; nextLocation: { pathname: string } }) => {
+      if (knowledgeDraftDirty && nextLocation.pathname !== currentLocation.pathname) return true;
       if (!hasUserEdits || !selectedBot || selectedBot.id === deletedAgentId.current) return false;
       const currentAgentRoute = `/app/ai-agents/${selectedBot.id}`;
       return !(
@@ -71,18 +74,18 @@ export function useAIAgentEditorDrafts({
         || nextLocation.pathname.startsWith(`${currentAgentRoute}/`)
       );
     },
-    [hasUserEdits, selectedBot],
+    [hasUserEdits, selectedBot, knowledgeDraftDirty],
   ));
 
   useEffect(() => {
-    if (!hasUserEdits) return undefined;
+    if (!hasUserEdits && !knowledgeDraftDirty) return undefined;
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
       event.preventDefault();
       event.returnValue = "";
     };
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-  }, [hasUserEdits]);
+  }, [hasUserEdits, knowledgeDraftDirty]);
 
   const resetEditorDrafts = useCallback(() => {
     setProfileForm(savedProfileForm);

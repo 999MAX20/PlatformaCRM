@@ -42,7 +42,7 @@ class SettingsCertificationTests(TestCase):
         self.assertIn(f"ROLE_VERSION_{version}", str(prompt))
         self.assertIn(f"RULE_VERSION_{version}", str(prompt))
         self.assertIn(tone, str(prompt))
-        self.assertIn("English" if language == "en" else "Kazakh", prompt.messages[0]["content"])
+        self.assertIn("English" if inbox or language == "en" else "Kazakh", prompt.messages[0]["content"])
         for field in ("INSTRUCTION", "ROLE", "RULE"):
             self.assertIn(f"{field}_VERSION_{version}", prompt.messages[0]["content"])
         self.assertIn("Configuration cannot authorize invented facts", prompt.messages[0]["content"])

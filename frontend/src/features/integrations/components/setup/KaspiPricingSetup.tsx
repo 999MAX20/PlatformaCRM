@@ -4,7 +4,6 @@ import { TrendingDown } from "lucide-react";
 import { Link } from "react-router";
 
 import { kaspiPricingApi, type KaspiPriceChangeLog, type KaspiPricingRule } from "../../../../api/pricing";
-import { getApiErrorMessage } from "../../../../api/client";
 import { Button } from "../../../../components/ui/Button";
 import { useNotification } from "../../../../components/notifications/NotificationProvider";
 import { ErrorState } from "../../../../components/ui/StateViews";
@@ -86,7 +85,7 @@ export function KaspiPricingInlineSetup({ businessId, canManage }: { businessId:
 
   return (
     <div className="w-full space-y-4 rounded-card border border-platforma-border bg-surface-muted p-4">
-      {error ? <ErrorState message={merchantSafeIntegrationError(getApiErrorMessage(error), t)} /> : null}
+      {error ? <ErrorState message={merchantSafeIntegrationError(error, t, canManage)} /> : null}
 
       <div className="rounded-card border border-platforma-warning/20 bg-[var(--platforma-warning-soft)] p-4">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
@@ -158,7 +157,7 @@ export function KaspiPricingInlineSetup({ businessId, canManage }: { businessId:
             <p className="mt-1 text-sm font-semibold text-platforma-subtle">
               {Number(latestLog.old_price).toLocaleString("ru-KZ")} ₸ → {Number(latestLog.new_price).toLocaleString("ru-KZ")} ₸ · {readableStatus(latestLog.status, t)}
             </p>
-            {latestLog.error ? <p className="mt-1 text-xs font-semibold text-platforma-danger">{merchantSafeIntegrationError(latestLog.error, t)}</p> : null}
+            {latestLog.error ? <p className="mt-1 text-xs font-semibold text-platforma-danger">{merchantSafeIntegrationError(latestLog.error, t, canManage)}</p> : null}
           </div>
         ) : (
           <p className="mt-3 rounded-2xl bg-surface-muted px-3 py-2 text-sm font-semibold text-platforma-faint">{t("integrations.kaspiPricing.noChanges")}</p>

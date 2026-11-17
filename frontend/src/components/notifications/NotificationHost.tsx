@@ -1,5 +1,7 @@
 import { createContext, useContext, useLayoutEffect, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
+import { NotificationCard } from "./NotificationCard";
+import { createNotificationLayout, NotificationLayoutContext } from "./notificationLayout";
 
 type Group = "connection" | "session" | "undo" | "notifications" | "messages";
 const HostContext = createContext<Record<Group, HTMLElement> | null>(null);
@@ -13,27 +15,32 @@ export function NotificationHost({ children }: { children: ReactNode }) {
   const [unavailable, setUnavailable] = useState(() => !navigator.onLine);
   const [host] = useState(() => {
     const root = document.createElement("div");
-    root.className = "platforma-notification-host";
-    root.dataset.testid = "notification-host";
+    root.className = "platforma-notification-viewport";
+    const stack = document.createElement("div");
+    stack.className = "platforma-notification-host";
+    stack.dataset.testid = "notification-host";
+    root.append(stack);
     const groups = {} as Record<Group, HTMLElement>;
     for (const group of ["connection", "session", "undo", "notifications", "messages"] as const) {
       const node = document.createElement("div");
       node.className = "platforma-notification-group";
       node.dataset.notificationGroup = group;
-      root.append(node);
+      stack.append(node);
       groups[group] = node;
     }
-    return { root, groups };
+    return { root, groups, layout: createNotificationLayout(stack) };
   });
 
   useLayoutEffect(() => {
+    const stopLayout = host.layout.start();
     let navigation: HTMLElement | null = null;
     const resize = new ResizeObserver(position);
     function position() {
       const dialogs = Array.from(document.querySelectorAll<HTMLElement>('[role="dialog"][aria-modal="true"]'));
-      const parent = dialogs.filter(node => node.getClientRects().length).at(-1) || document.body;
+      const parent = dialogs.filter(node => node.getClientRects().length && node.dataset.testid !== "notification-details").at(-1) || document.body;
       // Move the stable portal container, preserving mounted actions and timers.
       if (host.root.parentElement !== parent) parent.append(host.root);
+      host.root.inert = dialogs.some(node => node.dataset.testid === "notification-details" && node.getClientRects().length);
       const nav = document.querySelector<HTMLElement>('[data-testid="bottom-mobile-menu-trigger"]')?.closest("nav") || null;
       if (nav !== navigation) {
         if (navigation) resize.unobserve(navigation);
@@ -50,12 +57,13 @@ export function NotificationHost({ children }: { children: ReactNode }) {
     return () => {
       observer.disconnect();
       resize.disconnect();
+      stopLayout();
       window.removeEventListener("resize", position);
       host.root.remove();
     };
   }, [host]);
 
-  return <HostContext.Provider value={host.groups}><ConnectionNoticeContext.Provider value={{ unavailable, setUnavailable }}>{children}</ConnectionNoticeContext.Provider></HostContext.Provider>;
+  return <HostContext.Provider value={host.groups}><NotificationLayoutContext.Provider value={host.layout}><ConnectionNoticeContext.Provider value={{ unavailable, setUnavailable }}>{children}</ConnectionNoticeContext.Provider></NotificationLayoutContext.Provider></HostContext.Provider>;
 }
 
 export function NotificationPortal({ group, children }: { group: Group; children: ReactNode }) {
@@ -63,18 +71,16 @@ export function NotificationPortal({ group, children }: { group: Group; children
   return host ? createPortal(children, host[group]) : <>{children}</>;
 }
 
-export function NotificationPresence({ children }: { children: ReactNode }) {
+export function NotificationPresence({ children, onReadyChange }: { children: ReactNode; onReadyChange?: (ready: boolean) => void }) {
   const [retained, setRetained] = useState(children);
   useLayoutEffect(() => {
     if (children) {
       setRetained(children);
       return;
     }
-    const timer = window.setTimeout(() => setRetained(null), window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 200);
-    return () => window.clearTimeout(timer);
   }, [children]);
   if (!children && !retained) return null;
-  return <div className="platforma-notification-card" data-leaving={!children || undefined} inert={!children}>{children || retained}</div>;
+  return <NotificationCard leaving={!children} onReadyChange={onReadyChange} onExited={() => setRetained(null)}>{children || retained}</NotificationCard>;
 }
 
 export function restoreNoticeFocus(card: HTMLElement | null, opener: HTMLElement | null) {

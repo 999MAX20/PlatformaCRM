@@ -323,6 +323,8 @@ export const core: Record<string, string> = {
   "common.edit": "Edit",
   "files.scan.pending": "Awaiting scan",
   "files.scan.scanning": "Scanning",
+  "notifications.showDetails": "View details",
+  "notifications.detailsTitle": "Notification details",
   "files.scan.clean": "Security check passed",
   "files.scan.infected": "File blocked by security check",
   "files.scan.error": "Scan unavailable. Will retry automatically",

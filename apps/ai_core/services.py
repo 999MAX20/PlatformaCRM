@@ -60,10 +60,13 @@ def run_ai_request(
     from apps.ai_core.models import AgentProfile
     from apps.ai_core.runtime_policy import generation_policy, policy_fingerprint
     profile = AgentProfile.objects.filter(business=business, bot=knowledge_agent, is_active=True).order_by("-updated_at", "-id").first() if knowledge_agent else None
+    customer_language = response_language if source == AIRequestLog.Sources.BOT else None
     policy = generation_policy(prompt_type=prompt_type, agent=knowledge_agent, profile=profile,
                                configuration=scenario_config, model=model, model_tier=model_tier,
                                temperature=temperature, language=response_language)
     model, model_tier, temperature, response_language = policy.model, policy.model_tier, policy.temperature, policy.language
+    if customer_language:
+        response_language = customer_language
     policy_version = policy_fingerprint(knowledge_agent, profile) if knowledge_agent else None
     context = get_business_knowledge_context(business, query=inbound[-1] if inbound else user_input, agent=knowledge_agent)
     if scenario_config and "knowledge" not in scenario_config["sources"]:
@@ -85,7 +88,8 @@ def run_ai_request(
         elif profile is not None:
             escalation_rules = profile.escalation_rules_json.get("items", [])
     prompt = build_prompt(prompt_type=prompt_type, user_input=user_input, context=context, runtime_context=runtime_context,
-                          response_language=response_language, agent_preferences=agent_preferences, escalation_rules=escalation_rules)
+                          response_language=response_language, agent_preferences=agent_preferences, escalation_rules=escalation_rules,
+                          customer_language=source == AIRequestLog.Sources.BOT)
     if grounded:
         prompt.messages[0]["content"] += ANSWER_CONTRACT
     if response_contract:
@@ -106,7 +110,7 @@ def run_ai_request(
     elif language_name:
         prompt.messages[0]["content"] += (
             f" Output language requirement: write all human-readable response text, including the JSON answer field, in {language_name}."
-            " Keep schema keys, source IDs, entity names and codes unchanged. The question's language does not change this requirement."
+            " Keep schema keys, source IDs, entity names and codes unchanged."
         )
     no_sources = grounded and not sources
     if no_sources:

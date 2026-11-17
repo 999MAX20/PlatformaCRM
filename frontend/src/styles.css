@@ -549,30 +549,36 @@
 }
 .platforma-status-notice .platforma-notice-guidance { color: inherit; background: transparent; }
 .platforma-status-notice .platforma-retry-error { color: inherit; }
-.platforma-notification-host {
+.platforma-notification-viewport {
   --notification-gap: 24px;
   --notification-bottom: max(var(--notification-gap), env(safe-area-inset-bottom), calc(var(--notification-nav-clearance, 0px) + var(--notification-gap)));
   position: fixed;
+  inset: 0;
+  z-index: var(--platforma-z-toast);
+  overflow: clip;
+  pointer-events: none;
+}
+.platforma-notification-host {
+  position: absolute;
   right: var(--notification-gap);
   bottom: var(--notification-bottom);
-  z-index: var(--platforma-z-toast);
-  width: min(380px, calc(100vw - var(--notification-gap) * 2));
-  max-height: calc(100dvh - var(--notification-bottom) - var(--notification-gap));
-  display: flex;
-  flex-direction: column-reverse;
-  gap: 8px;
-  overflow-y: auto;
-  overscroll-behavior: contain;
+  width: min(380px, calc(100% - var(--notification-gap) * 2));
+  height: calc(100% - var(--notification-bottom) - var(--notification-gap));
   pointer-events: none;
-  scrollbar-width: thin;
 }
 .platforma-notification-group { display: contents; }
-.platforma-notification-card { flex: 0 0 auto; min-width: 0; pointer-events: auto; animation: platforma-notice-enter 200ms ease-out both; }
+.platforma-notification-slot { position: absolute; bottom: 0; width: 100%; transform: translateY(calc(-1 * var(--notice-offset))); transition: transform 200ms ease-out; }
+.platforma-notification-slot[data-queued] { visibility: hidden; pointer-events: none; transition: none; }
+.platforma-notification-slot[data-entering] { transition: none; }
+.platforma-notification-card { min-width: 0; pointer-events: auto; }
+.platforma-notification-card[data-visible] { animation: platforma-notice-enter 240ms ease-out both; }
 .platforma-notification-card[data-leaving] { animation: platforma-notice-exit 200ms ease-in both; pointer-events: none; }
-@keyframes platforma-notice-enter { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: translateX(0); } }
-@keyframes platforma-notice-exit { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(24px); } }
-@media (max-width: 760px) { .platforma-notification-host { --notification-gap: 16px; } }
-@media (prefers-reduced-motion: reduce) { .platforma-notification-card, .platforma-notification-card[data-leaving] { animation: none; } }
+.platforma-notification-preview { max-height: var(--notice-content-height, 240px); overflow: hidden; border-radius: 12px; }
+.platforma-notification-details { display: block; width: 100%; min-height: 40px; margin-top: 4px; padding: 8px 16px; border-radius: 8px; background: var(--platforma-bg); color: var(--platforma-text); pointer-events: auto; }
+@keyframes platforma-notice-enter { from { transform: translateX(calc(100% + var(--notification-gap, 24px) + 24px)); } to { transform: translateX(0); } }
+@keyframes platforma-notice-exit { from { transform: translateX(0); } to { transform: translateX(calc(100% + var(--notification-gap, 24px) + 24px)); } }
+@media (max-width: 760px) { .platforma-notification-viewport { --notification-gap: 16px; } }
+@media (prefers-reduced-motion: reduce) { .platforma-notification-card, .platforma-notification-card[data-visible], .platforma-notification-card[data-leaving] { animation: none; } .platforma-notification-slot { transition: none; } }
 @media (forced-colors: active) {
   .platforma-status-notice { background: Canvas; color: CanvasText; border-color: CanvasText; box-shadow: none; }
   .platforma-status-notice button, .platforma-status-notice .platforma-notice-close { border: 1px solid ButtonText; color: ButtonText; }

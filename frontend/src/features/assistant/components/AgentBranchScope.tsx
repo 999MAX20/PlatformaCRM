@@ -4,6 +4,7 @@ import { branchesApi } from "../../../api/branches";
 import { ErrorState, LoadingState } from "../../../components/ui/StateViews";
 import { Button } from "../../../components/ui/Button";
 import { Select } from "../../../components/ui/Select";
+import { StatusNotice } from "../../../components/ui/StatusNotice";
 import { useActiveBusiness } from "../../../hooks/useBusiness";
 import { useI18n } from "../../../lib/i18n";
 import type { BotDraftState } from "../aiAgentsTypes";
@@ -25,6 +26,7 @@ export function AgentBranchScope({ draft, setDraft, disabled }: { draft: BotDraf
         if (nextAll !== all) update(nextAll ? null : query.data.filter(branch => branch.can_book).map(branch => branch.id));
       }}
       options={[{ value: "all", label: t("branches.allFuture") }, { value: "selected", label: t("aiAgents.selectedBranches") }]} />
+    {!all && ids.length === 0 && <StatusNotice tone="warning" title={t("aiAgents.noBranchesSelected")} />}
     {!all && <div className="grid gap-1">{query.data.map(branch => <label key={branch.id} className="flex min-h-11 items-center gap-2 rounded-control px-2 text-sm hover:bg-surface-hover sm:min-h-9">
       <input type="checkbox" checked={ids.includes(branch.id)} onChange={event => update(event.target.checked ? [...ids, branch.id] : ids.filter(id => id !== branch.id))} />
       <span className="min-w-0 break-words">{branch.name}{branch.address ? <span className="text-platforma-subtle"> · {branch.address}</span> : null}</span>

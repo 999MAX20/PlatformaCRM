@@ -34,6 +34,7 @@ class ConversationQualification:
     reason: str = ""
     requires_human_review: bool = False
     request_kind: str = "business"
+    response_language: str = ""
     is_fallback: bool = False
 
     def to_dict(self):
@@ -45,6 +46,7 @@ def qualification_from_payload(payload: dict[str, Any]) -> ConversationQualifica
 
 
 def qualify_conversation(*, conversation: BotConversation, user=None, allow_mock=True, message_context=None) -> tuple[ConversationQualification, AIRequestLog | None]:
+    from apps.bots.customer_language import customer_reply_language, remember_customer_language
     memory = {}
     if message_context is None:
         from apps.ai_core.conversation_memory import inbox_memory
@@ -60,8 +62,9 @@ def qualify_conversation(*, conversation: BotConversation, user=None, allow_mock
         "Схема JSON: {"
         '"intent":"appointment_request|price_question|purchase_interest|support|complaint|spam|other",'
         '"request_kind":"business|social|off_topic|private_record|security|uncertain",'
+        '"response_language":"ru|kk|en",'
         '"confidence":0.0,'
-        '"summary":"short russian summary",'
+        '"summary":"short summary",'
         '"client_name":"",'
         '"phone":"",'
         '"service_name":"",'
@@ -73,7 +76,7 @@ def qualify_conversation(*, conversation: BotConversation, user=None, allow_mock
         '"should_create_deal":false,'
         '"should_create_task":true,'
         '"should_create_appointment":false,'
-        '"next_action":"short russian action",'
+        '"next_action":"short action",'
         '"reason":"why",'
         '"requires_human_review":false'
         "}. "
@@ -92,6 +95,12 @@ def qualify_conversation(*, conversation: BotConversation, user=None, allow_mock
         "Недостающие дата, время или телефон при записи требуют уточнения, но сами по себе не требуют human review."
     )
     user_input += (
+        " Determine response_language independently from the summary language: ru, kk or en from the latest customer's own message."
+        " An explicit request to reply in a language wins. For numbers, phone numbers, names, emoji or short acknowledgements,"
+        " retain the previous customer dialogue language. For mixed text, use the dominant language of the request."
+        " Ignore the language of quoted documents, product names, saved settings and agent replies."
+        " Kazakh written without Kazakh-specific letters or in Latin transliteration is still kk."
+        " If the language is undetermined or unsupported, retain the supplied response language."
         " Classify request_kind from the LATEST customer message, using prior messages only to resolve context."
         " business: company/services/products/new booking or normal follow-up; social: greeting or thanks only;"
         " Public company information is business even without sales or booking intent: address, opening hours,"
@@ -126,6 +135,7 @@ def qualify_conversation(*, conversation: BotConversation, user=None, allow_mock
         },
         allow_mock=allow_mock,
         model_tier="smart",
+        response_language=customer_reply_language(conversation, messages=message_context),
     )
     qualification = _parse_qualification(result.output_text)
     if qualification is None:
@@ -134,6 +144,7 @@ def qualify_conversation(*, conversation: BotConversation, user=None, allow_mock
         qualification = _fallback_qualification(conversation=conversation, messages=message_context, services=services)
         qualification.is_fallback = True
         qualification.reason = f"Fallback qualification used because AI output was not valid JSON. Provider={result.provider}."
+    qualification.response_language = remember_customer_language(conversation, message_context, qualification.response_language)
     return qualification, log
 
 
@@ -178,6 +189,7 @@ def _qualification_from_payload(payload: dict[str, Any]) -> ConversationQualific
     except (TypeError, ValueError):
         estimated_value = None
     return ConversationQualification(
+        response_language=payload.get("response_language") if isinstance(payload.get("response_language"), str) and payload["response_language"] in {"ru", "kk", "en"} else "",
         intent=intent[:64],
         confidence=confidence,
         summary=str(payload.get("summary") or "")[:500],

@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ExternalLink, RefreshCw, ShieldCheck } from "lucide-react";
+import { RefreshCw, ShieldCheck } from "lucide-react";
 
 import { botChannelsApi, instagramChannelApi } from "../../../../api/bots";
 import { businessConnectorsApi } from "../../../../api/connectors";
-import { getApiErrorMessage } from "../../../../api/client";
 import { Button } from "../../../../components/ui/Button";
 import { ErrorState } from "../../../../components/ui/StateViews";
 import { Input } from "../../../../components/ui/Input";
@@ -12,7 +11,9 @@ import { useNotification } from "../../../../components/notifications/Notificati
 import { useI18n } from "../../../../lib/i18n";
 import type { BotChannel, Id } from "../../../../types";
 import { merchantSafeIntegrationError } from "../../utils";
-import { MessengerSetupShell } from "./IntegrationSetupUi";
+import { AccountSelectionHint, MessengerSetupShell, SetupInstructions } from "./IntegrationSetupUi";
+import { CredentialInput } from "./CredentialInput";
+import { channelConnectionState } from "../../channelConnectionState";
 import { instagramOAuthCallbackType, type InstagramOAuthCallback } from "./metaCallbacks";
 
 export function InstagramInlineSetup({
@@ -119,7 +120,7 @@ export function InstagramInlineSetup({
   const testConnection = useMutation({
     mutationFn: () => instagramChannelApi.testConnection(Number(channel?.id)),
     onSuccess: (data) => {
-      setNotice(data.ok ? t("integrations.instagram.connectionChecked") : merchantSafeIntegrationError(data.reason, t), data.ok ? "success" : "warning");
+      setNotice(data.ok ? t("integrations.instagram.connectionChecked") : merchantSafeIntegrationError(data.reason, t, canManage), data.ok ? "success" : "warning");
       queryClient.invalidateQueries({ queryKey: ["bot-channels"] });
       queryClient.invalidateQueries({ queryKey: ["instagram-status", channel?.id] });
       queryClient.invalidateQueries({ queryKey: ["business-connectors"] });
@@ -139,14 +140,8 @@ export function InstagramInlineSetup({
   const error = saveCredentials.error || testConnection.error || startOAuth.error || completeOAuth.error || toggleChannel.error || status.error;
   const credentialsConfigured = Boolean(status.data?.instagram_user_id_configured && status.data?.access_token_configured);
   const hasOAuthResult = Boolean(oauthCode);
-  const connectionStatus = channel?.status === "active" ? t("integrations.status.connected")
-    : channel?.status === "paused" ? t("integrations.status.paused")
-    : channel?.status === "error" ? t("integrations.status.error")
-    : credentialsConfigured ? t("integrations.status.providerConfiguring")
-    : hasOAuthResult ? t("integrations.instagram.finishConnection")
-    : t("integrations.status.notConnected");
-  const connectionTone = channel?.status === "active" ? "success" : channel?.status === "error" ? "warning"
-    : channel?.status === "paused" ? "neutral" : credentialsConfigured || hasOAuthResult ? "progress" : "neutral";
+  const connection = channelConnectionState(channel);
+  const busy = saveCredentials.isPending || testConnection.isPending || startOAuth.isPending || completeOAuth.isPending || toggleChannel.isPending;
 
   if (!channel) {
     return <ErrorState message={t("aiAgents.channelSetupUnavailable")} />;
@@ -156,23 +151,35 @@ export function InstagramInlineSetup({
     <MessengerSetupShell
       logo="/integrations_logos/instagram.png"
       title="Instagram"
-      description={t("integrations.instagram.inlineDescription")}
-      status={connectionStatus}
-      statusTone={connectionTone}
-      error={error ? <ErrorState message={merchantSafeIntegrationError(getApiErrorMessage(error), t)} /> : null}
-      canManage={canManage}
+      description={t("integrations.setup.instagramDescription")}
+      status={t(connection.key)}
+      statusTone={connection.tone}
+      loading={status.isPending}
+      error={error ? <ErrorState message={merchantSafeIntegrationError(error, t, canManage)}
+        action={status.isError ? <Button onClick={() => void status.refetch()}>{t("common.retry")}</Button> : undefined} /> : null}
+      canManage={canManage && !busy && !status.isError}
       inboxChannel="instagram"
       channelToggleVisible={["active", "paused"].includes(channel.status)}
       channelEnabled={channel.status === "active"}
       channelToggleLoading={toggleChannel.isPending}
       onToggleChannel={(checked) => toggleChannel.mutate(checked ? "active" : "paused")}
       advancedOpen={showManualSetup}
+      advancedLabel={t("integrations.setup.manualSetup")}
       onToggleAdvanced={() => setShowManualSetup((value) => !value)}
+      instructions={!status.isError && !credentialsConfigured && !hasOAuthResult ? <SetupInstructions
+        steps={[t("integrations.setup.externalStep1"), t("integrations.setup.instagramStep2"), t("integrations.setup.instagramStep3")]} /> : null}
+      actions={!status.isError && !credentialsConfigured ? hasOAuthResult ? (
+        <Button type="button" disabled={!canManage || busy || !oauthCode.trim() || !oauthState.trim()} isLoading={completeOAuth.isPending} onClick={() => completeOAuth.mutate()}>
+          {t("integrations.instagram.completeConnection")}
+        </Button>
+      ) : <Button type="button" disabled={!canManage || busy} isLoading={startOAuth.isPending} onClick={() => startOAuth.mutate()}>
+        {t("aiAgents.connect")}
+      </Button> : null}
       advanced={
         <div className="space-y-3">
           <div className="grid gap-3 md:grid-cols-2">
             <Input label={t("integrations.instagram.accountId")} value={instagramUserId} onChange={(event) => setInstagramUserId(event.target.value)} placeholder={status.data?.instagram_user_id_configured ? t("integrations.instagram.idSaved") : "1784..."} />
-            <Input label={t("integrations.card.accessKey")} value={accessToken} onChange={(event) => setAccessToken(event.target.value)} placeholder={status.data?.access_token_configured ? t("integrations.card.accessKeyReplacePlaceholder") : t("integrations.card.accessKeyPlaceholder")} type="password" autoComplete="off" />
+            <CredentialInput label={t("integrations.card.accessKey")} value={accessToken} onChange={(event) => setAccessToken(event.target.value)} placeholder={status.data?.access_token_configured ? t("integrations.card.accessKeyReplacePlaceholder") : t("integrations.card.accessKeyPlaceholder")} disabled={!canManage || saveCredentials.isPending} />
             <Input label={t("integrations.instagram.facebookPageId")} value={pageId} onChange={(event) => setPageId(event.target.value)} placeholder={t("common.optional")} />
             <Input label={t("integrations.instagram.username")} value={username} onChange={(event) => setUsername(event.target.value)} placeholder="@account" />
           </div>
@@ -187,25 +194,10 @@ export function InstagramInlineSetup({
         </div>
       }
     >
-      {!credentialsConfigured ? (
+      {!status.isError && !credentialsConfigured ? (
         <div className="space-y-4">
-          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-            <div className="min-w-0">
-              <p className="text-sm font-black text-midnight">{t("integrations.instagram.metaConnection")}</p>
-              <p className="mt-1 text-sm font-semibold leading-6 text-platforma-faint">
-                {t("integrations.instagram.metaDescription")}
-              </p>
-            </div>
-            <Button type="button" disabled={!canManage} isLoading={startOAuth.isPending} onClick={() => startOAuth.mutate()}>
-              <ExternalLink size={16} /> {t("integrations.instagram.connectWithMeta")}
-            </Button>
-          </div>
-          {hasOAuthResult ? <div className="rounded-2xl bg-[var(--platforma-info-soft)] p-3 text-sm font-black text-platforma-info">{t("integrations.instagram.metaConfirmed")}</div> : null}
-          {hasOAuthResult ? (
-            <Button type="button" variant="secondary" disabled={!canManage || !oauthCode.trim() || !oauthState.trim()} isLoading={completeOAuth.isPending} onClick={() => completeOAuth.mutate()}>
-              <ShieldCheck size={16} /> {t("integrations.instagram.completeConnection")}
-            </Button>
-          ) : null}
+          {hasOAuthResult ? <p role="status" className="text-sm leading-6 text-platforma-subtle">{t("integrations.instagram.metaConfirmed")}</p> :
+            <AccountSelectionHint kind="account" label={t("integrations.setup.instagramAccount")} hint={t("integrations.setup.professionalAccount")} />}
         </div>
       ) : null}
     </MessengerSetupShell>

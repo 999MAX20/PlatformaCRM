@@ -51,6 +51,9 @@ export function AIAgentsWorkspace({
   navigation,
   isSaving,
   knowledgeItems,
+  knowledgeDraftDirty,
+  onKnowledgeDirtyChange,
+  onDiscardKnowledgeNavigation,
   mutationError,
   navigationBlocked,
   newAgentName,
@@ -98,6 +101,9 @@ export function AIAgentsWorkspace({
   navigation: ReactNode;
   isSaving: boolean;
   knowledgeItems: BusinessKnowledgeItem[];
+  knowledgeDraftDirty: boolean;
+  onKnowledgeDirtyChange: (dirty: boolean) => void;
+  onDiscardKnowledgeNavigation: () => void;
   mutationError: unknown;
   navigationBlocked: boolean;
   newAgentName: string;
@@ -232,7 +238,10 @@ export function AIAgentsWorkspace({
                 toggleChannel={toggleChannel}
               />
             ) : activeSection === "knowledge" ? (
-              <>{selectedBot.scenario === "crm" && <CRMAgentSettings section="sources" form={profileForm} setForm={setProfileForm} canManage={canManage} />}<KnowledgeSection key={selectedBot.id} agentId={selectedBot.id} businessId={businessId} items={knowledgeItems} canManage={canManage} customerAgent={selectedBot.scenario === "inbox"} /></>
+              <>{selectedBot.scenario === "crm" && <CRMAgentSettings section="sources" form={profileForm} setForm={setProfileForm} canManage={canManage} />}<KnowledgeSection key={selectedBot.id} agentId={selectedBot.id} businessId={businessId} items={knowledgeItems} canManage={canManage} customerAgent={selectedBot.scenario === "inbox"}
+                sourceEnabled={selectedBot.scenario !== "crm" || !Array.isArray(selectedProfile?.rules_json?.sources) || selectedProfile.rules_json.sources.includes("knowledge")}
+                onDirtyChange={onKnowledgeDirtyChange} navigationBlocked={navigationBlocked && knowledgeDraftDirty}
+                onCancelNavigation={onCloseNavigationGuard} onDiscardNavigation={onDiscardKnowledgeNavigation} /></>
             ) : activeSection === "work" || activeSection === "analytics" ? (
               <CRMAgentRuntime key={`${selectedBot.id}-${activeSection}`} bot={selectedBot} section={activeSection} dirty={dirty} />
             ) : activeSection === "actions" && selectedBot.scenario === "crm" ? (
@@ -277,7 +286,7 @@ export function AIAgentsWorkspace({
         isCreating={createAgentPending}
       />
       <UnsavedAgentChangesModal
-        open={navigationBlocked}
+        open={navigationBlocked && !knowledgeDraftDirty}
         isSaving={isSaving}
         onClose={onCloseNavigationGuard}
         onDiscard={onDiscardAndContinue}

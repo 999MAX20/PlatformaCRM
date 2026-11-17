@@ -21,6 +21,7 @@ def preview_agent_dialogue(*, bot, user, messages):
     # Deliberately unsaved. AI logs/usage are the only persisted preview effects.
     conversation = BotConversation(business=bot.business, bot=bot, channel="website")
     context = [{"id": None, **message} for message in messages]
+    conversation._preview_messages = context
     policy = safety_policy(bot)
     latest = context[-1]["text"]
     reason = "message_too_long" if len(latest) > policy["max_message_chars"] else obvious_risk(latest)

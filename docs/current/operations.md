@@ -166,8 +166,14 @@ production rollout, broker/antivirus и полный перенос этим н�
 
 STT использует серверные OPENROUTER_API_KEY/BASE_URL и отдельные
 VOICE_INPUT_ENABLED (default true), VOICE_TRANSCRIPTION_MODEL
-(default openai/whisper-large-v3-turbo), VOICE_HTTP_TIMEOUT_SECONDS (default60).
-Маршрут `/audio/transcriptions` получает `zdr:true`/`data_collection:deny`;
+(default elevenlabs/scribe-v2), VOICE_HTTP_TIMEOUT_SECONDS (default60).
+Default и явные специализированные STT-model overrides используют `/audio/transcriptions`.
+Непринятый кандидат `google/gemini-4-carbon` получает WAV и статическую инструкцию
+через `/chat/completions`, без CRM-контекста/tools, с reasoning=medium и ограничением4096
+токенов. После провала исходного low-профиля проверяется статическая инструкция
+на казахском языке; основной default сохранён до завершения точной проверки.
+[Результаты и граница](../testing/evidence/voice-accuracy-20261111.md).
+Оба маршрута получают `zdr:true`/`data_collection:deny`;
 несовместимость обрабатывается отказом без ослабления политики и без автоматического
 платного повтора. Ключи не передаются браузеру. Audio upload до2MB проходит только
 через ограниченный memory handler; API возвращает no-store. Для независимых
@@ -184,7 +190,9 @@ VOICE_INPUT_ENABLED (default true), VOICE_TRANSCRIPTION_MODEL
 broker/worker. [Реальная проверка и граница](../testing/evidence/voice-live-20261105.md).
 [Контракт и остаток](voice-assistant.md).
 
-После STT текст проходит GPT-4o mini для пунктуации с теми же ZDR/no-data-collection
+Текущая голосовая панель отправляет `format_text=false`, без второго запроса
+для пунктуации. Старые API callers с `format_text=true` сохраняют прежний путь:
+после STT текст проходит GPT-4o mini для пунктуации с теми же ZDR/no-data-collection
 ограничениями. Этот дополнительный запрос увеличивает время обработки; при ошибке
 возвращается исходная расшифровка. Неотправленный текст не записывается этим шагом
 в историю/AIRequestLog; отправленные разговорные ходы используют обычный учёт
@@ -830,6 +838,7 @@ Resend был подключён на сервере06.11 с подтвержд�
 конфигурация не подтверждена из-за SSH timeout. Не переносить старый transport
 PASS на новый invite flow. [Доказательства и остаток](../testing/evidence/invitations-24h-20261112.md).
 
+
 ## Закрытый текстовый пилот Meta: 14.11.2026
 
 На platformacrm.kz поверх release20261113-v4 развёрнуты семь проверенных файлов
@@ -875,3 +884,124 @@ is stored encrypted with audit, and expires13Jan2027 18:35:54UTC. Temporary plai
 copies were removed; backup before-system-user-token-20261114.dump verified.
 Renew before expiry. No customer onboarding or Advanced Access is certified.
 See META-PILOT-STABLE-20261114 in the primary checkpoint for current evidence.
+
+## Meta v4 and App Review preparation, 17.11.2026
+
+Scope: readiness audit, local fixes and an onboarding/reviewer scenario. No
+customer number registration, new send, deployment, working-DB migration or
+App Review submission is authorized by this preparation.
+
+### Observed readiness
+
+| Item | Current result | Required next result |
+| --- | --- | --- |
+| App and business | Platforma Digital app1021255197062056 published; portfolio986592421017390 verified; no required actions | Preserve existing test pilot |
+| Tech Provider | Onboarding page says1of2 steps; business approved | Complete App Review; do not claim approved Tech Provider/Advanced Access |
+| App Review | Actual submissions page says Not submitted; mixed draft includes advertising, Pages, Threads and fundraising alongside WhatsApp | Agree a WhatsApp-only request; do not delete other product requests implicitly |
+| v4 configuration | Owner-approved CloudAPI-only configuration CRM Cloud API v4 60d saved17Nov:1029142846909211; old2129224701037393 retained | Use new ID in the separately authorized deployment |
+| Configuration scope | SYSTEM_USER,60days; WhatsApp account only; DEVELOP plus MESSAGING (including template and phone asset tasks); two WhatsApp permissions | No ads, Pages, catalogs, Instagram, business_management, MANAGE or FULL_CONTROL in this configuration |
+| OAuth | Client/Web OAuth, HTTPS and strict mode on; owner-approved JS SDK and embedded-browser OAuth saved ON; allowed SDK domain normalized by Meta to https://platformacrm.kz/ | Exact redirect URI list remains empty; inspect deployed launch page and add only its required exact URIs |
+| Webhook | messages subscription already present; account_update absent | Deploy verified account handler before subscribing account_update at v27.0 |
+| Code | PIN before launch; prompt completion; bounded callback wait; separate account-event journal; minimal scopes | Publish/deploy reviewed candidate with migration0011 and exact environment config |
+| Real onboarding | No client-number acceptance in this phase | Eligible client assets, explicit authorization, billing, registration/subscription and real dialog |
+| Legal/reviewer material | Existing public documents cover only the closed text pilot | Separately approve commercial documents and create reviewer access/video; do not represent pilot policy as commercial approval |
+
+The Tech Provider checklist displays an App Review pending indicator, but the
+actual submissions page explicitly says Not submitted. No submission or approval
+was observed. The saved configuration does not grant access to any customer
+asset until that customer authorizes onboarding.
+
+### Safe configuration sequence
+
+1. Completed17Nov after explicit owner confirmation: saved Cloud API configuration
+   `1029142846909211`, SYSTEM_USER60days, six DEVELOP/MESSAGING tasks, two WhatsApp
+   permissions. Old configuration retained. No new access token generated.
+2. Completed17Nov: JS SDK login and embedded-browser OAuth saved ON for the app;
+   allowed domain `platformacrm.kz` (Meta stores `https://platformacrm.kz/`).
+   HTTPS and strict URI matching remain enabled.
+   Inspect the actual deployed launch page before adding exact redirect URIs.
+   The current hook binds `${origin}${pathname}?zani_provider=whatsapp`; dynamic
+   agent routes require their exact URI, not a wildcard or guessed allowlist.
+3. Prepare a separately authorized release containing the Signup backend,
+   migration0011, new form flow and account_update handler. Back up target DB and
+   configuration, run the candidate gates, migrate only the approved target,
+   set `WHATSAPP_EMBEDDED_SIGNUP_CONFIG_ID` to the saved v4 ID and verify readiness.
+4. After the handler is live, subscribe account_update on the existing signed
+   callback `https://platformacrm.kz/api/integrations/whatsapp/webhook/`.
+   Verify a signed test notification gets200 and produces only its operational
+   record. Keep messages subscribed. Do not expose or rotate app/verify secrets.
+
+### Standard Cloud API customer onboarding
+
+1. Confirm the customer owns the business portfolio, messaging account and number,
+   can receive the number-verification challenge, and explicitly permits connection.
+   Confirm direct Cloud API eligibility and payment method. Existing Business App
+   coexistence or a number migration requires its separate supported flow.
+2. An authorized CRM manager opens AI agents, chooses the intended agent and its
+   WhatsApp connection. Check the business and channel before proceeding. AI and
+   automatic replies remain off for acceptance.
+3. Enter the six-digit two-step PIN before pressing Connect. For a new number the
+   customer chooses the PIN; for an existing number they supply the current PIN.
+   The customer performs credential/OTP entry, legal consent and final access
+   authorization in Meta. Do not record credentials, PIN or tokens in video/logs.
+4. In Meta verify the phone first, select/create the correct business assets and
+   grant the two WhatsApp permissions. Press Finish on the final Meta screen;
+   closing that screen can return asset IDs without the exchange code.
+5. CRM immediately completes the same one-use attempt. Server checks actor,
+   tenant/channel revision, token app/scopes/expiry and phone membership, then
+   subscribes the app and registers the number before saving encrypted credentials
+   and activating the channel. Callback IDs alone are not success.
+6. Verify the channel state from a fresh server read. On cancellation or incomplete
+   callback restart explicitly. After a timeout, inspect provider state before a
+   new attempt; never replay the consumed authorization code or assume remote
+   registration rolled back. PIN remains for a recoverable retry.
+7. With separate send authorization, the customer sends one agreed test text to
+   the connected number. Verify one Inbox row and correct tenant. Reply once from
+   Inbox through the normal queue; verify actual delivery callback and handset
+   receipt, then replay the signed receipt and confirm no duplicate message.
+8. Record non-secret evidence: candidate version, config ID, channel/phone binding,
+   subscription/registration outcomes, token expiry, permission denial and replay
+   results. A queued/accepted send is not delivered. Establish renewal before expiry.
+
+### App Review package to prepare
+
+Request Advanced Access to `whatsapp_business_messaging` and
+`whatsapp_business_management` for this Cloud API scenario. Preserve unrelated
+product drafts until their owner decides whether to remove them from this request.
+Meta's current Tech Provider page explicitly requires two distinct videos:
+
+- Messaging: login to the reviewer CRM account, open the intended WhatsApp Inbox,
+  send one test message and show the same message arriving in WhatsApp. Also show
+  the incoming message in CRM and its delivery status. Use only authorized test
+  contacts and hide credentials/customer information.
+- Management: make the required test API calls and record a separate video creating
+  a WhatsApp message template for the actual product use case. This capability has
+  not been newly certified here; do not fake a UI or claim an absent template flow.
+
+Include a working reviewer account with only the needed CRM role, the exact URL,
+steps to the two demonstrated functions, test assets accessible to the reviewer,
+current privacy/deletion URLs and an accurate description of data use. Creating
+credentials and submitting the final review remain separate owner actions.
+
+Draft English service description, to reconcile with the demonstrated release:
+
+> PlatformaCRM lets a business connect its own WhatsApp business number and manage
+> customer conversations in a shared CRM inbox. Authorized staff view incoming
+> messages and send replies from the CRM. We use whatsapp_business_messaging for
+> message exchange and whatsapp_business_management to verify the selected account
+> and phone and subscribe the application during onboarding. Each connection is
+> associated with the customer's CRM business. Access tokens are stored encrypted.
+
+Reviewer steps: sign in with the separately supplied test account; open AI agents,
+select the designated agent and WhatsApp connection; complete the approved test
+onboarding; open Inbox and select the test conversation; send the agreed reply;
+observe delivery in WhatsApp. Add the exact demonstrated template-creation path
+and its separate video before submitting. This is a prepared script, not evidence
+that the reviewer account, videos, template flow or external review are complete.
+
+Sources checked17Nov2026: [Meta v4](https://developers.facebook.com/documentation/business-messaging/whatsapp/embedded-signup/version-4),
+[implementation](https://developers.facebook.com/documentation/business-messaging/whatsapp/embedded-signup/implementation),
+[Tech Provider onboarding](https://developers.facebook.com/documentation/business-messaging/whatsapp/embedded-signup/onboarding-customers-as-a-tech-provider),
+[account_update](https://developers.facebook.com/documentation/business-messaging/whatsapp/webhooks/reference/account_update).
+Account-specific state and video requirements came from the authenticated App
+Dashboard; local proof and limitations are in META-V4-20261117 in PRIMARY-SESSION.

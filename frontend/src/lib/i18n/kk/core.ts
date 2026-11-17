@@ -324,6 +324,8 @@ export const core: Record<string, string> = {
   "common.edit": "Өзгерту",
   "files.scan.pending": "Тексеруді күтуде",
   "files.scan.scanning": "Тексерілуде",
+  "notifications.showDetails": "Толығырақ",
+  "notifications.detailsTitle": "Хабарландыру мәліметтері",
   "files.scan.clean": "Қауіпсіздік тексеруінен өтті",
   "files.scan.infected": "Файл қауіпсіздік тексеруімен бұғатталды",
   "files.scan.error": "Тексеру қолжетімсіз. Автоматты түрде қайталанады",

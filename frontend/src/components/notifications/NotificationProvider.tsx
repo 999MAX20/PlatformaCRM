@@ -10,6 +10,7 @@ import { useRecoveryDelay } from "../actions/useRecoveryDelay";
 import { canShowSupportDetails } from "../actions/actionFeedbackPolicy";
 import { notificationContent, notificationDedupeKey } from "./notificationPolicy";
 import { NotificationPortal, restoreNoticeFocus } from "./NotificationHost";
+import { NotificationCard } from "./NotificationCard";
 
 type NotificationTone = StatusNoticeTone;
 
@@ -38,6 +39,7 @@ export function ActionFeedbackToast({ item, onDismiss, dismissAfterAction = true
   const [isActing, setIsActing] = useState(false);
   const [hasFocus, setHasFocus] = useState(false);
   const [leaving, setLeaving] = useState(false);
+  const [ready, setReady] = useState(false);
   const card = useRef<HTMLDivElement>(null);
   const opener = useRef(document.activeElement instanceof HTMLElement ? document.activeElement : null);
   const pending = useRef(false);
@@ -54,19 +56,14 @@ export function ActionFeedbackToast({ item, onDismiss, dismissAfterAction = true
   }, []);
 
   useEffect(() => {
-    if (!leaving) return;
-    const timer = window.setTimeout(() => onDismiss(item.id), window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 200);
+    if (!ready || leaving || isHovered || hasFocus || isActing || delay > 0) return undefined;
+    const timer = window.setTimeout(dismiss, item.durationMs ?? (tone === "warning" || tone === "danger" ? 7_000 : 5_000));
     return () => window.clearTimeout(timer);
-  }, [leaving, item.id, onDismiss]);
-
-  useEffect(() => {
-    if (leaving || isHovered || hasFocus || isActing || delay > 0) return undefined;
-    const timer = window.setTimeout(dismiss, item.durationMs ?? 5_000);
-    return () => window.clearTimeout(timer);
-  }, [delay, hasFocus, isActing, isHovered, leaving, item.durationMs, item.id, dismiss]);
+  }, [ready, delay, hasFocus, isActing, isHovered, leaving, item.durationMs, item.id, dismiss, tone]);
 
   return (
-    <div ref={card} className="platforma-notification-card" data-leaving={leaving || undefined} inert={leaving}>
+    <NotificationCard leaving={leaving} order={item.id} onReadyChange={setReady} onExited={() => onDismiss(item.id)}>
+    <div ref={card}>
     <StatusNotice
       data-testid="action-feedback"
       compact
@@ -129,6 +126,7 @@ export function ActionFeedbackToast({ item, onDismiss, dismissAfterAction = true
       ) : null}
     />
     </div>
+    </NotificationCard>
   );
 }
 
@@ -156,7 +154,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
       {children}
       <NotificationPortal group="notifications">
         {/* Pending notices mount only when a slot opens, starting their full reading interval. */}
-        {items.slice(0, 4).reverse().map((item) => (
+        {items.slice(0, 4).map((item) => (
           <ActionFeedbackToast key={item.id} item={item} onDismiss={dismiss} />
         ))}
       </NotificationPortal>

@@ -1,9 +1,17 @@
-import { resolve } from "node:path";
+import { isAbsolute, relative, resolve, sep } from "node:path";
 import { defineConfig } from "vite";
 
 export default defineConfig({
   plugins: [{
     name: "legacy-widget-filename",
+    configResolved(config) {
+      const projectRoot = resolve(__dirname, "../..");
+      const outputPath = resolve(config.root, config.build.outDir);
+      const projectRelativePath = relative(projectRoot, outputPath);
+      if (!projectRelativePath || projectRelativePath === ".." || projectRelativePath.startsWith(`..${sep}`) || isAbsolute(projectRelativePath)) {
+        throw new Error("Widget build output must stay inside PlatformaCRM. From frontend, use --outDir ../output/<task>/widget.");
+      }
+    },
     generateBundle(_options, bundle) {
       const widget = bundle["platformacrm-widget.js"];
       if (widget?.type === "chunk") {
@@ -12,7 +20,7 @@ export default defineConfig({
     },
   }],
   build: {
-    outDir: "dist/widget",
+    outDir: resolve(__dirname, "../dist/widget"),
     emptyOutDir: true,
     minify: true,
     lib: {

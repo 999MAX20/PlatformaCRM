@@ -3,7 +3,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { DatabaseZap, RefreshCw, ShieldCheck } from "lucide-react";
 
 import { businessConnectorsApi } from "../../../../api/connectors";
-import { getApiErrorMessage } from "../../../../api/client";
 import { Button } from "../../../../components/ui/Button";
 import { ErrorState } from "../../../../components/ui/StateViews";
 import { StatusNotice } from "../../../../components/ui/StatusNotice";
@@ -65,7 +64,7 @@ export function OzonInlineSetup({
   const testConnection = useMutation({
     mutationFn: () => businessConnectorsApi.ozonTestConnection(Number(connector?.id)),
     onSuccess: (data) => {
-      setNotice(data.ok ? (data.mock ? t("integrations.mock.connectionChecked") : t("integrations.ozon.connectionChecked")) : merchantSafeIntegrationError(data.reason, t), data.ok ? "success" : "warning");
+      setNotice(data.ok ? (data.mock ? t("integrations.mock.connectionChecked") : t("integrations.ozon.connectionChecked")) : merchantSafeIntegrationError(data.reason, t, canManage), data.ok ? "success" : "warning");
       queryClient.invalidateQueries({ queryKey: ["business-connectors"] });
       queryClient.invalidateQueries({ queryKey: ["ozon-status", connector?.id] });
     },
@@ -74,7 +73,7 @@ export function OzonInlineSetup({
   const syncData = useMutation({
     mutationFn: () => businessConnectorsApi.ozonSync(Number(connector?.id)),
     onSuccess: (data) => {
-      setNotice(data.ok ? (data.mock ? t("integrations.mock.syncLoaded", { count: data.events.length }) : t("integrations.ozon.dataLoaded", { count: data.events.length })) : merchantSafeIntegrationError(data.reason, t), data.ok ? "success" : "warning");
+      setNotice(data.ok ? (data.mock ? t("integrations.mock.syncLoaded", { count: data.events.length }) : t("integrations.ozon.dataLoaded", { count: data.events.length })) : merchantSafeIntegrationError(data.reason, t, canManage), data.ok ? "success" : "warning");
       queryClient.invalidateQueries({ queryKey: ["business-events"] });
       queryClient.invalidateQueries({ queryKey: ["business-connectors"] });
       queryClient.invalidateQueries({ queryKey: ["connector-sync-runs"] });
@@ -92,7 +91,7 @@ export function OzonInlineSetup({
 
   return (
     <div className="w-full space-y-4 rounded-card border border-platforma-border bg-surface-muted p-4">
-      {error ? <ErrorState message={merchantSafeIntegrationError(getApiErrorMessage(error), t)} /> : null}
+      {error ? <ErrorState message={merchantSafeIntegrationError(error, t, canManage)} /> : null}
 
       <div className="grid gap-2 sm:grid-cols-3">
         <div className="rounded-2xl bg-white p-3">

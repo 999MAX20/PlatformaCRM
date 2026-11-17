@@ -11,6 +11,7 @@ import { ErrorState, LoadingState } from "../../../../components/ui/StateViews";
 import { useI18n } from "../../../../lib/i18n";
 import type { BotChannel } from "../../../../types";
 import { MessengerSetupShell } from "./IntegrationSetupUi";
+import { channelConnectionState } from "../../channelConnectionState";
 
 type YCloudSetupProps = { channel: BotChannel; canManage: boolean; onBack?: () => void };
 
@@ -59,13 +60,15 @@ function YCloudChannelSetup({ channel, canManage, onBack }: YCloudSetupProps) {
   const statusLabel = !data ? t("common.loading") : !data.available ? t("integrations.ycloud.setupRequired")
     : connected ? t(paused ? "integrations.status.paused" : "integrations.status.connected")
     : pending ? t("integrations.ycloud.pending") : data.status === "expired" ? t("integrations.ycloud.expired") : t("integrations.status.notConnected");
+  const connection = channelConnectionState(data?.channel_status ? { status: data.channel_status } : channel);
   return <MessengerSetupShell title="WhatsApp" logo="/integrations_logos/whatsapp.png"
-    description={t("integrations.ycloud.connection")} status={statusLabel} canManage={canManage} inboxChannel="whatsapp"
-    statusTone={connected && !paused ? "success" : pending ? "progress" : "neutral"}
+    description="" status={t(connection.key)} canManage={canManage} inboxChannel="whatsapp"
+    loading={status.isPending} statusTone={connection.tone}
     channelToggleVisible={connected} channelEnabled={!paused && data?.channel_status === "active"}
     channelToggleLoading={toggle.isPending} onToggleChannel={(value) => toggle.mutate(value)}
     error={error ? <ErrorState message={t("integrations.ycloud.requestFailed")} action={<Button onClick={refresh}>{t("common.retry")}</Button>} /> : null}>
     {status.isPending ? <LoadingState /> : <div className="space-y-3" data-testid="ycloud-setup">
+      {data?.available && data.status === "expired" && <p role="status" className="text-sm text-platforma-subtle">{statusLabel}</p>}
       {!connected && !pending ? <>
         <Select label={t("integrations.ycloud.mode")} value={mode}
           disabled={!canManage || !data?.available || busy}
@@ -88,7 +91,7 @@ function YCloudChannelSetup({ channel, canManage, onBack }: YCloudSetupProps) {
       {pending ? <p role="status" className="text-sm text-platforma-muted">{t("integrations.ycloud.pending")}</p> : null}
       {data?.error_code || data?.failed_events ? <p role="alert" className="text-sm text-platforma-danger">{t("integrations.ycloud.needsAttention")}</p> : null}
       <div className="flex flex-wrap gap-3">
-        {!connected && !pending ? <Button disabled={!canManage || !data?.available || busy || (coexistence && !validNumber)} isLoading={start.isPending} onClick={() => start.mutate()}>{t("integrations.ycloud.connect")}</Button> : null}
+        {!connected && !pending ? <Button disabled={!canManage || !data?.available || busy || (coexistence && !validNumber)} isLoading={start.isPending} onClick={() => start.mutate()}>{t("aiAgents.connect")}</Button> : null}
         {pending && signupLink && signupLink.expiresAt > Date.now() ? <a className="inline-flex min-h-11 items-center gap-2 rounded-control px-3 font-bold text-brand-700 focus-visible:outline focus-visible:outline-2" href={signupLink.url} target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer"><ExternalLink size={16} />{t("integrations.ycloud.openSignup")}</a> : null}
         {pending ? <Button variant="secondary" disabled={!canManage || busy} onClick={() => recover.mutate("cancel")}>{t("common.cancel")}</Button> : null}
         {Boolean(data?.error_code || data?.failed_events) ? <Button variant="secondary" disabled={!canManage || busy || !data?.available} onClick={() => recover.mutate("retry_events")}>{t("common.retry")}</Button> : null}

@@ -324,6 +324,8 @@ export const core: Record<string, string> = {
   "common.edit": "Изменение",
   "files.scan.pending": "Ожидает проверки",
   "files.scan.scanning": "Проверяется",
+  "notifications.showDetails": "Подробнее",
+  "notifications.detailsTitle": "Подробности уведомления",
   "files.scan.clean": "Проверка пройдена",
   "files.scan.infected": "Файл заблокирован проверкой безопасности",
   "files.scan.error": "Проверка недоступна. Повторим автоматически",

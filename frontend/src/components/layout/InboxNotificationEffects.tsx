@@ -33,6 +33,7 @@ export function InboxNotificationEffects({
   const soundEnabled = useNotificationSoundPreference(user?.id);
   const [chatToastOpen, setChatToastOpen] = useState(false);
   const [chatToastPaused, setChatToastPaused] = useState(false);
+  const [chatToastReady, setChatToastReady] = useState(false);
   const previousUnreadMessagesRef = useRef<number | null>(null);
   const inboxSummary = useQuery({
     queryKey: ["inbox-summary", business?.id],
@@ -62,10 +63,10 @@ export function InboxNotificationEffects({
       setChatToastOpen(true);
   }, [receivesChatToasts, unreadChatMessages]);
   useEffect(() => {
-    if (!chatToastOpen || chatToastPaused) return;
+    if (!chatToastOpen || chatToastPaused || !chatToastReady) return;
     const timer = window.setTimeout(() => setChatToastOpen(false), 6500);
     return () => window.clearTimeout(timer);
-  }, [chatToastOpen, chatToastPaused, unreadChatMessages]);
+  }, [chatToastOpen, chatToastPaused, chatToastReady, unreadChatMessages]);
   return (
     <>
       {soundEnabled && user && business ? (
@@ -75,7 +76,7 @@ export function InboxNotificationEffects({
           businessId={business.id}
         />
       ) : null}
-      <NotificationPortal group="messages"><NotificationPresence>{chatToastOpen ? (
+      <NotificationPortal group="messages"><NotificationPresence onReadyChange={setChatToastReady}>{chatToastOpen ? (
           <UnreadMessagesNotice
             count={unreadChatMessages}
             onPauseChange={setChatToastPaused}

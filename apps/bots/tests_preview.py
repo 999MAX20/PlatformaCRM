@@ -80,7 +80,7 @@ class AgentPreviewTests(TestCase):
         with patch("apps.ai_core.services.generate_text", return_value=self.qualification(kind="off_topic")) as generate:
             response = self.post("A harmless fact please")
         self.assertEqual(generate.call_count, 1)
-        self.assertIn("Кешіріңіз", response.data["reply"])
+        self.assertIn("Sorry", response.data["reply"])
         self.bot.settings_json["customer_safety"] = {"off_topic_handoff_after": 1}
         self.bot.save()
         with patch("apps.ai_core.services.generate_text", return_value=self.qualification(kind="off_topic")) as generate:
@@ -106,7 +106,8 @@ class AgentPreviewTests(TestCase):
         self.assertIn("local_date", reply_log.input_json["scheduling_context"])
         self.assertEqual(generate.call_args.kwargs["temperature"], 0.2)
         self.assertEqual(generate.call_args.kwargs["model"], "openai/gpt-4o")
-        self.assertIn("reply in Kazakh", generate.call_args.args[0].messages[0]["content"])
+        self.assertEqual(reply_log.input_json["ai_response_language"], "en")
+        self.assertIn("reply in English", generate.call_args.args[0].messages[0]["content"])
         self.assertIn(self.service.id, [source["id"] for source in response.data["sources"] if source["type"] == "service"])
         self.assertFalse(any(source["type"] == "message" for source in response.data["sources"]))
 

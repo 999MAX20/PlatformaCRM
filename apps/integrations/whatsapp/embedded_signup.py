@@ -1,17 +1,24 @@
 import json
+import hashlib
+from datetime import timedelta
 from uuid import uuid4
 from urllib import parse, request as urllib_request
 from urllib.error import URLError
 
 from django.conf import settings
 from django.core import signing
+from django.db import IntegrityError, transaction
+from django.db.models import Q
 from django.utils import timezone
 
 from apps.bots.models import Bot, BotChannel
 from apps.bots.lifecycle import ensure_bot_channel
+from apps.businesses.access import Actions, Resources, assert_can
 from apps.core.production_rules import is_safe_public_https_url
-from apps.integrations.models import BusinessConnector
-from apps.integrations.channel_boundary import current_channel_setup
+from apps.integrations.models import BusinessConnector, WhatsAppSignupAttempt
+from apps.integrations.channel_boundary import current_channel_setup, lock_channel_for_setup
+from apps.integrations.connectors import create_or_update_credential
+from apps.integrations.whatsapp.signup_graph import activate_signup_number, validate_signup_assets
 from apps.integrations.whatsapp_credentials import get_whatsapp_connector, store_whatsapp_access_token
 
 
@@ -19,12 +26,21 @@ SIGNING_SALT = "zani.whatsapp.embedded-signup"
 
 
 def build_embedded_signup_state(*, business, user, redirect_uri, bot_channel=None):
+    channel = resolve_embedded_signup_channel(business=business, state_payload={"bot_channel_id": bot_channel.pk if bot_channel else None})
+    with transaction.atomic():
+        channel = lock_channel_for_setup(channel)
+        channel.signup_attempts.filter(consumed_at__isnull=True).update(consumed_at=timezone.now(), finished_at=timezone.now())
+        attempt = WhatsAppSignupAttempt.objects.create(
+            channel=channel, user=user, channel_revision=channel.updated_at,
+            channel_fingerprint=_channel_fingerprint(channel),
+        )
     return signing.dumps(
         {
             "business_id": business.id,
             "user_id": user.id,
             "redirect_uri": redirect_uri,
-            "bot_channel_id": bot_channel.id if bot_channel else None,
+            "bot_channel_id": channel.pk,
+            "attempt_id": str(attempt.pk),
             "iat": timezone.now().isoformat(),
         },
         salt=SIGNING_SALT,
@@ -32,7 +48,10 @@ def build_embedded_signup_state(*, business, user, redirect_uri, bot_channel=Non
 
 
 def load_embedded_signup_state(state, max_age=1800):
-    return signing.loads(state, salt=SIGNING_SALT, max_age=max_age)
+    try:
+        return signing.loads(state, salt=SIGNING_SALT, max_age=max_age)
+    except signing.BadSignature as exc:
+        raise ValueError("WhatsApp signup state is invalid or expired.") from exc
 
 
 def build_embedded_signup_url(*, business, user, redirect_uri, bot_channel=None):
@@ -42,7 +61,7 @@ def build_embedded_signup_url(*, business, user, redirect_uri, bot_channel=None)
         "redirect_uri": redirect_uri,
         "state": state,
         "response_type": "code",
-        "scope": "whatsapp_business_management,whatsapp_business_messaging,business_management",
+        "scope": "whatsapp_business_management,whatsapp_business_messaging",
     }
     if settings.WHATSAPP_EMBEDDED_SIGNUP_CONFIG_ID:
         params["config_id"] = settings.WHATSAPP_EMBEDDED_SIGNUP_CONFIG_ID
@@ -57,7 +76,6 @@ def exchange_code_for_access_token(*, code, redirect_uri):
         {
             "client_id": settings.META_APP_ID,
             "client_secret": settings.META_APP_SECRET,
-            "redirect_uri": redirect_uri,
             "code": code,
         },
     )
@@ -87,23 +105,73 @@ def resolve_embedded_signup_channel(*, business, state_payload):
     return channel
 
 
-def complete_embedded_signup(*, business, user, code, state, redirect_uri, phone_number_id, waba_id="", display_phone_number=""):
+def complete_embedded_signup(*, business, user, code, state, redirect_uri, phone_number_id, waba_id="", display_phone_number="", registration_pin=""):
     state_payload = load_embedded_signup_state(state)
     if state_payload["business_id"] != business.id or state_payload["user_id"] != user.id:
         raise ValueError("WhatsApp embedded signup state does not match the current user or business.")
     if state_payload.get("redirect_uri") != redirect_uri:
         raise ValueError("WhatsApp embedded signup redirect_uri mismatch.")
+    if not phone_number_id or not waba_id or len(registration_pin) != 6 or not registration_pin.isascii() or not registration_pin.isdigit():
+        raise ValueError("A phone number, WhatsApp account and six-digit PIN are required.")
     channel = resolve_embedded_signup_channel(business=business, state_payload=state_payload)
-    token_payload = exchange_code_for_access_token(code=code, redirect_uri=redirect_uri)
-    access_token = token_payload.get("access_token", "")
-    if not access_token:
-        raise ValueError("Meta did not return an access token.")
-    if not phone_number_id:
-        raise ValueError("Meta session did not return a WhatsApp phone_number_id.")
+    attempt = _claim_attempt(channel, user, state_payload)
+    try:
+        token_payload = exchange_code_for_access_token(code=code, redirect_uri=redirect_uri)
+        if not isinstance(token_payload, dict):
+            raise ValueError("Meta returned an invalid token response.")
+        access_token = token_payload.get("access_token", "")
+        if not isinstance(access_token, str) or not access_token:
+            raise ValueError("Meta did not return an access token.")
+        phone, expires_at = validate_signup_assets(access_token, phone_number_id, waba_id)
+        _reserve_phone(channel, attempt, phone_number_id)
+        activate_signup_number(access_token, phone_number_id, waba_id, registration_pin)
+        return _save_connection(channel, attempt, user, access_token, expires_at, phone_number_id, waba_id, phone["display_phone_number"], registration_pin)
+    except (URLError, OSError, TypeError, KeyError, AttributeError) as exc:
+        raise ValueError("WhatsApp connection could not be completed. Restart setup.") from exc
+    finally:
+        WhatsAppSignupAttempt.objects.filter(pk=attempt.pk).update(finished_at=timezone.now())
 
-    validate_signup_phone_number(access_token, phone_number_id)
 
+def _claim_attempt(channel, user, payload):
+    with transaction.atomic():
+        current = lock_channel_for_setup(channel)
+        attempt = WhatsAppSignupAttempt.objects.select_for_update().filter(
+            pk=payload.get("attempt_id"), channel=current, user=user, consumed_at__isnull=True,
+        ).first()
+        if attempt is None or attempt.channel_revision != current.updated_at or attempt.channel_fingerprint != _channel_fingerprint(current):
+            raise ValueError("WhatsApp setup has changed or this attempt was already used.")
+        current.signup_attempts.filter(
+            consumed_at__lt=timezone.now() - timedelta(minutes=30), finished_at__isnull=True,
+        ).update(finished_at=timezone.now())
+        if current.signup_attempts.filter(consumed_at__isnull=False, finished_at__isnull=True).exists():
+            raise ValueError("WhatsApp setup is already running.")
+        attempt.consumed_at = timezone.now()
+        attempt.save(update_fields=["consumed_at"])
+        return attempt
+
+
+def _reserve_phone(channel, attempt, phone_number_id):
+    try:
+        with current_channel_setup(channel) as current:
+            _assert_attempt_running(attempt, current)
+            if BotChannel.objects.filter(channel=BotChannel.Channels.WHATSAPP).exclude(pk=current.pk).filter(
+                Q(external_id=phone_number_id) | Q(config_json__phone_number_id=phone_number_id)
+            ).exists():
+                raise ValueError("This phone number is already connected to another channel.")
+            WhatsAppSignupAttempt.objects.filter(channel=current, phone_number_id=phone_number_id).update(phone_number_id=None)
+            attempt.phone_number_id = phone_number_id
+            attempt.save(update_fields=["phone_number_id"])
+    except IntegrityError as exc:
+        raise ValueError("This phone number is already being connected.") from exc
+
+
+def _save_connection(channel, attempt, user, access_token, expires_at, phone_number_id, waba_id, display_phone_number, registration_pin):
     with current_channel_setup(channel) as channel:
+        _assert_attempt_running(attempt, channel)
+        user.refresh_from_db()
+        if not user.is_active:
+            raise ValueError("The account is no longer active.")
+        assert_can(user, channel.bot.business, Resources.INTEGRATIONS, Actions.MANAGE)
         channel.status = BotChannel.Statuses.ACTIVE
         channel.external_id = phone_number_id
         channel.config_json = {
@@ -117,8 +185,9 @@ def complete_embedded_signup(*, business, user, code, state, redirect_uri, phone
             "connection_verified": True,
         }
         channel.save(update_fields=["status", "external_id", "config_json", "updated_at"])
-        store_whatsapp_access_token(channel, access_token)
+        store_whatsapp_access_token(channel, access_token, expires_at=expires_at)
         connector = get_whatsapp_connector(channel)
+        create_or_update_credential(connector, "registration_pin", registration_pin)
         safe_config = dict(connector.config_json or {})
         safe_config.update(
             {
@@ -133,12 +202,26 @@ def complete_embedded_signup(*, business, user, code, state, redirect_uri, phone
         )
         connector.status = BusinessConnector.Statuses.CONNECTED
         connector.capability = BusinessConnector.Capabilities.COMMUNICATIONS
-        connector.auth_type = BusinessConnector.AuthTypes.TOKEN
+        connector.auth_type = BusinessConnector.AuthTypes.OAUTH
         connector.config_json = safe_config
         connector.last_error = ""
         connector.connected_at = connector.connected_at or timezone.now()
         connector.save(update_fields=["status", "capability", "auth_type", "config_json", "last_error", "connected_at", "updated_at"])
+        WhatsAppSignupAttempt.objects.filter(channel=channel).exclude(pk=attempt.pk).update(phone_number_id=None)
+        WhatsAppSignupAttempt.objects.filter(pk=attempt.pk).update(succeeded=True)
         return channel, connector
+
+
+def _channel_fingerprint(channel):
+    snapshot = [channel.bot_id, channel.channel, channel.status, channel.external_id, channel.config_json]
+    return hashlib.sha256(json.dumps(snapshot, sort_keys=True).encode()).hexdigest()
+
+
+def _assert_attempt_running(attempt, channel):
+    if attempt.channel_fingerprint != _channel_fingerprint(channel) or not WhatsAppSignupAttempt.objects.filter(
+        pk=attempt.pk, consumed_at__isnull=False, finished_at__isnull=True,
+    ).exists():
+        raise ValueError("WhatsApp setup attempt is no longer current.")
 
 
 def validate_signup_phone_number(access_token, phone_number_id):

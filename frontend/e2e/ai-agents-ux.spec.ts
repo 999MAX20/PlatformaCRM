@@ -281,7 +281,7 @@ test("knowledge has full reading and independent saving while configuration is d
   await page.keyboard.press("Escape");
   await expect(reading).toBeHidden();
   await expect(page.getByRole("button", { name: "Длинный материал", exact: true })).toBeFocused();
-  await page.getByRole("button", { name: "Настроить", exact: true }).click();
+  await page.getByRole("button", { name: "Редактировать", exact: true }).click();
   const editing = page.getByRole("dialog");
   await editing.getByRole("textbox", { name: /^Содержание/ }).fill("Обновлённый материал");
   await editing.getByRole("button", { name: "Сохранить", exact: true }).click();

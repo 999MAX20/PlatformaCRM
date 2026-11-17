@@ -47,7 +47,8 @@ export type WhatsAppEmbeddedSignupCompletePayload = {
   state: string;
   redirect_uri?: string;
   phone_number_id: string;
-  waba_id?: string;
+  waba_id: string;
+  registration_pin: string;
   display_phone_number?: string;
 };
 

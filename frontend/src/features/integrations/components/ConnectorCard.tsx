@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CheckCircle2, Link2, LockKeyhole, PlugZap, Send, ShieldCheck } from "lucide-react";
 
-import { getApiErrorMessage } from "../../../api/client";
 import { businessConnectorsApi } from "../../../api/connectors";
 import { Button } from "../../../components/ui/Button";
 import { ErrorState } from "../../../components/ui/StateViews";
@@ -166,7 +165,7 @@ export function ConnectorCard({
           className="mt-4"
           compact
           tone="warning"
-          title={merchantSafeIntegrationError(connector.last_error, t)}
+          title={merchantSafeIntegrationError(connector.last_error, t, canManage)}
         />
       ) : null}
 
@@ -228,7 +227,7 @@ export function ConnectorCard({
               </div>
             </>
           )}
-          {error ? <ErrorState message={merchantSafeIntegrationError(getApiErrorMessage(error), t)} /> : null}
+          {error ? <ErrorState message={merchantSafeIntegrationError(error, t, canManage)} /> : null}
         </div>
       ) : (
         <StatusNotice className="mt-5" compact tone="info" title={t("integrations.card.readOnly")} />

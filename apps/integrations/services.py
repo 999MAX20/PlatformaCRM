@@ -246,7 +246,7 @@ def start_whatsapp_embedded_signup(*, business, user, redirect_uri, bot_channel=
     }
 
 
-def complete_whatsapp_embedded_signup(*, business, user, code, state, redirect_uri, phone_number_id, waba_id="", display_phone_number="", request=None):
+def complete_whatsapp_embedded_signup(*, business, user, code, state, redirect_uri, phone_number_id, waba_id="", display_phone_number="", registration_pin="", request=None):
     channel, connector = complete_embedded_signup(
         business=business,
         user=user,
@@ -256,6 +256,7 @@ def complete_whatsapp_embedded_signup(*, business, user, code, state, redirect_u
         phone_number_id=phone_number_id,
         waba_id=waba_id,
         display_phone_number=display_phone_number,
+        registration_pin=registration_pin,
     )
     if request is not None:
         write_audit_log(

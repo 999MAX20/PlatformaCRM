@@ -5,6 +5,7 @@ from django.db import transaction
 from rest_framework.exceptions import ValidationError
 
 from apps.integrations.whatsapp_routing import verified_whatsapp_routes
+from apps.integrations.whatsapp.account_updates import prepare_account_update, record_account_updates
 
 
 def _validate_envelope(payload):
@@ -34,7 +35,23 @@ def process_whatsapp_webhook(payload, auth_context, headers=None):
     )
 
     _validate_envelope(payload)
-    routes = verified_whatsapp_routes(payload, auth_context)
+    account_updates = []
+    message_payload = payload
+    if payload.get("entry"):
+        entries = []
+        for entry in payload["entry"]:
+            changes = []
+            for change in entry["changes"]:
+                if change.get("field") == "account_update":
+                    if change["value"].get("messages") or change["value"].get("statuses"):
+                        raise ValidationError("Account updates cannot contain message events.")
+                    account_updates.append(prepare_account_update(entry, change["value"], auth_context))
+                else:
+                    changes.append(change)
+            if changes:
+                entries.append({**entry, "changes": changes})
+        message_payload = {**payload, "entry": entries}
+    routes = verified_whatsapp_routes(message_payload, auth_context) if not account_updates or message_payload.get("entry") else []
     incoming = []
     for channel, value, portion in routes:
         if not payload.get("entry"):
@@ -63,6 +80,9 @@ def process_whatsapp_webhook(payload, auth_context, headers=None):
     for channel, single, parsed in incoming:
         conversation, message = _save_parsed_inbound_message(channel, single, parsed)
         result["messages"].append({"conversation_id": conversation.id, "message_id": message.id})
+    if account_updates:
+        record_account_updates(account_updates)
+        result["account_updates"] = len(account_updates)
     if len(result["messages"]) == 1:
         result.update(result["messages"][0])
     return result

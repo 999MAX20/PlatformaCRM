@@ -21,6 +21,14 @@ No scoped code/local-evidence remainder; no backend policy/schema/workingDB/prov
 Publication/CI receipt: output/mfa-inbox-20261114/CHECKPOINT.md.
 Evidence: docs/testing/task-state/PRIMARY-SESSION.md#mfa-inbox-20261114.
 
+CHANNELS-FIXES-20261114: search/key autofill and channel setup UI implemented locally;
+unified statuses, website copy/toggle and Telegram replacement. Owner correction:
+WhatsApp now shows one Connect button, no provider choice/names or manual keys.
+Fresh browser10/10 + signup5/5, build/types/i18n PASS; RU/KK/EN screenshots inspected.
+No login needed for removed key field. Publication blocked by uncommitted signup
+dependencies outside this UI task; no task commit/push/CI/deploy. Evidence:
+docs/testing/task-state/PRIMARY-SESSION.md#channels-fixes-20261114.
+
 AI-AGENTS-REDESIGN-20261113: approved editor redesign implemented; scoped local acceptance PASS.
 Named picker/local sections, split configuration, overview/context test and full knowledge view.
 Atomic save, independent knowledge/channels, draft/permission/runtime guards preserved.
@@ -217,6 +225,15 @@ No new KPI/schema/workingDB/env/provider/deploy; own runtimes stopped. No scoped
 44foreign outgoing block own-only push/newCI. Evidence:
 docs/testing/evidence/analytics-detail-compare-20261111.md.
 
+AI-REQUEST-APPOINTMENTS-20261111: new applications route to appointments, not Lead.
+Owner correction of priorW3; server guard and pending clarification, historical IDs preserved.
+Focused5PASS; dependent63PASS/1equipmentERROR; system/driftPASS. Same equipmentERROR in baseline.
+RealAI API8PASS+1proposal-boundaryFAIL; overlap confirmation safely fails without writes.
+Playwright clarification/proposal/keyboard confirmation1440/390PASS;23real calls.
+SQL only5newappointments; prior5entitytable rows unchanged. WorkingDB/env untouched.
+Own runtimes stopped/disposableDBabsent. Local uncommitted; no stage/push/newCI/deploy.
+Evidence: docs/testing/evidence/ai-request-appointments-20261111.md.
+
 ANALYTICS-FIXES-20261111: nine audited /analytics defects fixed and locally verified.
 API validation/period, team scope, exact Inbox link, cached recovery, locales and responsive/a11y.
 Focused16 and dependent131PASS/2PGskips; system/drift, build/types/i18n/bundle PASS.
@@ -248,6 +265,14 @@ Protected records unchanged; no unauthorized writes/duplicates observed. Own run
 WorkingDB/env/deploy untouched. FullD01/PGconcurrency/production not certified.
 Own docs commit only;40foreign outgoing block push/newCI. Evidence:
 docs/testing/evidence/ai-work-crm-live-20261111.md.
+
+VOICE-ACCURACY-20261111:12Nov targeted timeout investigation blocked by audio balance.
+Only2failed scenarios repeated; both nowHTTP402,minimumaudio balance0.50USD.
+Original60s wait likely; historical precise provider/network cause unproven without trace/ID.
+No passed checks rerun; no product/env/workingDB changes; own runtimes stopped/no writes.
+No owncommit/push/CI. Restore sufficient balance then repeat only these2cases.
+Evidence: docs/testing/evidence/voice-accuracy-20261111.md.
+Checkpoint: output/voice-accuracy-20261111/CHECKPOINT.md.
 
 AI-ANALYTICS-COMPLEX-FIXES-20261111: A1–A4 fixed and locally reverified.
 Dates/selected period, own/team status groups, compatible routing and denied-source response.
@@ -314,12 +339,12 @@ planner failure retained; not a general human/KK/noise/fullD01/production certif
 No workingDB/env/deploy changes. Own local commit;32foreignoutgoing block push/newCI.
 Evidence: docs/testing/evidence/voice-recognition-20261111.md.
 
-AI-AGENTS-FIXES-20261111: readiness/UI fixes implemented and locally verified.
-Provider/configuration and booking diagnostics; effective actions, recovery, scoped Inbox.
-Backend123/system/drift/browser7+final1/build-types-i18n-bundle PASS; RU/KK/EN320–1440.
-Design/permissions/foreign WIP retained; no workingDB/provider/deploy or new CI.
-No scoped implementation/local-evidence remainder; foreign outgoing range blocks push.
-Evidence: docs/testing/evidence/ai-agents-fixes-20261111.md; output/ai-agents-fixes-20261111.
+TIMELINE-FLAT-PAGINATION-20261111: approved flat prototype implemented in timeline only.
+Rows select + persistent range + arrows; no panel/page badge; global search width retained.
+Browser1440/390/320, RU/KK, boundaries/zero/size/keyboard PASS; Node9/build/types/i18n/bundle PASS.
+No shared component/backend/workingDB/deploy changes; foreign WIP retained.
+Own local commit only;29pre-existing outgoing commits block own-only push/newCI.
+Evidence: docs/testing/evidence/timeline-fixes-20261111.md#flat-pagination.
 
 CRM-GLOBAL-TEST-PLAN-20261111: detailed draft prepared for owner review.
 Implemented-function matrix, Computer user scenarios and static route/test inventory.
@@ -328,12 +353,12 @@ Execution target/candidate/external effects/defect policy require plan agreement
 Plan: docs/testing/crm-global-plan-20261111/README.md.
 Checkpoint: output/crm-global-test-plan-20261111/CHECKPOINT.md.
 
-TIMELINE-FLAT-PAGINATION-20261111: approved flat prototype implemented in timeline only.
-Rows select + persistent range + arrows; no panel/page badge; global search width retained.
-Browser1440/390/320, RU/KK, boundaries/zero/size/keyboard PASS; Node9/build/types/i18n/bundle PASS.
-No shared component/backend/workingDB/deploy changes; foreign WIP retained.
-Own local commit only;29pre-existing outgoing commits block own-only push/newCI.
-Evidence: docs/testing/evidence/timeline-fixes-20261111.md#flat-pagination.
+AI-AGENTS-FIXES-20261111: readiness/UI fixes implemented and locally verified.
+Provider/configuration and booking diagnostics; effective actions, recovery, scoped Inbox.
+Backend123/system/drift/browser7+final1/build-types-i18n-bundle PASS; RU/KK/EN320–1440.
+Design/permissions/foreign WIP retained; no workingDB/provider/deploy or new CI.
+No scoped implementation/local-evidence remainder; foreign outgoing range blocks push.
+Evidence: docs/testing/evidence/ai-agents-fixes-20261111.md; output/ai-agents-fixes-20261111.
 
 TIMELINE-PAGINATION-20261111: search uses global-header width; pagination moved into toolbar.
 Desktop1440 both search controls480px; single-row toolbar; table footer removed.
@@ -365,6 +390,20 @@ Historical status choices +YCloud onboarding fields only; no provider actions/da
 IsolatedPG27/system/drift/5readonlyAPI/HTTP/browserloginPASS; dev.ps1 exit0,6services running.
 No product source edits/push/deployment. Backup and checks:
 docs/testing/evidence/local-migrations-20261111.md; output/local-migrations-20261111.
+
+DIGITAL-DEPLOY-20261109: deployed and scoped live verification complete.
+platformadigital.kz HTTPS; www validTLS redirects preserving path; DNS updated.
+37public file hashes/404/securityheaders PASS; browserRU/KK/EN desktop/mobile/keyboard PASS.
+CRM service and Market container identities/protected config hashes unchanged;
+HTTPS stand pages200/protected APIs401 PASS. No DB/migration/app restart/source push.
+Chrome timeout retained as client limitation; owner-approved in-app browser PASS.
+Evidence and rollback: output/digital-deploy-20261109/RESULT.md. No scoped remainder.
+
+META-LEGAL-20261109: owner-requested document proposals prepared, not published.
+RU privacy/deletion/integration terms and owner options in output/meta-legal-20261109.
+Meta terms and local data/event/disconnect behavior compared; text/link-target checks PASS.
+Pending owner scope/retention/provider/operations decisions and proof of deletion/retention.
+No public HTML/export edits, provider updates, code, deploy, commit or push.
 
 BRANCH-WORKSPACE-20261109: implemented, scoped checks passed, activated locally.
 Simple single-point overview/direct hours; physical resources linked to location;
@@ -2186,6 +2225,26 @@ No scoped local remainder; publication/CI receipt in checkpoint.
 Evidence: docs/testing/evidence/notification-queue-20261113.md.
 Checkpoint: output/notification-queue-20261113/CHECKPOINT.md.
 
+META-DELIVERY-20261114 (local, no publication): direct Meta webhook processes all
+text/control messages and mixed statuses with route preflight and replay dedup.
+Inbox send intents commit before HTTP; ambiguous outcomes block resend, explicit
+rate limits retry within bounds, receipts cannot regress delivery or affect another
+attempt/business. Checks: 193 PASS, 2 PostgreSQL-locking skips on isolated SQLite;
+Django check/migration drift PASS. No schema/env/server/Meta changes. Real-number
+and PostgreSQL acceptance are not claimed. Details: META-DELIVERY-20261114 in
+PRIMARY-SESSION; log and source hashes linked there.
+
+META-SIGNUP-20261114: standard direct Meta Embedded Signup implemented locally.
+Token/app/scopes/expiry, WABA phone ownership, subscription/registration and one-use
+attempts precede connected status; stale/repeated setup and failed reconnect guarded.
+PIN input and callback/error/retry flow verified in RU/KK/EN. Scoped backend/browser,
+build/types, isolated migration checks PASS; the originally skipped PostgreSQL
+concurrency check subsequently passed in META-V4-20261117.
+No Meta/server/workingDB/publication changes. Target migration, Meta setup/Advanced
+Access/billing and real client-number acceptance remain open; coexistence/migration
+are separate scope. Detailed evidence and limitations: META-SIGNUP-20261114 in
+docs/testing/task-state/PRIMARY-SESSION.md; docs/current/integrations.md.
+
 META-PILOT-20261114: seven-step Meta plan reconciled and recorded in roadmap CRM-R03.
 Owner subsequently authorized necessary pilot deployment/Meta actions. Verified
 Meta text batch/outbox fixes deployed to test stand;
@@ -2208,3 +2267,19 @@ Owner explicitly approved full access only to test WABA after code10 denial.
 Normal Inbox->worker reply40 delivered14Nov23:43:08 local; same-row retry, no duplicate.
 Signed actual receipt replay200, counts3->3. Code8585aa27 published; its CI PASS.
 No remaining code/evidence/input gap in this closed test scope; client onboarding remains separate.
+
+META-V4-20261117: audit and local fixes; external readiness remains blocked.
+Meta business verified/app published; actual review Not submitted, mixed draft.
+Owner confirmed settings17Nov: CloudAPI-only60day config1029142846909211 created;
+SDK/embedded-browser OAuth ON, SDK domain platformacrm.kz saved. Exact redirects
+remain empty; account_update subscription waits for verified handler deployment.
+Deployment/migration0011 and real client acceptance remain separate gates.
+Local code: PIN before launch/prompt completion/20s incomplete timeout, minimal
+WhatsApp scopes, signed account-update journal without activation/messages.
+Focused account7PASS; dependent backend102run101PASS1SQLite-locking skip;
+PostgreSQL Signup24PASS including locking; build/types/i18n/bundlePASS.
+Targeted browser/visual final result and input hashes in PRIMARY-SESSION META-V4.
+No deployment, client send or App Review submission. Publication blocked by
+uncommitted shared frontend dependencies owned by another change; no foreign WIP
+staged. Concrete scenario/settings/reviewer package: docs/current/operations.md,
+section Meta v4 and App Review preparation. This does not close CRM-R03.

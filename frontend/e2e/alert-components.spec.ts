@@ -25,7 +25,7 @@ for (const language of ["ru", "kk", "en"]) {
       await page.waitForTimeout(250);
       const result = await host.evaluate(element => {
         const rect = element.getBoundingClientRect();
-        const cards = Array.from(element.querySelectorAll<HTMLElement>(".platforma-status-notice")).map(node => {
+        const cards = Array.from(element.querySelectorAll<HTMLElement>(".platforma-notification-slot:not([data-queued]) .platforma-status-notice")).map(node => {
           const style = getComputedStyle(node), box = node.getBoundingClientRect();
           const title = node.querySelector(".platforma-notice-title")!;
           const titleStyle = getComputedStyle(title);
@@ -43,10 +43,11 @@ for (const language of ["ru", "kk", "en"]) {
         expect([card.padding, card.radius, card.font, card.line, card.atomic]).toEqual(["16px", "12px", "14px", "21px", "true"]);
       }
       for (let i = 1; i < result.cards.length; i++) expect(result.cards[i].bottom).toBeLessThanOrEqual(result.cards[i - 1].top - 7);
-      expect(result.cards.map(card => card.tone)).toEqual(["warning", "success", "info", "warning", "danger", "success"]);
-      await host.getByTestId("action-feedback").last().getByRole("button").first().focus();
-      await expect(host.getByTestId("action-feedback").last().getByRole("button").first()).toBeFocused();
-      await host.evaluate(node => { node.scrollTop = 0; });
+      for (const card of result.cards) expect(card.top).toBeGreaterThanOrEqual(width <= 760 ? 16 : 24);
+      if (width <= 760) expect(result.cards.length).toBeLessThanOrEqual(3);
+      const lastVisible = host.locator('.platforma-notification-slot:not([data-queued])').getByTestId("action-feedback").last();
+      await lastVisible.getByRole("button").first().focus();
+      await expect(lastVisible.getByRole("button").first()).toBeFocused();
       await page.screenshot({ path: path.join(evidence, `stack-${language}-${width}.png`) });
       await fs.writeFile(path.join(evidence, `computed-${language}-${width}.json`), JSON.stringify(result, null, 2));
     });
@@ -72,13 +73,13 @@ test("queue retains visible notices and admits pending FIFO without losing focus
   await expect(host.getByTestId("action-feedback")).toHaveCount(4);
   await expect(host).toContainText("Queue 0");
   await expect(host).not.toContainText("Queue 4");
-  await expect(host.getByTestId("action-feedback").first()).toContainText("Queue 3");
+  await expect(host.getByTestId("action-feedback").first()).toContainText("Queue 0");
   await page.getByTestId("remove-opener").click();
-  const close = host.getByTestId("action-feedback").first().getByRole("button");
+  const close = host.getByTestId("action-feedback").filter({ hasText: "Queue 3" }).getByRole("button");
   await close.focus();
   await page.keyboard.press("Enter");
   await expect(host.getByTestId("action-feedback")).toHaveCount(4);
-  await expect(host.getByTestId("action-feedback").first()).toContainText("Queue 4");
+  await expect(host.getByTestId("action-feedback").last()).toContainText("Queue 4");
   await expect(host).not.toContainText("Queue 3");
   expect(await page.evaluate(() => document.activeElement?.tagName)).not.toBe("BODY");
 });
@@ -161,16 +162,17 @@ test("queued duplicates collapse and reading time starts on admission", async ({
   await expect(pending).toHaveCount(0);
   await cards.filter({ hasText: "Queue 3" }).getByRole("button").click();
   await page.clock.runFor(201);
-  await expect(cards.first()).toContainText("Queue 4");
+  await expect(cards.last()).toContainText("Queue 4");
   await cards.filter({ hasText: "Queue 2" }).getByRole("button").click();
   await page.clock.runFor(201);
   await expect(pending).toBeVisible();
+  await page.clock.runFor(450);
   await page.mouse.move(0, 0);
   await page.getByTestId("draft").focus();
   await page.clock.runFor(799);
-  await expect(pending.locator("..")).not.toHaveAttribute("data-leaving", "true");
+  await expect(pending.locator('xpath=ancestor::div[contains(@class,"platforma-notification-card")][1]')).not.toHaveAttribute("data-leaving", "true");
   await page.clock.runFor(2);
-  await expect(pending.locator("..")).toHaveAttribute("data-leaving", "true");
+  await expect(pending.locator('xpath=ancestor::div[contains(@class,"platforma-notification-card")][1]')).toHaveAttribute("data-leaving", "true");
   await page.clock.runFor(201);
   await expect(pending).toHaveCount(0);
   await expect(cards).toHaveCount(3);
@@ -209,12 +211,15 @@ test("enlarged notification text reflows at 320px and closes by keyboard", async
   await card.getByRole("button").focus();
   await expect(card.getByRole("button")).toBeInViewport();
   await page.screenshot({ path: path.join(evidence, "text200-320.png"), animations: "disabled" });
-  const host = page.getByTestId("notification-host");
-  await host.evaluate(node => { node.scrollTop = node.scrollHeight; });
-  expect(await card.locator(".platforma-notice-description").evaluate(node =>
-    node.getBoundingClientRect().bottom <= node.closest('[data-testid="notification-host"]')!.getBoundingClientRect().bottom,
-  )).toBe(true);
+  const details = page.locator('.platforma-notification-details');
+  await details.click();
+  const dialog = page.getByTestId('notification-details');
+  await expect(dialog).toBeVisible();
+  await dialog.locator('.platforma-notice-description').scrollIntoViewIfNeeded();
+  expect(await dialog.locator('.platforma-notice-description').evaluate(node => node.scrollWidth <= node.clientWidth)).toBe(true);
   await page.screenshot({ path: path.join(evidence, "text200-bottom-320.png"), animations: "disabled" });
+  await page.keyboard.press('Escape');
+  await expect(details).toBeFocused();
   await card.getByRole("button").focus();
   await page.keyboard.press("Enter");
   await expect(card).toHaveCount(0);
@@ -238,9 +243,9 @@ test("full reading interval resumes after hover and focus, followed by exit", as
   await expect(card).toHaveCount(1);
   await page.getByTestId("draft").focus();
   await page.clock.runFor(799);
-  await expect(card.locator("..")).not.toHaveAttribute("data-leaving", "true");
+  await expect(card.locator('xpath=ancestor::div[contains(@class,"platforma-notification-card")][1]')).not.toHaveAttribute("data-leaving", "true");
   await page.clock.runFor(2);
-  await expect(card.locator("..")).toHaveAttribute("data-leaving", "true");
+  await expect(card.locator('xpath=ancestor::div[contains(@class,"platforma-notification-card")][1]')).toHaveAttribute("data-leaving", "true");
   await page.clock.runFor(199);
   await expect(card).toHaveCount(1);
   await page.clock.runFor(2);
@@ -331,7 +336,7 @@ test("reduced motion removes animations and forced colors preserves controls", a
   await open(page, "en");
   await page.getByTestId("show").click();
   const card = page.getByTestId("notification-host").getByTestId("action-feedback");
-  expect(await card.locator("..").evaluate(node => getComputedStyle(node).animationName)).toBe("none");
+  expect(await card.locator('xpath=ancestor::div[contains(@class,"platforma-notification-card")][1]').evaluate(node => getComputedStyle(node).animationName)).toBe("none");
   expect(await card.evaluate(node => getComputedStyle(node).borderTopStyle)).toBe("solid");
   await page.keyboard.press("Tab");
   await card.getByRole("button").focus();

@@ -1253,8 +1253,10 @@ class WhatsAppIntegrationFoundationTests(TestCase):
             "apps.integrations.whatsapp.embedded_signup.exchange_code_for_access_token",
             return_value={"access_token": "embedded-access-token"},
         ), patch(
-            "apps.integrations.whatsapp.embedded_signup.validate_signup_phone_number",
-            return_value=None,
+            "apps.integrations.whatsapp.embedded_signup.validate_signup_assets",
+            return_value=({"display_phone_number": "+77015550101"}, None),
+        ), patch(
+            "apps.integrations.whatsapp.embedded_signup.activate_signup_number",
         ):
             complete_response = self.api.post(
                 "/api/business-connectors/whatsapp-embedded-signup/complete/",
@@ -1265,6 +1267,7 @@ class WhatsAppIntegrationFoundationTests(TestCase):
                     "redirect_uri": "https://app.zani.kz/app/integrations",
                     "phone_number_id": "phone-embedded",
                     "waba_id": "waba-embedded",
+                    "registration_pin": "123456",
                     "display_phone_number": "+77015550101",
                 },
                 format="json",
@@ -1305,6 +1308,8 @@ class WhatsAppIntegrationFoundationTests(TestCase):
                 "state": start_response.data["state"],
                 "redirect_uri": "https://app.zani.kz/app/integrations/other",
                 "phone_number_id": "phone-embedded",
+                "waba_id": "waba-embedded",
+                "registration_pin": "123456",
             },
             format="json",
         )

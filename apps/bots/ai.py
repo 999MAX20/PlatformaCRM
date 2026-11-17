@@ -4,6 +4,7 @@ from apps.bots.models import BotMessage
 from apps.bots.sales_playbooks import build_sales_playbook_context
 from apps.bots.scheduling_context import build_bot_scheduling_context
 from apps.bots.ai_settings import validate_ai_settings
+from apps.bots.customer_language import customer_reply_language
 from rest_framework.exceptions import PermissionDenied
 
 
@@ -54,7 +55,7 @@ def suggest_bot_reply(*, conversation, user=None, auto_mode=False, qualification
         agent_instruction = (
             f"Agent profile: {agent_profile.name}. "
             f"Role: {agent_profile.role_description or 'CRM assistant'}. "
-            f"Tone: {agent_profile.tone}. Language: {agent_profile.language}. "
+            f"Tone: {agent_profile.tone}. "
             f"System prompt: {agent_profile.system_prompt or 'Use concise helpful replies.'} "
             f"Allowed tools: {agent_profile.allowed_tools_json or {}}. "
             f"Escalation rules: {agent_profile.escalation_rules_json or {}}. "
@@ -65,14 +66,14 @@ def suggest_bot_reply(*, conversation, user=None, auto_mode=False, qualification
             "The reply may be sent automatically, so do not promise discounts, final booking, delivery, payment, or availability unless it is explicitly confirmed in context. "
             "When booking is requested, follow the supplied sales_playbook for this business type. "
             "Use available scheduling context when present. Offer only real slots from next_available_slots. "
-            "Use service prices from services.price_from and describe them as minimum prices in the saved reply language when price_from is present. "
+            "Use service prices from services.price_from and describe them as minimum prices in the resolved customer language when price_from is present. "
             "For a booking request, if service, preferred specialist/resource, day, or exact slot is missing, ask one clear next question instead of inventing details. "
         )
     else:
         reply_instruction = "Generate a short, helpful CRM manager reply for this bot conversation. Do not send it automatically. "
 
     user_input = agent_instruction + reply_instruction + f"Last inbound message: {last_inbound['text'] if last_inbound else 'No inbound message'}"
-    user_input += " Only prices explicitly supplied as price_from are minimum prices: use the saved reply language (for example, 'from' in English), not a guaranteed final price. Other supplied prices retain their stated meaning. Never claim you booked, cancelled or transferred anything unless a completed action is explicitly supplied by the server."
+    user_input += " Only prices explicitly supplied as price_from are minimum prices: use the resolved customer language (for example, 'from' in English), not a guaranteed final price. Other supplied prices retain their stated meaning. Never claim you booked, cancelled or transferred anything unless a completed action is explicitly supplied by the server."
     user_input += " Use scheduling_context.currency for every price; never infer currency from the message language. Interpret relative dates using scheduling_context.local_date and timezone. next_available_slots are confirmed free slots on their stated dates; do not say a requested date is unavailable when those slots include it."
     # Linking a staff CRM card is not customer authentication. Only the current
     # customer dialogue and public business materials belong in this prompt.
@@ -115,7 +116,7 @@ def suggest_bot_reply(*, conversation, user=None, auto_mode=False, qualification
         model=model,
         model_tier=model_tier,
         temperature=temperature,
-        response_language=agent_profile.language if agent_profile else conversation.bot.default_language,
+        response_language=customer_reply_language(conversation, messages=message_context),
     )
     sources = [
         {

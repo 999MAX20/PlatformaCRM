@@ -13,7 +13,7 @@ export function Modal({
   focusReturnId,
   footer,
 }: {
-  title: string;
+  title: React.ReactNode;
   open: boolean;
   onClose: () => void;
   children: React.ReactNode;

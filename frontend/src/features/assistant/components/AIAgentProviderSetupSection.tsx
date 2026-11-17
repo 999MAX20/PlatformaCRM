@@ -4,15 +4,15 @@ import { useMutation } from "@tanstack/react-query";
 
 import { botChannelsApi } from "../../../api/bots";
 import { Button } from "../../../components/ui/Button";
-import { Modal } from "../../../components/ui/Modal";
 import { ToggleSwitch } from "../../../components/ui/Switch";
 import { useI18n } from "../../../lib/i18n";
 import { cn } from "../../../lib/cn";
 import type { Bot as BotType, BotChannel, Id } from "../../../types";
 import { InstagramInlineSetup } from "../../integrations/components/setup/InstagramSetup";
-import { LogoMark } from "../../integrations/components/setup/IntegrationSetupUi";
+import { LogoMark, MessengerSetupDialog } from "../../integrations/components/setup/IntegrationSetupUi";
 import { TelegramInlineSetup } from "../../integrations/components/setup/TelegramSetup";
 import { WhatsAppInlineSetup } from "../../integrations/components/setup/WhatsAppSetup";
+import { WebsiteChannelSetup } from "../../integrations/components/setup/WebsiteChannelSetup";
 import { channelStatus, channelStatusClass } from "../aiAgentsUtils";
 import { FieldHint } from "./AIAgentsShared";
 export function ChannelManagerSection(props: {
@@ -76,9 +76,6 @@ function ChannelsSection({
   return (
     <>
       <div>
-        <div className="hidden grid-cols-[minmax(0,1fr)_145px_180px] gap-3 border-b border-platforma-border bg-surface-muted px-3 py-2 text-xs font-semibold text-platforma-subtle sm:grid">
-          <span>{t("conversations.channel")}</span><span>{t("aiAgents.statusLabel")}</span><span>{t("aiAgents.section.actions")}</span>
-        </div>
         {channelCards.map((item) => {
           const channel = channelByName(item.key);
           const connected = channel?.status === "active";
@@ -139,8 +136,9 @@ function ChannelsSection({
         })}
       </div>
 
-      <Modal
-        title={setupChannel ? t("aiAgents.connectionTitle", { title: channelCards.find((item) => item.key === setupChannel)?.title || "" }) : t("aiAgents.connection")}
+      <MessengerSetupDialog
+        title={channelCards.find((item) => item.key === setupChannel)?.title || t("aiAgents.connection")}
+        logo={channelCards.find((item) => item.key === setupChannel)?.logo}
         open={Boolean(setupChannel)}
         onClose={() => {
           setSetupChannel(null);
@@ -158,33 +156,10 @@ function ChannelsSection({
         ) : setupChannel === "instagram" ? (
           <InstagramInlineSetup businessId={businessId} canManage={canManage} channel={activeChannel} />
         ) : setupChannel === "website" ? (
-          <WebsiteSetup bot={bot} channel={activeChannel} />
+          <WebsiteChannelSetup channel={activeChannel} canManage={canManage} pending={toggleChannel.isPending}
+            error={toggleChannel.error} onToggle={(channel, status) => toggleChannel.mutate({ channel, status })} />
         ) : null}
-      </Modal>
+      </MessengerSetupDialog>
     </>
-  );
-}
-
-function WebsiteSetup({ bot, channel }: { bot: BotType; channel?: BotChannel }) {
-  const { t } = useI18n();
-  const widgetApiBase = import.meta.env.VITE_API_URL || window.location.origin;
-  const widgetScriptUrl = new URL("/widget/platformacrm-widget.js", window.location.origin).href;
-  const snippet = channel ? `<script src=\"${widgetScriptUrl}\" data-platforma-token=\"${channel.public_token}\" data-platforma-api=\"${widgetApiBase}\"></script>` : "";
-  return (
-    <div className="space-y-4">
-      <div className="border-b border-platforma-border pb-3">
-        <h3 className="text-base font-semibold text-midnight">{t("aiAgents.websiteSetupTitle")}</h3>
-        <p className="mt-1 text-sm font-semibold leading-6 text-platforma-faint">
-          {t("aiAgents.websiteSetupText", { name: bot.name })}
-        </p>
-      </div>
-      {channel ? (
-        <pre className="max-h-56 overflow-auto rounded-2xl bg-platforma-ink p-4 text-xs font-semibold leading-6 text-white">{snippet}</pre>
-      ) : (
-        <div className="rounded-2xl border border-dashed border-platforma-border bg-surface-muted p-4 text-sm font-semibold text-platforma-faint">
-          {t("aiAgents.websiteSetupEmpty")}
-        </div>
-      )}
-    </div>
   );
 }
