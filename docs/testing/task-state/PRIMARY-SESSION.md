@@ -170,6 +170,11 @@ evidence above retains its original scope and failures.
 Detailed continuation in the existing output checkpoint.
 
 ## AI-AGENTS-REDESIGN-20261113
+17.11 create modal: CRM selection retained but disabled, localized development banner;
+Create centered beneath cards. Local build/types/i18n/bundle and8distinct browser
+cases PASS across final reruns;320/1440, RU/KK/EN, text200 screenshots inspected.
+Existing CRM and customer creation preserved; no API/deployment change.
+Evidence: docs/testing/evidence/ai-agents-redesign-20261113.md (Create modal availability).
 
 Knowledge/dependency closeout17Nov: prior incomplete14Nov knowledge run superseded
 by release focus-results.json,8/8 desktop/mobile cases PASS. Create/edit/reload,

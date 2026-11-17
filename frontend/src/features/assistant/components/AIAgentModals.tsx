@@ -44,12 +44,14 @@ export function CreateAgentModal({
   }, [open]);
 
   return (
-    <Modal title={t("aiAgents.newAgentTitle")} open={open} focusReturnId="ai-agent-create" onClose={() => { if (!isCreating) onClose(); }}>
+    <Modal title={t("aiAgents.newAgentTitle")} open={open} focusReturnId="ai-agent-create"
+      className="[&>header]:h-auto [&>header]:min-h-16 [&>header]:py-4 [&>header>h2]:whitespace-normal [&>header>h2]:break-words"
+      onClose={() => { if (!isCreating) onClose(); }}>
       <form
         className="space-y-4"
         onSubmit={(event) => {
           event.preventDefault();
-          if (scenario && name.trim() && !(scenario === "crm" && hasCRMAgent)) onSubmit();
+          if (canManage && !isCreating && scenario === "inbox" && name.trim()) onSubmit();
         }}
       >
         {error ? <ErrorState error={error} message={getApiErrorMessage(error)} /> : null}
@@ -61,14 +63,16 @@ export function CreateAgentModal({
           onChange={(event) => onNameChange(event.target.value)}
           placeholder={t("aiAgents.agentNamePlaceholder")}
         />
-        <fieldset disabled={isCreating} className="space-y-3">
+        <fieldset disabled={isCreating} className="min-w-0 space-y-3">
           <legend className="mb-2 text-sm font-semibold">{t("aiScenario.choose")}</legend>
           {(["inbox", "crm"] as const).map(value => <AgentScenarioCard key={value} value={value} selected={scenario === value} unavailable={value === "crm" && hasCRMAgent} onSelect={() => onScenarioChange(value)} />)}
         </fieldset>
-        <Button type="submit" variant="primary" disabled={!canManage || !name.trim() || !scenario || (scenario === "crm" && hasCRMAgent)} isLoading={isCreating}>
-          <Plus aria-hidden="true" size={16} />
-          {t("aiAgents.createAgent")}
-        </Button>
+        <div className="flex justify-center">
+          <Button type="submit" variant="primary" disabled={!canManage || !name.trim() || scenario !== "inbox"} isLoading={isCreating}>
+            <Plus aria-hidden="true" size={16} />
+            {t("aiAgents.createAgent")}
+          </Button>
+        </div>
       </form>
     </Modal>
   );

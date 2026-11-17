@@ -25,6 +25,7 @@ export const ai: Record<string, string> = {
   "aiScenario.crmHelp": "Configure data sources and capabilities. The agent works inside the CRM for staff; changes require confirmation and permission for the action.",
   "aiScenario.inbox": "Customer conversations",
   "aiScenario.crm": "CRM and analytics",
+  "aiScenario.inDevelopment": "In development",
   "aiScenario.choose": "Agent purpose",
   "aiScenario.inboxDescription": "Answers incoming enquiries in connected channels using company knowledge and permitted enquiry actions.",
   "aiScenario.crmDescription": "Helps staff find CRM data, prepare changes for confirmation and analyse business activity.",

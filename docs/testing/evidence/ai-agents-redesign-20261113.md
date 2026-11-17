@@ -908,3 +908,48 @@ AntiSlop during scoped geometry/action/focus/localization/build PASS; existing
 full-project/live-provider checks N/A: presentation/focus only. Native zoom limit
 above explicit. Root/current branch retained, base37b1025b, foreign voice/Meta WIP
 preserved. Publication/CI and cleanup in existing checkpoint; no deployment.
+
+
+## Create modal availability — 17.11.2026
+
+Owner change: retain CRM/analytics card, disable native radio and form submission
+for this scenario, show requested development banner in RU/KK/EN; center Create
+under cards. Existing StatusNotice/Modal/Button/tokens reused. Existing CRM API,
+profiles and runtime remain available. No permission/AI/notification/BusinessEvent,
+schema/env or workingDB changes. Scoped wrapping fixes narrow enlarged text.
+
+Canonical checkout C:/Users/user/Desktop/PlatformaCRM; retained branch
+codex/ui-testing-toolkit, starting be222ec6. Concurrent client commit df5926c3 was
+already on origin/main before publication; its work and other WIP are preserved.
+Disposable SQLite, canonical Django/Vite49206/49207, mocked AI; no live provider.
+
+Commands (from root):
+- `.venv/Scripts/python.exe output/ai-agent-create-20261117/build.py`: PASS,
+  npm build includes i18n7440 keys/tsc/app/widget; bundle PASS. Existing locale
+  chunk warnings only. final-build-source.json binds emitted final reflow.
+- `.../check.py regressions-wrap`: staff desktop/mobile PASS (2).
+- `.../check.py regressions-complete`: CRM desktop/mobile, customer desktop/mobile,
+  localized desktop PASS (5); mobile localized interrupted with missing dialog.
+- `.../check.py regressions-localized-final --grep 'creation availability banner'
+  --project mobile`: PASS (1). Vite log showed concurrent i18n/HMR invalidation
+  and failed screenshot was blank; unchanged-source rerun passed after HMR settled.
+
+Eight distinct final cases passed across these runs. Earlier failed attempts are
+retained in logs/checkpoint: disabled-label automation, pending-label locator,
+reused fixtures and transient contrast during animation; corrected harness keeps
+assertions. Visual clipping found at320/text200 was fixed and rechecked.
+Actual customer POST201, pending duplicate prevention,503/retry and retained input;
+existing CRM configuration/approval/analytics and staff restrictions exercised.
+
+Anti Slop during scoped Delivery Gate PASS: geometry/center alignment/overflow,
+native disabled keyboard/mouse state, visible requested status, help, Escape/focus
+return and axe; RU/KK/EN screenshots captured and visually inspected at320/1440,
+enlarged text200 top/bottom remains scrollable/readable (root text scaling, not
+physical-device/native zoom). Existing neutral/emerald identity1/1/1; no assets,
+theme/motion or adjacent redesign. Loading/error/recovery and real HTTP covered.
+Artifacts: output/ai-agent-create-20261117, final localized screenshots in
+browser-regressions-complete (desktop) and browser-regressions-localized-final
+(mobile). Backend suites/fullrelease/live-provider checks N/A for this UI scope.
+Frontend contract updated; roadmap/passport/README/AI/access need no update:
+no stage advance or existing runtime/API/setup policy change. No scoped local
+acceptance remainder. Publication/CI receipt in existing checkpoint; no deployment.

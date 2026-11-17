@@ -2,11 +2,14 @@ import { ChartNoAxesCombined, CircleHelp, MessageSquareText } from "lucide-react
 import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useI18n } from "../../../lib/i18n";
+import { StatusNotice } from "../../../components/ui/StatusNotice";
 
 export function AgentScenarioCard({ value, selected, unavailable, onSelect }: {
   value: "inbox" | "crm"; selected: boolean; unavailable: boolean; onSelect: () => void;
 }) {
   const { t } = useI18n();
+  const inDevelopment = value === "crm";
+  const disabled = unavailable || inDevelopment;
   const id = useId();
   const [hintOpen, setHintOpen] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
@@ -41,12 +44,12 @@ export function AgentScenarioCard({ value, selected, unavailable, onSelect }: {
     onMouseEnter={showHint} onMouseLeave={hideHint}
     style={position ? { ...position, zIndex: "calc(var(--platforma-z-modal) + 1)" } : undefined}
     className={`${position ? "fixed" : "mt-2 w-full"} rounded-control border border-platforma-border bg-surface-card p-3 text-sm text-platforma-text shadow-lg`}>{t(`aiScenario.${value}Help`)}</div>;
-  return <div ref={cardRef} className={`relative flex flex-wrap items-start gap-2 rounded-xl border p-4 ${selected ? "border-brand-600 bg-surface-card" : "border-platforma-border bg-surface-card"} ${unavailable ? "border-disabled-border bg-disabled-surface text-disabled-content" : ""}`}
+  return <div ref={cardRef} className={`relative flex flex-wrap items-start gap-2 rounded-xl border p-4 ${selected && !disabled ? "border-brand-600 bg-surface-card" : "border-platforma-border bg-surface-card"} ${disabled ? "border-disabled-border bg-disabled-surface text-disabled-content" : ""}`}
     onKeyDown={event => { if (event.key === "Escape" && hintOpen) { event.preventDefault(); event.stopPropagation(); setHintOpen(false); } }}>
-    <label className={`flex flex-1 items-start gap-3 ${unavailable ? "cursor-not-allowed" : "cursor-pointer"}`}>
-      <input type="radio" name="agent-scenario" value={value} checked={selected} disabled={unavailable} onChange={onSelect} className="mt-1" />
+    <label className={`flex min-w-0 flex-[1_1_12rem] flex-wrap items-start gap-3 ${disabled ? "cursor-not-allowed" : "cursor-pointer"}`}>
+      <input type="radio" name="agent-scenario" value={value} checked={selected && !disabled} disabled={disabled} aria-describedby={inDevelopment ? `${id}-availability` : undefined} onChange={onSelect} className="mt-1" />
       <Icon size={20} aria-hidden="true" className="mt-0.5 shrink-0" />
-      <span><span className="block text-sm font-semibold">{t(`aiScenario.${value}`)}</span>
+      <span className="min-w-0 flex-[1_1_10rem] break-words"><span className="block text-sm font-semibold">{t(`aiScenario.${value}`)}</span>
         <span className="mt-1 block text-sm text-platforma-subtle">{t(`aiScenario.${value}Description`)}</span>
         {unavailable && <span className="mt-2 block text-sm">{t("aiScenario.alreadyExists")}</span>}
       </span>
@@ -57,6 +60,7 @@ export function AgentScenarioCard({ value, selected, unavailable, onSelect }: {
       onFocus={showHint} onBlur={() => setHintOpen(false)} onClick={showHint}>
       <CircleHelp size={18} aria-hidden="true" />
     </button>
+    {inDevelopment && <StatusNotice id={`${id}-availability`} className="w-full" compact ariaLive="off" title={t("aiScenario.inDevelopment")} />}
     {position ? createPortal(hint, document.body) : hint}
   </div>;
 }
