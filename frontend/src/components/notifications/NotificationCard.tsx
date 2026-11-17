@@ -21,6 +21,7 @@ export function NotificationCard({ children, leaving = false, order = 0, onReady
   const [expanded, setExpanded] = useState(false);
   const [overflow, setOverflow] = useState(false);
   const [pageVisible, setPageVisible] = useState(document.visibilityState === "visible");
+  const [hostHidden, setHostHidden] = useState(false);
   useLayoutEffect(() => slot.current && layout ? layout.register(slot.current, setPlacement) : undefined, [layout]);
   useLayoutEffect(() => {
     const node = content.current;
@@ -44,9 +45,18 @@ export function NotificationCard({ children, leaving = false, order = 0, onReady
     return () => document.removeEventListener("visibilitychange", update);
   }, []);
   useEffect(() => {
-    onReadyChange?.(placement.visible && entered && !expanded && !leaving && pageVisible);
+    const host = slot.current?.closest<HTMLElement>('.platforma-notification-viewport');
+    if (!host) return;
+    const update = () => setHostHidden(host.inert);
+    const observer = new MutationObserver(update);
+    observer.observe(host, { attributes: true, attributeFilter: ['inert'] });
+    update();
+    return () => observer.disconnect();
+  }, []);
+  useEffect(() => {
+    onReadyChange?.(placement.visible && entered && !expanded && !leaving && pageVisible && !hostHidden);
     return () => onReadyChange?.(false);
-  }, [placement.visible, entered, expanded, leaving, pageVisible, onReadyChange]);
+  }, [placement.visible, entered, expanded, leaving, pageVisible, hostHidden, onReadyChange]);
   useEffect(() => { if (leaving) setExpanded(false); }, [leaving]);
   useEffect(() => {
     if (!leaving) return;

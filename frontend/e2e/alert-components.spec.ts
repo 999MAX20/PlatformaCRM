@@ -22,7 +22,10 @@ for (const language of ["ru", "kk", "en"]) {
       const host = page.getByTestId("notification-host");
       await expect(host.getByTestId("action-feedback")).toHaveCount(5);
       await expect(host.getByTestId("connectivity-banner")).toBeVisible();
-      await page.waitForTimeout(250);
+      await expect.poll(() => host.locator('.platforma-notification-slot:not([data-queued]) .platforma-status-notice').evaluateAll(nodes => {
+        const boxes = nodes.map(node => node.getBoundingClientRect());
+        return boxes.every((box, index) => index === 0 || box.bottom <= boxes[index - 1].top - 7);
+      })).toBe(true);
       const result = await host.evaluate(element => {
         const rect = element.getBoundingClientRect();
         const cards = Array.from(element.querySelectorAll<HTMLElement>(".platforma-notification-slot:not([data-queued]) .platforma-status-notice")).map(node => {
@@ -75,12 +78,14 @@ test("queue retains visible notices and admits pending FIFO without losing focus
   await expect(host).not.toContainText("Queue 4");
   await expect(host.getByTestId("action-feedback").first()).toContainText("Queue 0");
   await page.getByTestId("remove-opener").click();
-  const close = host.getByTestId("action-feedback").filter({ hasText: "Queue 3" }).getByRole("button");
+  const visibleCard = host.locator('.platforma-notification-slot:not([data-queued])').getByTestId("action-feedback").first();
+  const dismissedTitle = await visibleCard.locator('.platforma-notice-title').innerText();
+  const close = visibleCard.getByRole("button");
   await close.focus();
   await page.keyboard.press("Enter");
   await expect(host.getByTestId("action-feedback")).toHaveCount(4);
   await expect(host.getByTestId("action-feedback").last()).toContainText("Queue 4");
-  await expect(host).not.toContainText("Queue 3");
+  await expect(host).not.toContainText(dismissedTitle);
   expect(await page.evaluate(() => document.activeElement?.tagName)).not.toBe("BODY");
 });
 
@@ -160,11 +165,23 @@ test("queued duplicates collapse and reading time starts on admission", async ({
   const cards = page.getByTestId("action-feedback");
   const pending = cards.filter({ hasText: "Pending short" });
   await expect(pending).toHaveCount(0);
-  await cards.filter({ hasText: "Queue 3" }).getByRole("button").click();
-  await page.clock.runFor(201);
+  const closeQueued = async (index: number) => {
+    const card = cards.filter({ hasText: `Queue ${index}` });
+    await card.getByRole("button").click();
+    await page.clock.runFor(450);
+    await expect(card).toHaveCount(0);
+    // Removing the exited card schedules layout after React commits.
+    await page.clock.runFor(50);
+  };
+  await closeQueued(0);
   await expect(cards.last()).toContainText("Queue 4");
-  await cards.filter({ hasText: "Queue 2" }).getByRole("button").click();
-  await page.clock.runFor(201);
+  await closeQueued(1);
+  const mobile = await page.evaluate(() => matchMedia('(max-width: 760px)').matches);
+  if (mobile) {
+    for (const index of [2, 3, 4]) {
+      await closeQueued(index);
+    }
+  }
   await expect(pending).toBeVisible();
   await page.clock.runFor(450);
   await page.mouse.move(0, 0);
@@ -175,7 +192,7 @@ test("queued duplicates collapse and reading time starts on admission", async ({
   await expect(pending.locator('xpath=ancestor::div[contains(@class,"platforma-notification-card")][1]')).toHaveAttribute("data-leaving", "true");
   await page.clock.runFor(201);
   await expect(pending).toHaveCount(0);
-  await expect(cards).toHaveCount(3);
+  await expect(cards).toHaveCount(mobile ? 0 : 3);
 });
 
 for (const language of ["ru", "kk", "en"]) {
@@ -215,15 +232,40 @@ test("enlarged notification text reflows at 320px and closes by keyboard", async
   await details.click();
   const dialog = page.getByTestId('notification-details');
   await expect(dialog).toBeVisible();
+  await expect(page.getByTestId('notification-host')).toBeHidden();
   await dialog.locator('.platforma-notice-description').scrollIntoViewIfNeeded();
   expect(await dialog.locator('.platforma-notice-description').evaluate(node => node.scrollWidth <= node.clientWidth)).toBe(true);
   await page.screenshot({ path: path.join(evidence, "text200-bottom-320.png"), animations: "disabled" });
   await page.keyboard.press('Escape');
+  await expect(page.getByTestId('notification-host')).toBeVisible();
   await expect(details).toBeFocused();
   await card.getByRole("button").focus();
   await page.keyboard.press("Enter");
   await expect(card).toHaveCount(0);
   await expect(page.getByTestId("long")).toBeFocused();
+});
+
+test("reading details hides the stack and pauses other notification timers", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await open(page);
+  await page.clock.install();
+  await page.clock.pauseAt(new Date());
+  await page.getByTestId("queued-short").click();
+  await page.getByTestId("long").click();
+  await page.clock.runFor(450);
+  const host = page.getByTestId("notification-host");
+  const short = host.getByTestId("action-feedback").filter({ hasText: "Pending short" });
+  await page.locator('.platforma-notification-details').click();
+  await expect(page.getByTestId("notification-details")).toBeVisible();
+  await expect(host).toBeHidden();
+  await page.clock.runFor(2000);
+  await expect(short).toHaveCount(1);
+  await page.keyboard.press("Escape");
+  await expect(host).toBeVisible();
+  await expect(short).toBeVisible();
+  await page.mouse.move(0, 0);
+  await page.clock.runFor(2000);
+  await expect(short).toHaveCount(0);
 });
 
 test("full reading interval resumes after hover and focus, followed by exit", async ({ page }) => {

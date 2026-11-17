@@ -2279,7 +2279,20 @@ WhatsApp scopes, signed account-update journal without activation/messages.
 Focused account7PASS; dependent backend102run101PASS1SQLite-locking skip;
 PostgreSQL Signup24PASS including locking; build/types/i18n/bundlePASS.
 Targeted browser/visual final result and input hashes in PRIMARY-SESSION META-V4.
-No deployment, client send or App Review submission. Publication blocked by
-uncommitted shared frontend dependencies owned by another change; no foreign WIP
-staged. Concrete scenario/settings/reviewer package: docs/current/operations.md,
+No deployment, client send or App Review submission at this preparation checkpoint.
+Owner subsequently authorized all-current-changes integration and deployment in
+RELEASE-20261117; the former shared-dependency publication restriction is resolved.
+Concrete scenario/settings/reviewer package: docs/current/operations.md,
 section Meta v4 and App Review preparation. This does not close CRM-R03.
+
+RELEASE-20261117: all captured pending changes integrated from baseb659f90b.
+Full local release gate PASS:3404 backend tests passed/81 platform skips,
+types/i18n/app/widget/bundle,2 mobile role checks and dependency audits.
+PostgreSQL Signup24/24 and migration roundtrip PASS;214 distinct browser cases PASS.
+Release verification fixed notification focus return and overlapping full-text view,
+preserving hidden-notice timers; corrected stale PIN and mobile fixture expectations.
+Five preceding published commits have successful GitHub CI. Production bundle
+preserves same-origin API and pilot legal files; AI remains off and Scribe unchanged.
+This entry records verified inputs. Actual Git/CI/server receipts are recorded during
+delivery in output/release-20261117/delivery.json; detailed checks and limits:
+PRIMARY-SESSION RELEASE-20261117 and output/release-20261117.

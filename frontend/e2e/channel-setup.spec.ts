@@ -91,7 +91,14 @@ test("status failure retries; WhatsApp offers one provider-neutral connection ac
   await open(page, "WhatsApp");
   await expect(page.getByRole("dialog").getByRole("button", { name: "Connect", exact: true })).toHaveCount(1);
   await expect(page.getByRole("dialog")).not.toContainText(/Meta|YCloud|Manual setup/i);
-  await expect(page.getByRole("dialog").locator("input")).toHaveCount(0);
+  const pin = page.getByRole("dialog").getByLabel(/WhatsApp two-step verification PIN/);
+  const connect = page.getByRole("dialog").getByRole("button", { name: "Connect", exact: true });
+  await expect(pin).toHaveAttribute("type", "password");
+  await expect(connect).toBeDisabled();
+  await pin.fill("12345");
+  await expect(connect).toBeDisabled();
+  await pin.fill("123456");
+  await expect(connect).toBeEnabled();
   expect(state.writes).toEqual([]);
 });
 

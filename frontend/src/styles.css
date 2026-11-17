@@ -566,6 +566,7 @@
   height: calc(100% - var(--notification-bottom) - var(--notification-gap));
   pointer-events: none;
 }
+.platforma-notification-viewport[inert] { visibility: hidden; }
 .platforma-notification-group { display: contents; }
 .platforma-notification-slot { position: absolute; bottom: 0; width: 100%; transform: translateY(calc(-1 * var(--notice-offset))); transition: transform 200ms ease-out; }
 .platforma-notification-slot[data-queued] { visibility: hidden; pointer-events: none; transition: none; }

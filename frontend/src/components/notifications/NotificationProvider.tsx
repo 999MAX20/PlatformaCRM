@@ -40,20 +40,25 @@ export function ActionFeedbackToast({ item, onDismiss, dismissAfterAction = true
   const [hasFocus, setHasFocus] = useState(false);
   const [leaving, setLeaving] = useState(false);
   const [ready, setReady] = useState(false);
-  const card = useRef<HTMLDivElement>(null);
+  const cards = useRef(new Set<HTMLDivElement>());
   const opener = useRef(document.activeElement instanceof HTMLElement ? document.activeElement : null);
+  const trackCard = useCallback((node: HTMLDivElement | null) => {
+    if (!node) return;
+    cards.current.add(node);
+    return () => { cards.current.delete(node); };
+  }, []);
+  const restoreFocus = useCallback(() => {
+    for (const node of cards.current) restoreNoticeFocus(node, opener.current);
+  }, []);
   const pending = useRef(false);
   const delay = useRecoveryDelay(item.appError);
   const tone = item.tone || (item.appError ? appErrorNoticeTone(item.appError) : "info");
   const content = notificationContent(item, item.appError ? t(item.appError.messageKey) : t("actions.errorGeneric"));
   const dismiss = useCallback(() => {
-    restoreNoticeFocus(card.current, opener.current);
+    restoreFocus();
     setLeaving(true);
-  }, []);
-  useLayoutEffect(() => {
-    const node = card.current;
-    return () => restoreNoticeFocus(node, opener.current);
-  }, []);
+  }, [restoreFocus]);
+  useLayoutEffect(() => () => restoreFocus(), [restoreFocus]);
 
   useEffect(() => {
     if (!ready || leaving || isHovered || hasFocus || isActing || delay > 0) return undefined;
@@ -63,7 +68,7 @@ export function ActionFeedbackToast({ item, onDismiss, dismissAfterAction = true
 
   return (
     <NotificationCard leaving={leaving} order={item.id} onReadyChange={setReady} onExited={() => onDismiss(item.id)}>
-    <div ref={card}>
+    <div ref={trackCard}>
     <StatusNotice
       data-testid="action-feedback"
       compact

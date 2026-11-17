@@ -2,13 +2,22 @@ import { expect, test, type Page } from "@playwright/test";
 import { crmSession } from "./support/crm-workspace";
 import type { Bot, BusinessKnowledgeItem } from "../src/types";
 
+const cleanup: Array<() => Promise<void>> = [];
+test.afterEach(async () => {
+  for (const remove of cleanup.splice(0).reverse()) await remove();
+});
+
 async function fixture(page: Page) {
   const session = await crmSession(page);
   const bot = await session.create<Bot>("bots", { name: "Knowledge acceptance", scenario: "inbox", status: "draft" });
+  cleanup.push(async () => {
+    const response = await page.request.delete(`${process.env.E2E_API_BASE_URL}/api/bots/${bot.id}/`, { headers: session.headers });
+    expect(response.ok(), await response.text()).toBeTruthy();
+  });
   return { session, bot, path: `/app/ai-agents/${bot.id}/knowledge` };
 }
 
-test("topic shortcuts remain after create; edit persists and eligibility follows both flags", async ({ page }) => {
+test("topic shortcuts remain after create; edit persists and eligibility follows both flags", async ({ page }, testInfo) => {
   const { session, bot, path } = await fixture(page);
   await page.goto(path);
   await page.getByRole("button", { name: "Цены и услуги Продажи", exact: true }).click();
@@ -43,12 +52,20 @@ test("topic shortcuts remain after create; edit persists and eligibility follows
   await editing.getByRole("button", { name: "Сохранить", exact: true }).click();
   await expect(editing).toBeHidden();
   await expect(page.getByText("Выключено", { exact: true })).toBeVisible();
+  await page.getByText("Выключено", { exact: true }).scrollIntoViewIfNeeded();
+  await page.screenshot({ path: testInfo.outputPath("knowledge-material-viewport.png") });
 });
 
 test("knowledge draft survives Escape, backdrop, close and browser back; discard is explicit", async ({ page }) => {
   const { session, bot, path } = await fixture(page);
   await page.goto(`/app/ai-agents/${bot.id}/profile`);
-  await page.goto(path);
+  const navigation = page.getByRole("navigation", { name: "Разделы редактора агента" });
+  await expect(navigation).toBeVisible();
+  const knowledge = navigation.locator("#agent-section-links").getByRole("button", { name: "Знания", exact: true });
+  const menu = navigation.locator(":scope > button");
+  if (await menu.isVisible() && await menu.getAttribute("aria-expanded") === "false") await menu.click();
+  await knowledge.click();
+  await expect(page).toHaveURL(new RegExp(`${path}$`));
   await page.getByRole("button", { name: "Добавить знание", exact: true }).click();
   const editor = page.getByRole("dialog", { name: "Новое знание", exact: true });
   await editor.getByRole("textbox", { name: /^Название/ }).fill("Черновик");
@@ -86,6 +103,10 @@ test("shared library exposes full text and material-wide permission; connect and
   const { session, bot, path } = await fixture(page);
   const content = "Общие условия бизнеса.\n".repeat(40) + "Последняя важная строка.";
   const item = await session.create<BusinessKnowledgeItem>("ai/knowledge-items", { title: "Общий материал для проверки", content, category: "policy", is_active: true, customer_visible: false });
+  cleanup.push(async () => {
+    const response = await page.request.delete(`${process.env.E2E_API_BASE_URL}/api/ai/knowledge-items/${item.id}/`, { headers: session.headers });
+    expect(response.ok(), await response.text()).toBeTruthy();
+  });
   await page.goto(path);
   await page.getByRole("button", { name: "Из библиотеки бизнеса", exact: true }).click();
   const library = page.getByRole("dialog", { name: "Из библиотеки бизнеса", exact: true });
