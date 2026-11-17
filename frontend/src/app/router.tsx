@@ -1,4 +1,4 @@
-import { MerchantRoute, PageLoader, PermissionRoute, LegacyDashboardRedirect } from "./routeGuards";
+import { MerchantRoute, LayoutLoader, PageLoader, PermissionRoute, LegacyDashboardRedirect } from "./routeGuards";
 import { AppLayout } from "./routeLoaders";
 import { merchantFeatureRoutes } from "./merchantRoutes";
 import { legacyMerchantRoutes } from "./legacyRoutes";
@@ -23,9 +23,9 @@ const router = createBrowserRouter([
     errorElement: <RouteErrorBoundary />,
     element: (
       <MerchantRoute>
-        <PageLoader>
+        <LayoutLoader>
           <AppLayout />
-        </PageLoader>
+        </LayoutLoader>
       </MerchantRoute>
     ),
     children: merchantChildren.map(
@@ -49,9 +49,9 @@ const router = createBrowserRouter([
     errorElement: <RouteErrorBoundary />,
     element: (
       <MerchantRoute>
-        <PageLoader>
+        <LayoutLoader>
           <AppLayout />
-        </PageLoader>
+        </LayoutLoader>
       </MerchantRoute>
     ),
     children: [

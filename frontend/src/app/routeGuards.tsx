@@ -54,6 +54,10 @@ export function PublicRoute({ children }: { children: React.ReactNode }) {
 
   return <Navigate to={intendedPath} replace />;
 }
+export function LayoutLoader({ children }: { children: React.ReactNode }) {
+  return <Suspense fallback={<LoadingState scope="page" />}>{children}</Suspense>;
+}
+
 export function PageLoader({ children }: { children: React.ReactNode }) {
   return (
     <PageLoadingBoundary identity={isValidElement(children) ? children.type : undefined}>

@@ -32,6 +32,8 @@ test("Inbox waits once for its initial visible data and does not wait for channe
     await expect(visibleLoaders(page)).toHaveCount(1);
     await expect(visibleLoaders(page).locator(".platforma-loading__content")).toHaveCSS("opacity", "1");
     await expect(page.getByTestId("inbox-workspace-ready")).toBeHidden();
+    await expect(page.getByTestId("header-account-link")).toBeVisible();
+    await expect(page.getByTestId("desktop-sidebar")).toBeVisible();
     await page.screenshot({ animations: "disabled", path: info.outputPath("inbox-initial.png") });
     messages.release();
     await expect(page.getByTestId("inbox-workspace-ready")).toBeHidden();
@@ -71,6 +73,8 @@ for (const item of pageCases) test(`${item.name} shows one initial loader then u
     await expect.poll(() => started).toBe(true);
     await expect(visibleLoaders(page)).toHaveCount(1);
     await expect(page.getByTestId("page-loading").filter({ visible: true })).toHaveCount(1);
+    await expect(page.getByTestId("header-account-link")).toBeVisible();
+    await expect(page.getByTestId("desktop-sidebar")).toBeVisible();
     await page.screenshot({ animations: "disabled", path: info.outputPath("initial.png") });
     waiting.release();
     await expect(visibleLoaders(page)).toHaveCount(0);
@@ -116,6 +120,8 @@ test("initial loading fits narrow enlarged text and keeps hidden controls out of
   try {
     await page.goto(`/app/conversations/${conversation.id}`);
     await expect(visibleLoaders(page)).toHaveCount(1);
+    await expect(page.getByTestId("header-account-link")).toBeVisible();
+    await expect(page.locator("[data-workspace-content]").getByTestId("page-loading")).toBeVisible();
     await page.evaluate(() => { document.documentElement.style.fontSize = "200%"; });
     const content = visibleLoaders(page).locator(".platforma-loading__content");
     await expect(content).toContainText(ru["common.loadingData"]);
@@ -132,6 +138,46 @@ test("initial loading fits narrow enlarged text and keeps hidden controls out of
     expect(errors).toEqual([]);
   } finally { waiting.release(); }
 });
+
+for (const [locale, width, url] of [["ru", 1440, "/app/tasks"], ["kk", 768, "/tasks"], ["en", 390, "/app/tasks"]] as const) {
+  test(`cold entry keeps usable navigation ${locale} ${width}`, async ({ page }, info) => {
+    const errors: string[] = [];
+    page.on("pageerror", error => errors.push(error.message));
+    await page.setViewportSize({ width, height: 900 });
+    await crmSession(page);
+    await page.evaluate(locale => localStorage.setItem("ai_smb_language", locale), locale);
+    const waiting = hold();
+    let started = false;
+    await page.route("**/api/tasks/summary/**", async route => { started = true; await waiting.promise; await route.continue(); });
+    try {
+      await page.goto(url);
+      await expect.poll(() => started).toBe(true);
+      await expect(visibleLoaders(page)).toHaveCount(1);
+      await expect(page.getByTestId("header-account-link")).toBeVisible();
+      const navigation = page.getByTestId(width >= 1024 ? "desktop-sidebar" : "bottom-mobile-menu-trigger");
+      await expect(navigation).toBeVisible();
+      const loader = page.getByTestId("page-loading").filter({ visible: true });
+      await expect(page.locator("[data-workspace-content]").getByTestId("page-loading")).toBeVisible();
+      const bounds = await loader.boundingBox();
+      const header = await page.locator("header").boundingBox();
+      expect(bounds!.y).toBeGreaterThanOrEqual(header!.y + header!.height);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      await page.screenshot({ animations: "disabled", path: info.outputPath("shell-loading.png") });
+      if (width < 1024) {
+        await navigation.click();
+        await expect(page.getByTestId("mobile-sidebar")).toBeVisible();
+        await page.keyboard.press("Escape");
+        await expect(page.getByTestId("mobile-navigation-drawer")).toHaveCount(0);
+        await expect(navigation).toBeFocused();
+      }
+      await page.getByTestId("header-account-link").focus();
+      await page.keyboard.press("Enter");
+      await expect(page.locator("[data-account-page]")).toBeVisible();
+      await expect(visibleLoaders(page)).toHaveCount(0);
+      expect(errors).toEqual([]);
+    } finally { waiting.release(); }
+  });
+}
 
 test("route navigation keeps the shell and cached return never blanks the page", async ({ page }, info) => {
   await crmSession(page);
@@ -168,6 +214,8 @@ test("platform details waits for its visible section", async ({ page }, info) =>
   try {
     await page.goto(`${href!.split("?")[0]}?section=details`);
     await expect.poll(() => started).toBe(true);
+    await expect(page.getByTestId("platform-sidebar")).toBeVisible();
+    await expect(page.locator("header")).toBeVisible();
     await expect(visibleLoaders(page)).toHaveCount(1);
     await page.screenshot({ animations: "disabled", path: info.outputPath("platform-initial.png") });
     waiting.release();

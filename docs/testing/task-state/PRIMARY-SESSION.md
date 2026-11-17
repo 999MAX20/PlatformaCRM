@@ -281,6 +281,11 @@ saved pre-task baselines. No scope remains in code or local evidence; deployment
 is not performed or claimed.
 
 PAGE-LOADING-20261113: scoped implementation and local UI acceptance complete.
+17.11 cold-entry correction: header/sidebar/mobile navigation remain usable while
+one loader waits in page content; merchant/legacy/platform shells covered.
+26distinct browser cases verified (24initialPASS +5focusedPASS including2recoveries),
+17Node/build/types/i18n/bundle PASS; RU/KK/EN and320px/200% images inspected.
+No scoped local remainder; publication/CI: output/loading-shell-20261117/CHECKPOINT.md.
 One initial loader; visible queries only; local refresh preserves content/drafts.
 Inbox list geometry, retry/403, hidden settings, cache, portal focus verified.
 RU/KK/EN and text200% inspected; no backend/workingDB/provider/deploy changes.

@@ -2,7 +2,7 @@ import { Navigate } from "react-router";
 
 import { RouteErrorBoundary } from "../components/ui/RouteErrorBoundary";
 
-import { PlatformRoute, PageLoader } from "./routeGuards";
+import { PlatformRoute, LayoutLoader, PageLoader } from "./routeGuards";
 import { PlatformLayout, AccountPage, PlatformOverviewPage, PlatformOperationsPage, PlatformMerchantsPage, PlatformMerchantDetailPage, SupportListPage, SupportDetailPage, SupportIncidentPage } from "./routeLoaders";
 export const platformRoutes = [
 {
@@ -10,9 +10,9 @@ export const platformRoutes = [
     errorElement: <RouteErrorBoundary />,
     element: (
       <PlatformRoute>
-        <PageLoader>
+        <LayoutLoader>
           <PlatformLayout />
-        </PageLoader>
+        </LayoutLoader>
       </PlatformRoute>
     ),
     children: [

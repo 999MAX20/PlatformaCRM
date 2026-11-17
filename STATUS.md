@@ -89,6 +89,11 @@ No scoped code/local-evidence remainder. Follow-up publication/CI: checkpoint.
 Evidence: docs/testing/task-state/PRIMARY-SESSION.md#notifications-server-fixes-20261113.
 
 PAGE-LOADING-20261113: scoped implementation and local UI acceptance complete.
+17.11 cold-entry correction: header/sidebar/mobile navigation remain usable while
+one loader waits in page content; merchant/legacy/platform shells covered.
+26distinct browser cases verified (24initialPASS +5focusedPASS including2recoveries),
+17Node/build/types/i18n/bundle PASS; RU/KK/EN and320px/200% images inspected.
+No scoped local remainder; publication/CI: output/loading-shell-20261117/CHECKPOINT.md.
 One initial loader; visible queries only; local refresh preserves content/drafts.
 Inbox list geometry, retry/403, hidden settings, cache, portal focus verified.
 Loading23PASS; dependent19 scenarios verified across retained runs; Node/build/bundlePASS.
