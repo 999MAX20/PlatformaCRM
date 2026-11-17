@@ -883,3 +883,28 @@ Exact commands, screenshots, attempt logs and publication receipt:
 Contracts/passport updated; roadmap/README/access/AI policy need no change because
 no stage, setup, business permission, provider or AI behavior changed. No live-site
 claim. Earlier alert task remains separate and unfinished.
+
+### Centered empty-state owner correction17Nov
+
+Explicit owner request supersedes the preceding two-column empty-state acceptance.
+Only the existing CTA remains, centered in both axes excluding fixed header/mobile
+navigation; content can grow/scroll. Populated editor branch retains its layout.
+Create modal focus-return ID moved to remaining CTA; text/surface/icons unchanged.
+
+Fresh `npm run build` (i18n/types/app/widget) and `npm run check:bundle` PASS;
+logs: output/ai-agents-empty-20261117/centered; existing locale warnings remain.
+Chrome/CUA on disposable API61533/Vite61534: real empty fixture, desktop1536x639,
+mobile390x844 and320x640, RU/KK/EN screenshots captured and visually inspected in
+chat. Exactly one Create/no selector; Enter opens dialog, Escape returns visible
+focus. At320x360 content scrolls and CTA works. Actual creation opened agent2/profile
+with picker/navigation restored. Only disposable fixture/account mutated.
+First language-save navigation was premature; retried after saved status and
+verified KK/EN text. Zoom shortcut had no effect under viewport override (16px,
+ratio1): new native200% evidence unavailable. Prior200% typography evidence remains
+valid for unchanged text styles; new short-height scrolling verified separately.
+
+AntiSlop during scoped geometry/action/focus/localization/build PASS; existing
+4.85/5.35 text/button contrast reused. No new copy/assets/theme/motion. Backend,
+full-project/live-provider checks N/A: presentation/focus only. Native zoom limit
+above explicit. Root/current branch retained, base37b1025b, foreign voice/Meta WIP
+preserved. Publication/CI and cleanup in existing checkpoint; no deployment.

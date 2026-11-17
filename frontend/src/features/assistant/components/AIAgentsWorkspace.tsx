@@ -171,12 +171,12 @@ export function AIAgentsWorkspace({
   return (
     <CrmWorkspacePage
       edgeToEdge
-      className="px-4 pt-5 pb-24 sm:px-6 sm:pt-6 lg:pb-6"
-      heightClassName="h-auto min-h-0"
+      className={selectedBot ? "px-4 pt-5 pb-24 sm:px-6 sm:pt-6 lg:pb-6" : "px-4 py-6 sm:px-6"}
+      heightClassName={selectedBot ? "h-auto min-h-0" : "h-auto min-h-[calc(100dvh-var(--app-header-height)-5.5rem-env(safe-area-inset-bottom))] lg:min-h-[calc(100dvh-var(--app-header-height))]"}
       maxWidthClassName="max-w-[1520px]"
       testId="ai-agents-workspace-ready"
     >
-      <div className="min-w-0">
+      <div className={selectedBot ? "min-w-0" : "grid min-w-0 flex-1 place-items-center"}>
 
         {selectedBot ? (
           <AIAgentEditorShell
@@ -264,15 +264,10 @@ export function AIAgentsWorkspace({
             )}
           </AIAgentEditorShell>
         ) : (
-          <div className="grid min-w-0 gap-5 lg:grid-cols-[216px_minmax(0,1fr)] lg:gap-8">
-            <aside className="relative z-20 min-w-0 lg:self-start" aria-label={t("aiAgents.allAgents")}>
-              {navigation}
-            </aside>
-            <div className="relative z-0 min-w-0 space-y-3">
+            <div className="min-w-0 w-full space-y-3">
               {mutationError ? <ErrorState error={mutationError} message={getApiErrorMessage(mutationError)} /> : null}
               <EmptyAgentsState canManage={canManage} onCreate={onOpenCreate} />
             </div>
-          </div>
         )}
       </div>
 

@@ -2310,11 +2310,11 @@ PRIMARY-SESSION RELEASE-20261117 and output/release-20261117.
 
 ## AI-AGENTS-EMPTY-20261117
 
-Empty Agents now reuses the216px left navigation/right content layout; CTA sits on
-the page background without a robot/card. Purple robot marks removed from agent
+Owner correction: empty Agents now shows only a CTA centered horizontally and
+vertically, without picker/top button/card. Purple robot marks removed from agent
 responses, navigator and legacy bots; no runtime/API/permission change.
-Local browser RU/KK/EN320–1440, keyboard/create/picker/focus,200% and actual isolated
-API creation/persistence PASS; build/types/i18n/bundle PASS. Screenshot review done.
+Fresh Chrome RU/KK/EN desktop/mobile, keyboard/create/focus and short-height
+scrolling PASS; build/types/i18n/bundle PASS. Native zoom limit recorded in evidence.
 No local scoped remainder. Publication/CI and exact limits:
 output/ai-agents-empty-20261117/CHECKPOINT.md; registered evidence:
 docs/testing/evidence/ai-agents-redesign-20261113.md#empty-state-correction17nov.

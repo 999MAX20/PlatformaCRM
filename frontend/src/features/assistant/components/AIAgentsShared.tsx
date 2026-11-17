@@ -15,7 +15,7 @@ export function EmptyAgentsState({ canManage, onCreate }: { canManage: boolean; 
           {t("aiAgents.emptyAgentsText")}
         </p>
         {canManage ? (
-          <Button className="mt-5" type="button" onClick={onCreate}>
+          <Button className="mt-5" type="button" data-focus-return-id="ai-agent-create" onClick={onCreate}>
             <Plus aria-hidden="true" size={16} />
             {t("aiAgents.createAgent")}
           </Button>
