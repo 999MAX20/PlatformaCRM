@@ -1,8 +1,7 @@
 import type { ReactNode } from "react";
 import { Link } from "react-router";
-import { ArrowRight, BookOpen, Bot, CheckCircle2, Circle, Plus, Radio, Sparkles } from "lucide-react";
+import { ArrowRight, BookOpen, CheckCircle2, Circle, Plus, Radio, Sparkles } from "lucide-react";
 
-import { Card, CardBody } from "../../../components/ui/Card";
 import { Button } from "../../../components/ui/Button";
 import { useI18n } from "../../../lib/i18n";
 import { cn } from "../../../lib/cn";
@@ -10,12 +9,8 @@ import type { OnboardingStep } from "../aiAgentsTypes";
 export function EmptyAgentsState({ canManage, onCreate }: { canManage: boolean; onCreate: () => void }) {
   const { t } = useI18n();
   return (
-    <Card variant="outlined">
-      <CardBody className="flex flex-col items-center justify-center py-16 text-center">
-        <div className="grid h-14 w-14 place-items-center rounded-2xl bg-ai-600 text-white">
-          <Bot size={24} />
-        </div>
-        <h3 className="mt-4 text-2xl font-black text-midnight">{t("aiAgents.emptyAgentsTitle")}</h3>
+    <section className="flex min-w-0 flex-col items-center justify-center py-10 text-center sm:py-16" data-testid="empty-agents-state">
+        <h2 className="text-2xl font-black text-midnight">{t("aiAgents.emptyAgentsTitle")}</h2>
         <p className="mt-2 max-w-xl text-sm font-semibold leading-6 text-platforma-faint">
           {t("aiAgents.emptyAgentsText")}
         </p>
@@ -25,8 +20,7 @@ export function EmptyAgentsState({ canManage, onCreate }: { canManage: boolean; 
             {t("aiAgents.createAgent")}
           </Button>
         ) : null}
-      </CardBody>
-    </Card>
+    </section>
   );
 }
 
@@ -53,7 +47,7 @@ export function FieldHint({ children }: { children: ReactNode }) {
 
 export function OnboardingProgress({ steps }: { steps: OnboardingStep[] }) {
   const { t } = useI18n();
-  const icons = [Bot, BookOpen, Radio];
+  const icons = [null, BookOpen, Radio];
   const complete = steps.every(step => step.done);
   return (
     <section className="space-y-4">
@@ -73,7 +67,7 @@ export function OnboardingProgress({ steps }: { steps: OnboardingStep[] }) {
             {t(step.done ? "aiAgents.preparation.complete" : "aiAgents.preparation.required")}
           </span>
           <span className="flex min-w-0 items-center gap-2 text-sm font-semibold text-platforma-ink">
-            <Icon aria-hidden="true" size={20} className="shrink-0" />{step.title}
+            {Icon && <Icon aria-hidden="true" size={20} className="shrink-0" />}{step.title}
           </span>
           <span className={cn("mt-auto flex min-h-11 items-center justify-between gap-2 rounded-control text-sm font-semibold leading-5", step.done ? "text-platforma-success" : "bg-brand-800 px-3 py-2 text-white")}>
             <span className="min-w-0 break-words">{step.text}</span>

@@ -1,4 +1,4 @@
-import { CheckCircle2, CircleAlert, Bot, UserRound } from "lucide-react";
+import { CheckCircle2, CircleAlert, UserRound } from "lucide-react";
 import { Link } from "react-router";
 import type { AgentTurn } from "../../../api/aiConversations";
 import { Button } from "../../../components/ui/Button";
@@ -22,7 +22,6 @@ export function AgentTurnCard({ turn, busy, canExecute, isLatest, onConfirm, onC
       <p className="min-w-0 whitespace-pre-wrap break-words text-sm leading-6">{turn.message}</p>
     </div>
     <div className="flex min-w-0 items-start gap-3">
-      <Bot size={20} className="mt-1 shrink-0 text-ai-600" aria-hidden="true" />
       <div className="min-w-0 flex-1 space-y-3">
         {turn.response && <p className="whitespace-pre-wrap break-words text-sm leading-6">{turn.response}</p>}
         <div className="flex flex-wrap items-center gap-2 text-xs text-platforma-subtle" role="status">

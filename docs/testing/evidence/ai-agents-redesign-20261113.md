@@ -839,3 +839,47 @@ working-DB mutation, UI rebuild or new release/deployment gate. UI source is unc
 so retained release browser/build evidence is reused within its original boundary.
 The earlier5/6 live result is not relabelled PASS; future live acceptance must retest
 the corrected candidate. Publication metadata is in the existing redesign checkpoint.
+
+## Empty-state correction17Nov
+
+Owner changed the empty-state requirement: reuse the populated editor columns,
+place selector/create at top left and existing create CTA on the right on the page
+background. Implemented at base7cb9bb59 in the canonical checkout/current branch.
+Six frontend files changed; decorative purple robot removed from empty state,
+agent replies, unused AiNavigatorWidget and legacy bot list/detail. Onboarding
+robot removed too. Neutral navigation glyphs are unchanged. Existing text, API,
+permissions, pending/error handling, draft and create flow remain.
+
+Local acceptance on isolated SQLite/API65459 and Vite65460:
+- `check.py build`: PASS i18n, TypeScript, app/widget build; `check.py bundle`: PASS
+  shell357kB<400kB. Existing RU/KK chunks exceed500kB; no dependency added.
+- Playwright CLI `inspect.js`:15layout captures RU/KK/EN at320/390/768/1024/1440,
+  desktop216px column/mobile stacking/transparent surface/no horizontal overflow.
+  Both create entries and selector exercised with keyboard, Escape and focus return
+  in all three languages. Empty GET response is a browser fixture, not deleted data.
+- Real POST created isolated agent2 (HTTP201), opened its profile and survived reload;
+  populated overview and both legacy pages captured and visually inspected.
+- `finish-browser.js`: final PASS, 200% text CTA reachable by scrolling and actual
+  click. Initial helper failures were wrong expected heading ('Agent profile' vs
+  actual 'Bot profile') and missing exact no-query route; fixed helper only.
+- Captured screenshots inspected for desktop/tablet/mobile geometry, RU/KK/EN
+  wrapping and200% CTA reachability. Text contrast4.85:1, button5.35:1 via skill
+  contrast-check.py; heading dark on page surface. Native focus remains visible.
+  No new runtime console error; initial favicon404/session-refresh400 before login
+  retained in CLI log. No CSS-copy tests or unrelated full-project suites added.
+
+Anti Slop during Delivery Gate in affected scope: hard gate PASS (geometry,
+contrast, semantic action, keyboard, build); purpose PASS (existing editor columns,
+page surface, removing requested decoration); identity PASS (existing tokens/type,
+green action; ENERGY1/RHYTHM1/MOTION1); craftsmanship PASS (same create workflow,
+localized real states, no invented data/copy/assets). Theme/assets/new motion N/A:
+none introduced. Read-only/error/loading policy unchanged by inspected diff.
+React checklist: no new hooks/network dependencies/effects/state or runtime imports.
+Unused navigator is source/build checked; agent-reply icon removal is source/build
+checked, no AI request/action executed. No workingDB/provider/deployment changes.
+
+Exact commands, screenshots, attempt logs and publication receipt:
+`output/ai-agents-empty-20261117/`. No scoped code/local-evidence remainder.
+Contracts/passport updated; roadmap/README/access/AI policy need no change because
+no stage, setup, business permission, provider or AI behavior changed. No live-site
+claim. Earlier alert task remains separate and unfinished.

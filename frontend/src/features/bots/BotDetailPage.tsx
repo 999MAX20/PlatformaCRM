@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Bot as BotIcon, Copy, ExternalLink, MessageSquareText, Plus, Radio, Send, Sparkles } from "lucide-react";
+import { ArrowLeft, Copy, ExternalLink, MessageSquareText, Plus, Radio, Send, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { Link, useParams } from "react-router";
 
@@ -129,9 +129,6 @@ export function BotDetailPage() {
         <Card>
           <CardBody>
             <div className="mb-5 flex items-center gap-3">
-              <div className="grid h-12 w-12 place-items-center rounded-2xl bg-ai-gradient text-white shadow-glow">
-                <BotIcon size={22} />
-              </div>
               <div>
                 <h2 className="text-lg font-bold text-midnight">{t("botDetail.profileTitle")}</h2>
                 <p className="text-sm text-platforma-faint">{t("botDetail.language", { language: bot.data.default_language.toUpperCase() })}</p>

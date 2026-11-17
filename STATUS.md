@@ -2307,3 +2307,15 @@ preserves same-origin API and pilot legal files; AI remains off and Scribe uncha
 This entry records verified inputs. Actual Git/CI/server receipts are recorded during
 delivery in output/release-20261117/delivery.json; detailed checks and limits:
 PRIMARY-SESSION RELEASE-20261117 and output/release-20261117.
+
+## AI-AGENTS-EMPTY-20261117
+
+Empty Agents now reuses the216px left navigation/right content layout; CTA sits on
+the page background without a robot/card. Purple robot marks removed from agent
+responses, navigator and legacy bots; no runtime/API/permission change.
+Local browser RU/KK/EN320–1440, keyboard/create/picker/focus,200% and actual isolated
+API creation/persistence PASS; build/types/i18n/bundle PASS. Screenshot review done.
+No local scoped remainder. Publication/CI and exact limits:
+output/ai-agents-empty-20261117/CHECKPOINT.md; registered evidence:
+docs/testing/evidence/ai-agents-redesign-20261113.md#empty-state-correction17nov.
+Deployment not performed; unfinished alerts work is not closed by this UI change.

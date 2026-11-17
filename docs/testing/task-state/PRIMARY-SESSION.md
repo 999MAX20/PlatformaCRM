@@ -13696,3 +13696,15 @@ AntiSlop affected-area gate: geometry/localization320-1440 and200% text PASS; ke
 
 Full codex_verify --mode full --base-ref b659f90b PASS17Nov10:35UTC:3485 backend cases in3549.970s,3404passed/81 platform skips; system/drift, deterministic npm install, i18n/types/app/widget/bundle,2mobile owner/manager smoke, hashed Python lock installability and pip/npm audits PASS (no known vulnerabilities). Backend source/tests/config/dependencies stayed byte-equivalent to candidate0494936 throughout; final frontend fixes were present before full-gate frontend and browser stages. No backend tests reference these frontend files. Production build input blobs pin the same final application source; final committed-range static check binds the closeout commit. No whole-backend rerun for docs/test-only closeout.
 Reviewed release range and final correction diff; local Markdown link targets and diff hygiene PASS. Source publication retains both local integration and corrective commits without rewriting existing history. Publication/deployment receipt is output/release-20261117/delivery.json; check that receipt plus Git/actual server rather than treating this pre-publication evidence snapshot as a deployed claim. The receipt must include actual CI URL, server release, backup, schema/runtime/public browser checks. Account_update subscription, exact Meta redirect allowlist, App Review and client-number/live delivery acceptance remain separate from this authorized Git/server release. No customer messages or provider submission authorized here.
+
+## AI-AGENTS-EMPTY-20261117
+
+Empty Agents now reuses the216px left navigation/right content layout; CTA sits on
+the page background without a robot/card. Purple robot marks removed from agent
+responses, navigator and legacy bots; no runtime/API/permission change.
+Local browser RU/KK/EN320–1440, keyboard/create/picker/focus,200% and actual isolated
+API creation/persistence PASS; build/types/i18n/bundle PASS. Screenshot review done.
+No local scoped remainder. Publication/CI and exact limits:
+output/ai-agents-empty-20261117/CHECKPOINT.md; registered evidence:
+docs/testing/evidence/ai-agents-redesign-20261113.md#empty-state-correction17nov.
+Deployment not performed; unfinished alerts work is not closed by this UI change.

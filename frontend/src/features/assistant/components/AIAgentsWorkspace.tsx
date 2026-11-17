@@ -264,10 +264,14 @@ export function AIAgentsWorkspace({
             )}
           </AIAgentEditorShell>
         ) : (
-          <div className="space-y-3">
-            {navigation}
-            {mutationError ? <ErrorState error={mutationError} message={getApiErrorMessage(mutationError)} /> : null}
-            <EmptyAgentsState canManage={canManage} onCreate={onOpenCreate} />
+          <div className="grid min-w-0 gap-5 lg:grid-cols-[216px_minmax(0,1fr)] lg:gap-8">
+            <aside className="relative z-20 min-w-0 lg:self-start" aria-label={t("aiAgents.allAgents")}>
+              {navigation}
+            </aside>
+            <div className="relative z-0 min-w-0 space-y-3">
+              {mutationError ? <ErrorState error={mutationError} message={getApiErrorMessage(mutationError)} /> : null}
+              <EmptyAgentsState canManage={canManage} onCreate={onOpenCreate} />
+            </div>
           </div>
         )}
       </div>

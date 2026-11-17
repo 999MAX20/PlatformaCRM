@@ -1,4 +1,4 @@
-import { Bot, ChevronUp, Sparkles, X } from "lucide-react";
+import { ChevronUp, Sparkles, X } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router";
 
@@ -37,9 +37,6 @@ export function AiNavigatorWidget({ signals }: { signals: AiNavigatorSignal[] })
         <div className="mb-3 rounded-card border border-ai-100 bg-ai-50 p-4 shadow-card">
           <div className="mb-3 flex items-start justify-between gap-3">
             <div className="flex items-center gap-2">
-              <span className="grid h-9 w-9 place-items-center rounded-control bg-ai-600 text-white shadow-soft">
-                <Bot size={17} />
-              </span>
               <div>
                 <p className="text-sm font-semibold text-platforma-ink">{t("dashboard.aiNavigator")}</p>
                 <p className="text-xs font-semibold text-platforma-subtle">{t("dashboard.aiNavigatorScope")}</p>
