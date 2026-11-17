@@ -1,5 +1,6 @@
 import json
 import hashlib
+import re
 from datetime import timedelta
 from uuid import uuid4
 from urllib import parse, request as urllib_request
@@ -25,7 +26,11 @@ from apps.integrations.whatsapp_credentials import get_whatsapp_connector, store
 SIGNING_SALT = "zani.whatsapp.embedded-signup"
 
 
-def build_embedded_signup_state(*, business, user, redirect_uri, bot_channel=None):
+def build_embedded_signup_state(*, business, user, redirect_uri, bot_channel=None, onboarding_mode="cloud", expected_phone=""):
+    if onboarding_mode not in {"cloud", "coexistence"}:
+        raise ValueError("Unsupported WhatsApp onboarding mode.")
+    if onboarding_mode == "coexistence" and not re.fullmatch(r"\+[1-9][0-9]{7,14}", expected_phone):
+        raise ValueError("An international Business App number is required.")
     channel = resolve_embedded_signup_channel(business=business, state_payload={"bot_channel_id": bot_channel.pk if bot_channel else None})
     with transaction.atomic():
         channel = lock_channel_for_setup(channel)
@@ -41,6 +46,8 @@ def build_embedded_signup_state(*, business, user, redirect_uri, bot_channel=Non
             "redirect_uri": redirect_uri,
             "bot_channel_id": channel.pk,
             "attempt_id": str(attempt.pk),
+            "onboarding_mode": onboarding_mode,
+            "expected_phone": expected_phone if onboarding_mode == "coexistence" else "",
             "iat": timezone.now().isoformat(),
         },
         salt=SIGNING_SALT,
@@ -54,8 +61,9 @@ def load_embedded_signup_state(state, max_age=1800):
         raise ValueError("WhatsApp signup state is invalid or expired.") from exc
 
 
-def build_embedded_signup_url(*, business, user, redirect_uri, bot_channel=None):
-    state = build_embedded_signup_state(business=business, user=user, redirect_uri=redirect_uri, bot_channel=bot_channel)
+def build_embedded_signup_url(*, business, user, redirect_uri, bot_channel=None, onboarding_mode="cloud", expected_phone=""):
+    state = build_embedded_signup_state(business=business, user=user, redirect_uri=redirect_uri, bot_channel=bot_channel,
+                                       onboarding_mode=onboarding_mode, expected_phone=expected_phone)
     params = {
         "client_id": settings.META_APP_ID,
         "redirect_uri": redirect_uri,
@@ -111,7 +119,8 @@ def complete_embedded_signup(*, business, user, code, state, redirect_uri, phone
         raise ValueError("WhatsApp embedded signup state does not match the current user or business.")
     if state_payload.get("redirect_uri") != redirect_uri:
         raise ValueError("WhatsApp embedded signup redirect_uri mismatch.")
-    if not phone_number_id or not waba_id or len(registration_pin) != 6 or not registration_pin.isascii() or not registration_pin.isdigit():
+    coexistence = state_payload.get("onboarding_mode") == "coexistence"
+    if not waba_id or (not coexistence and (not phone_number_id or len(registration_pin) != 6 or not registration_pin.isascii() or not registration_pin.isdigit())):
         raise ValueError("A phone number, WhatsApp account and six-digit PIN are required.")
     channel = resolve_embedded_signup_channel(business=business, state_payload=state_payload)
     attempt = _claim_attempt(channel, user, state_payload)
@@ -122,10 +131,14 @@ def complete_embedded_signup(*, business, user, code, state, redirect_uri, phone
         access_token = token_payload.get("access_token", "")
         if not isinstance(access_token, str) or not access_token:
             raise ValueError("Meta did not return an access token.")
-        phone, expires_at = validate_signup_assets(access_token, phone_number_id, waba_id)
+        options = {"coexistence": True, "expected_phone": state_payload.get("expected_phone", "")} if coexistence else {}
+        phone, expires_at = validate_signup_assets(access_token, phone_number_id, waba_id, **options)
+        if coexistence:
+            phone_number_id = str(phone["id"])
         _reserve_phone(channel, attempt, phone_number_id)
-        activate_signup_number(access_token, phone_number_id, waba_id, registration_pin)
-        return _save_connection(channel, attempt, user, access_token, expires_at, phone_number_id, waba_id, phone["display_phone_number"], registration_pin)
+        activate_signup_number(access_token, phone_number_id, waba_id, registration_pin, coexistence=coexistence)
+        return _save_connection(channel, attempt, user, access_token, expires_at, phone_number_id, waba_id, phone["display_phone_number"],
+                                registration_pin, coexistence=coexistence)
     except (URLError, OSError, TypeError, KeyError, AttributeError) as exc:
         raise ValueError("WhatsApp connection could not be completed. Restart setup.") from exc
     finally:
@@ -165,7 +178,7 @@ def _reserve_phone(channel, attempt, phone_number_id):
         raise ValueError("This phone number is already being connected.") from exc
 
 
-def _save_connection(channel, attempt, user, access_token, expires_at, phone_number_id, waba_id, display_phone_number, registration_pin):
+def _save_connection(channel, attempt, user, access_token, expires_at, phone_number_id, waba_id, display_phone_number, registration_pin, *, coexistence=False):
     with current_channel_setup(channel) as channel:
         _assert_attempt_running(attempt, channel)
         user.refresh_from_db()
@@ -181,13 +194,17 @@ def _save_connection(channel, attempt, user, access_token, expires_at, phone_num
             "business_account_id": waba_id,
             "display_phone_number": display_phone_number,
             "embedded_signup": True,
+            "onboarding_mode": "coexistence" if coexistence else "cloud",
             "setup_revision": uuid4().hex,
             "connection_verified": True,
         }
         channel.save(update_fields=["status", "external_id", "config_json", "updated_at"])
         store_whatsapp_access_token(channel, access_token, expires_at=expires_at)
         connector = get_whatsapp_connector(channel)
-        create_or_update_credential(connector, "registration_pin", registration_pin)
+        if not coexistence:
+            create_or_update_credential(connector, "registration_pin", registration_pin)
+        else:
+            connector.credentials.filter(key="registration_pin").delete()
         safe_config = dict(connector.config_json or {})
         safe_config.update(
             {
@@ -209,6 +226,12 @@ def _save_connection(channel, attempt, user, access_token, expires_at, phone_num
         connector.save(update_fields=["status", "capability", "auth_type", "config_json", "last_error", "connected_at", "updated_at"])
         WhatsAppSignupAttempt.objects.filter(channel=channel).exclude(pk=attempt.pk).update(phone_number_id=None)
         WhatsAppSignupAttempt.objects.filter(pk=attempt.pk).update(succeeded=True)
+        if coexistence:
+            from apps.integrations.models import WhatsAppCoexistenceSync
+            from apps.integrations.tasks import start_whatsapp_coexistence_sync
+            sync = WhatsAppCoexistenceSync.objects.create(channel=channel, setup_revision=channel.config_json["setup_revision"],
+                                                         phone_number_id=phone_number_id, waba_id=waba_id)
+            transaction.on_commit(lambda: start_whatsapp_coexistence_sync.delay(sync.pk))
         return channel, connector
 
 

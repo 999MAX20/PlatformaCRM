@@ -6,6 +6,7 @@ export type WhatsAppEmbeddedSignupCallback = {
   waba_id?: string;
   display_phone_number?: string;
   cancelled?: boolean;
+  coexistence?: boolean;
 };
 
 export type InstagramOAuthCallback = {
@@ -29,7 +30,7 @@ declare global {
           config_id: string;
           response_type: "code";
           override_default_response_type: true;
-          extras: { setup: Record<string, never> };
+          extras: { setup: Record<string, never>; featureType?: "whatsapp_business_app_onboarding"; sessionInfoVersion?: "3" };
         },
       ) => void;
     };
@@ -51,13 +52,15 @@ export function parseWhatsAppEmbeddedSignupMessage(event: MessageEvent): WhatsAp
     return null;
   }
   if (["CANCEL", "ERROR"].includes(payload.event)) return { type: whatsappEmbeddedSignupCallbackType, cancelled: true };
-  if (payload.event !== "FINISH" || typeof payload.data?.phone_number_id !== "string" || !payload.data.phone_number_id
+  const coexistence = payload.event === "FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING";
+  if ((!coexistence && (payload.event !== "FINISH" || typeof payload.data?.phone_number_id !== "string" || !payload.data.phone_number_id))
     || typeof payload.data?.waba_id !== "string" || !payload.data.waba_id) return null;
   return {
     type: whatsappEmbeddedSignupCallbackType,
     phone_number_id: payload.data?.phone_number_id,
     waba_id: payload.data?.waba_id,
     display_phone_number: payload.data?.display_phone_number,
+    coexistence,
   };
 }
 

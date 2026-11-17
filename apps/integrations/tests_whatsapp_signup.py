@@ -14,7 +14,7 @@ from apps.bots.models import Bot, BotChannel
 from apps.integrations.credential_encryption import decrypt_credential_value
 from apps.integrations.models import BusinessConnector, ConnectorCredential, WhatsAppSignupAttempt
 from apps.integrations.whatsapp.embedded_signup import build_embedded_signup_state, build_embedded_signup_url, complete_embedded_signup, exchange_code_for_access_token
-from apps.integrations.whatsapp.signup_graph import validate_signup_assets, graph_call
+from apps.integrations.whatsapp.signup_graph import validate_signup_assets, activate_signup_number, graph_call
 
 
 @override_settings(META_APP_ID="app", META_APP_SECRET="secret", WHATSAPP_GRAPH_BASE_URL="https://graph.facebook.com",
@@ -54,6 +54,56 @@ class WhatsAppSignupTests(TestCase):
                                          redirect_uri=self.redirect, bot_channel=self.channel)
         self.assertEqual(parse_qs(urlparse(url).query)["scope"],
                          ["whatsapp_business_management,whatsapp_business_messaging"])
+
+    def test_coexistence_discovers_only_requested_phone_and_skips_registration(self):
+        original = self.respond
+        self.graph.side_effect = lambda edge, token, **kw: (
+            {"id": "123", "is_on_biz_app": True, "platform_type": "CLOUD_API"}
+            if edge == "123" else original(edge, token, **kw)
+        )
+        phone, _ = validate_signup_assets("private-token", "", "456", coexistence=True, expected_phone="+77010000000")
+        self.assertEqual(phone["id"], "123")
+        activate_signup_number("private-token", "123", "456", "", coexistence=True)
+        self.assertFalse(any(edge.endswith("/register") for edge, _ in self.calls))
+        self.assertEqual(self.calls[-1][0], "456/subscribed_apps")
+
+    def test_coexistence_rejects_unconfirmed_business_app_and_wrong_phone(self):
+        for phone_id, expected in (("123", "+77010000000"), ("", "+77019999999"), ("123", "+77019999999")):
+            with self.subTest(phone_id=phone_id, expected=expected), self.assertRaises(ValueError):
+                validate_signup_assets("private-token", phone_id, "456", coexistence=True, expected_phone=expected)
+
+    def test_coexistence_rejects_ambiguous_phone_membership(self):
+        original = self.respond
+        self.graph.side_effect = lambda edge, token, **kw: (
+            {"data": [{"id": pid, "display_phone_number": "+77010000000"} for pid in ("123", "124")]}
+            if edge.endswith("/phone_numbers") else original(edge, token, **kw)
+        )
+        with self.assertRaises(ValueError):
+            validate_signup_assets("private-token", "", "456", coexistence=True, expected_phone="+77010000000")
+
+    def test_coexistence_signed_attempt_connects_without_pin_and_creates_sync(self):
+        from apps.integrations.models import WhatsAppCoexistenceSync
+        data = self.payload()
+        data["state"] = build_embedded_signup_state(business=self.business, user=self.user, redirect_uri=self.redirect,
+            bot_channel=self.channel, onboarding_mode="coexistence", expected_phone="+77010000000")
+        data["phone_number_id"], data["registration_pin"] = "", ""
+        original = self.respond
+        self.graph.side_effect = lambda edge, token, **kw: (
+            {"id": "123", "is_on_biz_app": True, "platform_type": "CLOUD_API"} if edge == "123" else original(edge, token, **kw))
+        channel, connector = complete_embedded_signup(**data)
+        self.assertEqual(channel.config_json["onboarding_mode"], "coexistence")
+        self.assertFalse(connector.credentials.filter(key="registration_pin").exists())
+        self.assertEqual(WhatsAppCoexistenceSync.objects.get().phone_number_id, "123")
+        self.assertFalse(any(edge.endswith("/register") for edge, _ in self.calls))
+        with self.assertRaises(ValueError):
+            complete_embedded_signup(**data)
+
+    def test_cloud_attempt_cannot_skip_pin(self):
+        data = self.payload()
+        data["registration_pin"] = ""
+        with self.assertRaises(ValueError):
+            complete_embedded_signup(**data)
+        self.exchange.assert_not_called()
 
     def test_full_flow_verifies_assets_before_activation_and_stores_secrets_encrypted(self):
         channel, connector = complete_embedded_signup(**self.payload())

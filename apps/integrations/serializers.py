@@ -244,6 +244,13 @@ class WhatsAppEmbeddedSignupStartSerializer(serializers.Serializer):
     business = serializers.PrimaryKeyRelatedField(queryset=Business.objects.all())
     bot_channel = serializers.PrimaryKeyRelatedField(queryset=BotChannel.objects.select_related("bot", "bot__business"), required=False, allow_null=True)
     redirect_uri = serializers.URLField(required=False, allow_blank=True)
+    onboarding_mode = serializers.ChoiceField(choices=("cloud", "coexistence"), default="cloud")
+    expected_phone = serializers.RegexField(r"^\+[1-9][0-9]{7,14}$", required=False)
+
+    def validate(self, attrs):
+        if attrs["onboarding_mode"] == "coexistence" and not attrs.get("expected_phone"):
+            raise serializers.ValidationError({"expected_phone": "Enter the WhatsApp Business number in international format."})
+        return attrs
 
     def validate_redirect_uri(self, value):
         if not value:
@@ -256,9 +263,9 @@ class WhatsAppEmbeddedSignupCompleteSerializer(serializers.Serializer):
     code = serializers.CharField(required=True, allow_blank=False, trim_whitespace=True)
     state = serializers.CharField(required=True, allow_blank=False, trim_whitespace=True)
     redirect_uri = serializers.URLField(required=False, allow_blank=True)
-    phone_number_id = serializers.CharField(required=True, allow_blank=False, trim_whitespace=True)
+    phone_number_id = serializers.CharField(required=False, default="", allow_blank=True, trim_whitespace=True)
     waba_id = serializers.CharField(required=True, allow_blank=False, trim_whitespace=True)
-    registration_pin = serializers.RegexField(r"^[0-9]{6}$", write_only=True, trim_whitespace=False)
+    registration_pin = serializers.RegexField(r"^[0-9]{6}$", required=False, write_only=True, trim_whitespace=False)
     display_phone_number = serializers.CharField(required=False, allow_blank=True, trim_whitespace=True)
 
     def validate_redirect_uri(self, value):

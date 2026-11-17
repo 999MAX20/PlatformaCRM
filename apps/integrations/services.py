@@ -227,12 +227,14 @@ def save_whatsapp_connection_request(*, business, user, config, request=None):
     return connector, created
 
 
-def start_whatsapp_embedded_signup(*, business, user, redirect_uri, bot_channel=None):
+def start_whatsapp_embedded_signup(*, business, user, redirect_uri, bot_channel=None, onboarding_mode="cloud", expected_phone=""):
     authorization_url, state = build_embedded_signup_url(
         business=business,
         user=user,
         redirect_uri=redirect_uri,
         bot_channel=bot_channel,
+        onboarding_mode=onboarding_mode,
+        expected_phone=expected_phone,
     )
     return {
         "authorization_url": authorization_url,

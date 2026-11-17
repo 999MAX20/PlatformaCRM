@@ -33,6 +33,7 @@ def process_whatsapp_webhook(payload, auth_context, headers=None):
     from apps.integrations.whatsapp import (
         _process_whatsapp_status_batch, _save_parsed_inbound_message, parse_inbound_message,
     )
+    from apps.integrations.whatsapp.coexistence_events import FIELDS, prepare_event, enqueue_event
 
     _validate_envelope(payload)
     account_updates = []
@@ -53,9 +54,13 @@ def process_whatsapp_webhook(payload, auth_context, headers=None):
         message_payload = {**payload, "entry": entries}
     routes = verified_whatsapp_routes(message_payload, auth_context) if not account_updates or message_payload.get("entry") else []
     incoming = []
+    business_app_events = []
     for channel, value, portion in routes:
         if not payload.get("entry"):
             incoming.append((channel, portion, parse_inbound_message(portion, headers)))
+            continue
+        if portion["entry"][0]["changes"][0].get("field") in FIELDS:
+            business_app_events.append(prepare_event(channel, portion, auth_context))
             continue
         for item in value.get("messages") or []:
             if not isinstance(item, dict) or not isinstance(item.get("id"), str) or not item["id"]:
@@ -73,6 +78,8 @@ def process_whatsapp_webhook(payload, auth_context, headers=None):
 
     result = {"processed": 0, "statuses": 0, "messages": []}
     for channel, value, portion in routes:
+        if portion.get("entry") and portion["entry"][0]["changes"][0].get("field") in FIELDS:
+            continue
         statuses = value.get("statuses") or []
         if statuses:
             result["processed"] += _process_whatsapp_status_batch(channel, statuses, portion)
@@ -83,6 +90,10 @@ def process_whatsapp_webhook(payload, auth_context, headers=None):
     if account_updates:
         record_account_updates(account_updates)
         result["account_updates"] = len(account_updates)
+    for sync, field, value in business_app_events:
+        enqueue_event(sync, field, value)
+    if business_app_events:
+        result["business_app_events"] = len(business_app_events)
     if len(result["messages"]) == 1:
         result.update(result["messages"][0])
     return result

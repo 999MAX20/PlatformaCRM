@@ -13714,6 +13714,49 @@ output/ai-agents-empty-20261117/CHECKPOINT.md; registered evidence:
 docs/testing/evidence/ai-agents-redesign-20261113.md#empty-state-correction17nov.
 Deployment not performed; unfinished alerts work is not closed by this UI change.
 
+### META-COEXISTENCE-20261117: existing Business App numbers
+
+Owner decision: import old history, confirmed in this chat17Nov. Implemented local
+signed coexistence mode, expected-phone Graph check, no PIN/register in this mode,
+durable contact/history sync and authenticated history/app-echo batches. Added
+integrations0012; ordinary DB/server untouched. Imported messages never trigger
+AI/unread/new service-window activity; historical failures cannot be retried.
+Live app echo overlapping history still hands off/cancels pending AI without duplicates.
+
+Verification: isolated PostgreSQL affected suites130 PASS with system/drift and
+0012 forward/backward/forward PASS; log output/meta-review-20261117/coexistence-postgres.log.
+Final echo/history overlap change:17 focused PostgreSQL tests PASS, including
+concurrent import; system/drift/migration roundtrip PASS again. Final log:
+output/meta-review-20261117/coexistence-postgres-final.log. These are separate runs,
+not147 distinct tests. Unchanged signup/routing/delivery results reused from130.
+Frontend build/types/i18n/app/widget PASS;23 Playwright fixture cases PASS, covering
+standard and Coexistence callbacks, invalid/retained input, cancellation, permissions,
+replay/busy/timeouts, connected edit/cancel and keyboard/dialog focus. RU/KK/EN390/1440
+axe/overflow PASS; RU390/1440, KK390 and EN1440 screenshots visually inspected.
+KK selected option truncates within existing Select; phone label/help/action remain
+readable. No shared-control redesign. Native Chrome/real OAuth is not this fixture proof.
+Earlier standard completion regression (mock phone without id) fixed by deriving
+the id only for Coexistence; final affected suite includes it. Prior failed logs retained.
+
+Remaining: deploy reviewed release/migration, enable three app subscriptions, verify
+Tech Provider eligibility, owner handset confirmation/history sharing, actual import
+and bidirectional app/CRM messages, OAuth/handset videos and App Review upload/access.
+Chrome extension inventory/user tabs now empty after earlier Meta page timeouts;
+owner browser recovery question pending. No final submission or real number change.
+Review instructions/recording plan updated to exclude restricted Zani number and
+clearly distinguish intended Platforma Digital Coexistence from completed evidence.
+Code limits: phone identities only (BSUID-only batch retained as failure), metadata/
+placeholders rather than downloaded attachments, operator recovery for failed batches
+and interrupted once-only requests; no claim of complete media/product readiness.
+Current integrations contract updated; historical reports unchanged. No new roadmap
+phase, environment keys or README setup changes in this scope. Foreign speech/AI/client
+work preserved; release candidate includes already published foreign commits after
+deployed4cc19068, so server rollout needs an explicit candidate decision and release gates.
+
+Owner requests direct Meta Coexistence, preserving WhatsApp Business app use; confirms test number ending2900 uses Business App. Prior standard v4 signup passed -> official v4 supports featureType but current code requires PIN/register and FINISH+phone -> add a separate signed Coexistence mode without changing standard Cloud/YCloud flows. Canonical root C:/Users/user/Desktop/PlatformaCRM, branch codex/ui-testing-toolkit, initial HEAD be222ec6; unrelated speech/client WIP and shared document edits preserved. No phone deletion, portfolio transfer, fictional-company verification or final App Review submission.
+Mode implementation/verification; code and live-evidence gaps. Reuse signed attempts, reservations, Graph validation, connector encryption, webhook authentication/routing and Inbox handoff. Risk: OAuth asset binding, cross-tenant routing, duplicate staff/AI replies, history opening a false service window. Checks: isolated signup happy/invalid/replay/permission/tenant tests, direct echo and standard/YCloud regression, system/drift; frontend build/types and actual affected flow/screenshots. No ordinary DB writes. Live readiness requires deployed code, webhook subscriptions, eligible Meta account and owner handset confirmation; local mocks are not live proof. Historical import scope asked separately; no bulk contact/history writes before settled scope. Anti Slop during applies when editing setup controls: retain existing shell/tokens, explicit labels, preserved input/error recovery, keyboard/dialog verification.
+17Nov evidence update: official new account model forbids cross-portfolio phone transfer; Zani number remains excluded. Platforma Digital verification freshly observed; Tech Provider eligibility page could not be reread because browser timed out twice, not a confirmed eligibility rejection. Government answers previously saved in App Review: no national-security disclosures in12months; none of listed procedures, per owner. Four redirect URIs preserved. No product edits/deployment yet at this checkpoint.
+
 ## CLIENTS-FILTERS-20261117
 
 Owner approved seven filters on /clients: date added, source, tags, appointments,

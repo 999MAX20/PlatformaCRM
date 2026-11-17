@@ -378,6 +378,7 @@ def test_whatsapp_channel_connection(channel):
 
 
 def whatsapp_channel_status(channel, webhook_url):
+    from apps.integrations.whatsapp.coexistence_sync import sync_status
     failed_event = IntegrationEventLog.objects.filter(
         business=channel.bot.business,
         provider=BotChannel.Channels.WHATSAPP,
@@ -397,6 +398,7 @@ def whatsapp_channel_status(channel, webhook_url):
         "phone_number_id_configured": bool(config.get("phone_number_id") or channel.external_id),
         "access_token_configured": has_whatsapp_access_token(channel),
         "business_account_id_configured": bool(config.get("business_account_id")),
+        "coexistence_sync": sync_status(channel) if config.get("onboarding_mode") == "coexistence" else None,
         "webhook_secret_configured": has_whatsapp_webhook_secret(channel),
         "verify_token_configured": bool(settings.WHATSAPP_VERIFY_TOKEN),
         "app_secret_configured": bool(settings.WHATSAPP_APP_SECRET),

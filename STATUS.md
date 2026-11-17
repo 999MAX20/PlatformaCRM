@@ -1,3 +1,11 @@
+META-COEXISTENCE-20261117: local Business App onboarding/history preparation implemented.
+Signed expected number, no phone re-registration, durable authenticated import,
+no historical AI/send/window effects; app replies hand off to staff. Migration0012.
+130 PostgreSQL affected checks,17 final focused checks and23 browser cases/build PASS.
+Live Meta/number acceptance, subscriptions, deployment and review videos
+remain open. Phone-only identities and metadata-only attachments are current limits.
+Evidence: PRIMARY-SESSION META-COEXISTENCE-20261117; output/meta-review-20261117.
+
 NOTIFICATIONS-REDESIGN-20261114: approved compact bell and notification center implemented.
 15.11 modal correction complete: no-blur dialog on all widths, source/metadata and
 personal receipt actions retained; visible filter labels removed, accessible names kept.

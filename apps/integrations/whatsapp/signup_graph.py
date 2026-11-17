@@ -1,6 +1,7 @@
 """Meta onboarding calls; no connector is activated by this module."""
 
 import json
+import re
 from datetime import datetime, timezone as datetime_timezone
 from urllib import parse, request as urllib_request
 from urllib.error import URLError
@@ -36,7 +37,7 @@ def graph_call(edge, token, *, params=None, body=None):
         raise ValueError("Meta onboarding could not be verified. Restart setup.") from exc
 
 
-def validate_signup_assets(token, phone_id, waba_id):
+def validate_signup_assets(token, phone_id, waba_id, *, coexistence=False, expected_phone=""):
     debug = graph_call("debug_token", f"{settings.META_APP_ID}|{settings.META_APP_SECRET}", params={"input_token": token}).get("data")
     required = {"whatsapp_business_management", "whatsapp_business_messaging"}
     if not isinstance(debug, dict) or debug.get("is_valid") is not True or str(debug.get("app_id")) != str(settings.META_APP_ID):
@@ -69,6 +70,7 @@ def validate_signup_assets(token, phone_id, waba_id):
     # Follow only Graph cursors, never a provider-supplied absolute next URL.
     cursor = None
     seen = set()
+    matched = []
     for _ in range(100):
         params = {"fields": "id,display_phone_number,platform_type", "limit": 100}
         if cursor:
@@ -78,22 +80,37 @@ def validate_signup_assets(token, phone_id, waba_id):
         if not isinstance(phones, list):
             break
         for phone in phones:
-            if isinstance(phone, dict) and str(phone.get("id")) == phone_id and phone.get("display_phone_number"):
+            if not isinstance(phone, dict) or not phone.get("display_phone_number"):
+                continue
+            matches = str(phone.get("id")) == phone_id if phone_id else coexistence and (
+                re.sub(r"\D", "", str(phone["display_phone_number"])) == expected_phone.lstrip("+")
+            )
+            if matches:
                 if phone.get("platform_type") not in (None, "NOT_APPLICABLE", "CLOUD_API"):
                     raise ValueError("This number requires a separate migration flow.")
-                return phone, min(expiries) if expiries else None
+                if not coexistence:
+                    return phone, min(expiries) if expiries else None
+                matched.append(phone)
         paging = page.get("paging") or {}
         cursor = (paging.get("cursors") or {}).get("after") if paging.get("next") else None
         if not cursor or cursor in seen:
             break
         seen.add(cursor)
+    if coexistence and len(matched) == 1:
+        phone = matched[0]
+        if re.sub(r"\D", "", str(phone["display_phone_number"])) != expected_phone.lstrip("+"):
+            raise ValueError("The selected number does not match the requested Business App number.")
+        status = graph_call(parse.quote(str(phone["id"]), safe=""), token, params={"fields": "is_on_biz_app,platform_type"})
+        if status.get("is_on_biz_app") is not True or status.get("platform_type") != "CLOUD_API" or str(status.get("id")) != str(phone["id"]):
+            raise ValueError("Meta has not confirmed Business App coexistence for this number.")
+        return phone, min(expiries) if expiries else None
     raise ValueError("The selected number does not belong to the WhatsApp account.")
 
 
-def activate_signup_number(token, phone_id, waba_id, pin):
-    for edge, body in (
-        (f"{parse.quote(waba_id, safe='')}/subscribed_apps", {}),
-        (f"{parse.quote(phone_id, safe='')}/register", {"messaging_product": "whatsapp", "pin": pin}),
-    ):
+def activate_signup_number(token, phone_id, waba_id, pin, *, coexistence=False):
+    operations = [(f"{parse.quote(waba_id, safe='')}/subscribed_apps", {})]
+    if not coexistence:
+        operations.append((f"{parse.quote(phone_id, safe='')}/register", {"messaging_product": "whatsapp", "pin": pin}))
+    for edge, body in operations:
         if graph_call(edge, token, body=body).get("success") is not True:
             raise ValueError("Meta did not confirm WhatsApp activation.")

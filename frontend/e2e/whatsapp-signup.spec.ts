@@ -8,17 +8,20 @@ test.afterEach(() => { expect(pageErrors).toEqual([]); });
 async function setup(page: Page, locale = "en") {
   let starts = 0;
   const completions: Record<string, unknown>[] = [];
+  const startPayloads: Record<string, unknown>[] = [];
   await page.addInitScript((language) => {
     localStorage.setItem("ai_smb_language", language);
-    const target = window as typeof window & { signupCallbacks: ((response: unknown) => void)[] };
+    const target = window as typeof window & { signupCallbacks: ((response: unknown) => void)[]; signupOptions: unknown[] };
     target.signupCallbacks = [];
-    target.FB = { init() {}, login(callback) { target.signupCallbacks.push(callback); } };
+    target.signupOptions = [];
+    target.FB = { init() {}, login(callback, options) { target.signupCallbacks.push(callback); target.signupOptions.push(options); } };
   }, locale);
   await page.route("**/api/**", async (route) => {
     const path = new URL(route.request().url()).pathname;
     if (!path.startsWith("/api/")) return route.continue();
     if (path.endsWith("/whatsapp-embedded-signup/start/")) {
       starts++;
+      startPayloads.push(route.request().postDataJSON());
       return route.fulfill({ json: { app_configured: true, config_id_configured: true, app_id: "fake-app", config_id: "fake-config", state: `state-${starts}`, redirect_uri: "http://127.0.0.1:5173/callback", graph_api_version: "v27.0" } });
     }
     if (path.endsWith("/whatsapp-embedded-signup/complete/")) {
@@ -30,7 +33,51 @@ async function setup(page: Page, locale = "en") {
   await page.goto("/e2e/fixtures/whatsapp-signup.html");
   await expect(page.getByRole("button", { name: /^(Connect|Подключить|Қосу)$/ })).toBeVisible();
   await expect(page.locator("main")).not.toContainText(/Meta|YCloud/i);
-  return { completions, starts: () => starts };
+  return { completions, startPayloads, starts: () => starts };
+}
+
+test("Business App uses coexistence callback without a phone ID or PIN and retains number on error", async ({ page }, testInfo) => {
+  const { completions, startPayloads } = await setup(page);
+  await page.getByRole("combobox").click();
+  await page.getByRole("option", { name: /WhatsApp Business App/ }).click();
+  const phone = page.getByLabel("WhatsApp Business app number", { exact: true });
+  const start = page.getByRole("button", { name: "Connect", exact: true });
+  await expect(page.getByLabel(/PIN/)).toHaveCount(0);
+  await phone.fill("87010000000");
+  await expect(start).toBeDisabled();
+  await phone.fill("+77010000000");
+  await start.click();
+  expect(startPayloads[0]).toMatchObject({ onboarding_mode: "coexistence", expected_phone: "+77010000000" });
+  expect(await page.evaluate(() => (window as unknown as { signupOptions: unknown[] }).signupOptions[0])).toMatchObject({
+    extras: { featureType: "whatsapp_business_app_onboarding", sessionInfoVersion: "3" },
+  });
+  await finish(page);
+  await code(page, 0, "business-app-code");
+  expect(completions).toHaveLength(0);
+  await page.evaluate(() => window.dispatchEvent(new MessageEvent("message", { origin: "https://www.facebook.com", source: window,
+    data: { type: "WA_EMBEDDED_SIGNUP", event: "FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING", data: { waba_id: "456" } } })));
+  await expect(start).toBeEnabled();
+  expect(completions[0]).toMatchObject({ code: "business-app-code", phone_number_id: "", waba_id: "456" });
+  expect(completions[0]).not.toHaveProperty("registration_pin");
+  await expect(phone).toHaveValue("+77010000000");
+  await page.screenshot({ path: testInfo.outputPath("coexistence-recovery.png"), fullPage: true });
+});
+
+for (const locale of ["ru", "kk", "en"]) for (const width of [390, 1440]) {
+  test(`Business App layout ${locale} ${width}`, async ({ page }, testInfo) => {
+    await page.setViewportSize({ width, height: 900 });
+    await setup(page, locale);
+    await page.getByRole("combobox").click();
+    await page.getByRole("option", { name: /WhatsApp Business App/ }).click();
+    const phone = page.locator('input[type="tel"]');
+    await phone.fill("+77010000000");
+    await phone.press("Tab");
+    await expect(page.getByRole("button", { name: /^(Connect|Подключить|Қосу)$/ })).toBeFocused();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    const accessibility = await new AxeBuilder({ page }).include("main").withTags(["wcag2a", "wcag2aa"]).analyze();
+    expect(accessibility.violations).toEqual([]);
+    await page.screenshot({ path: testInfo.outputPath(`coexistence-${locale}-${width}.png`), fullPage: true });
+  });
 }
 
 async function code(page: Page, index: number, value?: string) {
@@ -138,6 +185,21 @@ test("read-only manager cannot start signup", async ({ page }) => {
   const state = await setup(page);
   await page.goto("/e2e/fixtures/whatsapp-signup.html?readonly");
   await expect(page.getByRole("button", { name: "Connect", exact: true })).toBeDisabled();
+  expect(state.starts()).toBe(0);
+});
+
+test("connected channel can edit setup then cancel without changing its connection", async ({ page }) => {
+  const state = await setup(page);
+  await page.route("**/whatsapp-status/", route => route.fulfill({ json: {
+    phone_number_id_configured: true, access_token_configured: true,
+    coexistence_sync: { state: "complete", progress: 100, pending_batches: 0, error_code: "" },
+  } }));
+  await page.reload();
+  await expect(page.getByText(/Received history batches/)).toBeVisible();
+  await page.getByRole("button", { name: "Change connection", exact: true }).click();
+  await expect(page.getByLabel(/PIN/)).toBeVisible();
+  await page.getByRole("button", { name: "Cancel", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Change connection", exact: true })).toBeVisible();
   expect(state.starts()).toBe(0);
 });
 

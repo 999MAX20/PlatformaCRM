@@ -12,6 +12,8 @@ export function useWhatsAppSignup(businessId: Id, channelId: Id | undefined, not
   const queryClient = useQueryClient();
   const [result, setResult] = useState(emptyResult);
   const [pin, setPin] = useState("");
+  const [mode, setMode] = useState<"cloud" | "coexistence">("cloud");
+  const [phone, setPhone] = useState("");
   const [waiting, setWaiting] = useState(false);
   const generation = useRef(0);
   const active = useRef(false);
@@ -19,6 +21,7 @@ export function useWhatsAppSignup(businessId: Id, channelId: Id | undefined, not
   const source = useRef<MessageEventSource | null>(null);
   const retiredSources = useRef(new Set<MessageEventSource>());
   const launchPin = useRef("");
+  const launchMode = useRef<"cloud" | "coexistence">("cloud");
   const resultTimeout = useRef<number | undefined>(undefined);
   const notifyRef = useRef(notify);
   notifyRef.current = notify;
@@ -37,6 +40,8 @@ export function useWhatsAppSignup(businessId: Id, channelId: Id | undefined, not
   useEffect(() => {
     reset();
     setPin("");
+    setPhone("");
+    setMode("cloud");
     const receive = (event: MessageEvent) => {
       if (!active.current || !event.source || retiredSources.current.has(event.source)) return;
       const payload = parseWhatsAppEmbeddedSignupMessage(event);
@@ -49,8 +54,8 @@ export function useWhatsAppSignup(businessId: Id, channelId: Id | undefined, not
         notifyRef.current("integrations.whatsapp.metaAccessDenied");
         return;
       }
-      if (!payload.phone_number_id || !payload.waba_id) return;
-      setResult((previous) => ({ ...previous, phone: payload.phone_number_id!, waba: payload.waba_id! }));
+      if (!payload.waba_id || (launchMode.current === "coexistence" ? !payload.coexistence : (!payload.phone_number_id || payload.coexistence))) return;
+      setResult((previous) => ({ ...previous, phone: payload.phone_number_id || "", waba: payload.waba_id! }));
     };
     window.addEventListener("message", receive);
     return () => {
@@ -63,12 +68,14 @@ export function useWhatsAppSignup(businessId: Id, channelId: Id | undefined, not
 
   const start = useMutation({
     mutationFn: async () => {
-      if (!/^[0-9]{6}$/.test(pin)) return;
+      if (mode === "coexistence" ? !/^\+[1-9][0-9]{7,14}$/.test(phone) : !/^[0-9]{6}$/.test(pin)) return;
       reset();
-      launchPin.current = pin;
+      launchPin.current = mode === "cloud" ? pin : "";
+      launchMode.current = mode;
       const attempt = generation.current;
       const redirect = `${window.location.origin}${window.location.pathname}?zani_provider=whatsapp`;
-      const data = await businessConnectorsApi.startWhatsAppEmbeddedSignup({ business: businessId, botChannel: channelId, redirectUri: redirect });
+      const data = await businessConnectorsApi.startWhatsAppEmbeddedSignup({ business: businessId, botChannel: channelId, redirectUri: redirect,
+        onboardingMode: mode, expectedPhone: mode === "coexistence" ? phone : undefined });
       if (attempt !== generation.current) return;
       if (!data.app_configured || !data.config_id_configured) {
         notifyRef.current("integrations.whatsapp.metaOpenFailed");
@@ -100,7 +107,9 @@ export function useWhatsAppSignup(businessId: Id, channelId: Id | undefined, not
         }, 20000);
       }, {
         config_id: data.config_id, response_type: "code", override_default_response_type: true,
-        extras: { setup: {} },
+        extras: launchMode.current === "coexistence"
+          ? { setup: {}, featureType: "whatsapp_business_app_onboarding", sessionInfoVersion: "3" }
+          : { setup: {} },
       });
     },
     onError: () => reset(),
@@ -109,7 +118,7 @@ export function useWhatsAppSignup(businessId: Id, channelId: Id | undefined, not
   const complete = useMutation({
     mutationFn: ({ data, registrationPin }: { data: SignupResult; registrationPin: string; attempt: number }) => businessConnectorsApi.completeWhatsAppEmbeddedSignup({
       business: businessId, code: data.code, state: data.state, redirect_uri: data.redirect,
-      phone_number_id: data.phone, waba_id: data.waba, registration_pin: registrationPin,
+      phone_number_id: data.phone, waba_id: data.waba, registration_pin: registrationPin || undefined,
     }),
     onSuccess: (_, { attempt }) => {
       if (attempt !== generation.current) return;
@@ -127,7 +136,7 @@ export function useWhatsAppSignup(businessId: Id, channelId: Id | undefined, not
 
   const completeSignup = complete.mutate;
   useEffect(() => {
-    if (!active.current || !result.code || !result.phone || !result.waba) return;
+    if (!active.current || !result.code || (!result.phone && launchMode.current === "cloud") || !result.waba) return;
     active.current = false;
     window.clearTimeout(resultTimeout.current);
     setWaiting(false);
@@ -135,8 +144,8 @@ export function useWhatsAppSignup(businessId: Id, channelId: Id | undefined, not
   }, [result, completeSignup]);
 
   return {
-    start, complete, pin, setPin, waiting, cancel: reset,
+    start, complete, pin, setPin, mode, setMode, phone, setPhone, waiting, cancel: reset,
     hasResult: Boolean(result.code || result.phone),
-    canStart: /^[0-9]{6}$/.test(pin),
+    canStart: mode === "coexistence" ? /^\+[1-9][0-9]{7,14}$/.test(phone) : /^[0-9]{6}$/.test(pin),
   };
 }

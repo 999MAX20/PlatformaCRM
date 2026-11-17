@@ -357,6 +357,8 @@ def retry_outbound_message(message, *, actor=None, idempotency_key=""):
     normalized_key = _normalize_idempotency_key(idempotency_key)
     message.refresh_from_db()
 
+    if (message.payload_json or {}).get("historical"):
+        raise ValidationError({"message_id": "Imported historical messages cannot be resent."})
     if message.status == BotMessage.Statuses.CANCELLED:
         raise ValidationError({"message_id": "Cancelled messages cannot be retried."})
     if normalized_key and message.delivery_last_retry_key == normalized_key:

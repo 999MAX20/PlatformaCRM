@@ -78,7 +78,7 @@ then requires success from WABA `subscribed_apps` and phone `register` before
 activating the channel. The display number comes from Graph, never the browser.
 Completion requires `waba_id` and a six-digit `registration_pin`. Access token and
 PIN use encrypted connector credentials; finite token/data-access expiry is saved.
-The UI requests a standard Cloud flow, not Business App coexistence.
+The UI defaults to standard Cloud and separately offers Business App coexistence.
 The v4 launch collects PIN before opening Meta and submits completion as soon as
 both the SDK code and verified account callback arrive. No second confirmation
 delays the 30-second code exchange. An incomplete callback expires locally after
@@ -108,10 +108,43 @@ Signup locking passed on17Nov2026; this is not deployed-database evidence. Deplo
 must apply the migration and supply app ID/secret, Embedded Signup config ID,
 approved domains/HTTPS and webhook subscription configuration. Real client
 onboarding and inbound/manual reply require separate authorized live acceptance.
-Business App coexistence and number/provider migration are not implemented by
-this standard direct-Meta flow. Evidence: `META-SIGNUP-20261114` and
+Number/provider migration is not implemented by this standard direct-Meta flow.
+Business App coexistence uses the separate mode below. Evidence: `META-SIGNUP-20261114` and
 `META-V4-20261117` in PRIMARY-SESSION; the onboarding/reviewer runbook is in
 [operations](operations.md#meta-v4-and-app-review-preparation-17112026).
+
+### Direct Meta Coexistence and history, local preparation 17.11.2026
+
+Owner confirmed history import and an existing WhatsApp Business app number.
+Start accepts `onboarding_mode=coexistence` and mandatory E.164 `expected_phone`,
+both signed into the attempt. v4 SDK extras request Business App onboarding.
+Completion accepts the Coexistence WABA-only callback without PIN; Graph must
+identify exactly the expected phone and confirm `is_on_biz_app=true` and
+`platform_type=CLOUD_API`. This mode subscribes the WABA but never calls `/register`.
+Standard PIN/register, actor/tenant/revision protections remain unchanged.
+
+Migration `integrations0012` adds per-connection synchronization and durable raw
+event batches. Signed Meta `history`, `smb_app_state_sync`, `smb_message_echoes`
+are matched to the WABA, phone and current connection. Celery processes stored
+batches on the integrations queue. Contact and history sync requests run once,
+in that order, within 24 hours; an unknown provider result is not blindly replayed.
+Required app subscriptions must be enabled after deployment, alongside messages
+and account_update. Successful local tests do not establish those subscriptions.
+
+Imported history is deduplicated, retains original timestamps and does not create
+unread notifications, CRM leads, AI responses or a new service window. Historical
+outbound messages cannot be resent using retry. New Business App echoes hand off
+the conversation to staff and cancel pending AI/bot replies. Contact sync stores
+address-book names in conversation metadata; it does not delete CRM clients.
+History media metadata can arrive before its parent and waits durably for it.
+
+Local limitations: attachments are represented by metadata/placeholders, without
+media download; BSUID-only identities fail the retained batch rather than guessing
+a phone/tenant. Failed batches and interrupted once-only requests require operator
+inspection; there is no merchant replay button. Deployment/live number acceptance
+and Tech Provider eligibility remain unverified. This is not a claim that all
+history types or production Coexistence are ready. Evidence and remaining gates:
+`META-COEXISTENCE-20261117` in PRIMARY-SESSION.
 
 ### YCloud TP Lite — первый этап
 

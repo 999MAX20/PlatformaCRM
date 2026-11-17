@@ -9,6 +9,7 @@ import uuid
 from apps.businesses.models import Business
 from apps.core.sanitization import SanitizedErrorFieldsMixin
 from apps.integrations.ycloud.models import YCloudConnection, YCloudEvent, YCloudDispatch  # noqa: F401
+from apps.integrations.whatsapp_coexistence_models import WhatsAppCoexistenceSync, WhatsAppCoexistenceEvent  # noqa: F401
 
 
 class WhatsAppSignupAttempt(models.Model):

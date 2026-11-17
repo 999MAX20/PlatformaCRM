@@ -48,7 +48,7 @@ export type WhatsAppEmbeddedSignupCompletePayload = {
   redirect_uri?: string;
   phone_number_id: string;
   waba_id: string;
-  registration_pin: string;
+  registration_pin?: string;
   display_phone_number?: string;
 };
 
@@ -329,11 +329,15 @@ export const businessConnectorsApi = {
     const { data } = await apiClient.post<BusinessConnector>("/api/business-connectors/whatsapp-request/", payload);
     return data;
   },
-  startWhatsAppEmbeddedSignup: async ({ business, redirectUri, botChannel }: { business: Id; redirectUri?: string; botChannel?: Id }) => {
+  startWhatsAppEmbeddedSignup: async ({ business, redirectUri, botChannel, onboardingMode, expectedPhone }: {
+    business: Id; redirectUri?: string; botChannel?: Id; onboardingMode?: "cloud" | "coexistence"; expectedPhone?: string;
+  }) => {
     const { data } = await apiClient.post<WhatsAppEmbeddedSignupStartResponse>("/api/business-connectors/whatsapp-embedded-signup/start/", {
       business,
       redirect_uri: redirectUri,
       bot_channel: botChannel,
+      onboarding_mode: onboardingMode,
+      expected_phone: expectedPhone,
     });
     return data;
   },

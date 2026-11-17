@@ -179,7 +179,8 @@ class BusinessConnectorViewSet(TenantModelViewSet):
         if bot_channel and (bot_channel.bot.business_id != business.id or bot_channel.channel != BotChannel.Channels.WHATSAPP):
             raise ValidationError({"bot_channel": "Select a WhatsApp channel from the current business."})
         redirect_uri = serializer.validated_data.get("redirect_uri") or request.build_absolute_uri("/app/integrations")
-        return Response(start_whatsapp_embedded_signup(business=business, user=request.user, redirect_uri=redirect_uri, bot_channel=bot_channel))
+        return Response(start_whatsapp_embedded_signup(business=business, user=request.user, redirect_uri=redirect_uri, bot_channel=bot_channel,
+            onboarding_mode=serializer.validated_data["onboarding_mode"], expected_phone=serializer.validated_data.get("expected_phone", "")))
 
     @action(detail=False, methods=["post"], url_path="whatsapp-embedded-signup/complete")
     def whatsapp_embedded_signup_complete(self, request):
@@ -197,7 +198,7 @@ class BusinessConnectorViewSet(TenantModelViewSet):
                 redirect_uri=redirect_uri,
                 phone_number_id=serializer.validated_data["phone_number_id"],
                 waba_id=serializer.validated_data.get("waba_id", ""),
-                registration_pin=serializer.validated_data["registration_pin"],
+                registration_pin=serializer.validated_data.get("registration_pin", ""),
                 display_phone_number=serializer.validated_data.get("display_phone_number", ""),
                 request=request,
             )

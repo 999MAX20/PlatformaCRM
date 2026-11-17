@@ -140,6 +140,7 @@ export const telegramChannelApi = {
 };
 
 export type WhatsAppChannelStatus = {
+  coexistence_sync?: { state: string; progress: number; pending_batches: number; error_code: string } | null;
   status: string;
   provider_mode: "mock" | "meta_cloud" | "disabled";
   webhook_url: string;
