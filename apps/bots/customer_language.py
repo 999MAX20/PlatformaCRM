@@ -117,7 +117,7 @@ def remember_customer_language(conversation, messages, language):
     latest = next((item for item in reversed(messages) if item.get("direction") == "inbound"), None)
     if latest is None:
         return customer_reply_language(conversation, messages=messages)
-    language = explicit_language(latest.get("text", "")) or language
+    language = language_signal(latest.get("text", "")) or language
     if _context_only(latest.get("text", "")):
         language = customer_reply_language(conversation, messages=messages)
     if conversation.pk is None:

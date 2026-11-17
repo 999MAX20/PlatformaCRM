@@ -25,11 +25,22 @@ CHANNELS-FIXES-20261114: search/key autofill and channel setup UI implemented lo
 unified statuses, website copy/toggle and Telegram replacement. Owner correction:
 WhatsApp now shows one Connect button, no provider choice/names or manual keys.
 Fresh browser10/10 + signup5/5, build/types/i18n PASS; RU/KK/EN screenshots inspected.
-No login needed for removed key field. Publication blocked by uncommitted signup
-dependencies outside this UI task; no task commit/push/CI/deploy. Evidence:
+No login needed for removed key field. Former signup dependency blocker resolved
+by release04949366/4cc19068: published to main, CI success, deployed17Nov.
+This reuses release evidence, not a new live channel-delivery test. Evidence:
 docs/testing/task-state/PRIMARY-SESSION.md#channels-fixes-20261114.
 
 AI-AGENTS-REDESIGN-20261113: approved editor redesign implemented; scoped local acceptance PASS.
+Knowledge follow-up reconciled17Nov: truthful eligibility, guarded drafts, persistent
+topic shortcuts and full shared-library reading shipped in04949366/4cc19068.
+Eight final desktop/mobile knowledge cases PASS in release focus-results.json;
+earlier failed harness runs retained. Channel/language dependencies integrated;
+remote main and actual CI rechecked at4cc19068. Deployment receipt reused, no new
+deployment or AI activation. Language live evidence exposed a stale-model override;
+minimal fix verified by11focused/145dependent tests plus system/drift PASS.
+Own publication receipt in the existing checkpoint; fix not deployed or live-model
+retested. Real customer delivery remains separate. Evidence: existing redesign evidence,
+knowledge closeout.
 Named picker/local sections, split configuration, overview/context test and full knowledge view.
 Atomic save, independent knowledge/channels, draft/permission/runtime guards preserved.
 UX14 and dependent10 browser cases PASS; localized/responsive/keyboard/recovery/axe and build/bundle PASS.

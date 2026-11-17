@@ -1,4 +1,5 @@
 import json
+from datetime import timedelta
 from unittest.mock import patch
 
 from django.test import SimpleTestCase, TestCase, override_settings
@@ -85,6 +86,7 @@ class CustomerLanguageTests(TestCase):
         from apps.ai_core.conversation_access import inbox_memory_conversation
         thread = inbox_memory_conversation(self.conversation)
         thread.memory_since = timezone.now()
+        self.conversation.messages.update(created_at=thread.memory_since - timedelta(seconds=1))
         thread.save()
         self.inbound("👍")
         self.assertEqual(customer_reply_language(self.conversation), "en")
@@ -134,3 +136,35 @@ class CustomerLanguageTests(TestCase):
             self.assertEqual(remember_customer_language(self.conversation, [], value), "en")
         self.conversation.refresh_from_db()
         self.assertNotIn(LANGUAGE_KEY, self.conversation.metadata_json)
+
+    def test_current_message_language_overrides_stale_model_classification(self):
+        from apps.conversations.ai_qualification import qualify_conversation
+        from apps.bots.ai import suggest_bot_reply
+
+        self.inbound("Сәлеметсіз бе, кеңес алу қанша тұрады?")
+        self.inbound("Hello, how long is the consultation?")
+        qualification_output = {"intent": "price_question", "request_kind": "business",
+            "summary": "Consultation question", "confidence": 0.95, "response_language": "kk"}
+        with patch("apps.ai_core.services.generate_text", side_effect=[
+                AIClientResult(json.dumps(qualification_output), "test"),
+                AIClientResult("The consultation takes 30 minutes.", "test")]) as generate:
+            qualification, _ = qualify_conversation(conversation=self.conversation)
+            _, log, _, _ = suggest_bot_reply(conversation=self.conversation, qualification=qualification)
+        self.assertEqual(qualification.response_language, "en")
+        self.assertEqual(log.input_json["ai_response_language"], "en")
+        self.assertIn("reply in English", generate.call_args.args[0].messages[0]["content"])
+        self.conversation.refresh_from_db()
+        self.assertEqual(self.conversation.metadata_json[LANGUAGE_KEY]["language"], "en")
+        self.inbound("1")
+        self.assertEqual(safety_text(self.conversation, "handoff"), COPY["en"]["handoff"])
+
+    def test_preview_language_signal_overrides_model_without_persistence(self):
+        preview = BotConversation(business=self.business, bot=self.bot, channel="website")
+        for text, expected in (("Hello, how long is the consultation?", "en"),
+                ("Сколько стоит услуга?", "ru"), ("Сәлем, бағасы қанша?", "kk"),
+                ("Please reply in Kazakh", "kk")):
+            with self.subTest(text=text):
+                preview._preview_messages = [{"direction": "inbound", "text": text}]
+                self.assertEqual(remember_customer_language(preview, preview._preview_messages, "en" if expected != "en" else "kk"), expected)
+                self.assertEqual(customer_reply_language(preview), expected)
+        self.assertEqual(BotConversation.objects.count(), 1)

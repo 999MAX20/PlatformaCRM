@@ -160,13 +160,36 @@ button-only-signup.log and button-only-build.log record the new run. i18n7368 ke
 types/Vite/widget PASS, six WhatsApp RU/KK/EN390/1440 screenshots visually inspected.
 AntiSlop scoped geometry/meaning/keyboard/axe/localization PASS, existing tokens
 retained. No assets/theme/redesign/provider calls or backend changes.
-Current HEAD8585aa27, branch retained. Publication remains blocked: WhatsApp setup
-depends on foreign uncommitted useWhatsAppSignup.ts, connectors.ts and backend signup
-changes. A task-only commit would omit required dependencies; including them would
-publish another task. Index left untouched; no commit/push/CI/deployed claim.
+At HEAD8585aa27 publication was blocked by foreign signup dependencies.
+Resolved17Nov by owner-authorized RELEASE-20261117:04949366 integrated required
+signup/shared UI/language/knowledge changes,4cc19068 completed release corrections.
+Remote main4cc19068 and CI44066559087 success rechecked during knowledge closeout.
+Existing delivery.json records deployment of that candidate; no new deployment or
+real client delivery test performed in this reconciliation. Earlier isolated UI
+evidence above retains its original scope and failures.
 Detailed continuation in the existing output checkpoint.
 
 ## AI-AGENTS-REDESIGN-20261113
+
+Knowledge/dependency closeout17Nov: prior incomplete14Nov knowledge run superseded
+by release focus-results.json,8/8 desktop/mobile cases PASS. Create/edit/reload,
+truthful eligibility, Escape/backdrop/close/back draft protection, full shared text,
+explicit publication, reversible connection and no-blur agent dialogs covered.
+Retained mobile/desktop material screenshots inspected again; no new UI changes.
+Release browser acceptance214 distinct cases and full gate reused for candidate
+4cc19068; knowledge/channel/language tracked sources unchanged at reconciliation.
+Language affected138PASS; retained14Nov real-model dialogue evidence is5PASS/1FAIL
+(English after Kazakh incorrectly retained kk). Minimal backend fix now prefers
+current-message language_signal;11focused/145dependent tests and system/drift PASS.
+30tone outputs showed soft/overlapping tone differences, not five
+guaranteed voices. No new paid/model calls. Signup dependencies integrated in04949366;
+main/actualCI checked at4cc19068, existing deployment receipt confirmed.
+Knowledge/channel implementation and publication are complete. Language regression
+fix/local verification complete; own publication receipt in the existing checkpoint.
+New fix deployment/live-model retest and production AI activation/real customer delivery
+remain separate. Current foreign voice/Scribe/Meta edits preserved. Backend regression
+checks use isolated DB and mock provider; no UI rebuild/browser rerun for unchanged UI. Detailed evidence and command boundary:
+docs/testing/evidence/ai-agents-redesign-20261113.md#knowledge-and-dependency-closeout--17112026.
 
 Owner-approved redesign implemented in canonical checkout, branch codex/ui-testing-toolkit;
 start1421a111, precommit cd4e0a23. Foreign WIP preserved and excluded from own commit.

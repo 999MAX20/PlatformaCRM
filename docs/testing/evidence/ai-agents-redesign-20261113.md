@@ -756,3 +756,86 @@ acceptance. Historical audit remains above as the superseded pre-fix snapshot.
 Artifacts and exact command lists:
 `output/ai-agents-actions-implementation-20261114/`;
 `output/ai-agents-redesign-20261113/CHECKPOINT.md`.
+
+
+## Knowledge and dependency closeout — 17.11.2026
+
+Owner resumed the annotated next step: finish Knowledge, then resolve channel/language
+publication dependencies while preserving accepted overview, instructions and actions.
+Reconciliation found the implementation already integrated by RELEASE-20261117.
+This continuation reconciles status/contracts and fixes the language regression
+identified below; it does not claim that this chat implemented or reran the release.
+
+- Code: `04949366` contains KnowledgeEditor/KnowledgeMaterialDetails, guarded drafts,
+  persistent topic shortcuts, complete shared-material reading, scoped no-blur
+  overlays, channels/signup dependencies and customer-language handling. `4cc19068`
+  is the final release candidate. Knowledge/channel product files had no working-tree delta at reconciliation.
+- Knowledge: original14Nov browser run had2PASS/2FAIL and is retained. The final
+  release `output/release-20261117/focus-results.json` has8/8 knowledge cases PASS
+  (four scenarios on desktop/mobile), including real isolated HTTP persistence,
+  reload, eligibility flags, draft close/navigation guards, full shared text,
+  explicit permission, connect/disconnect preserving the original, and agent overlays.
+  Existing `output/ai-agents-knowledge-20261114/backend-check.log`:12PASS,
+  covering ownership, tenant/visibility and shared-publication boundaries.
+- Release: `browser-acceptance.json` consolidates214 distinct passing cases after
+  retained failed attempts and affected reruns. `delivery.json` records3404 backend
+  PASS/81 platform skips, system/drift/build/types/i18n/bundle/audits PASS and24
+  PostgreSQL Signup cases plus migration roundtrip. These are reused17Nov release
+  results, not new release tests in this continuation.
+- Language: `output/customer-language-20261114/affected.log` ends138PASS after the
+  retained initial failures. The `live-dialogue.jsonl` synthetic run had5PASS/1FAIL: English after Kazakh
+  incorrectly retained kk because model qualification overwrote the current message signal.
+  The30 retained real-model tone outputs have overlapping tones; the evidence does
+  not promise five reliably distinct voices. No new model calls or customer sends.
+- Visual evidence: desktop/mobile `knowledge-material-viewport.png` under release
+  `browser-focus` inspected again: persistent shortcuts, readable material/status
+  and edit action. The release records localized/responsive/keyboard/recovery/axe
+  acceptance; no fresh browser session or UI modification in this continuation.
+- Publication: `git ls-remote origin refs/heads/main` returned exact `4cc19068`;
+  GitHub API recheck confirmed [CI44066559087](https://github.com/999MAX20/PlatformaCRM/actions/runs/44066559087)
+  completed/success. Existing release receipt records deployed `/opt/platforma/releases/20261117-4cc19068`,
+  matching source/frontend hashes, schema/services checks and public Preview smoke.
+  No new server operation was performed here.
+
+Knowledge/channel implementation and dependency publication remainder: none.
+The identified language regression is fixed and locally verified below; its
+deployment/live-model retest is not performed here. Production AI
+remains disabled in the release receipt. Live customer delivery, Meta App Review,
+client onboarding and broader release/roadmap acceptance are not closed by these
+checks. Unrelated voice/Scribe working changes are excluded from this continuation.
+
+Current frontend/AI contracts, customer-agent passport and status now describe this
+boundary. Roadmap/README/access/integrations contracts need no additional change:
+no new stage, setup, permission, provider behavior or deployment is introduced.
+The existing redesign checkpoint records the initial evidence plan, reproduced gap,
+checks and final own-hunk publication; no new backlog or authority document.
+
+### Language regression correction in this continuation
+
+`remember_customer_language` now uses the existing `language_signal` before the
+model result. Explicit preference/current-message evidence wins; ambiguous text
+still permits model classification, and short/numeric replies retain history.
+No new provider/API/permissions, autonomous actions, schema or frontend changes.
+The actual qualify-to-reply regression supplies a wrong kk model result for an
+English message after Kazakh, then checks the en prompt/log/checkpoint and the
+following numeric reply's service language. Preview RU/KK/EN and explicit preference
+are covered without persisting a conversation.
+
+Commands from the canonical root (runner prefix:
+`.venv/Scripts/python.exe output/ai-agents-knowledge-20261114/closeout_verify.py`):
+
+- `reproduction apps.bots.tests_customer_language.CustomerLanguageTests.test_current_message_language_overrides_stale_model_classification`:
+  FAIL as expected before fix (`kk != en`), retained in closeout-reproduction.log.
+- `focused apps.bots.tests_customer_language`:10PASS/1FAIL in existing memory-reset
+  timing fixture. Old-message timestamps are now explicitly before reset cutoff;
+  assertions retained. `focused-final apps.bots.tests_customer_language`:11PASS.
+- `completion apps.ai_core.tests_agent_runtime apps.ai_core.tests_conversation_memory apps.ai_core.tests_inbox_continuity apps.ai_core.tests_prompt_preferences apps.ai_core.tests_settings_certification apps.bots.tests_automatic_booking apps.bots.tests_booking_creation apps.bots.tests_booking_terms apps.bots.tests_configuration apps.bots.tests_customer_language apps.bots.tests_customer_safety apps.bots.tests_handoff_notice apps.bots.tests_preview apps.bots.tests_runtime_configuration apps.bots.tests_safety_recovery apps.conversations.tests_ai_behavior_boundaries apps.conversations.tests_ai_confirmation apps.bots.tests_customer_knowledge`:
+  145PASS, system check and migration-drift PASS; closeout-completion.log.
+
+Focused11 overlap the final145; do not add their counts. Runs use disposable SQLite
+through isolated_runtime and a mocked provider. Tenant/role denial, source visibility,
+late results, reset/history, booking and handoff remain covered. No paid calls,
+working-DB mutation, UI rebuild or new release/deployment gate. UI source is unchanged,
+so retained release browser/build evidence is reused within its original boundary.
+The earlier5/6 live result is not relabelled PASS; future live acceptance must retest
+the corrected candidate. Publication metadata is in the existing redesign checkpoint.
