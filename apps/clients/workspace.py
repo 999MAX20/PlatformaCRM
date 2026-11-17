@@ -1,11 +1,40 @@
 """Client workspace predicates; conversation evidence is permission scoped by caller."""
 from django.db.models import CharField, DateTimeField, Exists, F, OuterRef, Q, Subquery
 from django.db.models.functions import Cast, Coalesce
+from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 
 from apps.activities.models import TaggedObject
 from apps.bots.models import BotMessage
 from apps.core.crm_filters import archive_filter, business_date_range, choice, values
+
+
+def client_related_filters(queryset, params, related):
+    appointment = choice(params, "appointment", ("", "upcoming", "no_upcoming", "period"))
+    task = choice(params, "task", ("", "open", "overdue", "no_open"))
+    contact = choice(params, "contact", ("", "missing_phone", "missing_email"))
+    if appointment != "period" and (params.get("appointment_from") or params.get("appointment_to")):
+        raise ValidationError({"appointment": "Select the period filter to use appointment dates."})
+    now = timezone.now()
+    if appointment:
+        appointments = related["appointments"].filter(is_archived=False)
+        if appointment == "period":
+            if not params.get("appointment_from") and not params.get("appointment_to"):
+                raise ValidationError({"appointment_from": "Select an appointment date range."})
+            appointments = business_date_range(appointments, params, prefix="appointment", field="start_at")
+        else:
+            appointments = appointments.filter(start_at__gte=now, status__in=("created", "confirmed", "rescheduled"))
+        matching = Exists(appointments.filter(client_id=OuterRef("pk"), business_id=OuterRef("business_id")))
+        queryset = queryset.filter(~matching if appointment == "no_upcoming" else matching)
+    if task:
+        tasks = related["tasks"].filter(is_archived=False).exclude(status__in=("done", "cancelled"))
+        if task == "overdue":
+            tasks = tasks.filter(due_at__lt=now)
+        matching = Exists(tasks.filter(client_id=OuterRef("pk"), business_id=OuterRef("business_id")))
+        queryset = queryset.filter(~matching if task == "no_open" else matching)
+    if contact:
+        queryset = queryset.filter(**{"phone" if contact == "missing_phone" else "email": ""})
+    return queryset
 
 
 def waiting_conversations(queryset):

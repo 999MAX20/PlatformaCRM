@@ -33,7 +33,7 @@ for (const [locale, copy] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
     const failures: string[] = [];
     page.on("pageerror", error => failures.push(error.message));
 
-    for (const kind of ["clients", "leads", "deals"] as const) {
+    for (const kind of ["leads", "deals"] as const) {
       await page.goto(`/app/${kind}`);
       const toolbar = page.getByTestId(`${kind}-unified-toolbar`);
       await expect(toolbar).toBeVisible();
@@ -42,7 +42,7 @@ for (const [locale, copy] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
       await expect(page).toHaveURL(new RegExp("search=Toolbar"));
       await expect.poll(async () => {
         const text = await toolbar.getByRole("group", { name: copy["crmFilters.quickFilters"], exact: true }).innerText();
-        return (kind === "clients" ? /\b0\b/ : /\b1\b/).test(text);
+        return /\b1\b/.test(text);
       }).toBe(true);
       const applied = page.url();
       const trigger = toolbar.locator(`[data-focus-return-id="${kind}-filters"]`);
@@ -93,7 +93,7 @@ for (const [locale, copy] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
       await page.screenshot({ path: info.outputPath(`${kind}-${locale}.png`) });
       expect(await toolbar.evaluate(element => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
 
-      if (kind !== "clients") {
+      {
         const scope = toolbar.getByRole("combobox", { name: copy["crmFilters.scope"], exact: true });
         await scope.click();
         await page.getByRole("option", { name: copy[`crmFilters.scope.${kind}.mine`], exact: true }).click();
@@ -133,7 +133,7 @@ test("advanced combinations, empty reset and failed-count recovery", async ({ pa
   await page.evaluate(() => localStorage.setItem("ai_smb_language", "en"));
   const failures: string[] = [];
   page.on("pageerror", error => failures.push(error.message));
-  for (const kind of ["clients", "leads", "deals"] as const) {
+  for (const kind of ["leads", "deals"] as const) {
     await page.goto(`/app/${kind}?created_from=not-a-date`);
     const toolbar = page.getByTestId(`${kind}-unified-toolbar`);
     await expect(toolbar).toBeVisible();

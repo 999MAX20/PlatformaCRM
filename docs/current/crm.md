@@ -651,6 +651,21 @@ backend80, system/drift, frontend build и browser PASS; публикация �
 максимум100), как списки заявок/сделок; выбранный в UI размер определяет границы
 страниц. Контекстные счётчики вычисляются до пагинации.
 
+CLIENTS-FILTERS-20261117: семь UI-групп клиентов используют существующие created,
+source, tag/tag_mode, archive и новые workspace-параметры. `appointment=upcoming`
+означает доступную неархивную запись с start_at>=now и статусом created/confirmed/
+rescheduled; `no_upcoming` означает отсутствие такой доступной записи.
+`appointment=period` требует appointment_from и/или appointment_to и отбирает по
+start_at во включительных локальных днях Business, со всеми статусами, без архива.
+`task=open|overdue|no_open` учитывает доступные неархивные задачи вне done/cancelled;
+overdue дополнительно требует due_at<now. Отрицательные условия говорят об
+отсутствии доступных записей, не раскрывают скрытые сущности. `contact=missing_phone|
+missing_email` проверяет пустое соответствующее поле. Условия объединяются И до
+пагинации и summary, неверные значения/даты дают400. Источник означает происхождение
+клиента, не наличие аккаунта мессенджера. Старые segment/handoff/custom-field API
+сохранены для других потребителей, новый список их не применяет. Миграций, write-
+операций, изменений прав, событий и уведомлений нет.
+
 AUD-14, 17.10: история BotMessage/Message не редактируется, не переносится между
 диалогами и не удаляется через generic API (PATCH/PUT/DELETE → 405). Совместимый
 POST входящего текста принимает conversation/text/sender_type=client, для BotMessage

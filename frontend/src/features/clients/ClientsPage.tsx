@@ -60,7 +60,6 @@ export function ClientsPage() {
     rows,
     segmentDraft,
     segmentOpen,
-    segmentOptions,
     segments,
     selectedClient,
     setActionClient,
@@ -285,10 +284,10 @@ export function ClientsPage() {
       {paymentsOpen && <PaymentsJournal key={business.id} onClose={() => setPaymentsOpen(false)} />}
       <div className="space-y-4 pt-2" data-testid="clients-workspace-ready" aria-busy={filteredClients.isFetching}>
         <ClientsFilters key={`${business.id}:${user?.id}`}
-          tagOptions={tagOptions} segmentOptions={segmentOptions} sourceOptions={sourceOptions}
+            tagOptions={tagOptions} sourceOptions={sourceOptions}
           counts={filteredClients.isError || filteredClients.isPlaceholderData ? undefined : filteredClients.data?.summary}
           visibleColumns={visibleClientColumns} onToggleColumn={toggleClientColumn}
-          onOpenSegment={() => setSegmentOpen(true)} customTable={customTable} t={t} />
+            customTable={customTable} t={t} />
         {pageError && <ErrorState error={pageError} message={getApiErrorMessage(pageError)} action={<Button variant="secondary" onClick={() => { void Promise.all([filteredClients.refetch(), tagsQuery.refetch(), segments.refetch(), taggedObjects.refetch()]); }}>{t("common.retry")}</Button>} />}
         {customTable.error}
         {!filteredClients.isError && <ClientsTable rows={rows} ordering={ordering} onOrderingChange={setOrdering}

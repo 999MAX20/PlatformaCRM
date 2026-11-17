@@ -9,6 +9,9 @@ from apps.activities.models import Tag, TaggedObject
 from apps.bots.models import Bot, BotConversation, BotMessage
 from apps.businesses.models import Business, BusinessMember
 from apps.clients.models import Client
+from apps.scheduling.models import Appointment
+from apps.services.models import Service
+from apps.tasks.models import Task
 
 
 class ClientWorkspaceFilterTests(TestCase):
@@ -29,6 +32,69 @@ class ClientWorkspaceFilterTests(TestCase):
 
     def inbound(self):
         return BotMessage.objects.create(conversation=self.conversation, direction="inbound", sender_type="client", status="received", text="Question")
+
+    def test_appointment_modes_statuses_dates_and_cross_business_links(self):
+        service = Service.objects.create(business=self.business, name="Consultation", duration_minutes=30)
+        start = datetime.now(timezone.utc) + timedelta(days=1)
+        record = Appointment.objects.create(business=self.business, client=self.client, service=service, start_at=start, end_at=start + timedelta(minutes=30))
+        for status in ("created", "confirmed", "rescheduled", "completed", "cancelled", "no_show"):
+            record.status = status
+            record.save(update_fields=["status"])
+            expected = int(status in ("created", "confirmed", "rescheduled"))
+            self.assertEqual(self.get(appointment="upcoming").data["count"], expected)
+            self.assertEqual(self.get(appointment="no_upcoming").data["count"], 1 - expected)
+        record.start_at = datetime(2026, 10, 12, 19, 30, tzinfo=timezone.utc)
+        record.save(update_fields=["start_at"])
+        self.assertEqual(self.get(appointment="period", appointment_from="2026-10-13", appointment_to="2026-10-13").data["count"], 1)
+        self.assertEqual(self.get(appointment="period", appointment_to="2026-10-12").data["count"], 0)
+        record.is_archived = True
+        record.save(update_fields=["is_archived"])
+        self.assertEqual(self.get(appointment="period", appointment_from="2026-10-13").data["count"], 0)
+        # Even an actor who owns both businesses cannot match a foreign back-reference.
+        self.foreign.owner = self.owner
+        self.foreign.save(update_fields=["owner"])
+        Appointment.objects.create(business=self.foreign, client=self.client, service=service, start_at=start, end_at=start + timedelta(minutes=30))
+        self.assertEqual(self.get(appointment="upcoming").data["count"], 0)
+
+    def test_task_modes_ignore_terminal_archived_and_foreign_tasks(self):
+        task = Task.objects.create(business=self.business, client=self.client, title="Call", due_at=datetime.now(timezone.utc) - timedelta(hours=1))
+        for status in ("open", "in_progress", "waiting", "done", "cancelled"):
+            task.status = status
+            task.save(update_fields=["status"])
+            expected = int(status not in ("done", "cancelled"))
+            self.assertEqual(self.get(task="open").data["count"], expected)
+            self.assertEqual(self.get(task="overdue").data["count"], expected)
+            self.assertEqual(self.get(task="no_open").data["count"], 1 - expected)
+        task.status, task.due_at = "open", None
+        task.save(update_fields=["status", "due_at"])
+        self.assertEqual(self.get(task="open").data["count"], 1)
+        self.assertEqual(self.get(task="overdue").data["count"], 0)
+        task.is_archived = True
+        task.save(update_fields=["is_archived"])
+        Task.objects.create(business=self.foreign, client=self.client, title="Foreign")
+        self.assertEqual(self.get(task="open").data["count"], 0)
+
+    def test_contact_filters_compose_before_pagination_and_summary(self):
+        other = Client.objects.create(business=self.business, full_name="Other", phone="+77010000001", email="other@example.test")
+        self.inbound()
+        self.assertEqual(self.get(contact="missing_phone", page_size=1).data["count"], 1)
+        result = self.get(contact="missing_email", source="website", task="no_open", appointment="no_upcoming", page_size=1)
+        self.assertEqual(result.data["count"], 1)
+        self.assertEqual(result.data["summary"]["no_reply"], 1)
+        self.assertEqual(result.data["results"][0]["id"], self.client.pk)
+        self.assertEqual(self.get(q=other.full_name, contact="missing_email").data["count"], 0)
+        self.api.force_authenticate(self.foreign.owner)
+        self.assertEqual(self.get(contact="missing_phone").data["count"], 0)
+        self.api.force_authenticate(None)
+        self.assertIn(self.get(task="open").status_code, (401, 403))
+
+    def test_invalid_new_filters_are_rejected(self):
+        for params in ({"task": "bad"}, {"contact": "bad"}, {"appointment": "bad"},
+                       {"appointment": "period"}, {"appointment_from": "2026-10-13"},
+                       {"appointment": "period", "appointment_from": "bad"},
+                       {"appointment": "period", "appointment_from": "2026-10-14", "appointment_to": "2026-10-13"}):
+            with self.subTest(params=params):
+                self.assertEqual(self.get(**params).status_code, 400)
 
     def test_waiting_reply_uses_delivery_not_read_or_assignment_or_failed_draft(self):
         self.inbound()

@@ -54,8 +54,8 @@ test("Records, schedule and client filter calendars remain reachable", async ({ 
   await page.goto("/app/clients");
   await page.locator('[data-focus-return-id="clients-filters"]').click();
   const filters = page.getByRole("dialog", { name: ru["crmFilters.filters"], exact: true });
-  await filters.getByRole("button", { name: new RegExp(`^${ru["crmFilters.created"]}`) }).click();
-  const panel = page.getByRole("dialog", { name: ru["crmFilters.created"], exact: true });
+  await filters.getByRole("button", { name: new RegExp(`^${ru["crmFilters.added"]}`) }).click();
+  const panel = page.getByRole("dialog", { name: ru["crmFilters.added"], exact: true });
   await panel.getByRole("gridcell").nth(10).click();
   await panel.getByRole("gridcell").nth(13).click();
   await panel.getByRole("button", { name: ru["crmFilters.apply"], exact: true }).click();

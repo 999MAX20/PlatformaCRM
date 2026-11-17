@@ -15,8 +15,8 @@ export function CalendarPopover({ anchor, label, id, testId, onClose, children }
   const closeRef = useRef(onClose);
   closeRef.current = onClose;
   const [position, setPosition] = useState({ left: 8, top: 8, maxHeight: 400 });
-  // Keep nested calendars inside the owning dialog's focus boundary.
-  const portalRoot = anchor.current?.closest<HTMLElement>('[role="dialog"][aria-modal="true"]') || document.body;
+  // Nested calendars belong to the parent popover's outside-click boundary too.
+  const portalRoot = anchor.current?.closest<HTMLElement>('[role="dialog"]') || document.body;
   useLayoutEffect(() => {
     const place = () => {
       const rect = anchor.current?.getBoundingClientRect();

@@ -7,11 +7,14 @@ import type { CrmFilterKind, CrmFilterValues } from "./useCrmFilters";
 export type FilterOption = { value: string | number; label: string };
 export type FilterOptions = { source?: FilterOption[]; tag?: FilterOption[]; segment?: FilterOption[]; assignees?: FilterOption[]; stage?: FilterOption[] };
 export function filterFields(kind: CrmFilterKind): string[] {
-  return kind === "clients" ? ["source", "tag", "segment", "handoff", "created", "archive"]
+  return kind === "clients" ? ["created", "source", "tag", "appointment", "task", "contact", "archive"]
     : kind === "leads" ? ["statuses", "assignees", "source", "created", "attention_reason", "archive"]
       : ["statuses", "stage", "assignees", "source", "amount", "created", "expected_close", "attention_reason", "archive"];
 }
 export function fieldOptions(kind: CrmFilterKind, key: string, supplied: FilterOptions, t: (key: string) => string): FilterOption[] {
+  if (key === "appointment") return ["upcoming", "no_upcoming", "period"].map(value => ({ value, label: t(`crmFilters.appointment.${value}`) }));
+  if (key === "task") return ["open", "overdue", "no_open"].map(value => ({ value, label: t(`crmFilters.task.${value}`) }));
+  if (key === "contact") return ["missing_phone", "missing_email"].map(value => ({ value, label: t(`crmFilters.contact.${value}`) }));
   if (key === "statuses") return (kind === "leads" ? ["new", "contacted", "in_progress", "appointment_created", "closed", "lost"] : ["open", "won", "lost"]).map(value => ({ value, label: t(`crmFilters.status.${value}`) }));
   if (key === "attention_reason") return (kind === "leads" ? ["unassigned", "no_action", "overdue_action"] : ["sla", "no_action", "closing"]).map(value => ({ value, label: t(`crmFilters.reason.${value}`) }));
   if (key === "assignees") return [{ value: "unassigned", label: t("crmFilters.unassigned") }, ...(supplied.assignees || [])];
@@ -23,8 +26,13 @@ export function CrmFilterFields({ kind, value, onChange, options, today }: {
 }) {
   const { t } = useI18n();
   return <div className="space-y-4">{filterFields(kind).map(key => {
-    const label = t(`crmFilters.${key}`);
-    if (["created", "expected_close"].includes(key)) return <DateRangePicker key={key} label={label} value={{ from: value[`${key}_from`], to: value[`${key}_to`] }} onChange={range => onChange({ [`${key}_from`]: range.from, [`${key}_to`]: range.to })} today={today} />;
+    const label = t(kind === "clients" && key === "created" ? "crmFilters.added" : `crmFilters.${key}`);
+    if (["appointment", "task", "contact"].includes(key)) return <div key={key} className="space-y-3">
+      <Select label={label} value={value[key]} onChange={event => onChange({ [key]: event.target.value, ...(key === "appointment" && event.target.value !== "period" ? { appointment_from: "", appointment_to: "" } : {}) })}
+        options={[{ value: "", label: t("common.all") }, ...fieldOptions(kind, key, options, t)]} />
+      {key === "appointment" && value.appointment === "period" && <DateRangePicker label={t("crmFilters.appointmentDates")} value={{ from: value.appointment_from, to: value.appointment_to }} onChange={range => onChange({ appointment_from: range.from, appointment_to: range.to })} today={today} />}
+    </div>;
+    if (["created", "expected_close"].includes(key)) return <DateRangePicker key={key} label={label} showPresets={kind === "clients"} value={{ from: value[`${key}_from`], to: value[`${key}_to`] }} onChange={range => onChange({ [`${key}_from`]: range.from, [`${key}_to`]: range.to })} today={today} />;
     if (key === "amount") return <fieldset key={key} className="grid grid-cols-2 gap-2"><legend className="mb-1.5 text-sm font-medium">{label}</legend><Input label={t("crmFilters.from")} type="number" min="0" step="any" value={value.amount_min} onChange={event => onChange({ amount_min: event.target.value })} /><Input label={t("crmFilters.to")} type="number" min="0" step="any" value={value.amount_max} onChange={event => onChange({ amount_max: event.target.value })} /></fieldset>;
     if (key === "archive") return <Select key={key} label={label} value={value.archive} onChange={event => onChange({ archive: event.target.value })} options={["active", "archived", "all"].map(item => ({ value: item, label: t(`crmFilters.archive.${item}`) }))} />;
     if (key === "handoff") return <label key={key} className="flex min-h-11 items-center gap-3 text-sm"><input type="checkbox" checked={value.handoff === "true"} onChange={event => onChange({ handoff: event.target.checked ? "true" : "" })} className="h-4 w-4 accent-brand-600" />{label}</label>;

@@ -13708,3 +13708,58 @@ No local scoped remainder. Publication/CI and exact limits:
 output/ai-agents-empty-20261117/CHECKPOINT.md; registered evidence:
 docs/testing/evidence/ai-agents-redesign-20261113.md#empty-state-correction17nov.
 Deployment not performed; unfinished alerts work is not closed by this UI change.
+
+## CLIENTS-FILTERS-20261117
+
+Owner approved seven filters on /clients: date added, source, tags, appointments,
+tasks, contact gaps and archive. Old segment/handoff/custom-field/saved-view menu
+content removed; waiting-reply stays next to search. Applied chips, draft/cancel,
+reset and URL restoration retained. Existing legacy API remains compatible.
+Code scope complete; local Chrome tab http://127.0.0.1:5173/app/clients opened.
+Browser extension subsequently timed out: ordinary-tab final screenshot/loading
+acceptance is unverified; isolated browser acceptance is separately passed.
+Checks and precise environment/publication boundary: PRIMARY-SESSION entry below
+and output/clients-filters-20261117/CHECKPOINT.md. No deployment performed.
+
+Canonical root C:/Users/user/Desktop/PlatformaCRM; retained branch
+codex/ui-testing-toolkit, starting HEAD be222ec637407ff3e19edbe28ad8793955ee4f94.
+Prior analysis -> owner approval -> minimal menu/server-predicate delta. Reused
+permission-scoped related querysets, timezone date helper, shared selects/calendar
+and URL state. New negative filters mean no readable matching records; no writes,
+migrations, permission changes, BusinessEvent, notification or AI effects.
+Foreign voice/Scribe, AI scenario and Meta integration edits excluded from commit;
+shared frontend/STATUS/PRIMARY docs staged by task-owned hunks only.
+
+Verification on isolated disposable SQLite, canonical sources, eager external
+side effects blocked; ordinary database not seeded/migrated:
+- `.venv/Scripts/python.exe output/clients-filters-20261117/verify.py apps.clients.tests_workspace_filters`:
+  10 PASS, system check and migration drift PASS (backend-focused.log).
+- Same runner `apps.clients apps.core.tests_workspace_related_filters apps.core.tests_crm_workspace_filters`:
+  90 PASS of 91, one new role fixture initially failed unique email. Corrected
+  fixture then final expected denial adjusted to established 200/empty read scope
+  after inspecting TenantModelViewSet; no production permission change.
+- Same runner `apps.clients.tests_filter_read_scope`: final 1 PASS, check/drift
+  PASS (backend-scope-final.log). Combined affected-suite coverage: 91 PASS;
+  unchanged prior 90 results reused, not represented as a fresh single all-green run.
+- `npm run build` in frontend: types, i18n, app/widget PASS (build-final.log).
+  `npm run check:bundle` PASS; existing RU/KK large-chunk warnings retained.
+- `.venv/Scripts/python.exe output/clients-filters-20261117/run-browser.py`:
+  final eight Playwright cases PASS: RU/KK/EN desktop1440x1000/mobile390x844,
+  seven fields, old URL ignore/cleanup, draft cancellation/focus, apply/reset,
+  reload, dates/validation, source/tags, archive, empty/error/recovery, overflow;
+  representative shared appointments-calendar consumer on both widths.
+  Screenshot artifacts in browser-results; RU desktop/mobile and KK mobile visually
+  inspected. Seven groups, labels, control geometry and action footer readable;
+  long KK footer wraps and scroll retains access. Native 200% zoom not certified.
+- Earlier focused browser reproducer found calendar portalled outside parent panel;
+  closest-dialog portal fix passed final tests. Initial shared-consumer test used
+  dormant /leads route; replaced with actual appointments consumer, two PASS.
+  Earlier locator/fixture failures retained in logs, not masked as product passes.
+- Anti Slop during: existing tokens/controls, meaningful labels, no decoration,
+  keyboard/focus, draft preservation, empty/recovery and localized mobile checks.
+  Full-project/release E2E not run: bounded filter/shared-calendar change.
+
+Current CRM/frontend contracts and clients passport updated; no roadmap phase,
+README/setup or unrelated authority update needed. Remaining evidence: final
+ordinary Chrome screenshot unavailable due extension timeout. Local test acceptance
+does not claim deployed readiness. Publication/CI receipt recorded in output checkpoint.

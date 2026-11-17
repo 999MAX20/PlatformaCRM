@@ -10,7 +10,7 @@ from apps.activities.segments import evaluate_segment_queryset, readable_segment
 from apps.bots.models import BotConversation
 from apps.businesses.access import Resources
 from apps.clients.identity import normalize_email, normalize_phone
-from apps.clients.workspace import client_workspace_filters, waiting_conversations
+from apps.clients.workspace import client_related_filters, client_workspace_filters, waiting_conversations
 from apps.crm.models import Deal
 from apps.core.crm_read_scope import readable_across_businesses
 from apps.core.permissions import accessible_businesses
@@ -25,7 +25,6 @@ def client_queryset_for_request(queryset, request, *, client_ids=None, apply_qui
     related = {
         # A multi-business actor must not inherit a historical foreign back-reference.
         key: readable_across_businesses(model.objects.all(), actor=request.user, resource=resource, businesses=businesses)
-        .filter(business_id=OuterRef("business_id"))
         for key, model, resource in (
             ("leads", Lead, Resources.LEADS), ("deals", Deal, Resources.DEALS),
             ("tasks", Task, Resources.TASKS), ("appointments", Appointment, Resources.APPOINTMENTS),
@@ -33,6 +32,9 @@ def client_queryset_for_request(queryset, request, *, client_ids=None, apply_qui
         )
     }
     workspace = request.query_params.get("workspace") == "true"
+    if workspace:
+        queryset = client_related_filters(queryset, request.query_params, related)
+    related = {key: value.filter(business_id=OuterRef("business_id")) for key, value in related.items()}
     queryset = annotate_client_list_queryset(queryset, related_querysets=related, waiting_only=workspace)
     if workspace and request.query_params.get("handoff") == "true":
         queryset = queryset.filter(Exists(related["conversations"].filter(

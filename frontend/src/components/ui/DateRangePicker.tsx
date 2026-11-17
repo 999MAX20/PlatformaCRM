@@ -81,7 +81,7 @@ export function DateRangePicker({ label, value, onChange, today, range = true, i
       className="min-h-11 w-full justify-between gap-2 text-left" onClick={() => setOpen(current => !current)}>
       <span id={`${id}-value`} className="min-w-0 whitespace-normal text-sm">{display}</span><CalendarDays size={17} className="shrink-0 text-platforma-subtle" />
     </Button>
-    {open && <DatePickerPanel id={id} anchor={trigger} label={label} value={value} today={today} range={range} allowClear={allowClear} min={min} max={max} yearRange={yearRange}
+    {open && <DatePickerPanel id={id} anchor={trigger} label={label} value={value} today={today} range={range} allowClear={allowClear} showPresets={showPresets} min={min} max={max} yearRange={yearRange}
       onApply={next => { onChange(next); close(); }} onClose={restore => { setOpen(false); if (restore !== false) trigger.current?.focus(); }} />}
   </div>;
   return <div className="min-w-0 space-y-1.5" onKeyDown={event => {
@@ -123,10 +123,10 @@ export function DateRangePicker({ label, value, onChange, today, range = true, i
   </div>;
 }
 
-export function DatePickerPanel({ anchor, label, value, today, onApply, onClose, range = true, allowClear = false, validate, validationMessage, min, max, yearRange, id, testId }: {
+export function DatePickerPanel({ anchor, label, value, today, onApply, onClose, range = true, allowClear = false, showPresets = false, validate, validationMessage, min, max, yearRange, id, testId }: {
   anchor: RefObject<HTMLElement | null>; label: string; value: DateRangeValue; today: string;
   onApply: (value: DateRangeValue) => void; onClose: (restoreFocus?: boolean) => void;
-  range?: boolean; allowClear?: boolean; validate?: (value: DateRangeValue) => boolean;
+  range?: boolean; allowClear?: boolean; showPresets?: boolean; validate?: (value: DateRangeValue) => boolean;
   validationMessage?: string;
   min?: string; max?: string; id?: string; testId?: string;
   yearRange?: CalendarYearRange;
@@ -137,7 +137,7 @@ export function DatePickerPanel({ anchor, label, value, today, onApply, onClose,
   const valid = ((allowClear && empty) || (isCalendarDate(draft.from) && isCalendarDate(draft.to) && draft.from <= draft.to
     && (!min || draft.from >= min) && (!max || draft.to <= max))) && (!validate || validate(draft));
   return <CalendarPopover anchor={anchor} label={label} id={id} testId={testId} onClose={onClose}>
-    <DateRangePicker inline compact range={range} allowClear={false} label={label} value={draft} today={today} min={min} max={max} yearRange={yearRange}
+    <DateRangePicker inline compact range={range} allowClear={false} showPresets={showPresets} label={label} value={draft} today={today} min={min} max={max} yearRange={yearRange}
       onChange={next => { setDraft(next); if (!range) onApply(next); }} />
     {!valid && validationMessage ? <p role="alert" className="mt-2 text-sm text-platforma-danger">{validationMessage}</p> : null}
     <div className="mt-3 flex flex-wrap justify-end gap-2 border-t border-platforma-border pt-3">

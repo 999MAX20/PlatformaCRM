@@ -2319,3 +2319,15 @@ No local scoped remainder. Publication/CI and exact limits:
 output/ai-agents-empty-20261117/CHECKPOINT.md; registered evidence:
 docs/testing/evidence/ai-agents-redesign-20261113.md#empty-state-correction17nov.
 Deployment not performed; unfinished alerts work is not closed by this UI change.
+
+## CLIENTS-FILTERS-20261117
+
+Owner approved seven filters on /clients: date added, source, tags, appointments,
+tasks, contact gaps and archive. Old segment/handoff/custom-field/saved-view menu
+content removed; waiting-reply stays next to search. Applied chips, draft/cancel,
+reset and URL restoration retained. Existing legacy API remains compatible.
+Code scope complete; local Chrome tab http://127.0.0.1:5173/app/clients opened.
+Browser extension subsequently timed out: ordinary-tab final screenshot/loading
+acceptance is unverified; isolated browser acceptance is separately passed.
+Checks and precise environment/publication boundary: PRIMARY-SESSION entry below
+and output/clients-filters-20261117/CHECKPOINT.md. No deployment performed.

@@ -1,4 +1,3 @@
-import { customFilterParams } from "../../../components/crm/CustomFieldColumns";
 import { useCrmFilters, crmFilterParams } from "../../../components/crm/useCrmFilters";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
@@ -59,7 +58,7 @@ export function useClientsWorkspace({
   const setSelectedSegment = (segment: string) => updateFilter({ segment });
   const setQuickFilter = (quick: ClientQuickFilter) => updateFilter({ quick });
   const debouncedSearch = useDebouncedValue(search, 350);
-  const filterParams = { ...crmFilterParams("clients", { ...filterState, search: debouncedSearch }), ...customFilterParams(searchParams) };
+  const filterParams = crmFilterParams("clients", { ...filterState, search: debouncedSearch });
   const [ordering, setOrdering] = useState("-created_at");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(DEFAULT_CLIENTS_PAGE_SIZE);

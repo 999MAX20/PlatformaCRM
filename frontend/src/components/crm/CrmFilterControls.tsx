@@ -50,9 +50,10 @@ export function CrmFilterControls({ kind, searchLabel, counts, options = {}, act
   }
   function start() { setDraft({ ...state }); setError(""); setOpen(true); }
   function validation(value: CrmFilterValues) {
-    if (compact && !validCustomFieldFilter(value, customDefinitions)) return t("clients.invalidCustomFilter");
-    for (const key of ["created_from", "created_to", "expected_close_from", "expected_close_to"]) if (value[key] && !isCalendarDate(value[key])) return t("crmFilters.invalidDate");
-    for (const prefix of ["created", "expected_close"]) if (value[`${prefix}_from`] && value[`${prefix}_to`] && value[`${prefix}_from`] > value[`${prefix}_to`]) return t("crmFilters.invalidRange");
+    if (compact && kind !== "clients" && !validCustomFieldFilter(value, customDefinitions)) return t("clients.invalidCustomFilter");
+    for (const key of ["created_from", "created_to", "expected_close_from", "expected_close_to", "appointment_from", "appointment_to"]) if (value[key] && !isCalendarDate(value[key])) return t("crmFilters.invalidDate");
+    for (const prefix of ["created", "expected_close", "appointment"]) if (value[`${prefix}_from`] && value[`${prefix}_to`] && value[`${prefix}_from`] > value[`${prefix}_to`]) return t("crmFilters.invalidRange");
+    if (value.appointment === "period" && !value.appointment_from && !value.appointment_to) return t("crmFilters.appointmentDateRequired");
     if ((value.amount_min && Number(value.amount_min) < 0) || (value.amount_max && Number(value.amount_max) < 0) || (value.amount_min && value.amount_max && Number(value.amount_min) > Number(value.amount_max))) return t("crmFilters.invalidAmount");
     return "";
   }
@@ -64,12 +65,12 @@ export function CrmFilterControls({ kind, searchLabel, counts, options = {}, act
     if (["created", "expected_close", "amount"].includes(key)) {
       const from = key === "amount" ? "amount_min" : `${key}_from`;
       const to = key === "amount" ? "amount_max" : `${key}_to`;
-      return state[from] || state[to] ? [{ key, label: t(`crmFilters.${key}`), value: `${state[from] || "…"} — ${state[to] || "…"}`, clear: { [from]: "", [to]: "" } }] : [];
+      return state[from] || state[to] ? [{ key, label: t(kind === "clients" && key === "created" ? "crmFilters.added" : `crmFilters.${key}`), value: `${state[from] || "…"} – ${state[to] || "…"}`, clear: { [from]: "", [to]: "" } }] : [];
     }
     if (!state[key] || state[key] === defaults[key]) return [];
     const selected = state[key].split(",");
     const available = fieldOptions(kind, key, options, t);
-    const display = key === "archive" ? t(`crmFilters.archive.${state.archive}`) : key === "handoff" ? t("crmFilters.handoff") : selected.map(value => available.find(option => String(option.value) === value)?.label || value).join(", ");
+    const display = key === "appointment" && state.appointment === "period" ? `${state.appointment_from || "…"} – ${state.appointment_to || "…"}` : key === "archive" ? t(`crmFilters.archive.${state.archive}`) : key === "handoff" ? t("crmFilters.handoff") : selected.map(value => available.find(option => String(option.value) === value)?.label || value).join(", ");
     return [{ key, label: t(`crmFilters.${key}`), value: key === "tag" && selected.length > 1 ? `${display} · ${t(state.tag_mode === "all" ? "crmFilters.tagAll" : "crmFilters.tagAny")}` : display, clear: { [key]: defaults[key] } }];
   });
   const statusText = kind === "clients" ? t(`crmFilters.archive.${state.archive}`) : state.statuses === defaults.statuses ? t(kind === "leads" ? "crmFilters.unfinished" : "crmFilters.openDeals")
@@ -77,14 +78,14 @@ export function CrmFilterControls({ kind, searchLabel, counts, options = {}, act
   const form = (
       <form onKeyDown={event => { if (event.key === "Escape" && event.defaultPrevented) event.stopPropagation(); }} onSubmit={event => { event.preventDefault(); const message = validation(draft); if (message) { setError(message); return; } update(draft); close(); }} className="space-y-5">
         <CrmFilterFields kind={kind} value={draft} onChange={patch => { setError(""); setDraft(current => ({ ...current, ...patch, ...(patch.assignees ? { scope: "all" } : {}) })); }} options={options} today={dateInTimeZone(new Date().toISOString(), business?.timezone || "UTC")} />
-        {compact && <CustomFieldFilterFields definitions={customDefinitions} value={draft} onChange={patch => { setError(""); setDraft(current => ({ ...current, ...patch })); }} />}
-        {extraFilterAction && <div onClick={() => close(false)}>{extraFilterAction}</div>}
-        <details className="rounded-control border border-platforma-border p-3"><summary className="platforma-focus-ring cursor-pointer text-sm font-medium">{t("crmFilters.savedViews")}</summary>
+        {compact && kind !== "clients" && <CustomFieldFilterFields definitions={customDefinitions} value={draft} onChange={patch => { setError(""); setDraft(current => ({ ...current, ...patch })); }} />}
+        {kind !== "clients" && extraFilterAction && <div onClick={() => close(false)}>{extraFilterAction}</div>}
+        {kind !== "clients" && <details className="rounded-control border border-platforma-border p-3"><summary className="platforma-focus-ring cursor-pointer text-sm font-medium">{t("crmFilters.savedViews")}</summary>
           <div className="mt-3 space-y-2">{views.map(view => <div key={view.id} className="flex items-center gap-2"><Button type="button" variant="secondary" size="sm" className="min-w-0 flex-1 justify-start" onClick={() => { const next = { ...defaults, ...Object.fromEntries(crmFilterKeysFor(kind).filter(key => typeof view.values[key] === "string").map(key => [key, view.values[key]])) }; setDraft(next); }}><span className="truncate">{view.name}</span></Button><Button type="button" size="icon" variant="ghost" aria-label={`${t("crmFilters.remove")}: ${view.name}`} onClick={() => saveViews(views.filter(item => item.id !== view.id))}><Trash2 size={15} /></Button></div>)}
             <Input label={t("crmFilters.viewName")} value={presetName} maxLength={80} onChange={event => setPresetName(event.target.value)} />
             <Button type="button" variant="secondary" size="sm" disabled={!presetName.trim()} onClick={() => { const message = validation(draft); if (message) { setError(message); return; } saveViews([{ id: crypto.randomUUID(), name: presetName.trim(), values: { ...draft } }, ...views].slice(0, 12)); setPresetName(""); }}><BookmarkPlus size={15} />{t("crmFilters.saveView")}</Button>
           </div>
-        </details>
+        </details>}
         {error ? <p role="alert" className="text-sm text-platforma-danger">{error}</p> : null}
         <div className="sticky bottom-0 flex flex-wrap justify-between gap-2 border-t border-platforma-border bg-platforma-card pt-3">
           <Button type="button" variant="ghost" onClick={() => { setDraft({ ...defaults, pipeline: state.pipeline }); setError(""); }}>{t("common.reset")}</Button>
@@ -93,7 +94,7 @@ export function CrmFilterControls({ kind, searchLabel, counts, options = {}, act
       </form>
   );
   const appliedCount = chips.length + (state.custom_field ? 1 : 0);
-  if (compact) return <div data-testid={`${kind}-unified-toolbar`} className="flex flex-wrap items-center gap-2 px-1 lg:flex-nowrap lg:overflow-x-auto">
+  if (compact) return <div data-testid={`${kind}-unified-toolbar`} className="space-y-2"><div className="flex flex-wrap items-center gap-2 px-1 lg:flex-nowrap lg:overflow-x-auto">
     <label className="relative w-full lg:w-[var(--global-search-width,480px)] max-w-full min-w-0 shrink-0">
       <Search size={17} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-platforma-muted" />
       <input aria-label={searchLabel} placeholder={searchLabel} data-testid={`${kind}-search-input`} value={state.search} onChange={event => update({ search: event.target.value }, true)} className="platforma-focus-ring h-10 w-full rounded-control border border-platforma-control bg-platforma-card pl-9 pr-3 text-sm text-platforma-text placeholder:text-platforma-muted max-sm:h-11" />
@@ -101,9 +102,13 @@ export function CrmFilterControls({ kind, searchLabel, counts, options = {}, act
     <Button type="button" variant={state.quick === "no_reply" ? "primary" : "secondary"} className="h-10 shrink-0 whitespace-nowrap max-sm:h-11" aria-pressed={state.quick === "no_reply"} onClick={() => update({ quick: state.quick === "no_reply" ? "all" : "no_reply", archive: "active" })}>
       {t("crmFilters.quick.no_reply")}{typeof counts?.no_reply === "number" ? <span className="text-xs tabular-nums">{counts.no_reply}</span> : null}
     </Button>
-    <Button ref={trigger} type="button" variant="secondary" className="h-10 shrink-0 gap-2 max-sm:h-11" aria-haspopup="dialog" aria-expanded={open} onClick={() => open ? close() : start()}><SlidersHorizontal size={16} />{t("crmFilters.filters")}{appliedCount > 0 && <span className="text-xs tabular-nums">{appliedCount}</span>}</Button>
+    <Button ref={trigger} data-focus-return-id={`${kind}-filters`} type="button" variant="secondary" className="h-10 shrink-0 gap-2 max-sm:h-11" aria-haspopup="dialog" aria-expanded={open} onClick={() => open ? close() : start()}><SlidersHorizontal size={16} />{t("crmFilters.filters")}{appliedCount > 0 && <span className="text-xs tabular-nums">{appliedCount}</span>}</Button>
     <div className="flex shrink-0 items-center gap-2">{actions}</div>
     {state.search || state.quick !== "all" || appliedCount > 0 ? <Button type="button" size="icon" variant="ghost" className="h-10 w-10 shrink-0 max-sm:h-11 max-sm:w-11" aria-label={t("common.reset")} title={t("common.reset")} onClick={reset}><X size={16} /></Button> : null}
+    </div>
+    {chips.length > 0 && <div className="flex flex-wrap gap-2 px-1" aria-label={t("crmFilters.activeFilters")}>
+      {chips.map(chip => <button key={chip.key} type="button" onClick={() => update(chip.clear)} className="platforma-focus-ring inline-flex min-h-8 max-sm:min-h-11 max-w-full items-center gap-2 rounded-control bg-surface-muted px-2 text-left text-xs text-platforma-text" aria-label={`${t("crmFilters.remove")}: ${chip.label}: ${chip.value}`}><span className="min-w-0 break-words">{chip.label}: {chip.value}</span><X size={13} className="shrink-0" /></button>)}
+    </div>}
     {open && <CalendarPopover anchor={trigger} label={t("crmFilters.filters")} onClose={close} testId={`${kind}-filters-panel`}>{form}</CalendarPopover>}
   </div>;
   return <div className="space-y-2" data-testid={`${kind}-unified-toolbar`}>

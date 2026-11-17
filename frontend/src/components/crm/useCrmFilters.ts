@@ -4,8 +4,8 @@ import { useSearchParams } from "react-router";
 export type CrmFilterKind = "clients" | "leads" | "deals";
 export type CrmFilterValues = Record<string, string>;
 export const crmFilterKeys = ["search", "quick", "scope", "statuses", "source", "assignees", "tag", "tag_mode", "segment", "created_from", "created_to", "expected_close_from", "expected_close_to", "amount_min", "amount_max", "attention_reason", "archive", "handoff", "stage", "pipeline"] as const;
-const clientCustomFilterKeys = ["custom_field", "custom_operator", "custom_value"] as const;
-export const crmFilterKeysFor = (kind: CrmFilterKind): readonly string[] => kind === "clients" ? [...crmFilterKeys, ...clientCustomFilterKeys] : crmFilterKeys;
+const clientFilterKeys = ["search", "quick", "source", "tag", "tag_mode", "created_from", "created_to", "archive", "appointment", "appointment_from", "appointment_to", "task", "contact"] as const;
+export const crmFilterKeysFor = (kind: CrmFilterKind): readonly string[] => kind === "clients" ? clientFilterKeys : crmFilterKeys;
 export function crmFilterDefaults(kind: CrmFilterKind): CrmFilterValues {
   return { ...Object.fromEntries(crmFilterKeysFor(kind).map(key => [key, ""])), quick: "all", scope: "all", archive: "active", tag_mode: "any", statuses: kind === "leads" ? "new,contacted,in_progress" : kind === "deals" ? "open" : "" };
 }
@@ -20,9 +20,9 @@ function normalize(kind: CrmFilterKind, next: CrmFilterValues, patch: CrmFilterV
   if ((patch.statuses !== undefined && patch.statuses !== crmFilterDefaults(kind).statuses) || (patch.archive && patch.archive !== "active")) next.quick = "all";
   if (patch.scope === "mine") next.assignees = "";
   if (patch.assignees) next.scope = "all";
-  if (kind === "clients" && !next.custom_field) {
-    next.custom_operator = "";
-    next.custom_value = "";
+  if (kind === "clients") {
+    for (const key of crmFilterKeys) if (!(clientFilterKeys as readonly string[]).includes(key)) delete next[key];
+    if (next.appointment !== "period") { next.appointment_from = ""; next.appointment_to = ""; }
   }
   return next;
 }
@@ -51,6 +51,9 @@ export function useCrmFilters(kind: CrmFilterKind) {
     setParams(current => {
       const query = new URLSearchParams(current);
       for (const key of ["filter", "status", "owner", "from", "to", "min", "max"]) query.delete(key);
+      if (kind === "clients") for (const key of [...crmFilterKeys, "custom_field", "custom_operator", "custom_value"]) {
+        if (!(clientFilterKeys as readonly string[]).includes(key)) query.delete(key);
+      }
       for (const key of crmFilterKeysFor(kind)) {
         if (next[key] && next[key] !== defaults[key]) query.set(key, next[key]); else query.delete(key);
       }
