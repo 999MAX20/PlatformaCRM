@@ -7,6 +7,7 @@ from urllib.error import HTTPError
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
 from rest_framework.exceptions import ValidationError
+from rest_framework.throttling import ScopedRateThrottle
 
 from apps.ai_core import tests_conversation_memory as fixtures
 from apps.ai_core.models import AgentTurn, AIRequestLog
@@ -26,7 +27,24 @@ def audio_bytes(seconds=1):
     OPENROUTER_BASE_URL="https://openrouter.ai/api/v1",
     VOICE_TRANSCRIPTION_MODEL="elevenlabs/scribe-v2", VOICE_HTTP_TIMEOUT_SECONDS=60)
 class SpeechTests(TestCase):
-    setUp = fixtures.ConversationMemoryTests.setUp
+    def setUp(self):
+        fixtures.ConversationMemoryTests.setUp(self)
+        # Database rollback reuses user IDs; throttle cache outlives each test.
+        keys = [ScopedRateThrottle.cache_format % {"scope": "ai_assistant", "ident": user.pk}
+                for user in (self.owner, self.other_owner)]
+        ScopedRateThrottle.cache.delete_many(keys)
+        self.addCleanup(ScopedRateThrottle.cache.delete_many, keys)
+
+    def test_speech_requests_still_enforce_rate_limit(self):
+        self.api.force_authenticate(self.owner)
+        throttle = ScopedRateThrottle()
+        key = throttle.cache_format % {"scope": "ai_assistant", "ident": self.owner.pk}
+        count, duration = throttle.parse_rate(throttle.THROTTLE_RATES["ai_assistant"])
+        throttle.cache.set(key, [throttle.timer()] * count, duration)
+        with patch("apps.ai_core.speech_views.transcribe_audio") as transcribe:
+            response = self.post(format_text="false")
+        self.assertEqual(response.status_code, 429, response.data)
+        transcribe.assert_not_called()
 
     def post(self, content=None, **values):
         return self.api.post("/api/ai/speech/", {"business": self.business.pk,

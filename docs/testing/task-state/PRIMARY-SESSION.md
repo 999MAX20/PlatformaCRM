@@ -13723,6 +13723,71 @@ Deployment not performed; unfinished alerts work is not closed by this UI change
 
 ### META-COEXISTENCE-20261117: existing Business App numbers
 
+18Nov repair evidence: polluted throttle_ai_assistant_1 reproduced readiness
+KeyError/429 in speech-ci-before.log. SpeechTests fixture now deletes only its
+two fixture-user ai_assistant cache keys before/after each case; audio tests
+reuse this setup. Added real429/provider-not-called control. No production
+rate/permission/provider changes. speech-ci-after.log28 PASS on working tree;
+speech-ci-candidate.log28 PASS using HEAD source in memory for foreign-modified
+Python modules and only the task-owned speech fixture patch. No source copy or
+foreign provider activation. Both runs used disposable SQLite and mocked calls.
+Static gate against ebfeea67 PASS, including system/drift/diff hygiene. Runtime
+Coexistence code unchanged; previous scoped evidence retained, full CI pending.
+Fresh npm audit still FAIL on GHSA-fc5q-39xc-vjpf, latest4.0.7, no patched release.
+Upstream PR194 is not a complete fix; multiple proposed fixes remain open. No
+unreviewed fork, advisory suppression or audit threshold reduction applied.
+SSH timeout confirmed; live cloud Running, OS Login/serial console disabled,
+TCP22 allowlist does not include the current administrative source IP. No cloud
+mutation. Asked owner about previous network and maintained dependency patch.
+
+18Nov CI repair/release continuation: owner explicitly requests fixing CI, running
+gates and deploying Coexistence for the company Business App number ending7770,
+with app preservation/history import. Starting HEAD25cbafab on retained branch;
+foreign voice/provider and document WIP preserved. Prior scoped Coexistence PASS
+-> published CI speech429 failures plus picomatch advisory -> reproduce shared
+throttle state and isolate test fixtures; investigate a verified dependency fix.
+Mode implementation/verification/operation; gaps code and environment. Reuse
+existing signup/history implementation and isolated test runners. Production
+throttles, permissions, AI activation and unrelated WIP are outside repair scope.
+Checks: contaminated-cache reproducer, speech affected tests with throttle control,
+then exact release full gates/CI and server migration/service/HTTPS checks.
+SSH currently times out; release remains blocked until access and gates succeed.
+Anti Slop during: no UI changes planned, preserve existing onboarding flow.
+
+Owner update18Nov: replaces intended test number ending2900 with number ending7770,
+explicitly confirms it belongs to Platforma Digital and currently uses WhatsApp
+Business App. Preserve app and import history. Full number retained only in local
+review package; old target is superseded, not an instruction to disconnect/delete
+anything. No new live onboarding/import performed. Existing release CI still
+failed on fresh API read; no waiver or broader-release approval inferred.
+
+Historical owner follow-up17Nov: explicitly approved the entire six-commit release through
+ebfeea67, including client filters and AI/agent changes, AFTER successful checks.
+This resolves release-scope approval; no repeated permission is needed for that
+candidate. Fresh CI44139255024 final result FAILURE: backend ran3514 tests,
+5 failures/1 error/82 skips. Five failures are speech/speech_audio returning429
+instead of200/403/503; remaining speech readiness test raises KeyError ready.
+Rate-limit interference is a hypothesis, not a verified fix. These exact test
+files contain foreign uncommitted voice-provider work; no overwrite or test
+weakening performed. Frontend build/bundle passed; audit still blocked by
+picomatch GHSA-fc5q-39xc-vjpf; npm latest remains4.0.7. Server not changed because
+the owner's successful-check condition is unmet. Prior backend-running and
+release-approval-pending notes below are superseded by this final observation.
+
+Publication receipt: task-only ebfeea67dbe56daa1ef1519e150809db9c4552fa committed
+on retained codex/ui-testing-toolkit and normal-pushed to origin/main; remote SHA
+read back equal. Other writers' changes excluded, including shared-document hunks.
+CI44139255024: frontend install/build/bundle PASS, npm audit FAIL on
+GHSA-fc5q-39xc-vjpf (picomatch through latest4.0.7, upstream reports no patched
+version17Nov); package/lock unchanged from deployed4cc19068. Backend CI still
+in_progress at Checkout on last observation; do not report overall CI green.
+No audit suppression or dependency rewrite. Server unchanged; release scope
+question pending for six commits4cc19068..ebfeea67 (Meta plus published client/AI
+changes). Browser recovery also pending; current Chrome inventory and user tabs
+both empty. Review package/instructions/readiness/recording plan refreshed and
+all artifact SHA256s validated. This checkpoint update remains local while the
+required CI gate is failed. App Review preparation and live Coexistence remain open.
+
 Owner decision: import old history, confirmed in this chat17Nov. Implemented local
 signed coexistence mode, expected-phone Graph check, no PIN/register in this mode,
 durable contact/history sync and authenticated history/app-echo batches. Added
@@ -13763,6 +13828,8 @@ deployed4cc19068, so server rollout needs an explicit candidate decision and rel
 Owner requests direct Meta Coexistence, preserving WhatsApp Business app use; confirms test number ending2900 uses Business App. Prior standard v4 signup passed -> official v4 supports featureType but current code requires PIN/register and FINISH+phone -> add a separate signed Coexistence mode without changing standard Cloud/YCloud flows. Canonical root C:/Users/user/Desktop/PlatformaCRM, branch codex/ui-testing-toolkit, initial HEAD be222ec6; unrelated speech/client WIP and shared document edits preserved. No phone deletion, portfolio transfer, fictional-company verification or final App Review submission.
 Mode implementation/verification; code and live-evidence gaps. Reuse signed attempts, reservations, Graph validation, connector encryption, webhook authentication/routing and Inbox handoff. Risk: OAuth asset binding, cross-tenant routing, duplicate staff/AI replies, history opening a false service window. Checks: isolated signup happy/invalid/replay/permission/tenant tests, direct echo and standard/YCloud regression, system/drift; frontend build/types and actual affected flow/screenshots. No ordinary DB writes. Live readiness requires deployed code, webhook subscriptions, eligible Meta account and owner handset confirmation; local mocks are not live proof. Historical import scope asked separately; no bulk contact/history writes before settled scope. Anti Slop during applies when editing setup controls: retain existing shell/tokens, explicit labels, preserved input/error recovery, keyboard/dialog verification.
 17Nov evidence update: official new account model forbids cross-portfolio phone transfer; Zani number remains excluded. Platforma Digital verification freshly observed; Tech Provider eligibility page could not be reread because browser timed out twice, not a confirmed eligibility rejection. Government answers previously saved in App Review: no national-security disclosures in12months; none of listed procedures, per owner. Four redirect URIs preserved. No product edits/deployment yet at this checkpoint.
+
+META-V4 restriction analysis17Nov: owner asks Platforma Digital account restrictions, read-only. Confirmed portfolio986592421017390 business PLATFORMA DIGITAL, TOO remains verified since11Nov. Support Home app1021255197062056 no source issues30days; Test Messaging Account39726358643675305 no issues/Approved. Restricted messaging account1093557260384485 Zani - Platforma Digital explicitly belongs to Zani, although shared/visible under Platforma Digital. Detail forbids initiating/replying/adding numbers, duration Forever, remedy verify business links owner1736551894463416. No portfolio-wide ban observed; no claim no possible other restriction. Specific policy violation/appeal not shown. Screenshot platforma-restriction-analysis.png inspected. No verification/appeal/payment/ownership mutation; fictional ЦКТ must not be verified.
 
 ## CLIENTS-FILTERS-20261117
 

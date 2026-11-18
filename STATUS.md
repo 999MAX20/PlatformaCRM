@@ -5,6 +5,14 @@ GLOBAL-SEARCH-20261118: селектор страницы/CRM удалён; по
 Evidence: docs/testing/evidence/global-search-20261118.md. c5fec11e normal-push origin/main подтверждён; CI464 in_progress, не green.
 
 META-COEXISTENCE-20261117: local Business App onboarding/history preparation implemented.
+18Nov CI repair: speech cache interference reproduced; fixture-only cleanup plus
+rate-limit control verified (28 affected tests, candidate without foreign WIP also28).
+System/drift/static PASS; full CI remains pending. No production throttle change.
+picomatch latest4.0.7 still vulnerable/no upstream release; patch strategy pending.
+SSH blocked by old admin IP allowlist. No deployment or new-number import yet.
+Owner approved entire ebfeea67 release after green checks; published to main.
+Prior CI44139255024 failed speech tests and npm audit; new CI must verify repair.
+Server unchanged; no live import or final submission.
 Signed expected number, no phone re-registration, durable authenticated import,
 no historical AI/send/window effects; app replies hand off to staff. Migration0012.
 130 PostgreSQL affected checks,17 final focused checks and23 browser cases/build PASS.
