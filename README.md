@@ -2,6 +2,9 @@ Broad synthetic Scribe v3 verification18Nov completed: explicit KK/RU improves
 clean KK word accuracy, but mixed names, numbers and negations remain unreliable.
 Customer activation stays off; human speech and full planner/CRM acceptance remain open.
 [Current results, budget and scoped improvements](docs/testing/evidence/voice-scribe-v3-20261117.md).
+Approved follow-up adds reviewed scheduling changes, KK negation handling,
+locale language defaults and opt-in authorized card-name hints. Customer audio
+activation remains off; these local fixes do not certify live speech accuracy.
 
 Management UI (12.11.2026): five real-data pages replace the previous Business entry.
 The five Management migrations are applied to the owner-authorized local PostgreSQL

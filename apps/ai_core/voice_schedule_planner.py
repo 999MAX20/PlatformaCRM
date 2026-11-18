@@ -36,6 +36,9 @@ must be empty strings, never 00:00 or a default appointment hour. If date is abs
 date must be empty; retain the supplied time. Never invent a date or a time.
 Do not guess missing client, date, time, service, specialist or branch. Use empty strings.
 Normalize inflected personal names to their nominative lookup form, preserving identity.
+Explicit corrections override the rejected value: "Әсел емес, Әсем" selects Әсем;
+"не в 12, а в 13" selects 13. Do not combine names or retain a negated time.
+If the intended corrected value is unclear, leave that field empty for clarification.
 Phone is optional. Do not ask again for an already supplied name just because it is new.
 client_id may only be one of selectable_clients, explicitly selected in this dialogue.
 For current_entity=client, the request may explicitly refer to that client using a pronoun.

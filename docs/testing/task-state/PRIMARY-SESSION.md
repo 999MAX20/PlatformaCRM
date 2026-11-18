@@ -9,7 +9,9 @@ VOICE-SCRIBE-V3-20261117: broad synthetic benchmark18Nov complete; customer acti
 64 utterances/298 conditions;295 HTTP200,2 provider429,1 local silence rejection.
 Paired KK WER1.36% explicit KK/RU vs6.53% auto; mixed names/phone/negation failures remain.
 Account usage delta833 within new2000 cap; exact attribution caveat in evidence.
-Product diagnosis only; fixes/live human KK/planner acceptance remain open.
+Approved fixes implemented: KK fallback/phone guards, reviewed scheduling changes,
+locale language defaults and authorized opt-in card-name hints. Isolated backend,
+10 browser scenarios and build/types PASS; live human KK/planner acceptance remains open.
 Evidence: docs/testing/evidence/voice-scribe-v3-20261117.md.
 Checkpoint: output/voice-scribe-v3-20261117/CHECKPOINT.md.
 

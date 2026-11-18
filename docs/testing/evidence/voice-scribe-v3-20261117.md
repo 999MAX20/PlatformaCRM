@@ -1,5 +1,93 @@
 # VOICE-SCRIBE-V3-20261117: прямое подключение и synthetic-проверка
 
+## Improvements 20261118
+
+Owner annotation authorizes the four follow-up improvements. Implementation is
+in the canonical checkout on `codex/ui-testing-toolkit`, starting `e9f45929`;
+unrelated integrations/global-search documentation WIP is excluded.
+
+- KK fallback rejects the three reproduced negated/quoted booking examples and
+  recognizes `сағат ... жаз`. Router and scheduling prompts explicitly preserve
+  corrected names/times and distinguish cancellation from starting.
+- Existing-client booking, rescheduling and cancellation now require reviewed
+  confirmation. Backend direct-mode bypass is denied; preview shows client and
+  date/time, with original/new times for rescheduling. Client references retain
+  redaction after access changes. Existing new-client/task review remains.
+- Fresh RU/KK UI preferences select an explicit bilingual STT profile. Explicit
+  saved auto/RU/KK choices are preserved; English UI still defaults to auto.
+- Opted-in card context can supply only the authorized client's name/name parts
+  to direct ElevenLabs. Linked task/appointment clients receive a separate access
+  check. No tenant directory, phone or notes are supplied. Maximum10 unique terms,
+  50characters/5words each, letters/spaces/hyphen/apostrophe only. Foreign/invalid
+  context is rejected, archived names omitted, access rechecked after STT.
+- Literal phone conversion accepts comma after plus without changing repeated
+  digits. Known distorted labels require clarification; grouped numbers are not
+  guessed. `numbers_format=words` remains because digits mode had regressions.
+
+Privacy: no live provider calls or credit spending in this implementation cycle.
+Existing production activation/privacy flags remain off; logging=false, no audio
+storage, no redirects/retries/provider fallback and server-only key remain.
+Names are hints, not identity evidence or transcript replacement. Production
+usage still requires separate Enterprise STT ZRM/no-training acceptance.
+
+Verification uses isolated SQLite and Chromium with fictional fixtures and mocked
+providers. Broad affected/dependent voice/speech/conversation run:156 tests,
+152PASS/4SQLite row-lock skips,96.417s; system check and migration drift PASS.
+After preview-reference/redaction changes:37 affected tests PASS,45.468s.
+Final speech/context validation run:44 tests,43PASS/1SQLite skip,23.083s.
+Final name-context run after binding the interface voice runtime:14PASS,5.521s,
+including paused-agent independence, linked-client access and archived-name omission.
+Frontend `npm run build` (types/i18n/app/widget) PASS after final date formatting.
+Chromium:9 scenarios PASS in the combined run, then the remaining recording
+scenario PASS with the corrected stable client route (10 distinct scenarios total).
+Actual isolated API verifies review/no mutation before confirmation, existing-client
+booking, cancelled cancellation proposal, rescheduling, replay, correction of
+client/task text and outage input retention. UI locales RU/KK/EN and320/390/1440
+widths covered. Synthetic microphone capture verifies KK multipart and context
+omitted/included on opt-in, plus retained audio/discard after mocked503.
+
+UI delivery gate (scoped, existing design retained):
+- R26/R32/R35 PASS: confirmation/cancel via keyboard and real isolated API; custom
+  language selection survives reload; existing edit/retry/input retention exercised.
+- R03/R39 PASS: affected320/390/1440 screenshots captured and visually inspected;
+  names, original/new local dates and controls remain readable, no page overflow.
+  Existing named buttons, focus styles and shared typography/tokens retained.
+- R17/R18/R23/R36/R38 PASS: preview uses authorized records; all test identities
+  are explicitly fictional. No invented production metrics/assets/content.
+- R01/R05/R11/R20/R29/R31 and visual/motion/performance additions N/A: no visual
+  redesign, new palette, media, theme or motion. Operational panel retained;
+  only target identity/date content and existing settings behavior changed.
+- Empty/loading/error/redaction reuse existing components; error retention and
+  redaction are exercised. Full-app WCAG, dark-theme recertification and field
+  performance are not claimed by this bounded change.
+
+Attempt history: old existing-client-direct test correctly failed under the newly
+approved review policy and was replaced with review/no-write/bypass checks. New
+transition fixtures first lacked explicit identity and then attached the ID to
+the client noun; corrected to explicit appointment ID, preserving the application's
+clarification guard. Browser selector initially treated the shared custom Select
+as native; fixture initially omitted a synthetic provider base URL. Both fixture
+issues corrected without weakening product readiness or privacy checks. Legacy
+client query URL redirects to the permanent card route; recording test now opens
+that stable route and waits for the actual card before opening the voice panel.
+
+Remaining evidence: no live Scribe/LLM remeasurement after these code changes,
+no human KK speech corpus and no production activation. Prompt changes do not
+prove live intent accuracy; historical STT accuracy FAIL and full D01 remain open.
+No migrations, notification/BusinessEvent behavior or access-policy expansion.
+Existing speech/AI/operations contracts updated; CRM lifecycle/access contracts
+unchanged because underlying permissions and domain transitions are reused.
+
+Commands/artifacts: `output/voice-scribe-v3-20261117/improvements_checks.py`
+(default affected suite; focused labels recorded in checkpoint),
+`benchmark_checks.py`, `improvements_browser.py` (then `--grep 'recording sends'`),
+`frontend: npm run build`. Logs: `improvements-final-{0,1,2}.log`,
+`improvements-speech-final.log`, `improvements-narrow.log` (final14-test run),
+`improvements-build-final.log`, `browser-*-1795015422668717800.log` and subsequent
+recording-only log.37-test result retained in checkpoint; its temporary log was
+overwritten by the final14-test focused run. Screenshots under
+`browser-1795015422668717800/` show final localized dates/identity/review UI.
+
 ## Обширный синтетический тест, 18.11.2026 — актуальный результат
 
 Проверка выполнена в пределах нового лимита 2000 кредитов. Это тест распознавания

@@ -32,13 +32,23 @@ class KazakhVoiceTests(TestCase):
     draft = scheduling.VoiceScheduleConversationTests.draft
     run_turn = scheduling.VoiceScheduleConversationTests.run_turn
 
-    def test_existing_exact_client_booking_remains_direct(self):
+    def test_existing_exact_client_booking_requires_review(self):
         from apps.ai_core.models import ApprovalRequest
+        from apps.ai_core.conversation_actions import confirm_turn
+        from apps.ai_core.tool_registry import tool_call_fingerprint
         client = Client.objects.create(business=self.business, full_name="Әсел Қасымова")
         turn = self.run_turn(self.draft(client_name=client.full_name), confirm_client=False)
+        self.assertEqual(turn.status, "awaiting_confirmation", turn.error_code)
+        self.assertFalse(Appointment.objects.exists())
+        self.assertFalse(ApprovalRequest.objects.exists())
+        log = turn.tool_calls.get()
+        with self.assertRaises(PermissionDenied):
+            confirm_turn(conversation_id=self.thread.pk, turn_id=turn.pk, user=self.owner,
+                expected_revision=turn.sequence, actions=[{"id": log.pk, "fingerprint": tool_call_fingerprint(log)}], _direct=True)
+        turn = scheduling.confirm_prepared_creation(turn, self.owner)
         self.assertEqual(turn.status, "completed", turn.error_code)
         self.assertEqual(Appointment.objects.get().client_id, client.pk)
-        self.assertEqual(ApprovalRequest.objects.get().payload["authorization"], "voice_direct_submission")
+        self.assertEqual(ApprovalRequest.objects.get().payload["authorization"], "review")
 
     def test_new_client_identity_review_cannot_be_bypassed_by_direct_mode(self):
         from apps.ai_core.conversation_actions import confirm_turn

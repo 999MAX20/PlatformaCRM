@@ -90,7 +90,7 @@ def _confirm_turn(*, conversation_id, turn_id, user, actions, expected_revision,
             if _direct:
                 from apps.ai_core.voice_policy import requires_voice_creation_review
                 if requires_voice_creation_review(log.tool_name, log.input_json):
-                    raise PermissionDenied("Review the new client or task before creation.")
+                    raise PermissionDenied("Review the voice action before execution.")
         # A lost HTTP response can be recovered without another approval/write.
         if all(log.status == AIToolCallLog.Statuses.EXECUTED for log in selected):
             return turn, None

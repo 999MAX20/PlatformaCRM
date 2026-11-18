@@ -21,6 +21,7 @@ class BookingInstructionTests(SimpleTestCase):
             "Book a new client Paul for a consultation with Anna tomorrow at nine",
             "Schedule an appointment for Paul",
             "Павелді консультацияға ертең сағат тоғызға жазыңыз",
+            "Ертең сағат он бес отызға Әлихан Омаровты маман Гүлнұрға жаз.",
         ):
             with self.subTest(message=message):
                 self.assertTrue(voice_booking_request(message))
@@ -33,6 +34,9 @@ class BookingInstructionTests(SimpleTestCase):
             "Добавь заметку: запиши Павла к Анне",
             "Do not book an appointment, create client Paul only",
             "Не запиши Павла к Анне, создай только клиента",
+            "Әселді қабылдауға жазып жіберме. Тек кестені көрсет.",
+            "Әселді қабылдауға жаз деп айтқан жоқпын.",
+            "Әселді қабылдауға жазыңыз деген тапсырма жаса.",
         ):
             with self.subTest(message=message):
                 self.assertFalse(voice_booking_request(message))

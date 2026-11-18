@@ -4,6 +4,16 @@ from apps.ai_core.speech_numbers import ambiguous_spoken_phone, normalize_spoken
 
 
 class SpokenPhoneTests(SimpleTestCase):
+    def test_plus_comma_preserves_repeated_zeroes(self):
+        text = "Телефон плюс, жеті, жеті, нөл, бір, нөл, нөл, нөл, екі, нөл, үш, нөл."
+        self.assertEqual(normalize_spoken_phone(text), "Телефон +77010002030.")
+
+    def test_distorted_phone_labels_require_clarification(self):
+        for text in ("Телефон номері дұрыс: жеті жеті нөл бір екі үш төрт бес алты жеті сегіз.",
+                     "Telefon nömrə plus yeddi yeddi sıfır bir sıfır sıfır iki sıfır üç sıfır."):
+            with self.subTest(text=text):
+                self.assertTrue(ambiguous_spoken_phone(text))
+
     def test_phone_before_date_keeps_date_and_every_digit(self):
         phone = "плюс семь семь ноль екі екі екі екі екі екі екі екі"
         for suffix in (", 10 ноября 2030 года в 12 часов.", ", 9 қарашада сағат 12-де.",

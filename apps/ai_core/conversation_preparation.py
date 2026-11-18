@@ -32,6 +32,9 @@ def payload_references(payload):
     client = payload.get("values", {}).get("client")
     if isinstance(client, dict) and type(client.get("id")) is int:
         references.append({"entity": "clients", "id": client["id"]})
+    preview_client = payload.get("preview", {}).get("client_id")
+    if type(preview_client) is int:
+        references.append({"entity": "clients", "id": preview_client})
     return references
 
 

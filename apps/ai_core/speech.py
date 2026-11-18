@@ -99,7 +99,7 @@ def validate_audio(content):
         raise ValidationError({"audio": "audio_format"}) from None
 
 
-def transcribe_audio(content, language="auto"):
+def transcribe_audio(content, language="auto", *, keyterms=()):
     duration = validate_audio(content)
     if language not in {"auto", "ru", "kk"}:
         raise ValidationError({"language": "invalid_language"})
@@ -110,7 +110,7 @@ def transcribe_audio(content, language="auto"):
         if not speech_ready():
             raise AIProviderError(code="not_configured", retryable=False)
         if settings.VOICE_TRANSCRIPTION_PROVIDER == "elevenlabs":
-            call = elevenlabs_speech.build_request(content, language)
+            call = elevenlabs_speech.build_request(content, language, keyterms=keyterms)
             endpoint = "/v1/speech-to-text"
             open_call = elevenlabs_speech.open_request
         else:

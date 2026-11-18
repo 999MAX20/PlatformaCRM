@@ -3,8 +3,9 @@ clean KK word accuracy, but mixed names, numbers and negations remain unreliable
 Customer activation stays off; human speech and full planner/CRM acceptance remain open.
 [Current results, budget and scoped improvements](../testing/evidence/voice-scribe-v3-20261117.md).
 
-VOICE-SCRIBE-V3-20261117: broad synthetic diagnosis complete; quality failures
-remain open. Prior56 isolated checks reused for unchanged voice source.
+VOICE-SCRIBE-V3-20261117: approved follow-up implemented: KK negation fallback,
+reviewed booking/reschedule/cancel, locale language default and scoped opt-in name hints.
+New isolated checks cover changed source; live accuracy failures remain open.
 Key local/STT-only/capped; activation and Enterprise ZRM/no-training remain open.
 Prior accuracy FAIL and D01 are not closed.
 [Проверки и границы](../testing/evidence/voice-scribe-v3-20261117.md).

@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
 import type { Id } from "../../types";
 import type { SpeechLanguage } from "../../api/speech";
+import { useI18n } from "../../lib/i18n";
 
 type Preferences = { visible: boolean; language: SpeechLanguage; device: string };
-const defaults: Preferences = { visible: true, language: "auto", device: "" };
 export function useVoicePreferences(userId: Id) {
+  const { language } = useI18n();
+  const defaults: Preferences = { visible: true, language: language === "kk" ? "kk" : language === "ru" ? "ru" : "auto", device: "" };
   const key = `voice-preferences:${userId}`;
   const read = (): Preferences => {
     try {
       const value = JSON.parse(localStorage.getItem(key) || "{}");
-      return { visible: value.visible !== false, language: ["ru", "kk"].includes(value.language) ? value.language : "auto",
+      return { visible: value.visible !== false, language: ["auto", "ru", "kk"].includes(value.language) ? value.language : defaults.language,
         device: typeof value.device === "string" ? value.device : "" };
     } catch { return defaults; }
   };
@@ -21,7 +23,7 @@ export function useVoicePreferences(userId: Id) {
     };
     refresh(); window.addEventListener("voice-preferences", refresh); window.addEventListener("storage", refresh);
     return () => { window.removeEventListener("voice-preferences", refresh); window.removeEventListener("storage", refresh); };
-  }, [key]);
+  }, [key, language]);
   const update = (patch: Partial<Preferences>) => {
     const next = { ...preferences, ...patch };
     try { localStorage.setItem(key, JSON.stringify(next)); } catch { /* Preferences still work for this mounted view. */ }

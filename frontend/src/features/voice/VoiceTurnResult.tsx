@@ -15,6 +15,8 @@ export function VoiceTurnResult({ turn, busy, canExecute, onAction, readOnly = f
   const locale = language === "kk" ? "kk-KZ" : language === "en" ? "en-US" : "ru-RU";
   const visitLabel = (record: Record<string, unknown>) => [record.service_name, record.resource_name, record.branch_name,
     typeof record.start_at === "string" ? formatDateTime(record.start_at, undefined, true, locale) : null].filter(Boolean).join(" · ");
+  const fieldValue = (field: string, value: unknown) => field === "start_at" && typeof value === "string"
+    ? formatDateTime(value, undefined, true, locale) : printable(value);
   if (turn.redacted) return <p role="status" className="text-sm text-platforma-subtle">{t("agentChat.redacted")}</p>;
   const pending = turn.status === "awaiting_confirmation";
   const identityReview = pending && turn.actions.some(action => action.tool_name === "crm_create" && action.input_json.entity === "clients"
@@ -52,10 +54,14 @@ export function VoiceTurnResult({ turn, busy, canExecute, onAction, readOnly = f
       }
       return <section key={action.id} className="space-y-2 border-l-2 border-platforma-border pl-3" aria-label={t("aiCRM.review")}>
         <p className="font-medium">{t(`aiWorkflow.tool.${action.tool_name}`)} · {t(`aiWorkflow.source.${entity}`)}</p>
+        {pending && action.tool_name === "crm_transition" && entity === "appointments" && <p className="break-words">
+          {String(object(action.input_json.preview).client_name || "")} · {visitLabel(object(action.input_json.preview))}
+          {typeof target === "number" && <Link className="platforma-focus-ring ml-2 underline" to={`/app/calendar?appointment=${target}`}>#{target}</Link>}
+        </p>}
         {action.status === "executed" && route && typeof target === "number" ? <Link className="platforma-focus-ring break-words underline"
           to={`/app/${route[0]}?${route[1]}=${target}`}>{String(record.full_name || record.title || record.message || `#${target}`)}</Link>
           : <dl className="space-y-1">{Object.entries(fields).map(([field, value]) => <div key={field} className="flex flex-wrap gap-x-2">
-            <dt className="text-platforma-subtle">{t(`aiCRM.field.${field}`)}:</dt><dd className="min-w-0 break-words">{field in before ? `${printable(before[field])} → ` : ""}{printable(value)}</dd>
+            <dt className="text-platforma-subtle">{t(`aiCRM.field.${field}`)}:</dt><dd className="min-w-0 break-words">{field in before ? `${fieldValue(field, before[field])} → ` : ""}{fieldValue(field, value)}</dd>
           </div>)}</dl>}
         {action.tool_name === "crm_transition" && action.input_json.action ? <p>{t(`aiCRM.action.${String(action.input_json.action)}`)}</p> : null}
         {action.input_json.reason ? <p className="break-words">{printable(action.input_json.reason)}</p> : null}

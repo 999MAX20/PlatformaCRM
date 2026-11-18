@@ -50,7 +50,8 @@ export function VoicePanel({ userId, status, currentEntity, currentBranch, initi
       if (!audio || controller.signal.aborted) return;
       setRecorded(audio);
       if (!send) return;
-      const result = await speechApi.transcribe(status.business, audio, preferences.language, controller.signal);
+      const result = await speechApi.transcribe(status.business, audio, preferences.language, controller.signal,
+        includeContext ? currentEntity : undefined);
       if (controller.signal.aborted) return;
       recognizing = false;
       setRecorded(null); setTranscribing(false); abort.current = null;

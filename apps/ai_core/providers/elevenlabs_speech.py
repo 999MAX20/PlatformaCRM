@@ -1,5 +1,6 @@
 from urllib import request
 from uuid import uuid4
+import unicodedata
 
 from django.conf import settings
 
@@ -22,7 +23,22 @@ class _NoRedirect(request.HTTPRedirectHandler):
         raise AIProviderError(code="provider_rejected", retryable=False)
 
 
-def build_request(content, language):
+def bounded_name_terms(names):
+    terms = []
+    for name in names:
+        if not isinstance(name, str) or len(name) > 50 or len(name.split()) > 5:
+            continue
+        if not name or any(not (unicodedata.category(char).startswith("L") or char in " '-’") for char in name):
+            continue
+        name = " ".join(name.split())
+        if name and name not in terms:
+            terms.append(name)
+        if len(terms) == 10:
+            break
+    return terms
+
+
+def build_request(content, language, *, keyterms=()):
     if not is_configured():
         raise AIProviderError(code="not_configured", retryable=False)
     if language not in {"auto", "ru", "kk"}:
@@ -37,6 +53,7 @@ def build_request(content, language):
     if language != "auto":
         fields.extend([("language_code", language),
                        ("secondary_language_codes", "kk" if language == "ru" else "ru")])
+    fields.extend(("keyterms", term) for term in bounded_name_terms(keyterms))
     boundary = "platforma-" + uuid4().hex
     while boundary.encode("ascii") in content:
         boundary = "platforma-" + uuid4().hex

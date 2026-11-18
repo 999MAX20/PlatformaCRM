@@ -26,6 +26,19 @@ DIRECT_SETTINGS = dict(
 
 @override_settings(**DIRECT_SETTINGS)
 class ElevenLabsSpeechTests(SimpleTestCase):
+    def test_keyterms_are_bounded_names_in_repeated_multipart_fields(self):
+        terms = ["Әсел Қасымова", "Әсел Қасымова", "Әсем", "x\r\ninjected", "123", "a" * 51]
+        call = elevenlabs_speech.build_request(b"synthetic", "kk", keyterms=terms)
+        mime = BytesParser(policy=policy.default).parsebytes(
+            f"Content-Type: {call.get_header('Content-type')}\r\n\r\n".encode() + call.data)
+        actual = [part.get_payload(decode=True).decode() for part in mime.iter_parts()
+                  if part.get_param("name", header="content-disposition") == "keyterms"]
+        self.assertEqual(actual, ["Әсел Қасымова", "Әсем"])
+        self.assertEqual(len(elevenlabs_speech.bounded_name_terms(["Name " + chr(65 + i) for i in range(20)])), 10)
+        with override_settings(ELEVENLABS_SCRIBE_PRIVACY_CONFIRMED=False):
+            with self.assertRaises(AIProviderError):
+                elevenlabs_speech.build_request(b"synthetic", "kk", keyterms=terms)
+
     def test_disabled_or_unconfirmed_configuration_never_sends_audio(self):
         for config in (
             {"ELEVENLABS_SCRIBE_ENABLED": False}, {"ELEVENLABS_SCRIBE_PRIVACY_CONFIRMED": False},
@@ -115,6 +128,79 @@ class ElevenLabsSpeechTests(SimpleTestCase):
 class ElevenLabsSpeechAPITests(TestCase):
     setUp = speech_fixtures.SpeechTests.setUp
     post = speech_fixtures.SpeechTests.post
+
+    def test_malformed_context_is_rejected_before_provider(self):
+        self.api.force_authenticate(self.owner)
+        with patch("apps.ai_core.speech_views.transcribe_audio") as transcribe:
+            for value in ([1], {"entity": [], "id": 1}, {"entity": "clients", "id": True},
+                          {"entity": "clients", "id": 1, "name": "Untrusted"}):
+                with self.subTest(value=value):
+                    response = self.post(format_text="false", current_entity=json.dumps(value))
+                    self.assertEqual(response.status_code, 400)
+            transcribe.assert_not_called()
+
+    def test_opted_in_card_names_are_scoped_and_not_stored(self):
+        from apps.clients.models import Client
+        from apps.ai_core.models import AIRequestLog, AgentProfile
+        from apps.bots.models import Bot
+        Bot.objects.filter(business=self.business).update(status="paused")
+        AgentProfile.objects.filter(business=self.business).update(is_active=False)
+        own = Client.objects.create(business=self.business, full_name="Әсел Қасымова")
+        other = Client.objects.create(business=self.other_business, full_name="Foreign Sentinel")
+        self.api.force_authenticate(self.owner)
+        with patch("apps.ai_core.speech_views.transcribe_audio", return_value={"text": "synthetic"}) as transcribe:
+            self.assertEqual(self.post(format_text="false").status_code, 200)
+            self.assertEqual(transcribe.call_args.kwargs["keyterms"], [])
+            response = self.post(format_text="false", current_entity=json.dumps({"entity": "clients", "id": own.pk}))
+            self.assertEqual(response.status_code, 200, response.data)
+            self.assertEqual(transcribe.call_args.kwargs["keyterms"], ["Әсел Қасымова", "Әсел", "Қасымова"])
+            transcribe.reset_mock()
+            response = self.post(format_text="false", current_entity=json.dumps({"entity": "clients", "id": other.pk}))
+            self.assertEqual(response.status_code, 403)
+            transcribe.assert_not_called()
+        self.assertFalse(AIRequestLog.objects.exists())
+        self.assertFalse(AgentTurn.objects.exists())
+
+    def test_linked_client_scope_and_archived_names(self):
+        from apps.clients.models import Client
+        from apps.tasks.models import Task
+        own = Client.objects.create(business=self.business, full_name="Әсем")
+        foreign = Client.objects.create(business=self.other_business, full_name="Foreign Sentinel")
+        task = Task.objects.create(business=self.business, title="Synthetic", client=own)
+        self.api.force_authenticate(self.owner)
+        context = json.dumps({"entity": "tasks", "id": task.pk})
+        with patch("apps.ai_core.speech_views.transcribe_audio", return_value={"text": "synthetic"}) as transcribe:
+            self.assertEqual(self.post(format_text="false", current_entity=context).status_code, 200)
+            self.assertEqual(transcribe.call_args.kwargs["keyterms"], ["Әсем"])
+            Client.objects.filter(pk=own.pk).update(is_archived=True)
+            self.assertEqual(self.post(format_text="false", current_entity=context).status_code, 200)
+            self.assertEqual(transcribe.call_args.kwargs["keyterms"], [])
+            Task.objects.filter(pk=task.pk).update(client=foreign)
+            transcribe.reset_mock()
+            self.assertEqual(self.post(format_text="false", current_entity=context).status_code, 403)
+            transcribe.assert_not_called()
+
+    def test_context_revoked_during_transcription_does_not_return_text(self):
+        from apps.clients.models import Client
+        own = Client.objects.create(business=self.business, full_name="Әсем")
+        self.api.force_authenticate(self.owner)
+        def transcribe(*args, **kwargs):
+            Client.objects.filter(pk=own.pk).update(business=self.other_business)
+            return {"text": "PRIVATE_SENTINEL"}
+        with patch("apps.ai_core.speech_views.transcribe_audio", side_effect=transcribe):
+            response = self.post(format_text="false", current_entity=json.dumps({"entity": "clients", "id": own.pk}))
+        self.assertEqual(response.status_code, 403)
+        self.assertNotIn("PRIVATE_SENTINEL", str(response.data))
+
+    def test_disabled_privacy_does_not_read_context_names(self):
+        self.api.force_authenticate(self.owner)
+        with override_settings(ELEVENLABS_SCRIBE_PRIVACY_CONFIRMED=False), \
+             patch("apps.ai_core.speech_context.target_for_command") as read, \
+             patch("apps.ai_core.providers.elevenlabs_speech.open_request") as send:
+            response = self.post(format_text="false", current_entity=json.dumps({"entity": "clients", "id": 1}))
+        self.assertEqual(response.status_code, 503)
+        read.assert_not_called()
+        send.assert_not_called()
 
     def test_ready_uses_direct_provider_without_exposing_credentials(self):
         self.api.force_authenticate(self.owner)

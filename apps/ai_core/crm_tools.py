@@ -235,6 +235,14 @@ def prepare_command(*, business, user, tool, payload):
         if tool == "crm_transition":
             preview_fields.update({"status", "stage", "owner", "assignee", "responsible_user", "start_at", "resource"})
         prepared["before"] = {key: value for key, value in record.items() if key in preview_fields}
+        if tool == "crm_transition" and payload["entity"] == "appointments":
+            from apps.ai_core.agent_runtime import voice_runtime
+            if voice_runtime():
+                prepared["preview"] = {"start_at": record.get("start_at"), "client_name": ""}
+                if record.get("client"):
+                    client = target_for_command(business, user, "clients", record["client"])
+                    prepared["preview"]["client_name"] = client.full_name
+                    prepared["preview"]["client_id"] = client.pk
     return json.loads(json.dumps(prepared, cls=DjangoJSONEncoder))
 
 
