@@ -318,3 +318,23 @@ Accepted implementation/local-evidence scope has no remaining owner decision or
 code requirement. Working migration, target rollout and deployed pilot acceptance
 remain separate environment/release work. Full AC01–14, arbitrary terminal reopen,
 repricing rendered services, bulk/ambiguous legacy conversion are not closed here.
+
+### Follow-up publication
+
+Implementation `c42c4711e861a44321b4d478f3feedc461c83085`, retained branch
+codex/ui-testing-toolkit, canonical C:/Users/user/Desktop/PlatformaCRM.
+35-file task-only index reviewed, including all four new files. Working/index diff
+hygiene, registry JSON and seven added relative documentation links PASS. STATUS
+and PRIMARY staged with only this task's hunks; foreign Meta/WhatsApp work remains
+unstaged. No ignored fixture, credentials, screenshot or runtime artifact published.
+After commit, `scripts/codex_verify.py --mode static --base-ref 9016bc4286db12427b0d641d77fb92360d8d9d51`
+PASS (working/index/actual committed range, migration drift, system check and final
+hygiene); log corrections-static.log. No arbitrary base or full-project claim.
+
+Fetch and ancestry proved exactly one authorized outgoing implementation commit.
+Normal `git push origin HEAD:main` succeeded; remote refs/heads/main read back
+exactlyc42c4711e861a44321b4d478f3feedc461c83085. Push workflow is CI, no deployment.
+[CI473](https://github.com/999MAX20/PlatformaCRM/actions/runs/44317269011) was
+in_progress at inspection (18.11.2026); not claimed green. This publication receipt
+is docs-only; application evidence remains valid for unchanged source. Own test
+backend/frontend and PostgreSQL processes stopped; ordinary working DB untouched.

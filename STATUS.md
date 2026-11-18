@@ -2422,5 +2422,6 @@ References preceded UI edits. Owner-only annulment, retained reversal balance,
 linked replacement, explicit reuse and full legacy remainder attachment preserve history/cash receipts.
 PostgreSQL19, dependent126, final pricing/correction31 PASS; build/types/i18n and
 real RU/KK/EN desktop/mobile/retry/stale/draft checks PASS. Working DB unchanged.
-Task-only publication pending; arbitrary reopen/rendered-service repricing/bulk reconciliation excluded.
+Implementation c42c4711 normal-pushed to origin/main; remote SHA verified. CI473 in_progress at inspection.
+Arbitrary reopen/rendered-service repricing/bulk reconciliation excluded.
 Scope/checkpoint: docs/testing/evidence/visit-plan-payments-20261118.md.
