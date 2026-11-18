@@ -1,10 +1,9 @@
-Expanded18Nov:19 RU/KK/mixed HTTP200,163.111s; names/phone accuracy FAIL,
-5 spoken dates preserved.89 new credits;97/5000 total,4903 remaining.
-Production flags/privacy protection unchanged; no real data or CRM writes.
-Source a3753708; full expanded result in existing voice-scribe evidence.
-Details: [evidence](../testing/evidence/voice-scribe-v3-20261117.md).
+Broad synthetic Scribe v3 verification18Nov completed: explicit KK/RU improves
+clean KK word accuracy, but mixed names, numbers and negations remain unreliable.
+Customer activation stays off; human speech and full planner/CRM acceptance remain open.
+[Current results, budget and scoped improvements](../testing/evidence/voice-scribe-v3-20261117.md).
 
-VOICE-SCRIBE-V3-20261117: expanded synthetic testing complete; quality failures
+VOICE-SCRIBE-V3-20261117: broad synthetic diagnosis complete; quality failures
 remain open. Prior56 isolated checks reused for unchanged voice source.
 Key local/STT-only/capped; activation and Enterprise ZRM/no-training remain open.
 Prior accuracy FAIL and D01 are not closed.

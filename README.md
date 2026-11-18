@@ -1,8 +1,7 @@
-Expanded18Nov:19 RU/KK/mixed HTTP200,163.111s; names/phone accuracy FAIL,
-5 spoken dates preserved.89 new credits;97/5000 total,4903 remaining.
-Production flags/privacy protection unchanged; no real data or CRM writes.
-Source a3753708; full expanded result in existing voice-scribe evidence.
-Details: [evidence](docs/testing/evidence/voice-scribe-v3-20261117.md).
+Broad synthetic Scribe v3 verification18Nov completed: explicit KK/RU improves
+clean KK word accuracy, but mixed names, numbers and negations remain unreliable.
+Customer activation stays off; human speech and full planner/CRM acceptance remain open.
+[Current results, budget and scoped improvements](docs/testing/evidence/voice-scribe-v3-20261117.md).
 
 Management UI (12.11.2026): five real-data pages replace the previous Business entry.
 The five Management migrations are applied to the owner-authorized local PostgreSQL
@@ -52,8 +51,8 @@ do not certify broad recognition quality or deployment. The independent voice pa
 `ai_core.0009_interface_voice_conversations`; verified in disposable databases,
 applied to the local working database with an owner-authorized backup on05.11.
 Direct ElevenLabs `scribe_v3` is **disabled for customer audio**;56 isolated tests and
-initial3 RU clips passed; expanded19 RU/KK/mixed returned HTTP200 but exposed
-name/phone failures (97 total credits used;5000 authorized cap).
+initial3 RU clips passed; broader synthetic verification exposed name/phone/negation
+failures. Current accuracy and bounded spend are in the evidence below.
 `VOICE_TRANSCRIPTION_PROVIDER` still defaults to `openrouter`; the existing recognition
 model remains `elevenlabs/scribe-v2` with ZDR/no-data-collection policy. Direct v3 needs
 a separate server key and explicit enable/privacy-confirmation flags (both default False).

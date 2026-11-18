@@ -4,10 +4,11 @@ GLOBAL-SEARCH-20261118: селектор страницы/CRM удалён; по
 задач/диалогов, несовпадение полей диалогов и неполные error states; это не полная готовность поиска.
 Evidence: docs/testing/evidence/global-search-20261118.md. c5fec11e normal-push origin/main подтверждён; CI464 in_progress, не green.
 
-VOICE-SCRIBE-V3-20261117: Expanded18Nov:19 RU/KK/mixed HTTP200,163.111s; names/phone accuracy FAIL,
-5 spoken dates preserved.89 new credits;97/5000 total,4903 remaining.
-Production flags/privacy protection unchanged; no real data or CRM writes.
-Source a3753708; full expanded result in existing voice-scribe evidence.
+VOICE-SCRIBE-V3-20261117: broad synthetic benchmark18Nov complete; customer activation off.
+64 utterances/298 conditions;295 HTTP200,2 provider429,1 local silence rejection.
+Paired KK WER1.36% explicit KK/RU vs6.53% auto; mixed names/phone/negation failures remain.
+Account usage delta833 within new2000 cap; exact attribution caveat in evidence.
+Product diagnosis only; fixes/live human KK/planner acceptance remain open.
 Evidence: docs/testing/evidence/voice-scribe-v3-20261117.md.
 Checkpoint: output/voice-scribe-v3-20261117/CHECKPOINT.md.
 
