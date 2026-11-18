@@ -4,6 +4,16 @@ GLOBAL-SEARCH-20261118: селектор страницы/CRM удалён; по
 задач/диалогов, несовпадение полей диалогов и неполные error states; это не полная готовность поиска.
 Evidence: docs/testing/evidence/global-search-20261118.md. c5fec11e normal-push origin/main подтверждён; CI464 in_progress, не green.
 
+VOICE-SCRIBE-V3-20261117: direct Scribe v3 synthetic connection verified18Nov.
+56 isolated tests + system/drift PASS;3 live fixed fictional RU clips HTTP200,
+14.24s audio, actual8 credits used of5000 authorized. Key STT-only,5000 cap,1day,
+saved only local .env. Runtime remains disabled and ZRM/privacy gates unchanged.
+Synthetic no-ZRM exception exists only in ignored one-shot test harness, no API bypass.
+No real CRM data/actions, OpenRouter spend, top-up or deployment. Broad RU/KK/mixed
+accuracy and Enterprise ZRM/no-training acceptance remain open.
+Evidence: docs/testing/evidence/voice-scribe-v3-20261117.md.
+Checkpoint: output/voice-scribe-v3-20261117/CHECKPOINT.md.
+
 META-COEXISTENCE-20261117: local Business App onboarding/history preparation implemented.
 18Nov CI repair: speech cache interference reproduced; fixture-only cleanup plus
 rate-limit control verified (28 affected tests, candidate without foreign WIP also28).

@@ -17,7 +17,7 @@ class Response(io.BytesIO):
     headers = {"x-request-id": "req-safe-123", "Authorization": "Bearer PRIVATE_SENTINEL"}
 
 
-@override_settings(AI_ENABLED=True, VOICE_INPUT_ENABLED=True, OPENROUTER_API_KEY="PRIVATE_SENTINEL",
+@override_settings(AI_ENABLED=True, VOICE_INPUT_ENABLED=True, VOICE_TRANSCRIPTION_PROVIDER="openrouter", OPENROUTER_API_KEY="PRIVATE_SENTINEL",
                    OPENROUTER_BASE_URL="https://openrouter.ai/api/v1", VOICE_TRANSCRIPTION_MODEL="elevenlabs/scribe-v2")
 class SpeechDiagnosticsTests(SimpleTestCase):
     def formatted(self, record):

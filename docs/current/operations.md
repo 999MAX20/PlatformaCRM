@@ -162,6 +162,24 @@ Worker канонического checkout слушает `reports_exports`. П�
 production rollout, broker/antivirus и полный перенос этим не подтверждены.
 Срез: `output/import-create-20261106/working-migration.log`.
 
+## Прямой ElevenLabs Scribe v3 — подготовка 17.11.2026
+
+Адаптер добавлен, но текущий провайдер и рабочий `.env` не переключены.
+Ключ `ELEVENLABS_API_KEY` задаётся только серверу через secret/env management.
+Флаги `ELEVENLABS_SCRIBE_ENABLED` и `ELEVENLABS_SCRIBE_PRIVACY_CONFIRMED` default False;
+`VOICE_TRANSCRIPTION_PROVIDER` default openrouter. Модель прямого адаптера фиксирована
+в коде как scribe_v3. Общий VOICE_HTTP_TIMEOUT_SECONDS и лимиты аудио сохранены.
+Не включать адаптер до подтверждения Enterprise STT ZRM/no-training и последующих
+проверок по [evidence](../testing/evidence/voice-scribe-v3-20261117.md).
+18.11 владелец разрешил только synthetic API-проверки без ZRM в пределах5000
+бесплатных кредитов. Три коротких RU-записи проверены, списано8 кредитов. Отдельный
+ключ STT-only/5000/1день сохранён в локальном .env; оба рабочих флага False.
+Исключение находится только в ignored output harness с фиксированными фразами,
+без входных файлов/CRM/микрофона и без повторного запуска существующего отчёта.
+Пополнение, коммерческое использование и отключение рабочей защиты не разрешены.
+При будущем откате явно вернуть provider=openrouter и выключить Scribe; текущие
+OpenRouter credentials/model остаются отдельными. Runtime fallback не добавлен.
+
 ## Голосовой ввод — 05.11.2026
 
 STT использует серверные OPENROUTER_API_KEY/BASE_URL и отдельные

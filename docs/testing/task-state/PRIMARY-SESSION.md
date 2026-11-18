@@ -5,6 +5,16 @@
 [checkpoint](../evidence/global-search-20261118.md). Новые серверные поиски задач/Inbox
 не реализованы; рекомендации не разрешают следующий этап автоматически.
 
+VOICE-SCRIBE-V3-20261117: direct Scribe v3 synthetic connection verified18Nov.
+56 isolated tests + system/drift PASS;3 live fixed fictional RU clips HTTP200,
+14.24s audio, actual8 credits used of5000 authorized. Key STT-only,5000 cap,1day,
+saved only local .env. Runtime remains disabled and ZRM/privacy gates unchanged.
+Synthetic no-ZRM exception exists only in ignored one-shot test harness, no API bypass.
+No real CRM data/actions, OpenRouter spend, top-up or deployment. Broad RU/KK/mixed
+accuracy and Enterprise ZRM/no-training acceptance remain open.
+Evidence: docs/testing/evidence/voice-scribe-v3-20261117.md.
+Checkpoint: output/voice-scribe-v3-20261117/CHECKPOINT.md.
+
 ## NOTIFICATIONS-REDESIGN-20261114
 
 15.11 owner correction at e26fa34d complete: modal detail on all widths without blur;

@@ -45,8 +45,14 @@ Audio is transient, without TTS or continuous listening. Local synthetic checks
 do not certify broad recognition quality or deployment. The independent voice path requires
 `ai_core.0009_interface_voice_conversations`; verified in disposable databases,
 applied to the local working database with an owner-authorized backup on05.11.
-Default speech recognition remains `elevenlabs/scribe-v2` with ZDR/no-data-collection
-policy. The local Gemini audio candidate improved several Kazakh/mixed samples but
+Direct ElevenLabs `scribe_v3` is **disabled for customer audio**;56 isolated tests and
+three fictional Russian API clips passed18.11 (8 free credits used;5000 authorized cap).
+`VOICE_TRANSCRIPTION_PROVIDER` still defaults to `openrouter`; the existing recognition
+model remains `elevenlabs/scribe-v2` with ZDR/no-data-collection policy. Direct v3 needs
+a separate server key and explicit enable/privacy-confirmation flags (both default False).
+Enterprise STT Zero Retention eligibility and no-training terms must be confirmed
+before activation; an ordinary API balance alone is insufficient.
+[Configuration, synthetic checks and remaining acceptance](docs/testing/evidence/voice-scribe-v3-20261117.md). The local Gemini audio candidate improved several Kazakh/mixed samples but
 failed exact acceptance and is not the default. [Current accuracy evidence and limitations](docs/testing/evidence/voice-accuracy-20261111.md).
 Local dev uses `AI_QUEUE_LIVE_REQUESTS=False` without Redis/AI worker; production
 queue defaults are unchanged. Real synthetic-Russian audio→OpenRouter→direct Task

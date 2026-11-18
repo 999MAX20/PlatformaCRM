@@ -23,7 +23,7 @@ def audio_bytes(seconds=1):
     return stream.getvalue()
 
 
-@override_settings(AI_ENABLED=True, VOICE_INPUT_ENABLED=True, OPENROUTER_API_KEY="synthetic-test-key",
+@override_settings(AI_ENABLED=True, VOICE_INPUT_ENABLED=True, VOICE_TRANSCRIPTION_PROVIDER="openrouter", OPENROUTER_API_KEY="synthetic-test-key",
     OPENROUTER_BASE_URL="https://openrouter.ai/api/v1",
     VOICE_TRANSCRIPTION_MODEL="elevenlabs/scribe-v2", VOICE_HTTP_TIMEOUT_SECONDS=60)
 class SpeechTests(TestCase):

@@ -12,6 +12,8 @@ from rest_framework.exceptions import ValidationError
 
 from apps.ai_core.providers.base import AIProviderError
 from apps.ai_core.providers.openrouter import OpenRouterProvider
+from apps.ai_core.providers import elevenlabs_speech
+from apps.ai_core.speech_configuration import speech_model, speech_ready
 from apps.ai_core.speech_numbers import normalize_spoken_phone
 from apps.ai_core.speech_diagnostics import safe_model_id, safe_provider_id, speech_http_failure
 
@@ -55,7 +57,7 @@ def _speech_request(content, language):
 def _transcript(result, endpoint):
     if not isinstance(result, dict):
         raise AIProviderError(code="invalid_response", retryable=False)
-    if endpoint == "/audio/transcriptions":
+    if endpoint in {"/audio/transcriptions", "/v1/speech-to-text"}:
         text = result.get("text")
     else:
         choices = result.get("choices")
@@ -102,17 +104,23 @@ def transcribe_audio(content, language="auto"):
     if language not in {"auto", "ru", "kk"}:
         raise ValidationError({"language": "invalid_language"})
     started = time.monotonic()
-    diagnostic = {"speech_stage": "configuration", "speech_model": safe_model_id(settings.VOICE_TRANSCRIPTION_MODEL)}
+    diagnostic = {"speech_stage": "configuration", "speech_model": safe_model_id(speech_model())}
     completed = False
     try:
-        if not settings.AI_ENABLED or not settings.VOICE_INPUT_ENABLED or not settings.OPENROUTER_API_KEY or not settings.OPENROUTER_BASE_URL:
+        if not speech_ready():
             raise AIProviderError(code="not_configured", retryable=False)
-        provider = OpenRouterProvider()
-        endpoint, payload = _speech_request(content, language)
-        call = request.Request(provider.base_url.rstrip("/") + endpoint,
-            data=json.dumps(payload).encode(), headers=provider._headers(), method="POST")
+        if settings.VOICE_TRANSCRIPTION_PROVIDER == "elevenlabs":
+            call = elevenlabs_speech.build_request(content, language)
+            endpoint = "/v1/speech-to-text"
+            open_call = elevenlabs_speech.open_request
+        else:
+            provider = OpenRouterProvider()
+            endpoint, payload = _speech_request(content, language)
+            call = request.Request(provider.base_url.rstrip("/") + endpoint,
+                data=json.dumps(payload).encode(), headers=provider._headers(), method="POST")
+            open_call = request.urlopen
         diagnostic["speech_stage"] = "request"
-        with request.urlopen(call, timeout=settings.VOICE_HTTP_TIMEOUT_SECONDS) as response:
+        with open_call(call, timeout=settings.VOICE_HTTP_TIMEOUT_SECONDS) as response:
             diagnostic["status_code"] = getattr(response, "status", 200)
             headers = getattr(response, "headers", {})
             diagnostic["speech_provider_request_id"] = safe_provider_id(headers.get("x-request-id"))

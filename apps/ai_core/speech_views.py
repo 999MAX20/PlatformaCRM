@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.core.files.uploadhandler import MemoryFileUploadHandler, StopUpload
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
@@ -11,6 +10,7 @@ from rest_framework.views import APIView
 from apps.ai_core.conversation_access import voice_access
 from apps.ai_core.providers.base import AIProviderError
 from apps.ai_core.speech import MAX_AUDIO_BYTES, MAX_AUDIO_SECONDS, transcribe_audio
+from apps.ai_core.speech_configuration import speech_ready
 from apps.ai_core.speech_formatting import format_transcript
 from apps.core.permissions import accessible_businesses
 
@@ -60,7 +60,7 @@ class SpeechView(APIView):
         business_id = serializers.IntegerField(min_value=1).run_validation(request.query_params.get("business"))
         business = speech_scope(request.user, business_id)
         return Response({"business": business.pk,
-            "ready": bool(settings.AI_ENABLED and settings.VOICE_INPUT_ENABLED and settings.OPENROUTER_API_KEY and settings.OPENROUTER_BASE_URL),
+            "ready": speech_ready(),
             "max_seconds": MAX_AUDIO_SECONDS, "max_bytes": MAX_AUDIO_BYTES})
 
     def post(self, request):

@@ -19,7 +19,7 @@ def audio_response(text, **choice_values):
         "message": {"role": "assistant", "content": text}, **choice_values}]}).encode())
 
 
-@override_settings(AI_ENABLED=True, VOICE_INPUT_ENABLED=True, OPENROUTER_API_KEY="synthetic-test-key",
+@override_settings(AI_ENABLED=True, VOICE_INPUT_ENABLED=True, VOICE_TRANSCRIPTION_PROVIDER="openrouter", OPENROUTER_API_KEY="synthetic-test-key",
     OPENROUTER_BASE_URL="https://openrouter.ai/api/v1", VOICE_TRANSCRIPTION_MODEL="google/gemini-4-carbon")
 class AudioTranscriptionTests(TestCase):
     setUp = speech_fixtures.SpeechTests.setUp
