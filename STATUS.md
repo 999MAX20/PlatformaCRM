@@ -2427,4 +2427,4 @@ VISIT-PLAN-PAYMENTS termination/refusal follow-up: implemented and locally verif
 Owner refusal/termination, frozen remaining prices, preserved debt, separate remainder
 and linked rebooking delivered. Dependent127, PostgreSQL20, build/types/i18n/bundle
 and real RU/KK/EN desktop/mobile/recovery flows PASS. No working migration/deploy.
-Publication pending scoped review. Evidence: docs/testing/evidence/visit-plan-payments-20261118.md#plan-termination-refusal-20261118.
+Implementation bb051dbd pushed to origin/main; remote SHA verified; CI in_progress. Evidence: docs/testing/evidence/visit-plan-payments-20261118.md#plan-termination-refusal-20261118.

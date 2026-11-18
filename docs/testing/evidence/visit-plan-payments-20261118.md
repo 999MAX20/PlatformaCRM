@@ -432,3 +432,18 @@ README unchanged: no installation/configuration or public release claim changes.
 No remaining code, local evidence or owner decision in approved scope. Environment:
 working migration/deployment and target pilot acceptance remain separate. Full
 AC01–14, external bank execution and arbitrary terminal reopen are not certified.
+
+### Termination publication receipt
+
+Implementation bb051dbda914c3a654369a5532aee6ba93efd485 on retained branch
+codex/ui-testing-toolkit. Task-only31-file index reviewed; foreign integration hunks
+in STATUS/PRIMARY preserved unstaged. Added local links9, registry JSON, credential
+pattern scan and diff hygiene PASS. Static runner before commit and after commit
+with explicit base61a7946fda20ab2dd8ebf6a8135073a697800ae7 PASS; logs
+static-precommit.log/static-committed.log. This checks the actual committed range.
+Fetch proved only the authorized implementation outgoing; normal HEAD:main push
+succeeded and remote SHA read back exactlybb051dbda914c3a654369a5532aee6ba93efd485.
+[CI](https://github.com/999MAX20/PlatformaCRM/actions/runs/44327322575) was in_progress
+at inspection, not claimed green. Push starts CI, not deployment. Own synthetic
+browser/backend/frontend and PostgreSQL runtimes stopped. No working DB mutation.
+This docs receipt does not change application evidence inputs.

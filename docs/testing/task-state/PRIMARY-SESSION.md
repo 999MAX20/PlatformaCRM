@@ -14100,5 +14100,4 @@ Side-conversation approved refusal/termination scope implemented and locally ver
 owner preview/reason/consent, unchanged other prices, cancelled future time, retained
 rendered debt, separate refund/retain and linked rebooking. Dependent127/PostgreSQL20,
 build/types/i18n/bundle and real RU/KK/EN responsive recovery flows PASS. No working
-DB migration/deploy; full pilot acceptance separate. Publication pending task-only
-review. [Evidence](../evidence/visit-plan-payments-20261118.md#plan-termination-refusal-20261118).
+DB migration/deploy; full pilot acceptance separate. Implementation bb051dbd pushed to origin/main; remote SHA verified; CI in_progress. [Evidence](../evidence/visit-plan-payments-20261118.md#plan-termination-refusal-20261118).
