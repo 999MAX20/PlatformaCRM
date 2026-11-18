@@ -17,18 +17,26 @@ Checkpoint: output/voice-scribe-v3-20261117/CHECKPOINT.md.
 META-COEXISTENCE-20261117: local Business App onboarding/history preparation implemented.
 18Nov CI repair: speech cache interference reproduced; fixture-only cleanup plus
 rate-limit control verified (28 affected tests, candidate without foreign WIP also28).
-System/drift/static PASS; full CI remains pending. No production throttle change.
+System/drift/static PASS; no production throttle change.
 Owner-approved maintained picomatch patch prepared: bounded malicious-pattern
 tests, consumer/source integrity, clean install, app/widget/Storybook builds and
-npm audit PASS locally. Published CI confirmation remains pending.
-SSH blocked by old admin IP allowlist. No deployment or new-number import yet.
+npm audit PASS locally. Candidate58a6427e CI44291366686 backend/frontend/audits PASS;
+full isolated release gate44291424890 PASS (3515 tests/82 skips,2 mobile smoke).
+Package58a6427e prepared; owner approved the entire candidate including added UI scope.
+SSH restored after approved /32
+UFW rule and one VM restart; temporary bootcmd removed. Existing CRM active.
+58a6427e deployed18Nov; integrations0012 applied, service/readiness/protection checks PASS.
+Existing connections preserved. No new-number import yet; browser login pending.
 Owner approved entire ebfeea67 release after green checks; published to main.
-Prior CI44139255024 failed speech tests and npm audit; new CI must verify repair.
-Server unchanged; no live import or final submission.
+Prior CI44139255024 failed speech tests and npm audit; new CI verifies the repair.
+Server runs58a6427e; no live import or final submission.
 Signed expected number, no phone re-registration, durable authenticated import,
 no historical AI/send/window effects; app replies hand off to staff. Migration0012.
 130 PostgreSQL affected checks,17 final focused checks and23 browser cases/build PASS.
-Live Meta/number acceptance, subscriptions, deployment and review videos
+Three Coexistence subscriptions enabled v27.0 with owner approval. Live OAuth
+launch validated v4/coexOn; Meta rejects Business App number with3441107 (partner
+app not set up). App Review still Not submitted,2WhatsApp permissions; Tech Provider1/2.
+Live Meta/number acceptance, history import and review videos
 remain open. Phone-only identities and metadata-only attachments are current limits.
 Evidence: PRIMARY-SESSION META-COEXISTENCE-20261117; output/meta-review-20261117.
 

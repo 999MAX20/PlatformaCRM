@@ -13733,6 +13733,68 @@ Deployment not performed; unfinished alerts work is not closed by this UI change
 
 ### META-COEXISTENCE-20261117: existing Business App numbers
 
+18Nov live blocker verified: after owner pressed Continue, original popup input
+and screenshot access recovered. KZ/business number ending7770 entered once;
+Meta rejected with3441107: partner app not set up for Business App numbers.
+No handset verification, phone registration/history sync or sends occurred.
+Screenshot visually inspected; initial capture failure superseded by recovery.
+Meta launch checker with actual extras: v4/cloud_api/coexOn/session3; selected
+CRM login config1029142846909211 plus explicitv4 yields the same. No config/code
+change needed from that evidence. Tech Provider page1/2, businessApproved;
+both WhatsApp permissions Ready for testing. Actual App Review submission list
+explicitly Not submitted, exactly management/messaging (generic onboarding page
+label In review must not be interpreted as a submitted request). Exact missing
+entitlement behind3441107 remains unconfirmed; support draft NOT SENT in
+output/meta-review-20261117/coexistence-meta-blocker-20261118.txt. Source/reference:
+https://developers.facebook.com/documentation/business-messaging/whatsapp/embedded-signup/onboarding-business-app-users
+Next: finish App Review evidence/access/disclosures, obtain provider/app approval
+or Meta clarification, then retry owner-approved Business App flow. Never delete
+the app account or replace the number with API-only registration to bypass this.
+
+18Nov live continuation: owner logged into reviewer CRM after current stand password
+was located and verified against active server hash (old local copies did not match;
+no password reset). Actual agent17 edit dialog exposes Coexistence and history notice.
+Owner explicitly approved three additional webhook subscriptions at action time:
+history, smb_app_state_sync, smb_message_echoes enabled v27.0 in Meta; each saved
+row reports subscribed. messages/account_update retained. Entered owner number
+ending7770 with Preserve Business App selected; actual OAuth popup carries
+whatsapp_business_app_onboarding and sessionInfoVersion3. No number registered or
+history imported yet. Owner approved Cloud API/Business Platform terms; two clicks
+timed out in popup Input.dispatchMouseEvent, unchanged terms screen, owner asked
+to press Continue manually. Screenshot capture also timed out; DOM access works.
+Keep current popup/CRM state; do not restart signup or switch browser protocols.
+
+18Nov deployment PASS: owner explicitly approved entire58a6427e; exact source/
+frontend archive hashes validated remotely. New /opt/platforma/releases/20261118-58a6427e
+active; integrations0012 applied, no pending migrations. Backup retained at
+/root/platforma-coexistence-20261118-58a6427e (pg_dump/list validation, env/Caddy/units).
+Existing WhatsApp channel/credential/config hash unchanged. CRM web/worker/events/
+stand active; ready200, anonymous API401, invalid webhook403, Caddy validate/reload
+PASS. Fresh postdeploy preflight confirms candidate directory, AIoff/scribe-v2 and
+zero pending outbound. Logs: deploy-20261118.log and postdeploy-20261118.json in
+output/meta-review-20261117. Existing system warnings remain: monitoring release/DSN,
+transactional mail, legacy connector decryption. No claim these were fixed.
+Browser new production tab reached stand access; session expired, owner login
+requested. Live UI, Meta coex subscriptions, handset onboarding/history still open.
+
+18Nov recovery receipt: owner approved /32 UFW bootcmd plus one VM restart.
+VM returned Running; SSH with the pinned host key succeeded, UFW permits TCP22
+from the approved current /32 and original admin source only. crm-web, worker,
+events, stand and Caddy active; old release4cc19068 remains deployed. Temporary
+bootcmd removed from cloud metadata and saved original cloud-config reread.
+Fresh preflight: PostgreSQL, no pending migrations/outbound, AI disabled,
+voice still scribe-v2,39GB free. No second restart or production data change.
+Candidate58a6427e: CI44291366686 backend/frontend/audits PASS; full isolated
+release gate44291424890 PASS:3515 tests/82 skips,2 mobile owner/manager smoke
+cases, build/i18n/budget, dependency audits and4 patched-glob checks. GitHub
+artifact14423405613 retains full log/report. Production frontend575 files pinned
+to58a6427e and source input blobs verified; later foreign voice commitb5dde74b
+excluded. Archives and deployment script prepared and validated; release.json
+acceptance finalized from the actual successful run. Deployment receipt above.
+Owner explicitly approved the entire58a6427e candidate after package, CI/full gate
+and fresh server preflight completed, including added client/payment/appointment/
+search changes. Deployment completed; preserve pinned candidate.
+
 Publication18Nov: speech fix a8462902 and maintained dependency patch48f201be
 normal-pushed to origin/main; remote SHA verified. CI44287950736 backend PASS:
 3515 tests/82 skips plus Python audit. CI44290641391 frontend PASS including new
@@ -13757,14 +13819,14 @@ file lock; npm install restored modules without stopping the existing dev server
 then independent clean install passed. No app source copy or foreign WIP edits.
 Static gate PASS; added manual release-validation workflow to run the required
 full isolated gate on a clean committed candidate without foreign local WIP.
-New dependency patches and this workflow are not yet published in this entry.
+Dependency patches and workflow were subsequently published (receipt above).
 Maintained fork is not independently audited by npm advisory feed; CI explicitly
 requires runtime regression and installed-source tests in addition to npm audit.
 Security report: Codex Security target collection findings/picomatch-ci-repair.md.
 Network: owner switched to saved5GHz SSID, same external IP/SSH timeout. Owner
 then explicitly approved adding only current /32 TCP22 cloud ingress; saved and
-verified in cloud UI. SSH still times out after that change; host firewall/access
-recovery remains necessary. No VM/service restart.
+verified in cloud UI. SSH still timed out after that change; subsequent authorized
+host firewall recovery and single restart succeeded (receipt above).
 
 18Nov owner selected a maintained local picomatch security patch, rather than
 waiting for upstream; audit remains mandatory. Scope: pinned official4.0.7
