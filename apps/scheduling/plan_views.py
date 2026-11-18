@@ -133,7 +133,7 @@ class VisitPlanViewSet(viewsets.GenericViewSet):
             "refunded": str(row.refunded_amount), "available": str(row.amount - row.refunded_amount),
             "occurred_at": row.occurred_at, "method": row.method, "currency": row.currency} for row in page])
 
-    @action(detail=True, methods=["post"], url_path="preview-correction/(?P<correction>annul-completion|attach-legacy)")
+    @action(detail=True, methods=["post"], url_path="preview-correction/(?P<correction>annul-completion|attach-legacy|refuse-service|terminate)")
     def preview_correction(self, request, pk=None, correction=None):
         from apps.payments.plan_corrections import preview_correction
         from apps.core.domain_errors import InvalidTransition
@@ -142,12 +142,15 @@ class VisitPlanViewSet(viewsets.GenericViewSet):
         serializer.is_valid(raise_exception=True)
         if plan.revision != serializer.validated_data["expected_revision"]:
             raise InvalidTransition("The plan changed. Refresh before reviewing the correction.")
+        if correction in {"refuse-service", "terminate"}:
+            from apps.payments.plan_termination import preview_termination
+            return Response(preview_termination(plan, request.user, correction, serializer.validated_data))
         return Response(preview_correction(plan, request.user, correction, serializer.validated_data))
 
-    @action(detail=True, methods=["post"], url_path="commands/(?P<command>schedule|revise|archive|restore|responsible|accept-terms|settle-remainder|use-credit|annul-completion|attach-legacy|create-replacement)")
+    @action(detail=True, methods=["post"], url_path="commands/(?P<command>schedule|revise|archive|restore|responsible|accept-terms|settle-remainder|use-credit|annul-completion|attach-legacy|create-replacement|refuse-service|terminate|rebook)")
     def command(self, request, pk=None, command=None):
         plan = self.get_object()
-        input_type = PlanMoneyInput if command in {"accept-terms", "settle-remainder", "use-credit", "annul-completion", "attach-legacy", "create-replacement"} else PlanCommandInput
+        input_type = PlanMoneyInput if command in {"accept-terms", "settle-remainder", "use-credit", "annul-completion", "attach-legacy", "create-replacement", "refuse-service", "terminate", "rebook"} else PlanCommandInput
         serializer = input_type(data=request.data)
         serializer.is_valid(raise_exception=True)
         values = dict(serializer.validated_data)

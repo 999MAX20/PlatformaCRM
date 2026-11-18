@@ -2422,3 +2422,9 @@ real RU/KK/EN desktop/mobile/retry/stale/draft checks PASS. Working DB unchanged
 Implementation c42c4711 normal-pushed to origin/main; remote SHA verified. CI473 in_progress at inspection.
 Arbitrary reopen/rendered-service repricing/bulk reconciliation excluded.
 Scope/checkpoint: docs/testing/evidence/visit-plan-payments-20261118.md.
+
+VISIT-PLAN-PAYMENTS termination/refusal follow-up: implemented and locally verified.
+Owner refusal/termination, frozen remaining prices, preserved debt, separate remainder
+and linked rebooking delivered. Dependent127, PostgreSQL20, build/types/i18n/bundle
+and real RU/KK/EN desktop/mobile/recovery flows PASS. No working migration/deploy.
+Publication pending scoped review. Evidence: docs/testing/evidence/visit-plan-payments-20261118.md#plan-termination-refusal-20261118.

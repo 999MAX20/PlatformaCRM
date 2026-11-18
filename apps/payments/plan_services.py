@@ -55,7 +55,9 @@ def allocate_completed(plan, actor, *, appointment=None):
             origin = receipt_plan(receipt)
             corrected_origin = receipt.appointment_id and hasattr(receipt.appointment, "visit_plan_step") and hasattr(receipt.appointment.visit_plan_step, "completion_correction")
             if origin and origin.pk == plan.pk and receipt.appointment_id and receipt.appointment_id != step.appointment_id and not corrected_origin:
-                continue
+                from apps.scheduling.plan_rebooking import replaces_appointment
+                if not replaces_appointment(step, receipt.appointment_id):
+                    continue
             amount = min(due, available)
             if amount > 0:
                 PlanAllocation.objects.create(receipt=receipt, terms=terms, appointment=step.appointment,

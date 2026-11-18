@@ -5,10 +5,12 @@ export type PlanStep = PlanStepInput & {
   id: number; service_name: string; resource_name: string; appointment: number | null;
   start_at: string | null; status: string; removed_at: string | null;
   completion_corrected: boolean; replacement_step: number | null; replaces_step: number | null;
+  service_refused: boolean; rebooked_from: number | null; rebooked_as: number | null;
 };
 export type VisitPlan = {
   id: number; business: number; client: number; client_name: string; revision: number;
   responsible_user: number; responsible_user_name: string; is_archived: boolean;
+  terminated_at: string | null;
   can_change: boolean; steps: PlanStep[];
   money: PlanMoney | null;
 };
@@ -25,14 +27,15 @@ export type PlanTermsPreview = Pick<PlanTerms, "mode" | "currency" | "total" | "
   balance: Pick<PlanMoney, "received" | "refunded" | "allocated" | "unallocated" | "retained"> };
 export type PlanCreditOption = { source_plan: number; source_revision: number; receipt: number; amount: string; currency: string };
 export type PlanResult = VisitPlan | { read_restricted: true };
-export type PlanCorrectionKind = "annul-completion" | "attach-legacy" | "create-replacement";
-export type PlanCorrectionPreview = { preview_hash: string; currency: string; [key: string]: string | number };
+export type PlanCorrectionKind = "annul-completion" | "attach-legacy" | "create-replacement" | "refuse-service" | "terminate" | "rebook";
+export type PlanClosureStep = { id: number; service_name: string; appointment: number | null; status: string; start_at: string | null };
+export type PlanCorrectionPreview = { preview_hash: string; currency: string; steps?: PlanClosureStep[]; [key: string]: string | number | PlanClosureStep[] | undefined };
 export type PlanLegacyOption = { id: number; amount: string; refunded: string; available: string; currency: string; method: string; occurred_at: string };
 export type PlanHistoryEvent = { id: number; created_at: string; command: string; actor_name: string };
 export const visitPlansApi = {
   legacyOptions: async (business: number, id: number, page: number) =>
     (await apiClient.get<PaginatedResponse<PlanLegacyOption>>(`/api/visit-plans/${id}/legacy-payment-options/`, { params: { business, page } })).data,
-  previewCorrection: async (business: number, id: number, kind: Exclude<PlanCorrectionKind, "create-replacement">, payload: Record<string, unknown>) =>
+  previewCorrection: async (business: number, id: number, kind: Exclude<PlanCorrectionKind, "create-replacement" | "rebook">, payload: Record<string, unknown>) =>
     (await apiClient.post<PlanCorrectionPreview>(`/api/visit-plans/${id}/preview-correction/${kind}/`, payload, { params: { business } })).data,
   termsHistory: async (business: number, id: number, page: number) =>
     (await apiClient.get<PaginatedResponse<PlanTerms & { actor_name: string }>>(`/api/visit-plans/${id}/terms-history/`, { params: { business, page } })).data,

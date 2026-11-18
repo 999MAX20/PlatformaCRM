@@ -338,3 +338,97 @@ exactlyc42c4711e861a44321b4d478f3feedc461c83085. Push workflow is CI, no deploym
 in_progress at inspection (18.11.2026); not claimed green. This publication receipt
 is docs-only; application evidence remains valid for unchanged source. Own test
 backend/frontend and PostgreSQL processes stopped; ordinary working DB untouched.
+
+## PLAN-TERMINATION-REFUSAL-20261118
+
+Mode implementation; code gap. Owner approved five rules in the side conversation:
+time cancellation preserves service/price and replacement history; refusal subtracts
+only its agreed line; no fees or debt writeoff; owner with money rights confirms
+refusal/termination; refund/retention and future credit transfer remain explicit.
+Prior payment/correction closure -> scheduled refusal and termination absent ->
+extend existing locked plan commands, terms ledger and shared dialogs only.
+
+Canonical root C:/Users/user/Desktop/PlatformaCRM, branch codex/ui-testing-toolkit,
+base a3753708bf809921dffa86070410293b71b76ff4. Starting foreign WIP: integrations
+services/tests/signup and frontend WhatsApp fixtures/hook, integrations contract,
+STATUS and PRIMARY-SESSION. Preserve those hunks. Payment/scheduling paths clean.
+No handoff or parallel writer requested. No working database changes/deployment.
+
+Acceptance: owner-only preview+reason+consent; cancel future bookings and pending
+reminders atomically; retain rendered services, frozen line prices, allocations,
+receipts and debt; zero remaining services allowed; refund/retain separately;
+terminated plan cannot reopen/add services or accept excess advance; debt settlement
+remains reachable; archive blocked on debt/unresolved balance. Cancelled time can
+be rebooked with linked history and unchanged agreed price. Replays, stale previews,
+rollback, tenant isolation and concurrency must pass. No new fees, AI tools,
+external messages or cancellation marketing automations from refusal/termination.
+Audit/activity record effects; no financial amounts in broad-access timeline.
+Migration adds lifecycle/rebooking history fields, tested only in disposable DB.
+
+Reuse zani-change-crm-domain, zani-run-verification and zani-review-frontend;
+Anti Slop during: preserve shared tokens/components; responsive dialogs; keyboard,
+focus and retained input; real preview amounts and RU/KK/EN copy. Reference board
+shown before UI changes (generated_images/01a1eede-e68a-7850-bbd7-eb45e72d8b16/
+exec-c1085901-b09a-4afa-81cc-200a294eaa25.png).
+Focused domain/API tests precede UI. Completion: affected payment/scheduling suites,
+PostgreSQL race checks, system/schema/migration checks in isolated runtime;
+build/types/i18n and reachable real browser desktop/mobile/error/retry flows.
+Update CRM/access/frontend/roadmap/capability contracts and this evidence. Commit
+and normal push only task-owned verified outgoing range; inspect CI separately.
+No remaining owner policy decision; full pilot certification outside this phase.
+
+### Local acceptance result
+
+Implemented and locally verified 18.11.2026 on a3753708 + task patch (HEAD advanced
+independently to61a7946f: unrelated voice evidence only, not owned by this task).
+New services plan_termination/plan_rebooking reuse Business/plan locks, immutable
+terms, receipt/allocation ledger, permission checks, idempotency and shared dialogs.
+Scheduling0015 adds termination/refusal/rebooking history. No working DB migration.
+
+Acceptance PASS: agreed line subtraction without repricing; booked slots released;
+completed services/receipts/allocations/debt retained; zero-service closure; owner-only
+preview/reason/consent; stale balance/revision rejected; atomic rollback/replay;
+linked rebooking preserves price and earmarked advance; no reopen after archive
+restore; debt payments capped also per selected visit; retained balance transfers
+to a new plan without a new receipt. Refused earmarked funds cannot conceal debt.
+
+Commands/artifacts (all under ignored output/plan-termination-20261118):
+- Python closure_dependent.py: isolated check, makemigrations --check --dry-run,
+  affected payment/correction/migration/scheduling/analytics/activity suites:127 PASS.
+  Exact labels/commands and exit codes in closure-dependent.json/log.
+- Python acceptance_pg.py: disposable PostgreSQL17, termination functional11,
+  termination races3 and existing money races6:20 PASS, no skips;
+  acceptance-pg.json/log. Completion/refund races and same-key replay covered.
+- frontend npm run build: i18n/types/app/widget PASS (frontend-acceptance-build.log).
+  npm run check:bundle PASS (bundle-acceptance.log); existing RU/KK chunks warn above
+ 500kB; app shell stays within400kB. No dependency or environment change.
+
+Initial dependent run exposed archive checking future charges and the old remove
+flow test. Guard corrected to rendered debt; test now exercises explicit owner
+refusal, preserving original history/replay assertions. Both affected reruns PASS.
+Later earmarked-refusal projection fix reran dependent127 and PostgreSQL18 PASS;
+last two coverage additions produced PostgreSQL20 PASS without further backend edits.
+Synthetic fixture date-price type error repaired in ignored seed only.
+
+Real Chrome extension + canonical Vite/Django, disposable SQLite, synthetic owner:
+RU refusal90k->60k, termination60k->30k, paid45k/applied30k/free15k;
+separate refund15k gives free0/debt0. KK mobile termination preserved10k debt:
+10001 rejected,10000 accepted. EN linked rebooking preserves30k; second-tab change
+rejects stale preview, refresh retains reason and resets consent. Injected lost
+response after commit retries same identity once. Draft guard, required fields,
+keyboard Space/Escape, close/focus return, loading/recovery and final list status
+verified. New linked step opens the existing schedule form with fixed client/service.
+Screenshots captured AND inspected: refusal-preview-ru.png, refusal-mobile-ru.png,
+termination-preview-ru.png, terminated-refunded.png, termination-kk-mobile.png,
+termination-refreshed-en.png, termination-final-en.png. Mobile390x844 no horizontal
+overflow; shared40px buttons retained with spacing, consent/close targets44px.
+Contrast warning4.92:1, subtle6.16:1. Existing tokens/Modal/Button retained; no new
+assets, navigation or themes, so those aesthetic gates N/A. Translation HMR briefly
+invalidated I18nProvider in dev; clean reload recovered the original target and all
+final flows. This is not a deployed-browser certification. Viewport override reset.
+
+CRM/access/frontend, roadmap, acceptance and capability evidence synchronized.
+README unchanged: no installation/configuration or public release claim changes.
+No remaining code, local evidence or owner decision in approved scope. Environment:
+working migration/deployment and target pilot acceptance remain separate. Full
+AC01–14, external bank execution and arbitrary terminal reopen are not certified.

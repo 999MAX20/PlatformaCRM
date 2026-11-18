@@ -14093,3 +14093,12 @@ acceptance. Existing Chrome tab retained; no working DB mutation or deployment.
 ## VISIT-PLAN-PAYMENTS-20261118
 
 Authorized stage2 money scope and approved references implemented and locally verified. Positive package with all-zero bases rejected. Original payment checks retained in evidence. Owner then approved five correction/legacy rules: owner-only annulment, retained reversal, linked replacement, explicit reuse and whole unused legacy attachment implemented; references preceded UI edits. Follow-up PostgreSQL19, dependent126 and final pricing/correction31 PASS; final build/types/i18n and real RU/KK/EN desktop/mobile/retry/stale/draft flow PASS. No working DB migration/deployment; full AC01–14 not closed. Implementation c42c4711 normal-pushed to origin/main with remote SHA read-back; CI473 in_progress at inspection. Foreign integration changes preserved. Detailed contract, snapshots, checks and publication receipt: [evidence](../evidence/visit-plan-payments-20261118.md).
+
+### PLAN-TERMINATION-REFUSAL-20261118
+
+Side-conversation approved refusal/termination scope implemented and locally verified:
+owner preview/reason/consent, unchanged other prices, cancelled future time, retained
+rendered debt, separate refund/retain and linked rebooking. Dependent127/PostgreSQL20,
+build/types/i18n/bundle and real RU/KK/EN responsive recovery flows PASS. No working
+DB migration/deploy; full pilot acceptance separate. Publication pending task-only
+review. [Evidence](../evidence/visit-plan-payments-20261118.md#plan-termination-refusal-20261118).

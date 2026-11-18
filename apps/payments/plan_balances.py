@@ -85,6 +85,20 @@ def current_terms(plan):
     return plan.payment_terms.order_by("-revision", "-pk").first()
 
 
+def refused_advance(plan, additional_steps=()):
+    unavailable = ZERO
+    for receipt in plan_sources(plan).filter(appointment__isnull=False):
+        origin = receipt_plan(receipt)
+        if not origin or origin.pk != plan.pk:
+            continue
+        step = getattr(receipt.appointment, "visit_plan_step", None)
+        while step and getattr(step, "rebooked_as", None):
+            step = step.rebooked_as
+        if step and (step.refusal_reason or step.pk in additional_steps):
+            unavailable += source_balance(plan, receipt) - retained_balance(plan, receipt)
+    return unavailable
+
+
 def plan_money_projection(plan, actor):
     try:
         assert_plan_money(plan, actor)
@@ -116,7 +130,7 @@ def plan_money_projection(plan, actor):
         "terms_current": bool(terms and terms.composition == composition(plan)),
         "received": str(received), "attached": str(attached), "incoming_credit": str(incoming), "outgoing_credit": str(outgoing),
         "refunded": str(refunded), "allocated": str(allocated), "unallocated": str(unallocated),
-        "retained": str(retained), "remaining": str(max(ZERO, (terms.total if terms else ZERO) - allocated - unallocated + retained)),
+        "retained": str(retained), "remaining": str(max(ZERO, (terms.total if terms else ZERO) - allocated - (ZERO if plan.terminated_at else unallocated - retained - refused_advance(plan)))),
         "sources": [{"id": r.pk, "amount": str(r.amount), "available": str(source_balance(plan, r)),
             "retained": str(retained_balance(plan, r)), "method": r.method, "occurred_at": r.occurred_at} for r in sources],
         "allocations": [{"id": a.pk, "appointment": a.appointment_id, "amount": str(a.amount),

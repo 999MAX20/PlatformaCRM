@@ -9,7 +9,7 @@ import { PlanCorrectionDialog } from "./PlanCorrectionDialog";
 
 export function PlanPayments({ plan, currency }: { plan: VisitPlan; currency: string }) {
   const { t, language } = useI18n();
-  const [dialog, setDialog] = useState<"payment" | "terms" | "remainder" | "credit" | "attach-legacy" | null>(null);
+  const [dialog, setDialog] = useState<"payment" | "terms" | "remainder" | "credit" | "attach-legacy" | "terminate" | null>(null);
   const funds = plan.money;
   if (!funds) return null;
   const terms = funds.terms;
@@ -24,9 +24,9 @@ export function PlanPayments({ plan, currency }: { plan: VisitPlan; currency: st
       <div><h3 className="font-semibold">{terms ? t(terms.mode === "package" ? "planMoney.package" : "planMoney.perVisit") : t("planMoney.notAgreed")}</h3>
         {terms && !funds.terms_current && <p role="status" className="mt-1 text-sm text-platforma-warning">{t("planMoney.reviewComposition")}</p>}</div>
       <div className="flex flex-wrap gap-2">
-        {funds.can_correct && !plan.is_archived && <Button variant="secondary" onClick={() => setDialog("attach-legacy")}>{t("planCorrection.attach-legacy")}</Button>}
-        {funds.can_receive && !plan.is_archived && <Button variant="secondary" onClick={() => setDialog("terms")}>{t(terms ? "planMoney.changeTerms" : "planMoney.acceptTerms")}</Button>}
-        {funds.can_receive && funds.terms_current && !plan.is_archived && <Button onClick={() => setDialog("payment")}>{t("payments.add")}</Button>}
+        {funds.can_correct && !plan.is_archived && !plan.terminated_at && <><Button variant="secondary" onClick={() => setDialog("attach-legacy")}>{t("planCorrection.attach-legacy")}</Button><Button variant="secondary" onClick={() => setDialog("terminate")}>{t("planCorrection.terminate")}</Button></>}
+        {funds.can_receive && !plan.is_archived && !plan.terminated_at && <Button variant="secondary" onClick={() => setDialog("terms")}>{t(terms ? "planMoney.changeTerms" : "planMoney.acceptTerms")}</Button>}
+        {funds.can_receive && funds.terms_current && !plan.is_archived && (!plan.terminated_at || Number(funds.remaining) > 0) && <Button onClick={() => setDialog("payment")}>{t(plan.terminated_at ? "planClosure.settleDebt" : "payments.add")}</Button>}
       </div>
     </div>
     {terms && <dl className="grid grid-cols-1 gap-4 min-[400px]:grid-cols-2 md:grid-cols-3 xl:grid-cols-5">{metrics.map(([label, value]) => <div key={label} className="min-w-0"><dt className="text-sm text-platforma-subtle">{t(label!)}</dt><dd className="mt-1 break-words text-lg font-semibold tabular-nums">{formatted(value || "0")}</dd></div>)}</dl>}
@@ -36,7 +36,7 @@ export function PlanPayments({ plan, currency }: { plan: VisitPlan; currency: st
     </dl>}
     {(funds.can_manage && Number(funds.unallocated) > 0 || funds.can_receive && funds.terms_current) && !plan.is_archived && <div className="flex flex-wrap gap-2">
       {funds.can_manage && Number(funds.unallocated) > 0 && <Button variant="secondary" onClick={() => setDialog("remainder")}>{t("planMoney.remainder")}</Button>}
-      {funds.can_receive && funds.terms_current && <Button variant="secondary" onClick={() => setDialog("credit")}>{t("planMoney.useCredit")}</Button>}
+      {funds.can_receive && funds.terms_current && !plan.terminated_at && <Button variant="secondary" onClick={() => setDialog("credit")}>{t("planMoney.useCredit")}</Button>}
     </div>}
     {funds.sources.length > 0 && <details className="border-t border-platforma-border pt-3"><summary className="platforma-focus-ring cursor-pointer rounded py-2 font-semibold">{t("planMoney.sources")}</summary><ul className="divide-y divide-platforma-border">
       {funds.sources.map(source => <li key={source.id} className="flex flex-wrap justify-between gap-2 py-3 text-sm"><span>#{source.id} · {new Date(source.occurred_at).toLocaleDateString(language)} · {t(`payments.method.${source.method}`)}</span><span>{formatted(source.amount)} · {t("planMoney.available")}: {formatted(source.available)}</span></li>)}
@@ -44,8 +44,8 @@ export function PlanPayments({ plan, currency }: { plan: VisitPlan; currency: st
     {dialog === "payment" && <PaymentForm businessId={plan.business} currency={unit} initialClient={{ id: plan.client, label: plan.client_name }} plan={{ id: plan.id, revision: plan.revision, total: terms!.total, remaining: funds.remaining,
       appointments: plan.steps.filter(step => step.appointment && !step.removed_at).map(step => ({ id: step.appointment!, label: `${step.service_name} · #${step.appointment}` })) }} canLinkDeal={false} canLinkAppointment onClose={() => setDialog(null)} onSaved={() => setDialog(null)} />}
     {terms && <PlanTermsHistory business={plan.business} plan={plan.id} />}
-    {dialog === "attach-legacy" && <PlanCorrectionDialog plan={plan} kind={dialog} onClose={() => setDialog(null)} />}
-    {dialog && dialog !== "payment" && dialog !== "attach-legacy" && <PlanMoneyDialog plan={plan} kind={dialog} onClose={() => setDialog(null)} />}
+    {(dialog === "attach-legacy" || dialog === "terminate") && <PlanCorrectionDialog plan={plan} kind={dialog} onClose={() => setDialog(null)} />}
+    {dialog && dialog !== "payment" && dialog !== "attach-legacy" && dialog !== "terminate" && <PlanMoneyDialog plan={plan} kind={dialog} onClose={() => setDialog(null)} />}
   </section>;
 }
 

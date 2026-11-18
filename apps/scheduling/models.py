@@ -162,6 +162,9 @@ class VisitPlan(TimeStampedModel):
     archived_at = models.DateTimeField(null=True, blank=True)
     archived_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="archived_visit_plans")
     archive_reason = models.TextField(blank=True)
+    terminated_at = models.DateTimeField(null=True, blank=True)
+    terminated_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name="terminated_visit_plans")
+    termination_reason = models.TextField(blank=True)
 
     class Meta:
         ordering = ["-created_at", "-id"]
@@ -177,6 +180,8 @@ class VisitPlanStep(TimeStampedModel):
     responsible_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, null=True, blank=True, related_name="visit_plan_step_overrides")
     appointment = models.OneToOneField(Appointment, on_delete=models.PROTECT, null=True, blank=True, related_name="visit_plan_step")
     removed_at = models.DateTimeField(null=True, blank=True)
+    refusal_reason = models.TextField(blank=True)
+    rebooked_from = models.OneToOneField("self", on_delete=models.PROTECT, null=True, blank=True, related_name="rebooked_as")
 
     class Meta:
         ordering = ["position", "id"]

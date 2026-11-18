@@ -98,7 +98,7 @@ def change_plan(*, plan, actor, command, expected_revision, idempotency_key, dat
     business = Business.objects.select_for_update().get(pk=plan.business_id)
     plan = VisitPlan.objects.select_for_update(of=("self",)).select_related("business", "client").get(pk=plan.pk, business=business)
     assert_plan_change(plan, actor)
-    if command in {"annul-completion", "attach-legacy", "create-replacement"}:
+    if command in {"annul-completion", "attach-legacy", "create-replacement", "refuse-service", "terminate"}:
         from apps.payments.plan_corrections import assert_owner_money
         assert_owner_money(plan, actor)
     if command in {"accept-terms", "settle-remainder", "use-credit"}:
@@ -112,9 +112,17 @@ def change_plan(*, plan, actor, command, expected_revision, idempotency_key, dat
             raise InvalidTransition("The plan changed. Refresh before submitting again.")
         if plan.is_archived and command != "restore":
             raise InvalidTransition("The plan is archived.")
+        if plan.terminated_at and command not in {"archive", "restore", "settle-remainder", "annul-completion"}:
+            raise InvalidTransition("The plan is terminated. Create a new plan for further services.")
         before = list(plan.steps.values("id", "service_id", "resource_id", "branch_id", "responsible_user_id", "removed_at", "appointment_id"))
         if command == "schedule":
             _schedule(plan, actor, data)
+        elif command in {"refuse-service", "terminate"}:
+            from apps.payments.plan_termination import close_services
+            close_services(plan, actor, command, data)
+        elif command == "rebook":
+            from apps.scheduling.plan_rebooking import rebook_step
+            rebook_step(plan, actor, data)
         elif command in {"annul-completion", "attach-legacy", "create-replacement"}:
             from apps.payments.plan_corrections import annul_completion, attach_legacy, create_replacement
             {"annul-completion": annul_completion, "attach-legacy": attach_legacy,
@@ -134,6 +142,14 @@ def change_plan(*, plan, actor, command, expected_revision, idempotency_key, dat
             if command == "archive" and (plan.payment_terms.exists() or plan.legacy_attachments.exists()):
                 from apps.payments.plan_balances import plan_sources, source_balance, retained_balance, assert_plan_money
                 assert_plan_money(plan, actor)
+                from apps.payments.plan_balances import current_terms, net_allocated, ZERO
+                from apps.payments.models import PlanAllocation
+                from decimal import Decimal
+                terms = current_terms(plan)
+                completed_ids = set(plan.steps.filter(removed_at__isnull=True, appointment__status="completed").values_list("pk", flat=True))
+                rendered = sum((Decimal(line["amount"]) for line in terms.lines if line["step"] in completed_ids), ZERO) if terms else ZERO
+                if rendered > net_allocated(PlanAllocation.objects.filter(terms__plan=plan)):
+                    raise UnfinishedWork("Settle the outstanding plan debt before archiving.")
                 if any(source_balance(plan, receipt) > retained_balance(plan, receipt) for receipt in plan_sources(plan)):
                     raise UnfinishedWork("Record the client's choice for the remaining advance before archiving.")
             plan.is_archived = command == "archive"
@@ -177,6 +193,8 @@ def _revise(plan, actor, data):
     if data.get("consent") is not True or not str(data.get("reason", "")).strip():
         raise ValidationError({"consent": "Confirm the changed composition and provide a reason."})
     changes, additions, removals = data.get("changes", []), data.get("add", []), data.get("remove", [])
+    if removals:
+        raise InvalidTransition("Use the owner-confirmed service refusal with a price preview.")
     ids = [item.get("id") for item in changes] + removals
     if len(ids) != len(set(ids)):
         raise ValidationError({"steps": "Each step may be changed only once."})

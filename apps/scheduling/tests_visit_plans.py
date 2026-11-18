@@ -79,11 +79,17 @@ class VisitPlanTests(TestCase):
         step = plan.steps.get()
         with self.assertRaises(ValidationError):
             self.change(plan, data={"remove": [step.pk]})
-        plan, _ = self.change(plan, data={"consent": True, "reason": "Changed", "remove": [step.pk], "add": [{"service": self.service}]})
+        with self.assertRaises(InvalidTransition):
+            self.change(plan, data={"consent": True, "reason": "Changed", "remove": [step.pk]})
+        from apps.payments.plan_termination import preview_termination
+        data = {"consent": True, "reason": "Changed", "step_id": step.pk}
+        data["preview_hash"] = preview_termination(plan, self.owner, "refuse-service", data)["preview_hash"]
+        plan, _ = self.change(plan, "refuse-service", data)
+        plan, _ = self.change(plan, data={"consent": True, "reason": "Added", "add": [{"service": self.service}]})
         step.refresh_from_db()
         self.assertIsNotNone(step.removed_at)
         self.assertEqual(plan.steps.count(), 2)
-        self.assertEqual(plan.revision, 2)
+        self.assertEqual(plan.revision, 3)
         with self.assertRaises(IdempotencyConflict):
             self.change(plan, data={"consent": True, "reason": "Different"})
 

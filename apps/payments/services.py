@@ -102,13 +102,26 @@ def record_payment(*, actor, data, touch_plan=True):
             if plan.revision != data.get("expected_revision"):
                 raise InvalidTransition("The plan changed. Review its current terms.")
             terms = require_current_terms(plan)
+            if plan.terminated_at:
+                from .plan_balances import plan_money_projection
+                if amount > Decimal(plan_money_projection(plan, actor)["remaining"]):
+                    raise ValidationError({"amount": "A terminated plan accepts only its outstanding debt."})
             currency = terms.currency
             if data.get("currency") != currency or deal:
                 raise ValidationError({"plan": "Plan currency must match; a deal cannot also be linked."})
             if appointment and not plan.steps.filter(appointment=appointment, removed_at__isnull=True).exists():
                 raise ValidationError({"appointment": "Select a visit of this plan."})
-        elif appointment and hasattr(appointment, "visit_plan_step") and appointment.visit_plan_step.plan.payment_terms.exists():
-            raise ValidationError({"plan": "Record this visit payment through its plan."})
+            if plan.terminated_at and appointment:
+                from .models import PlanAllocation
+                from .plan_balances import net_allocated
+                step = plan.steps.get(appointment=appointment, removed_at__isnull=True)
+                price = Decimal(next(line["amount"] for line in terms.lines if line["step"] == step.pk))
+                if amount > price - net_allocated(PlanAllocation.objects.filter(appointment=appointment)):
+                    raise ValidationError({"amount": "Payment exceeds this rendered visit's outstanding debt."})
+        elif appointment and hasattr(appointment, "visit_plan_step"):
+            linked_step = appointment.visit_plan_step
+            if linked_step.removed_at or linked_step.plan.terminated_at or linked_step.plan.payment_terms.exists():
+                raise ValidationError({"plan": "Record this visit payment through its active plan service."})
 
     payment = Payment(
         business=business, client=client, deal=deal, appointment=appointment, plan=plan,

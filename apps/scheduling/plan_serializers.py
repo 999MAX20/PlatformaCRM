@@ -76,6 +76,7 @@ def plan_projection(plan, actor):
             "responsible_user": plan.responsible_user_id,
             "responsible_user_name": plan.responsible_user.full_name,
             "is_archived": plan.is_archived, "can_change": can_change,
+            "terminated_at": plan.terminated_at,
             "money": plan_money_projection(plan, actor),
             "created_at": plan.created_at, "steps": [step_projection(step) for step in steps]}
 
@@ -93,6 +94,9 @@ def step_projection(step):
             "appointment": step.appointment_id, "start_at": appointment.start_at if appointment else None,
             "status": appointment.status if appointment else "unscheduled",
             "removed_at": step.removed_at,
+            "service_refused": bool(step.refusal_reason),
+            "rebooked_from": step.rebooked_from_id,
+            "rebooked_as": getattr(getattr(step, "rebooked_as", None), "pk", None),
             "completion_corrected": bool(correction),
             "replacement_step": correction.replacement_id if correction else None,
             "replaces_step": replaces.step_id if replaces else None}

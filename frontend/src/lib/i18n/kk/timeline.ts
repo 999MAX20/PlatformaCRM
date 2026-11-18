@@ -31,6 +31,7 @@ export const timeline: Record<string, string> = {
   "timeline.eventType.appointment_cancelled": "Қабылдау тоқтатылды",
   "timeline.eventType.appointment_completed": "Қабылдау аяқталды",
   "timeline.eventType.appointment_completion_corrected": "Қате аяқталу жойылды",
+  "timeline.eventType.appointment_service_refused": "Клиент қызметтен бас тартты",
   "timeline.eventType.appointment_no_show": "Клиент келмеді",
   "timeline.eventType.appointment_rescheduled": "Қабылдау уақыты ауыстырылды",
   "timeline.eventType.task_created": "Тапсырма құрылды",

@@ -31,6 +31,7 @@ export const timeline: Record<string, string> = {
   "timeline.eventType.appointment_cancelled": "Запись отменена",
   "timeline.eventType.appointment_completed": "Запись завершена",
   "timeline.eventType.appointment_completion_corrected": "Ошибочное завершение аннулировано",
+  "timeline.eventType.appointment_service_refused": "Клиент отказался от услуги",
   "timeline.eventType.appointment_no_show": "Клиент не пришёл",
   "timeline.eventType.appointment_rescheduled": "Запись перенесена",
   "timeline.eventType.task_created": "Создана задача",
