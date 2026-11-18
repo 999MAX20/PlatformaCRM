@@ -1,5 +1,50 @@
 # VOICE-SCRIBE-V3-20261117: прямое подключение и synthetic-проверка
 
+## Short corrections 20261118
+
+Owner approved the first two additional improvements: focused clarification and
+short corrections. Scope: unconfirmed booking/visit-plan drafts in the existing
+voice panel, starting from46443e18 in the canonical checkout. Other integration
+WIP is excluded. This does not add a new client/task correction workflow.
+
+The latest open draft is bound to the next turn on the server and read only through
+permission-filtered memory. A bounded patch changes client fields or explicitly
+indexed visits; omitted fields and visit ordering are retained. Changed time needs
+evidence in the latest utterance. Corrected client name/phone invalidates an old
+client ID unless a newly supplied ID passes the existing selectable/access checks.
+An unnamed replacement specialist asks for a choice even with one catalog option.
+Continuation asks one missing field at a time. The old proposal is superseded;
+the corrected proposal rechecks scheduling conditions and requires fresh review.
+Cancelled/completed/reset/inaccessible drafts cannot supply patch context.
+
+Verification (mocked providers, fictional data, disposable SQLite):
+
+- 9 focused tests PASS,6.342s: RU time, KK name/date, selected visit in a plan,
+  specialist clarification, retained fields, replay, stale approval denial,
+  completed/cancelled/reset/access-changed context and foreign client denial.
+- 194 affected/dependent tests:190PASS/4SQLite row-lock skips,141.739s; voice,
+  speech, provider, conversation execution/memory/state/review/API. Django system
+  check and migration drift PASS. No working database migrations.
+- Chromium reachable flow PASS,18.6s: two successive short RU/KK corrections,
+  updated name/time with service/specialist retained, no appointment until review,
+  keyboard confirmation and exactly one appointment.390px screenshot captured
+  and inspected: labels, wrapping, controls and focus usable, no horizontal overflow.
+  Existing panel/layout/copy are unchanged; previous locale/recovery checks remain
+  scoped evidence, not new runs. Initial browser failure was the fixture matching
+  a prompt example instead of user messages; fixed the fake provider and used a
+  distinct fictional name to avoid an unrelated existing-client match.
+- Frontend `npm run build` (types/i18n/app/widget) and `npm run check:bundle` PASS.
+  Existing dictionary chunk-size warnings remain; app-shell budget passes.
+
+Commands: `.venv/Scripts/python.exe output/voice-scribe-v3-20261117/corrections_checks.py`
+and `corrections_browser.py`, with repository PYTHONPATH and UTF-8. The first uses
+`scripts.codex_verify.isolated_runtime`; the second starts canonical Vite/Django on
+dedicated ports with a fake provider. Logs: `corrections-final-{0,1,2}.log`,
+`corrections-narrow.log`, browser run1795017069987136100 under the local checkpoint.
+No live STT/LLM requests or credit spend. Production audio activation/privacy flags
+remain unchanged/off. Live language interpretation and human KK speech remain open;
+these checks prove draft/approval handling, not new ASR accuracy or full D01 readiness.
+
 ## Improvements 20261118
 
 Owner annotation authorizes the four follow-up improvements. Implementation is

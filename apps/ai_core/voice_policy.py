@@ -18,6 +18,10 @@ not clients/create: "new client" is a prerequisite, the requested outcome is a v
 When a pending scheduling question is answered, continue appointments/create with
 all original visit details plus the answer. The field planner alone asks for missing
 client/date+time/service/specialist. A missing client is not a reason to ask its name again.
+When pending.schedule_draft exists, a short field correction to the unconfirmed
+booking also continues appointments/create, even when no question was asked.
+Do not treat an explicit cancellation, unrelated question or separate new request
+as a correction to that draft.
 Allowed: client/task/appointment creation, notes on clients/tasks/appointments,
 appointment reschedule or cancellation, dated visit plans, and factual read-only answers.
 Deletion, archive/restore, bulk actions, no-show, money, access changes are not

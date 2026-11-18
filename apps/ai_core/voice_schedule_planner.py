@@ -11,6 +11,7 @@ from apps.ai_core.agent_runtime import bind_command
 from apps.ai_core.crm_tools import scoped_entities
 from apps.ai_core.services import run_ai_request
 from apps.ai_core.voice_schedule_commands import MAX_VISITS, validate_schedule
+from apps.ai_core.voice_schedule_patch import PATCH_CONTRACT, apply_schedule_patch, pending_schedule
 from apps.clients.identity import normalize_phone
 from apps.core.domain_errors import ScheduleConflict
 from apps.scheduling.availability import business_zone
@@ -129,7 +130,7 @@ def extract_schedule(turn, memory, language):
     if current and current.get("entity") == "clients":
         selectable.append(current["id"])
     pending = memory.get("pending", {})
-    draft = pending.get("schedule_draft", {}) if pending.get("state") in {"clarifying", "superseded"} else {}
+    draft = pending_schedule(turn, memory)
     earlier = [item["text"] for item in memory.get("messages", [])
                if item["state"] in {"clarifying", "superseded"}] if draft else []
     source = "\n".join([*earlier, turn.message])
@@ -140,7 +141,7 @@ def extract_schedule(turn, memory, language):
         selected_branch = voice_branch(turn.conversation, turn.conversation.owner, turn.context_json["current_branch"])
     services, resources, branches = schedule_catalog(business, turn.conversation.owner)
     result, log = run_ai_request(business=business, user=turn.conversation.owner, prompt_type="crm_action_plan",
-        user_input=source, response_language=language, response_contract=CONTRACT,
+        user_input=source, response_language=language, response_contract=CONTRACT + (PATCH_CONTRACT if draft else ""),
         input_json={"scheduling": {"local_now": timezone.localtime(timezone.now(), business_zone(business)).isoformat(),
             "timezone": business.timezone, "draft": draft, "selectable_clients": selectable,
             "catalog": {"services": [row.name for row in services[:100]], "specialists": [row.name for row in resources[:100]],
@@ -153,6 +154,9 @@ def extract_schedule(turn, memory, language):
         raw = result.output_text.strip()
         fence = re.fullmatch(r"```(?:json)?\s*\n(.*?)\n```", raw, re.DOTALL)
         value = json.loads(fence.group(1) if fence else raw)
+        patched = isinstance(value, dict) and "patch" in value
+        if patched:
+            value = apply_schedule_patch(draft, value, turn.message)
         if not isinstance(value, dict) or set(value) != {"client_name", "client_phone", "client_id", "plan", "visits"}:
             raise ValueError
         if any(not isinstance(value[field], str) or len(value[field]) > 200 for field in ("client_name", "client_phone")):
@@ -163,8 +167,9 @@ def extract_schedule(turn, memory, language):
             raise ValueError
         if not value["plan"] and len(value["visits"]) != 1:
             raise ValueError
-        value["plan"] = len(value["visits"]) > 1 or (value["plan"] and bool(re.search(r"\b(?:план\w*|plan|жоспар\w*)\b", source, re.I)))
-        for visit in value["visits"]:
+        if not patched:
+            value["plan"] = len(value["visits"]) > 1 or (value["plan"] and bool(re.search(r"\b(?:план\w*|plan|жоспар\w*)\b", source, re.I)))
+        for index, visit in enumerate(value["visits"]):
             if not isinstance(visit, dict) or set(visit) != {"date", "time", "time_text", "time_basis", "service", "specialist", "branch", "any_resource"}:
                 raise ValueError
             if type(visit["any_resource"]) is not bool or any(not isinstance(visit[f], str) or len(visit[f]) > 200 for f in ("date", "time", "time_text", "time_basis", "service", "specialist", "branch")):
@@ -172,7 +177,8 @@ def extract_schedule(turn, memory, language):
             if visit["time_basis"] not in {"business", "utc"}:
                 raise ValueError
             evidence = " ".join(visit["time_text"].split()).casefold()
-            if not evidence or evidence not in " ".join(source.split()).casefold():
+            retained_time = patched and all(visit[field] == draft["visits"][index][field] for field in ("time", "time_text", "time_basis"))
+            if not retained_time and (not evidence or evidence not in " ".join(source.split()).casefold()):
                 visit["time"] = ""
             if selected_branch and not visit["branch"].strip():
                 visit["branch"] = selected_branch.name
@@ -211,7 +217,7 @@ def schedule_catalog(business, user):
     return services, resources, branches
 
 
-def resolve_schedule(*, business, user, draft, language):
+def resolve_schedule(*, business, user, draft, language, focused=False):
     from apps.branches.access import accessible_branches
     from apps.branches.models import Branch
     from apps.branches.schedule import appointment_snapshot, booking_terms
@@ -287,7 +293,8 @@ def resolve_schedule(*, business, user, draft, language):
         valid = True
         if len(service_rows) != 1:
             ask("service", service_rows); valid = False
-        if len(resource_rows) != 1 and not (raw["any_resource"] and resource_rows):
+        if ((focused and not raw["specialist"].strip() and not raw["any_resource"])
+                or (len(resource_rows) != 1 and not (raw["any_resource"] and resource_rows))):
             ask("resource", resource_rows); valid = False
         if raw["branch"].strip() and not branch_rows:
             questions.append(copy["branch_unavailable"].format(visit=index)); valid = False
@@ -341,8 +348,10 @@ def resolve_schedule(*, business, user, draft, language):
         else:
             visits.append(selected)
     if questions or missing:
+        if focused:
+            missing = missing[:1]
         parts = ([copy["missing"].format(fields=", ".join(missing))] if missing else []) + list(dict.fromkeys(questions))
-        return None, "\n".join(parts), references
+        return None, "\n".join(parts[:1] if focused else parts), references
     return {"entity": "appointments", "values": {"client": client_value, "plan": draft["plan"], "visits": visits}}, "", references
 
 
@@ -350,7 +359,7 @@ def prepare_schedule(turn, plan, memory, language):
     from apps.ai_core.crm_tools import prepare_command
     draft, request_id = extract_schedule(turn, memory, language)
     payload, question, references = resolve_schedule(business=turn.conversation.business,
-        user=turn.conversation.owner, draft=draft, language=language)
+        user=turn.conversation.owner, draft=draft, language=language, focused=bool(pending_schedule(turn, memory)))
     prepared = []
     if payload:
         payload = prepare_command(business=turn.conversation.business, user=turn.conversation.owner,

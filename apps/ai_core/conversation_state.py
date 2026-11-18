@@ -125,6 +125,12 @@ def start_turn(*, conversation_id, user, message, idempotency_key, mode="work", 
         recover_interrupted(thread)
         if thread.turns.filter(status__in=RUNNING).exists():
             raise IdempotencyConflict("Wait for the current request or cancel it.")
+        if thread.kind == AgentConversation.Kinds.VOICE:
+            context = {key: value for key, value in context.items() if key != "schedule_parent"}
+            previous = thread.turns.order_by("-sequence").first()
+            if (previous and previous.status in OPEN and previous.context_json.get("schedule_draft")
+                    and previous.memory_epoch == thread.memory_epoch):
+                context["schedule_parent"] = previous.pk
         for previous in thread.turns.filter(status__in=OPEN):
             stop_turn(previous, user, status=AgentTurn.Statuses.SUPERSEDED)
         thread.revision += 1

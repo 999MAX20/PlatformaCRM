@@ -11,7 +11,10 @@ Paired KK WER1.36% explicit KK/RU vs6.53% auto; mixed names/phone/negation failu
 Account usage delta833 within new2000 cap; exact attribution caveat in evidence.
 Approved fixes implemented: KK fallback/phone guards, reviewed scheduling changes,
 locale language defaults and authorized opt-in card-name hints. Isolated backend,
-10 browser scenarios and build/types PASS; live human KK/planner acceptance remains open.
+10 browser scenarios and build/types PASS. Follow-up short booking/visit-plan
+corrections retain other fields and require new review; one-field clarification.
+194 backend tests (190PASS/4SQLite skips), check/drift and new browser flow PASS.
+Live human KK/planner acceptance remains open.
 Evidence: docs/testing/evidence/voice-scribe-v3-20261117.md.
 Checkpoint: output/voice-scribe-v3-20261117/CHECKPOINT.md.
 

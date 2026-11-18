@@ -5,7 +5,9 @@ Customer activation stays off; human speech and full planner/CRM acceptance rema
 
 VOICE-SCRIBE-V3-20261117: approved follow-up implemented: KK negation fallback,
 reviewed booking/reschedule/cancel, locale language default and scoped opt-in name hints.
-New isolated checks cover changed source; live accuracy failures remain open.
+Short booking/visit-plan corrections now preserve unchanged draft fields, ask one
+follow-up field at a time and require fresh review. No new client/task correction
+workflow is claimed. Local mocked checks do not close live accuracy failures.
 Key local/STT-only/capped; activation and Enterprise ZRM/no-training remain open.
 Prior accuracy FAIL and D01 are not closed.
 [Проверки и границы](../testing/evidence/voice-scribe-v3-20261117.md).

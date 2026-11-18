@@ -80,7 +80,8 @@ def staff_memory(*, thread, user, query, before_sequence=None):
             pending = {"turn_id": latest.pk, "state": latest.status, "question": latest.context_json.get("question", ""),
                        "plan": latest.plan_json}
             if (latest.status in {AgentTurn.Statuses.CLARIFYING, AgentTurn.Statuses.SUPERSEDED}
-                    and latest.context_json.get("question") and latest.context_json.get("schedule_draft")):
+                    and (thread.kind == AgentConversation.Kinds.VOICE or latest.context_json.get("question"))
+                    and latest.context_json.get("schedule_draft")):
                 pending["schedule_draft"] = latest.context_json["schedule_draft"]
     _store_summary(thread, summaries, fingerprint)
     return {"messages": [entry(turn, 1200) for turn in selected], "summary": summaries,

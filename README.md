@@ -5,6 +5,8 @@ Customer activation stays off; human speech and full planner/CRM acceptance rema
 Approved follow-up adds reviewed scheduling changes, KK negation handling,
 locale language defaults and opt-in authorized card-name hints. Customer audio
 activation remains off; these local fixes do not certify live speech accuracy.
+Short corrections to unconfirmed bookings/visit plans retain other draft details
+and require a fresh review; continuation asks one missing field at a time.
 
 Management UI (12.11.2026): five real-data pages replace the previous Business entry.
 The five Management migrations are applied to the owner-authorized local PostgreSQL
