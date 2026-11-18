@@ -2445,3 +2445,11 @@ Owner refusal/termination, frozen remaining prices, preserved debt, separate rem
 and linked rebooking delivered. Dependent127, PostgreSQL20, build/types/i18n/bundle
 and real RU/KK/EN desktop/mobile/recovery flows PASS. No working migration/deploy.
 Implementation bb051dbd pushed to origin/main; remote SHA verified; CI in_progress. Evidence: docs/testing/evidence/visit-plan-payments-20261118.md#plan-termination-refusal-20261118.
+
+## CLIENTS-EMPTY-20261118
+Implemented centered Clients empty CTA on page canvas, outside table frame;
+header create hidden only for confirmed unfiltered empty list, shortcut retained.
+Filtered empty keeps reset and header creation. Build/types/i18n and bundle PASS;
+Chrome desktop/mobile empty CTA, Enter/open, Escape/focus and real list recovery
+verified. Empty API response was temporarily substituted in test tab, then cleared;
+no client data changed. Details: PRIMARY-SESSION same ID. Publication pending.

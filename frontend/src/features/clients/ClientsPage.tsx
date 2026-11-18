@@ -88,6 +88,7 @@ export function ClientsPage() {
   useClientsPageHeader({
     t,
     onCreateClient: canCreate ? openCreateClient : undefined,
+    hideCreateAction: !hasClientFilters && filteredClients.isSuccess && !filteredClients.isPlaceholderData && rows.length === 0,
     onCloseClientCard: closeClientCard,
     onPayments: hasPermission(user, business?.id, "payments") ? openPayments : undefined,
   });
@@ -275,7 +276,7 @@ export function ClientsPage() {
 
   return (
     <>
-      <div className="space-y-4 pt-2" data-testid="clients-workspace-ready" aria-busy={filteredClients.isFetching}>
+      <div className="flex min-h-[calc(100dvh-var(--app-header-height)-8.5rem)] flex-col gap-4 pt-2 sm:min-h-[calc(100dvh-var(--app-header-height)-9rem)] lg:min-h-[calc(100dvh-var(--app-header-height)-2rem)]" data-testid="clients-workspace-ready" aria-busy={filteredClients.isFetching}>
         {hasPermission(user, business.id, "payments") && <div className="flex justify-end lg:hidden">
           <Button variant="secondary" onClick={openPayments} data-focus-return-id="clients-payments">{t("payments.title")}</Button>
         </div>}

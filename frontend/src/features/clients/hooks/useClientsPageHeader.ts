@@ -9,11 +9,13 @@ export function useClientsPageHeader({
   onCreateClient,
   onCloseClientCard,
   onPayments,
+  hideCreateAction = false,
 }: {
   t: Translate;
   onCreateClient?: () => void;
   onCloseClientCard: () => void;
   onPayments?: () => void;
+  hideCreateAction?: boolean;
 }) {
   const { setPageHeader } = usePageHeader();
 
@@ -22,14 +24,14 @@ export function useClientsPageHeader({
       title: t("clients.title"),
       secondaryActions: onPayments ? [{ label: t("payments.title"), title: t("payments.title"), onClick: onPayments, presentation: "label", focusReturnId: "clients-payments" }] : [],
 
-      primaryAction: onCreateClient ? {
+      primaryAction: onCreateClient && !hideCreateAction ? {
         label: t("clients.create"),
         icon: Plus,
         onClick: onCreateClient,
       } : undefined,
     });
     return () => setPageHeader(null);
-  }, [onCreateClient, onPayments, setPageHeader, t]);
+  }, [hideCreateAction, onCreateClient, onPayments, setPageHeader, t]);
 
   useEffect(() => {
     function handleHotkeys(event: KeyboardEvent) {

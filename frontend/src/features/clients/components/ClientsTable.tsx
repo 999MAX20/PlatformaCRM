@@ -18,6 +18,13 @@ export function ClientsTable({ rows, ordering, onOrderingChange, onOpenClient, h
   customColumns: ReturnType<typeof useCustomColumns>["columns"];
   t: Translate;
 }) {
+  if (!rows.length) return <section className="flex flex-1 items-center justify-center py-8 text-center" data-testid="clients-empty" aria-labelledby="clients-empty-title">
+    <div className="w-full max-w-lg space-y-4">
+      <h2 id="clients-empty-title" className="text-xl font-semibold text-platforma-text sm:text-2xl">{t(hasFilters ? "clients.notFoundTitle" : "clients.emptyTitle")}</h2>
+      <p className="text-sm text-platforma-subtle sm:text-base">{t(hasFilters ? "clients.emptyFiltered" : "clients.emptyText")}</p>
+      {hasFilters ? <Button className="min-h-11" onClick={onResetFilters}>{t("common.reset")}</Button> : onCreateClient && <Button className="min-h-11" data-focus-return-id="clients-empty-create" onClick={onCreateClient}>{t("clients.create")}</Button>}
+    </div>
+  </section>;
   const headers = [
     { key: "full_name", label: t("clients.client") },
     ...(visibleColumns.has("source") ? [{ key: "source", label: t("clients.source") }] : []),
@@ -45,11 +52,6 @@ export function ClientsTable({ rows, ordering, onOrderingChange, onOpenClient, h
         </table>
       </div>
       <MobileClientCards rows={rows} onOpenClient={onOpenClient} customColumns={customColumns} t={t} />
-      {!rows.length && <div className="space-y-3 px-6 py-12 text-center">
-        <p className="font-semibold">{t(hasFilters ? "clients.notFoundTitle" : "clients.emptyTitle")}</p>
-        <p className="text-sm text-platforma-subtle">{t(hasFilters ? "clients.emptyFiltered" : "clients.emptyText")}</p>
-        {hasFilters ? <Button variant="secondary" onClick={onResetFilters}>{t("common.reset")}</Button> : onCreateClient && <Button onClick={onCreateClient}>{t("clients.create")}</Button>}
-      </div>}
     </CrmDataTable>
   </>;
 }

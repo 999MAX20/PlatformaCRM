@@ -14133,3 +14133,36 @@ owner preview/reason/consent, unchanged other prices, cancelled future time, ret
 rendered debt, separate refund/retain and linked rebooking. Dependent127/PostgreSQL20,
 build/types/i18n/bundle and real RU/KK/EN responsive recovery flows PASS. No working
 DB migration/deploy; full pilot acceptance separate. Implementation bb051dbd pushed to origin/main; remote SHA verified; CI in_progress. [Evidence](../evidence/visit-plan-payments-20261118.md#plan-termination-refusal-20261118).
+
+## CLIENTS-EMPTY-20261118
+Mode implementation; owner requests existing Appointments empty CTA pattern on Clients.
+Base 476342c1624eecd4ccb90ab51e5b792bac00cb5a, codex/ui-testing-toolkit,
+canonical C:/Users/user/Desktop/PlatformaCRM. Existing integration/shared-doc WIP preserved.
+Prior table-contained empty message + duplicate header action -> approved requirement
+change -> empty section outside table, flex-centered page, hide duplicate header create.
+Reuse Button, existing RU/KK/EN copy, permission checks, filters and create dialog.
+Skills: zani-review-frontend, antislop during, ui/layoutmobile/human. Apply existing
+Appointments typography/spacing, transparent canvas, 44px action, keyboard/focus.
+Design direction inherited neutral/emerald CRM, energy/rhythm/motion 1/1/1; no assets.
+Risk local UI: distinguish loaded empty vs loading/error/placeholder; preserve filtered
+reset and populated table, creation permission and keyboard shortcut.
+Checks: frontend build/types/i18n + bundle, scoped behavior/desktop/mobile browser
+screenshots and create/Escape; no backend/API/permissions/migration/events/AI change.
+
+Verification on task-owned frontend delta: npm run build PASS (i18n/types/app/widget),
+npm run check:bundle PASS (existing RU/KK >500kB warnings), git diff --check PASS.
+Build log: %TEMP%/platformacrm-clients-empty-build.log. No new copy/dependencies.
+Chrome ordinary localhost5173 recovered by starting existing Redis18404 from
+canonical output/local-import-runtime, using documented localhost6379 config;
+no worker/beat, migrations or data seeding. Existing frontend3112/backend4336 retained.
+Browser: real populated list/header verified. Test tab1634126389 only: CDP XHR
+clients list response count0/results[] substituted; CTA/no header duplicate verified,
+desktop screenshot and390x844 screenshot captured and visually inspected. Enter
+opens existing create form; Escape restores CTA focus. Real unmatched search shows
+reset; reset clears URL. Interception and viewport override removed, reload verifies
+real populated clients/header. No client record created/changed/deleted.
+Anti Slop scoped gate: approved Appointments geometry and existing tokens, one green
+CTA, transparent background, no decorations, semantic h2/section,44px target,
+mobile wrap/no clipping, visible keyboard focus. Backend authorization unchanged;
+no new role certification, translated copy unchanged, no whole-product E2E.
+Current frontend contract updated; no API/roadmap/setup contract change required.
