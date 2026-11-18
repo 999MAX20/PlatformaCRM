@@ -141,6 +141,19 @@ class BotConversation(TimeStampedModel):
         return f"{self.bot} conversation via {self.channel}"
 
 
+class InboundMessageBatch(models.Model):
+    conversation = models.OneToOneField(BotConversation, on_delete=models.CASCADE, related_name="inbound_batch")
+    first_message_id = models.PositiveBigIntegerField()
+    last_message_id = models.PositiveBigIntegerField()
+    started_at = models.DateTimeField()
+    due_at = models.DateTimeField(db_index=True)
+    pending = models.BooleanField(default=True, db_index=True)
+    runtime_fingerprint = models.CharField(max_length=64)
+    memory_epoch = models.PositiveIntegerField()
+    revision = models.PositiveIntegerField()
+    staff_message_id = models.PositiveBigIntegerField(default=0)
+
+
 class BotMessage(SanitizedErrorFieldsMixin, models.Model):
     sanitized_text_fields = ("error_text",)
     class Directions(models.TextChoices):

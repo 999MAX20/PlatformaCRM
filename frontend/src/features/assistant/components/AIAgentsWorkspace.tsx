@@ -216,7 +216,7 @@ export function AIAgentsWorkspace({
             ) : activeSection === "instructions" ? (
               <InstructionsSection key={selectedBot.id} botId={selectedBot.id} scenario={selectedBot.scenario} botDraft={botDraft} setBotDraft={setBotDraft} form={profileForm} setForm={setProfileForm} canManage={canManage} />
             ) : activeSection === "advanced" ? (
-              <ModelsSection draft={botDraft} setDraft={setBotDraft} canManage={canManage} readiness={selectedBot.readiness} />
+              <ModelsSection draft={botDraft} setDraft={setBotDraft} canManage={canManage} readiness={selectedBot.readiness} scenario={selectedBot.scenario} />
             ) : activeSection === "profile" ? (
               <ProfileManagerSection
                 scenario={selectedBot.scenario}

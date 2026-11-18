@@ -108,6 +108,11 @@ This reuses release evidence, not a new live channel-delivery test. Evidence:
 docs/testing/task-state/PRIMARY-SESSION.md#channels-fixes-20261114.
 
 AI-AGENTS-REDESIGN-20261113: approved editor redesign implemented; scoped local acceptance PASS.
+19.11 authorized phase: preview explanations + opt-in inbound grouping, accepted design preserved.
+Local scope PASS: final47 + dependent97 + unchanged56 =200 distinct backend scenarios;
+browser8+4 PASS, strengthened mobile3 PASS, build/types/i18n/bundle/system/drift PASS.
+Migration0015 isolated only; target migration/beat-worker rollout not performed. Publication pending.
+Evidence: docs/testing/evidence/ai-agents-redesign-20261113.md (Preview explanations and inbound batching).
 17.11 create modal: CRM selection retained but disabled, localized development banner;
 Create centered beneath cards. Local build/types/i18n/bundle and8distinct browser
 cases PASS across final reruns;320/1440, RU/KK/EN, text200 screenshots inspected.

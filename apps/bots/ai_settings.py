@@ -8,6 +8,10 @@ def validate_ai_settings(value):
     if not isinstance(value, dict):
         raise ValidationError("Agent settings must be an object.")
     value = dict(value)
+    if "inbound_wait_seconds" in value:
+        seconds = value["inbound_wait_seconds"]
+        if type(seconds) is not int or seconds not in (0, 2, 3, 5):
+            raise ValidationError({"inbound_wait_seconds": "Select 0, 2, 3 or 5 seconds."})
     if value.get("branch_ids") is not None and (not isinstance(value["branch_ids"], list)
             or any(type(item) is not int or item <= 0 for item in value["branch_ids"])):
         raise ValidationError({"branch_ids": "Select branch identifiers."})

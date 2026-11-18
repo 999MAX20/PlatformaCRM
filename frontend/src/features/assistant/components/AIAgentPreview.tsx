@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { LoaderCircle, RotateCcw, SendHorizontal } from "lucide-react";
-import { botAiApi, type AgentPreviewMessage } from "../../../api/bots";
+import { botAiApi, type AgentPreviewMessage, type AgentPreviewResponse } from "../../../api/bots";
+import { AgentPreviewExplanation } from "./AgentPreviewExplanation";
 import { getApiErrorMessage } from "../../../api/client";
 import { Button } from "../../../components/ui/Button";
 import { Textarea } from "../../../components/ui/Textarea";
@@ -10,13 +11,17 @@ import { useI18n } from "../../../lib/i18n";
 export function AIAgentPreview({ botId, blocked, canTest, fillHeight = false }: { botId: number; blocked: boolean; canTest: boolean; fillHeight?: boolean }) {
   const { t } = useI18n();
   const [text, setText] = useState("");
-  const [messages, setMessages] = useState<AgentPreviewMessage[]>([]);
+  const [turns, setTurns] = useState<Array<{ request: string; result: AgentPreviewResponse }>>([]);
+  const messages: AgentPreviewMessage[] = turns.flatMap(turn => [
+    { direction: "inbound" as const, text: turn.request },
+    ...(turn.result.reply ? [{ direction: "outbound" as const, text: turn.result.reply }] : []),
+  ]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const preview = useMutation({
     mutationFn: (history: AgentPreviewMessage[]) => botAiApi.preview(botId, history),
     onSuccess: (result, history) => {
-      setMessages([...history, ...(result.reply ? [{ direction: "outbound" as const, text: result.reply }] : [])]);
+      setTurns(current => [...current, { request: history[history.length - 1].text, result }]);
       setText("");
     },
   });
@@ -24,18 +29,24 @@ export function AIAgentPreview({ botId, blocked, canTest, fillHeight = false }: 
   const unavailable = !canTest ? t("aiSetup.previewForbidden") : blocked ? t("aiSetup.saveBeforeTest") : "";
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-  }, [messages]);
+  }, [turns]);
   return (
     <section className={`flex flex-col gap-3 ${fillHeight ? "min-h-0 flex-1 overflow-y-auto overscroll-contain" : ""}`}>
       <div ref={scrollRef} role="log" aria-label={t("aiSetup.previewTitle")}
         className={`space-y-3 overflow-y-auto overscroll-contain ${fillHeight ? "min-h-0 flex-1" : "max-h-80"}`}>
-        {messages.map((message, index) => (
-          <div key={index} className="border-b border-platforma-border pb-2 last:border-0">
-            <p className="text-xs font-semibold text-platforma-subtle">{t(message.direction === "inbound" ? "aiAgents.client" : "aiAgents.reply")}</p>
-            <p className="whitespace-pre-wrap break-words text-sm">{message.text}</p>
+        {turns.map((turn, index) => (
+          <div key={index} className="space-y-3">
+            <div className="border-b border-platforma-border pb-2">
+              <p className="text-xs font-semibold text-platforma-subtle">{t("aiAgents.client")}</p>
+              <p className="whitespace-pre-wrap break-words text-sm">{turn.request}</p>
+            </div>
+            <div className="border-b border-platforma-border pb-2 last:border-0">
+              <p className="text-xs font-semibold text-platforma-subtle">{t("aiAgents.reply")}</p>
+              <p className="whitespace-pre-wrap break-words text-sm">{turn.result.reply || t("aiSetup.result.noReply")}</p>
+              <AgentPreviewExplanation result={turn.result} />
+            </div>
           </div>
         ))}
-        {preview.data && !preview.data.reply && preview.data.summary && <p className="whitespace-pre-wrap break-words text-sm text-platforma-subtle">{preview.data.summary}</p>}
       </div>
       <form className="grid min-w-0 w-full shrink-0 gap-2" onSubmit={event => {
         event.preventDefault();
@@ -63,7 +74,7 @@ export function AIAgentPreview({ botId, blocked, canTest, fillHeight = false }: 
           </Button>
           {messages.length > 0 && <Button type="button" className="h-[44px] min-h-[44px] w-[44px] shrink-0 p-0" variant="secondary" disabled={preview.isPending}
             aria-label={t("aiSetup.resetTest")} title={t("aiSetup.resetTest")}
-            onClick={() => { setMessages([]); setText(""); preview.reset(); inputRef.current?.focus(); }}><RotateCcw size={16} aria-hidden="true" /></Button>}
+            onClick={() => { setTurns([]); setText(""); preview.reset(); inputRef.current?.focus(); }}><RotateCcw size={16} aria-hidden="true" /></Button>}
         </div>
       </form>
     </section>

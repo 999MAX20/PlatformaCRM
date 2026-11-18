@@ -953,3 +953,87 @@ browser-regressions-complete (desktop) and browser-regressions-localized-final
 Frontend contract updated; roadmap/passport/README/AI/access need no update:
 no stage advance or existing runtime/API/setup policy change. No scoped local
 acceptance remainder. Publication/CI receipt in existing checkpoint; no deployment.
+
+## Preview explanations and inbound batching — 19.11.2026
+
+Owner scope: phase 1 only, per-result test-chat explanation and incoming-message
+grouping; preserve accepted editor design and sections. Canonical checkout,
+codex/ui-testing-toolkit, base fda242c4; foreign invitation/access/WhatsApp work
+excluded. No provider traffic, working-DB mutation or deployment.
+
+Implemented: native collapsible explanations retain each result's summary,
+available sources, decision reason, model state and automatic-reply eligibility.
+Mock/not-called/simulation boundaries are explicit; no internal reasoning is
+invented. Only direction/text enter subsequent preview requests. Existing panel
+geometry/focus/history/error retry retained; invalid aside/dialog and duplicate
+banner semantics corrected without visual redesign.
+
+Opt-in setting 0/2/3/5 seconds uses existing atomic configuration/permissions.
+Existing agents default to immediate handling. Durable per-conversation batch,
+15-second deadline ceiling, per-message safety admission, one existing AgentTurn
+bound to the latest message and original IDs; pause/resume, handoff, memory/config
+and staff intervention guards retained. Raw messages are not rewritten. Combined
+context is bounded and prioritizes the newest fragment; memory-off retains the
+current group. Admission and queue retirement share a transaction. An uncertain
+accepted attempt is not automatically replayed. Celery beat/worker integrations
+and migration bots0015 are required in the eventual deployment.
+
+Verification on isolated SQLite, mocked providers; artifacts under
+`output/ai-agents-message-batch-20261119/`:
+
+- `.venv/Scripts/python.exe .../verify.py apps.bots.tests_inbound_batching`:
+  initial12 PASS; expanded17 PASS. The first combined100 run had99 PASS and one
+  new fixture error (duplicate empty User.email); explicit unique fixture emails
+  fixed it. A19-case run loaded a synchronous nested-request fixture before its
+  Context correction and failed one case; separate Context now represents the
+  incoming request while an earlier request remains in progress.
+- Final `verify.py apps.bots.tests_inbound_batching apps.ai_core.tests_conversation_memory
+  apps.ai_core.tests_inbox_continuity apps.bots.tests_customer_language`: **47 PASS**,
+  log `verify-1795037981290273300-0.log`. Includes20 batch cases: deadlines,
+  duplicate/overlapping worker admission, new message in-flight, memory-off,
+  bounded context, staff intervention, pause/resume, handoff, unsafe fragment,
+  config change, restart-before-admission/uncertain-after-admission, tenant and
+  settings authorization, real pipeline single outbound with mocked provider.
+- `verify.py apps.bots.tests_automatic_booking apps.bots.tests_booking_terms
+  apps.conversations.tests_ai_confirmation apps.bots.tests_safety_recovery apps.bots.tests`:
+  **97 PASS**, log `verify-1795037704858475600-0.log`.
+- The original100 run's83 non-batch tests passed: preview, Inbox continuity,
+  conversation memory, configuration, runtime configuration, customer safety,
+  safety state, pause/inbound, customer language. The final47 reran27 of these
+  plus20 batch tests; together with97 dependent tests this is **200 distinct
+  passing scenarios**, not a single200-test run. The later context-bound change
+  only affects active batches; unchanged non-batch dependent paths reuse their PASS.
+- `verify.py --checks`: Django check and migration drift PASS; migration0015 also
+  applied successfully to clean disposable test/browser DBs. No working migration.
+- `build.py`: i18n, TypeScript, app and widget builds, bundle gate PASS. Dedicated
+  output/dist avoids other writers' builds. Existing RU/KK chunk-size warnings
+  remain; app-shell budget passes. No new dependencies/assets.
+- `check.py regressions-fixed ai-agent-explanations.spec.ts`: **8 PASS**,
+  RU/KK/EN desktop1440/mobile320, actual safety-preview API, fixture mock replies,
+  per-turn evidence/history, error/retry, no diagnostics in model history,
+  keyboard disclosure/reset, axe zero violations, settings save/readback and
+  preserved instructions. Initial failures: existing ARIA semantics and fixture
+  bot quota; corrected semantics and fixture cleanup, no assertions weakened.
+- `check.py regressions-existing ai-agents-ux.spec.ts --grep 'test chat overlays|configuration survives'`:
+  **4 PASS**, geometry/focus/history, unsaved protection, failed atomic save/retry.
+- `check.py regressions-mobile-final ai-agent-explanations.spec.ts --project mobile --grep per-turn`:
+  **3 PASS**, strengthened200% text scroll-to-bottom checks, screenshots captured
+  and visually inspected for RU/KK/EN. Desktop explanations, narrow settings and
+  mobile normal/200% inspected: wrapping and controls remain usable. This is CSS
+  text enlargement, not physical-device/native zoom certification.
+
+Anti Slop during/core/ui/human/layout/copy applied to this scope: existing tokens,
+compact native disclosure/Select, purpose-backed real API output, no assets or
+redesign. React review: typed API, derived history, functional state update, no
+additional network requests/effects or expensive dependencies. Empty/error/retry,
+disabled and focus behavior passed. New dialog behavior/motion/assets N/A; existing
+close/Escape/focus verified. Contracts AI/frontend/operations and customer-agent
+passport updated; no roadmap phase advance, new authority, access framework,
+notification or BusinessEvent policy. README unchanged: existing worker setup,
+no new env/dependency; operational requirement recorded in operations contract.
+
+Limits: no real-model/live-channel/deployed acceptance, no new PostgreSQL threaded
+concurrency or live Celery restart certification. Overlap is exercised as request
+interleaving through existing atomic admission; pending DB recovery is isolated.
+Local scoped code/UI acceptance complete. Publication receipt follows in checkpoint;
+working migration/worker rollout remain deployment work, not silently completed.

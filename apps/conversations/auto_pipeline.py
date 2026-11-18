@@ -65,6 +65,10 @@ class AutoPipelineDecision:
 
 
 def maybe_run_auto_pipeline(*, conversation: BotConversation, message: BotMessage, channel: BotChannel | None = None) -> AutoPipelineDecision:
+    from apps.bots.inbound_batching import queue_inbound
+    queued = queue_inbound(conversation=conversation, message=message, channel=channel)
+    if queued is not None:
+        return queued
     from apps.ai_core.inbox_runtime import run_inbound_once
     return run_inbound_once(conversation=conversation, message=message, channel=channel, run=_run_auto_pipeline)
 

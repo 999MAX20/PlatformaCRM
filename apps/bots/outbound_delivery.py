@@ -119,6 +119,7 @@ def create_outbound_message(
                     **({"customer_handoff_notice": notice_binding["message_id"],
                         "customer_handoff_epoch": notice_binding["epoch"]} if notice_binding else {}),
                     **({"in_reply_to_message_id": binding["message_id"], "memory_epoch": binding["epoch"], "memory_revision": binding["revision"]} if binding else {}),
+                    **({"batch_staff_message_id": binding["batch_staff_message_id"]} if binding and binding.get("batch_staff_message_id") is not None else {}),
                     **({"agent_runtime_fingerprint": runtime_fingerprint} if runtime_fingerprint else {}),
                 },
             )
@@ -208,6 +209,9 @@ def deliver_outbound_message(message_id):
         inbound_id = (message.payload_json or {}).get("in_reply_to_message_id")
         latest = conversation.messages.filter(direction=BotMessage.Directions.INBOUND).order_by("-created_at", "-pk").values_list("pk", flat=True).first() if inbound_id else None
         stale = bool(inbound_id and latest != inbound_id)
+        staff_id = (message.payload_json or {}).get("batch_staff_message_id")
+        if staff_id is not None:
+            stale = stale or conversation.messages.filter(sender_type="manager", pk__gt=staff_id).exists()
         if inbound_id:
             from apps.ai_core.models import AgentConversation
             stale = stale or not AgentConversation.objects.filter(inbox_conversation=conversation,

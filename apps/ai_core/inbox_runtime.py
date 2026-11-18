@@ -56,6 +56,9 @@ def is_current_inbound(conversation):
         return True
     if binding["conversation_id"] != conversation.pk:
         return False
+    staff_id = binding.get("batch_staff_message_id")
+    if staff_id is not None and conversation.messages.filter(sender_type="manager", pk__gt=staff_id).exists():
+        return False
     latest = conversation.messages.filter(direction=BotMessage.Directions.INBOUND).order_by("-created_at", "-pk").values_list("pk", flat=True).first()
     return latest == binding["message_id"] and AgentTurn.objects.filter(
         pk=binding["turn_id"], status=AgentTurn.Statuses.PREPARING,
@@ -67,7 +70,7 @@ def assert_current_inbound(conversation):
         raise PermissionDenied("A newer customer message replaced this request.")
 
 
-def run_inbound_once(*, conversation, message, channel, run):
+def run_inbound_once(*, conversation, message, channel, run, batch_message_ids=None, batch_staff_message_id=None, on_admitted=None):
     from apps.conversations.auto_pipeline import AutoPipelineDecision
     if message.conversation_id != conversation.pk or message.direction != BotMessage.Directions.INBOUND:
         raise PermissionDenied("The inbound message does not belong to this conversation.")
@@ -89,9 +92,12 @@ def run_inbound_once(*, conversation, message, channel, run):
             idempotency_key=f"message:{message.pk}", request_hash=hashlib.sha256(message.text.encode()).hexdigest(),
             message="", mode="inbox", memory_epoch=thread.memory_epoch,
             access_fingerprint=memory_access_fingerprint(business=conversation.business, agent=conversation.bot),
-            context_json={"inbound_message_id": message.pk})
+            context_json={"inbound_message_id": message.pk, "batch_message_ids": batch_message_ids or []})
+        if on_admitted:
+            on_admitted()
     token = _attempt.set({"conversation_id": conversation.pk, "message_id": message.pk, "turn_id": turn.pk,
-                          "epoch": thread.memory_epoch, "revision": thread.revision})
+                          "epoch": thread.memory_epoch, "revision": thread.revision, "batch_message_ids": batch_message_ids or [],
+                          "batch_staff_message_id": batch_staff_message_id})
     try:
         decision = run(conversation=conversation, message=message, channel=channel)
         payload = {"status": decision.status, "reason": decision.reason, "ai_log_id": decision.ai_log_id,

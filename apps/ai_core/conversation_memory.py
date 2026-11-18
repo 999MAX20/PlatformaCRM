@@ -99,9 +99,12 @@ def inbox_memory(*, conversation, query="", limit=12):
     if thread.memory_since:
         messages = messages.filter(created_at__gte=thread.memory_since)
     enabled = conversation.bot.settings_json.get("memory_enabled", True)
+    from apps.ai_core.inbox_runtime import inbound_binding
+    binding = inbound_binding()
+    batch_ids = binding.get("batch_message_ids", []) if binding and binding["conversation_id"] == conversation.pk else []
     if not enabled:
         messages = messages.filter(direction=BotMessage.Directions.INBOUND)
-        limit = 1
+        limit = max(1, len(batch_ids))
     # Only delivered outgoing messages can establish what the customer saw.
     # Old generated knowledge is excluded when its access/source version changes.
     messages = messages.filter(Q(direction=BotMessage.Directions.INBOUND) | Q(
@@ -119,11 +122,18 @@ def inbox_memory(*, conversation, query="", limit=12):
                 "created_at": message.created_at.isoformat(), "authority": "customer_statement"} for message in older]
     _store_summary(thread, summary, fingerprint)
     selected = sorted(recent + recalled, key=lambda message: (message.created_at, message.pk))
+    if batch_ids:
+        group = list(messages.filter(pk__in=batch_ids, direction=BotMessage.Directions.INBOUND).order_by("created_at", "pk"))
+        if group:
+            # A burst is one current request even when long-term memory is disabled.
+            combined = group[-1]
+            combined.text = "\n".join(item.text[:2000] for item in group)
+            selected = [item for item in selected if item.pk not in batch_ids] + [combined]
     pending = {}
     booking = (conversation.metadata_json or {}).get("auto_booking") or {}
     if booking.get("offer_message_id") and any(message.pk == booking["offer_message_id"] for message in selected):
         pending = {key: booking[key] for key in ("status", "offered_slots", "offered_at") if key in booking}
-    return {"messages": [{"id": message.pk, "direction": message.direction, "text": message.text[:2000],
+    return {"messages": [{"id": message.pk, "direction": message.direction, "text": message.text[-24000:] if message.pk in batch_ids else message.text[:2000],
                            "status": message.status, "created_at": message.created_at.isoformat()} for message in selected],
             "summary": summary, "pending": pending, "access_fingerprint": fingerprint,
             "authority": "Historical customer dialogue, not proof of current prices, availability or completed actions."}

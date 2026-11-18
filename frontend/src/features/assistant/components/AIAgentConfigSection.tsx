@@ -99,7 +99,7 @@ export function InstructionsSection({ form, setForm, canManage, botId, scenario 
   );
 }
 
-export function ModelsSection({ draft, setDraft, canManage, readiness }: { draft: BotDraftState; setDraft: React.Dispatch<React.SetStateAction<BotDraftState>>; canManage: boolean; readiness?: Bot["readiness"] }) {
+export function ModelsSection({ draft, setDraft, canManage, readiness, scenario }: { draft: BotDraftState; setDraft: React.Dispatch<React.SetStateAction<BotDraftState>>; canManage: boolean; readiness?: Bot["readiness"]; scenario?: Bot["scenario"] }) {
   const { t } = useI18n();
   const model = String(draft.settings_json.model || "");
   const temperature = Number(draft.settings_json.temperature ?? 0.4);
@@ -136,6 +136,13 @@ export function ModelsSection({ draft, setDraft, canManage, readiness }: { draft
               onChange={value => setDraft(current => ({ ...current, settings_json: { ...current.settings_json, memory_enabled: value } }))} />
           </div>
           <FieldHint>{t("agentChat.memoryHint")}</FieldHint>
+          {scenario === "inbox" && <>
+            <Select density="compact" label={t("aiSetup.batch.label")}
+              value={String(draft.settings_json.inbound_wait_seconds || 0)} disabled={!canManage}
+              onChange={event => setDraft(current => ({ ...current, settings_json: { ...current.settings_json, inbound_wait_seconds: Number(event.target.value) } }))}
+              options={[{ value: "0", label: t("aiSetup.batch.off") }, ...[2, 3, 5].map(seconds => ({ value: String(seconds), label: t("aiSetup.batch.seconds", { seconds }) }))]} />
+            <FieldHint>{t("aiSetup.batch.hint")}</FieldHint>
+          </>}
 
         </div>
       </section>

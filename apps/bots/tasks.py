@@ -3,6 +3,12 @@ from celery import shared_task
 from apps.bots.outbound_delivery import deliver_outbound_message, process_due_outbound_messages
 
 
+@shared_task(name="bots.process_due_inbound_batches", queue="integrations")
+def process_due_inbound_batches_task():
+    from apps.bots.inbound_batching import process_due_batches
+    return {"processed": sum(result is not None for result in process_due_batches())}
+
+
 @shared_task(name="bots.resume_answered_handoffs", queue="default")
 def resume_answered_handoffs_task(limit=100):
     from apps.bots.handoff_recovery import resume_due_conversations

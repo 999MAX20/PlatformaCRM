@@ -458,6 +458,10 @@ CELERY_BEAT_SCHEDULE.update(
             "schedule": 60,
             "kwargs": {"limit": 100},
         },
+        "inbound-message-batches": {
+            "task": "bots.process_due_inbound_batches",
+            "schedule": 1,
+        },
         "file-antivirus-runtime": {
             "task": "files.scan_due_attachments",
             "schedule": 15,
