@@ -14,8 +14,9 @@ locale language defaults and authorized opt-in card-name hints. Isolated backend
 corrections retain other fields and require new review; one-field clarification.
 194 backend tests (190PASS/4SQLite skips), check/drift and new browser flow PASS.
 Live human KK/planner acceptance remains open.
-Next dialogue corpus prepared:24 dialogues/48 turns (16KK/4mixed/4RU); no live calls.
-Proposed pilot4 dialogues:200 ElevenLabs credits +$0.15 OpenRouter, pending separate budget approval.
+24-dialogue corpus prepared; approved4-dialogue live pilot attempted12 text/voice combinations,0 fully correct.
+OpenRouter actual$0.00733485; STT9success/1timeout, creditreserve92/200 (exactbilling unavailable).
+Main-route negation, name preservation, patch schema and phone correction remain code gaps; no wrong action executed.
 Evidence: docs/testing/evidence/voice-scribe-v3-20261117.md.
 Checkpoint: output/voice-scribe-v3-20261117/CHECKPOINT.md.
 

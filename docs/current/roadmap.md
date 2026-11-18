@@ -10,6 +10,10 @@ follow-up field at a time and require fresh review. No new client/task correctio
 workflow is claimed. Local mocked checks do not close live accuracy failures.
 Key local/STT-only/capped; activation and Enterprise ZRM/no-training remain open.
 Prior accuracy FAIL and D01 are not closed.
+The approved4-dialogue live pilot found main-route negation/name/patch/phone failures
+even on reference text;0 of12 attempted dialogue/track combinations fully correct,
+one STT timeout. No incorrect proposal was executed. These are open code/evidence
+gaps; mocked correction PASS does not certify live understanding.
 [Проверки и границы](../testing/evidence/voice-scribe-v3-20261117.md).
 
 ## Остаток общего аудита и заявки — 12.11.2026

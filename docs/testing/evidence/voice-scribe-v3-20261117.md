@@ -1,5 +1,79 @@
 # VOICE-SCRIBE-V3-20261117: прямое подключение и synthetic-проверка
 
+## Live dialogue pilot 20261118
+
+Owner explicitly approved200 ElevenLabs credits and$0.15 OpenRouter for the four
+pilot dialogues. [Raw results, model outputs, usage and adjudication](voice-scribe-v3-pilot-20261118.json).
+Source0dfbffa5; no application source or production settings changed. Only fictional
+data, a disposable SQLite DB and the fixed synthetic clock were used. Existing
+customer-audio activation/privacy flags remained false. The synthetic-only ElevenLabs
+logging exception was applied only to test requests, as previously authorized.
+
+Outcome:12 dialogue/track combinations started,0 fully correct;16 of24 planned
+turns scored, with later turns skipped after a mismatch. One male-track cancellation
+request timed out and was not retried. The sole not-yet-started male mixed dialogue
+was then attempted with the same ledger/caps; no previous request was replayed.
+This small deliberately difficult sample is not a population accuracy estimate.
+
+Concrete failures:
+
+- Even perfect text did not produce reliable understanding. The planner retained
+  the Kazakh accusative surname `Сынақты` instead of `Сынақ` in one initial request.
+  The same initial text in another dialogue was handled correctly, demonstrating
+  variation at the configured temperature0.4.
+- The name correction produced a top-level client-name patch AND an invalid
+  visit-level `client_name`. The server rejected it with `invalid_action_plan`.
+- A request to change the final phone digit from8 to9 returned the original full draft;
+  the draft still contained the old number. Review prevented execution.
+- Negated booking routed to `appointments/create` on reference text and both
+  voices. It stopped at a missing-specialist question, not at a semantic rejection.
+  No writes is therefore insufficient to call this a correct refusal.
+- Six of nine successful STT transcripts have zero normalized word errors, but
+  the planner dropped the ambiguous fictional surname in the clean KK examples.
+  Mixed RU/KK speech changed `Әсел Сынақ` to `Асель Снаг` / `Осель Снах`.
+  Female speech changed `Алдыңғы әрекеттен бас тарт` to `Алдыңғы әрекеттен баста`.
+  These are separate ASR and planner failures. Repeated phrases/voices are correlated,
+  and `Сынақ` is also a common word: do not generalize this name sample to all KK names.
+
+The D03 runtime evaluator originally checked no writes/tools but missed the booking
+route/draft. Manual review tightened scoring to the original `no_booking_proposal`
+expectation. The original runtime result is retained next to adjudication. Its second
+turn was already executed despite the first semantic failure; this evaluator defect
+is disclosed, not hidden by calling the no-write outcome PASS. No further paid rerun.
+No incorrect proposal was confirmed and no Client/Appointment/Task was created in
+the live runs. Domain confirmation/replay paths were exercised in the offline harness.
+
+Cost/control evidence:
+
+- OpenRouter:31 successful API requests,66,771 prompt tokens +2,316 completion
+  tokens; provider-reported total cost$0.00733485, below$0.15. Model fixed to
+  `openai/gpt-4o-mini`; max output1,200, provider price ceilings$0.15/$0.60 per million
+  input/output tokens, request fee ceiling0 and fallback disabled.
+- ElevenLabs:10 attempted requests,9 successful +1 timeout,76.872s attempted audio.
+  Conservative reserved credits92, including the timed-out request, below200.
+  These reserves are not a claim of exact provider billing.16 prepared WAVs total
+  97.728s; only requested clips were charged/reserved. No paid TTS used.
+  Final account reconciliation was unavailable: subscription GET timed out at25/60s;
+  the old browser showed cached9,070, and after reload the balance field disappeared.
+  Do not interpret the cached value as zero spend or invent an exact credit charge.
+- Persistent pre-dispatch reservations survive failure/resume. UTF-8 byte count
+  plus1,024 framing tokens conservatively bounds input cost; actual provider usage
+  settles completed LLM requests. Unknown STT charge remains reserved. No automatic
+  retry, redirects, customer-data access or working-database writes.
+
+Verification: budget reserve/reject/settle and resume-preservation checks PASS;
+24 mocked harness steps PASS after fixing test-only settings/replay fixtures;
+audio hashes/duration, exact persisted fields, stale approval denial, confirmation
+replay and transaction rollback checked. Live commands: `pilot_run.py --live`, then
+`--resume` for the sole never-started case. Logs and ledger are under the existing
+local checkpoint. No application build/full suite rerun for evidence-only changes.
+
+Next code priorities, not implemented in this pilot: reject negated booking at the
+main action boundary; constrain the correction schema; detect an unchanged value
+after an explicit correction and ask instead of presenting it as fixed; preserve
+or clarify ambiguous names. Retest those with reference text before spending more
+on speech. Human KK, live accuracy acceptance and production privacy remain open.
+
 ## Dialogue preparation 20261118
 
 Prepared, not executed: [24 synthetic dialogues / 48 turns](voice-scribe-v3-dialogues-20261118.json),
@@ -47,9 +121,10 @@ disable automatic retries and stop before either separately approved cap is exce
 Preparation checks: JSON parse,24 unique IDs,48 nonempty turns,16/4/4 language split,
 4 pilot IDs, fixture references, expected no-write assertions, budget arithmetic,
 local links and secret/diff hygiene. No app source changed; app build/backend suites
-are not rerun for this corpus/evidence-only change. Audio generation, guarded live
-runner and live results remain future work. The earlier2,000-credit authorization
-does not authorize this series; next step is approval of the proposed pilot budget.
+are not rerun for this corpus/evidence-only change. The four-dialogue pilot budget
+was subsequently approved and its execution is recorded above. The full24-dialogue
+run remains unexecuted/unapproved; neither the earlier2,000-credit series nor the
+pilot approval authorizes that expansion.
 
 ## Short corrections 20261118
 
