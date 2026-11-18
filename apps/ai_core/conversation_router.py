@@ -11,7 +11,7 @@ from apps.ai_core.conversation_copy import conversation_text
 from apps.ai_core.crm_tools import ENTITIES, MUTATIONS, scoped_entities, serialize_record, target_for_command
 from apps.ai_core.services import run_ai_request
 from apps.ai_core.workflows import assert_workflow_enabled
-from apps.ai_core.voice_policy import VOICE_CONTRACT, validate_voice_plan, voice_reference, voice_booking_request
+from apps.ai_core.voice_policy import VOICE_CONTRACT, validate_voice_plan, voice_reference, voice_booking_request, negated_voice_booking
 from apps.businesses.access import Actions, Resources, can
 from apps.businesses.capabilities import resource_is_enabled
 
@@ -287,6 +287,12 @@ def route_turn(*, thread, user, message, memory, context, mode="work", language=
         raise AIClientError(code="invalid_action_plan", retryable=False)
     if thread.kind == "voice" and route["intent"] == "actions":
         steps = route["steps"]
+        if negated_voice_booking(message) and any(
+                step["entity"] in {"appointments", "clients"} and step["operation"] == "create" for step in steps):
+            question = {"ru": "Запись не подготовлена. Что нужно сделать?",
+                        "kk": "Қабылдауға жазу дайындалмады. Не істеу керек?",
+                        "en": "No booking was prepared. What would you like to do?"}
+            return {**route, "intent": "clarify", "steps": [], "question": question.get(language, question["ru"])}, log
         if (len(steps) == 1 and steps[0]["entity"] == "clients" and steps[0]["operation"] == "create"
                 and voice_booking_request(message)):
             # Keep the user's requested visit when the router returns only its client prerequisite.

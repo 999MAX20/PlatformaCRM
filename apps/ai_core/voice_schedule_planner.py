@@ -11,7 +11,8 @@ from apps.ai_core.agent_runtime import bind_command
 from apps.ai_core.crm_tools import scoped_entities
 from apps.ai_core.services import run_ai_request
 from apps.ai_core.voice_schedule_commands import MAX_VISITS, validate_schedule
-from apps.ai_core.voice_schedule_patch import PATCH_CONTRACT, apply_schedule_patch, pending_schedule
+from apps.ai_core.voice_schedule_patch import PATCH_CONTRACT, apply_schedule_patch, pending_schedule, unchanged_correction, UnchangedScheduleCorrection
+from apps.ai_core.voice_schedule_schema import SCHEMA_CONTRACT, schedule_schema
 from apps.clients.identity import normalize_phone
 from apps.core.domain_errors import ScheduleConflict
 from apps.scheduling.availability import business_zone
@@ -141,7 +142,9 @@ def extract_schedule(turn, memory, language):
         selected_branch = voice_branch(turn.conversation, turn.conversation.owner, turn.context_json["current_branch"])
     services, resources, branches = schedule_catalog(business, turn.conversation.owner)
     result, log = run_ai_request(business=business, user=turn.conversation.owner, prompt_type="crm_action_plan",
-        user_input=source, response_language=language, response_contract=CONTRACT + (PATCH_CONTRACT if draft else ""),
+        user_input=source, response_language=language,
+        response_contract=CONTRACT + (PATCH_CONTRACT if draft else "") + SCHEMA_CONTRACT,
+        response_schema=schedule_schema(bool(draft)), response_schema_name="voice_schedule",
         input_json={"scheduling": {"local_now": timezone.localtime(timezone.now(), business_zone(business)).isoformat(),
             "timezone": business.timezone, "draft": draft, "selectable_clients": selectable,
             "catalog": {"services": [row.name for row in services[:100]], "specialists": [row.name for row in resources[:100]],
@@ -154,6 +157,18 @@ def extract_schedule(turn, memory, language):
         raw = result.output_text.strip()
         fence = re.fullmatch(r"```(?:json)?\s*\n(.*?)\n```", raw, re.DOTALL)
         value = json.loads(fence.group(1) if fence else raw)
+        if isinstance(value, dict) and set(value) == {"schedule"}:
+            value = value["schedule"]
+            if isinstance(value, dict) and set(value) == {"patch", "visits"}:
+                if (not isinstance(value["patch"], dict) or not isinstance(value["visits"], list)
+                        or any(not isinstance(row, dict) for row in value["visits"])):
+                    raise ValueError
+                if (set(value["patch"]) - {"client_name", "client_phone", "client_id"}
+                        or any(set(row) - {"index", "date", "time", "time_text", "time_basis", "service", "specialist", "branch", "any_resource"}
+                               for row in value["visits"])):
+                    raise ValueError
+                value = {"patch": {key: val for key, val in value["patch"].items() if val is not None},
+                         "visits": [{key: val for key, val in row.items() if val is not None} for row in value["visits"]]}
         patched = isinstance(value, dict) and "patch" in value
         if patched:
             value = apply_schedule_patch(draft, value, turn.message)
@@ -182,6 +197,14 @@ def extract_schedule(turn, memory, language):
                 visit["time"] = ""
             if selected_branch and not visit["branch"].strip():
                 visit["branch"] = selected_branch.name
+        if draft:
+            from apps.ai_core.voice_policy import voice_booking_request
+            new_booking = not patched and voice_booking_request(turn.message) and re.search(
+                r"\b(?:нов(?:ую|ая)\s+запись|new\s+(?:booking|appointment)|жаңа\s+(?:қабылдау|жазба))\b", turn.message, re.I)
+            field = "" if new_booking else unchanged_correction(
+                draft, value, turn.message, pending.get("schedule_correction_field", ""))
+            if field:
+                raise UnchangedScheduleCorrection(field, log.pk)
         return value, log.pk
     except (ValueError, KeyError, TypeError):
         raise AIClientError(code="invalid_action_plan", retryable=False) from None
@@ -357,7 +380,18 @@ def resolve_schedule(*, business, user, draft, language, focused=False):
 
 def prepare_schedule(turn, plan, memory, language):
     from apps.ai_core.crm_tools import prepare_command
-    draft, request_id = extract_schedule(turn, memory, language)
+    try:
+        draft, request_id = extract_schedule(turn, memory, language)
+    except UnchangedScheduleCorrection as exc:
+        questions = {
+            "ru": {"client_phone": "Укажите правильный номер телефона целиком.", "client_name": "Укажите правильное имя и фамилию клиента.", "schedule": "Что нужно изменить в записи? Укажите новое значение."},
+            "kk": {"client_phone": "Дұрыс телефон нөмірін толық айтыңыз.", "client_name": "Клиенттің дұрыс аты-жөнін айтыңыз.", "schedule": "Қабылдауға жазылуда нені өзгерту керек? Жаңа мәнді айтыңыз."},
+            "en": {"client_phone": "Please give the full corrected phone number.", "client_name": "Please give the client's corrected full name.", "schedule": "What should change in the booking? Please give the new value."},
+        }
+        question = questions.get(language, questions["ru"])[exc.field]
+        return {"plan": plan, "prepared": [], "references": [], "question": question, "response": question,
+                "status": "clarifying", "request_log_id": exc.request_id,
+                "context": {"schedule_draft": pending_schedule(turn, memory), "schedule_correction_field": exc.field}}
     payload, question, references = resolve_schedule(business=turn.conversation.business,
         user=turn.conversation.owner, draft=draft, language=language, focused=bool(pending_schedule(turn, memory)))
     prepared = []

@@ -16,7 +16,9 @@ corrections retain other fields and require new review; one-field clarification.
 Live human KK/planner acceptance remains open.
 24-dialogue corpus prepared; approved4-dialogue live pilot attempted12 text/voice combinations,0 fully correct.
 OpenRouter actual$0.00733485; STT9success/1timeout, creditreserve92/200 (exactbilling unavailable).
-Main-route negation, name preservation, patch schema and phone correction remain code gaps; no wrong action executed.
+Follow-up: main-route negation guard, scheduling schema and unchanged-correction clarification verified locally.
+Final235 tests:231PASS/4SQLite skips; system/drift,2 browser flows and build/types/bundle PASS.
+Initial name preservation and live/human KK acceptance remain open; no further paid calls or activation.
 Evidence: docs/testing/evidence/voice-scribe-v3-20261117.md.
 Checkpoint: output/voice-scribe-v3-20261117/CHECKPOINT.md.
 

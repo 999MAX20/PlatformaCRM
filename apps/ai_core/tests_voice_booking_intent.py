@@ -13,6 +13,15 @@ from apps.scheduling.models import Appointment
 
 
 class BookingInstructionTests(SimpleTestCase):
+    def test_negated_stored_booking_is_denied_but_task_and_time_correction_are_allowed(self):
+        for message in ("Әселді қабылдауға жазып жіберме.", "Не записывай на завтра", "Don't book a visit"):
+            with self.subTest(message=message), self.assertRaises(PermissionDenied):
+                validate_voice_plan({"origin": "voice"}, {"steps": [create_step("appointments")]}, message)
+        validate_voice_plan({"origin": "voice"}, {"steps": [create_step("tasks")]}, "Создай задачу: не записывай на завтра")
+        validate_voice_plan({"origin": "voice"}, {"steps": [create_step("appointments")]}, "Не в 12, а в 13")
+        with self.assertRaises(PermissionDenied):
+            validate_voice_plan({"origin": "voice"}, {"steps": [create_step("clients")]}, "Әселді қабылдауға жазып жіберме.")
+
     def test_explicit_booking_phrasings(self):
         for message in (
             "Запиши нового клиента Павла Тестового на консультацию Канни 7 ноября 2026 года в 9 часов",

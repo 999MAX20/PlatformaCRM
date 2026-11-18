@@ -43,3 +43,41 @@ test("short KK name and RU time corrections preserve booking and require fresh r
   const clients = await session.list<{ full_name: string }>("clients");
   expect(clients.some(client => client.full_name === "Әсем Сынақ")).toBe(true);
 });
+
+test("unchanged phone asks for clarification, then a corrected number requires review", async ({ page }, info) => {
+  test.skip(!fixture?.threads.recovery, "Requires pilot recovery fixture");
+  await page.setViewportSize({ width: 390, height: 844 });
+  const session = await crmSession(page, fixture.email);
+  const before = await session.list("appointments");
+  const thread = fixture.threads.recovery;
+  await page.evaluate(({ key, thread }) => {
+    localStorage.setItem("ai_smb_language", "ru"); sessionStorage.setItem(key, thread);
+  }, { key: `voice-thread:v2:${fixture.user}:${fixture.business}`, thread });
+  await page.goto("/app/clients");
+  await page.getByRole("button", { name: ru["voice.title"], exact: true }).click();
+  const panel = page.getByRole("dialog", { name: ru["voice.title"], exact: true });
+  await expect(panel.getByRole("button", { name: ru["agentChat.confirm"], exact: true })).toBeEnabled();
+  await panel.getByRole("button", { name: ru["voice.editRequest"], exact: true }).click();
+  const input = panel.getByRole("textbox", { name: ru["voice.transcript"], exact: true });
+  await input.fill("Соңғы сан сегіз емес, тоғыз. Остальные цифры не меняй.");
+  await panel.getByRole("button", { name: ru["agentChat.send"], exact: true }).click();
+  await expect(panel).toContainText("Укажите правильный номер телефона целиком.");
+  await expect(panel.getByRole("button", { name: ru["agentChat.confirm"], exact: true })).toHaveCount(0);
+  expect((await session.list("appointments")).length).toBe(before.length);
+  await page.screenshot({ path: info.outputPath("phone-clarification-390.png"), fullPage: true });
+  await panel.getByRole("button", { name: ru["voice.editRequest"], exact: true }).click();
+  await expect(input).toBeFocused();
+  await input.fill("Телефон +77012345679");
+  await panel.getByRole("button", { name: ru["agentChat.send"], exact: true }).click();
+  const confirm = panel.getByRole("button", { name: ru["agentChat.confirm"], exact: true });
+  await expect(confirm).toBeEnabled();
+  await expect(panel).toContainText("+77012345679");
+  expect((await session.list("appointments")).length).toBe(before.length);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({ path: info.outputPath("phone-recovery-review-390.png"), fullPage: true });
+  await confirm.focus(); await page.keyboard.press("Enter");
+  await expect.poll(async () => (await session.read(`ai/conversations/${thread}`)).turns.at(-1).status).toBe("completed");
+  expect((await session.list("appointments")).length).toBe(before.length + 1);
+  const clients = await session.list<{ phone: string }>("clients");
+  expect(clients.some(client => client.phone === "+77012345679")).toBe(true);
+});

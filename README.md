@@ -7,8 +7,10 @@ locale language defaults and opt-in authorized card-name hints. Customer audio
 activation remains off; these local fixes do not certify live speech accuracy.
 Short corrections to unconfirmed bookings/visit plans retain other draft details
 and require a fresh review; continuation asks one missing field at a time.
-The subsequent real-model pilot found unresolved negation, name and correction
-errors even on reference text. Review prevented execution; live acceptance remains open.
+The subsequent real-model pilot found negation, name and correction errors even on
+reference text. Follow-up adds main-route negation guards, structured scheduling
+output and clarification when a correction leaves the old value. Name preservation
+and real-model acceptance remain open; no further paid calls or activation.
 
 Management UI (12.11.2026): five real-data pages replace the previous Business entry.
 The five Management migrations are applied to the owner-authorized local PostgreSQL

@@ -1,5 +1,70 @@
 # VOICE-SCRIBE-V3-20261117: прямое подключение и synthetic-проверка
 
+## Pilot fixes 20261118
+
+Authorized follow-up to the failed live pilot, base19117b41, canonical checkout and
+existing branch `codex/ui-testing-toolkit`. No provider requests, credit usage,
+customer audio, working-DB migrations or activation changes in this phase.
+The historical pilot below remains FAIL; these local checks use fictional fixtures
+and substituted provider responses, including the captured incorrect model outputs.
+
+Implemented:
+
+- Explicit recognized booking negations in RU/KK/EN stop a main-route appointment
+  or client prerequisite before schedule extraction. Confirmation also rejects a
+  stored negated creation plan. Task text and field-level time negation retain their
+  existing behavior. This conservative lexical guard is bounded, not universal NLU.
+- Scheduling requests use the existing provider JSON-schema capability with a
+  named `voice_schedule` envelope. Pending drafts permit either a bounded nullable
+  patch or a separate full schedule. Client properties cannot occur inside visit
+  objects. Server shape/type/ID/tenant checks remain authoritative, including for
+  providers without supported structured output. No automatic paid retries.
+- A no-op continuation or a recognized name/phone correction retaining the old or
+  empty value asks for clarification without tools or writes. The pending name/phone
+  requirement survives another-field correction; successful recovery needs fresh
+  review. Explicit separate new bookings can still reuse a client's phone.
+
+Verification: initial pilot regression reproduced five assertions (four negated
+main-route drafts and the unchanged phone awaiting confirmation). First correction
+gate26 PASS; extended gate31 PASS. Intermediate affected suites201 run/197 PASS,
+4 SQLite row-lock skips. Review added a KK time-vs-name regression and narrower
+separate-new-booking handling. Final affected/dependent gate235 run/231 PASS,
+4 SQLite row-lock skips; system check and migration drift PASS on the final source.
+This does not certify PostgreSQL concurrency. Build/types/i18n/app/widget and bundle
+gate PASS; existing RU/KK dictionary chunk warnings only.
+
+Initial browser run: existing short-correction flow PASS; new recovery test reached
+the correct full-phone clarification with no confirmation action, then timed out
+because the test omitted the existing Edit request button before entering its answer.
+Test corrected to use the actual UI; no product UI source change was required.
+Final browser run `1795020417215060500`:2 PASS in40.9s against the canonical
+source with isolated Django/DB and Vite; provider responses substituted. The new
+flow proves no confirmation or writes for the old phone, Edit request restores
+focused input, corrected phone appears with retained booking details, and keyboard
+confirmation creates exactly one visit with the corrected client phone. The existing
+KK-name/RU-time correction flow also passes. All three390px screenshots were captured
+and visually inspected: readable labels, unclipped values and controls, no horizontal
+overflow. Existing components/styles preserved; no visual redesign/theme/layout
+acceptance is claimed beyond these affected states. Anti Slop copy gate: specific
+RU/KK/EN clarification, neutral client terminology, no invented facts or assets.
+
+Commands: `.venv/Scripts/python.exe output/voice-scribe-v3-20261117/pilot_fixes_checks.py`
+(isolated voice/speech/provider, planner JSON/analytics/CRM, memory/state/review/API
+suites plus `manage.py check` and `makemigrations --check --dry-run`);
+`.venv/Scripts/python.exe output/voice-scribe-v3-20261117/pilot_fixes_browser.py`;
+frontend `npm run build` and `npm run check:bundle`. Detailed logs/checkpoint remain
+under `output/voice-scribe-v3-20261117/`. Rerun when affected source, dependencies,
+configuration or fixtures change; this is a scoped gate, not full release certification.
+
+Remaining code gap: initial name/surname preservation and ASR ambiguity. Remaining
+evidence: repeat real-model pilot, larger corpus and human KK recordings. Environment
+and owner boundary: Enterprise privacy/no-training and customer activation remain
+off/unapproved. No claim that structured output alone improves recognition accuracy,
+that all possible corrections are understood, or that full D01 is accepted.
+Current voice contract, roadmap, passport, README and task indexes updated together.
+Operations/access/CRM/frontend contracts require no change: no new provider setup,
+permission, lifecycle, notification, BusinessEvent or UI component was introduced.
+
 ## Live dialogue pilot 20261118
 
 Owner explicitly approved200 ElevenLabs credits and$0.15 OpenRouter for the four

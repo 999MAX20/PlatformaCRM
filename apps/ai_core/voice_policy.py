@@ -49,6 +49,15 @@ def requires_voice_creation_review(tool, payload):
         payload.get("entity") == "appointments" and tool in {"crm_create", "crm_transition"})
 
 
+def negated_voice_booking(message):
+    return bool(re.search(
+        r"\bне\s+(?:записыва\w*|запиши\w*|записать|создава\w*\s+запис\w*)\b|"
+        r"\b(?:do\s+not|don't|never)\s+(?:book|schedule)\b|"
+        r"\b(?:қабылдауға|консультацияға)\b.{0,400}?\b(?:жазба\w*|жазбай\w*|жазып\s+жіберме\w*)\b|"
+        r"\b(?:қабылдауға|консультацияға)\b.{0,400}?\bжаз\w*\s+деп\s+айтқан\s+жоқпын\b",
+        message, re.I | re.S))
+
+
 def voice_booking_request(message):
     """Recognize explicit booking instructions when a route drops the visit."""
     pattern = (r"\b(?:запиши(?:те)?|записать)\b.{0,400}?\b(?:на|к)\b|"
@@ -99,6 +108,9 @@ def validate_voice_plan(context, plan, message=""):
     if context.get("origin") != "voice":
         return
     steps = plan.get("steps", [])
+    if negated_voice_booking(message) and any(
+            step.get("entity") in {"appointments", "clients"} and step.get("operation") == "create" for step in steps):
+        raise PermissionDenied("voice_action_unavailable")
     if (voice_booking_request(message) and any(step.get("entity") == "clients"
             and step.get("operation") == "create" for step in steps)
             and not any(step.get("entity") == "appointments" and step.get("operation") == "create" for step in steps)):

@@ -83,6 +83,7 @@ def staff_memory(*, thread, user, query, before_sequence=None):
                     and (thread.kind == AgentConversation.Kinds.VOICE or latest.context_json.get("question"))
                     and latest.context_json.get("schedule_draft")):
                 pending["schedule_draft"] = latest.context_json["schedule_draft"]
+                pending["schedule_correction_field"] = latest.context_json.get("schedule_correction_field", "")
     _store_summary(thread, summaries, fingerprint)
     return {"messages": [entry(turn, 1200) for turn in selected], "summary": summaries,
             "references": references[:20], "pending": pending, "access_fingerprint": fingerprint,

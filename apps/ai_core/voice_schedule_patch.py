@@ -1,4 +1,5 @@
 from copy import deepcopy
+import re
 
 
 PATCH_CONTRACT = '''When draft is nonempty, a short answer or correction normally updates it.
@@ -24,6 +25,34 @@ def pending_schedule(turn, memory):
             and pending.get("state") in {"clarifying", "superseded"}):
         return pending.get("schedule_draft", {})
     return {}
+
+
+class UnchangedScheduleCorrection(Exception):
+    def __init__(self, field, request_id):
+        self.field, self.request_id = field, request_id
+
+
+def unchanged_correction(previous, value, message, pending_field=""):
+    if pending_field in {"client_phone", "client_name"}:
+        before, after = previous[pending_field], value[pending_field]
+        if pending_field == "client_phone":
+            before, after = re.sub(r"\D", "", before), re.sub(r"\D", "", after)
+        if not after.strip() or " ".join(before.split()).casefold() == " ".join(after.split()).casefold():
+            return pending_field
+    field = ""
+    if re.search(r"\b(?:телефон\w*|номер\w*|phone|number|соңғы\s+(?:сан|цифр\w*)|последн\w*\s+цифр\w*|last\s+digit)\b", message, re.I):
+        field = "client_phone"
+    elif (re.search(r"\b(?:имя|аты|аты-жөні|name)\b", message, re.I)
+          or any(word.casefold() in previous["client_name"].casefold().split()
+                 for word in re.findall(r"\b([\w-]+)\s+емес\b", message, re.I))):
+        field = "client_name"
+    if field in {"client_phone", "client_name"}:
+        normalize = (lambda text: re.sub(r"\D", "", text)) if field == "client_phone" else (lambda text: " ".join(text.split()).casefold())
+        if not normalize(value[field]) or normalize(previous[field]) == normalize(value[field]):
+            return field
+    if value == previous:
+        return "schedule"
+    return ""
 
 
 def apply_schedule_patch(previous, value, message):
