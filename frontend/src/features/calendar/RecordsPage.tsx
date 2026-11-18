@@ -72,6 +72,7 @@ function RecordsListPage() {
   const records = useQuery({ queryKey: ["appointments", "workspace", user?.id, filters], queryFn: () => appointmentsApi.workspace(filters), enabled: !!business && periodReady, refetchInterval: 30000,
     placeholderData: (previous, previousQuery) => previousQuery?.queryKey[2] === user?.id &&
       (previousQuery?.queryKey[3] as { business?: number } | undefined)?.business === business?.id ? previous : undefined });
+  const showHeaderCreate = canCreate && !(records.isSuccess && !records.isPlaceholderData && records.data.results.length === 0);
   const customTable = useCustomColumns(business?.id || 0, "appointment", (records.data?.results || []).map(record => record.id));
   usePageLoading(!periodReady || records.isLoading);
   const update = (key: string, value: string) => setParams(current => {
@@ -86,9 +87,9 @@ function RecordsListPage() {
     return next;
   });
   useEffect(() => {
-    setPageHeader({ title: t("appointments.title"), primaryAction: canCreate ? { label: t("appointments.create"), icon: Plus, onClick: () => setParams(current => { const next = new URLSearchParams(current); next.set("create", "1"); return next; }) } : undefined });
+    setPageHeader({ title: t("appointments.title"), primaryAction: showHeaderCreate ? { label: t("appointments.create"), icon: Plus, onClick: () => setParams(current => { const next = new URLSearchParams(current); next.set("create", "1"); return next; }) } : undefined });
     return () => setPageHeader(null);
-  }, [setPageHeader, setParams, t, canCreate]);
+  }, [setPageHeader, setParams, t, showHeaderCreate]);
   const create = useMutation({
     mutationFn: (payload: AppointmentCreatePayload) => {
       createPending.current = true;

@@ -2366,3 +2366,10 @@ Build/types/i18n/bundle and 10 targeted browser scenarios PASS. Chrome localhost
 opened and visually inspected; ordinary app also showed a connection alert,
 not treated as release-health evidence. Details: PRIMARY-SESSION same task ID,
 output/records-empty-20261118/CHECKPOINT.md. No deployment performed.
+
+RECORDS-EMPTY-20261118 follow-up: owner removes duplicate header create button on
+successfully loaded empty lists. Central create remains for first/day/period;
+filtered empty keeps reset only; populated list restores header create.
+Build/types/i18n and RU desktop/mobile state-transition/create-focus scenarios
+PASS. Current contracts updated; no backend/permission/API changes.
+Evidence and publication receipt: output/records-empty-20261118/CHECKPOINT.md.

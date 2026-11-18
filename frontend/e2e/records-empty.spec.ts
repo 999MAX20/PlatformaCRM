@@ -33,6 +33,7 @@ for (const [language, copy] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
     const cta = page.getByTestId("records-empty");
     await expect(cta.getByRole("heading")).toHaveText(copy["records.emptyFirst"]);
     await expect(cta).toContainText(copy["records.emptyFirstHint"]);
+    await expect(page.getByRole("button", { name: copy["appointments.create"], exact: true })).toHaveCount(1);
     await page.screenshot({ path: info.outputPath(`first-${language}.png`) });
     const create = cta.getByRole("button", { name: copy["appointments.create"], exact: true });
     await create.focus(); await page.keyboard.press("Enter");
@@ -43,6 +44,7 @@ for (const [language, copy] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
     mode = "real";
     await page.reload();
     await expect(cta.getByRole("heading")).toHaveText(copy["records.emptyDay"]);
+    await expect(page.getByRole("button", { name: copy["appointments.create"], exact: true })).toHaveCount(1);
     await cta.getByRole("button", { name: copy["records.chooseDate"], exact: true }).click();
     const calendar = page.locator("#records-period-panel");
     await expect(calendar).toBeVisible();
@@ -56,6 +58,7 @@ for (const [language, copy] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
     await page.getByRole("textbox", { name: copy["records.search"], exact: true }).fill("NO MATCH EMPTY CTA");
     await expect(cta.getByRole("heading")).toHaveText(copy["records.emptySearch"]);
     await expect(cta.getByRole("button")).toHaveCount(1);
+    await expect(page.getByRole("button", { name: copy["appointments.create"], exact: true })).toHaveCount(0);
     await cta.getByRole("button", { name: copy["records.reset"], exact: true }).click();
     await expect(page).not.toHaveURL(/search=|2030/);
     await page.goto("/app/appointments?from=2030-12-15&to=2030-12-15&workflow=completed");
@@ -77,6 +80,7 @@ for (const [language, copy] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
     await page.goto(`/app/appointments?from=${day}&to=${day}`);
     await expect(page.getByTestId("records-workspace").getByRole("row").or(page.getByTestId("records-workspace").getByRole("button", { name: new RegExp(`#${data.results[0].id}`) })).first()).toBeAttached();
     await expect(cta).toHaveCount(0);
+    await expect(page.getByRole("button", { name: copy["appointments.create"], exact: true })).toHaveCount(1);
   });
 }
 

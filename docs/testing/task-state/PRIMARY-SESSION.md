@@ -13882,3 +13882,24 @@ contract change required. Existing toolbar/recovery test expectations updated;
 their historical date-specific fixtures were not rerun, targeted current scenarios
 cover changed actions. Scope code/isolated visual evidence complete; no live release
 claim. Final diff hygiene/publication/CI and process receipts in output checkpoint.
+
+RECORDS-EMPTY-20261118 follow-up: owner removes duplicate header create button on
+successfully loaded empty lists. Central create remains for first/day/period;
+filtered empty keeps reset only; populated list restores header create.
+Build/types/i18n and RU desktop/mobile state-transition/create-focus scenarios
+PASS. Current contracts updated; no backend/permission/API changes.
+Evidence and publication receipt: output/records-empty-20261118/CHECKPOINT.md.
+
+Follow-up base48390211, canonical root and codex/ui-testing-toolkit retained;
+foreign voice WIP preserved. Derived RecordsPage header condition only; no extra
+query, layout or copy change. Existing Anti Slop during and frontend skills reused.
+`npm run build` from frontend PASS (header-build.log).
+`.venv/Scripts/python.exe output/records-empty-20261118/run-browser.py --grep
+'actions and recovery ru' --output output/records-empty-20261118/header-results`
+PASS2 on desktop/mobile: only one create in first/day, none in filtered empty,
+header create restored on populated list, modal Escape/focus/date/reset/recovery.
+New screenshots visually inspected. Prior unchanged KK/EN/text-resize/permission
+evidence retained; no backend/full-project rerun for header visibility only.
+Chrome ordinary5173 AX verified absence of header button and retained centralCTA;
+native screenshot failed Debugger unattached, isolated screenshots used for visual
+acceptance. Existing Chrome tab retained; no working DB mutation or deployment.
