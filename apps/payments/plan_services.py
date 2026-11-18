@@ -10,7 +10,7 @@ from apps.scheduling.plan_access import assert_plan_change
 from .models import Payment, PlanAllocation, PlanCreditTransfer, PlanRemainderDecision, PlanTerms
 from .plan_balances import (
     ZERO, assert_plan_money, composition, current_terms, net_allocated, plan_sources,
-    retained_balance, source_balance,
+    retained_balance, source_balance, receipt_plan,
 )
 from .plan_pricing import money, preview_terms
 
@@ -44,15 +44,17 @@ def allocate_completed(plan, actor, *, appointment=None):
     steps = plan.steps.filter(appointment__status="completed", removed_at__isnull=True).select_related("appointment").order_by("appointment__start_at", "pk")
     if appointment is not None:
         steps = steps.filter(appointment=appointment)
-    sources = list(plan_sources(plan).select_for_update())
+    sources = list(plan_sources(plan).select_for_update(of=("self",)))
     for step in steps:
         due = prices[step.pk] - net_allocated(PlanAllocation.objects.filter(appointment=step.appointment))
         for receipt in sources:
             if due <= 0:
                 break
-            # A retained remainder needs an explicit transfer before reuse.
+            # Retained funds require an explicit reuse or transfer decision.
             available = source_balance(plan, receipt) - retained_balance(plan, receipt)
-            if receipt.plan_id == plan.pk and receipt.appointment_id and receipt.appointment_id != step.appointment_id:
+            origin = receipt_plan(receipt)
+            corrected_origin = receipt.appointment_id and hasattr(receipt.appointment, "visit_plan_step") and hasattr(receipt.appointment.visit_plan_step, "completion_correction")
+            if origin and origin.pk == plan.pk and receipt.appointment_id and receipt.appointment_id != step.appointment_id and not corrected_origin:
                 continue
             amount = min(due, available)
             if amount > 0:
@@ -70,11 +72,14 @@ def settle_remainder(plan, actor, data):
         raise ValidationError({"receipt": "Select an available source of this plan."})
     amount = money(data.get("amount"), positive=True)
     choice = data.get("choice")
-    if choice not in {"retain", "refund"}:
-        raise ValidationError({"choice": "Choose refund or retain explicitly."})
+    if choice not in {"retain", "refund", "reuse"}:
+        raise ValidationError({"choice": "Choose refund, retain or reuse explicitly."})
     available = source_balance(plan, receipt)
     if choice == "retain":
         available -= retained_balance(plan, receipt)
+    elif choice == "reuse":
+        require_current_terms(plan)
+        available = retained_balance(plan, receipt)
     if amount > available:
         raise ValidationError({"amount": "The remainder is no longer available."})
     refund = None
@@ -86,6 +91,8 @@ def settle_remainder(plan, actor, data):
             "reason": data["reason"]}, touch_plan=False)
     PlanRemainderDecision.objects.create(plan=plan, receipt=receipt, amount=amount, choice=choice,
         refund=refund, reason=data["reason"].strip(), consent=True, actor=actor)
+    if choice == "reuse":
+        allocate_completed(plan, actor)
 
 
 def use_credit(plan, actor, data):

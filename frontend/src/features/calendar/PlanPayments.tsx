@@ -5,10 +5,11 @@ import { useI18n } from "../../lib/i18n";
 import { PaymentForm } from "../payments/PaymentForm";
 import { PlanMoneyDialog } from "./PlanMoneyDialog";
 import { PlanTermsHistory } from "./PlanTermsHistory";
+import { PlanCorrectionDialog } from "./PlanCorrectionDialog";
 
 export function PlanPayments({ plan, currency }: { plan: VisitPlan; currency: string }) {
   const { t, language } = useI18n();
-  const [dialog, setDialog] = useState<"payment" | "terms" | "remainder" | "credit" | null>(null);
+  const [dialog, setDialog] = useState<"payment" | "terms" | "remainder" | "credit" | "attach-legacy" | null>(null);
   const funds = plan.money;
   if (!funds) return null;
   const terms = funds.terms;
@@ -23,11 +24,13 @@ export function PlanPayments({ plan, currency }: { plan: VisitPlan; currency: st
       <div><h3 className="font-semibold">{terms ? t(terms.mode === "package" ? "planMoney.package" : "planMoney.perVisit") : t("planMoney.notAgreed")}</h3>
         {terms && !funds.terms_current && <p role="status" className="mt-1 text-sm text-platforma-warning">{t("planMoney.reviewComposition")}</p>}</div>
       <div className="flex flex-wrap gap-2">
+        {funds.can_correct && !plan.is_archived && <Button variant="secondary" onClick={() => setDialog("attach-legacy")}>{t("planCorrection.attach-legacy")}</Button>}
         {funds.can_receive && !plan.is_archived && <Button variant="secondary" onClick={() => setDialog("terms")}>{t(terms ? "planMoney.changeTerms" : "planMoney.acceptTerms")}</Button>}
         {funds.can_receive && funds.terms_current && !plan.is_archived && <Button onClick={() => setDialog("payment")}>{t("payments.add")}</Button>}
       </div>
     </div>
     {terms && <dl className="grid grid-cols-1 gap-4 min-[400px]:grid-cols-2 md:grid-cols-3 xl:grid-cols-5">{metrics.map(([label, value]) => <div key={label} className="min-w-0"><dt className="text-sm text-platforma-subtle">{t(label!)}</dt><dd className="mt-1 break-words text-lg font-semibold tabular-nums">{formatted(value || "0")}</dd></div>)}</dl>}
+    {Number(funds.attached) > 0 && <p className="text-sm tabular-nums">{t("planCorrection.attached")}: <strong>{formatted(funds.attached)}</strong></p>}
     {(Number(funds.refunded) > 0 || Number(funds.retained) > 0 || Number(funds.incoming_credit) > 0 || Number(funds.outgoing_credit) > 0) && <dl className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
       {[["planMoney.refunded", funds.refunded], ["planMoney.retained", funds.retained], ["planMoney.incoming", funds.incoming_credit], ["planMoney.outgoing", funds.outgoing_credit]].filter(([, value]) => Number(value) > 0).map(([label, value]) => <div key={label}><dt>{t(label)}</dt><dd className="font-semibold tabular-nums">{formatted(value)}</dd></div>)}
     </dl>}
@@ -41,7 +44,8 @@ export function PlanPayments({ plan, currency }: { plan: VisitPlan; currency: st
     {dialog === "payment" && <PaymentForm businessId={plan.business} currency={unit} initialClient={{ id: plan.client, label: plan.client_name }} plan={{ id: plan.id, revision: plan.revision, total: terms!.total, remaining: funds.remaining,
       appointments: plan.steps.filter(step => step.appointment && !step.removed_at).map(step => ({ id: step.appointment!, label: `${step.service_name} · #${step.appointment}` })) }} canLinkDeal={false} canLinkAppointment onClose={() => setDialog(null)} onSaved={() => setDialog(null)} />}
     {terms && <PlanTermsHistory business={plan.business} plan={plan.id} />}
-    {dialog && dialog !== "payment" && <PlanMoneyDialog plan={plan} kind={dialog} onClose={() => setDialog(null)} />}
+    {dialog === "attach-legacy" && <PlanCorrectionDialog plan={plan} kind={dialog} onClose={() => setDialog(null)} />}
+    {dialog && dialog !== "payment" && dialog !== "attach-legacy" && <PlanMoneyDialog plan={plan} kind={dialog} onClose={() => setDialog(null)} />}
   </section>;
 }
 

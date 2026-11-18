@@ -32,9 +32,10 @@ def record_payment(*, actor, data, touch_plan=True):
     if existing:
         if existing.request_hash != request_hash:
             raise CRMCommandConflict("Submission identity already belongs to different payment data.")
-        if existing.plan_id:
-            from .plan_balances import assert_plan_money
-            assert_plan_money(existing.plan, actor, action)
+        from .plan_balances import assert_plan_money, receipt_plan
+        existing_plan = receipt_plan(existing)
+        if existing_plan:
+            assert_plan_money(existing_plan, actor, action)
         return get_object_or_404(payment_queryset(actor, business), pk=existing.pk), True
 
     try:
@@ -63,13 +64,15 @@ def record_payment(*, actor, data, touch_plan=True):
         if data["occurred_at"] < original.occurred_at:
             raise ValidationError({"occurred_at": "Refund cannot precede receipt."})
         client, deal, appointment, currency = original.client, original.deal, original.appointment, original.currency
-        if original.plan_id:
+        from .plan_balances import receipt_plan
+        origin_plan = receipt_plan(original)
+        if origin_plan:
             from apps.scheduling.models import VisitPlan
             from .plan_balances import assert_plan_money, source_balance
             plan = get_object_or_404(VisitPlan.objects.select_for_update(),
-                pk=data.get("refund_plan") or original.plan_id, business=business, client=client)
+                pk=data.get("refund_plan") or origin_plan.pk, business=business, client=client)
             assert_plan_money(plan, actor, Actions.MANAGE)
-            if plan.pk != original.plan_id:
+            if plan.pk != origin_plan.pk:
                 appointment = None
             if amount > source_balance(plan, original):
                 raise ValidationError({"amount": "Refund exceeds the unallocated plan balance."})

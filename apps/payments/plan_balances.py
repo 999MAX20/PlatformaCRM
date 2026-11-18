@@ -26,11 +26,21 @@ def refundable(receipt):
 
 def plan_sources(plan):
     return Payment.objects.filter(business_id=plan.business_id, client_id=plan.client_id, kind="receipt").filter(
-        Q(plan=plan) | Q(pk__in=PlanCreditTransfer.objects.filter(target_plan=plan).values("receipt_id"))).order_by("occurred_at", "pk")
+        Q(plan=plan) | Q(plan_attachment__plan=plan) | Q(pk__in=PlanCreditTransfer.objects.filter(target_plan=plan).values("receipt_id"))).order_by("occurred_at", "pk")
+
+
+def receipt_plan(receipt):
+    if receipt.plan_id:
+        return receipt.plan
+    attachment = getattr(receipt, "plan_attachment", None)
+    return attachment.plan if attachment else None
 
 
 def source_balance(plan, receipt):
     initial = receipt.amount if receipt.plan_id == plan.pk else ZERO
+    attachment = getattr(receipt, "plan_attachment", None)
+    if attachment and attachment.plan_id == plan.pk:
+        initial += attachment.amount
     incoming = total(PlanCreditTransfer.objects.filter(receipt=receipt, target_plan=plan))
     outgoing = total(PlanCreditTransfer.objects.filter(receipt=receipt, source_plan=plan))
     refunds = total(receipt.refunds.filter(plan=plan))
@@ -41,6 +51,8 @@ def source_balance(plan, receipt):
 def retained_balance(plan, receipt):
     events = [(row.created_at, row.pk, row.amount) for row in
         plan.remainder_decisions.filter(receipt=receipt, choice="retain")]
+    events += [(row.created_at, row.pk, -row.amount) for row in
+        plan.remainder_decisions.filter(receipt=receipt, choice="reuse")]
     events += [(row.created_at, row.pk, -row.amount) for row in
         PlanCreditTransfer.objects.filter(receipt=receipt, source_plan=plan)]
     events += [(row.created_at, row.pk, -row.amount) for row in receipt.refunds.filter(plan=plan)]
@@ -82,12 +94,14 @@ def plan_money_projection(plan, actor):
     sources = list(plan_sources(plan))
     received = sum((r.amount if r.plan_id == plan.pk else ZERO for r in sources), ZERO)
     incoming = total(plan.incoming_credit.all())
+    attached = total(plan.legacy_attachments.all())
     outgoing = total(plan.outgoing_credit.all())
     refunded = total(plan.payments.filter(kind="refund"))
     allocated = net_allocated(PlanAllocation.objects.filter(terms__plan=plan))
     unallocated = sum((source_balance(plan, r) for r in sources), ZERO)
     retained = sum((retained_balance(plan, r) for r in sources), ZERO)
     permissions = {}
+    from apps.businesses.access import user_is_business_owner
     for name, action in (("can_receive", Actions.CREATE), ("can_manage", Actions.MANAGE)):
         try:
             assert_plan_money(plan, actor, action)
@@ -95,11 +109,12 @@ def plan_money_projection(plan, actor):
             permissions[name] = True
         except PermissionDenied:
             permissions[name] = False
+    permissions["can_correct"] = permissions["can_manage"] and user_is_business_owner(actor, plan.business)
     return {"terms": None if terms is None else {"id": terms.pk, "mode": terms.mode,
         "currency": terms.currency, "total": str(terms.total), "lines": terms.lines,
         "revision": terms.revision, "reason": terms.reason, "created_at": terms.created_at},
         "terms_current": bool(terms and terms.composition == composition(plan)),
-        "received": str(received), "incoming_credit": str(incoming), "outgoing_credit": str(outgoing),
+        "received": str(received), "attached": str(attached), "incoming_credit": str(incoming), "outgoing_credit": str(outgoing),
         "refunded": str(refunded), "allocated": str(allocated), "unallocated": str(unallocated),
         "retained": str(retained), "remaining": str(max(ZERO, (terms.total if terms else ZERO) - allocated - unallocated + retained)),
         "sources": [{"id": r.pk, "amount": str(r.amount), "available": str(source_balance(plan, r)),

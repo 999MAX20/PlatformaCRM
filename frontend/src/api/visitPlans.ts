@@ -4,6 +4,7 @@ export type PlanStepInput = { service: number; resource?: number | null; branch?
 export type PlanStep = PlanStepInput & {
   id: number; service_name: string; resource_name: string; appointment: number | null;
   start_at: string | null; status: string; removed_at: string | null;
+  completion_corrected: boolean; replacement_step: number | null; replaces_step: number | null;
 };
 export type VisitPlan = {
   id: number; business: number; client: number; client_name: string; revision: number;
@@ -15,7 +16,7 @@ export type PlanTerms = { id: number; revision: number; mode: "package" | "per_v
   lines: { step: number; base: string; amount: string; frozen: boolean }[]; reason: string; created_at: string };
 export type PlanMoney = { terms: PlanTerms | null; terms_current: boolean; received: string; allocated: string;
   refunded: string; unallocated: string; retained: string; remaining: string; incoming_credit: string; outgoing_credit: string;
-  can_receive: boolean; can_manage: boolean;
+  can_receive: boolean; can_manage: boolean; can_correct: boolean; attached: string;
   sources: { id: number; amount: string; available: string; retained: string; method: string; occurred_at: string }[];
   allocations: { id: number; appointment: number; amount: string; reversal_of: number | null; created_at: string }[] };
 export type PlanTermsDraft = { expected_revision: number; mode: "package" | "per_visit"; total: string;
@@ -24,8 +25,15 @@ export type PlanTermsPreview = Pick<PlanTerms, "mode" | "currency" | "total" | "
   balance: Pick<PlanMoney, "received" | "refunded" | "allocated" | "unallocated" | "retained"> };
 export type PlanCreditOption = { source_plan: number; source_revision: number; receipt: number; amount: string; currency: string };
 export type PlanResult = VisitPlan | { read_restricted: true };
+export type PlanCorrectionKind = "annul-completion" | "attach-legacy" | "create-replacement";
+export type PlanCorrectionPreview = { preview_hash: string; currency: string; [key: string]: string | number };
+export type PlanLegacyOption = { id: number; amount: string; refunded: string; available: string; currency: string; method: string; occurred_at: string };
 export type PlanHistoryEvent = { id: number; created_at: string; command: string; actor_name: string };
 export const visitPlansApi = {
+  legacyOptions: async (business: number, id: number, page: number) =>
+    (await apiClient.get<PaginatedResponse<PlanLegacyOption>>(`/api/visit-plans/${id}/legacy-payment-options/`, { params: { business, page } })).data,
+  previewCorrection: async (business: number, id: number, kind: Exclude<PlanCorrectionKind, "create-replacement">, payload: Record<string, unknown>) =>
+    (await apiClient.post<PlanCorrectionPreview>(`/api/visit-plans/${id}/preview-correction/${kind}/`, payload, { params: { business } })).data,
   termsHistory: async (business: number, id: number, page: number) =>
     (await apiClient.get<PaginatedResponse<PlanTerms & { actor_name: string }>>(`/api/visit-plans/${id}/terms-history/`, { params: { business, page } })).data,
   creditOptions: async (business: number, id: number, page: number) =>

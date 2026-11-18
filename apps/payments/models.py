@@ -86,7 +86,7 @@ class PlanRemainderDecision(models.Model):
     plan = models.ForeignKey("scheduling.VisitPlan", on_delete=models.PROTECT, related_name="remainder_decisions")
     receipt = models.ForeignKey(Payment, on_delete=models.PROTECT, related_name="remainder_decisions")
     amount = models.DecimalField(max_digits=14, decimal_places=2)
-    choice = models.CharField(max_length=8, choices=[("retain", "Retain"), ("refund", "Refund")])
+    choice = models.CharField(max_length=8, choices=[("retain", "Retain"), ("refund", "Refund"), ("reuse", "Reuse")])
     refund = models.OneToOneField(Payment, null=True, on_delete=models.PROTECT, related_name="remainder_decision")
     reason = models.CharField(max_length=500)
     consent = models.BooleanField()
@@ -111,3 +111,27 @@ class PlanCreditTransfer(models.Model):
             models.CheckConstraint(condition=models.Q(amount__gt=0), name="plan_credit_positive"),
             models.CheckConstraint(condition=~models.Q(source_plan=models.F("target_plan")), name="plan_credit_different_plans"),
         ]
+
+
+class PlanLegacyAttachment(models.Model):
+    receipt = models.OneToOneField(Payment, on_delete=models.PROTECT, related_name="plan_attachment")
+    plan = models.ForeignKey("scheduling.VisitPlan", on_delete=models.PROTECT, related_name="legacy_attachments")
+    amount = models.DecimalField(max_digits=14, decimal_places=2)
+    refunded_before = models.DecimalField(max_digits=14, decimal_places=2)
+    reason = models.CharField(max_length=500)
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [models.CheckConstraint(condition=models.Q(amount__gt=0), name="plan_attachment_positive")]
+
+
+class PlanCompletionCorrection(models.Model):
+    step = models.OneToOneField("scheduling.VisitPlanStep", on_delete=models.PROTECT, related_name="completion_correction")
+    terms = models.ForeignKey(PlanTerms, on_delete=models.PROTECT, related_name="completion_corrections")
+    replacement = models.OneToOneField("scheduling.VisitPlanStep", null=True, on_delete=models.PROTECT, related_name="replaces_correction")
+    removed_price = models.DecimalField(max_digits=14, decimal_places=2)
+    released_amount = models.DecimalField(max_digits=14, decimal_places=2)
+    reason = models.CharField(max_length=500)
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL)
+    created_at = models.DateTimeField(auto_now_add=True)

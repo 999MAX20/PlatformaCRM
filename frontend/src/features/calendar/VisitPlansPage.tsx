@@ -25,6 +25,7 @@ import { useAuth } from "../auth/AuthProvider";
 import { PlanEditor } from "./PlanEditor";
 import { PlanHistory } from "./PlanHistory";
 import { PlanPayments, PlanStepMoney } from "./PlanPayments";
+import { PlanStepCorrection } from "./PlanCorrectionDialog";
 import { useCalendarCatalog } from "./useCalendarCatalog";
 
 type Dialog = { kind: "add" | "edit" | "schedule" | "remove" | "archive" | "restore" | "responsible"; step?: PlanStep } | null;
@@ -134,6 +135,7 @@ export function VisitPlansPage() {
           <div className="flex flex-wrap gap-2">{step.appointment ? <Link className="platforma-focus-ring rounded px-3 py-2 text-sm text-brand-700" state={{ recordReturnTo: `/app/appointments?${params.toString()}` }} to={`/app/appointments/${step.appointment}`}>{t("plans.openAppointment")}</Link> : !step.removed_at && !plan.is_archived && plan.can_change ? <><Button disabled={!canCreate} onClick={() => open({ kind: "schedule", step })}>{t("plans.schedule")}</Button><Button variant="secondary" onClick={() => open({ kind: "edit", step })}>{t("common.edit")}</Button><Button variant="secondary" onClick={() => open({ kind: "remove", step })}>{t("plans.remove")}</Button></> : null}</div>
         </div>
         <PlanStepMoney plan={plan} stepId={step.id} />
+        <PlanStepCorrection plan={plan} step={step} />
       </li>)}</ol> : <EmptyState title={t("plans.emptySteps")} />}
       <PlanHistory key={plan.id} business={business.id} actor={user?.id || 0} plan={plan.id} timeZone={business.timezone || "UTC"} />
     </> : null : <>

@@ -2414,5 +2414,13 @@ Evidence and publication receipt: output/records-empty-20261118/CHECKPOINT.md.
 VISIT-PLAN-PAYMENTS-20261118: authorized money scope implemented and locally verified.
 Terms/package/per-visit, advances/allocations/refund-retain/same-client credit and approved UI delivered locally; zero-base positive package forbidden.
 Final PostgreSQL21, SQLite18 regressions/39 migration-payment/122 dependent/21 finance PASS; app/widget/types/i18n/bundle and real RU/KK/EN desktop/mobile/recovery PASS.
-Working migration/deploy and full AC01–14 are not claimed. Terminal correction/legacy reconciliation remain owner decisions outside this slice.
+Working migration/deploy and full AC01–14 are not claimed. The later approved correction/legacy slice is recorded below.
 Publication receipt and detailed boundaries: docs/testing/evidence/visit-plan-payments-20261118.md.
+
+VISIT-PLAN-PAYMENTS follow-up: five approved correction/legacy rules implemented and locally verified.
+References preceded UI edits. Owner-only annulment, retained reversal balance,
+linked replacement, explicit reuse and full legacy remainder attachment preserve history/cash receipts.
+PostgreSQL19, dependent126, final pricing/correction31 PASS; build/types/i18n and
+real RU/KK/EN desktop/mobile/retry/stale/draft checks PASS. Working DB unchanged.
+Task-only publication pending; arbitrary reopen/rendered-service repricing/bulk reconciliation excluded.
+Scope/checkpoint: docs/testing/evidence/visit-plan-payments-20261118.md.

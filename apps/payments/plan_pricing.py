@@ -47,8 +47,11 @@ def price_plan(plan, data):
     prior = current_terms(plan)
     if prior is None:
         from .models import Payment
+        from django.db.models import F, Q
         if Payment.objects.filter(business_id=plan.business_id, plan__isnull=True,
-                appointment_id__in=[step.appointment_id for step in steps if step.appointment_id]).exists():
+                kind="receipt", plan_attachment__isnull=True,
+                appointment_id__in=[step.appointment_id for step in steps if step.appointment_id]).filter(
+                    Q(amount__gt=F("refunded_amount")) | Q(appointment__status="completed")).exists():
             raise ValidationError({"legacy_payments": "Existing visit payments require explicit reconciliation before accepting plan terms."})
     old = {line["step"]: line for line in prior.lines} if prior else {}
     frozen = {}

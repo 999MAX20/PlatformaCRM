@@ -166,3 +166,155 @@ Actual [CI run471](https://github.com/999MAX20/PlatformaCRM/actions/runs/4430763
 was in_progress at publication inspection; not reported as green. This follow-up
 receipt is documentation only; application checks retain their stated boundaries.
 Foreign integration/WhatsApp changes and their STATUS/PRIMARY entries remain unstaged.
+
+## Authorized correction and legacy-payment follow-up
+
+Owner confirmed all five proposed pilot rules, then requested implementation and
+UI references before interface edits. Base9016bc42, same canonical root/branch.
+Foreign dirty integrations/WhatsApp files and STATUS/PRIMARY entries unchanged.
+Prior result: corrections and legacy attachment intentionally excluded -> explicit
+owner authorization -> add two bounded, previewed commands on existing plan services.
+
+Mode implementation; gap code. Owner-only with existing financial MANAGE, plan
+UPDATE and complete tenant/object access. Erroneous completion becomes cancelled,
+original history stays; reversal releases allocations into retained balance; a new
+terms version removes that visit's charge without repricing other lines. A linked
+replacement is explicitly created/scheduled, never restores the old slot.
+Legacy attachment retains the original Payment and prior refunds, links its entire
+available amount once to one same-client/business/currency plan; manual unambiguous
+receipts only, no completed-service receipts or split/mass conversion.
+
+Risk high: money/status/analytics/concurrency. Reuse Business lock, idempotent plan
+commands, Payment/refund, allocation reversal, plan terms and activity/audit.
+No cancellation messages or ordinary automation replay; cancel pending post-service
+followups for annulled completion. Preserve historical events; reports read corrected
+current status and cash receipts remain unchanged. Additive isolated migration only.
+No working-DB migration, external provider mutation, deploy or new AI command.
+
+Acceptance: exact balances and unchanged cash totals; original records retained;
+owner/tenant denial; preview staleness; replay/rollback; competing attach/refund and
+correction/refund; report regression; reachable RU/KK/EN desktop/mobile dialogs,
+loading/empty/error/recovery, keyboard/focus and visually inspected screenshots.
+Focused isolated backend per slice before frontend; affected payment/scheduling/
+analytics suites, PostgreSQL races, migration/drift/system; final build/types/i18n.
+Full release gate outside this phase. Normal task-only commit/push and actual CI.
+
+UI references generated and shown before edits: exec-d4d4430a (annul completion),
+exec-34974fa1 (attach prior payment), generated_images session directory. References
+are illustrative modal compositions; existing navigation/logo/tokens stay unchanged.
+Skills: domain/verification/frontend and imagegen; Anti Slop during (saved choice),
+UI/layout/human/copy modules. Applied requirements: real server preview amounts;
+explicit consent/reason; retained inputs and stable retry identity; readable mobile
+layout and focus return. Existing quiet green/amber UI direction, no new assets in app.
+
+Iteration: payments0003 adds correction and legacy-link records (no backfill).
+An earmarked erroneous-visit receipt retains both released allocations and its
+unused earmarked balance. Explicit reuse in the same plan releases only the selected
+retained amount, preserving separate consent before paying the linked replacement.
+First SQLite run stopped during slow DB setup; diagnostic run with a faulthandler timer encountered
+native Windows access violation while rendering historical migration models, before
+tests. Retained logs corrections-focused/diagnostic. New verbose run without timer
+shows migrations advancing; no failed business assertion yet. No acceptance claimed.
+Design read: owner financial review in existing PlatformaCRM form style; dials1/1/1,
+spacing separates balance/consent, existing green/amber marks safe/sensitive actions.
+
+Iteration checkpoint: first focused SQLite9 had8PASS/one money-string formatting
+assertion failure; PostgreSQL15 had14PASS/another equivalent formatting assertion.
+Assertions now compare exact Decimal values; no monetary tolerance added. Expanded
+PostgreSQL rerun16/16PASS, including attach-vs-refund and competing-plan attachment.
+After this run, replacement consent/reason became mandatory at the backend too;
+dependent126 test batch includes that delta and followup/audit/replay/rollback tests.
+Initial batch and browser fixture setup were interrupted by tool/process reset:
+no Python processes remained and sessions were unavailable. Logs stopped during
+migrations, no final test result; restarted only those isolated processes. System
+check/drift passed before interruption. First new UI app/widget build completed;
+final localized timeline delta will receive another completion build.
+UI references preceded edits; new modal uses shared controls and current money
+preview, full legacy balance, explicit replacement, reuse selection, safe retry.
+Browser acceptance and dependent-suite completion are still pending at this checkpoint.
+
+### Follow-up completion evidence
+
+Canonical root and branch unchanged; implementation starts at9016bc42 plus the
+task-owned dirty files. Foreign integration/WhatsApp changes and foreign index
+entries were not included. New schema payments0003 is additive, without backfill.
+It was applied/reversed/reapplied only in disposable databases; working DB unchanged.
+
+Backend checks (isolated_runtime, dotenv/external sockets blocked by ignored harness):
+- `corrections_dependent.py`: `check`, `makemigrations --check --dry-run` PASS;
+  `test apps.payments.tests_plan_corrections.PlanCorrectionTests apps.payments.tests_plan_payments.PlanPaymentTests apps.payments.tests apps.payments.tests_plan_migration apps.scheduling.tests_visit_plans apps.scheduling.tests_record_completion apps.scheduling.tests_record_commands apps.analytics.tests_manual_finance apps.analytics.tests_financial_sources apps.activities.tests --noinput -v 2`:126PASS.
+  This batch preceded the additional archive guard and final completed-legacy predicate;
+  those deltas are covered by the following focused reruns.
+- `corrections_pg.py`: disposable PostgreSQL17, `test apps.payments.tests_plan_corrections.PlanCorrectionTests apps.payments.tests_plan_concurrency.PlanMoneyConcurrencyTests --noinput -v 2`:19PASS, zero skips.
+  Includes archive-before-terms guard, replacement consent, rollback/audit, preserved
+  sent/cancelled pending followups, competing attachment/refund/completion and replay.
+- `pricing_final.py`:31PASS (correction and original plan-payment classes), after
+  preserving the completed-legacy guard even when its old receipt is fully refunded.
+  Positive package/all-zero bases and previous frozen-price/rounding checks preserved.
+- `security_final.py`:13PASS final correction class, adding direct API403 checks
+  for all three owner-only commands/preview despite manager financial MANAGE,
+  and forged foreign-Business receipt rejection with no attachment. Product code
+  unchanged after pricing run; test-only extension. Log corrections-security-final.log.
+- Logs/results: corrections-dependent.log/json, corrections-pg.log/json,
+  corrections-pricing-final.log under output/visit-plan-payments-20261118.
+
+Frontend completion `npm run build`: PASS (types,7527 RU/KK/EN keys, app/widget),
+corrections-completion-build.log; `npm run check:bundle`: PASS,
+corrections-completion-bundle.log. Existing RU/KK >500kB dictionary warnings remain;
+app shell within400kB. Build includes preserved foreign working-tree integration WIP;
+this task neither claims nor stages it. No dependencies added.
+
+CUA Chrome extension, canonical Vite/Django source, dedicated localhost58932/58931,
+isolated SQLite fixture only. Synthetic client and test owner; no real client data,
+provider calls or actual funds. New references were shown before UI changes.
+Observed actions and resulting database assertions (correction-browser-data.json):
+- RU annul preview90k→60k, allocation30k→0, retained0→30k. Lost-response503 injected
+  after actual commit in ignored harness; unchanged-payload retry succeeds with one
+  correction/reversal and no second receipt. Reason/consent remained locked and retained.
+- Explicit linked replacement creates an undated step; old visit stays cancelled.
+  Existing schedule form reachable with correct client/service, no old-slot reopening.
+  Re-agreed90k composition keeps other30k lines; separate reuse30k clears retained
+  balance only after explicit reason/consent. Backend also covers scheduling/completing
+  the replacement and later allocation; browser did not submit that second booking.
+- Legacy receipt50k with prior refund10k initially previews40k attachment. Concurrent
+  synthetic refund5k makes confirmation409, no attachment. Refresh retains reason,
+  resets consent and recalculates35k / remaining25k. Confirm attaches35k, original
+  receipt/date/plan=NULL remain, no extra cash receipt. Reopening shows no eligible
+  source, preventing a second attachment. Extra fixtures used solely for localization.
+- Loading/disabled controls, empty-source state, save error/recovery, stale refresh,
+  draft-close confirmation, Escape/Tab, visible focus and focus return exercised.
+  Labels, inputs, checkbox and actions are semantic shared controls. No new permission
+  framework, UI-only authority or raw component API transport.
+- RU/EN desktop and RU/KK390×844 forms/screenshots visually inspected. Two reproduced
+  geometry issues fixed: shorter modal headings and two-column mobile balance rows;
+  min-w-0 fieldsets prevent long source/reuse values widening either form. Recheck:
+  viewport390, fieldset318/333 with equal client/scroll widths, no horizontal overflow.
+  Translations include correction history; neutral terminology preserved.
+
+Inspected screenshots in the output directory: correction-preview-en.png,
+correction-preview-kk-mobile.png, correction-retry-mobile.png,
+legacy-preview-en.png, legacy-preview-mobile.png, legacy-preview-kk-mobile.png,
+reuse-mobile.png, legacy-attached-result.png, correction-completed-result.png.
+The initial RU preview image precedes the mobile title/layout fix; final RU mobile
+and KK/EN captures reflect the final component. Full-page capture timed out once;
+documented troubleshooting followed, normal screenshot on the same page succeeded.
+Temporary viewport reset; CUA completion recorded. No browser access bypass.
+
+Harness-only attempts: first command fault wrapper omitted DRF action metadata and
+returned404 before mutation; preserved action metadata and verified actual503/replay.
+Translation hot reload invalidated the development I18nProvider once; fresh separate
+tab verified final source without reloading an unsaved form. Neither harness/HMR
+attempt was presented as a passed production flow.
+
+Anti Slop during delivery gate applied within scope: real financial data/actions,
+existing tokens and shared controls, readable layout, explicit consent, keyboard,
+retained input, error/empty/loading and responsive/localized verification above.
+No new visual assets, navigation redesign, animation or external links (N/A).
+React review: state stays in bounded dialogs; existing API/cache/draft-guard layers
+reused. CRM/access/frontend/roadmap/acceptance/capability docs synchronized; README
+unchanged because setup/environment/public release status did not change.
+
+Accepted implementation/local-evidence scope has no remaining owner decision or
+code requirement. Working migration, target rollout and deployed pilot acceptance
+remain separate environment/release work. Full AC01–14, arbitrary terminal reopen,
+repricing rendered services, bulk/ambiguous legacy conversion are not closed here.

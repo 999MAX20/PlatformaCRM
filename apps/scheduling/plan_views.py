@@ -124,10 +124,30 @@ class VisitPlanViewSet(viewsets.GenericViewSet):
             "reason": row.reason, "created_at": row.created_at,
             "actor_name": row.actor.full_name if row.actor else ""} for row in page])
 
-    @action(detail=True, methods=["post"], url_path="commands/(?P<command>schedule|revise|archive|restore|responsible|accept-terms|settle-remainder|use-credit)")
+    @action(detail=True, methods=["get"], url_path="legacy-payment-options")
+    def legacy_payment_options(self, request, pk=None):
+        from django.db.models import F
+        from apps.payments.plan_corrections import legacy_options
+        page = self.paginate_queryset(legacy_options(self.get_object(), request.user).filter(amount__gt=F("refunded_amount")))
+        return self.get_paginated_response([{"id": row.pk, "amount": str(row.amount),
+            "refunded": str(row.refunded_amount), "available": str(row.amount - row.refunded_amount),
+            "occurred_at": row.occurred_at, "method": row.method, "currency": row.currency} for row in page])
+
+    @action(detail=True, methods=["post"], url_path="preview-correction/(?P<correction>annul-completion|attach-legacy)")
+    def preview_correction(self, request, pk=None, correction=None):
+        from apps.payments.plan_corrections import preview_correction
+        from apps.core.domain_errors import InvalidTransition
+        plan = self.get_object()
+        serializer = PlanMoneyInput(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        if plan.revision != serializer.validated_data["expected_revision"]:
+            raise InvalidTransition("The plan changed. Refresh before reviewing the correction.")
+        return Response(preview_correction(plan, request.user, correction, serializer.validated_data))
+
+    @action(detail=True, methods=["post"], url_path="commands/(?P<command>schedule|revise|archive|restore|responsible|accept-terms|settle-remainder|use-credit|annul-completion|attach-legacy|create-replacement)")
     def command(self, request, pk=None, command=None):
         plan = self.get_object()
-        input_type = PlanMoneyInput if command in {"accept-terms", "settle-remainder", "use-credit"} else PlanCommandInput
+        input_type = PlanMoneyInput if command in {"accept-terms", "settle-remainder", "use-credit", "annul-completion", "attach-legacy", "create-replacement"} else PlanCommandInput
         serializer = input_type(data=request.data)
         serializer.is_valid(raise_exception=True)
         values = dict(serializer.validated_data)

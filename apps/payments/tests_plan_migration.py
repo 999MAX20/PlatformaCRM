@@ -34,6 +34,15 @@ class PlanMoneyMigrationTests(TransactionTestCase):
             self.assertFalse(PlanAllocation.objects.exists())
             MigrationExecutor(connection).migrate([before])
         finally:
-            MigrationExecutor(connection).migrate([after])
+            executor = MigrationExecutor(connection)
+            executor.migrate(executor.loader.graph.leaf_nodes())
+        current = Payment.objects.get(pk=identity)
+        self.assertEqual((current.amount, current.note, current.created_at), (Decimal("100.25"), "Preserved", timestamp))
+        from .models import PlanLegacyAttachment, PlanCompletionCorrection
+        self.assertFalse(PlanLegacyAttachment.objects.exists())
+        self.assertFalse(PlanCompletionCorrection.objects.exists())
+        MigrationExecutor(connection).migrate([after])
+        executor = MigrationExecutor(connection)
+        executor.migrate(executor.loader.graph.leaf_nodes())
         current = Payment.objects.get(pk=identity)
         self.assertEqual((current.amount, current.note, current.created_at), (Decimal("100.25"), "Preserved", timestamp))

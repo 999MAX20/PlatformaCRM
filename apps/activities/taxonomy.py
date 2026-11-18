@@ -36,6 +36,7 @@ class ActivityEvents:
     APPOINTMENT_CONFIRMED = "appointment_confirmed"
     APPOINTMENT_CANCELLED = "appointment_cancelled"
     APPOINTMENT_COMPLETED = "appointment_completed"
+    APPOINTMENT_COMPLETION_CORRECTED = "appointment_completion_corrected"
     APPOINTMENT_NO_SHOW = "appointment_no_show"
     APPOINTMENT_RESCHEDULED = "appointment_rescheduled"
 
@@ -113,6 +114,7 @@ EVENT_LABELS = {
     ActivityEvents.APPOINTMENT_CONFIRMED: "Запись подтверждена",
     ActivityEvents.APPOINTMENT_CANCELLED: "Запись отменена",
     ActivityEvents.APPOINTMENT_COMPLETED: "Визит завершён",
+    ActivityEvents.APPOINTMENT_COMPLETION_CORRECTED: "Ошибочное завершение аннулировано",
     ActivityEvents.APPOINTMENT_NO_SHOW: "Клиент не пришёл",
     ActivityEvents.APPOINTMENT_RESCHEDULED: "Запись перенесена",
     ActivityEvents.TASK_CREATED: "Создана задача",
@@ -269,6 +271,13 @@ EVENT_DEFINITIONS = {
         audit_required=True,
         important=True,
     ),
+    ActivityEvents.APPOINTMENT_COMPLETION_CORRECTED: _define(
+        ActivityEvents.APPOINTMENT_COMPLETION_CORRECTED,
+        category=ActivityEvent.Categories.APPOINTMENT,
+        domain="appointments",
+        audit_required=True,
+        important=True,
+    ),
     ActivityEvents.APPOINTMENT_RESCHEDULED: _define(
         ActivityEvents.APPOINTMENT_RESCHEDULED,
         category=ActivityEvent.Categories.APPOINTMENT,
@@ -394,6 +403,7 @@ EVENT_CATEGORIES = {
     ActivityEvents.APPOINTMENT_CONFIRMED: ActivityEvent.Categories.APPOINTMENT,
     ActivityEvents.APPOINTMENT_CANCELLED: ActivityEvent.Categories.APPOINTMENT,
     ActivityEvents.APPOINTMENT_COMPLETED: ActivityEvent.Categories.APPOINTMENT,
+    ActivityEvents.APPOINTMENT_COMPLETION_CORRECTED: ActivityEvent.Categories.APPOINTMENT,
     ActivityEvents.APPOINTMENT_NO_SHOW: ActivityEvent.Categories.APPOINTMENT,
     ActivityEvents.APPOINTMENT_RESCHEDULED: ActivityEvent.Categories.APPOINTMENT,
     ActivityEvents.TASK_CREATED: ActivityEvent.Categories.TASK,

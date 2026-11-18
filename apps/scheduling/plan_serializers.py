@@ -49,6 +49,7 @@ class PlanBasePriceInput(serializers.Serializer):
 
 class PlanMoneyInput(serializers.Serializer):
     expected_revision = serializers.IntegerField(min_value=1)
+    step_id = serializers.IntegerField(min_value=1, required=False)
     mode = serializers.ChoiceField(choices=["package", "per_visit"], required=False)
     total = serializers.DecimalField(max_digits=14, decimal_places=2, min_value=0, required=False)
     base_prices = PlanBasePriceInput(many=True, max_length=100, required=False)
@@ -56,7 +57,7 @@ class PlanMoneyInput(serializers.Serializer):
     consent = serializers.BooleanField(required=False)
     reason = serializers.CharField(max_length=500, required=False, allow_blank=True)
     receipt = serializers.IntegerField(min_value=1, required=False)
-    choice = serializers.ChoiceField(choices=["retain", "refund"], required=False)
+    choice = serializers.ChoiceField(choices=["retain", "refund", "reuse"], required=False)
     amount = serializers.DecimalField(max_digits=14, decimal_places=2, min_value=0, required=False)
     source_plan = serializers.IntegerField(min_value=1, required=False)
     source_revision = serializers.IntegerField(min_value=1, required=False)
@@ -81,6 +82,8 @@ def plan_projection(plan, actor):
 
 def step_projection(step):
     appointment = step.appointment
+    correction = getattr(step, "completion_correction", None)
+    replaces = getattr(step, "replaces_correction", None)
     return {"id": step.pk, "service": appointment.service_id if appointment else step.service_id,
             "service_name": appointment.service.name if appointment else step.service.name,
             "resource": appointment.resource_id if appointment else step.resource_id,
@@ -89,4 +92,7 @@ def step_projection(step):
             "responsible_user": step.responsible_user_id,
             "appointment": step.appointment_id, "start_at": appointment.start_at if appointment else None,
             "status": appointment.status if appointment else "unscheduled",
-            "removed_at": step.removed_at}
+            "removed_at": step.removed_at,
+            "completion_corrected": bool(correction),
+            "replacement_step": correction.replacement_id if correction else None,
+            "replaces_step": replaces.step_id if replaces else None}

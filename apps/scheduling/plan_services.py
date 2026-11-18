@@ -98,6 +98,9 @@ def change_plan(*, plan, actor, command, expected_revision, idempotency_key, dat
     business = Business.objects.select_for_update().get(pk=plan.business_id)
     plan = VisitPlan.objects.select_for_update(of=("self",)).select_related("business", "client").get(pk=plan.pk, business=business)
     assert_plan_change(plan, actor)
+    if command in {"annul-completion", "attach-legacy", "create-replacement"}:
+        from apps.payments.plan_corrections import assert_owner_money
+        assert_owner_money(plan, actor)
     if command in {"accept-terms", "settle-remainder", "use-credit"}:
         from apps.payments.plan_balances import assert_plan_money
         assert_plan_money(plan, actor, Actions.MANAGE if command == "settle-remainder" else Actions.CREATE)
@@ -112,6 +115,10 @@ def change_plan(*, plan, actor, command, expected_revision, idempotency_key, dat
         before = list(plan.steps.values("id", "service_id", "resource_id", "branch_id", "responsible_user_id", "removed_at", "appointment_id"))
         if command == "schedule":
             _schedule(plan, actor, data)
+        elif command in {"annul-completion", "attach-legacy", "create-replacement"}:
+            from apps.payments.plan_corrections import annul_completion, attach_legacy, create_replacement
+            {"annul-completion": annul_completion, "attach-legacy": attach_legacy,
+             "create-replacement": create_replacement}[command](plan, actor, data)
         elif command in {"accept-terms", "settle-remainder", "use-credit"}:
             from apps.payments.plan_services import accept_terms, settle_remainder, use_credit
             {"accept-terms": accept_terms, "settle-remainder": settle_remainder, "use-credit": use_credit}[command](plan, actor, data)
@@ -124,7 +131,7 @@ def change_plan(*, plan, actor, command, expected_revision, idempotency_key, dat
                 raise ValidationError({"reason": "Provide a reason."})
             if command == "archive" and plan.steps.filter(appointment__status__in=["created", "confirmed", "rescheduled"], appointment__is_archived=False).exists():
                 raise UnfinishedWork("Resolve scheduled visits before archiving the plan.")
-            if command == "archive" and plan.payment_terms.exists():
+            if command == "archive" and (plan.payment_terms.exists() or plan.legacy_attachments.exists()):
                 from apps.payments.plan_balances import plan_sources, source_balance, retained_balance, assert_plan_money
                 assert_plan_money(plan, actor)
                 if any(source_balance(plan, receipt) > retained_balance(plan, receipt) for receipt in plan_sources(plan)):

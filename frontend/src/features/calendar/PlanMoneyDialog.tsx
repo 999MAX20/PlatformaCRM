@@ -102,7 +102,7 @@ export function PlanMoneyDialog({ plan, kind, onClose }: { plan: VisitPlan; kind
       {localError && <p role="alert" className="text-platforma-danger">{localError}</p>}
       {uncertain && <p role="alert">{t("payments.uncertain")}</p>}
       {stale && <Button type="button" variant="secondary" onClick={() => void refresh()}>{t("planMoney.refresh")}</Button>}
-      <fieldset disabled={pending || uncertain || stale} className="space-y-4">
+      <fieldset disabled={pending || uncertain || stale} className="min-w-0 space-y-4">
         {kind === "terms" ? <>
           <Select label={t("planMoney.mode")} value={mode} onChange={e => { setMode(e.target.value as typeof mode); changed(); }} options={[{ value: "per_visit", label: t("planMoney.perVisit") }, { value: "package", label: t("planMoney.package") }]} />
           {mode === "package" && <Input label={t("planMoney.total")} value={total} inputMode="decimal" required onChange={e => { setTotal(e.target.value); changed(); }} />}
@@ -122,7 +122,7 @@ export function PlanMoneyDialog({ plan, kind, onClose }: { plan: VisitPlan; kind
         </> : <>
           <Select label={t("planMoney.source")} value={receipt} required options={[{ value: "", label: t("planMoney.selectSource") }, ...(plan.money?.sources || []).filter(s => Number(s.available) > 0).map(s => ({ value: s.id, label: `#${s.id} · ${s.available} ${terms?.currency || ""}` }))]} onChange={e => { setReceipt(e.target.value); setDirty(true); setConsent(false); }} />
           <Input label={t("payments.amount")} inputMode="decimal" value={amount} required onChange={e => { setAmount(e.target.value); setDirty(true); setConsent(false); }} />
-          <Select label={t("planMoney.choice")} value={choice} required options={[{ value: "", label: t("planMoney.choose") }, { value: "refund", label: t("payments.refund") }, { value: "retain", label: t("planMoney.retain") }]} onChange={e => { setChoice(e.target.value); setDirty(true); setConsent(false); }} />
+          <Select label={t("planMoney.choice")} value={choice} required options={[{ value: "", label: t("planMoney.choose") }, { value: "refund", label: t("payments.refund") }, { value: "retain", label: t("planMoney.retain") }, ...(plan.money?.terms_current && Number(plan.money?.sources.find(s => String(s.id) === receipt)?.retained) > 0 ? [{ value: "reuse", label: t("planCorrection.reuse") }] : [])]} onChange={e => { setChoice(e.target.value); setDirty(true); setConsent(false); }} />
           <p className="text-sm text-platforma-subtle">{t("payments.manualNotice")}</p>
         </>}
         {(kind !== "terms" || preview) && <>
