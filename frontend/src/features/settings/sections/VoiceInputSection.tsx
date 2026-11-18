@@ -12,7 +12,7 @@ import type { Id } from "../../../types";
 
 export function VoiceInputSection({ model }: { model: SettingsModel }) {
   const { user } = useAuth();
-  return <SettingsSection id="voice-input" active={model.activeSettingsSection} title={model.t("voice.title")}>
+  return <SettingsSection id="voice-input" active={model.activeSettingsSection} title={model.t("settings.section.voice-input")}>
     {user && model.activeSettingsSection === "voice-input" && <VoiceSettings key={user.id} userId={user.id} />}
   </SettingsSection>;
 }
@@ -26,6 +26,7 @@ export function VoiceSettings({ userId }: { userId: Id }) {
     return () => { alive = false; navigator.mediaDevices?.removeEventListener("devicechange", refresh); };
   }, [recorder.state]);
   return <div className="space-y-5 p-4 sm:p-5">
+    <p className="max-w-xl text-sm text-platforma-subtle">{t("settings.clarity.voiceLocal")}</p>
     <label className="flex min-h-10 items-center gap-3 text-sm"><input type="checkbox" checked={preferences.visible} onChange={event => update({ visible: event.target.checked })} />{t("voice.visible")}</label>
     <Select label={t("voice.language")} value={preferences.language} onChange={event => update({ language: event.target.value as SpeechLanguage })}
       options={[{ value: "auto", label: t("voice.auto") }, { value: "ru", label: "Русский" }, { value: "kk", label: "Қазақша" }]} />

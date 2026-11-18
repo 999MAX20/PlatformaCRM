@@ -67,6 +67,31 @@ class SecurityCenterTests(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["active_support_grants"], 1)
 
+    def test_history_pagination_filters_before_slicing_and_preserves_scope(self):
+        self.client.force_authenticate(self.owner)
+        failed = LoginHistory.objects.create(business=self.business, user=self.owner, status=LoginHistory.Statuses.FAILED)
+        LoginHistory.objects.bulk_create([LoginHistory(business=self.business, user=self.owner, status=LoginHistory.Statuses.SUCCESS) for _ in range(105)])
+        other = Business.objects.create(owner=self.staff, name="Other", slug="other-history")
+        LoginHistory.objects.create(business=other, user=self.staff, status=LoginHistory.Statuses.FAILED)
+        params = {"business": self.business.pk, "paginate": "true"}
+        filtered = self.client.get("/api/security/login-history/", {**params, "status": "failed"})
+        self.assertEqual(filtered.data["count"], 1)
+        self.assertEqual(filtered.data["results"][0]["id"], failed.pk)
+        first = self.client.get("/api/security/login-history/", params)
+        second = self.client.get("/api/security/login-history/", {**params, "page": 2})
+        self.assertEqual(len(first.data["results"]), 25)
+        self.assertFalse({row["id"] for row in first.data["results"]} & {row["id"] for row in second.data["results"]})
+        self.assertEqual(len(self.client.get("/api/security/login-history/", {"business": self.business.pk}).data), 100)
+        for endpoint in ("audit", "login-history"):
+            url = f"/api/security/{endpoint}/"
+            result = self.client.get(url, {**params, "date_from": (timezone.now() + timezone.timedelta(days=1)).isoformat()})
+            self.assertEqual(result.data["count"], 0)
+            self.assertEqual(self.client.get(url, {**params, "date_from": "bad"}).status_code, 400)
+            self.assertEqual(self.client.get(url, {**params, "business": other.pk}).status_code, 403)
+            self.assertEqual(self.client.get(url, {**params, "page": 9999}).status_code, 404)
+        self.client.force_authenticate(self.staff)
+        self.assertEqual(self.client.get("/api/security/login-history/", params).status_code, 403)
+
     def test_security_rejects_ambiguous_business_and_invalid_filters(self):
         second = Business.objects.create(owner=self.owner, name="Second", slug="security-second")
         self.client.force_authenticate(self.owner)

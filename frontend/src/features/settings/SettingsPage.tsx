@@ -1,4 +1,5 @@
 import { Navigate, useLocation } from "react-router";
+import { DraftGuard } from "../../components/actions/DraftGuard";
 import { ForbiddenState, LoadingState } from "../../components/ui/StateViews";
 import { useActiveBusiness } from "../../hooks/useBusiness";
 import { useAuth } from "../auth/AuthProvider";
@@ -46,6 +47,8 @@ function BusinessSettingsPage() {
   if (!model.business) return <p className="p-5 text-sm text-platforma-subtle">{model.t("settings.redesign.noBusiness")}</p>;
   if (!model.allowedSettingsSections.length) return <ForbiddenState />;
   return <div data-testid="settings-workspace-ready" className="settings-workspace grid items-start gap-4 lg:grid-cols-[216px_minmax(0,1fr)]">
+    <DraftGuard allowHashNavigation dirty={model.profileDraftState.dirty || Object.keys(model.appointmentMessageDrafts).length > 0}
+      pending={model.profileDraftState.pending || model.appointmentMessageMutation.isPending} />
     <SettingsNavigation activeSettingsSection={model.activeSettingsSection} navigationTitle={model.t("settings.navigationTitle")}
       setActiveSettingsSection={model.setActiveSettingsSection} translatedSettingsGroups={model.translatedSettingsGroups}
       translatedSettingsSections={model.translatedSettingsSections} />

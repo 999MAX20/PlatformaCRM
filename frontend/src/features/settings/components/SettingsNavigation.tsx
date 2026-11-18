@@ -17,7 +17,7 @@ export function SettingsNavigation({ activeSettingsSection, setActiveSettingsSec
       options={translatedSettingsSections.map(section => ({ value: section.id, label: section.label }))} /></div>
     <nav aria-label={navigationTitle} className="hidden space-y-3 py-1 lg:block">
       {translatedSettingsGroups.map(group => <div key={group.key}>
-        <p className="mb-1 text-xs font-bold uppercase text-platforma-subtle">{group.label}</p>
+        <p className="mb-1 px-3 text-xs font-semibold text-platforma-subtle">{group.label}</p>
         <div className="space-y-1">
           {group.sections.map(section => <a key={section.id} href={"#" + section.id}
             aria-current={(activeSettingsSection === section.id || activeSettingsSection === "roles" && section.id === "team-access") ? "page" : undefined}

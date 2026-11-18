@@ -3,11 +3,13 @@ import { useBlocker } from "react-router";
 import { useActionConfirm } from "./ActionConfirmProvider";
 import { useI18n } from "../../lib/i18n";
 
-export function DraftGuard({ dirty, pending, saved }: { dirty: boolean; pending: boolean; saved?: RefObject<boolean> }) {
+export function DraftGuard({ dirty, pending, saved, allowHashNavigation = false }: { dirty: boolean; pending: boolean; saved?: RefObject<boolean>; allowHashNavigation?: boolean }) {
   const { t } = useI18n();
   const confirm = useActionConfirm();
   const confirming = useRef(false);
-  const blocker = useBlocker(() => !saved?.current && (dirty || pending));
+  const blocker = useBlocker(({ currentLocation, nextLocation }) =>
+    !(allowHashNavigation && currentLocation.pathname === nextLocation.pathname && currentLocation.search === nextLocation.search)
+    && !saved?.current && (dirty || pending));
   useEffect(() => {
     const unload = (event: BeforeUnloadEvent) => { if (!saved?.current && (dirty || pending)) { event.preventDefault(); event.returnValue = ""; } };
     window.addEventListener("beforeunload", unload);

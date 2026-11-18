@@ -24,7 +24,7 @@ export const voice = {
   "voice.editRequest": "Сұрауды түзету",
   "voice.reviewTask": "Тапсырманың атауы мен деректерін тексеріңіз. Тапсырма растаудан кейін жасалады.",
   "voice.completed": "Әрекет орындалды. Нәтиже төменде көрсетілген.",
-  "settings.section.voice-input": "Дауыстық көмекші",
+  "settings.section.voice-input": "Дауыстық енгізу",
   "voice.settings": "Микрофон баптаулары",
   "voice.record": "Сұрауды жазу",
   "voice.recordAgain": "Қайта жазу",

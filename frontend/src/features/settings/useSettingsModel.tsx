@@ -5,7 +5,7 @@ import { useSettingsCustomFields } from "./useSettingsCustomFields";
 import { useSettingsSecurity } from "./useSettingsSecurity";
 import { useSettingsBilling } from "./useSettingsBilling";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 import { businessesApi } from "../../api/businesses";
 
@@ -23,6 +23,7 @@ import {
 } from "./settingsConfig";
 
 export function useSettingsModel() {
+  const [profileDraftState, setProfileDraftState] = useState({ dirty: false, pending: false });
   const { t, language } = useI18n();
 
   const confirmAction = useActionConfirm();
@@ -193,7 +194,7 @@ export function useSettingsModel() {
       allowedSettingsSectionIds,
       queryClient,
     });
-  const { auditLogs, loginHistory, supportGrants } = useSettingsSecurity({
+  const { auditLogs, loginHistory, supportGrants, securityFilters, setSecurityFilters } = useSettingsSecurity({
     business,
     canViewAudit,
     activeSettingsSection,
@@ -218,7 +219,7 @@ export function useSettingsModel() {
       ...section,
       label: t(section.id === "integrations" ? "nav.integrations" : `settings.section.${section.id}`),
       group:
-        section.group || settingsSectionGroupFallback[section.id] || "advanced",
+        section.group || settingsSectionGroupFallback[section.id] || "business",
     }));
 
   const translatedSettingsGroups = settingsGroupOrder
@@ -235,6 +236,10 @@ export function useSettingsModel() {
     language === "kk" ? "kk-KZ" : language === "en" ? "en-US" : "ru-RU";
 
   return {
+    securityFilters,
+    setSecurityFilters,
+    profileDraftState,
+    setProfileDraftState,
     activeSettingsSection,
     allowedSettingsSectionIds,
     allowedSettingsSections,

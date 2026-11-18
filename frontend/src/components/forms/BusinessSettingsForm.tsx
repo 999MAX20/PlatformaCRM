@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -12,6 +12,7 @@ import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
 import { Select } from "../ui/Select";
 import { DraftGuard } from "../actions/DraftGuard";
+import { BusinessTimezoneSelect } from "./BusinessTimezoneSelect";
 
 function createSchema(t: (key: string) => string) {
   return z.object({
@@ -26,7 +27,7 @@ function createSchema(t: (key: string) => string) {
   });
 }
 type Values = z.infer<ReturnType<typeof createSchema>>;
-export function BusinessSettingsForm({ initial, onSubmit, readOnly = false, protectDraft = false }: { initial?: Business | null; onSubmit: (payload: Partial<Business>) => Promise<unknown>; readOnly?: boolean; protectDraft?: boolean }) {
+export function BusinessSettingsForm({ initial, onSubmit, readOnly = false, protectDraft = false, onDraftStateChange }: { initial?: Business | null; onSubmit: (payload: Partial<Business>) => Promise<unknown>; readOnly?: boolean; protectDraft?: boolean; onDraftStateChange?: (state: { dirty: boolean; pending: boolean }) => void }) {
   const { t } = useI18n();
   const [saveError, setSaveError] = useState<unknown>(null);
   const [saved, setSaved] = useState(false);
@@ -44,8 +45,12 @@ export function BusinessSettingsForm({ initial, onSubmit, readOnly = false, prot
     },
   });
   function focusField(field: keyof Values) {
-    window.requestAnimationFrame(() => form.setFocus(field));
+    window.requestAnimationFrame(() => {
+      if (field === "timezone") document.querySelector<HTMLButtonElement>('[data-business-timezone] button')?.focus();
+      else form.setFocus(field);
+    });
   }
+  useEffect(() => { onDraftStateChange?.({ dirty: form.formState.isDirty, pending: form.formState.isSubmitting }); }, [onDraftStateChange, form.formState.isDirty, form.formState.isSubmitting]);
   async function submit(values: Values) {
     setSaveError(null); setSaved(false);
     try {
@@ -64,7 +69,7 @@ export function BusinessSettingsForm({ initial, onSubmit, readOnly = false, prot
   const field = (name: keyof Values) => ({ ...form.register(name), error: error(name) });
   return <form noValidate onChange={() => setSaved(false)} onSubmit={form.handleSubmit(submit, errors => focusField(Object.keys(errors)[0] as keyof Values))}>
     {protectDraft && <DraftGuard dirty={form.formState.isDirty} pending={form.formState.isSubmitting} />}
-    <fieldset disabled={form.formState.isSubmitting || readOnly} className="min-w-0 space-y-5 p-4 sm:p-5">
+    <fieldset disabled={form.formState.isSubmitting || readOnly} className="min-w-0 max-w-4xl space-y-5 p-4 sm:p-5">
       <legend className="sr-only">{t("businessForm.group.profile")}</legend>
       <div className="space-y-3">
         <h2 className="text-base font-bold">{t("settings.redesign.basics")}</h2>
@@ -72,7 +77,8 @@ export function BusinessSettingsForm({ initial, onSubmit, readOnly = false, prot
           <Input label={t("businessForm.name")} {...field("name")} />
           <Select label={t("businessForm.type")} {...field("business_type")} value={form.watch("business_type")}
             options={["dentistry", "beauty", "sauna", "autoservice", "education", "medical", "other"].map(value => ({ value, label: t(`businessType.${value}`) }))} />
-          <Input label={t("businessForm.timezone")} placeholder="Asia/Almaty" {...field("timezone")} />
+          <div data-business-timezone><BusinessTimezoneSelect value={form.watch("timezone")} error={error("timezone")} disabled={form.formState.isSubmitting || readOnly}
+            onChange={value => { form.setValue("timezone", value, { shouldDirty: true, shouldValidate: true }); setSaved(false); }} /></div>
           <Select label={t("businessForm.currency")} {...field("currency")} value={form.watch("currency")} options={["KZT", "USD", "EUR", "RUB"].map(value => ({ value, label: value }))} />
         </div>
       </div>

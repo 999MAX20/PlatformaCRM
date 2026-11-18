@@ -6,6 +6,7 @@ from rest_framework import serializers
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.pagination import PageNumberPagination
 
 from apps.accounts.mfa import validate_step_up_token
 from apps.businesses.access import Actions, Resources, assert_can, can
@@ -59,6 +60,16 @@ def _apply_audit_filters(queryset, request):
     return queryset
 
 
+def _history_response(queryset, request, serializer):
+    queryset = queryset.order_by("-created_at", "-pk")
+    if request.query_params.get("paginate") == "true":
+        paginator = PageNumberPagination()
+        paginator.page_size = 25
+        page = paginator.paginate_queryset(queryset, request)
+        return paginator.get_paginated_response(serializer(page, many=True).data)
+    return Response(serializer(queryset[:100], many=True).data)
+
+
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def security_audit(request):
@@ -67,7 +78,7 @@ def security_audit(request):
         AuditLog.objects.filter(business=business).select_related("business", "actor"),
         request,
     )
-    return Response(AuditLogSerializer(queryset[:100], many=True).data)
+    return _history_response(queryset, request, AuditLogSerializer)
 
 
 @api_view(["GET"])
@@ -77,8 +88,11 @@ def security_login_history(request):
     queryset = LoginHistory.objects.filter(business=business).select_related("business", "user")
     status_filter = request.query_params.get("status")
     if status_filter:
-        queryset = queryset.filter(status=status_filter)
-    return Response(LoginHistorySerializer(queryset[:100], many=True).data)
+        queryset = queryset.filter(status=serializers.ChoiceField(choices=LoginHistory.Statuses.values).run_validation(status_filter))
+    for parameter, lookup in (("date_from", "created_at__gte"), ("date_to", "created_at__lte")):
+        if request.query_params.get(parameter):
+            queryset = queryset.filter(**{lookup: serializers.DateTimeField().run_validation(request.query_params[parameter])})
+    return _history_response(queryset, request, LoginHistorySerializer)
 
 
 @api_view(["GET"])

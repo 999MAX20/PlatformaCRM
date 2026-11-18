@@ -1,3 +1,7 @@
+## SETTINGS-CLARITY-20261118 — локально проверено
+
+Упрощены навигация, выбор часового пояса и времени сообщений; единое сохранение сценария и защита черновиков. Серверные фильтры/страницы истории безопасности; локальные голосовые настройки обозначены явно. PASS: 14 backend tests, check/schema, build/types/i18n/bundle, 12 выбранных desktop/mobile сценариев (с исправленными тестовыми данными), осмотр RU/KK/EN. Django8000 перезапущен по просьбе владельца, Chrome открыт на /app/settings. Публикация/CI отдельно; граница и логи: [checkpoint](docs/testing/task-state/PRIMARY-SESSION.md#settings-clarity-20261118).
+
 INVITATIONS-SMTP-20261118: restored Resend SMTP + HTTPS FRONTEND_URL on live stand.
 New invitations 3 Manager / 4 Operator: SMTP accepted and Resend Delivered confirmed.
 Owner-approved old test emails 630/632/635 cancelled with audit; active queue 0.

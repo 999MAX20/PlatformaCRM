@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 
 import { securityApi } from "../../api/security";
 
@@ -11,16 +12,17 @@ type Context = {
 };
 
 export function useSettingsSecurity({ business, canViewAudit, activeSettingsSection }: Context) {
+const [securityFilters, setSecurityFilters] = useState({ period: "all", date_from: undefined as string | undefined, failedOnly: false, auditPage: 1, loginPage: 1 });
 const auditLogs = useQuery({
-    queryKey: ["security-audit", business?.id],
-    queryFn: () => securityApi.audit({ business: business?.id }),
+    queryKey: ["security-audit", business?.id, securityFilters.date_from, securityFilters.auditPage],
+    queryFn: () => securityApi.auditPage({ business: business?.id, date_from: securityFilters.date_from, page: securityFilters.auditPage }),
     enabled: activeSettingsSection === "security-center" && Boolean(business && canViewAudit),
     retry: false,
   });
 
 const loginHistory = useQuery({
-    queryKey: ["security-login-history", business?.id],
-    queryFn: () => securityApi.loginHistory({ business: business?.id }),
+    queryKey: ["security-login-history", business?.id, securityFilters.date_from, securityFilters.failedOnly, securityFilters.loginPage],
+    queryFn: () => securityApi.loginHistoryPage({ business: business?.id, date_from: securityFilters.date_from, status: securityFilters.failedOnly ? "failed" : undefined, page: securityFilters.loginPage }),
     enabled: activeSettingsSection === "security-center" && Boolean(business && canViewAudit),
     retry: false,
   });
@@ -31,5 +33,5 @@ const supportGrants = useQuery({
     enabled: activeSettingsSection === "security-center" && Boolean(business && canViewAudit),
     retry: false,
   });
-return { auditLogs, loginHistory, supportGrants };
+return { auditLogs, loginHistory, supportGrants, securityFilters, setSecurityFilters };
 }

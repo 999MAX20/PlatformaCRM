@@ -50,18 +50,21 @@ for (const [language, copy] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
   });
 }
 
-test("business values save while reference metadata is preserved; invalid timezone recovers", async ({ page }) => {
+test("business values save while reference metadata is preserved; invalid timezone recovers", async ({ page }, info) => {
   const session = await crmSession(page);
   const before = await session.read(`businesses/${session.business}`);
   const panel = await open(page, "business-profile");
-  await panel.getByLabel(ru["businessForm.city"], { exact: true }).fill("Settings city");
-  await panel.getByLabel(ru["businessForm.timezone"], { exact: true }).fill("Invalid/TimeZone");
+  const city = `Settings city ${info.project.name}`;
+  await panel.getByLabel(ru["businessForm.city"], { exact: true }).fill(city);
+  await page.route("**/api/businesses/*/", route => route.request().method() === "PATCH" ? route.fulfill({ status: 400, json: { timezone: ["Invalid timezone"] } }) : route.continue(), { times: 1 });
   await panel.getByRole("button", { name: ru["businessForm.save"], exact: true }).click();
   await expect(page.getByRole("alert")).toBeVisible();
   expect((await session.read(`businesses/${session.business}`)).city).toBe(before.city);
-  await panel.locator('input[name="timezone"]').fill("Asia/Almaty");
+  await panel.locator('[data-business-timezone] button').first().click();
+  await panel.locator('[data-business-timezone] input').fill("Алматы");
+  await panel.getByRole("option", { name: /Алматы/ }).click();
   await panel.getByRole("button", { name: ru["businessForm.save"], exact: true }).click();
-  await expect.poll(async () => (await session.read(`businesses/${session.business}`)).city).toBe("Settings city");
+  await expect.poll(async () => (await session.read(`businesses/${session.business}`)).city).toBe(city);
   const after = await session.read(`businesses/${session.business}`);
   for (const key of ["slug", "financial_source_mode", "financial_connector", "language", "sla_minutes", "booking_buffer_minutes", "cancellation_policy", "prepayment_policy", "brand_color", "brand_logo_url"]) expect(after[key]).toEqual(before[key]);
   await panel.locator('input[name="invoice_email"]').fill("invalid-email");
@@ -83,7 +86,7 @@ test("appointment edits preserve another card draft and recover from a rejected 
   await scenarios.nth(1).click();
   await text.fill("Keep other draft {time}");
   await scenarios.nth(0).click();
-  await panel.getByRole("combobox").click();
+  await panel.getByRole("combobox", { name: new RegExp(ru["settings.appointmentMessages.deliveryChannel"]) }).click();
   await expect(page.getByRole("option", { name: "SMS", exact: true })).toHaveCount(0);
   await page.keyboard.press("Escape");
   await panel.getByRole("switch").click();

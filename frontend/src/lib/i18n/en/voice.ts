@@ -24,7 +24,7 @@ export const voice = {
   "voice.editRequest": "Edit request",
   "voice.reviewTask": "Check the task title and details. The task will be created after confirmation.",
   "voice.completed": "Action completed. The result is shown below.",
-  "settings.section.voice-input": "Voice assistant",
+  "settings.section.voice-input": "Voice input",
   "voice.settings": "Microphone settings",
   "voice.record": "Record request",
   "voice.recordAgain": "Record again",

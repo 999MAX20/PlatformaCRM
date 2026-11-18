@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link } from "react-router";
 import { ActionMenu } from "../../../components/ui/ActionMenu";
 import { Button } from "../../../components/ui/Button";
+import { Select } from "../../../components/ui/Select";
 import { hasPermission } from "../../../lib/permissions";
 import { useAuth } from "../../auth/AuthProvider";
 import type { CustomFieldEntityType } from "../../../types";
@@ -25,7 +26,10 @@ export function CustomFieldsSection({ model }: { model: SettingsModel }) {
   return <SettingsSection id="custom-fields" active={activeSettingsSection} title={t("settings.section.custom-fields")}
     actions={<Button type="button" disabled={pending || entity === "lead" || entity === "deal"} onClick={() => setEditor("new")}><Plus size={16} />{t("settings.redesign.addField")}</Button>}>
     <div className="space-y-4 p-4 sm:p-5">
-      <SettingsTabs value={entity} onChange={setEntity} label={t("settings.entity")} items={fieldEntities.map(value => ({ value, label: `${t(`settings.customFieldEntity.${value}`)}${value === "lead" || value === "deal" ? ` · ${t("records.historical")}` : ""}` }))} />
+      <SettingsTabs value={entity === "lead" || entity === "deal" ? "history" : entity} onChange={value => setEntity(value === "history" ? "lead" : value as CustomFieldEntityType)} label={t("settings.entity")}
+        items={[...fieldEntities.filter(value => value !== "lead" && value !== "deal").map(value => ({ value, label: t(`settings.customFieldEntity.${value}`) })), { value: "history", label: t("records.historical") }]} />
+      {(entity === "lead" || entity === "deal") && <div className="max-w-xs"><Select label={t("settings.entity")} value={entity} onChange={event => setEntity(event.target.value as CustomFieldEntityType)}
+        options={["lead", "deal"].map(value => ({ value, label: t(`settings.customFieldEntity.${value}`) }))} /></div>}
       <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-platforma-subtle">
         <p className="max-w-2xl">{t(`settings.workflow.fieldPlacement.${entity}`)}</p>
         {hasPermission(user, business?.id, entity === "service" || entity === "specialist" ? "settings" : entity === "appointment" ? "appointments" : entity + "s", "view") && <Link to={entityLinks[entity]} className="platforma-focus-ring inline-flex min-h-11 items-center rounded-control font-semibold text-brand-700 underline underline-offset-4">{t(entity === "lead" || entity === "deal" ? "records.legacyTitle" : `settings.workflow.openEntities.${entity}`)}</Link>}

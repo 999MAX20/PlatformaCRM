@@ -26,7 +26,7 @@ export const visibilityOptions = [
 ] as const;
 
 export const roleGuideKeys = ["admin", "manager", "operator", "specialist"] as const;
-export const settingsGroupOrder = ["business", "team", "communication", "advanced", "setup"] as const;
+export const settingsGroupOrder = ["business", "communication", "setup"] as const;
 
 export type SettingsGroupKey = (typeof settingsGroupOrder)[number];
 
@@ -36,14 +36,14 @@ export const settingsSections: SettingsSectionConfig[] = [
   { id: "integrations", group: "communication", resource: "integrations", action: "view" },
   { id: "voice-input", group: "communication", resource: "ai_assistant", action: "suggest" },
   { id: "business-profile", group: "business", resource: "settings", action: "update" },
-  { id: "team-access", group: "team", resource: "team", action: "view" },
-  { id: "roles", group: "team", resource: "team", action: "manage" },
-  { id: "security-center", group: "team", resource: "audit_logs", action: "view" },
+  { id: "team-access", group: "business", resource: "team", action: "view" },
+  { id: "roles", group: "business", resource: "team", action: "manage" },
+  { id: "security-center", group: "business", resource: "audit_logs", action: "view" },
   { id: "appointment-messages", resource: "settings", action: "update" },
   { id: "quick-replies", group: "communication", resource: "conversations", action: "view" },
   { id: "billing", group: "setup", resource: "billing", action: "view" },
   { id: "usage", group: "setup", resource: "billing", action: "view" },
-  { id: "custom-fields", group: "advanced", resource: "settings", action: "update" },
+  { id: "custom-fields", group: "business", resource: "settings", action: "update" },
 ];
 
 export const settingsSectionGroupFallback: Record<string, SettingsGroupKey> = {

@@ -24,7 +24,7 @@ export const voice = {
   "voice.editRequest": "Исправить запрос",
   "voice.reviewTask": "Проверьте название и данные задачи. Задача будет создана после подтверждения.",
   "voice.completed": "Действие выполнено. Результат показан ниже.",
-  "settings.section.voice-input": "Голосовой помощник",
+  "settings.section.voice-input": "Голосовой ввод",
   "voice.settings": "Настройки микрофона",
   "voice.record": "Записать запрос",
   "voice.recordAgain": "Записать заново",

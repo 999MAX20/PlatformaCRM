@@ -2,7 +2,7 @@ import { CalendarCheck2, CalendarClock, MessageSquare } from "lucide-react";
 import { useRef, useState } from "react";
 import { getApiFieldErrors } from "../../../api/client";
 import { Button } from "../../../components/ui/Button";
-import { Input } from "../../../components/ui/Input";
+import { MessageTimingInput } from "../components/MessageTimingInput";
 import { Select } from "../../../components/ui/Select";
 import { Switch } from "../../../components/ui/Switch";
 import { Textarea } from "../../../components/ui/Textarea";
@@ -35,7 +35,14 @@ export function AppointmentMessagesSection({ model }: { model: SettingsModel; })
   }));
   if (channel && !choices.some(option => option.value === channel)) choices.push({ value: channel, label: t("settings.appointmentMessages.unavailableChannel", { channel: channel === "sms" ? "SMS" : channel }) });
   function update(values: Partial<AppointmentMessageSetting>) {
-    setAppointmentMessageDrafts(current => ({ ...current, [id]: { ...current[id], ...values } }));
+    setAppointmentMessageDrafts(current => {
+      const next = { ...current, [id]: { ...current[id], ...values } };
+      for (const key of Object.keys(next[id]) as Array<keyof AppointmentMessageSetting>) {
+        if (next[id][key] === setting[key]) delete next[id][key];
+      }
+      if (!Object.keys(next[id]).length) delete next[id];
+      return next;
+    });
     if (currentMutation && !appointmentMessageMutation.isPending) appointmentMessageMutation.reset();
   }
   function insertVariable(name: string) {
@@ -76,7 +83,7 @@ export function AppointmentMessagesSection({ model }: { model: SettingsModel; })
           <div className="mb-4 flex items-center justify-between gap-3">
             <h2 className="text-base font-bold">{t(meta.titleKey)}</h2>
             <div className="flex min-h-11 items-center gap-3"><span className="text-sm text-platforma-subtle">{t(enabled ? "settings.enabled" : "settings.paused")}</span><Switch checked={enabled} label={t(meta.titleKey)} isLoading={appointmentMessageMutation.isPending}
-              onChange={is_enabled => appointmentMessageMutation.mutate({ id, payload: { is_enabled } })} /></div>
+              onChange={is_enabled => update({ is_enabled })} /></div>
           </div>
           {fieldErrors.is_enabled && <p role="alert" className="mb-3 text-sm text-platforma-danger">{fieldErrors.is_enabled.join(" ")}</p>}
           <div className="grid min-w-0 grid-cols-1 gap-5 2xl:grid-cols-[minmax(0,1fr)_240px]">
@@ -85,14 +92,13 @@ export function AppointmentMessagesSection({ model }: { model: SettingsModel; })
             }}>
               <fieldset disabled={appointmentMessageMutation.isPending} className="min-w-0 space-y-4">
                 <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
-                  <Input label={t(setting.scenario === "thank_you" ? "settings.appointmentMessages.offsetAfter" : "settings.appointmentMessages.offsetBefore")}
-                    type="number" min={setting.scenario === "thank_you" ? 0 : 1} max={43200} required step={1}
-                    value={Math.abs(Number(appointmentMessageValue(setting, "offset_minutes")))} error={fieldErrors.offset_minutes?.join(" ")}
-                    onChange={event => update({ offset_minutes: (setting.scenario === "thank_you" ? 1 : -1) * Math.abs(Number(event.target.value || 0)) })} />
+                  <MessageTimingInput key={id} minutes={Number(appointmentMessageValue(setting, "offset_minutes"))} after={setting.scenario === "thank_you"}
+                    error={fieldErrors.offset_minutes?.join(" ")} onChange={offset_minutes => update({ offset_minutes })} />
                   <Select label={t("settings.appointmentMessages.deliveryChannel")} value={channel} options={choices} error={fieldErrors.channel_policy?.join(" ")}
                     onChange={event => update({ channel_policy: event.target.value as AppointmentMessageSetting["channel_policy"] })} />
                 </div>
                 <p className="text-xs leading-5 text-platforma-subtle">{t("settings.appointmentMessages.channelStatus")}</p>
+                {channel === "auto" && <p className="text-xs leading-5 text-platforma-subtle">{t("settings.clarity.channelAuto")}</p>}
                 <Textarea ref={textarea} label={t("settings.appointmentMessages.templateText")} rows={7} value={text} error={fieldErrors.template_text?.join(" ")} onChange={event => update({ template_text: event.target.value })} />
                 <div><p className="mb-2 text-xs text-platforma-subtle">{t("settings.redesign.insertVariable")}</p><div className="flex flex-wrap gap-2">{variableNames.map(name => <Button key={name} variant="secondary" size="sm" type="button" onClick={() => insertVariable(name)}>{t(`settings.redesign.variable.${name}`)}</Button>)}</div></div>
               </fieldset>
