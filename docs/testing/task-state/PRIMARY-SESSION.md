@@ -1,3 +1,9 @@
+INVITATIONS-LIVE-20261118: owner selected existing business; no new signup.
+Two explicit recipient/role-approved invitations created: Manager and Operator.
+Both email attempts FAIL, persisted after reload; only owner remains a member.
+No resend/revoke/accept/config/deploy. SSH timeout prevents root-cause proof.
+Evidence: docs/testing/evidence/invitations-24h-20261112.md#рабочий-прогон--18112026.
+
 ## GLOBAL-SEARCH-20261118
 
 Удалён page scope глобального поиска; текущая страница больше не меняет область
