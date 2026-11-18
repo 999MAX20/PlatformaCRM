@@ -1,3 +1,10 @@
+## GLOBAL-SEARCH-20261118
+
+Удалён page scope глобального поиска; текущая страница больше не меняет область
+и URL через этот control. Анализ реализации и ограничения, проверки и delivery:
+[checkpoint](../evidence/global-search-20261118.md). Новые серверные поиски задач/Inbox
+не реализованы; рекомендации не разрешают следующий этап автоматически.
+
 ## NOTIFICATIONS-REDESIGN-20261114
 
 15.11 owner correction at e26fa34d complete: modal detail on all widths without blur;

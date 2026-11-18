@@ -1,0 +1,174 @@
+{
+  "flows": [
+    {
+      "name": "scope buttons removed",
+      "pass": true
+    },
+    {
+      "name": "global query preserves local URL",
+      "pass": true
+    },
+    {
+      "name": "cross-entity search on tasks page",
+      "pass": true
+    },
+    {
+      "name": "clear preserves local URL and empties field",
+      "pass": true
+    },
+    {
+      "name": "email finds client",
+      "pass": true
+    },
+    {
+      "name": "client destination opens",
+      "pass": true
+    },
+    {
+      "name": "record destination opens",
+      "pass": true
+    },
+    {
+      "name": "task destination opens",
+      "pass": true
+    },
+    {
+      "name": "conversation destination opens correct client",
+      "pass": true
+    },
+    {
+      "name": "known limitation: conversation absent by client name",
+      "pass": true
+    },
+    {
+      "name": "known limitation: records absent by service name",
+      "pass": true
+    },
+    {
+      "name": "empty state",
+      "pass": true
+    },
+    {
+      "name": "Escape closes results",
+      "pass": true
+    },
+    {
+      "name": "outside click closes results",
+      "pass": true
+    },
+    {
+      "name": "error offers retry",
+      "pass": true
+    },
+    {
+      "name": "retry recovers",
+      "pass": true
+    }
+  ],
+  "layouts": [
+    {
+      "name": "ru/1440 dropdown fits",
+      "pass": true
+    },
+    {
+      "name": "ru/1440 no selector",
+      "pass": true
+    },
+    {
+      "name": "ru/1440 measured colors",
+      "left": 276,
+      "right": 836,
+      "width": 1440,
+      "scroll": 1440,
+      "ink": "rgb(23, 32, 30)",
+      "meta": "rgb(96, 113, 105)",
+      "bg": "rgb(255, 255, 255)"
+    },
+    {
+      "name": "ru/1440 closes",
+      "pass": true
+    },
+    {
+      "name": "kk/320 dropdown fits",
+      "pass": true
+    },
+    {
+      "name": "kk/320 no selector",
+      "pass": true
+    },
+    {
+      "name": "kk/320 measured colors",
+      "left": 12,
+      "right": 308,
+      "width": 320,
+      "scroll": 320,
+      "ink": "rgb(23, 32, 30)",
+      "meta": "rgb(96, 113, 105)",
+      "bg": "rgb(255, 255, 255)"
+    },
+    {
+      "name": "kk/320 closes",
+      "pass": true
+    },
+    {
+      "name": "en/390 dropdown fits",
+      "pass": true
+    },
+    {
+      "name": "en/390 no selector",
+      "pass": true
+    },
+    {
+      "name": "en/390 measured colors",
+      "left": 12,
+      "right": 378,
+      "width": 390,
+      "scroll": 390,
+      "ink": "rgb(23, 32, 30)",
+      "meta": "rgb(96, 113, 105)",
+      "bg": "rgb(255, 255, 255)"
+    },
+    {
+      "name": "en/390 closes",
+      "pass": true
+    },
+    {
+      "name": "ru/768 dropdown fits",
+      "pass": true
+    },
+    {
+      "name": "ru/768 no selector",
+      "pass": true
+    },
+    {
+      "name": "ru/768 measured colors",
+      "left": 12,
+      "right": 756,
+      "width": 768,
+      "scroll": 768,
+      "ink": "rgb(23, 32, 30)",
+      "meta": "rgb(96, 113, 105)",
+      "bg": "rgb(255, 255, 255)"
+    },
+    {
+      "name": "ru/768 closes",
+      "pass": true
+    },
+    {
+      "name": "Tab reaches first result",
+      "pass": true
+    },
+    {
+      "name": "keyboard Enter opens client",
+      "pass": true
+    },
+    {
+      "name": "loading visible during pending query",
+      "pass": true
+    },
+    {
+      "name": "loading recovers to empty",
+      "pass": true
+    }
+  ]
+}

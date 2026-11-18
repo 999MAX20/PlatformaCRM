@@ -3,7 +3,7 @@ import { useClientSearch } from "../../hooks/useClientSearch";
 import { ErrorState } from "../ui/StateViews";
 import { CalendarCheck, ListChecks, MessageCircle, Search, User, X } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link, useLocation, useSearchParams } from "react-router";
+import { Link } from "react-router";
 
 import { formatDateTime } from "../../lib/format";
 import { cn } from "../../lib/cn";
@@ -22,47 +22,13 @@ type SearchItem = {
   haystack: string;
 };
 
-type SearchScope = "page" | "global";
-type SearchContext = {
-  id: "clients" | "conversations" | "calendar" | "tasks" | "integrations" | "timeline" | "default";
-  types: string[];
-  placeholderKey: string;
-};
-
-const contextByPath: Array<{ match: (path: string) => boolean; context: SearchContext }> = [
-  { match: (path) => path.includes("/app/clients"), context: { id: "clients", types: ["client"], placeholderKey: "search.placeholder.clients" } },
-  { match: (path) => path.includes("/app/conversations"), context: { id: "conversations", types: ["conversation"], placeholderKey: "search.placeholder.conversations" } },
-  { match: (path) => (path.includes("/app/calendar") || path.includes("/app/appointments")), context: { id: "calendar", types: ["appointment"], placeholderKey: "search.placeholder.calendar" } },
-  { match: (path) => path.includes("/app/tasks"), context: { id: "tasks", types: ["task"], placeholderKey: "search.placeholder.tasks" } },
-  { match: (path) => path.includes("/app/integrations"), context: { id: "integrations", types: [], placeholderKey: "search.placeholder.integrations" } },
-  { match: (path) => path.includes("/app/timeline"), context: { id: "timeline", types: [], placeholderKey: "search.placeholder.timeline" } },
-];
-
-function getSearchContext(pathname: string): SearchContext {
-  return contextByPath.find((item) => item.match(pathname))?.context || { id: "default", types: [], placeholderKey: "header.search" };
-}
-
-function setSearchParam(searchParams: URLSearchParams, setSearchParams: ReturnType<typeof useSearchParams>[1], value: string) {
-  const next = new URLSearchParams(searchParams);
-  const clean = value.trim();
-  if ((searchParams.get("search") || "") === clean) return;
-  if (clean) next.set("search", clean);
-  else next.delete("search");
-  setSearchParams(next, { replace: true });
-}
-
 export function GlobalSearch() {
   const { t, language } = useI18n();
-  const location = useLocation();
-  const [searchParams, setSearchParams] = useSearchParams();
   const [open, setOpen] = useState(false);
   const [mobileExpanded, setMobileExpanded] = useState(false);
-  const [scope, setScope] = useState<SearchScope>("global");
   const [query, setQuery] = useState("");
   const rootRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const activeContext = useMemo(() => getSearchContext(location.pathname), [location.pathname]);
-  const rendersPageSearchInline = scope === "page" && activeContext.id === "tasks";
   const shouldLoadSearchData = open || mobileExpanded;
   const { services, tasks, botConversations } = useEntityData({
     enabled: shouldLoadSearchData,
@@ -75,10 +41,10 @@ export function GlobalSearch() {
     botConversations: true,
   });
 
-  const recordSearchEnabled = shouldLoadSearchData && (scope === "global" || activeContext.id === "calendar" || activeContext.id === "default");
+  const recordSearchEnabled = shouldLoadSearchData;
   const recordSearch = useRecordSearch(query, recordSearchEnabled);
 
-  const clientSearchEnabled = shouldLoadSearchData && (scope === "global" || activeContext.id === "clients" || activeContext.id === "default");
+  const clientSearchEnabled = shouldLoadSearchData;
   const clientSearch = useClientSearch(query, clientSearchEnabled);
   const clients = { data: clientSearchEnabled ? clientSearch.clients : [] };
 
@@ -130,21 +96,10 @@ export function GlobalSearch() {
 
   const results = useMemo(() => {
     const value = query.trim().toLowerCase();
-    const scopedItems = scope === "page" && activeContext.id !== "default" ? items.filter((item) => activeContext.types.includes(item.type)) : items;
-    const clientResults = scopedItems.filter(item => item.type === "client" || item.type === "appointment");
-    const otherResults = scopedItems.filter(item => item.type !== "client" && item.type !== "appointment" && (!value || item.haystack.toLowerCase().includes(value))).slice(0, value ? 12 : 8);
+    const clientResults = items.filter(item => item.type === "client" || item.type === "appointment");
+    const otherResults = items.filter(item => item.type !== "client" && item.type !== "appointment" && (!value || item.haystack.toLowerCase().includes(value))).slice(0, value ? 12 : 8);
     return [...clientResults, ...otherResults];
-  }, [activeContext.types, items, query, scope]);
-
-  useEffect(() => {
-    if (scope === "page") setQuery(searchParams.get("search") || "");
-  }, [location.pathname, scope, searchParams]);
-
-  useEffect(() => {
-    if (scope !== "page" || activeContext.id === "default") return;
-    const handle = window.setTimeout(() => setSearchParam(searchParams, setSearchParams, query), 280);
-    return () => window.clearTimeout(handle);
-  }, [activeContext.id, query, scope, searchParams, setSearchParams]);
+  }, [items, query]);
 
   useEffect(() => {
     function handlePointerDown(event: PointerEvent) {
@@ -189,7 +144,6 @@ export function GlobalSearch() {
 
   function clearSearch() {
     setQuery("");
-    if (scope === "page" && activeContext.id !== "default") setSearchParam(searchParams, setSearchParams, "");
   }
 
   const typeLabels: Record<string, string> = {
@@ -200,7 +154,7 @@ export function GlobalSearch() {
     conversation: t("search.conversation"),
     task: t("search.task"),
   };
-  const placeholder = scope === "page" ? t(activeContext.placeholderKey) : t("search.placeholder.global");
+  const placeholder = t("search.placeholder.global");
 
   return (
     <div ref={rootRef} className={mobileExpanded ? "absolute left-[4.35rem] top-1/2 z-[70] w-[var(--global-search-width)] -translate-y-1/2 lg:relative lg:left-auto lg:top-auto lg:w-full lg:translate-y-0" : "relative w-full"}>
@@ -233,10 +187,10 @@ export function GlobalSearch() {
           aria-label={t("search.aria")}
           placeholder={placeholder}
           value={query}
-          onFocus={() => setOpen(!rendersPageSearchInline)}
+          onFocus={() => setOpen(true)}
           onChange={(event) => {
             setQuery(event.target.value);
-            setOpen(!rendersPageSearchInline);
+            setOpen(true);
           }}
         />
         {query || mobileExpanded ? (
@@ -246,20 +200,8 @@ export function GlobalSearch() {
         ) : null}
       </div>
 
-      {open && !rendersPageSearchInline ? (
+      {open ? (
         <div className="absolute left-[-3.6rem] top-full z-[70] mt-2 w-[calc(100vw-1.5rem)] rounded-card border border-platforma-border bg-surface-card p-3 shadow-premium lg:left-1/2 lg:w-[min(560px,calc(100vw-8rem))] lg:-translate-x-1/2">
-          <div className="mb-3 grid grid-cols-2 rounded-control bg-surface-muted p-1">
-            {(["page", "global"] as const).map((value) => (
-              <button
-                key={value}
-                type="button"
-                className={cn("platforma-focus-ring h-9 rounded-control text-xs font-semibold transition", scope === value ? "bg-surface-card text-brand-700 shadow-xs" : "text-platforma-subtle hover:text-platforma-text")}
-                onClick={() => setScope(value)}
-              >
-                {value === "page" ? t("search.scopePage") : t("search.scopeGlobal")}
-              </button>
-            ))}
-          </div>
           <div className="max-h-[min(62vh,420px)] space-y-1 overflow-auto">
             {results.map((item) => {
               const Icon = item.icon;

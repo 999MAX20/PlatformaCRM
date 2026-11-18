@@ -609,8 +609,9 @@ test("global search and command palette open safely", async ({ page, isMobile })
   const headerSearch = page.locator("header input:visible").first();
   await expect(headerSearch).toBeVisible();
   await headerSearch.click();
-  await expect(page.getByRole("button", { name: /\u042d\u0442\u0430 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0430|Р­С‚Р° СЃС‚СЂР°РЅРёС†Р°|Р В­РЎвЂљР В° РЎРѓРЎвЂљРЎР‚Р В°Р Р…Р С‘РЎвЂ Р В°|This page/ })).toBeVisible();
-  await expect(page.getByRole("button", { name: /\u0412\u0441\u044f CRM|Р’СЃСЏ CRM|Р вЂ™РЎРѓРЎРЏ CRM|All CRM/ })).toBeVisible();
+  await expect(headerSearch).toBeFocused();
+  await expect(page.getByRole("button", { name: /\u042d\u0442\u0430 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0430|Р­С‚Р° СЃС‚СЂР°РЅРёС†Р°|Р В­РЎвЂљР В° РЎРѓРЎвЂљРЎР‚Р В°Р Р…Р С‘РЎвЂ Р В°|This page/ })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: /\u0412\u0441\u044f CRM|Р’СЃСЏ CRM|Р вЂ™РЎРѓРЎРЏ CRM|All CRM/ })).toHaveCount(0);
   await page.keyboard.press("Escape");
   await expect(page.getByRole("button", { name: /\u042d\u0442\u0430 \u0441\u0442\u0440\u0430\u043d\u0438\u0446\u0430|Р­С‚Р° СЃС‚СЂР°РЅРёС†Р°|Р В­РЎвЂљР В° РЎРѓРЎвЂљРЎР‚Р В°Р Р…Р С‘РЎвЂ Р В°|This page/ })).toHaveCount(0);
 
