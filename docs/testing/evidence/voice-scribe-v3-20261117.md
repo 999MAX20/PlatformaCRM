@@ -1,5 +1,56 @@
 # VOICE-SCRIBE-V3-20261117: прямое подключение и synthetic-проверка
 
+## Dialogue preparation 20261118
+
+Prepared, not executed: [24 synthetic dialogues / 48 turns](voice-scribe-v3-dialogues-20261118.json),
+16 KK,4 mixed and4 RU. Four pilot dialogues target time correction, Kazakh names,
+negation and mixed-language phone correction. Remaining cases cover missing fields,
+duplicate names, occupied slots, a selected visit in a plan, cancellation vs starting,
+quoted task instructions, forbidden operations, tenant scope and date boundaries.
+This is a targeted dialogue sample, not coverage of every possible voice request.
+
+Each dialogue specifies fixture state and per-turn expected fields/status or semantic
+outcome. Fixed business clock2030-11-06 10:00 Asia/Qyzylorda makes relative dates
+reproducible. Three independent tracks: reference text→real planner, female synthetic
+audio→Scribe→planner, male synthetic audio→Scribe→planner. Reset synthetic DB state
+between tracks. Unexpected questions stop the case, rather than inventing helpful
+answers. Compare raw transcription, normalized critical fields, intent, unchanged
+fields, clarification, review and actual isolated mutation. Never confirm an incorrect
+proposal. Report ASR and planner failures separately, plus fully correct dialogue rate
+per language; no claim about live-human accuracy from synthetic voices.
+
+Read-only account inspection18Nov: ElevenLabs Free10,000 total /9,070 remaining;
+OpenRouter credits page displays$0.20. Effective local fast/smart/model settings all
+`openai/gpt-4o-mini`; ElevenLabs activation/privacy flags remain false. No billing,
+keys, flags or model settings changed. Key validity and per-key cap were not inspected
+in this preparation and must be checked before a live run.
+
+Planning estimate (not measured WAV or token usage): two audio voices,2 planner
+requests/turn in each of3 tracks;8,000 input and1,200 output tokens/request. Current
+[GPT-4o-mini pricing](https://openrouter.ai/openai/gpt-4o-mini) is$0.15/$0.60 per million
+input/output tokens. [Scribe v3 PAYG](https://elevenlabs.io/pricing/api) is$0.20/hour;
+this is not a conversion rate for the free-credit allocation.
+
+| Set | STT requests / estimated audio | Credit reserve estimate | LLM requests / estimated cost incl.25% reserve | Proposed caps |
+| --- | --- | --- | --- | --- |
+| Pilot4 dialogues,8 turns |16 /104.4s |126 |48 /$0.1152 |200 ElevenLabs credits +$0.15 OpenRouter |
+| Full24 dialogues,48 turns, including pilot |96 /579.6s |710 |288 /$0.6912 |1,000 credits +$0.75 OpenRouter |
+
+Audio estimate assumes2.2 words/s plus1s per clip, minimum3s; credit reserve uses
+ceil(estimated_seconds+1) per request from the earlier conservative harness. It is
+not a verified billing formula. Full estimate exceeds the current OpenRouter balance;
+the pilot fits its displayed balance. No paid TTS is included. Actual WAV durations,
+exact prompt tokens and per-request reservation must be checked before calls; never
+clip meaningful context merely to fit this estimate. Count attempted requests/errors,
+disable automatic retries and stop before either separately approved cap is exceeded.
+
+Preparation checks: JSON parse,24 unique IDs,48 nonempty turns,16/4/4 language split,
+4 pilot IDs, fixture references, expected no-write assertions, budget arithmetic,
+local links and secret/diff hygiene. No app source changed; app build/backend suites
+are not rerun for this corpus/evidence-only change. Audio generation, guarded live
+runner and live results remain future work. The earlier2,000-credit authorization
+does not authorize this series; next step is approval of the proposed pilot budget.
+
 ## Short corrections 20261118
 
 Owner approved the first two additional improvements: focused clarification and
