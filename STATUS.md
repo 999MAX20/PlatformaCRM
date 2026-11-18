@@ -2454,3 +2454,8 @@ Chrome desktop/mobile empty CTA, Enter/open, Escape/focus and real list recovery
 verified. Empty API response was temporarily substituted in test tab, then cleared;
 no client data changed. Details: PRIMARY-SESSION same ID. Implementation 0bda8890 pushed to origin/main;
 remote SHA verified. CI status unverified: gh CLI unavailable. No deployment claimed.
+
+CLIENTS-EMPTY-20261118 toolbar follow-up: Clients empty body now only CTA;
+Appointments confirmed globally empty body retains Calendar in inner header.
+Date-empty/filtered controls preserved. Build/types/i18n/bundle PASS; Chrome
+empty response preview and Calendar navigation verified; no DB changes. Publication pending.

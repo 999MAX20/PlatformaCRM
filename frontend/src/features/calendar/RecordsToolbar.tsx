@@ -21,9 +21,10 @@ type Props = {
   members: Option[];
   periodOpen: boolean;
   setPeriodOpen: Dispatch<SetStateAction<boolean>>;
+  calendarOnly?: boolean;
 };
 
-export function RecordsToolbar({ today, params, setParams, filters, summary, resources, branches, members, periodOpen, setPeriodOpen }: Props) {
+export function RecordsToolbar({ today, params, setParams, filters, summary, resources, branches, members, periodOpen, setPeriodOpen, calendarOnly = false }: Props) {
   const { t, language } = useI18n();
   const navigate = useNavigate();
   const filterTrigger = useRef<HTMLButtonElement>(null);
@@ -45,6 +46,9 @@ export function RecordsToolbar({ today, params, setParams, filters, summary, res
   if (filters.attention) chips.push({ key: "attention", label: t("records.pendingResult"), value: "" });
   const from = filters.start_from || "";
   const to = params.get("to") || from;
+  if (calendarOnly) return <div className="flex justify-end" data-testid="records-toolbar">
+    <Button onClick={() => navigate(`/app/calendar?date=${from || today}`)}><CalendarDays size={16} />{t("nav.calendar")}</Button>
+  </div>;
   const formatDay = (day: string) => {
     const date = new Date(`${day}T12:00:00Z`);
     return Number.isFinite(date.getTime()) ? new Intl.DateTimeFormat(language === "kk" ? "kk-KZ" : language === "en" ? "en-GB" : "ru-RU", { day: "numeric", month: language === "kk" ? "numeric" : "short", year: "numeric", timeZone: "UTC" }).format(date) : day;

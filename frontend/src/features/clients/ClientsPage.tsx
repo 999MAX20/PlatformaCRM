@@ -84,11 +84,12 @@ export function ClientsPage() {
   });
 
   const canCreate = hasPermission(user, business?.id, "clients", "create");
+  const isEmptyWorkspace = !hasClientFilters && filteredClients.isSuccess && !filteredClients.isPlaceholderData && rows.length === 0;
   const customTable = useCustomColumns(business?.id || 0, "client", rows.map(row => row.client.id));
   useClientsPageHeader({
     t,
     onCreateClient: canCreate ? openCreateClient : undefined,
-    hideCreateAction: !hasClientFilters && filteredClients.isSuccess && !filteredClients.isPlaceholderData && rows.length === 0,
+    hideCreateAction: isEmptyWorkspace,
     onCloseClientCard: closeClientCard,
     onPayments: hasPermission(user, business?.id, "payments") ? openPayments : undefined,
   });
@@ -277,14 +278,14 @@ export function ClientsPage() {
   return (
     <>
       <div className="flex min-h-[calc(100dvh-var(--app-header-height)-8.5rem)] flex-col gap-4 pt-2 sm:min-h-[calc(100dvh-var(--app-header-height)-9rem)] lg:min-h-[calc(100dvh-var(--app-header-height)-2rem)]" data-testid="clients-workspace-ready" aria-busy={filteredClients.isFetching}>
-        {hasPermission(user, business.id, "payments") && <div className="flex justify-end lg:hidden">
+        {!isEmptyWorkspace && hasPermission(user, business.id, "payments") && <div className="flex justify-end lg:hidden">
           <Button variant="secondary" onClick={openPayments} data-focus-return-id="clients-payments">{t("payments.title")}</Button>
         </div>}
-        <ClientsFilters key={`${business.id}:${user?.id}`}
+        {!isEmptyWorkspace && <ClientsFilters key={`${business.id}:${user?.id}`}
             tagOptions={tagOptions} sourceOptions={sourceOptions}
           counts={filteredClients.isError || filteredClients.isPlaceholderData ? undefined : filteredClients.data?.summary}
           visibleColumns={visibleClientColumns} onToggleColumn={toggleClientColumn}
-            customTable={customTable} t={t} />
+            customTable={customTable} t={t} />}
         {pageError && <ErrorState error={pageError} message={getApiErrorMessage(pageError)} action={<Button variant="secondary" onClick={() => { void Promise.all([filteredClients.refetch(), tagsQuery.refetch(), segments.refetch(), taggedObjects.refetch()]); }}>{t("common.retry")}</Button>} />}
         {customTable.error}
         {!filteredClients.isError && <ClientsTable rows={rows} ordering={ordering} onOrderingChange={setOrdering}

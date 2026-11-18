@@ -14166,3 +14166,25 @@ CTA, transparent background, no decorations, semantic h2/section,44px target,
 mobile wrap/no clipping, visible keyboard focus. Backend authorization unchanged;
 no new role certification, translated copy unchanged, no whole-product E2E.
 Current frontend contract updated; no API/roadmap/setup contract change required.
+
+CLIENTS-EMPTY-20261118 follow-up: owner requests CTA-only empty Clients workspace,
+and empty Appointments workspace with only Calendar in inner header. Existing
+centered CTA -> new owner decision -> hide list controls on confirmed unfiltered
+empty client list; records additionally use existing unfiltered availability cache
+(count0 across dates), preserving empty-day/date and filtered recovery controls.
+No new copy/API/permissions/migrations/events. Skills/direction inherited above.
+Checks: frontend build/types/i18n/bundle; Chrome mocked empty responses (no DB writes),
+real filtered/day/populated recovery, Calendar navigation, desktop/mobile screenshots.
+Follow-up verification: npm --prefix frontend run build PASS (log
+%TEMP%/platformacrm-empty-toolbars-build.log); frontend npm run check:bundle PASS,
+existing RU/KK chunk warnings; git diff --check PASS. Chrome tab1634126420:
+scoped temporary XHR responses for clients and appointment workspace count0, no DB
+writes. Clients desktop screenshot: only CTA in body; Enter opens existing form,
+Escape closes. Records desktop and390x844 screenshots inspected: Calendar at top
+right, centered create CTA, no search/date/status/filter/sort. Calendar click reaches
+/app/calendar?date=2026-11-18. Removed interception/viewport override and reloaded:
+real day-empty retains full toolbar and choose-date recovery. Existing permissions,
+loading/error branches unchanged; no new translations, no backend/full E2E suite.
+React review: hook order stable, existing availability query key shared/deduplicated
+with empty-state observer, no effect-derived duplicated state or new dependency.
+Frontend contract updated; no API/domain/roadmap/setup contract changes required.
