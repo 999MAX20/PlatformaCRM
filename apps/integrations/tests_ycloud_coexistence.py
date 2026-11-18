@@ -194,10 +194,14 @@ class CoexistenceMessageTests(TestCase):
         process(event.pk)
         self.assertEqual(BotMessage.objects.count(), 1)
 
-    def test_history_is_ignored_and_cannot_open_window(self):
+    def test_history_is_imported_without_opening_window(self):
         from apps.bots.models import BotMessage
-        self.assertIsNone(self.accept({"id": "history-1", "type": "whatsapp.smb.history", "whatsappMessage": self.echo()["whatsappMessage"]}))
-        self.assertFalse(BotMessage.objects.exists())
+        event = self.process({"id": "history-1", "type": "whatsapp.smb.history", "whatsappMessage": self.echo()["whatsappMessage"]})
+        self.assertEqual(event.status, "processed")
+        message = BotMessage.objects.get()
+        self.assertTrue(message.payload_json["historical"])
+        self.assertIsNone(message.conversation.last_inbound_at)
+        self.assertEqual(message.conversation.unread_count, 0)
 
     def test_status_updates_for_app_message_do_not_create_dispatch_or_regress(self):
         from apps.bots.models import BotMessage

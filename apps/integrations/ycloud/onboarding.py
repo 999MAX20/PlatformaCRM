@@ -40,7 +40,8 @@ def start(channel, actor, *, onboarding_type=YCloudConnection.OnboardingTypes.PL
         onboarding_type == YCloudConnection.OnboardingTypes.APP and not expected_phone_number
     ):
         raise ValidationError({"expected_phone_number": "Use an international phone number, for example +77010000000."})
-    if channel.channel != "whatsapp" or channel.status == "active":
+    if (channel.channel != "whatsapp" or channel.status == "active" or channel.external_id
+            or (channel.config_json or {}).get("connection_verified")):
         raise ValidationError("Use an inactive WhatsApp channel for onboarding.")
     connection = YCloudConnection.objects.filter(channel=channel).first()
     if connection and (connection.waba_id or connection.expires_at > timezone.now()):

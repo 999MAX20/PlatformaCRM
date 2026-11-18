@@ -87,6 +87,11 @@ function YCloudChannelSetup({ channel, canManage, onBack }: YCloudSetupProps) {
       {(pending || connected ? data?.onboarding_type === "WHATSAPP_BUSINESS_APP" : coexistence) ?
         <p id={`ycloud-app-help-${channel.id}`} className="text-sm text-platforma-muted">{t("integrations.ycloud.appHelp")}</p> : null}
       {data?.phone_number ? <p className="font-semibold text-platforma-text">{data.phone_number}</p> : null}
+      {connected && data?.onboarding_type === "WHATSAPP_BUSINESS_APP" && data.history ?
+        <p role="status" className="text-sm text-platforma-muted">
+          {t("integrations.ycloud.historyCount", { count: data.history.messages })}
+          {data.history.pending_events > 0 ? ` ${t("integrations.ycloud.historyPending")}` : ""}
+        </p> : null}
       {!data?.available ? <p role="status" className="text-sm text-platforma-muted">{t("integrations.ycloud.setupRequired")}</p> : null}
       {pending ? <p role="status" className="text-sm text-platforma-muted">{t("integrations.ycloud.pending")}</p> : null}
       {data?.error_code || data?.failed_events ? <p role="alert" className="text-sm text-platforma-danger">{t("integrations.ycloud.needsAttention")}</p> : null}

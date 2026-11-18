@@ -29,7 +29,9 @@ class YCloudSetupView(APIView):
         state = connection.status if connection else "not_connected"
         if connection and state == "pending" and connection.expires_at <= timezone.now():
             state = "expired"
+        from apps.integrations.ycloud.history import history_status
         return Response({"available": client.configured(), "status": state,
+            "history": history_status(connection),
             "channel_status": channel.status,
             "onboarding_type": connection.onboarding_type if connection else YCloudConnection.OnboardingTypes.PLATFORM,
             "expected_phone_number": connection.expected_phone_number if connection else "",

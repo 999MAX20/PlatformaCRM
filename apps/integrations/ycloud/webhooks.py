@@ -20,6 +20,7 @@ KINDS = {
     "whatsapp.message.updated": "whatsappMessage",
     "whatsapp.smb.message.echoes": "whatsappMessage",
     "whatsapp.smb.message.created": "whatsappMessage",
+    "whatsapp.smb.history": "whatsappMessage",
 }
 
 
@@ -60,6 +61,15 @@ def accept(body, header):
     key = KINDS.get(kind)
     if key is None:
         return None
+    if kind == "whatsapp.smb.history":
+        keys = [name for name in ("whatsappMessage", "whatsappInboundMessage") if name in payload]
+        if not keys:
+            # Documented progress-only events have no WABA/number. Never attribute
+            # them to a tenant or infer that any customer's import is complete.
+            return None
+        if len(keys) != 1:
+            raise ValidationError("Ambiguous history direction.")
+        key = keys[0]
     data = payload.get(key)
     if not isinstance(data, dict):
         raise ValidationError("Invalid event object.")
@@ -70,7 +80,7 @@ def accept(body, header):
             return None  # Another partner customer, not a route into this CRM.
         connection = YCloudConnection.objects.filter(customer_id=customer_id).first()
     else:
-        number = data.get("to") if kind == "whatsapp.inbound_message.received" else data.get("from")
+        number = data.get("to") if key == "whatsappInboundMessage" else data.get("from")
         if not isinstance(number, str) or not number or not isinstance(data.get("wabaId"), str) or not data["wabaId"]:
             raise ValidationError("Invalid message route.")
         connection = YCloudConnection.objects.filter(waba_id=data["wabaId"], phone_number=number, status="connected").first()

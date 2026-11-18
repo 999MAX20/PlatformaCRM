@@ -13,6 +13,7 @@ export type YCloudStatus = {
   failed_events: number;
   onboarding_type: YCloudOnboardingType;
   expected_phone_number: string;
+  history?: { messages: number; pending_events: number; failed_events: number };
 };
 
 export const ycloudApi = {

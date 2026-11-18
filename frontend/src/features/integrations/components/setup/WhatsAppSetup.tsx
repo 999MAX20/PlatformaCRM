@@ -12,6 +12,7 @@ import { merchantSafeIntegrationError } from "../../utils";
 import { AccountSelectionHint, MessengerSetupShell, SetupInstructions } from "./IntegrationSetupUi";
 import { useWhatsAppSignup } from "./useWhatsAppSignup";
 import { YCloudSetup } from "./YCloudSetup";
+import { ycloudApi } from "../../../../api/ycloud";
 import { CredentialInput } from "./CredentialInput";
 import { channelConnectionState } from "../../channelConnectionState";
 
@@ -22,6 +23,13 @@ export function WhatsAppInlineSetup({ businessId, canManage, channel }: {
   const showNotification = useNotification();
   const queryClient = useQueryClient();
   const [editing, setEditing] = useState(false);
+  const [ycloudChannelId, setYcloudChannelId] = useState<Id | null>(null);
+  const ycloud = useQuery({
+    queryKey: ["ycloud-status", channel?.id],
+    queryFn: () => ycloudApi.status(channel!.id),
+    enabled: Boolean(channel?.id) && canManage && !channel?.external_id
+      && !channel?.config_json?.connection_verified && !["active", "paused"].includes(channel?.status ?? ""),
+  });
   const signup = useWhatsAppSignup(businessId, channel?.id,
     key => {
       if (key === "integrations.whatsapp.connectedNotice") setEditing(false);
@@ -44,7 +52,9 @@ export function WhatsAppInlineSetup({ businessId, canManage, channel }: {
     },
   });
   if (!channel) return <ErrorState message={t("aiAgents.channelSetupUnavailable")} />;
-  if (channel.config_json?.provider_mode === "ycloud") return <YCloudSetup channel={channel} canManage={canManage} />;
+  if (channel.config_json?.provider_mode === "ycloud" || ycloudChannelId === channel.id) {
+    return <YCloudSetup channel={channel} canManage={canManage} onBack={() => setYcloudChannelId(null)} />;
+  }
   const connection = channelConnectionState(channel);
   const error = signup.start.error || signup.complete.error || toggleChannel.error || status.error;
   const busy = toggleChannel.isPending || signup.start.isPending || signup.waiting || signup.complete.isPending;
@@ -62,6 +72,10 @@ export function WhatsAppInlineSetup({ businessId, canManage, channel }: {
       steps={[t("integrations.setup.externalStep1"), t("integrations.setup.whatsappStep2"), t("integrations.setup.whatsappStep3")]}
       note={t(signup.mode === "coexistence" ? "integrations.whatsapp.coexistenceNote" : "integrations.setup.whatsappPinNote")} /> : null}
     actions={showSetup ? <>
+      {!configured && !editing && !channel.external_id && !channel.config_json?.connection_verified
+        && !["active", "paused"].includes(channel.status) && ycloud.data?.available ?
+        <Button type="button" variant="secondary" disabled={!canManage || busy}
+          onClick={() => { signup.cancel(); setYcloudChannelId(channel.id); }}>{t("integrations.ycloud.connect")}</Button> : null}
       {editing && !busy ? <Button type="button" variant="secondary" onClick={() => { signup.cancel(); setEditing(false); }}>{t("common.cancel")}</Button> : null}
       {signup.waiting ? <Button type="button" variant="secondary" onClick={signup.cancel}>{t("common.cancel")}</Button> : null}
       <Button type="button" variant="primary" disabled={!canManage || busy || !signup.canStart} isLoading={signup.start.isPending || signup.complete.isPending}

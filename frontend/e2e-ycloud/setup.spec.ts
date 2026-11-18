@@ -24,7 +24,7 @@ for (const [language, dictionary] of Object.entries({ ru, kk, en })) {
     await page.getByRole("option", { name: t("appMode"), exact: true }).click();
     const number = page.getByRole("textbox", { name: new RegExp(`^${t("appNumber")}`) });
     await number.fill("123");
-    const start = page.getByRole("button", { name: t("connect"), exact: true });
+    const start = page.getByRole("button", { name: { ru: "Подключить", kk: "Қосу", en: "Connect" }[language], exact: true });
     await expect(start).toBeDisabled();
     await expect(page.getByText(t("invalidNumber"), { exact: true })).toBeVisible();
     await number.fill("+77010000000");
@@ -52,11 +52,11 @@ test("read-only and unavailable disable setup", async ({ page }) => {
   });
   await page.goto("/e2e-ycloud/fixture.html?lang=en&readonly=1");
   await expect(page.getByRole("combobox")).toBeDisabled();
-  await expect(page.getByRole("button", { name: "Connect via YCloud", exact: true })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Connect", exact: true })).toBeDisabled();
   available = false;
   await page.goto("/e2e-ycloud/fixture.html?lang=en");
   await expect(page.getByRole("combobox")).toBeDisabled();
-  await expect(page.getByRole("button", { name: "Connect via YCloud", exact: true })).toBeDisabled();
+  await expect(page.getByRole("button", { name: "Connect", exact: true })).toBeDisabled();
 });
 
 test("loading, default API mode and cancellation", async ({ page }) => {
@@ -78,10 +78,10 @@ test("loading, default API mode and cancellation", async ({ page }) => {
     return route.fulfill({ json: { onboarding_url: "https://connect.ycloud.com/open/whatsapp/onboard#token=synthetic", expires_at: new Date(Date.now() + 3600000).toISOString() } });
   });
   await page.goto("/e2e-ycloud/fixture.html?lang=en");
-  await expect(page.getByText("Connection via YCloud", { exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "WhatsApp", exact: true })).toBeVisible();
   await expect(page.getByTestId("ycloud-setup")).toHaveCount(0);
   releaseStatus();
-  const start = page.getByRole("button", { name: "Connect via YCloud", exact: true });
+  const start = page.getByRole("button", { name: "Connect", exact: true });
   await start.click();
   await expect(page.getByRole("button", { name: "Loading...", exact: true })).toBeDisabled();
   await expect(page.getByRole("combobox")).toBeDisabled();

@@ -14321,3 +14321,10 @@ Delivery gate: changed UI screenshots captured and visually inspected on desktop
 Publication preparation: origin/main equals starting HEAD after fetch; only this task's explicit files/hunks staged. Existing CI workflow runs on main push; no deployment workflow triggered by these paths. No release/deployment certification claimed.
 
 Publication: implementation commit 986c31384e7237b99b8c9a1c0cddcbbcd733d2d0 normal-pushed from codex/ui-testing-toolkit to origin/main; ls-remote SHA matched. Push workflow PlatformaCRM CI run44368616294 observed in_progress, conclusion null (https://github.com/999MAX20/PlatformaCRM/actions/runs/44368616294); no remote PASS claimed. This documentation follow-up records that source snapshot; deployment not performed.
+
+## YCLOUD-HISTORY-20261119 - preparation complete, live acceptance pending
+
+Owner authorized preparation while YCloud Tech Partner approval is pending. Previous verified YCloud onboarding/echo pipeline preserved; explicit history exclusion superseded by text import. New unbound channel can select YCloud, paused/connected channels protected. Signed history shares tenant/message locks, no unread/window/AI side effects; app echo dedup/handoff preserved. UI counts observed records without claiming complete archive. No media download, schema/dependency/credential changes or deployment.
+
+Canonical repo C:/Users/user/Desktop/PlatformaCRM, branch codex/ui-testing-toolkit; starting HEAD d8ec748aa46782051198b13c8a547d2f49d13850. Foreign Google/access/Meta-signup WIP preserved and excluded from staging; shared docs staged as task-only append.
+Checks: PostgreSQL dependent 116 PASS, final history 14 PASS, system/drift PASS; browser 18 PASS RU/KK/EN desktop/mobile with captured and visually inspected screenshots; build/types/i18n/bundle PASS (existing locale warnings). Full release suite not requested/run. Details, logs, provider contract and activation runbook: docs/testing/evidence/ycloud-coexistence-20261109.md. Next: normal task-only commit/push and actual CI inspection; then partner approval/configuration/release/handset consent before live end-to-end acceptance.

@@ -552,3 +552,20 @@ diff/reverse PASS. HEAD98925b67 + previous WIP/16 closed findings + patch, local
 Evidence OFFICIAL-17-20261028 checkpoint and output/security-remediation-20261028/
 client-import-update-permission/fix-report.md. Current OWN/TEAM UPDATE semantics for
 unowned Client retained exactly; no new ownership rule or production certification.
+
+### YCloud history preparation, 19.11.2026
+
+The earlier YCloud history exclusion is superseded for signed text history events.
+`whatsapp.smb.history` routes inbound/outbound records by the verified WABA and
+business number and reuses the WhatsApp history importer. Import does not create
+unread activity, open an API service window, send messages or invoke AI/CRM
+automation. Replays and app echoes share message identity; current live records
+are not overwritten by older history. Media content remains unavailable.
+Progress-only events without WABA/number cannot be safely assigned to a business;
+they do not produce a tenant completion state. Setup shows actual imported counts,
+pending work and existing retry controls, not a claimed complete archive.
+New unbound WhatsApp channels can choose YCloud when server configuration is ready;
+connected and paused channels cannot be replaced through this signup operation.
+No schema or credential changes. Partner approval, deployment, server secrets,
+webhook delivery and real handset authorization remain separate live acceptance.
+[Preparation and checks](../testing/evidence/ycloud-coexistence-20261109.md#2026-11-19-history-import-preparation).

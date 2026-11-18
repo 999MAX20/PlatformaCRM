@@ -2486,3 +2486,7 @@ role/error/retry browser checks and desktop/tablet/mobile RU/KK/EN visual gate P
 No working DB changes or deployment. Implementation8f2c95a7 normal-pushed to main;
 remote SHA matched. CI44369480025 in_progress at inspection. Details:
 [checkpoint](docs/testing/task-state/PRIMARY-SESSION.md#dashboard-redesign-20261118).
+
+## YCLOUD-HISTORY-20261119 - local preparation verified
+
+YCloud entry for new CRM channels, Coexistence text history import, observed counts and retry are implemented. Isolated PostgreSQL dependent suite 116 PASS plus final focused 14 PASS; browser 18 PASS desktop/mobile, build/types/bundle PASS. No deployment or live number connection; partner approval, server configuration and handset history consent remain. Media content unavailable. Evidence: [YCloud preparation](docs/testing/evidence/ycloud-coexistence-20261109.md#2026-11-19-history-import-preparation).

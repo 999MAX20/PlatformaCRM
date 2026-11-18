@@ -8,6 +8,36 @@ from apps.bots.models import BotMessage, BotConversation
 
 
 class CoexistenceConcurrencyTests(foundation.YCloudConcurrencyTests):
+    def test_history_and_app_echo_import_one_message(self):
+        from apps.integrations.ycloud.events import process
+        self.channel.status = "active"
+        self.channel.external_id = "phone-1"
+        self.channel.save()
+        self.binding.status = "connected"
+        self.binding.onboarding_type = "WHATSAPP_BUSINESS_APP"
+        self.binding.waba_id = "waba-1"
+        self.binding.phone_id = "phone-1"
+        self.binding.phone_number = "+77010000000"
+        self.binding.save()
+        data = {"id": "history-app", "wamid": "wamid.history-app", "wabaId": "waba-1",
+                "from": "+77010000000", "to": "+77012223344", "type": "text",
+                "text": {"body": "Staff reply"}, "status": "sent", "sendTime": timezone.now().isoformat()}
+        events = [YCloudEvent.objects.create(connection=self.binding, external_id=f"history-race-{i}",
+            kind=kind, next_attempt_at=timezone.now(), payload={"whatsappMessage": data})
+            for i, kind in enumerate(["whatsapp.smb.history", "whatsapp.smb.message.echoes"])]
+        from threading import Lock
+        remaining = [event.pk for event in events]
+        lock = Lock()
+        def run():
+            with lock:
+                event_id = remaining.pop()
+            process(event_id)
+        self.concurrent(run)
+        self.assertEqual(BotMessage.objects.count(), 1)
+        self.assertEqual(YCloudEvent.objects.filter(status="processed").count(), 2)
+        self.assertTrue(BotConversation.objects.get().handoff_required)
+        self.assertIsNone(BotConversation.objects.get().last_inbound_at)
+
     def test_two_app_streams_import_one_reply(self):
         from apps.integrations.ycloud.events import process
         self.channel.status = "active"

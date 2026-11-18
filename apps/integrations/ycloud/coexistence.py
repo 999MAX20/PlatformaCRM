@@ -21,7 +21,7 @@ def app_message(binding, data):
         conversation__business_id=binding.channel.bot.business_id,
         conversation__bot_id=binding.channel.bot_id,
         conversation__channel="whatsapp",
-        direction="outbound", payload_json__source=APP_SOURCE,
+        direction="outbound", payload_json__source__in=[APP_SOURCE, "whatsapp_history"],
     ).filter(Q(external_message_id=data.get("wamid") or data.get("id")) |
              Q(payload_json__ycloud_id=data.get("id"))).first()
 
@@ -57,6 +57,12 @@ def record_app_message(binding, data):
     if previous:
         if previous.external_message_id != wamid or previous.conversation.external_user_id != recipient:
             raise client.YCloudError("message_identity_conflict")
+        if previous.payload_json.get("historical"):
+            from apps.integrations.whatsapp.coexistence_messages import _staff_handoff
+            previous.payload_json.update(source=APP_SOURCE, historical=False, ycloud_id=provider_id)
+            previous.status, previous.sent_at = "sent", sent_at
+            previous.save(update_fields=["payload_json", "status", "sent_at"])
+            _staff_handoff(previous.conversation)
         return previous
     # An API delivery reported on an app stream is a receipt, never a second staff reply.
     if YCloudDispatch.objects.filter(connection=binding).filter(Q(provider_id=provider_id) | Q(wamid=wamid)).exists():
