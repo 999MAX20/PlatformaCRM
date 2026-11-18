@@ -2452,4 +2452,5 @@ header create hidden only for confirmed unfiltered empty list, shortcut retained
 Filtered empty keeps reset and header creation. Build/types/i18n and bundle PASS;
 Chrome desktop/mobile empty CTA, Enter/open, Escape/focus and real list recovery
 verified. Empty API response was temporarily substituted in test tab, then cleared;
-no client data changed. Details: PRIMARY-SESSION same ID. Publication pending.
+no client data changed. Details: PRIMARY-SESSION same ID. Implementation 0bda8890 pushed to origin/main;
+remote SHA verified. CI status unverified: gh CLI unavailable. No deployment claimed.
