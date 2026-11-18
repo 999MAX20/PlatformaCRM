@@ -1,4 +1,5 @@
 import { timeline } from "./kk/timeline";
+import { googleSheets } from "./kk/googleSheets";
 import { importWorkspace } from "./kk/importWorkspace";
 import { voice } from "./kk/voice";
 import { ru } from "./ru";
@@ -28,6 +29,7 @@ import { deals } from "./kk/deals";
 
 export const kk: Record<string, string> = {
   ...ru,
+  ...googleSheets,
   ...importWorkspace,
   ...voice,
   ...leads,

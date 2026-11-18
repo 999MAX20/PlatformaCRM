@@ -1,3 +1,55 @@
+## Google Sheets — implementation 19.11.2026, acceptance in progress
+
+Owner-authorized slice: shared Google OAuth foundation and client import/export
+through Sheets. Calendar must connect existing specialist calendars; Calendar
+events, conflict handling and synchronization are not implemented by this slice.
+Google connections are separate actor/Business/provider records, never generic
+connector config or browser-stored refresh tokens. Integrations MANAGE is required
+for every operation, plus Clients CREATE for import and VIEW for export; ordinary
+import confirmation still enforces current client field/update permissions.
+
+OAuth uses a fixed configured callback, ten-minute single-use actor/Business-bound
+state, PKCE and encrypted access/refresh credentials. Requested scopes are
+`openid email https://www.googleapis.com/auth/drive.file`; no Calendar scope.
+Google Picker receives a short-lived access token transiently to select files;
+it is not stored in browser storage or query cache. Disconnect clears local
+credentials and attempts Google revocation; failed revocation is shown with a
+manual Google account-access link. Revocation may invalidate the same account's
+other grants to this Google client. Reconnection keeps the same Google subject.
+
+The settings integration card supports selecting a spreadsheet/grid sheet,
+immutable CSV snapshot, existing column mapping/preview and explicit confirmation.
+Limits: 5000 data rows, 100 columns; oversized allocated grids are rejected rather
+than silently truncated. Snapshot bytes use existing file validation and scanning.
+Request UUID replay returns the same import job; completed jobs cannot be imported
+again through confirmation. The source Google spreadsheet is never modified.
+
+Export requires explicit confirmation, uses current scoped client export/field
+policy, and writes a dedicated spreadsheet with literal string cells. Limits:
+5000 clients, 100 columns, 1 MiB serialized row data. Manual refresh replaces values
+on that export sheet, including manual edits. A durable transfer reservation and
+Drive appProperties lookup prevent blind duplicate creation after an ambiguous
+create response. Unknown creation remains retryable by the same request UUID;
+it never automatically creates another file. Failed writes retain the destination.
+
+API: `/api/integrations/google/` (status), `start/`, `complete/`,
+`connections/{id}/disconnect/`, and `connections/{id}/sheets/` operations
+`picker`, `metadata`, `import`, `export` (POST), `exports` (GET). Responses are
+actor-scoped; token-bearing Picker responses and Google data responses are no-store.
+Import confirmation remains `/api/import-jobs/{id}/confirm/`.
+
+Configuration: dedicated `GOOGLE_INTEGRATION_CLIENT_ID`,
+`GOOGLE_INTEGRATION_CLIENT_SECRET`, `GOOGLE_INTEGRATION_REDIRECT_URI`,
+`GOOGLE_PICKER_API_KEY`, `GOOGLE_CLOUD_PROJECT_NUMBER`; existing connector encryption
+keyring is mandatory outside development. Enable Sheets, Drive and Picker APIs.
+Use a Web OAuth client with exact callback and origin. Restrict the Picker key to
+application origins and `https://docs.google.com/*`, and Picker/Drive APIs, per
+[Google's setup guide](https://developers.google.com/workspace/drive/picker/guides/web-picker-sample).
+Testing-mode Google OAuth requires configured test users; it is not production
+verification. Migration `integrations.0013_google_connections` is intentional;
+working/deployed migration and live Google data transfer are separate acceptance.
+[Evidence and remaining work](../testing/evidence/google-sheets-20261119.md).
+
 ## Website widget recovery — 12.11.2026
 
 Widget сохраняет conversation ID, последние100 подтверждённых пользовательских

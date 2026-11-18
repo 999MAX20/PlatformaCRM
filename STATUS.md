@@ -1,3 +1,7 @@
+## GOOGLE-SHEETS-20261119 — local verification / live acceptance pending
+
+OAuth + Sheets import/export implemented; Cloud test project, OAuth client and restricted Picker key configured. Backend72 PASS, final build PASS, RU/KK/EN desktop/mobile synthetic flows verified; PostgreSQL3 race tests PASS; publication pending. Working DB unchanged; live Google grant/transfer and Calendar sync not claimed. Evidence: docs/testing/evidence/google-sheets-20261119.md.
+
 ## SETTINGS-CLARITY-20261118 — локально проверено
 
 Упрощены навигация, выбор часового пояса и времени сообщений; единое сохранение сценария и защита черновиков. Серверные фильтры/страницы истории безопасности; локальные голосовые настройки обозначены явно. PASS: 14 backend tests, check/schema, build/types/i18n/bundle, 12 выбранных desktop/mobile сценариев (с исправленными тестовыми данными), осмотр RU/KK/EN. Django8000 перезапущен по просьбе владельца, Chrome открыт на /app/settings. Код 986c3138 отправлен в origin/main, SHA подтверждён; CI44368616294 выполняется (не PASS). Граница и логи: [checkpoint](docs/testing/task-state/PRIMARY-SESSION.md#settings-clarity-20261118).

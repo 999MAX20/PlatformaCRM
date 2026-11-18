@@ -1,4 +1,5 @@
 import { timeline } from "./en/timeline";
+import { googleSheets } from "./en/googleSheets";
 import { importWorkspace } from "./en/importWorkspace";
 import { voice } from "./en/voice";
 import { ru } from "./ru";
@@ -28,6 +29,7 @@ import { deals } from "./en/deals";
 
 export const en: Record<string, string> = {
   ...ru,
+  ...googleSheets,
   ...importWorkspace,
   ...voice,
   ...leads,

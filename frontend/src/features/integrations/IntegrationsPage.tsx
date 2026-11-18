@@ -10,6 +10,7 @@ import { hasPermission } from "../../lib/permissions";
 import { useAuth } from "../auth/AuthProvider";
 import { ProviderCard } from "./components/ProviderCard";
 import { integrationProviderCatalog } from "./config/providerCatalog";
+import { GoogleSheetsCard } from "./components/GoogleSheetsCard";
 
 export function IntegrationsPage({ embedded = false }: { embedded?: boolean }) {
   const { t } = useI18n();
@@ -41,6 +42,7 @@ export function IntegrationsPage({ embedded = false }: { embedded?: boolean }) {
       {pageError ? <ErrorState error={pageError} message={getApiErrorMessage(pageError)} /> : null}
       {canManage && <Link to="/app/integrations/import" className="rounded-control border border-platforma-border bg-surface-card px-4 py-3 text-sm font-semibold text-brand-700 hover:bg-surface-hover">{t("importWorkspace.title")}</Link>}
       <div className="grid items-stretch gap-3 sm:grid-cols-2">
+        {canManage && <GoogleSheetsCard key={`${user?.id}:${business.id}`} businessId={business.id} />}
         {integrationProviderCatalog.map((provider) => (
           <ProviderCard
             key={provider.provider}

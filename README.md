@@ -169,6 +169,11 @@ writer и обязательные согласования отменены р�
 Python dependencies устанавливаются с `--require-hashes`, frontend — `npm ci`
 из `frontend/`; Node должен соответствовать `engines` в package.json (>=22.22).
 Конфигурация описана в [.env.example](.env.example); рабочие secrets не коммитятся.
+Для Google Sheets настройте отдельный Web OAuth client и ограниченный Picker key:
+[настройка и границы коннектора](docs/current/integrations.md#google-sheets--implementation-19112026-acceptance-in-progress).
+Доступны импорт клиентов с проверкой полей и экспорт в отдельную таблицу;
+Calendar-синхронизация пока не реализована. Миграция Google-коннектора и реальная
+авторизация требуют отдельной проверки в выбранной рабочей среде.
 XLSX импорт ограничен числом строк/столбцов и разжатым ZIP-объёмом; значения
 `IMPORT_*` и правила отказа описаны в [operations](docs/current/operations.md#лимиты-xlsx-импорта).
 Не переносите demo/seed в рабочую базу и не применяйте migration автоматически.

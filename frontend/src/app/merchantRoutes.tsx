@@ -2,6 +2,7 @@ import { routeMetadata, merchantRoutePermission } from "./routeMetadata";
 import { Navigate } from "react-router";
 import { lazy } from "react";
 const VoiceSettingsPage = lazy(() => import("../features/voice/VoiceSettingsPage"));
+const GoogleCallback = lazy(() => import("../features/integrations/GoogleCallback"));
 const VoiceHistoryPage = lazy(() => import("../features/voice/VoiceHistoryPage"));
 const ManagementPage = lazy(() => import("../features/management/ManagementPage").then(module => ({ default: module.ManagementPage })));
 import { RecordsPage, LegacyRecordsPage, ImportWorkspacePage } from "./routeLoaders";
@@ -9,6 +10,7 @@ import { RecordsPage, LegacyRecordsPage, ImportWorkspacePage } from "./routeLoad
 import { PageLoader, UserStartRedirect, BusinessRouteRedirect, SettingsAccessRoute, IntegrationsSettingsRedirect } from "./routeGuards";
 import { DashboardPage, AccountPage, ClientsPage, PaymentsPage, ClientWorkspacePage, TasksPage, TaskWorkspacePage, CalendarPage, AppointmentWorkspacePage, ConversationsPage, TimelinePage, BotsPage, BotDetailPage, PricingPage, AIAgentsPage, AutomationsPage, ResourcesPage, ServicesPage, BranchesPage, CompanyPage, BusinessPage, AnalyticsPage, SettingsPage, WorkingHoursPage, SupportListPage, SupportDetailPage } from "./routeLoaders";
 export const merchantFeatureRoutes = [
+  { path: "integrations/google/callback", resource: "integrations", permissionAction: "manage", element: <PageLoader><GoogleCallback /></PageLoader> },
   { path: "voice/history", resource: "ai_assistant", permissionAction: "suggest", element: <PageLoader><VoiceHistoryPage /></PageLoader> },
   { path: "settings/voice", resource: "ai_assistant", permissionAction: "suggest", element: <PageLoader><VoiceSettingsPage /></PageLoader> },
 { path: "integrations/import", resource: "integrations", action: "manage", element: <PageLoader><ImportWorkspacePage /></PageLoader> },
