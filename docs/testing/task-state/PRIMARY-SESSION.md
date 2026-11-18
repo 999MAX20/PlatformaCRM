@@ -14297,10 +14297,13 @@ mobile EN screenshots inspected. Working/index diff hygiene and scoped docs link
 checked. No remaining code/evidence/owner decisions within local dashboard scope.
 Local8000 instability remains an external environment limitation, not a dashboard
 failure; isolated compiled acceptance passed. No deployment/working-day certification.
-Publication preparation: current branch retained; latest shared HEAD8c5adc2b already
-on origin/main. Only dashboard files and owned documentation hunks will be committed.
-CI main-push workflow inspected; no deployment workflow is triggered by this change.
-Publication receipt/remote CI status follows separately; no CI PASS claimed here.
+Publication: task implementation8f2c95a71a5a9df8a58ec34b52fc808043ff6f1d committed
+on codex/ui-testing-toolkit and normal-pushed to origin/main; ls-remote SHA matched.
+Outgoing range from8c5adc2b contained only this task; committed-range diff hygiene PASS.
+Foreign WIP preserved. CI main-push workflow inspected; no deployment workflow is
+triggered by this change. GitHub Actions run44369480025 observed in_progress via
+GitHub API (combined-status connector returned no legacy statuses), no CI PASS claimed.
+CI: https://github.com/999MAX20/PlatformaCRM/actions/runs/44369480025 .
 
 ## SETTINGS-CLARITY-20261118
 
