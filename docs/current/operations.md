@@ -859,9 +859,15 @@ accepted — SMTP acceptance, не Inbox и не принятие приглаш
 Console/file/dummy backend считается неготовым; явный resend заменяет ссылку.
 Resend был подключён на сервере06.11 с подтверждённой Inbox-доставкой synthetic
 письма: smtp.resend.com:587 STARTTLS, sender no-reply@notify.platformacrm.kz.
-12.11 локальная .env остаётся console/без SMTP credentials; актуальная серверная
-конфигурация не подтверждена из-за SSH timeout. Не переносить старый transport
-PASS на новый invite flow. [Доказательства и остаток](../testing/evidence/invitations-24h-20261112.md).
+18.11 сервер94.131.87.21 проверен по SSH: прежний адрес был устаревшим.
+На текущем release20261118-58a6427e восстановлен SMTP Resend587/STARTTLS и
+FRONTEND_URL=https://platformacrm.kz; два новых приглашения приняты SMTP,
+в кабинете Resend для обоих подтверждён Delivered.
+Три исторических test email отменены по отдельному разрешению, активная очередь0.
+Резервная копия и rollback: /opt/platforma/shared/email-restore-20261118/.
+Локальная console-конфигурация не менялась. SMTP acceptance не доказывает Inbox;
+Delivered подтверждает доставку серверу получателя; папка Inbox/Spam и принятие
+сотрудником не проверены. [Доказательства и остаток](../testing/evidence/invitations-24h-20261112.md).
 
 
 ## Закрытый текстовый пилот Meta: 14.11.2026

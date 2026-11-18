@@ -171,3 +171,47 @@ Business18, приглашения1(manager)/2(operator), delivery failed/not_co
 Никаких отправок, изменений БД/config/firewall/deploy не выполнено.
 Следующий шаг требует согласованного восстановления Resend/FRONTEND_URL на этом
 сервере; отозванные ссылки не пересылать — для проверки нужны новые приглашения.
+
+## Восстановление Resend и новые письма — 18.11.2026
+
+Owner явно разрешил восстановить Resend/FRONTEND_URL и создать новые приглашения
+тем же двум получателям с согласованными Manager/Operator. Отдельно разрешил
+отменить только Notification630/632/635: pending,0attempts,Business2,example.test.
+Условия повторно проверены под row lock; изменены только status/updated_at,
+добавлены3audit records, исходные строки сохранены в защищённой резервной копии.
+Активная email-очередь после отмены0. Старые приглашения1/2 не изменены.
+
+Сохранённый domain-scoped Resend key проверен через SMTP STARTTLS с проверкой
+сертификата и authentication, без тестового письма. Затем восстановлены ровно
+8полей shared crm.env: EMAIL_BACKEND/HOST/PORT/HOST_USER/HOST_PASSWORD/USE_TLS,
+DEFAULT_FROM_EMAIL, FRONTEND_URL. Host smtp.resend.com, port587, sender
+PlatformaCRM <no-reply@notify.platformacrm.kz>, frontend https://platformacrm.kz.
+Секрет не выводился и не сохранялся в репозиторий. Root-only backup directory
+/opt/platforma/shared/email-restore-20261118 содержит crm.env.before, manifest.json,
+queue-before.json и resend-smtp.json(0600). Rollback: восстановить только8почтовых
+полей из backup с учётом более поздних env-изменений; перезапустить affectedCRM.
+Отменённые historical notifications не возвращать автоматически в pending.
+
+Django check и email_runtime_smoke --fail-on-missing PASS (без --send).
+crm-web/events/worker перезапущены; все5CRM/stand/Caddy services active.
+Хеши stand.env/stand-password/Caddyfile неизменны. Source release остаётся
+20261118-58a6427e; код, миграции, firewall, DNS, чужие интеграции не менялись.
+
+Через Chrome UI созданы приглашения3(manager) и4(operator). Каждая отправка
+выполнена один раз:18.11 22:36:38 и22:36:56 Asia/Qyzylorda. Оба UI показывают
+«Письмо принято почтовым сервисом»; независимый PostgreSQL READ ONLY readback
+подтверждает delivery_status=accepted, delivery_error пустой, TTL24h,
+accepted_at/revoked_at null. Согласованные роли сохранены, старые revoked записи
+не восстановлены. Следовательно, реальная SMTP-отправка обоих писем PASS.
+Снимок захвачен и визуально проверен: output/playwright/invitations-live-20261118/send-success.png.
+
+После входа владельца в Resend оба новых письма имеют статус Delivered:
+
+- Manager, invitation 3: provider ID 01a1efbb-6ce0-7049-910d-de612c3e280d.
+- Operator, invitation 4: provider ID 01a1efbb-b50d-791b-ad71-ed4f33fa2b78.
+Снимок захвачен и визуально проверен:
+output/playwright/invitations-live-20261118/resend-delivered.png.
+Доставка почтовому серверу получателей подтверждена. Папка Inbox/Spam и принятие
+приглашений сотрудниками не проверены. Scope восстановления и реальной отправки закрыт.
+Повторных отправок или дополнительных smoke email нет. Прежние FAIL остаются
+историческим доказательством причины и не переписываются под новый PASS.

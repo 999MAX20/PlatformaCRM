@@ -1,6 +1,8 @@
-INVITATIONS-SMTP-20261118: correct SSH94.131.87.21 works; prior target stale.
-Shared env locmem/placeholder SMTP, no credentials/FRONTEND_URL; DB not_configured.
-Both invitations now externally revoked; this chat made no further sends/mutations.
+INVITATIONS-SMTP-20261118: restored Resend SMTP + HTTPS FRONTEND_URL on live stand.
+New invitations 3 Manager / 4 Operator: SMTP accepted and Resend Delivered confirmed.
+Owner-approved old test emails 630/632/635 cancelled with audit; active queue 0.
+SMTP TLS/auth, Django check/readiness, services and read-only DB checks PASS.
+Inbox/Spam and employee acceptance not verified; existing-business send scope complete.
 Evidence: docs/testing/evidence/invitations-24h-20261112.md.
 
 INVITATIONS-LIVE-20261118: owner selected existing business; no new signup.
