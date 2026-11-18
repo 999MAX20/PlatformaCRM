@@ -154,5 +154,15 @@ existing UI/API layers retained, no redundant global state or raw component requ
 
 ### Publication
 
-Task-only index/range review and normal push receipt recorded below when available.
+Implementation commit `2012fd2ce351e06718ac62807dd290bc20c4717a` on retained
+`codex/ui-testing-toolkit`, canonical C:/Users/user/Desktop/PlatformaCRM.
+Task-only36-file index reviewed; working/index/committed-range diff hygiene PASS,
+registry JSON parsed; relative evidence/contract links checked. No secrets, ignored
+runtime/logs, unrelated integrations or status entries staged. Fetch proved no
+foreign outgoing commits. Normal `git push origin HEAD:main` succeeded; remote
+refs/heads/main read back exactly2012fd2ce351e06718ac62807dd290bc20c4717a.
+Push workflow is CI (no deployment job); no deployment performed.
+Actual [CI run471](https://github.com/999MAX20/PlatformaCRM/actions/runs/44307635515)
+was in_progress at publication inspection; not reported as green. This follow-up
+receipt is documentation only; application checks retain their stated boundaries.
 Foreign integration/WhatsApp changes and their STATUS/PRIMARY entries remain unstaged.
