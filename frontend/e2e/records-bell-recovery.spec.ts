@@ -34,7 +34,7 @@ for (const [language, copy] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
     expect((await (await filtered).json()).count).toBe(1);
     await expect(recordLinks).toHaveCount(1);
     await page.getByRole("textbox", { name: copy["records.search"], exact: true }).fill("NO SUCH FIXTURE CLIENT");
-    await expect(page.getByText(copy["appointments.emptyFiltered"], { exact: true })).toBeVisible();
+    await expect(page.getByText(copy["records.emptySearch"], { exact: true })).toBeVisible();
     await expect(page.getByTestId("inline-fallback")).toHaveCount(0);
 
     let failure = 404;
@@ -45,7 +45,7 @@ for (const [language, copy] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
     await expect(error).toContainText(copy["records.loadFailed"]);
     await expect(error).toContainText(copy["records.loadFailedHint"]);
     await expect(error).not.toContainText(copy["fallback.fields.title"]);
-    await expect(page.getByText(copy["appointments.emptyFiltered"], { exact: true })).toHaveCount(0);
+    await expect(page.getByTestId("records-empty")).toHaveCount(0);
     for (const status of [503, 400]) {
       failure = status;
       const failed = page.waitForResponse(response => response.url().includes("/api/appointments/workspace/") && response.status() === status);

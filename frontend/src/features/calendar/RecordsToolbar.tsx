@@ -1,5 +1,5 @@
 import { ArrowDownWideNarrow, ArrowUpWideNarrow, CalendarDays, SlidersHorizontal, X } from "lucide-react";
-import { useRef, useState } from "react";
+import { useRef, useState, type Dispatch, type SetStateAction } from "react";
 import { useNavigate, type SetURLSearchParams } from "react-router";
 import { Button } from "../../components/ui/Button";
 import { RecordsPeriodPanel } from "./RecordsPeriodPanel";
@@ -19,15 +19,16 @@ type Props = {
   resources: Option[];
   branches: Option[];
   members: Option[];
+  periodOpen: boolean;
+  setPeriodOpen: Dispatch<SetStateAction<boolean>>;
 };
 
-export function RecordsToolbar({ today, params, setParams, filters, summary, resources, branches, members }: Props) {
+export function RecordsToolbar({ today, params, setParams, filters, summary, resources, branches, members, periodOpen, setPeriodOpen }: Props) {
   const { t, language } = useI18n();
   const navigate = useNavigate();
   const filterTrigger = useRef<HTMLButtonElement>(null);
   const closeFilters = (restoreFocus = true) => { setDialog(null); if (restoreFocus) filterTrigger.current?.focus({ preventScroll: true }); };
   const [dialog, setDialog] = useState<"filters" | null>(null);
-  const [periodOpen, setPeriodOpen] = useState(false);
   const periodTrigger = useRef<HTMLButtonElement>(null);
   const closePeriod = (restoreFocus = true) => { setPeriodOpen(false); if (restoreFocus) periodTrigger.current?.focus({ preventScroll: true }); };
   const [draft, setDraft] = useState<Record<string, string>>({});

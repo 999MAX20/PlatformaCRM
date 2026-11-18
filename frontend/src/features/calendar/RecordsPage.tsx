@@ -30,6 +30,7 @@ import { recordWorkspaceParams, resetRecordFilters } from "./recordFilters";
 import { useCalendarCatalog } from "./useCalendarCatalog";
 import { VisitPlansPage } from "./VisitPlansPage";
 import { useRecordsPeriod } from "./useRecordsPeriod";
+import { RecordsEmptyState } from "./RecordsEmptyState";
 
 export function RecordsPage() {
   const [params] = useSearchParams();
@@ -37,6 +38,7 @@ export function RecordsPage() {
 }
 
 function RecordsListPage() {
+  const [periodOpen, setPeriodOpen] = useState(false);
   const [drawer, setDrawer] = useState<CrmDrawerEntity | null>(null);
   const { t } = useI18n();
   const { user } = useAuth();
@@ -113,19 +115,21 @@ function RecordsListPage() {
   }, [records.isError, records.error, filters.page, setParams]);
   if (!business) return <EmptyState title={t("appointments.noBusiness")} />;
   const catalogError = catalog.services.error || catalog.resources.error || branches.error || members.error;
-  return <div className="space-y-4 pt-2" data-testid="records-workspace" aria-busy={records.isFetching}>
-    <RecordsToolbar params={params} setParams={setParams} today={today} filters={filters} summary={records.data?.summary}
+  const filtered = [filters.q, filters.workflow, filters.attention, filters.client, filters.resource, filters.responsible_user, filters.confirmed, filters.branch, filters.custom_field].some(Boolean);
+  return <div className="flex min-h-[calc(100dvh-var(--app-header-height)-8.5rem)] flex-col gap-4 pt-2 sm:min-h-[calc(100dvh-var(--app-header-height)-9rem)] lg:min-h-[calc(100dvh-var(--app-header-height)-2rem)]" data-testid="records-workspace" aria-busy={records.isFetching}>
+    <RecordsToolbar params={params} setParams={setParams} today={today} filters={filters} summary={records.data?.summary} periodOpen={periodOpen} setPeriodOpen={setPeriodOpen}
       resources={(catalog.resources.data || []).map(item => ({ value: item.id, label: item.name }))}
       branches={(branches.data || []).map(item => ({ value: item.id, label: item.name }))}
       members={[{ value: user!.id, label: user!.full_name || user!.email }, ...(members.data || []).filter(item => item.user.id !== user?.id && item.is_active).map(item => ({ value: item.user.id, label: item.user.full_name || item.user.email }))]} />
     {catalogError ? <ErrorState error={catalogError} action={<Button onClick={() => { void catalog.services.refetch(); void catalog.resources.refetch(); void branches.refetch(); if (members.isEnabled) void members.refetch(); }}>{t("common.retry")}</Button>} /> : null}
     {customTable.toolbar}
     {records.isError ? <RecordsLoadError error={records.error} retry={() => void records.refetch()} />
-      : records.isPending ? <LoadingState />
+      : records.isPending || (records.isPlaceholderData && !records.data?.results.length) ? <LoadingState />
       : records.data?.results.length ? <>{records.isPlaceholderData && <p role="status" className="text-sm text-platforma-subtle">{t("common.loading")}</p>}
         <RecordsTableView records={records.data.results} customColumns={customTable.columns} timeZone={timeZone} showBranch={(branches.data?.length || 0) > 0} onOpen={id => setDrawer({ type: "appointment", id })} />
         <CrmPagination compact shown={records.data.results.length} total={records.data.count} page={Number(filters.page)} pageSize={Number(filters.page_size)} onPageChange={page => update("page", String(page))} onPageSizeChange={size => update("page_size", String(size))} previousLabel={t("pagination.previous")} nextLabel={t("pagination.next")} />
-      </> : <EmptyState title={t("appointments.emptyFiltered")} action={<Button variant="secondary" onClick={() => setParams(current => resetRecordFilters(current, today))}>{t("records.reset")}</Button>} />}
+      </> : <RecordsEmptyState businessId={business.id} userId={user?.id} filtered={filtered} singleDay={!!filters.start_from && (!params.get("to") || params.get("to") === filters.start_from)} canCreate={canCreate}
+        onCreate={() => update("create", "1")} onChooseDate={() => setPeriodOpen(true)} onReset={() => setParams(current => resetRecordFilters(current, today))} />}
     <CrmEntityDrawer entity={drawer} onClose={() => setDrawer(null)} />
     <Modal open={params.get("create") === "1" && canCreate} onClose={() => { if (!createPending.current) closeCreate(); }} title={t("appointments.create")}>
       {sourceClientQuery.error ? <ErrorState error={sourceClientQuery.error} action={<Button onClick={() => void sourceClientQuery.refetch()}>{t("common.retry")}</Button>} /> : null}

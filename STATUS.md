@@ -2355,3 +2355,14 @@ Build/types/i18n/bundle PASS;14distinct browser cases plus6label/2text reruns PA
 Desktop/tablet/mobile and RU/KK/EN/text200 screenshots inspected. No deployment.
 Evidence: docs/testing/evidence/clients-records-20261105.md (Payments modal18Nov).
 Checkpoint/publication/CI: output/clients-payments-20261118/CHECKPOINT.md.
+
+## RECORDS-EMPTY-20261118
+
+Owner accepted context-sensitive appointments CTA: first record/create,
+empty day or period/create+choose date, filtered/reset. Framed empty card/icon
+removed; content centered below retained toolbar on page background. Creation
+respects permission; existing API scope and lifecycle unchanged.
+Build/types/i18n/bundle and 10 targeted browser scenarios PASS. Chrome localhost
+opened and visually inspected; ordinary app also showed a connection alert,
+not treated as release-health evidence. Details: PRIMARY-SESSION same task ID,
+output/records-empty-20261118/CHECKPOINT.md. No deployment performed.

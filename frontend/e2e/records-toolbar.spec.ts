@@ -66,13 +66,14 @@ for (const [language, copy] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
     const response = page.waitForResponse(r => r.url().includes("/api/appointments/workspace/") && r.url().includes("start_from=2026-12-20"));
     await periodPanel.getByRole("button", { name: copy["crmFilters.apply"], exact: true }).click();
     expect((await response).url()).toContain("start_to=2026-12-22");
-    await expect(page.getByText(copy["appointments.emptyFiltered"], { exact: true })).toBeVisible();
-    await toolbar.getByRole("button", { name: copy["records.reset"], exact: true }).click();
+    await expect(page.getByText(copy["records.emptyPeriod"], { exact: true })).toBeVisible();
+    await page.getByRole("textbox", { name: copy["records.search"], exact: true }).fill("NO SUCH FIXTURE CLIENT");
+    await page.getByTestId("records-empty").getByRole("button", { name: copy["records.reset"], exact: true }).click();
     await expect(page).not.toHaveURL(/from=2026-12-/);
-    await expect(page.getByText(copy["appointments.emptyFiltered"], { exact: true })).toBeVisible();
+    await expect(page.getByText(copy["records.emptyDay"], { exact: true })).toBeVisible();
     await page.setViewportSize({ width: 390, height: 844 });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBeTruthy();
-    const empty = await page.getByText(copy["appointments.emptyFiltered"], { exact: true }).boundingBox();
+    const empty = await page.getByText(copy["records.emptyDay"], { exact: true }).boundingBox();
     expect(empty!.y + empty!.height).toBeLessThan(760);
     await page.screenshot({ path: info.outputPath(`records-mobile-${language}.png`) });
     await trigger.click();

@@ -1,4 +1,11 @@
 export const calendar: Record<string, string> = {
+  "records.emptyFirst": "Create your first appointment",
+  "records.emptyFirstHint": "Choose a client, service and time",
+  "records.emptyNone": "No appointments yet",
+  "records.emptyDay": "No appointments on this day",
+  "records.emptyPeriod": "No appointments in this period",
+  "records.emptySearch": "No appointments found",
+  "records.chooseDate": "Choose a date",
   "calendar.previousYear": "Previous year",
   "calendar.nextYear": "Next year",
   "calendar.viewMode": "Calendar view",

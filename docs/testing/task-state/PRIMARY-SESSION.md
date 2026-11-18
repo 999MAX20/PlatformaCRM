@@ -13825,3 +13825,60 @@ No backend/API/schema/money/AI/permission policy or workingDB changes. Isolated
 receipt/refund writes only. Foreign voice/calendar WIP preserved; no deployment.
 Evidence: ../evidence/clients-records-20261105.md#payments-modal-and-client-footer-removal-18112026.
 Checkpoint/publication/actualCI: output/clients-payments-20261118/CHECKPOINT.md.
+
+## RECORDS-EMPTY-20261118
+
+Owner accepted context-sensitive appointments CTA: first record/create,
+empty day or period/create+choose date, filtered/reset. Framed empty card/icon
+removed; content centered below retained toolbar on page background. Creation
+respects permission; existing API scope and lifecycle unchanged.
+Build/types/i18n/bundle and 10 targeted browser scenarios PASS. Chrome localhost
+opened and visually inspected; ordinary app also showed a connection alert,
+not treated as release-health evidence. Details: PRIMARY-SESSION same task ID,
+output/records-empty-20261118/CHECKPOINT.md. No deployment performed.
+
+Mode implementation; code gap approved by owner annotation1. Canonical root
+C:/Users/user/Desktop/PlatformaCRM; retained codex/ui-testing-toolkit, initial
+HEAD ebfeea67dbe56daa1ef1519e150809db9c4552fa. Initial voice/payment WIP preserved;
+shared docs staged by own hunks. Prior one generic empty card -> approved three
+states -> minimal RecordsPage/Toolbar and new RecordsEmptyState presentation.
+Availability request uses existing workspace API, business/user query key and
+page_size1 without dates only when an unfiltered list is empty; no records means
+no readable records in existing backend scope. Error/pending stays error/loading.
+Create CTA opens existing form with selected date, date CTA opens existing panel,
+reset reuses existing semantics. No backend permission, API, money, migration,
+environment, notification, BusinessEvent or AI changes.
+
+Checks on canonical sources with existing node_modules:
+- frontend `npm run build`: PASS, check:i18n7454 keys, tsc and app/widget builds
+  (build-final.log). Repeated only after increasing CTA tap target to44px.
+- frontend `npm run check:bundle`: PASS, existing RU/KK chunk-size warnings remain
+  (bundle-final.log). No full-project build/test certification claimed.
+- `.venv/Scripts/python.exe output/records-empty-20261118/run-browser.py`:
+  10 PASS (browser-completion.log), RU/KK/EN at1440x1000 and390x844; first/period/
+  filtered, create opening/Escape/focus, date apply, search/status/reset, read
+  failure/retry, availability loading, populated list, no-create presentation,
+  320px/200% root-text resize and reachable button without horizontal overflow.
+  Real authenticated isolated workspace API for day/filter/list; first/no-create/
+  failure/loading controlled browser responses. These prove UI behavior, not new
+  backend authorization. Backend unchanged, no backend suite required.
+- Initial focused RU PASS. First multilingual run4PASS/4FAIL due test not setting
+  local language storage; fixed setup with addInitScript, then final10PASS. Product
+  translations were correct. No weakened expectations.
+- Screenshots under output/records-empty-20261118/browser-results: desktop first,
+  mobile first/period and narrow-text view visually inspected; native Chrome
+  127.0.0.1:5173/app/appointments confirmed day CTA, background/centering and no card.
+  Native Chrome screenshot inspected; tab1634125856 retained. Existing global
+  connection alert observed separately; isolated flow passed without it.
+- Anti Slop during: existing neutral/emerald tokens, 1/1/1 dials, no decorative
+  assets or copy, true three-way states, mobile44px targets, wrapping and scroll,
+  keyboard/focus/recovery. Contrast measured: secondary text/canvas6.40:1,
+  white/green5.35:1. 200% text resize checked; native browser zoom not certified.
+  React review: stable top-level component, scoped cached query, event handlers,
+  no raw component fetch, no added dependencies or global UI changes.
+
+Current frontend contract and scheduling passport updated; no roadmap/setup/API
+contract change required. Existing toolbar/recovery test expectations updated;
+their historical date-specific fixtures were not rerun, targeted current scenarios
+cover changed actions. Scope code/isolated visual evidence complete; no live release
+claim. Final diff hygiene/publication/CI and process receipts in output checkpoint.
