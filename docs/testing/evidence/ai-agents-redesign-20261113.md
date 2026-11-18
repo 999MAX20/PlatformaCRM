@@ -1035,5 +1035,9 @@ no new env/dependency; operational requirement recorded in operations contract.
 Limits: no real-model/live-channel/deployed acceptance, no new PostgreSQL threaded
 concurrency or live Celery restart certification. Overlap is exercised as request
 interleaving through existing atomic admission; pending DB recovery is isolated.
-Local scoped code/UI acceptance complete. Publication receipt follows in checkpoint;
-working migration/worker rollout remain deployment work, not silently completed.
+Local scoped code/UI acceptance complete. Code85d086e66eb0a8d1373179fab216716fd2cf973f
+normal-pushed/read back on origin/main; outgoing range contained only this task.
+CI44404460792 was in_progress at inspection, not PASS. Full intended patch,
+index/working/committed diff hygiene and evidence links checked. Foreign WIP
+preserved, shared STATUS/frontend hunks staged separately. Working migration/worker
+rollout remain deployment work, not silently completed. Final receipt in checkpoint.

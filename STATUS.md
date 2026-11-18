@@ -111,7 +111,8 @@ AI-AGENTS-REDESIGN-20261113: approved editor redesign implemented; scoped local 
 19.11 authorized phase: preview explanations + opt-in inbound grouping, accepted design preserved.
 Local scope PASS: final47 + dependent97 + unchanged56 =200 distinct backend scenarios;
 browser8+4 PASS, strengthened mobile3 PASS, build/types/i18n/bundle/system/drift PASS.
-Migration0015 isolated only; target migration/beat-worker rollout not performed. Publication pending.
+Code85d086e6 published/read back on origin/main; CI44404460792 in_progress at inspection.
+Migration0015 isolated only; target migration/beat-worker rollout not performed.
 Evidence: docs/testing/evidence/ai-agents-redesign-20261113.md (Preview explanations and inbound batching).
 17.11 create modal: CRM selection retained but disabled, localized development banner;
 Create centered beneath cards. Local build/types/i18n/bundle and8distinct browser
