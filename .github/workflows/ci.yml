@@ -99,6 +99,9 @@ jobs:
       - name: Build frontend and widget
         run: npm run build
 
+      - name: Verify patched glob dependency
+        run: node --test scripts/tests/picomatch-security.test.mjs
+
       - name: Check frontend bundle budget
         run: npm run check:bundle
 

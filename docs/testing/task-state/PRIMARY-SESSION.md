@@ -13723,6 +13723,41 @@ Deployment not performed; unfinished alerts work is not closed by this UI change
 
 ### META-COEXISTENCE-20261117: existing Business App numbers
 
+18Nov dependency repair: official picomatch4.0.7 original timed out at3000ms on
+the hostile-pattern child; normal controls passed. Local maintained fork uses
+existing parsed tokens/literal fallback to stop wildcard/globstar/negative
+extglob repetition, including recursion-limit opt-out. Fixed-text/quoted/escaped/
+class-star controls pass. Compatibility change and maintenance documented in
+frontend/vendor/picomatch/PLATFORMA-PATCH.md; arbitrary raw regex safety excluded.
+Four final Node checks PASS (12 hostile patterns x9 options, public/posix APIs,
+consumer resolution and installed/source equality); source archive comparison
+shows only parser and package identity changed, MIT retained. Root override
+and exact integrity tarball ensure a single patched dependency. npm audit0,
+clean dependency-only temp npm ci, app/widget types/i18n/build/budget and
+Storybook build PASS. Canonical npm ci initially hit an existing native-module
+file lock; npm install restored modules without stopping the existing dev server,
+then independent clean install passed. No app source copy or foreign WIP edits.
+Static gate PASS; added manual release-validation workflow to run the required
+full isolated gate on a clean committed candidate without foreign local WIP.
+New dependency patches and this workflow are not yet published in this entry.
+Maintained fork is not independently audited by npm advisory feed; CI explicitly
+requires runtime regression and installed-source tests in addition to npm audit.
+Security report: Codex Security target collection findings/picomatch-ci-repair.md.
+Network: owner switched to saved5GHz SSID, same external IP/SSH timeout. Owner
+then explicitly approved adding only current /32 TCP22 cloud ingress; saved and
+verified in cloud UI. SSH still times out after that change; host firewall/access
+recovery remains necessary. No VM/service restart.
+
+18Nov owner selected a maintained local picomatch security patch, rather than
+waiting for upstream; audit remains mandatory. Scope: pinned official4.0.7
+vendor source/license, narrow repeated-wildcard safeguard, lock override and
+CI regression verification. Reject unsafe repeated wildcard forms using the
+existing literal fallback; preserve ordinary globs, fixed-text extglobs and
+all build consumers. Check original/alternate exploit under subprocess deadline,
+legitimate matching, override resolution, clean npm ci/build/bundle/audit and CI.
+Owner asked to switch to the former network; current Wi-Fi identified but no VPN
+profile and former SSID unknown, clarification pending. No arbitrary reconnect.
+
 18Nov repair evidence: polluted throttle_ai_assistant_1 reproduced readiness
 KeyError/429 in speech-ci-before.log. SpeechTests fixture now deletes only its
 two fixture-user ai_assistant cache keys before/after each case; audio tests
