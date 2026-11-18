@@ -1,10 +1,13 @@
-VOICE-SCRIBE-V3-20261117: прямое подключение Scribe v3 проверено18.11 на
-трёх вымышленных RU-записях: HTTP200,14.24с аудио, фактически8 кредитов из лимита5000.
-56 изолированных тестов, Django check и migration drift PASS. Ключ установлен
-только локально, STT-only, лимит5000, срок1день. Рабочий провайдер не переключён,
-флаги enable/privacy False. Исключение без ZRM только в отдельном synthetic harness.
-Остаток: широкая точность RU/KK/mixed, Enterprise STT ZRM/no-training и рабочая
-активация/deployment. Старые accuracy FAIL и открытый D01 не закрыты.
+Expanded18Nov:19 RU/KK/mixed HTTP200,163.111s; names/phone accuracy FAIL,
+5 spoken dates preserved.89 new credits;97/5000 total,4903 remaining.
+Production flags/privacy protection unchanged; no real data or CRM writes.
+Source a3753708; full expanded result in existing voice-scribe evidence.
+Details: [evidence](../testing/evidence/voice-scribe-v3-20261117.md).
+
+VOICE-SCRIBE-V3-20261117: expanded synthetic testing complete; quality failures
+remain open. Prior56 isolated checks reused for unchanged voice source.
+Key local/STT-only/capped; activation and Enterprise ZRM/no-training remain open.
+Prior accuracy FAIL and D01 are not closed.
 [Проверки и границы](../testing/evidence/voice-scribe-v3-20261117.md).
 
 ## Повторная проверка новых заявок — 12.11.2026

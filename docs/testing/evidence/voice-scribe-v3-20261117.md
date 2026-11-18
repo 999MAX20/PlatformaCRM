@@ -1,6 +1,10 @@
 # VOICE-SCRIBE-V3-20261117: прямое подключение и synthetic-проверка
 
-## Текущее состояние, 18.11.2026
+Current result: expanded19 RU/KK/mixed requests completed; accuracy failures remain.
+Total97/5000 credits used,4903 remaining. See expanded acceptance below.
+The initial three-clip section records the earlier snapshot.
+
+## Initial three-clip snapshot, 18.11.2026
 
 Подключение Scribe v3 проверено на трёх коротких вымышленных русских фразах.
 Рабочая активация для клиентских данных НЕ выполнена. 56 изолированных тестов,
@@ -93,3 +97,58 @@ Operations/voice/README/roadmap/passport/STATUS синхронизированы
 - https://elevenlabs.io/docs/eleven-api/resources/zero-retention-mode
 
 Publication записывается в checkpoint отдельно; local/live PASS не означает deploy.
+
+## Expanded synthetic acceptance — 18.11.2026
+
+Owner authorized RU/KK/mixed, names, numbers and dates with 4992 credits remaining.
+Source a3753708; production voice code unchanged from b5dde74b. Prior56 isolated
+tests reused as unchanged-source evidence, not rerun. No production activation.
+
+19/19 HTTP200; 163.111 seconds audio, no retries. Command (PYTHONPATH=root):
+`.venv/Scripts/python.exe output/voice-scribe-v3-20261117/expanded_synthetic.py --live`
+Exit0 proves transport only. Synthetic corpus:7 RU Microsoft Irina/Pavel clips,
+6 KK and6 mixed kk-KZ-AigulNeural/DauletNeural clips, reused from11Nov.
+KK/mixed SHA256 verified against historical native-manifest; all WAV hashes pinned.
+Fixed two corpus directories; <=24 requests/400seconds, exclusive report marker,
+isolated runtime. No new TTS, OpenRouter, real client data, CRM writes or deployment.
+Production enable/privacy flags and readiness remain False before/after. Logging=true
+exists only in this ignored synthetic harness, not application API/configuration.
+
+| Group | Requests | Exact client names | Normalized phones |
+| --- | ---: | ---: | ---: |
+| ru | 7 | 6/6 | 4/6 |
+| kk | 6 | 4/5 | 4/4 |
+| mixed | 6 | 3/5 | 2/5 |
+
+Specialist names3/5; task titles2/3 (RU control reviewed manually).
+All5 spoken dates/times preserved by manual transcript comparison:
+kk-booking2030-11-07 12:00; mixed-booking2030-11-08 10:00;
+kk-conflict2030-11-09 12:00; mixed-conflict2030-11-10 12:00;
+ru-booking-two-names2030-11-09 10:00. This does not verify date parser/planner/CRM.
+
+Failures retained without transcript correction:
+- kk-client-auto, mixed-booking, mixed-conflict: Kazakh name spelling changed;
+  mixed-task: final Kazakh letter in first title word changed.
+- mixed-digits: spoken digit values preserved but commas prevent application phone
+  normalization. mixed-booking: grouped seventy-seven preserves prefix value but
+  compound numbers are unsupported by the normalizer.
+- mixed-conflict: repeated Kazakh twos recognized as Russian ones: actual digit error.
+- ru-male-voice, ru-eight-prefix: grouped number words change digit sequence as well
+  as preventing normalization; blind concatenation cannot repair these safely.
+- mixed-eight: command words distorted despite preserved name/phone.
+
+Synthetic pronunciation may contribute; these results do not establish live-human
+accuracy or comparative model superiority. Recognition acceptance remains FAIL.
+Noise/live voices and full voice-to-CRM flow remain unverified. Follow-up needs phone
+handling/ambiguity confirmation and further fictional voice checks; no product fix
+was included in this verification scope. Enterprise STT ZRM/no-training and production
+activation remain separate. Existing privacy/customer-data protection unchanged.
+
+ElevenLabs authenticated Analytics/Usage:22 billable requests,97credits,3m rounded,
+4.41credits/request. Prior3 requests cost8: expanded series89 credits; remaining
+5000-97=4903. No additional calls. Budget is cumulative, not reset per run.
+Local ignored artifacts: expanded_synthetic.py, expanded-corpus.json,
+expanded-live-20261118.json/log under output/voice-scribe-v3-20261117.
+No secrets in tracked evidence. Test execution scope complete, quality failures open.
+
+Median request 2.235s; range 1.297–4.641s.

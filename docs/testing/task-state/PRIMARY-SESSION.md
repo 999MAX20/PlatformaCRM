@@ -5,13 +5,10 @@
 [checkpoint](../evidence/global-search-20261118.md). Новые серверные поиски задач/Inbox
 не реализованы; рекомендации не разрешают следующий этап автоматически.
 
-VOICE-SCRIBE-V3-20261117: direct Scribe v3 synthetic connection verified18Nov.
-56 isolated tests + system/drift PASS;3 live fixed fictional RU clips HTTP200,
-14.24s audio, actual8 credits used of5000 authorized. Key STT-only,5000 cap,1day,
-saved only local .env. Runtime remains disabled and ZRM/privacy gates unchanged.
-Synthetic no-ZRM exception exists only in ignored one-shot test harness, no API bypass.
-No real CRM data/actions, OpenRouter spend, top-up or deployment. Broad RU/KK/mixed
-accuracy and Enterprise ZRM/no-training acceptance remain open.
+VOICE-SCRIBE-V3-20261117: Expanded18Nov:19 RU/KK/mixed HTTP200,163.111s; names/phone accuracy FAIL,
+5 spoken dates preserved.89 new credits;97/5000 total,4903 remaining.
+Production flags/privacy protection unchanged; no real data or CRM writes.
+Source a3753708; full expanded result in existing voice-scribe evidence.
 Evidence: docs/testing/evidence/voice-scribe-v3-20261117.md.
 Checkpoint: output/voice-scribe-v3-20261117/CHECKPOINT.md.
 

@@ -1,3 +1,9 @@
+Expanded18Nov:19 RU/KK/mixed HTTP200,163.111s; names/phone accuracy FAIL,
+5 spoken dates preserved.89 new credits;97/5000 total,4903 remaining.
+Production flags/privacy protection unchanged; no real data or CRM writes.
+Source a3753708; full expanded result in existing voice-scribe evidence.
+Details: [evidence](../testing/evidence/voice-scribe-v3-20261117.md).
+
 ## Прямой Scribe v3 — подготовка 17.11.2026
 
 По разрешению владельца подготовлен отдельный ElevenLabs STT adapter с фиксированным
