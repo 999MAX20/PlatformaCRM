@@ -13811,3 +13811,17 @@ Current CRM/frontend contracts and clients passport updated; no roadmap phase,
 README/setup or unrelated authority update needed. Remaining evidence: final
 ordinary Chrome screenshot unavailable due extension timeout. Local test acceptance
 does not claim deployed readiness. Publication/CI receipt recorded in output checkpoint.
+
+## CLIENTS-PAYMENTS-20261118
+
+Owner requests text-only Payments, modal journal and removal of client footer.
+Explicit clarification keeps paged query and defers replacement UI; no infinite
+scroll/all-row fetch. First20 filtered clients remain accessible. Payment history
+pagination, data, forms and permissions retained. Mobile text action above list;
+shared Header label stays visible when no icon (other icon callers unchanged).
+Local build/types/i18n/bundle and14distinct browser cases PASS;6label and2text200
+reruns overlap those14. Screenshots captured/inspected at320/768/1440, RU/KK/EN.
+No backend/API/schema/money/AI/permission policy or workingDB changes. Isolated
+receipt/refund writes only. Foreign voice/calendar WIP preserved; no deployment.
+Evidence: ../evidence/clients-records-20261105.md#payments-modal-and-client-footer-removal-18112026.
+Checkpoint/publication/actualCI: output/clients-payments-20261118/CHECKPOINT.md.

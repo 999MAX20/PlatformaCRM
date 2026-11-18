@@ -151,7 +151,7 @@ export function Header({
                     data-focus-return-id={action.focusReturnId}
                   >
                     {Icon ? <Icon size={17} /> : null}
-                    {showsLabel ? <span className="hidden xl:inline">{action.label}</span> : null}
+                    {showsLabel ? <span className={Icon ? "hidden xl:inline" : undefined}>{action.label}</span> : null}
                   </Button>
                 );
               })}

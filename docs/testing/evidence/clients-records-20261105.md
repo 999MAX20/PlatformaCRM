@@ -132,3 +132,67 @@ contracts unchanged. No scoped implementation/local-check remainder. Canonical r
 C:/Users/user/Desktop/PlatformaCRM, codex/ui-testing-toolkit, HEAD66101d50.
 Existing index.lock and mixed foreign outgoing still block own-only publication;
 no own stage/commit/push/newCI/deployment and no lock/history modification.
+
+## Payments modal and client footer removal, 18.11.2026
+
+Owner explicitly requests text-only «Оплаты», modal instead of payment inspector,
+and removal of the client-list footer pagination. Owner clarified: remove the
+component for later relocation/redesign, do not add infinite scrolling or fetch
+all clients. Existing paged query remains (first20 filtered clients accessible);
+the common CrmPagination component remains available to other pages.
+
+PaymentsJournal reuses Modal and retains existing API/query, payment fields,
+history, client filtering, receipt/refund forms, permission gates and history
+pagination. No money/domain/auth/schema/API/notification/BusinessEvent/AI changes.
+Header button has no icon or nested action. At widths below1024 it appears above
+the list, keeping the mobile header usable. Shared Header now keeps a label
+visible when an action has no icon; the other label-action consumer WorkingHours
+has an icon and its branch is unchanged. RU/KK/EN terminology updated together.
+
+Canonical root C:/Users/user/Desktop/PlatformaCRM, retained branch
+codex/ui-testing-toolkit, starting HEAD ebfeea67. Voice and subsequently arriving
+calendar WIP are excluded. Disposable canonical-source runtime51573/51574,
+SQLite and mock providers; no working DB mutations or deployment.
+
+Verification artifacts: `output/clients-payments-20261118/`.
+- `.venv/Scripts/python.exe output/clients-payments-20261118/build.py`: final
+  build/types/i18n7454/app/widget and bundle PASS. Existing locale chunk warnings.
+  build-source.json binds the emitted final narrow-grid correction to the build.
+- Same directory `check.py regressions-final --grep 'payments modal|payment modal|seven client filters'`:
+  14 PASS across desktop1440/mobile320: RU/KK/EN, seven client filters,
+  real HTTP receipt1250.50/refund250.50 and remaining1000.00, read503/retry,
+  history fields/filter/empty, nested-form Escape/focus and journal focus return.
+- `check.py regressions-label --grep 'payments modal preserves'`: 6 PASS after
+  mobile label correction; visible innerText checked, no nested button/SVG.
+- `check.py regressions-text-final --grep 'navigation \(en\)'`: 2 PASS after
+  narrow grid correction, including inner-body overflow and200% text scrolling.
+  These affected reruns overlap the14 scenarios, not22 distinct scenarios.
+- `node output/clients-payments-20261118/capture.cjs`: read-only isolated browser
+  captures clients1440/768/320. Captures and localized modal screenshots visually
+  inspected; no client footer, label readable, modal centered, fields preserved.
+  Text200 uses root font scaling, not native device zoom. Full-page screenshots
+  place fixed mobile navigation mid-image; actual scrolling retains bottom space.
+
+Initial desktop run3PASS/1harnessFAIL: Select accessible name includes selected
+value, exact label locator timed out after actual receipt/refund succeeded.
+Changed locator to label prefix. Visual capture found a blank mobile header
+button; moved mobile text action above list and preserved no-icon desktop labels.
+Text200 capture exposed implicit grid minimum overflow; explicit minmax grid and
+min-width0 fixed it. First inner-body assertion matched notification portal too;
+scoped to scroll body and reran2PASS. Earlier failures retained, not relabelled.
+
+Anti Slop during scoped Delivery Gate:
+- Hard gate PASS: browser/axe, visible labels, keyboard/focus, geometry/overflow,
+  real APIs, empty/error/retry, build and visually inspected screenshots.
+- Purpose PASS: requested payment history and action; no new decoration/assets.
+- Identity PASS: existing neutral/emerald tokens, type and shared primitives,
+  ENERGY/RHYTHM/MOTION1/1/1; primary payment action remains the accent.
+- Craftsmanship PASS: preserved queries/permissions/forms and client filters,
+  localized desktop/mobile and enlarged text checked. React review: no new
+  fetching/effects/dependencies, existing mutation/guard semantics retained.
+
+Backend/full-project/provider/theme/new-asset checks N/A for this presentation
+scope; no financial contract implementation changed. Frontend contract and client
+passport updated; roadmap/README/domain/access contract need no change. No scoped
+code/local-evidence remainder. Future pagination design is intentionally outside
+this change. Publication/actualCI receipt: existing task checkpoint in output.

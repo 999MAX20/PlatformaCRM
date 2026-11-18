@@ -2344,3 +2344,14 @@ Browser extension subsequently timed out: ordinary-tab final screenshot/loading
 acceptance is unverified; isolated browser acceptance is separately passed.
 Checks and precise environment/publication boundary: PRIMARY-SESSION entry below
 and output/clients-filters-20261117/CHECKPOINT.md. No deployment performed.
+
+## CLIENTS-PAYMENTS-20261118
+
+Text-only Payments button and centered modal journal implemented; data/history,
+receipt/refund/forms/permissions preserved. Mobile action above list, desktop in header.
+Client footer pagination removed per explicit owner clarification; paged query stays,
+no autoload and only first20 filtered clients until a separately requested redesign.
+Build/types/i18n/bundle PASS;14distinct browser cases plus6label/2text reruns PASS.
+Desktop/tablet/mobile and RU/KK/EN/text200 screenshots inspected. No deployment.
+Evidence: docs/testing/evidence/clients-records-20261105.md (Payments modal18Nov).
+Checkpoint/publication/CI: output/clients-payments-20261118/CHECKPOINT.md.

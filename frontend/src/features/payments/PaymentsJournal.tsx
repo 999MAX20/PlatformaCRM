@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import { Plus, X } from "lucide-react";
-import { useEffect, useId, useState } from "react";
+import { Plus } from "lucide-react";
+import { useEffect, useState } from "react";
 import { paymentsApi, type Payment, type PaymentOption } from "../../api/payments";
 import { getApiErrorMessage } from "../../api/client";
-import { Drawer } from "../../components/ui/Overlay";
+import { Modal } from "../../components/ui/Modal";
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
 import { Select } from "../../components/ui/Select";
@@ -19,7 +19,6 @@ export function PaymentsJournal({ client, onClose }: { client?: PaymentOption; o
   const { t } = useI18n();
   const { business } = useActiveBusiness();
   const { user } = useAuth();
-  const titleId = useId();
   const [search, setSearch] = useState("");
   const [query, setQuery] = useState("");
   const [kind, setKind] = useState("");
@@ -38,17 +37,21 @@ export function PaymentsJournal({ client, onClose }: { client?: PaymentOption; o
     enabled: canView,
   });
   return <>
-    <Drawer open onClose={form ? () => undefined : onClose} titleId={titleId} size="complex" testId="payments-journal" closeOnBackdrop={false}>
-      <div className="flex shrink-0 items-start justify-between gap-3 border-b border-platforma-border p-4 sm:p-5">
-        <div className="min-w-0"><h2 id={titleId} className="text-xl font-semibold">{t("payments.title")}</h2>{client && <p className="break-words text-sm text-platforma-muted">{client.label}</p>}</div>
-        <div className="flex flex-wrap justify-end gap-2">
+    <Modal open onClose={form ? () => undefined : onClose} title={t("payments.title")} size="xl" testId="payments-journal" closeOnBackdrop={false}
+      className="[&>header]:h-auto [&>header]:min-h-16 [&>header]:py-4 [&>header>h2]:whitespace-normal [&>header>h2]:break-words"
+      footer={canView && payments.data && !payments.error && <nav aria-label={t("payments.pagination")} className="flex flex-wrap items-center justify-between gap-2">
+        <span className="text-sm" aria-live="polite">{t("payments.count", { count: payments.data.count })} · {page}/{Math.max(1, Math.ceil(payments.data.count / 20))}</span>
+        <div className="flex flex-wrap gap-2"><Button variant="secondary" disabled={!payments.data.previous || payments.isFetching} onClick={() => setPage(page - 1)}>{t("common.back")}</Button><Button variant="secondary" disabled={!payments.data.next || payments.isFetching} onClick={() => setPage(page + 1)}>{t("payments.next")}</Button></div>
+      </nav>}>
+      {(client || canCreate) && <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        {client && <p className="min-w-0 break-words text-sm text-platforma-muted">{client.label}</p>}
+        <div className="ml-auto flex flex-wrap justify-end gap-2">
           {canCreate && <Button type="button" onClick={() => { setForm("receipt"); setSaved(false); }} data-testid="payment-add"><Plus aria-hidden size={18} />{t("payments.add")}</Button>}
-          <Button type="button" variant="ghost" aria-label={t("common.close")} onClick={onClose}><X size={20} /></Button>
         </div>
-      </div>
-      <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-4 sm:p-5">
+      </div>}
+      <div className="space-y-4">
         {!canView ? <ForbiddenState /> : <>
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 [&>*]:min-w-0">
             <Input label={t("payments.search")} value={search} maxLength={200} onChange={(e) => setSearch(e.target.value)} />
             <Select label={t("payments.kind")} value={kind} onChange={(e) => { setKind(e.target.value); setPage(1); }} options={[
               { value: "", label: t("payments.all") }, { value: "receipt", label: t("payments.receipt") }, { value: "refund", label: t("payments.refundKind") },
@@ -78,11 +81,7 @@ export function PaymentsJournal({ client, onClose }: { client?: PaymentOption; o
           </ul>}
         </>}
       </div>
-      {canView && payments.data && !payments.error && <nav aria-label={t("payments.pagination")} className="flex shrink-0 flex-wrap items-center justify-between gap-2 border-t border-platforma-border p-4">
-        <span className="text-sm" aria-live="polite">{t("payments.count", { count: payments.data.count })} · {page}/{Math.max(1, Math.ceil(payments.data.count / 20))}</span>
-        <div className="flex gap-2"><Button variant="secondary" disabled={!payments.data.previous || payments.isFetching} onClick={() => setPage(page - 1)}>{t("common.back")}</Button><Button variant="secondary" disabled={!payments.data.next || payments.isFetching} onClick={() => setPage(page + 1)}>{t("payments.next")}</Button></div>
-      </nav>}
-    </Drawer>
+    </Modal>
     {form && business && <PaymentForm businessId={business.id} currency={business.currency} initialClient={client}
       original={form === "receipt" ? undefined : form} canLinkDeal={hasPermission(user, business.id, "deals")}
       canLinkAppointment={hasPermission(user, business.id, "appointments")} onClose={() => setForm(null)}

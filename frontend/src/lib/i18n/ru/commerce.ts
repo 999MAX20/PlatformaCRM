@@ -110,7 +110,7 @@ export const commerce: Record<string, string> = {
   "documents.read": "Ознакомился с документом:",
   "documents.required": "Подтвердите каждый обязательный документ.",
   "payments.refundDateInvalid": "Возврат не может быть раньше оплаты.",
-  "payments.title": "Ручной учёт",
+  "payments.title": "Оплаты",
   "finance.title": "Финансы из учётной системы",
   "finance.unavailable": "Нет финансовых данных",
   "finance.stale": "Данные не обновлены.",

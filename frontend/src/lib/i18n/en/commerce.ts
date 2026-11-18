@@ -109,7 +109,7 @@ export const commerce: Record<string, string> = {
   "documents.read": "I have read:",
   "documents.required": "Acknowledge every required document.",
   "payments.refundDateInvalid": "A refund cannot precede its receipt.",
-  "payments.title": "Manual accounting",
+  "payments.title": "Payments",
   "payments.add": "Add payment",
   "payments.client": "Client",
   "payments.deal": "Deal",

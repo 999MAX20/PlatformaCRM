@@ -1,21 +1,16 @@
 import { ArrowDown, ArrowUp, ChevronsUpDown } from "lucide-react";
-import { CrmDataTable, CrmPagination } from "../../../components/crm";
+import { CrmDataTable } from "../../../components/crm";
 import { Button } from "../../../components/ui/Button";
 import type { useCustomColumns } from "../../../components/crm/CustomFieldColumns";
 import type { ClientTableColumn, ClientTableRow, Translate } from "../types";
 import { ClientRow } from "./ClientRow";
 import { MobileClientCards } from "./MobileClientCards";
 
-export function ClientsTable({ rows, ordering, onOrderingChange, onOpenClient, totalClients, page, pageSize, onPageChange, onPageSizeChange, hasFilters, onResetFilters, onCreateClient, visibleColumns, customColumns, t }: {
+export function ClientsTable({ rows, ordering, onOrderingChange, onOpenClient, hasFilters, onResetFilters, onCreateClient, visibleColumns, customColumns, t }: {
   rows: ClientTableRow[];
   ordering: string;
   onOrderingChange: (ordering: string) => void;
   onOpenClient: (id: number) => void;
-  totalClients: number;
-  page: number;
-  pageSize: number;
-  onPageChange: (page: number) => void;
-  onPageSizeChange: (pageSize: number) => void;
   hasFilters: boolean;
   onResetFilters: () => void;
   onCreateClient?: () => void;
@@ -56,6 +51,5 @@ export function ClientsTable({ rows, ordering, onOrderingChange, onOpenClient, t
         {hasFilters ? <Button variant="secondary" onClick={onResetFilters}>{t("common.reset")}</Button> : onCreateClient && <Button onClick={onCreateClient}>{t("clients.create")}</Button>}
       </div>}
     </CrmDataTable>
-    <CrmPagination compact shown={rows.length} total={totalClients} page={page} pageSize={pageSize} onPageChange={onPageChange} onPageSizeChange={onPageSizeChange} previousLabel={t("pagination.previous")} nextLabel={t("pagination.next")} />
   </>;
 }

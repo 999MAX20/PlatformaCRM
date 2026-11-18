@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Plus, WalletCards } from "lucide-react";
+import { Plus } from "lucide-react";
 
 import { usePageHeader } from "../../../components/layout/PageHeaderContext";
 import type { Translate } from "../types";
@@ -20,7 +20,7 @@ export function useClientsPageHeader({
   useEffect(() => {
     setPageHeader({
       title: t("clients.title"),
-      secondaryActions: onPayments ? [{ label: t("payments.title"), title: t("payments.title"), icon: WalletCards, onClick: onPayments, presentation: "icon", showOnMobile: true, focusReturnId: "clients-payments" }] : [],
+      secondaryActions: onPayments ? [{ label: t("payments.title"), title: t("payments.title"), onClick: onPayments, presentation: "label", focusReturnId: "clients-payments" }] : [],
 
       primaryAction: onCreateClient ? {
         label: t("clients.create"),

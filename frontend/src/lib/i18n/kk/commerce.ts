@@ -109,7 +109,7 @@ export const commerce: Record<string, string> = {
   "documents.read": "Құжатпен таныстым:",
   "documents.required": "Әрбір міндетті құжатты растаңыз.",
   "payments.refundDateInvalid": "Қайтарым төлемнен бұрын болуы мүмкін емес.",
-  "payments.title": "Қолмен есепке алу",
+  "payments.title": "Төлемдер",
   "payments.add": "Төлем қосу",
   "payments.client": "Клиент",
   "payments.deal": "Мәміле",

@@ -50,13 +50,10 @@ export function ClientsPage() {
     drawerEntity,
     editing,
     filteredClients,
-    goToPage,
     openClientCard,
     openCreateClient,
     openEditClient,
-    page,
     pageLoading,
-    pageSize,
     rows,
     segmentDraft,
     segmentOpen,
@@ -65,8 +62,6 @@ export function ClientsPage() {
     setActionClient,
     setCreateOpen,
     setEditing,
-    setPage,
-    setPageSize,
     setSegmentDraft,
     setSegmentOpen,
     setSelectedClientId,
@@ -81,7 +76,6 @@ export function ClientsPage() {
     taggedObjects,
     tagsQuery,
     toggleClientColumn,
-    totalClients,
     visibleClientColumns,
   } = useClientsWorkspace({
     businessId: business?.id,
@@ -283,6 +277,9 @@ export function ClientsPage() {
     <>
       {paymentsOpen && <PaymentsJournal key={business.id} onClose={() => setPaymentsOpen(false)} />}
       <div className="space-y-4 pt-2" data-testid="clients-workspace-ready" aria-busy={filteredClients.isFetching}>
+        {hasPermission(user, business.id, "payments") && <div className="flex justify-end lg:hidden">
+          <Button variant="secondary" onClick={openPayments} data-focus-return-id="clients-payments">{t("payments.title")}</Button>
+        </div>}
         <ClientsFilters key={`${business.id}:${user?.id}`}
             tagOptions={tagOptions} sourceOptions={sourceOptions}
           counts={filteredClients.isError || filteredClients.isPlaceholderData ? undefined : filteredClients.data?.summary}
@@ -291,8 +288,7 @@ export function ClientsPage() {
         {pageError && <ErrorState error={pageError} message={getApiErrorMessage(pageError)} action={<Button variant="secondary" onClick={() => { void Promise.all([filteredClients.refetch(), tagsQuery.refetch(), segments.refetch(), taggedObjects.refetch()]); }}>{t("common.retry")}</Button>} />}
         {customTable.error}
         {!filteredClients.isError && <ClientsTable rows={rows} ordering={ordering} onOrderingChange={setOrdering}
-          onOpenClient={openClientCard} totalClients={totalClients} page={page} pageSize={pageSize}
-          onPageChange={goToPage} onPageSizeChange={size => { setPageSize(size); setPage(1); }}
+          onOpenClient={openClientCard}
           hasFilters={hasClientFilters} onResetFilters={clearAllFilters} onCreateClient={canCreate ? openCreateClient : undefined}
           visibleColumns={visibleClientColumns} customColumns={customTable.columns} t={t} />}
       </div>
