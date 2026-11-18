@@ -23,6 +23,12 @@ Evidence: docs/testing/evidence/voice-scribe-v3-20261117.md.
 Checkpoint: output/voice-scribe-v3-20261117/CHECKPOINT.md.
 
 META-COEXISTENCE-20261117: local Business App onboarding/history preparation implemented.
+18Nov evening: official Meta error reference maps3441107 to Advanced Access via
+App Review for the two WhatsApp permissions. Diagnostic message sent to Meta's
+business assistant; human handoff failed, no support case ID. Technical-report Next
+disabled for both relevant categories. Review remains incomplete/unsubmitted;
+video upload still fails after owner enabled extension file access. Processor countries
+and contracting entities unconfirmed; owner has no DPA/country list available.
 18Nov CI repair: speech cache interference reproduced; fixture-only cleanup plus
 rate-limit control verified (28 affected tests, candidate without foreign WIP also28).
 System/drift/static PASS; no production throttle change.

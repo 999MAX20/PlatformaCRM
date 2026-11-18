@@ -13741,6 +13741,27 @@ Deployment not performed; unfinished alerts work is not closed by this UI change
 
 ### META-COEXISTENCE-20261117: existing Business App numbers
 
+18Nov evening continuation (owner authorized Meta support send and review preparation):
+prior deployed58a6427e/config evidence retained; new official errors reference maps
+3441107 directly to requesting advanced management/messaging access via App Review.
+https://developers.facebook.com/documentation/business-messaging/whatsapp/embedded-signup/errors
+This supersedes uncertainty about the documented remedy below, not live acceptance.
+Support message with app/config/portfolio/session/phone was delivered in Business
+Support Home, chat "WhatsApp Coexistence Onboarding Issue". Requested human escalation;
+bot attempted handoff then said unable to help. No case ID/human ticket verified.
+Bug-report form for this app leaves Next disabled for Embedded Signup and Tech
+Provider onboarding. Do not report a filed specialist case or a granted entitlement.
+App Review data form readback: controller Platforma Digital LLP/Kazakhstan, no
+government disclosures, no formal procedures; processor list still empty.
+Company-description fields did not persist after navigation; management explanation
+was entered but saving/upload is not verified. Initial chooser timed out; owner
+enabled extension file URL access; retry through observed file input also timed
+out before selection and modal closed. No attachment/saved explanation verified.
+Owner confirms no available DPA/country list or exact Yandex contracting entity.
+Scope now is evidence/forms only; no runtime/provider/security changes, sends to
+customers, migration, deployment or application rebuild. Preserve unrelated WIP.
+Checks: visible form readback, official-source consistency and scoped docs hygiene.
+
 18Nov live blocker verified: after owner pressed Continue, original popup input
 and screenshot access recovered. KZ/business number ending7770 entered once;
 Meta rejected with3441107: partner app not set up for Business App numbers.
