@@ -102,7 +102,7 @@ function PaymentsWorkspace({ client }: { client?: PaymentOption }) {
                 <div><dt className="text-platforma-muted">{t("payments.method")}</dt><dd>{t(`payments.method.${payment.method}`)}</dd></div>
                 <div><dt className="text-platforma-muted">{t("payments.source")}</dt><dd>{t(payment.source === "manual" ? "payments.manual" : "payments.integration")}</dd></div>
                 <div><dt className="text-platforma-muted">{t("payments.actor")}</dt><dd className="break-words">{payment.actor_name || "—"} · {formatDateTime(payment.created_at)}</dd></div>
-                {payment.link && <div><dt className="text-platforma-muted">{t("payments.link")}</dt><dd>{t(`payments.${payment.link.kind}`)} #{payment.link.id}</dd></div>}
+                {payment.link && <div><dt className="text-platforma-muted">{t("payments.link")}</dt><dd>{t(payment.link.kind === "plan" ? "plans.plan" : `payments.${payment.link.kind}`)} #{payment.link.id}</dd></div>}
                 {Number(payment.refunded_amount) > 0 && <div><dt className="text-platforma-muted">{t("payments.refunded")}</dt><dd>{payment.refunded_amount} {payment.currency}</dd></div>}
               </dl>
               {(payment.note || payment.reason) && <p className="whitespace-pre-wrap break-words text-sm">{payment.reason || payment.note}</p>}

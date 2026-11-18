@@ -12,6 +12,7 @@ from apps.clients.models import Client
 from apps.core.audit import write_actor_audit_log
 from apps.core.idempotency import canonical_request_hash, CRMCommandConflict
 from apps.core.models import AuditLog
+from apps.core.domain_errors import InvalidTransition
 from apps.crm.models import Deal
 from apps.scheduling.models import Appointment
 from .models import Payment
@@ -19,7 +20,7 @@ from .selectors import payment_business, payment_queryset, visible_entities
 
 
 @transaction.atomic
-def record_payment(*, actor, data):
+def record_payment(*, actor, data, touch_plan=True):
     original_id = data.get("original")
     action = Actions.MANAGE if original_id else Actions.CREATE
     business = payment_business(actor, data["business"], action)
@@ -31,6 +32,9 @@ def record_payment(*, actor, data):
     if existing:
         if existing.request_hash != request_hash:
             raise CRMCommandConflict("Submission identity already belongs to different payment data.")
+        if existing.plan_id:
+            from .plan_balances import assert_plan_money
+            assert_plan_money(existing.plan, actor, action)
         return get_object_or_404(payment_queryset(actor, business), pk=existing.pk), True
 
     try:
@@ -45,6 +49,7 @@ def record_payment(*, actor, data):
         raise ValidationError({"method": "Invalid payment method."})
 
     original = None
+    plan = None
     if original_id:
         original = get_object_or_404(payment_queryset(actor, business), pk=original_id)
         assert_can(actor, business, Resources.PAYMENTS, Actions.MANAGE, obj=original)
@@ -52,11 +57,22 @@ def record_payment(*, actor, data):
             raise ValidationError({"original": "Only manual receipts can be refunded here."})
         if not data.get("reason", "").strip():
             raise ValidationError({"reason": "A refund reason is required."})
-        if amount > original.amount - original.refunded_amount:
+        from .plan_balances import refundable
+        if amount > refundable(original):
             raise ValidationError({"amount": "Refund exceeds the remaining received amount."})
         if data["occurred_at"] < original.occurred_at:
             raise ValidationError({"occurred_at": "Refund cannot precede receipt."})
         client, deal, appointment, currency = original.client, original.deal, original.appointment, original.currency
+        if original.plan_id:
+            from apps.scheduling.models import VisitPlan
+            from .plan_balances import assert_plan_money, source_balance
+            plan = get_object_or_404(VisitPlan.objects.select_for_update(),
+                pk=data.get("refund_plan") or original.plan_id, business=business, client=client)
+            assert_plan_money(plan, actor, Actions.MANAGE)
+            if plan.pk != original.plan_id:
+                appointment = None
+            if amount > source_balance(plan, original):
+                raise ValidationError({"amount": "Refund exceeds the unallocated plan balance."})
     else:
         client = get_object_or_404(
             visible_entities(Client, actor, business, Resources.CLIENTS).select_for_update(),
@@ -67,13 +83,32 @@ def record_payment(*, actor, data):
         deal = _link(Deal, data.get("deal"), actor, business, Resources.DEALS, client)
         appointment = _link(Appointment, data.get("appointment"), actor, business, Resources.APPOINTMENTS, client)
         currency = business.currency
-        if data.get("currency") != currency:
+        if not data.get("plan") and data.get("currency") != currency:
             raise ValidationError({"currency": "Use the current business currency."})
         if deal and deal.currency != currency:
             raise ValidationError({"deal": "Deal currency does not match the payment currency."})
+        if data.get("plan"):
+            from apps.scheduling.models import VisitPlan
+            from apps.scheduling.plan_access import assert_plan_change
+            from .plan_balances import assert_plan_money
+            from .plan_services import require_current_terms
+            plan = get_object_or_404(VisitPlan.objects.select_for_update(), pk=data["plan"],
+                business=business, client=client, is_archived=False)
+            assert_plan_money(plan, actor, Actions.CREATE)
+            assert_plan_change(plan, actor)
+            if plan.revision != data.get("expected_revision"):
+                raise InvalidTransition("The plan changed. Review its current terms.")
+            terms = require_current_terms(plan)
+            currency = terms.currency
+            if data.get("currency") != currency or deal:
+                raise ValidationError({"plan": "Plan currency must match; a deal cannot also be linked."})
+            if appointment and not plan.steps.filter(appointment=appointment, removed_at__isnull=True).exists():
+                raise ValidationError({"appointment": "Select a visit of this plan."})
+        elif appointment and hasattr(appointment, "visit_plan_step") and appointment.visit_plan_step.plan.payment_terms.exists():
+            raise ValidationError({"plan": "Record this visit payment through its plan."})
 
     payment = Payment(
-        business=business, client=client, deal=deal, appointment=appointment,
+        business=business, client=client, deal=deal, appointment=appointment, plan=plan,
         original=original, kind=Payment.Kinds.REFUND if original else Payment.Kinds.RECEIPT,
         amount=amount, currency=currency, occurred_at=data["occurred_at"],
         method=data["method"], note=data.get("note", "").strip(),
@@ -85,6 +120,13 @@ def record_payment(*, actor, data):
     if original:
         original.refunded_amount += amount
         original.save(update_fields=["refunded_amount"])
+    if plan is not None:
+        if not original:
+            from .plan_services import allocate_completed
+            allocate_completed(plan, actor)
+        if touch_plan:
+            from apps.scheduling.plan_lifecycle import touch_appointment_plan
+            touch_appointment_plan(plan)
     event_type = "client_payment_refunded" if original else "client_payment_recorded"
     write_actor_audit_log(actor=actor, action=AuditLog.Actions.CREATE, instance=payment,
                           metadata={"event_type": event_type, "original_id": original_id, "risk_level": "high"})

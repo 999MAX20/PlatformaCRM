@@ -7,12 +7,13 @@ export type Payment = {
   currency: string; refunded_amount: string; remaining_amount: string;
   occurred_at: string; method: PaymentMethod; source: string; note: string;
   reason: string; created_at: string; actor_name: string; can_refund: boolean;
-  link: { kind: "deal" | "appointment"; id: number } | null;
+  link: { kind: "deal" | "appointment" | "plan"; id: number } | null;
 };
 export type PaymentDraft = {
   business: number; submission_id: string; client?: number; deal?: number;
   appointment?: number; original?: number; amount: string; currency?: string;
   occurred_at: string; method: PaymentMethod; note: string; reason?: string;
+  plan?: number; expected_revision?: number;
 };
 export type PaymentOption = { id: number; label: string; occurred_at?: string | null };
 export type PaymentOptionKind = "client" | "deal" | "appointment";

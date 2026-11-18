@@ -24,6 +24,7 @@ import { hasPermission } from "../../lib/permissions";
 import { useAuth } from "../auth/AuthProvider";
 import { PlanEditor } from "./PlanEditor";
 import { PlanHistory } from "./PlanHistory";
+import { PlanPayments, PlanStepMoney } from "./PlanPayments";
 import { useCalendarCatalog } from "./useCalendarCatalog";
 
 type Dialog = { kind: "add" | "edit" | "schedule" | "remove" | "archive" | "restore" | "responsible"; step?: PlanStep } | null;
@@ -127,10 +128,12 @@ export function VisitPlansPage() {
         {plan.can_change ? <div className="flex flex-wrap gap-2">{!plan.is_archived ? <><Button onClick={() => open({ kind: "add" })}>{t("plans.addStep")}</Button><Button variant="secondary" onClick={() => open({ kind: "responsible" })}>{t("appointment.responsible")}</Button></> : null}<Button variant="secondary" onClick={() => open({ kind: plan.is_archived ? "restore" : "archive" })}>{t(plan.is_archived ? "plans.restore" : "plans.archive")}</Button></div> : null}
       </div>
       {recovery}
+      <PlanPayments key={`money-${plan.id}`} plan={plan} currency={business.currency} />
       {plan.steps.length ? <ol className="space-y-3">{plan.steps.map(step => <li key={step.id} className="rounded-card border border-platforma-border bg-white p-4">
         <div className="flex flex-wrap items-start justify-between gap-3"><div><h3 className="font-semibold">{step.service_name}</h3><p className="text-sm text-platforma-subtle">{step.removed_at ? t("plans.removed") : step.appointment ? (step.status === "created" || step.status === "rescheduled" ? t("records.planned") : t(`status.${step.status}`)) : t("plans.unscheduled")}{step.resource_name ? ` · ${step.resource_name}` : ""}</p>{step.start_at ? <p className="text-sm">{formatDateTime(step.start_at, business.timezone, false, language === "kk" ? "kk-KZ" : language === "en" ? "en-US" : "ru-RU")}</p> : null}</div>
           <div className="flex flex-wrap gap-2">{step.appointment ? <Link className="platforma-focus-ring rounded px-3 py-2 text-sm text-brand-700" state={{ recordReturnTo: `/app/appointments?${params.toString()}` }} to={`/app/appointments/${step.appointment}`}>{t("plans.openAppointment")}</Link> : !step.removed_at && !plan.is_archived && plan.can_change ? <><Button disabled={!canCreate} onClick={() => open({ kind: "schedule", step })}>{t("plans.schedule")}</Button><Button variant="secondary" onClick={() => open({ kind: "edit", step })}>{t("common.edit")}</Button><Button variant="secondary" onClick={() => open({ kind: "remove", step })}>{t("plans.remove")}</Button></> : null}</div>
         </div>
+        <PlanStepMoney plan={plan} stepId={step.id} />
       </li>)}</ol> : <EmptyState title={t("plans.emptySteps")} />}
       <PlanHistory key={plan.id} business={business.id} actor={user?.id || 0} plan={plan.id} timeZone={business.timezone || "UTC"} />
     </> : null : <>

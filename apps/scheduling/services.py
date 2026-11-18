@@ -483,6 +483,9 @@ def apply_appointment_status(
 
     appointment.status = status_value
     appointment.save(update_fields=["status", "updated_at"])
+    if plan is not None and status_value == Appointment.Statuses.COMPLETED:
+        from apps.payments.plan_services import allocate_completed
+        allocate_completed(plan, actor, appointment=appointment)
     touch_appointment_plan(plan)
 
     if status_value in TERMINAL_APPOINTMENT_STATUSES:

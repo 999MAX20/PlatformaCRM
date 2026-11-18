@@ -2410,3 +2410,9 @@ filtered empty keeps reset only; populated list restores header create.
 Build/types/i18n and RU desktop/mobile state-transition/create-focus scenarios
 PASS. Current contracts updated; no backend/permission/API changes.
 Evidence and publication receipt: output/records-empty-20261118/CHECKPOINT.md.
+
+VISIT-PLAN-PAYMENTS-20261118: authorized money scope implemented and locally verified.
+Terms/package/per-visit, advances/allocations/refund-retain/same-client credit and approved UI delivered locally; zero-base positive package forbidden.
+Final PostgreSQL21, SQLite18 regressions/39 migration-payment/122 dependent/21 finance PASS; app/widget/types/i18n/bundle and real RU/KK/EN desktop/mobile/recovery PASS.
+Working migration/deploy and full AC01–14 are not claimed. Terminal correction/legacy reconciliation remain owner decisions outside this slice.
+Publication receipt and detailed boundaries: docs/testing/evidence/visit-plan-payments-20261118.md.

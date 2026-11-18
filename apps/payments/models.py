@@ -17,6 +17,7 @@ class Payment(models.Model):
     client = models.ForeignKey("clients.Client", on_delete=models.PROTECT, related_name="payments")
     deal = models.ForeignKey("crm.Deal", null=True, blank=True, on_delete=models.PROTECT, related_name="payments")
     appointment = models.ForeignKey("scheduling.Appointment", null=True, blank=True, on_delete=models.PROTECT, related_name="payments")
+    plan = models.ForeignKey("scheduling.VisitPlan", null=True, blank=True, on_delete=models.PROTECT, related_name="payments")
     original = models.ForeignKey("self", null=True, blank=True, on_delete=models.PROTECT, related_name="refunds")
     kind = models.CharField(max_length=16, choices=Kinds.choices)
     amount = models.DecimalField(max_digits=14, decimal_places=2)
@@ -44,4 +45,69 @@ class Payment(models.Model):
             models.CheckConstraint(condition=models.Q(refunded_amount__gte=0, refunded_amount__lte=models.F("amount")), name="payment_refund_bounded"),
             models.CheckConstraint(condition=(models.Q(kind="receipt", original__isnull=True) | models.Q(kind="refund", original__isnull=False, refunded_amount=0)), name="payment_original_matches_kind"),
             models.CheckConstraint(condition=(models.Q(deal__isnull=True) | models.Q(appointment__isnull=True)), name="payment_single_link"),
+        ]
+
+
+class PlanTerms(models.Model):
+    plan = models.ForeignKey("scheduling.VisitPlan", on_delete=models.PROTECT, related_name="payment_terms")
+    revision = models.PositiveIntegerField()
+    mode = models.CharField(max_length=16, choices=[("package", "Package"), ("per_visit", "Per visit")])
+    currency = models.CharField(max_length=8)
+    total = models.DecimalField(max_digits=14, decimal_places=2)
+    lines = models.JSONField()
+    composition = models.JSONField()
+    previous = models.ForeignKey("self", null=True, on_delete=models.PROTECT)
+    reason = models.CharField(max_length=500)
+    consent = models.BooleanField()
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["plan", "revision"], name="plan_terms_revision_unique"),
+            models.CheckConstraint(condition=models.Q(total__gte=0), name="plan_terms_total_nonnegative"),
+        ]
+
+
+class PlanAllocation(models.Model):
+    receipt = models.ForeignKey(Payment, on_delete=models.PROTECT, related_name="allocations")
+    terms = models.ForeignKey(PlanTerms, on_delete=models.PROTECT, related_name="allocations")
+    appointment = models.ForeignKey("scheduling.Appointment", on_delete=models.PROTECT, related_name="payment_allocations")
+    amount = models.DecimalField(max_digits=14, decimal_places=2)
+    reversal_of = models.OneToOneField("self", null=True, on_delete=models.PROTECT, related_name="reversal")
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [models.CheckConstraint(condition=models.Q(amount__gt=0), name="plan_allocation_positive")]
+
+
+class PlanRemainderDecision(models.Model):
+    plan = models.ForeignKey("scheduling.VisitPlan", on_delete=models.PROTECT, related_name="remainder_decisions")
+    receipt = models.ForeignKey(Payment, on_delete=models.PROTECT, related_name="remainder_decisions")
+    amount = models.DecimalField(max_digits=14, decimal_places=2)
+    choice = models.CharField(max_length=8, choices=[("retain", "Retain"), ("refund", "Refund")])
+    refund = models.OneToOneField(Payment, null=True, on_delete=models.PROTECT, related_name="remainder_decision")
+    reason = models.CharField(max_length=500)
+    consent = models.BooleanField()
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [models.CheckConstraint(condition=models.Q(amount__gt=0), name="plan_remainder_positive")]
+
+
+class PlanCreditTransfer(models.Model):
+    receipt = models.ForeignKey(Payment, on_delete=models.PROTECT, related_name="credit_transfers")
+    source_plan = models.ForeignKey("scheduling.VisitPlan", on_delete=models.PROTECT, related_name="outgoing_credit")
+    target_plan = models.ForeignKey("scheduling.VisitPlan", on_delete=models.PROTECT, related_name="incoming_credit")
+    amount = models.DecimalField(max_digits=14, decimal_places=2)
+    reason = models.CharField(max_length=500)
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(condition=models.Q(amount__gt=0), name="plan_credit_positive"),
+            models.CheckConstraint(condition=~models.Q(source_plan=models.F("target_plan")), name="plan_credit_different_plans"),
         ]

@@ -536,6 +536,7 @@ platform_manager имеет просмотр и работу с обращени
 | Client archive/soft DELETE/merge | `clients:delete`, object scope, доменные зависимости; update недостаточно |
 | Restore критичных CRM-данных | Существующее owner/admin ограничение и action permission; не общий обход lifecycle |
 | Payment view/create/refund | `payments:view/create/manage`, доступ к клиенту и связанным Deal/Appointment; manager по умолчанию не получает refund |
+| VisitPlan money | Текущие `payments:view` и доступ к чувствительному amount обязательны также при записи; CREATE для условий/прихода, MANAGE для возврата/сохранения и источника переноса. Доступ к клиенту, всем шагам и источникам оплаты; согласование, приход и команды плана требуют UPDATE плана/шагов; прямой возврат из журнала сохраняет существующий MANAGE. Повтор команды заново проверяет права; при отсутствии финансового VIEW проекция `money: null`. Новых grants нет ([evidence](../testing/evidence/visit-plan-payments-20261118.md)) |
 | Appointment/заметка | `appointments:update`, доступ к записи; специалист только к своей связанной Resource-записи |
 | График/исключение специалиста | `settings:update`, same Business; отсутствие не отменяет визиты автоматически |
 | Task lifecycle/assign/watch/comment | `tasks:update`, scope, действительный target; отмена с причиной |

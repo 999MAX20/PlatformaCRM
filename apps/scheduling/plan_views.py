@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from apps.businesses.models import Business
 from apps.core.permissions import user_can_access_business
 from apps.scheduling.plan_selectors import readable_plans
-from apps.scheduling.plan_serializers import PlanCreateInput, PlanCommandInput, plan_projection
+from apps.scheduling.plan_serializers import PlanCreateInput, PlanCommandInput, PlanMoneyInput, plan_projection
 from apps.scheduling.plan_services import create_plan, change_plan
 from apps.scheduling.record_workspace import RecordWorkspacePagination
 
@@ -81,10 +81,54 @@ class VisitPlanViewSet(viewsets.GenericViewSet):
         data = plan_projection(current, self.request.user) if current else {"read_restricted": True}
         return Response(data, status=201 if created and not replayed else 200)
 
-    @action(detail=True, methods=["post"], url_path="commands/(?P<command>schedule|revise|archive|restore|responsible)")
+    @action(detail=True, methods=["post"], url_path="preview-terms")
+    def preview_terms(self, request, pk=None):
+        from apps.payments.plan_pricing import preview_terms
+        from apps.core.domain_errors import InvalidTransition
+        plan = self.get_object()
+        serializer = PlanMoneyInput(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        if plan.revision != serializer.validated_data["expected_revision"]:
+            raise InvalidTransition("The plan changed. Refresh before reviewing terms.")
+        return Response(preview_terms(plan, request.user, serializer.validated_data))
+
+    @action(detail=True, methods=["get"], url_path="credit-options")
+    def credit_options(self, request, pk=None):
+        from apps.businesses.access import Actions
+        from apps.payments.plan_balances import assert_plan_money, plan_sources, retained_balance
+        from apps.scheduling.plan_access import assert_plan_change
+        plan = self.get_object()
+        assert_plan_money(plan, request.user, Actions.CREATE)
+        options = []
+        for source in readable_plans(business=plan.business, actor=request.user).filter(client=plan.client).exclude(pk=plan.pk):
+            try:
+                assert_plan_money(source, request.user, Actions.MANAGE)
+                assert_plan_change(source, request.user)
+            except PermissionDenied:
+                continue
+            for receipt in plan_sources(source):
+                retained = retained_balance(source, receipt)
+                if retained > 0:
+                    options.append({"source_plan": source.pk, "source_revision": source.revision,
+                        "receipt": receipt.pk, "amount": str(retained), "currency": receipt.currency})
+        return self.get_paginated_response(self.paginate_queryset(options))
+
+    @action(detail=True, methods=["get"], url_path="terms-history")
+    def terms_history(self, request, pk=None):
+        from apps.payments.plan_balances import assert_plan_money
+        plan = self.get_object()
+        assert_plan_money(plan, request.user)
+        page = self.paginate_queryset(plan.payment_terms.select_related("actor").order_by("-revision"))
+        return self.get_paginated_response([{"id": row.pk, "revision": row.revision,
+            "mode": row.mode, "currency": row.currency, "total": str(row.total), "lines": row.lines,
+            "reason": row.reason, "created_at": row.created_at,
+            "actor_name": row.actor.full_name if row.actor else ""} for row in page])
+
+    @action(detail=True, methods=["post"], url_path="commands/(?P<command>schedule|revise|archive|restore|responsible|accept-terms|settle-remainder|use-credit)")
     def command(self, request, pk=None, command=None):
         plan = self.get_object()
-        serializer = PlanCommandInput(data=request.data)
+        input_type = PlanMoneyInput if command in {"accept-terms", "settle-remainder", "use-credit"} else PlanCommandInput
+        serializer = input_type(data=request.data)
         serializer.is_valid(raise_exception=True)
         values = dict(serializer.validated_data)
         revision = values.pop("expected_revision")

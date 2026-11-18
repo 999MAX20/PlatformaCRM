@@ -42,7 +42,28 @@ class PlanCommandInput(serializers.Serializer):
     notes = serializers.CharField(max_length=2000, required=False, allow_blank=True)
 
 
+class PlanBasePriceInput(serializers.Serializer):
+    step = serializers.IntegerField(min_value=1)
+    amount = serializers.DecimalField(max_digits=14, decimal_places=2, min_value=0)
+
+
+class PlanMoneyInput(serializers.Serializer):
+    expected_revision = serializers.IntegerField(min_value=1)
+    mode = serializers.ChoiceField(choices=["package", "per_visit"], required=False)
+    total = serializers.DecimalField(max_digits=14, decimal_places=2, min_value=0, required=False)
+    base_prices = PlanBasePriceInput(many=True, max_length=100, required=False)
+    preview_hash = serializers.CharField(max_length=64, required=False)
+    consent = serializers.BooleanField(required=False)
+    reason = serializers.CharField(max_length=500, required=False, allow_blank=True)
+    receipt = serializers.IntegerField(min_value=1, required=False)
+    choice = serializers.ChoiceField(choices=["retain", "refund"], required=False)
+    amount = serializers.DecimalField(max_digits=14, decimal_places=2, min_value=0, required=False)
+    source_plan = serializers.IntegerField(min_value=1, required=False)
+    source_revision = serializers.IntegerField(min_value=1, required=False)
+
+
 def plan_projection(plan, actor):
+    from apps.payments.plan_balances import plan_money_projection
     steps = visible_steps(plan, actor)
     try:
         assert_plan_change(plan, actor)
@@ -54,6 +75,7 @@ def plan_projection(plan, actor):
             "responsible_user": plan.responsible_user_id,
             "responsible_user_name": plan.responsible_user.full_name,
             "is_archived": plan.is_archived, "can_change": can_change,
+            "money": plan_money_projection(plan, actor),
             "created_at": plan.created_at, "steps": [step_projection(step) for step in steps]}
 
 
