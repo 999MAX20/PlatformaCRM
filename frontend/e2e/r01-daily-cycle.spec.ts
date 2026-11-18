@@ -149,7 +149,7 @@ test("R01 administrator follows one customer from Inbox through visit, receipt a
   const receipt = await action("payment.receipt", "client-payments", () => payment.locator('button[type="submit"]').click());
   await expect(page.getByTestId(`payment-row-${receipt.id}`)).toBeVisible();
   expect(await s.read(`client-payments/${receipt.id}`, { business: s.business })).toMatchObject({ client: client.id, link: { kind: "appointment", id: visit.id }, amount: "1250.50", kind: "receipt" });
-  await page.reload();
+  await page.goto(`/app/clients/${client.id}`);
   await page.getByRole("button", { name: ru["clients.archiveAction"], exact: true }).click();
   const archive = page.getByRole("dialog");
   await archive.locator("textarea").fill("Attempt while lead/conversation remain open");

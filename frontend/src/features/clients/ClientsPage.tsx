@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "../../components/ui/Button";
-import { PaymentsJournal } from "../payments/PaymentsJournal";
+import { useNavigate } from "react-router";
 import { hasPermission } from "../../lib/permissions";
 import palette from "../../theme/semantic-tokens.json";
 
@@ -34,8 +34,8 @@ export function ClientsPage() {
   const queryClient = useQueryClient();
   const { business } = useActiveBusiness();
   const { user } = useAuth();
-  const [paymentsOpen, setPaymentsOpen] = useState(false);
-  const openPayments = useCallback(() => setPaymentsOpen(true), []);
+  const navigate = useNavigate();
+  const openPayments = useCallback(() => { void navigate("/app/payments"); }, [navigate]);
   const [mergePreview, setMergePreview] = useState<ClientMergeDryRun | null>(
     null,
   );
@@ -275,7 +275,6 @@ export function ClientsPage() {
 
   return (
     <>
-      {paymentsOpen && <PaymentsJournal key={business.id} onClose={() => setPaymentsOpen(false)} />}
       <div className="space-y-4 pt-2" data-testid="clients-workspace-ready" aria-busy={filteredClients.isFetching}>
         {hasPermission(user, business.id, "payments") && <div className="flex justify-end lg:hidden">
           <Button variant="secondary" onClick={openPayments} data-focus-return-id="clients-payments">{t("payments.title")}</Button>

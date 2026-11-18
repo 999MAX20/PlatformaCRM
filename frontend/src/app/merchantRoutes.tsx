@@ -7,7 +7,7 @@ const ManagementPage = lazy(() => import("../features/management/ManagementPage"
 import { RecordsPage, LegacyRecordsPage, ImportWorkspacePage } from "./routeLoaders";
 
 import { PageLoader, UserStartRedirect, BusinessRouteRedirect, SettingsAccessRoute, IntegrationsSettingsRedirect } from "./routeGuards";
-import { DashboardPage, AccountPage, ClientsPage, ClientWorkspacePage, TasksPage, TaskWorkspacePage, CalendarPage, AppointmentWorkspacePage, ConversationsPage, TimelinePage, BotsPage, BotDetailPage, PricingPage, AIAgentsPage, AutomationsPage, ResourcesPage, ServicesPage, BranchesPage, CompanyPage, BusinessPage, AnalyticsPage, SettingsPage, WorkingHoursPage, SupportListPage, SupportDetailPage } from "./routeLoaders";
+import { DashboardPage, AccountPage, ClientsPage, PaymentsPage, ClientWorkspacePage, TasksPage, TaskWorkspacePage, CalendarPage, AppointmentWorkspacePage, ConversationsPage, TimelinePage, BotsPage, BotDetailPage, PricingPage, AIAgentsPage, AutomationsPage, ResourcesPage, ServicesPage, BranchesPage, CompanyPage, BusinessPage, AnalyticsPage, SettingsPage, WorkingHoursPage, SupportListPage, SupportDetailPage } from "./routeLoaders";
 export const merchantFeatureRoutes = [
   { path: "voice/history", resource: "ai_assistant", permissionAction: "suggest", element: <PageLoader><VoiceHistoryPage /></PageLoader> },
   { path: "settings/voice", resource: "ai_assistant", permissionAction: "suggest", element: <PageLoader><VoiceSettingsPage /></PageLoader> },
@@ -58,6 +58,7 @@ export const merchantFeatureRoutes = [
       </PageLoader>
     ),
   },
+{ path: routeMetadata.payments.segment, ...merchantRoutePermission("payments"), element: <PageLoader><PaymentsPage /></PageLoader> },
 { path: routeMetadata.clients.segment, ...merchantRoutePermission("clients"), element: (
       <PageLoader>
         <ClientsPage />

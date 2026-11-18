@@ -196,3 +196,44 @@ scope; no financial contract implementation changed. Frontend contract and clien
 passport updated; roadmap/README/domain/access contract need no change. No scoped
 code/local-evidence remainder. Future pagination design is intentionally outside
 this change. Publication/actualCI receipt: existing task checkpoint in output.
+
+## Payments page and scrolling history, 18.11.2026
+
+Owner replaced the previously accepted modal with `/app/payments`. The journal
+modal and its pagination/footer are removed. Desktop search, kind and Add payment
+share a compact row; tablet768 retains that row and mobile320 wraps. Existing CRM
+ground/tokens/components are retained. Entry from clients opens the full ledger;
+entry from a client keeps `?client=ID` through reload. Receipt/refund dialogs,
+fields, source/actor/date/link/note/refund history and backend policies are unchanged.
+Older operations load at the scroll boundary. Next-page failure preserves loaded
+rows with Retry; filters restart their own scoped query. No client-list autoload.
+
+Validation on canonical checkout, dirty task snapshot over4de7b6d7, isolated fixtures
+at127.0.0.1:52472 (temporary DB, no working DB writes):
+- `python output/payments-page-20261118/check.py regressions-final`:12PASS/2FAIL;
+  both failures were an ambiguous confirmation locator (close icon and confirm
+  text share a name). Text-bearing button locator corrected, then
+  `... check.py regressions-draft --grep "draft survives"`:2PASS.14distinct cases
+  covered across desktop/mobile: RU/KK/EN, client reload, receipt/refund with API
+  amounts, history22rows, failed next-page retry, filter reset, denied permission,
+  draft cancellation and confirmed departure, focus return, scoped axe.
+- First exploratory run:4PASS/6FAIL; fixed missing accessible heading, warmed
+  development dependency loading, and scoped locale fixture search because older
+  backdated fixtures correctly moved beyond page1. Logs retained, no weakened
+  monetary assertions.
+- `.venv/Scripts/python.exe output/payments-page-20261118/build.py`: i18n7454,
+  TypeScript, app/widget production builds PASS. Shared dist bundle check failed
+  on duplicate app-shell chunks from concurrent output. Rebuilt into task-owned
+  output with `python output/payments-page-20261118/build-isolated.py`: app build
+  and bundle budget PASS. Existing RU/KK dictionary size warnings remain warnings.
+- Screenshots captured and visually inspected:1440/768/320, RU/KK/EN, empty and
+  populated, text200. Toolbar aligned, no horizontal page overflow, preserved
+  fields and responsive wrapping. Keyboard/modal form escape/focus tested.
+- Consumer journey tests updated for page navigation; full daily-cycle/release
+  suites not run (domain/API unchanged). Backend/migrations/provider/live checks
+  not applicable to this presentation/navigation change. No deployment.
+
+Logs/screenshots: `output/payments-page-20261118/`; continuity/publication:
+`output/clients-payments-20261118/CHECKPOINT.md`. No new roadmap phase or domain,
+access, money or AI contract; README unchanged by this task. Foreign voice/search
+work retained. Task-source and documentation diff reviewed; publication follows.

@@ -192,3 +192,5 @@ export const SupportIncidentPage = lazy(() => import("../features/support/Suppor
 export const CompanyPage = lazy(() => import("../features/business/CompanyPage").then(module => ({ default: module.CompanyPage })));
 
 export const BusinessPage = lazy(() => import("../features/business/BusinessPage").then(module => ({ default: module.BusinessPage })));
+
+export const PaymentsPage = lazy(() => import("../features/payments/PaymentsPage").then(module => ({ default: module.PaymentsPage })));

@@ -2347,14 +2347,17 @@ and output/clients-filters-20261117/CHECKPOINT.md. No deployment performed.
 
 ## CLIENTS-PAYMENTS-20261118
 
-Text-only Payments button and centered modal journal implemented; data/history,
-receipt/refund/forms/permissions preserved. Mobile action above list, desktop in header.
-Client footer pagination removed per explicit owner clarification; paged query stays,
-no autoload and only first20 filtered clients until a separately requested redesign.
-Build/types/i18n/bundle PASS;14distinct browser cases plus6label/2text reruns PASS.
-Desktop/tablet/mobile and RU/KK/EN/text200 screenshots inspected. No deployment.
-Evidence: docs/testing/evidence/clients-records-20261105.md (Payments modal18Nov).
-Checkpoint/publication/CI: output/clients-payments-20261118/CHECKPOINT.md.
+Owner superseded accepted modal with dedicated `/app/payments`: routed ledger,
+compact search/kind/add toolbar, no journal modal/footer/pagination. Older payments
+load on scroll by explicit owner choice; client-scoped URL survives reload.
+Existing financial forms/history/permissions retained. Client list pagination
+removal stays unchanged (first20 clients, no autoload).14distinct browser cases
+PASS after focused locator rerun; build/types/i18n and isolated bundle PASS.
+Desktop/tablet/mobile/locales/text200 screenshots inspected. Prior modal PASS is
+historical; publication/actual CI receipt is recorded in the checkpoint below.
+Evidence: docs/testing/evidence/clients-records-20261105.md.
+Checkpoint: output/clients-payments-20261118/CHECKPOINT.md; new runs in
+output/payments-page-20261118. Foreign voice/search WIP preserved. No deployment.
 
 ## RECORDS-EMPTY-20261118
 

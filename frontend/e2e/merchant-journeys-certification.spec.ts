@@ -258,7 +258,6 @@ test.describe("FC-006 pilot merchant journeys", () => {
     expect(replay.ok()).toBeTruthy();
     expect((await replay.json()).id).toBe(refund.id);
     await page.reload();
-    await page.getByTestId("client-payments-open").click();
     await expect(page.getByTestId(`payment-row-${refund.id}`)).toBeVisible();
     const persisted = await page.request.get(`${apiBaseURL}/api/client-payments/?business=${business}&client=${client.id}`, { headers });
     expect(persisted.ok()).toBeTruthy();
