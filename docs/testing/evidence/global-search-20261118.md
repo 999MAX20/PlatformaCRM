@@ -196,7 +196,7 @@ responsive Header instances, ждать отрисовку/учитывать ca
 
 Backend/migrations/API не менялись: migration drift и все backend-сюиты не запускались.
 Права/tenant покрыты указанными backend тестами; все роли в браузере не сертифицированы.
-Полный release gate, live deployment и CI этой задачи не запускались. Нового этапа
+Полный release gate и live deployment не запускались. Push-triggered CI проверен отдельно ниже. Нового этапа
 roadmap нет; product/CRM/access/AI/integration contracts и README не требуют изменений,
 поскольку APIs, права, setup и эти домены не изменены. Frontend contract, capabilities,
 STATUS, PRIMARY и реестр evidence обновлены; исторические отчёты не переписаны.
@@ -208,3 +208,9 @@ STATUS, PRIMARY и реестр evidence обновлены; историчес�
 они не закрыты общим PASS и не выданы за выполненный следующий этап. Окружение:
 локальная изолированная проверка, не production. Решения о расширении набора сущностей
 или новом поисковом движке не принимались. Publication фиксируется отдельно ниже.
+
+Публикация: implementation commit `c5fec11ea575815485ca65c59365fdb74e08f0cd`,
+normal fast-forward push в `origin/main`; remote SHA прочитан и совпал.
+[CI run464](https://github.com/999MAX20/PlatformaCRM/actions/runs/44285882544)
+на момент записи `in_progress`, conclusion отсутствует; зелёный CI не заявляется.
+Собственные Django/Vite и браузерная сессия остановлены. Deployment не проверен.

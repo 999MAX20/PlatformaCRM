@@ -2,7 +2,7 @@ GLOBAL-SEARCH-20261118: селектор страницы/CRM удалён; по
 Локально: 40 backend + 15 Node PASS, 32 browser assertions (30 проверок поведения/адаптива
 и 2 воспроизведённых ограничения), build/types/i18n/bundle PASS. Аудит выявил неполноту
 задач/диалогов, несовпадение полей диалогов и неполные error states; это не полная готовность поиска.
-Evidence: docs/testing/evidence/global-search-20261118.md. Публикация проверяется отдельно.
+Evidence: docs/testing/evidence/global-search-20261118.md. c5fec11e normal-push origin/main подтверждён; CI464 in_progress, не green.
 
 META-COEXISTENCE-20261117: local Business App onboarding/history preparation implemented.
 Signed expected number, no phone re-registration, durable authenticated import,
