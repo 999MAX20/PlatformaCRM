@@ -1,3 +1,8 @@
+INVITATIONS-SMTP-20261118: correct SSH94.131.87.21 works; prior target stale.
+Shared env locmem/placeholder SMTP, no credentials/FRONTEND_URL; DB not_configured.
+Both invitations now externally revoked; this chat made no further sends/mutations.
+Evidence: docs/testing/evidence/invitations-24h-20261112.md.
+
 INVITATIONS-LIVE-20261118: owner selected existing business; no new signup.
 Two explicit recipient/role-approved invitations created: Manager and Operator.
 Both email attempts FAIL, persisted after reload; only owner remains a member.
