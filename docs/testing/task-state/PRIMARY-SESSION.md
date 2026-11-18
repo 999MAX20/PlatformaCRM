@@ -13723,6 +13723,14 @@ Deployment not performed; unfinished alerts work is not closed by this UI change
 
 ### META-COEXISTENCE-20261117: existing Business App numbers
 
+Publication18Nov: speech fix a8462902 and maintained dependency patch48f201be
+normal-pushed to origin/main; remote SHA verified. CI44287950736 backend PASS:
+3515 tests/82 skips plus Python audit. CI44290641391 frontend PASS including new
+security regression/audit; backend still running. Full release workflow44290809006
+failed before tests because ubuntu-latest resolved26.04 unsupported by locked
+Playwright1.60. Pin release runner to supported ubuntu24.04, then retry full gate.
+No runtime code changed for this environment correction. Release still not deployed.
+
 18Nov dependency repair: official picomatch4.0.7 original timed out at3000ms on
 the hostile-pattern child; normal controls passed. Local maintained fork uses
 existing parsed tokens/literal fallback to stop wildcard/globstar/negative
