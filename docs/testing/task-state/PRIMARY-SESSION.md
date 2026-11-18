@@ -1,6 +1,6 @@
 ## GOOGLE-SHEETS-20261119 — local verification / live acceptance pending
 
-OAuth + Sheets import/export implemented; Cloud test project, OAuth client and restricted Picker key configured. Backend72 PASS, final build PASS, RU/KK/EN desktop/mobile synthetic flows verified; PostgreSQL3 race tests PASS; published918096ce to origin/main (remote SHA verified); CI44397837621 running, not PASS. Working DB unchanged; live Google grant/transfer and Calendar sync not claimed. Evidence: ../evidence/google-sheets-20261119.md.
+OAuth + Sheets import/export implemented; Cloud test project, OAuth client and restricted Picker key configured. Backend72 PASS, final build PASS, RU/KK/EN desktop/mobile synthetic flows verified; PostgreSQL3 race tests PASS; published918096ce to origin/main (remote SHA verified); CI44397837621 running, not PASS. Local PostgreSQL platformacrm: approved migrations0012/0013 applied, Django check and Google tables verified. Live Google grant/transfer and Calendar sync not claimed. Evidence: ../evidence/google-sheets-20261119.md.
 
 INVITATIONS-SMTP-20261118: restored Resend SMTP + HTTPS FRONTEND_URL on live stand.
 New invitations 3 Manager / 4 Operator: SMTP accepted and Resend Delivered confirmed.
