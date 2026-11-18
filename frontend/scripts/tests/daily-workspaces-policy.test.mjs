@@ -77,13 +77,14 @@ test("daily workspaces preserve recoverable and role-valid actions", async () =>
 });
 
 test("owner dashboard fetches and renders capability-scoped daily modules", async () => {
-  const [page, dashboard, queries] = await Promise.all([
+  const [page, dashboard, queries, attention] = await Promise.all([
     source("features/dashboard/DashboardPage.tsx"),
     source("features/dashboard/OperationalDashboard.tsx"),
     source("features/dashboard/dashboardQueries.ts"),
+    source("features/dashboard/DashboardAttention.tsx"),
   ]);
 
-  assert.match(page, /useQuery\(workQueuesQuery\(business\?\.id, limit\)\)/);
+  assert.match(page, /useQuery\(workQueuesQuery\(business\?\.id\)\)/);
   assert.match(queries, /workQueuesApi\.get\(\{ business: business!, limit, workflow: "appointments" \}\)/);
   assert.doesNotMatch(page, /useCrmEntities|appointmentsApi\.list|tasksApi\.list/);
   for (const resource of ["appointments", "tasks", "conversations"]) {
@@ -91,25 +92,27 @@ test("owner dashboard fetches and renders capability-scoped daily modules", asyn
   }
   assert.match(page, /leads: false, deals: false/);
   assert.match(dashboard, /access\[resource\] && data\.available\[resource\]/);
-  assert.match(dashboard, /metrics\.filter\(\(metric\) => canSee\(metric\.resource\)\)/);
-  assert.match(dashboard, /data\.attention\.filter\(\(item\) => canSee\(resourceByType\[item\.type\]\)\)/);
+  assert.match(dashboard, /metrics\.filter\(metric => canSee\(metric\.resource\)\)/);
+  assert.match(attention, /groups\.filter\(group => canSee\(group\.resource\) && group\.count > 0\)/);
+  assert.match(attention, /access\[resource\] && data\.available\[resource\]/);
 });
 
 test("shared owner and manager operations render only after loading and error guards", async () => {
   const dashboard = await source("features/dashboard/OperationalDashboard.tsx");
   const readyMarker = dashboard.indexOf('data-testid="dashboard-operations"');
   const loadingGuard = dashboard.indexOf("if (loading || !data) return <LoadingState />");
-  const errorGuard = dashboard.indexOf("if (error)");
+  const errorGuard = dashboard.indexOf("if (error && (!data || denied))");
   assert.ok(errorGuard >= 0 && errorGuard < loadingGuard);
   assert.ok(loadingGuard >= 0 && loadingGuard < readyMarker);
   assert.doesNotMatch(dashboard, /summary\.[a-z_]+ \|\| 0/);
 });
 
-test("owner AI brief does not substitute unsourced local recommendations", async () => {
-  const dashboard = await source("features/dashboard/OwnerDashboard.tsx");
-  assert.match(dashboard, /ownerBrief\?\.recommendations/);
-  assert.match(dashboard, /item\.source_ids\.some\(\(id\) => ownerBrief\?\.sources\.some/);
-  assert.match(dashboard, /source\.id === id/);
-  assert.match(dashboard, /recommendation\.labels\.join/);
-  assert.doesNotMatch(dashboard, /if \(overdueTasks > 0\)|if \(newLeadsCount > 0\)/);
+test("dashboard uses financial report and connector counts without a duplicate AI request", async () => {
+  const page = await source("features/dashboard/DashboardPage.tsx");
+  const owner = await source("features/dashboard/OwnerDashboard.tsx");
+  const attention = await source("features/dashboard/DashboardAttention.tsx");
+  assert.doesNotMatch(page, /aiApi|ownerDailyBrief/);
+  assert.match(owner, /dashboard\?\.financial/);
+  assert.match(owner, /financial\.state !== "unavailable"/);
+  assert.match(attention, /connections\?\.health\?\.error/);
 });

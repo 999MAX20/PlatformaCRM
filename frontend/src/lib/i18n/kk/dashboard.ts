@@ -1,4 +1,13 @@
 export const dashboard: Record<string, string> = {
+  "dashboard.openNextConfirmation": "Ең жақын жазбаны ашу",
+  "dashboard.financeToday": "Бүгінгі қаржы",
+  "dashboard.reviewRecords": "Жазбаларды қарау",
+  "dashboard.reviewTasks": "Мерзімі өткен тапсырмаларды ашу",
+  "dashboard.reviewConversations": "Диалогтарды ашу",
+  "dashboard.reviewConnections": "Қосылымдарды тексеру",
+  "dashboard.oldestSince": "Ең ерте: {at}",
+  "dashboard.refreshFailed": "Жиынтықты жаңарту мүмкін болмады. Соңғы алынған деректер көрсетілген. Қайта жаңартыңыз.",
+  "dashboard.connectionsUnavailable": "Қосылымдардың күйін тексеру мүмкін болмады.",
   "dashboard.todayConfirmations": "Растауды күтуде",
   "dashboard.waitingConversations": "Операторды күтуде",
   "dashboard.operationalMetrics": "Бүгінгі жұмыс",

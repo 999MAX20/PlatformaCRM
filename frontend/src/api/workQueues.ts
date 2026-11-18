@@ -113,6 +113,7 @@ export type WorkQueuesResponse = {
   attention: Array<WorkQueueItem & { attention_reason: string; attention_at: string | null }>;
   summary: WorkQueueSummary;
   queues: {
+    pending_results?: WorkQueueAppointmentItem[];
     overdue_tasks: WorkQueueTaskItem[];
     stale_leads: WorkQueueLeadItem[];
     sla_overdue_deals: WorkQueueDealItem[];

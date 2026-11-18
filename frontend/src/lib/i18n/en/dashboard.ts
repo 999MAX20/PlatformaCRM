@@ -1,4 +1,13 @@
 export const dashboard: Record<string, string> = {
+  "dashboard.openNextConfirmation": "Open the next appointment",
+  "dashboard.financeToday": "Today's finances",
+  "dashboard.reviewRecords": "Review appointments",
+  "dashboard.reviewTasks": "Open overdue tasks",
+  "dashboard.reviewConversations": "Open conversations",
+  "dashboard.reviewConnections": "Check connections",
+  "dashboard.oldestSince": "Earliest: {at}",
+  "dashboard.refreshFailed": "Could not refresh the summary. Showing the last received data. Try refreshing again.",
+  "dashboard.connectionsUnavailable": "Could not check connection status.",
   "dashboard.todayConfirmations": "Awaiting confirmation",
   "dashboard.waitingConversations": "Waiting for an operator",
   "dashboard.operationalMetrics": "Today's work",

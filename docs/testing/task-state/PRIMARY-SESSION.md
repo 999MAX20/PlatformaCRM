@@ -14202,6 +14202,106 @@ React review: hook order stable, existing availability query key shared/deduplic
 with empty-state observer, no effect-derived duplicated state or new dependency.
 Frontend contract updated; no API/domain/roadmap/setup contract changes required.
 
+## DASHBOARD-REDESIGN-20261118
+
+Implemented and locally verified. Owner selected reference 1 composition plus grouped attention from
+reference 3, preserving the current style and connecting real data. Prior audited
+read-only result -> explicit implementation approval -> scoped dashboard redesign.
+Root: C:/Users/user/Desktop/PlatformaCRM; branch codex/ui-testing-toolkit;
+base c43fbe518a24b47878b122fb6a18f5bf1d6a3959. Pre-existing integration/WhatsApp WIP
+and existing STATUS/PRIMARY-SESSION/operations changes belong to other work.
+Mode: functional frontend. Gap: approved UI requirement change, not a backend rewrite.
+Reuse work-queues scoped full summary, owner-dashboard financial report/connector
+health, existing record/task/inbox routes, shared Surface/Button/StatusBadge and i18n.
+No domain writes, new endpoints, migrations, provider actions, permission changes,
+notifications or BusinessEvents. Remove duplicate AI brief request/panel.
+Skills: zani-review-frontend, zani-run-verification, antislop (during), UI/layout/
+human/copy modules and design-taste-frontend app-screen guidance. Domain skill
+consulted for boundaries; existing read contracts suffice.
+Design read: operational SMB workspace, existing Manrope/green/neutral surfaces;
+ENERGY1/RHYTHM2/MOTION1. Compact divided metrics reduce scanning; wide upcoming
+records plus grouped attention prevent backlog from hiding finance. Existing green
+marks actions; warning marks actual problems. Spacing/radii follow shared tokens;
+no new visual assets. Source labels, zero/missing/error and scopes stay explicit.
+Acceptance: real full counts, grouped pending results/tasks/conversations and owner
+connection problems, actionable existing destinations, compact receipts/refunds/net,
+role denial, freshness/retry, RU/KK/EN, keyboard, desktop/mobile without overflow.
+Checks: frontend build/types/i18n, targeted policy tests and isolated dashboard
+Playwright checks (roles, full counts, no broad list preload, error/recovery,
+group links), live screenshots inspected. No full release gate or working DB seed.
+
+Implementation checkpoint: compact full-count strip, next five unique appointments,
+grouped full queues with earliest dates, scoped connection errors, receipts/refunds/net
+and preserved source/status metadata. Removed duplicate AI query/panel and misleading
+team-workload disclosure; no backend/schema changes. Future confirmations use their
+own queue, disjoint from past records needing a result. Refresh on mount/focus, every
+60s while visible, and manually; temporary errors retain labelled previous data,
+permission/authentication denial hides it. Existing record creation/modal is reused.
+
+Verification so far: build/types/i18n PASS (dashboard-build-final-pass.log), seven
+focused node checks PASS. Isolated original18 browser cases:16 PASS; the two finance
+assertions initially expected the wrong existing RU stale label, fixed and both
+PASS on rerun (dashboard-e2e-focused-final.log). The extended desktop locale reload
+hit shared Vite HMR useI18n/Sidebar context failure; mobile RU/KK/EN passed. A separate
+task-owned compiled preview passed populated/long-value layout on desktop, tablet
+and mobile (3/3, dashboard-preview-verification.log), with RU/KK/EN in each case.
+All nine screenshots inspected; keyboard focus is visibly outlined. Production
+source is unchanged by this harness. Final badge alignment fix was included in
+the preview Vite build; final tsc -b passed (dashboard-final-types.log).
+Earlier startup120s expired during cold isolated migrations; preparation is now a
+separate step in isolated_runtime. Earlier refresh-test text comparison used innerText
+against textContent; corrected to compare the actual count. Two whole-build attempts
+were blocked by concurrent BusinessTimezoneSelect TS errors; that other work was
+corrected by its writer and the later whole build passed. No foreign source edited.
+
+Live Chromium observed canonical5173/8000, real business2:13 pending results,1 overdue
+task,1 connection failure, no upcoming24h appointments, no verified finance source.
+RU desktop and RU/KK/EN mobile screenshots captured/inspected under output/playwright.
+Live8000 restarted during checks and intermittently returned502 or auth timeouts;
+normal CSRF/password login with longer timeout recovered200. Those environment/auth
+limitations are not claimed fixed. Working DB was never seeded or migrated.
+Delivery gate: geometry/meaning/localized reflow PASS on desktop1280, tablet1024
+and Pixel7; five unique rows, long client/resource values and compact mobile badges.
+Behavior PASS: loading, missing/zero/stale/error data, retry, role denial, full
+counts, existing create-dialog open/Escape, entity links. Keyboard Tab/Shift+Tab
+focus screenshot inspected. Existing token contrast on white: text16.64, muted5.17,
+brand8.98, primary5.35, warning5.46, control3.07. No new motion/assets/theme, form
+validation or destructive action: those checks not applicable. Fixed shell navigation
+appears inside full-page mobile screenshots at its viewport position; page content
+remains scrollable. No global accessibility or whole-product certification claimed.
+React skill review: stable hooks, derived state without effects, parallel scoped
+queries through existing cache/API, no new dependency or broad entity preload.
+Bundle budget PASS (npm run check:bundle): shell355.1kB below400kB; existing RU/KK
+locale warnings594.2/596.0kB retained, language chunks remain split.
+Commands: frontend `npm run build`, `npm exec -- tsc -b`, `npm run check:bundle`;
+`node --test scripts/tests/dashboard-appointment-dedupe.test.mjs scripts/tests/daily-workspaces-policy.test.mjs`.
+Browser runner: `.venv/Scripts/python.exe` with `scripts.codex_verify.isolated_runtime`,
+`python -u scripts/browser_test_runtime.py prepare`, then frontend
+`npm exec -- playwright test e2e/dashboard-data-loading.spec.ts` (desktop/mobile);
+focused rerun selected `finance distinguishes|upcoming preview`. Stable preview:
+`npm exec -- vite build --outDir ../output/playwright/dashboard-built`, then
+`npm exec -- playwright test e2e/dashboard-data-loading.spec.ts --config=../output/playwright/dashboard-preview.config.ts --grep "upcoming preview"`.
+The ignored preview config reuses canonical Playwright settings with Vite preview
+and dedicated runtime ports; three projects run against the disposable database.
+Rerun trigger: dashboard/API/i18n/token changes affecting these contracts. No backend
+code changes, so domain suites/system/schema gates and full release gate not run.
+Frontend contract and capabilities row updated; product/CRM roadmap, access, AI,
+API and README require no changes: no domain/setup/release or permission contract
+changed. Existing full AI assistant is unaffected by removing dashboard duplication.
+Final existing regression updated for grouped queues: `npm exec -- playwright test
+e2e/ui-operations.spec.ts --config=../output/playwright/dashboard-preview.config.ts
+--output=../output/playwright/dashboard-regression-checks --grep "dashboard distinguishes"`
+PASS 3/3 desktop/tablet/mobile (dashboard-regression.log): full totals, queue link,
+initial error/retry and RU/KK/EN empty states. Filled desktop, empty tablet RU and
+mobile EN screenshots inspected. Working/index diff hygiene and scoped docs links
+checked. No remaining code/evidence/owner decisions within local dashboard scope.
+Local8000 instability remains an external environment limitation, not a dashboard
+failure; isolated compiled acceptance passed. No deployment/working-day certification.
+Publication preparation: current branch retained; latest shared HEAD8c5adc2b already
+on origin/main. Only dashboard files and owned documentation hunks will be committed.
+CI main-push workflow inspected; no deployment workflow is triggered by this change.
+Publication receipt/remote CI status follows separately; no CI PASS claimed here.
+
 ## SETTINGS-CLARITY-20261118
 
 Implementation authorized after read-only settings audit. Prior functional settings flows retained; owner-approved delta: unified message saving, protected drafts, readable time/timezone controls, server-side security history filtering/pagination, quieter navigation and historical-field grouping, explicit local voice preferences.

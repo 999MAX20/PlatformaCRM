@@ -261,16 +261,15 @@ test("business settings retain drafts across groups, reveal invalid fields and r
 test("dashboard distinguishes full totals, empty data and failed queues with working entity links", async ({ page }, info) => {
   const session = await crmSession(page);
   for (let index = 0; index < 9; index++) await session.create("tasks", { title: `Synthetic overdue ${index}`, due_at: "2026-01-01T09:00:00Z", assignee: session.userId });
-  const data = await session.read("work-queues", { business: session.business, limit: 8 });
+  const data = await session.read("work-queues", { business: session.business, limit: 8, workflow: "appointments" });
   await page.goto("/app");
   await expect(page.getByTestId("dashboard-metric-overdue_tasks").locator(".tabular-nums")).toHaveText(String(data.summary.overdue_tasks));
   expect(data.summary.overdue_tasks).toBeGreaterThan(8);
-  await expect(page.getByTestId("dashboard-attention-item")).toHaveCount(8);
-  await page.getByRole("button", { name: ru["dashboard.showMore"], exact: true }).click();
-  await expect(page.getByTestId("dashboard-attention-item")).toHaveCount(Math.min(16, data.summary.total_attention));
+  await expect(page.getByTestId("dashboard-group-overdue_tasks").locator(".tabular-nums")).toHaveText(String(data.summary.overdue_tasks));
+  await expect(page.getByTestId("dashboard-attention-item")).toHaveCount(0);
   await page.screenshot({ path: info.outputPath("dashboard-filled.png"), fullPage: true });
   await noOverflow(page);
-  const first = page.getByTestId("dashboard-attention-item").first();
+  const first = page.getByTestId("dashboard-group-overdue_tasks").getByRole("link");
   const href = await first.getAttribute("href");
   await first.click();
   await expect(page).toHaveURL(new RegExp(href!.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));

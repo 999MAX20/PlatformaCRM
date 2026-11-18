@@ -2477,3 +2477,11 @@ Appointments confirmed globally empty body retains Calendar in inner header.
 Date-empty/filtered controls preserved. Build/types/i18n/bundle PASS; Chrome
 empty response preview and Calendar navigation verified; no DB changes. Implementation
 7340e5d6 pushed to origin/main, remote SHA verified. CI not verified (gh unavailable).
+
+## DASHBOARD-REDESIGN-20261118
+
+Implemented and locally verified: reference 1 with grouped attention from reference 3,
+real scoped queues/finance and existing style. Build/types/bundle, 7 focused checks,
+role/error/retry browser checks and desktop/tablet/mobile RU/KK/EN visual gate PASS.
+No working DB changes or deployment; publication receipt reported separately. Details:
+[checkpoint](docs/testing/task-state/PRIMARY-SESSION.md#dashboard-redesign-20261118).
