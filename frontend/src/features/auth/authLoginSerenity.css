@@ -601,6 +601,11 @@
   background: linear-gradient(90deg, transparent, var(--color-brand-default) 22%, var(--color-brand-default) 74%, transparent);
 }
 
+.serenity-login__card--login::before,
+.serenity-login__card--signup::before {
+  content: none;
+}
+
 .serenity-login__eyebrow {
   display: block;
   margin-top: 16px;

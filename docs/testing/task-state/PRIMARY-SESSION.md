@@ -14390,6 +14390,24 @@ remote SHA matched. Working/index/committed-range diff hygiene PASS. Outgoing ra
 contained only this task. CI44527511918 in_progress, conclusion null via GitHub API;
 not a CI PASS. No deployment performed. Follow-up records this publication receipt.
 
+Owner follow-up: remove decorative top stripe only on login/signup. Prior centered
+layout accepted -> explicit decoration change -> disable card pseudo-element for
+login/signup only. Start cbb31b67; foreign password-policy WIP preserved. Anti Slop
+during/ui: retain geometry/tokens, remove purposeless decoration, preserve mobile.
+Checks: both pages desktop/mobile screenshots, navigation and prior centering;
+build/types/i18n/bundle and diff hygiene. No auth behavior/backend test delta.
+
+Follow-up verified: login/signup desktop1536 and mobile400 screenshots captured
+and inspected, line absent; login centers384/1152 retained. Login->signup click
+and signup->login Enter PASS; console errors none. Two mobile viewport capture
+timeouts resolved through documented full-page capture on the same target page.
+Evidence output/auth-halves-20261119/{login,signup}-no-stripe{,-mobile}.jpg.
+Fresh build/types/i18n/bundle PASS: output/auth-stripe-{build,bundle}-20261119.log.
+Scoped Anti Slop gate PASS: requested decoration removed, existing spacing/type,
+mobile and functional links retained. Copy/locales, loading/error/auth behavior,
+MFA and other cards unchanged; no backend/E2E rerun for pseudo-element removal.
+No remaining scoped acceptance. README/passport/roadmap unchanged (no flow change).
+
 ## SETTINGS-CLARITY-20261118
 
 Implementation authorized after read-only settings audit. Prior functional settings flows retained; owner-approved delta: unified message saving, protected drafts, readable time/timezone controls, server-side security history filtering/pagination, quieter navigation and historical-field grouping, explicit local voice preferences.
