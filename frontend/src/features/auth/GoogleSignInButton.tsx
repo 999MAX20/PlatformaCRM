@@ -138,8 +138,10 @@ export function GoogleSignInButton({ disabled, onCredential, text = "continue_wi
   }, [attempt, language, t, text]);
 
   return <div className="col-span-full w-full min-w-0" aria-busy={!ready && !error}>
-    <div ref={container} inert={disabled || !ready} className={disabled ? "pointer-events-none opacity-60" : undefined} />
-    {!hasButton && !ready && !error ? <p role="status" className="text-sm text-platforma-subtle">{t("googleAuth.loading")}</p> : null}
+    <div className="relative min-h-11">
+      <div ref={container} inert={disabled || !ready} className={`flex min-h-11 items-center${disabled ? " pointer-events-none opacity-60" : ""}`} />
+      {!hasButton && !ready && !error ? <p role="status" className="pointer-events-none absolute inset-0 flex items-center text-sm text-platforma-subtle">{t("googleAuth.loading")}</p> : null}
+    </div>
     {error ? <div className="space-y-2"><p role="alert" className="text-sm text-platforma-danger">{error}</p>
       <Button type="button" variant="secondary" disabled={disabled} onClick={() => setAttempt(value => value + 1)}>{t("common.retry")}</Button>
     </div> : null}
