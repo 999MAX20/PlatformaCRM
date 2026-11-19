@@ -15,7 +15,7 @@ for (const entry of ["login", "signup"]) for (const language of ["ru", "kk", "en
     const waiting = new Promise<void>(resolve => { release = resolve; });
     await page.route("https://accounts.google.com/gsi/client", async route => {
       await waiting;
-      await route.fulfill({ contentType: "application/javascript", body: `window.google={accounts:{id:{initialize(){},renderButton(parent,options){const b=document.createElement('button');b.textContent='Google';b.style.cssText='display:block;height:32px;padding:0;border:1px solid #dadce0';b.style.width=options.width+'px';parent.appendChild(b)}}}};` });
+      await route.fulfill({ contentType: "application/javascript", body: `window.google={accounts:{id:{initialize(){},renderButton(parent,options){const boot=document.createElement('div');boot.style.height='64px';const b=document.createElement('button');b.textContent='Google';b.style.cssText='display:block;height:32px;padding:0;border:1px solid #dadce0';b.style.width=options.width+'px';boot.appendChild(b);parent.appendChild(boot);setTimeout(()=>{boot.style.height='32px';b.dataset.ready='true';},250)}}}};` });
     });
     await page.goto(`/${entry}`, { waitUntil: "domcontentloaded" });
     await expect(page.getByRole("status")).toHaveText(dictionaries[language]["googleAuth.loading"]);
@@ -23,9 +23,22 @@ for (const entry of ["login", "signup"]) for (const language of ["ru", "kk", "en
     const card = page.locator(".serenity-login__card");
     const before = await card.boundingBox();
     const inputBefore = await page.locator('input[name="email"]').boundingBox();
+    await card.evaluate(element => {
+      const samples: number[] = [];
+      const observer = new ResizeObserver(() => samples.push(element.getBoundingClientRect().height));
+      observer.observe(element);
+      Object.assign(element, { googleBootSamples: samples, googleBootObserver: observer });
+    });
     release();
-    await expect(page.getByRole("button", { name: "Google", exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Google", exact: true })).toHaveAttribute("data-ready", "true");
     await expect(page.getByRole("status")).toHaveCount(0);
+    const bootstrapHeights = await card.evaluate(element => {
+      const observed = element as HTMLElement & { googleBootSamples: number[]; googleBootObserver: ResizeObserver };
+      observed.googleBootObserver.disconnect();
+      return observed.googleBootSamples;
+    });
+    expect(bootstrapHeights.length).toBeGreaterThan(0);
+    expect(Math.max(...bootstrapHeights) - Math.min(...bootstrapHeights)).toBeLessThanOrEqual(1);
     const after = await card.boundingBox();
     const inputAfter = await page.locator('input[name="email"]').boundingBox();
     expect(Math.abs(after!.y - before!.y)).toBeLessThanOrEqual(1);
