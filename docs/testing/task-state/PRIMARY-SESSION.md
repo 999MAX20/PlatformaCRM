@@ -14526,6 +14526,29 @@ Committed-range/index/working diff hygiene PASS. CI44535029646 observed in_progr
 conclusion null; no CI success or deployment claimed. Other writers' password WIP
 preserved. Owner subsequently asks opinion on button width; recommend280px centered
 desktop with mobile full width, not implemented without a new action request.
+Owner approved uniform primary auth button sizing, including forgot/reset forms.
+Prior full-width buttons -> explicit new width request -> shared Serenity form
+submit/primary rule: min(280px,100%) centered above560px, full-width on mobile.
+Reuse antislop/ui/layoutmobile/human: existing colors/heights/focus/loading retained,
+long localized labels may wrap, width bounded by parent. Local CSS-only risk;
+check login/signup/forgot/reset browser desktop/mobile geometry, invalid-submit and
+keyboard, build/types/bundle once. Shared selector also covers Serenity MFA/Google
+completion buttons; no identity/backend/consent changes or working-DB requests.
+Start97fca758; preserve foreign password-policy WIP, stage only CSS and own docs.
+Verified width follow-up: login/signup/forgot/reset desktop1536 measured280px each,
+center offsets <0.01px. Mobile390 screenshots inspected for each; buttons match
+form width (signup267.6px), labels/focus stay visible. KK forgot/reset and EN signup
+screenshots inspected; Shift+Tab to submit shows clear focus. Forgot invalid email
+click remains blocked by native validation, focus returns to email; no request/mail.
+No credential/account changes. Source review covers unchanged loading/disabled,
+MFA/Google consumers inherit the shared rule; their auth flows not rerun for CSS.
+Evidence output/auth-halves-20261119/{login,signup,forgot,reset}-button-{desktop,mobile}.jpg,
+forgot-button-kk.jpg, reset-button-kk.jpg, signup-button-en-focus.jpg. Viewport and RU
+restored. Anti Slop scoped geometry/meaning/keyboard/responsive/localized gate PASS.
+Build/types/i18n and bundle PASS: output/auth-button-width-{build,bundle}.log.
+No backend/schema/API/permission/notification/AI impact; no backend/full E2E rerun.
+Frontend contract updated; passport/README/roadmap unchanged for size-only delta.
+No remaining local scoped criteria. Commit/push receipt reported in the chat.
 
 ## SETTINGS-CLARITY-20261118
 

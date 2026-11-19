@@ -796,13 +796,27 @@
 
 .serenity-login__primary {
   min-height: 48px;
-  width: 100%;
   margin-top: 2px;
   border: 1px solid rgb(var(--color-brand-default-rgb) / 0.22);
   background: var(--color-brand-default);
   color: #ffffff;
   box-shadow: 0 16px 34px rgb(var(--color-brand-default-rgb) / 0.24);
   transition: background 160ms ease, box-shadow 160ms ease, transform 120ms ease;
+}
+
+.serenity-login form button[type="submit"],
+.serenity-login__primary {
+  display: flex;
+  width: min(280px, 100%);
+  margin-inline: auto;
+  justify-self: center;
+}
+
+@media (max-width: 560px) {
+  .serenity-login form button[type="submit"],
+  .serenity-login__primary {
+    width: 100%;
+  }
 }
 
 .serenity-login__primary:disabled,

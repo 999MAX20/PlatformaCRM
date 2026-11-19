@@ -10,6 +10,8 @@ Backend consent/system/drift, build/types/bundle and focused browser PASS.
 RU/KK/EN retry/link/retained input and desktop/mobile screenshots verified.
 Signup follow-up1541933a pushed to main; CI44535029646 in_progress at observation.
 Foreign WIP preserved. No deployment.
+Auth button follow-up: shared280px centered desktop / full-width mobile rule;
+login/signup/forgot/reset screenshots, RU/KK/EN, focus and build/types/bundle PASS.
 Evidence: [checkpoint](docs/testing/task-state/PRIMARY-SESSION.md#auth-halves-20261119).
 
 AUTH-FORMS-AUDIT-20261119: lost-access public link/contact removed; password eyes
