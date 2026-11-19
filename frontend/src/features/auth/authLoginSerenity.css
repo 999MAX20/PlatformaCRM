@@ -662,6 +662,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
   gap: 10px;
+  margin-top: 16px;
 }
 
 .serenity-login__social {
@@ -695,7 +696,7 @@
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: 13px;
-  margin: 14px 0;
+  margin: 16px 0;
   color: var(--serenity-muted);
   font-size: 12px;
   font-weight: 650;

@@ -92,7 +92,7 @@ export function GoogleSignInButton({ disabled, onCredential, text = "continue_wi
           restore ||= mount.contains(document.activeElement);
           mount.replaceChildren();
           identity.renderButton(mount, {
-            type: "standard", theme: "outline", size: "medium", text, width, locale: language,
+            type: "standard", theme: "outline", size: "large", shape: "pill", logo_alignment: "left", text, width, locale: language,
           });
           if (restore) window.requestAnimationFrame(() => {
             if (active && document.activeElement === document.body) {
@@ -139,8 +139,8 @@ export function GoogleSignInButton({ disabled, onCredential, text = "continue_wi
 
   return <div className="col-span-full w-full min-w-0" aria-busy={!ready && !error}>
     <div className="relative min-h-11">
-      <div ref={container} inert={disabled || !ready} className={`flex min-h-11 items-center${disabled ? " pointer-events-none opacity-60" : ""}`} />
-      {!hasButton && !ready && !error ? <p role="status" className="pointer-events-none absolute inset-0 flex items-center text-sm text-platforma-subtle">{t("googleAuth.loading")}</p> : null}
+      <div ref={container} inert={disabled || !ready} className={`flex min-h-11 items-center justify-center${disabled ? " pointer-events-none opacity-60" : ""}`} />
+      {!hasButton && !ready && !error ? <p role="status" className="pointer-events-none absolute inset-0 flex items-center justify-center text-sm text-platforma-subtle">{t("googleAuth.loading")}</p> : null}
     </div>
     {error ? <div className="space-y-2"><p role="alert" className="text-sm text-platforma-danger">{error}</p>
       <Button type="button" variant="secondary" disabled={disabled} onClick={() => setAttempt(value => value + 1)}>{t("common.retry")}</Button>
