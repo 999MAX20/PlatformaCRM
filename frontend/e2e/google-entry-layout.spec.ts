@@ -9,7 +9,7 @@ for (const entry of ["login", "signup"]) for (const language of ["ru", "kk", "en
     await page.addInitScript(lang => localStorage.setItem("ai_smb_language", lang), language);
     await page.route("**/api/**", route => route.fulfill({
       status: /csrf|google\/start/.test(route.request().url()) ? 200 : 401,
-      json: route.request().url().includes("csrf") ? { csrf_token: "synthetic" } : { nonce: "synthetic", expires_in: 600 },
+      json: route.request().url().includes("csrf") ? { csrf_token: "synthetic" } : { nonce: "synthetic", flow_id: "s".repeat(43), expires_in: 600 },
     }));
     let release!: () => void;
     const waiting = new Promise<void>(resolve => { release = resolve; });

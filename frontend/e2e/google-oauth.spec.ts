@@ -104,6 +104,33 @@ test("expired flow offers restart without creating an account", async ({ page },
   await expect(page).toHaveURL(/\/login$/);
 });
 
+test("separate tabs and a legacy start preserve each Google identity flow", async ({ page, context }, info) => {
+  const firstEmail = `tabs-first-${info.project.name}@example.test`;
+  const secondEmail = `tabs-second-${info.project.name}@example.test`;
+  await google(page, firstEmail);
+  await page.goto("/login");
+  await expect(page.getByRole("button", { name: "Synthetic Google" })).toBeVisible();
+  const second = await context.newPage();
+  await google(second, secondEmail);
+  await second.goto("/signup");
+  await expect(second.getByRole("button", { name: "Synthetic Google" })).toBeVisible();
+  const csrf = await context.request.get("/api/auth/csrf/");
+  const legacy = await context.request.post("/api/auth/google/start/", {
+    data: {}, headers: { "X-CSRFToken": (await csrf.json()).csrf_token },
+  });
+  expect(legacy.status()).toBe(200);
+  await page.getByRole("button", { name: "Synthetic Google" }).click();
+  await expect(page).toHaveURL(/\/google\/complete$/);
+  await expect(page.getByText(firstEmail, { exact: true })).toBeVisible();
+  await second.getByRole("button", { name: "Synthetic Google" }).click();
+  await expect(second).toHaveURL(/\/google\/complete$/);
+  await expect(second.getByText(secondEmail, { exact: true })).toBeVisible();
+  await page.reload();
+  await expect(page.getByText(firstEmail, { exact: true })).toBeVisible();
+  await expect(page.getByRole("alert")).toHaveCount(0);
+  await second.close();
+});
+
 for (const entry of ["login", "signup"]) {
 test(`${entry}: resizing the Google button preserves the current attempt`, async ({ page }, info) => {
   await google(page, `resize-${entry}-${info.project.name}@example.test`);

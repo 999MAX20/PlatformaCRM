@@ -16,7 +16,7 @@ from django.test import TestCase, TransactionTestCase, override_settings
 from django.utils import timezone
 from rest_framework.test import APIClient
 
-from apps.accounts.google_auth import COOKIE, _hash
+from apps.accounts.google_auth import BROWSER_COOKIE, COOKIE, _hash
 from apps.accounts.models import GoogleAuthFlow, MfaDevice, SocialIdentity, User
 from apps.accounts.mfa import issue_session
 from apps.businesses.models import Business, BusinessMember
@@ -76,6 +76,70 @@ class GoogleAuthTests(TestCase):
         if stale:
             refresh["auth_time"] = int((timezone.now() - timedelta(minutes=20)).timestamp())
         self.client.credentials(HTTP_AUTHORIZATION="Bearer " + str(refresh.access_token))
+
+    def tab_start(self, client=None, **extra):
+        response = self.post("start", {"flow_scope": "tab", **extra}, client=client)
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertTrue(response.cookies[BROWSER_COOKIE]["httponly"])
+        self.assertNotIn(COOKIE, response.cookies)
+        return response.data
+
+    def tab_verify(self, flow, client=None):
+        return self.post("verify", {"flow_id": flow["flow_id"], "id_token": self.token(flow["nonce"])}, client=client)
+
+    def test_two_tabs_keep_independent_callbacks_and_shared_binding_after_finish(self):
+        first = self.tab_start()
+        binding = self.client.cookies[BROWSER_COOKIE].value
+        second_tab = APIClient(enforce_csrf_checks=True)
+        second_tab.cookies = self.client.cookies
+        second = self.tab_start(second_tab)
+        self.assertEqual(second_tab.cookies[BROWSER_COOKIE].value, binding)
+        self.assertNotEqual(first["flow_id"], second["flow_id"])
+        self.assertEqual(self.tab_verify(first).status_code, 200)
+        self.assertEqual(self.tab_verify(second, second_tab).status_code, 200)
+        response = self.post("signup", {**self.signup_data(), "flow_id": first["flow_id"]})
+        self.assertEqual(response.status_code, 201, response.data)
+        self.assertNotIn(BROWSER_COOKIE, response.cookies)
+        self.assertEqual(second_tab.get("/api/auth/google/flow/", {"flow_id": second["flow_id"]}).status_code, 200)
+        self.assertEqual(self.post("signup", {**self.signup_data(), "flow_id": second["flow_id"]}, client=second_tab).status_code, 409)
+        self.assertEqual((User.objects.count(), Business.objects.count(), SocialIdentity.objects.count()), (1, 1, 1))
+
+    def test_verified_tab_survives_cloned_selector_restart_and_legacy_tab(self):
+        first = self.tab_start()
+        self.assertEqual(self.tab_verify(first).status_code, 200)
+        self.tab_start(flow_id=first["flow_id"])
+        self.start()
+        response = self.client.get("/api/auth/google/flow/", {"flow_id": first["flow_id"]})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data["code"], "google_signup_required")
+        self.assertEqual(self.post("signup", {**self.signup_data(), "flow_id": first["flow_id"]}).status_code, 201)
+
+    def test_tab_selector_requires_its_browser_and_does_not_fallback_to_legacy(self):
+        first = self.tab_start()
+        other = APIClient(enforce_csrf_checks=True)
+        headers = self.bootstrap(other)
+        self.assertEqual(self.post("verify", {"flow_id": first["flow_id"], "id_token": self.token(first["nonce"])}, other, headers).status_code, 400)
+        self.assertEqual(self.post("start", {"flow_scope": "tab"}, other, headers).status_code, 200)
+        self.assertEqual(self.post("verify", {"flow_id": first["flow_id"], "id_token": self.token(first["nonce"])}, other, headers).status_code, 400)
+        nonce = self.start()
+        self.assertEqual(self.post("verify", {"id_token": self.token(nonce), "flow_id": "malformed"}).status_code, 400)
+        self.assertEqual(self.post("verify", {"id_token": self.token(nonce)}).status_code, 200)
+        self.assertEqual(self.tab_verify(first).status_code, 200)
+
+    def test_tab_expiry_replay_and_failure_limit_remain_enforced(self):
+        first = self.tab_start()
+        self.assertEqual(self.tab_verify(first).status_code, 200)
+        self.assertEqual(self.tab_verify(first).status_code, 400)
+        cookie = self.client.cookies[BROWSER_COOKIE].value
+        GoogleAuthFlow.objects.filter(browser_hash=_hash(cookie + ":" + first["flow_id"])).update(expires_at=timezone.now() - timedelta(seconds=1))
+        self.assertEqual(self.client.get("/api/auth/google/flow/", {"flow_id": first["flow_id"]}).status_code, 400)
+        second = self.tab_start()
+        for _ in range(5):
+            cache.clear()
+            self.assertEqual(self.post("verify", {"flow_id": second["flow_id"], "id_token": self.token("wrong-nonce")}).status_code, 400)
+        cache.clear()
+        self.assertEqual(self.tab_verify(second).status_code, 400)
+        self.assertFalse(User.objects.exists())
 
     def test_unknown_identity_waits_for_business_and_documents_then_initializes_once(self):
         response = self.verify()

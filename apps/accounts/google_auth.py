@@ -29,6 +29,7 @@ from apps.core.models import LoginHistory
 
 
 COOKIE = "platforma_google_flow"
+BROWSER_COOKIE = "platforma_google_browser"
 COOKIE_PATH = "/api/auth/google/"
 TTL = 600
 
@@ -67,11 +68,17 @@ def _hash(value):
 
 
 def _flow(request, *, lock=False, verified=False):
-    cookie = request.COOKIES.get(COOKIE, "")
+    data = request.query_params if request.method == "GET" else request.data
+    modern = "flow_id" in data
+    selector = data.get("flow_id") if modern else None
+    if modern and (not isinstance(selector, str) or len(selector) != 43):
+        raise GoogleFlowInvalid()
+    cookie = request.COOKIES.get(BROWSER_COOKIE if modern else COOKIE, "")
     if not isinstance(cookie, str) or len(cookie) != 43:
         raise GoogleFlowInvalid()
     query = GoogleAuthFlow.objects.select_for_update() if lock else GoogleAuthFlow.objects
-    flow = query.filter(browser_hash=_hash(cookie), expires_at__gt=timezone.now(), consumed_at=None, failed_attempts__lt=5).first()
+    browser_hash = _hash(cookie + ":" + selector) if modern else _hash(cookie)
+    flow = query.filter(browser_hash=browser_hash, expires_at__gt=timezone.now(), consumed_at=None, failed_attempts__lt=5).first()
     if flow is None or (verified and flow.verified_at is None):
         raise GoogleFlowInvalid()
     return flow
@@ -89,8 +96,9 @@ def prune_google_flows(*, limit=1000):
     return GoogleAuthFlow.objects.filter(pk__in=ids, expires_at__lte=timezone.now()).delete()[0]
 
 
-def _finish(response):
-    response.delete_cookie(COOKIE, path=COOKIE_PATH, samesite="Lax")
+def _finish(response, request):
+    if "flow_id" not in request.data:
+        response.delete_cookie(COOKIE, path=COOKIE_PATH, samesite="Lax")
     return response
 
 
@@ -108,10 +116,10 @@ def _session(request, user, *, business=None):
         extra.update(user=CurrentUserSerializer(user).data,
                      business={"id": business.id, "name": business.name, "slug": business.slug})
     if requires_mfa(user):
-        return _finish(Response({**start_auth_challenge(user), **extra}, status=202))
+        return _finish(Response({**start_auth_challenge(user), **extra}, status=202), request)
     refresh = issue_session(user, mfa_verified=False, request=request)
     record_login(request, user=user, email=user.email, status=LoginHistory.Statuses.SUCCESS)
-    return _finish(set_refresh_cookie(Response({"access": str(refresh.access_token), **extra}, status=201 if business else 200), str(refresh)))
+    return _finish(set_refresh_cookie(Response({"access": str(refresh.access_token), **extra}, status=201 if business else 200), str(refresh)), request)
 
 
 class GoogleView(AuthCookieCsrfMixin, APIView):
@@ -131,6 +139,19 @@ class GoogleStartView(GoogleView):
         if not any(settings.GOOGLE_OAUTH_CLIENT_IDS):
             raise GoogleFlowInvalid()
         prune_google_flows(limit=100)
+        if "flow_scope" in request.data:
+            if request.data["flow_scope"] != "tab":
+                raise GoogleFlowInvalid()
+            browser = request.COOKIES.get(BROWSER_COOKIE, "")
+            if not isinstance(browser, str) or len(browser) != 43:
+                browser = secrets.token_urlsafe(32)
+            selector, nonce = secrets.token_urlsafe(32), secrets.token_urlsafe(32)
+            GoogleAuthFlow.objects.create(browser_hash=_hash(browser + ":" + selector), nonce_hash=_hash(nonce),
+                                         expires_at=timezone.now() + timedelta(seconds=TTL))
+            response = Response({"nonce": nonce, "flow_id": selector, "expires_in": TTL})
+            response.set_cookie(BROWSER_COOKIE, browser, max_age=TTL, httponly=True,
+                                secure=settings.AUTH_REFRESH_COOKIE_SECURE, samesite="Lax", path=COOKIE_PATH)
+            return response
         previous = request.COOKIES.get(COOKIE, "")
         if previous:
             GoogleAuthFlow.objects.filter(browser_hash=_hash(previous), consumed_at=None).update(
@@ -242,6 +263,6 @@ class GoogleLinkView(GoogleView):
                 SocialIdentity.objects.create(user=user, provider="google", subject=flow.subject, email=flow.email, email_verified=True)
                 record_security_event(request, user=user, event="google_identity_linked")
                 _consume(flow)
-                return _finish(Response({"ok": True}))
+                return _finish(Response({"ok": True}), request)
         except IntegrityError:
             raise GoogleLinkConflict() from None

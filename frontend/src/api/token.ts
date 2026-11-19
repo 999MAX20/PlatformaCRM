@@ -188,25 +188,33 @@ export function isGooglePending(value: unknown): value is GooglePending {
   return code === "google_signup_required" || code === "google_link_required";
 }
 
+const GOOGLE_FLOW_KEY = "platforma_google_flow_id";
+function googleFlowSelection() {
+  const flowId = sessionStorage.getItem(GOOGLE_FLOW_KEY);
+  return flowId === null ? {} : { flow_id: flowId };
+}
+
 export async function startGoogleFlow() {
   const generation = tokenStorage.getGeneration();
-  const { data } = await sessionCookieRequest(generation, async () => axios.post<{ nonce: string; expires_in: number }>(
-    `${baseURL}/api/auth/google/start/`, {}, await csrfCookieOptions(generation),
+  const { data } = await sessionCookieRequest(generation, async () => axios.post<{ nonce: string; expires_in: number; flow_id: string }>(
+    `${baseURL}/api/auth/google/start/`, { flow_scope: "tab" }, await csrfCookieOptions(generation),
   ));
+  sessionStorage.setItem(GOOGLE_FLOW_KEY, data.flow_id);
   return data;
 }
 
 export async function getGoogleFlow() {
-  const { data } = await axios.get<GooglePending>(`${baseURL}/api/auth/google/flow/`, cookieRequestOptions);
+  const { data } = await axios.get<GooglePending>(`${baseURL}/api/auth/google/flow/`, { ...cookieRequestOptions, params: googleFlowSelection() });
   return data;
 }
 
 export async function verifyGoogle(idToken: string) {
   const generation = beginLogin();
   const { data } = await sessionCookieRequest(generation, async () => axios.post<TokenPair | MfaPendingResponse | GooglePending>(
-    `${baseURL}/api/auth/google/verify/`, { id_token: idToken }, await csrfCookieOptions(generation),
+    `${baseURL}/api/auth/google/verify/`, { id_token: idToken, ...googleFlowSelection() }, await csrfCookieOptions(generation),
   ));
   assertCurrentSession(generation);
+  if (!isGooglePending(data)) sessionStorage.removeItem(GOOGLE_FLOW_KEY);
   if (!isGooglePending(data) && !isMfaPendingResponse(data)) tokenStorage.setAccess(data.access);
   return data;
 }
@@ -214,9 +222,10 @@ export async function verifyGoogle(idToken: string) {
 export async function signupGoogle(payload: GoogleSignupPayload) {
   const generation = beginLogin();
   const { data } = await sessionCookieRequest(generation, async () => axios.post<TokenPair | MfaPendingResponse>(
-    `${baseURL}/api/auth/google/signup/`, payload, await csrfCookieOptions(generation),
+    `${baseURL}/api/auth/google/signup/`, { ...payload, ...googleFlowSelection() }, await csrfCookieOptions(generation),
   ));
   assertCurrentSession(generation);
+  sessionStorage.removeItem(GOOGLE_FLOW_KEY);
   if (!isMfaPendingResponse(data)) tokenStorage.setAccess(data.access);
   return data;
 }
@@ -225,10 +234,11 @@ export async function linkGoogle(payload: { password: string; mfa_code?: string 
   const generation = tokenStorage.getGeneration();
   const { data } = await sessionCookieRequest(generation, async () => {
     const options = await csrfCookieOptions(generation);
-    return axios.post<{ ok: boolean }>(`${baseURL}/api/auth/google/link/`, payload, {
+    return axios.post<{ ok: boolean }>(`${baseURL}/api/auth/google/link/`, { ...payload, ...googleFlowSelection() }, {
       ...options, headers: { ...options.headers, Authorization: `Bearer ${tokenStorage.getAccess()}` },
     });
   });
+  sessionStorage.removeItem(GOOGLE_FLOW_KEY);
   return data;
 }
 
