@@ -14385,6 +14385,11 @@ Frontend contract updated; identity passport/CRM roadmap/README unchanged becaus
 no identity/domain/setup behavior changed. No remaining code or visual criteria in
 this local geometry scope; publication/CI recorded separately.
 
+Publication: 47f0ac29c1286d522796af43bd34b92e21841e1b normal-pushed to origin/main;
+remote SHA matched. Working/index/committed-range diff hygiene PASS. Outgoing range
+contained only this task. CI44527511918 in_progress, conclusion null via GitHub API;
+not a CI PASS. No deployment performed. Follow-up records this publication receipt.
+
 ## SETTINGS-CLARITY-20261118
 
 Implementation authorized after read-only settings audit. Prior functional settings flows retained; owner-approved delta: unified message saving, protected drafts, readable time/timezone controls, server-side security history filtering/pagination, quieter navigation and historical-field grouping, explicit local voice preferences.
