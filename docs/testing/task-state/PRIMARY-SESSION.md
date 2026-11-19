@@ -14603,3 +14603,63 @@ Normal origin/main publication and fresh CI result are recorded separately
 in Manager pilot-readiness-20261119.md and pilot-release-manifest-20261119.json.
 This source/evidence preparation does not authorize deployment or close
 live YCloud/employee auth/audio/privacy/operational acceptance.
+
+### Authorized deployment of 3e605431 — 19Nov2026
+
+Owner explicitly authorized safe production deployment of exact3e605431,
+migrations, beat and access verification, preserving data/current patches and
+preparing recovery. AI and number connection must remain disabled. This supersedes
+the earlier no-deployment boundary for this named operation only.
+Canonical source/branch unchanged: C:/Users/user/Desktop/PlatformaCRM,
+codex/ui-testing-toolkit, HEAD3e6054311230c84089b74cb43ca10611109fa355.
+Starting index empty; unrelated existing Google-live/Meta App Review hunks remain
+in STATUS, PRIMARY and google-sheets evidence. Do not publish/deploy those hunks.
+Mode operations; gap environment. Reuse full candidate/CI44494144956 success,
+same-origin artifact013990d2dfc75d884b33ba69679a172309206d84525072a783dd7137da78cbf3,
+isolated restore/PITR/migration and model rollback evidence; no redundant full gate.
+Deploy chat is the single production writer; coordinator reviews target/procedure
+and records shared checkpoint. Independent review covers beat side effects/access
+smoke. Before mutation: fresh source/overlay/config/service/DB/queue inventory,
+recoverable current snapshot and bounded write pause; inspect every scheduled task
+so beat does not accidentally enable AI or customer sends. Never use the old
+code-only automatic rollback after schema migration (23502 already reproduced).
+Acceptance: exact source/artifact active with overlays preserved; five expected
+migrations, original data/config preserved, web/worker/events and singleton beat
+healthy, role/tenant/revoked-access checks, safe queue dispatch/consumption,
+AI/Scribe off and no onboarding/number activation. Keep no-write rollback boundary
+until smoke passes; preserve any later accepted writes during recovery. No real
+customer messages or destructive test fixtures. Scope may use rollback-only
+synthetic access checks with outgoing effects blocked. Production receipts and
+operator commands remain in existing digital-deploy CHECKPOINT/ignored output.
+
+Deployment observed19Nov: exact3e605431 activated at
+/opt/platforma/releases/20261119-3e605431; source/frontend mismatches0,538 prior
+hashed assets retained. Maintenance15:14:47–15:18:32 UTC+5. Fresh dump restored
+to platforma_recovery_3e605431 and all pre-migration table digests matched;
+five migrations applied15:16:27, original business-column digests unchanged.
+Production real-JWT smoke under maintenance: own200/foreign404/operator403,
+revoked profile has no business access; all synthetic rows rolled back.
+Web/worker/events/stand/beat active, same release, NRestarts0 at postflight;
+file-scan timer retained. Beat singleton and two actual consumed polls proven;
+allowlist only ycloud-events with YCLOUD_ENABLED=False. AI/Scribe/Kaspi off;
+batching, AI jobs, notifications, outbound, automation and other dormant beat
+tasks remain excluded. No number onboarding or customer message sends.
+crm.env hash unchanged; Caddy only CRM release paths changed, other sites unchanged.
+Fresh backup /opt/platforma/shared/deploy-3e605431/database.dump SHA256
+24c2edb733ffa470f7aec8ebb561dfb3d48bd73b60070afb2d1ff2260ce05f19;
+old release/config and recovery DB retained. Atomic double-rename rollback tested
+with injected second-command failure on disposable DB. No production rollback used.
+Writer boundary closed15:17:22 before worker/beat start; automatic snapshot restore
+now prohibited because newly accepted writes must be preserved.
+Receipt: output/digital-deploy-20261109/deploy-postflight-3e605431.json.
+Public anonymous gate401/webhook invalid token403 preserved. Initial public HTML
+hash probe failed on expected stand-gate401; gate-authenticated HTTPS login200
+hash936bdf408f8b11afa8bf9bb976b855455b514f38856cc3e66751fd03f5604168
+matches candidate, ready200; application-anonymous clients401 after gate.
+Baseline global health FAIL is market_container_count, pre-existing/out of scope.
+Parent Chrome reload showed the session-ended login notice; saved login accepted and
+authenticator MFA displayed. User asked to complete MFA in browser; owner UI
+acceptance pending, no full employee login/MFA claim. No credentials changed.
+Auth refresh returned401 at15:19:53 UTC+5; exact rejection reason is not logged.
+JWT/device-session policy and crm.env unchanged, auth/session rows preserved
+before reopening; expiration is not established as the cause.

@@ -1051,3 +1051,42 @@ Sources checked17Nov2026: [Meta v4](https://developers.facebook.com/documentatio
 [account_update](https://developers.facebook.com/documentation/business-messaging/whatsapp/webhooks/reference/account_update).
 Account-specific state and video requirements came from the authenticated App
 Dashboard; local proof and limitations are in META-V4-20261117 in PRIMARY-SESSION.
+
+## Pilot deployment 3e605431, 19.11.2026
+
+Owner-authorized deployment activated exact commit
+`3e6054311230c84089b74cb43ca10611109fa355` in
+`/opt/platforma/releases/20261119-3e605431`. CRM reopened at15:18:32 UTC+5 after
+a bounded write pause, fresh dump restore verification and production access smoke.
+Applied bots0015, integrations0013, payments0002+0003 and scheduling0015;
+no pending migrations remained. Original business-column digests matched.
+Web, worker, events, stand and beat use the same release. Existing worker queues
+and file-scan timer are retained. Source/frontend hashes matched the candidate;
+538 old hashed assets remain available for already-open clients.
+
+Beat uses a deployment-only allowlist in
+`/opt/platforma/shared/operations-3e605431/deploy-beat-3e605431.py`:
+only `ycloud-events`, with enforced `YCLOUD_ENABLED=False`. Singleton and two
+consumed polling tasks were verified. AI and ElevenLabs Scribe remain off.
+Inbound batching, notifications, outbound sends, automations, routing, AI jobs
+and the other standard beat entries are not activated. The scheduler is running,
+but this does not enable WhatsApp onboarding or certify live message delivery.
+Do not replace the allowlist with the full schedule implicitly.
+
+Recovery material remains protected in `/opt/platforma/shared/deploy-3e605431/`,
+including the fresh database dump and saved configuration. The dump was restored
+into `platforma_recovery_3e605431` and compared before migration. The old release
+`/opt/platforma/releases/20261118-58a6427e` retains all prior overlays.
+Restic files backup and pgBackRest incremental
+`20261115-200004F_20261119-101456I` completed. Never use code-only rollback:
+the old models are incompatible with new NOT NULL columns. Since writers resumed,
+automatic snapshot restoration is prohibited; recovery must preserve newly
+accepted writes through a reviewed forward fix or reconciliation.
+
+Production real-JWT smoke covered own access, cross-business denial, forbidden
+operator action and revoked membership with synthetic transaction rollback.
+Live owner browser validation awaits authenticator MFA completion; this is not
+full employee/MFA acceptance. The existing overall health failure
+`market_container_count` predates this deployment and is not fixed here.
+Evidence: [deployment checkpoint](../testing/task-state/PRIMARY-SESSION.md#authorized-deployment-of-3e605431--19nov2026)
+and local operator receipts under `output/digital-deploy-20261109/`.

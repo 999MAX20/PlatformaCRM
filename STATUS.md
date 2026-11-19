@@ -2,10 +2,17 @@ PILOT-RELEASE-20261119: owner authorized coordinated readiness; startup channel
 WhatsApp only, real names/assignments not a preparation blocker. YCloud source CI
 44392825855 and main b9415d71 CI44404635483 backend/frontend success confirmed.
 Tech Partner approval not observed in authenticated console; no number activation.
-Server58a6427e+17 invite/access overlays; main delta33 commits/206paths and5 unapplied
-candidate migrations. Preserve overlays; combined52-file candidate prepared.
-Same-origin app/widget review artifact and static smoke PASS; publication/CI
-receipt tracked in Manager pilot report. Client activation remains blocked.
+Initial server58a6427e+17 invite/access overlays retained for recovery;
+the combined52-file candidate incorporates those fixes.
+Combined candidate3e605431 published; CI44494144956 backend/frontend success.
+Same-origin app/widget review artifact and static smoke PASS. Owner authorized
+safe deployment, five migrations, beat and access checks19Nov. Exact3e605431 is
+deployed; CRM reopened15:18:32 UTC+5 after verified fresh restore, migrations and
+production JWT/tenant/role/revoked smoke. Source/frontend hashes match; original
+business data preserved. Singleton beat runs only disabled-provider YCloud polls;
+AI/Scribe/YCloud off, dormant notification/AI backlog remains excluded.
+Live owner browser reached authenticator MFA; user completion pending.
+Client number activation remains excluded.
 Full gate PASS:3689 backend/98skips,build/types/i18n/bundle,2mobile smoke,audits0;
 frozen app inputs unchanged; inert test-runner override removed with equivalent-env proof.
 WSL restore/PITR/files/5migrations/data-preservation PASS; old-code INSERT23502
@@ -16,7 +23,7 @@ Fresh invite122 backend/14browser PASS and live owner form desktop/mobile/action
 verified; employee live auth still open. Inbox60 focused and3 PG batching races
 PASS (23 distinct in PG run),isolated real Celery restart PASS; AC10 export fixed/
 scoped verified. Voice local240PASS/4skips,4browser; final D01/D02 text2/2 PASS,
-17scored turns/$0.00847635/STT0; audio/fullD01 open. No deployment/working DB changes.
+17scored turns/$0.00847635/STT0; audio/fullD01 open. Server deployed; owner UI pending.
 Owner approved Direct Meta callback inclusion in combined pilot commit; unrelated
 Google-live/older Meta App Review evidence WIP remains excluded.
 Checkpoint: docs/testing/task-state/PRIMARY-SESSION.md#pilot-release-20261119--coordination-and-candidate-preparation.
