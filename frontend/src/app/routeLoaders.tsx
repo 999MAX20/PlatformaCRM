@@ -1,4 +1,5 @@
 import { lazy } from "react";
+export const GoogleCompletePage = lazy(() => import("../features/auth/GoogleCompletePage").then(module => ({ default: module.GoogleCompletePage })));
 export const ImportWorkspacePage = lazy(() => import("../features/importWorkspace/ImportWorkspacePage").then(module => ({ default: module.ImportWorkspacePage })));
 export const LegacyRecordsPage = lazy(() => import("../features/calendar/LegacyRecordsPage").then(module => ({ default: module.LegacyRecordsPage })));
 export const RecordsPage = lazy(() => import("../features/calendar/RecordsPage").then(module => ({ default: module.RecordsPage })));

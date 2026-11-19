@@ -16,7 +16,8 @@ interface GoogleCredentialResponse {
 }
 
 interface GoogleAccountsId {
-  initialize(options: { client_id: string; callback: (response: GoogleCredentialResponse) => void }): void;
+  initialize(options: { client_id: string; nonce: string; auto_select?: boolean; callback: (response: GoogleCredentialResponse) => void }): void;
+  renderButton(parent: HTMLElement, options: { type: "standard"; theme: "outline"; size: "large"; text: "continue_with"; width: number; locale: string }): void;
   prompt(callback?: (notification: { isNotDisplayed?: () => boolean; isSkippedMoment?: () => boolean; isDismissedMoment?: () => boolean }) => void): void;
 }
 

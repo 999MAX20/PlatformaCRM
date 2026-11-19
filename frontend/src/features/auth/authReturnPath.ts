@@ -12,6 +12,7 @@ export function getAuthReturnPathFromState(state: unknown) {
 export function getPostAuthReturnPath(isPlatformUser: boolean, intendedPath?: string) {
   const fallback = isPlatformUser ? "/platform" : "/app";
   if (!intendedPath) return fallback;
+  if (intendedPath === "/google/complete") return intendedPath;
   if (intendedPath.startsWith("/invite/")) return intendedPath;
   if (!isSafeInternalReturnPath(intendedPath)) return fallback;
   if (isPlatformUser && !intendedPath.startsWith("/platform")) return fallback;

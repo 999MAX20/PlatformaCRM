@@ -802,3 +802,7 @@ Resend требует revision и60с cooldown, заменяет token/expiry; a
 SMTP выполняется после commit; delivery_status отделён от статуса приглашения.
 Support repair с личным согласием владельца остаётся без автоматической отправки.
 [Реализация, проверки и SMTP-граница](../testing/evidence/invitations-24h-20261112.md).
+
+## Google sign-in — 19.11.2026
+
+Google subject login preserves MFA; new users complete business/legal onboarding, existing emails require explicit password/MFA proof before linking. No automatic email attachment. See [flow, Google Cloud setup and rollout](google-sign-in.md) and [verification evidence](../testing/evidence/google-auth-20261119.md). Production activation is separate.

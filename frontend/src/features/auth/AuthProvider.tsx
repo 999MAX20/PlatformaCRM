@@ -37,7 +37,7 @@ import {
   type SocialProvider,
   type MfaPendingResponse,
 } from "../../api/auth";
-import { assertCurrentSession } from "../../api/token";
+import { assertCurrentSession, verifyGoogle, signupGoogle, isGooglePending, type GooglePending, type GoogleSignupPayload } from "../../api/token";
 import { tokenStorage } from "../../lib/storage";
 import type { Business, CurrentUser } from "../../types";
 
@@ -56,6 +56,8 @@ type AuthContextValue = {
   signupOwner: (payload: OwnerSignupPayload) => Promise<CurrentUser | MfaPendingResponse>;
   loginWithSocial: (provider: SocialProvider, idToken: string) => Promise<CurrentUser | MfaPendingResponse>;
   completeMfaSession: () => Promise<CurrentUser>;
+  loginWithGoogle: (idToken: string) => Promise<CurrentUser | MfaPendingResponse | GooglePending>;
+  signupWithGoogle: (payload: GoogleSignupPayload) => Promise<CurrentUser | MfaPendingResponse>;
   logout: () => void;
 };
 
@@ -246,6 +248,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return loadCurrentUser();
       },
       completeMfaSession: async () => {
+        return loadCurrentUser();
+      },
+      loginWithGoogle: async (idToken: string) => {
+        const response = await verifyGoogle(idToken);
+        if (isGooglePending(response) || isMfaPendingResponse(response)) return response;
+        return loadCurrentUser();
+      },
+      signupWithGoogle: async (payload: GoogleSignupPayload) => {
+        const response = await signupGoogle(payload);
+        if (isMfaPendingResponse(response)) return response;
         return loadCurrentUser();
       },
       logout,

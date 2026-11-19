@@ -37,6 +37,10 @@ function errorCode(
 
 export const appErrorCodeRegistry: readonly AppErrorCodePolicy[] = [
   errorCode("validation_error", "validation"),
+  errorCode("google_flow_invalid", "validation", { messageKey: "googleAuth.expired" }),
+  errorCode("google_flow_required", "validation", { messageKey: "googleAuth.expired" }),
+  errorCode("google_link_conflict", "conflict", { messageKey: "googleAuth.conflict" }),
+  errorCode("google_link_proof_required", "permission", { messageKey: "googleAuth.proofRequired" }),
   errorCode("password_reset_link_invalid", "validation", { messageKey: "passwordReset.invalidLink" }),
   errorCode("request_failed", "validation"),
   errorCode("method_not_allowed", "validation"),

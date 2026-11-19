@@ -21,6 +21,7 @@ from apps.accounts.mfa_views import (
     MfaVerifyView,
 )
 from apps.accounts.views import ChangePasswordView, CurrentUserLoginHistoryView, CurrentUserView, OwnerSignupView, PasswordResetConfirmView, PasswordResetRequestView, SocialAuthView
+from apps.accounts.google_auth import GoogleStartView, GoogleVerifyView, GoogleFlowView, GoogleSignupView, GoogleLinkView
 from apps.accounts.recovery_views import platform_recovery, platform_recovery_action, recovery_confirmations, recovery_decision, public_recovery
 from apps.businesses.employee_access_views import (
     platform_employee_access, platform_employee_access_action, employee_access_confirmations, employee_access_decision,
@@ -246,6 +247,11 @@ urlpatterns = [
     path("api/auth/token/refresh/", ThrottledTokenRefreshView.as_view(), name="token_refresh"),
     path("api/auth/logout/", LogoutView.as_view(), name="auth_logout"),
     path("api/auth/social/", SocialAuthView.as_view(), name="auth_social"),
+    path("api/auth/google/start/", GoogleStartView.as_view(), name="google_start"),
+    path("api/auth/google/verify/", GoogleVerifyView.as_view(), name="google_verify"),
+    path("api/auth/google/flow/", GoogleFlowView.as_view(), name="google_flow"),
+    path("api/auth/google/signup/", GoogleSignupView.as_view(), name="google_signup"),
+    path("api/auth/google/link/", GoogleLinkView.as_view(), name="google_link"),
     path("api/auth/signup/owner/", OwnerSignupView.as_view(), name="auth_signup_owner"),
     path("api/auth/password-reset/request/", PasswordResetRequestView.as_view(), name="auth_password_reset_request"),
     path("api/auth/account-recovery/", public_recovery),

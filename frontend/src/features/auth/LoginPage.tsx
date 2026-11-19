@@ -21,6 +21,8 @@ import { Input } from "../../components/ui/Input";
 import { StatusNotice } from "../../components/ui/StatusNotice";
 import { useI18n } from "../../lib/i18n";
 import { useAuth } from "./AuthProvider";
+import { GoogleSignInButton } from "./GoogleSignInButton";
+import { isGooglePending } from "../../api/token";
 import { PasswordVisibilityToggle } from "./PasswordVisibilityToggle";
 import { getPostAuthReturnPath } from "./authReturnPath";
 import type { CurrentUser } from "../../types";
@@ -61,11 +63,11 @@ function loadExternalScript(id: string, src: string) {
 export function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, loginWithSocial } = useAuth();
+  const { login, loginWithSocial, loginWithGoogle } = useAuth();
   const { t } = useI18n();
   const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
   const appleClientId = import.meta.env.VITE_APPLE_CLIENT_ID;
-  const isGoogleConfigured = Boolean(googleClientId);
+  const isGoogleConfigured = Boolean(googleClientId) && (location.state as LoginLocationState | null)?.from?.pathname !== "/google/complete";
   const isAppleConfigured = Boolean(appleClientId);
   const schema = z.object({
     email: z.string().email(t("validation.email")),
@@ -138,34 +140,25 @@ export function LoginPage() {
     }
   }
 
-  async function handleGoogleLogin() {
-    if (!googleClientId) {
-      setError(t("auth.socialNotConfigured"));
-      return;
-    }
-
+  async function completeGoogleLogin(idToken: string) {
     setError(null);
+    setSessionExpiredNotice(false);
     setSocialLoading("google");
     try {
-      await loadExternalScript("google-identity-services", "https://accounts.google.com/gsi/client");
-      const googleIdentity = window.google?.accounts?.id;
-      if (!googleIdentity) {
-        throw new Error("Google Identity Services unavailable");
+      const result = await loginWithGoogle(idToken);
+      if (isGooglePending(result)) {
+        navigate("/google/complete", { state: location.state });
+      } else if (isMfaPendingResponse(result)) {
+        sessionStorage.setItem("zani_mfa_pending", JSON.stringify(result));
+        navigate("/mfa", { replace: true, state: location.state });
+      } else {
+        navigate(getPostLoginPath(result), { replace: true });
       }
-      googleIdentity.initialize({
-        client_id: googleClientId,
-        callback: (response) => {
-          void completeSocialLogin("google", response.credential);
-        },
-      });
-      googleIdentity.prompt((notification) => {
-        if (notification.isNotDisplayed?.() || notification.isSkippedMoment?.() || notification.isDismissedMoment?.()) {
-          setError(t("auth.socialFailed"));
-          setSocialLoading(null);
-        }
-      });
-    } catch {
-      setError(t("auth.socialFailed"));
+      return true;
+    } catch (err) {
+      setError(getApiErrorMessage(err));
+      return false;
+    } finally {
       setSocialLoading(null);
     }
   }
@@ -255,16 +248,7 @@ export function LoginPage() {
               <>
                 <div className="serenity-login__social-row">
                   {isGoogleConfigured ? (
-                    <Button
-                      type="button"
-                      className="serenity-login__social"
-                      isLoading={socialLoading === "google"}
-                      disabled={isSubmitting || Boolean(socialLoading)}
-                      onClick={handleGoogleLogin}
-                    >
-                      <span className="serenity-login__provider-mark" aria-hidden="true">G</span>
-                      Google
-                    </Button>
+                    <GoogleSignInButton disabled={isSubmitting || Boolean(socialLoading)} onCredential={completeGoogleLogin} />
                   ) : null}
                   {isAppleConfigured ? (
                     <Button

@@ -174,6 +174,63 @@ export async function signupOwner(payload: OwnerSignupPayload) {
   return data;
 }
 
+export type GooglePending = {
+  code: "google_signup_required" | "google_link_required";
+  email: string;
+  full_name: string;
+  expires_in: number;
+};
+export type GoogleSignupPayload = Omit<OwnerSignupPayload, "email" | "password">;
+
+export function isGooglePending(value: unknown): value is GooglePending {
+  const code = (value as { code?: string } | null)?.code;
+  return code === "google_signup_required" || code === "google_link_required";
+}
+
+export async function startGoogleFlow() {
+  const generation = tokenStorage.getGeneration();
+  const { data } = await sessionCookieRequest(generation, async () => axios.post<{ nonce: string; expires_in: number }>(
+    `${baseURL}/api/auth/google/start/`, {}, await csrfCookieOptions(generation),
+  ));
+  return data;
+}
+
+export async function getGoogleFlow() {
+  const { data } = await axios.get<GooglePending>(`${baseURL}/api/auth/google/flow/`, cookieRequestOptions);
+  return data;
+}
+
+export async function verifyGoogle(idToken: string) {
+  const generation = beginLogin();
+  const { data } = await sessionCookieRequest(generation, async () => axios.post<TokenPair | MfaPendingResponse | GooglePending>(
+    `${baseURL}/api/auth/google/verify/`, { id_token: idToken }, await csrfCookieOptions(generation),
+  ));
+  assertCurrentSession(generation);
+  if (!isGooglePending(data) && !isMfaPendingResponse(data)) tokenStorage.setAccess(data.access);
+  return data;
+}
+
+export async function signupGoogle(payload: GoogleSignupPayload) {
+  const generation = beginLogin();
+  const { data } = await sessionCookieRequest(generation, async () => axios.post<TokenPair | MfaPendingResponse>(
+    `${baseURL}/api/auth/google/signup/`, payload, await csrfCookieOptions(generation),
+  ));
+  assertCurrentSession(generation);
+  if (!isMfaPendingResponse(data)) tokenStorage.setAccess(data.access);
+  return data;
+}
+
+export async function linkGoogle(payload: { password: string; mfa_code?: string }) {
+  const generation = tokenStorage.getGeneration();
+  const { data } = await sessionCookieRequest(generation, async () => {
+    const options = await csrfCookieOptions(generation);
+    return axios.post<{ ok: boolean }>(`${baseURL}/api/auth/google/link/`, payload, {
+      ...options, headers: { ...options.headers, Authorization: `Bearer ${tokenStorage.getAccess()}` },
+    });
+  });
+  return data;
+}
+
 export async function requestPasswordReset(payload: PasswordResetRequestPayload) {
   const { data } = await axios.post<PasswordResetRequestResponse>(`${baseURL}/api/auth/password-reset/request/`, payload);
   return data;

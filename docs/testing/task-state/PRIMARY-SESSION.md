@@ -14734,3 +14734,15 @@ Verification (canonical dirty task snapshot before commit):
 No migration/env/permission/BusinessEvent/AI/provider/number change. Publication
 is source-only; server remains at previously deployed3e605431 until a new rollout
 is explicitly authorized. Foreign Google/Meta WIP remains unstaged and preserved.
+
+## GOOGLE-AUTH-20261119 — verified implementation
+
+User authorized Google existing-user login, new owner onboarding with business/legal documents, and explicit safe linking without duplicates. Canonical checkout/branch: Desktop/PlatformaCRM, codex/ui-testing-toolkit; base b53da6e48fd3b81f535e1ce9dd56c6a48d0965aa. Prior auth forms closure → new Google requirement → reuse approved forms/session/MFA/legal receipt components; replace only Google prompt and silent email linking. Foreign password-policy and evidence WIP retained; no production deployment or Cloud mutation.
+
+Code gap: nonce-bound short-lived single-use flow, signed Google identity verification, explicit current-account password/MFA proof for linking, atomic owner/business/documents creation. API cookie requests retain CSRF and serialized session generation guards. Migration adds pending Google flow; AI/notifications/BusinessEvent changes N/A. Backend delegated to pilot_acceptance; parent owns frontend and completion evidence.
+
+Risk: authentication, replay, duplicate identity/business, cross-account linking. Checks: isolated signed-token happy/invalid/expiry/replay/CSRF/MFA/rollback/conflict tests, dependent auth/signup tests, system/migration drift; frontend interaction/browser flows with synthetic Google boundary plus build/types/i18n. Live Google external proof requires configured web client, recorded separately from local evidence.
+
+Skills: Anti Slop during (UI/human/layout/copy) and Design Taste/app-screens. Applied requirements: preserve approved login background/components/tokens; explicit labels and keyboard focus; retain form input on errors and support retry/expiry; inspect desktop/mobile RU/KK/EN screenshots and changed actions. Delivery: verified scoped source commit + normal publication per AGENTS §6, with CI status and Google Cloud setup instructions.
+
+Google result: backend affected65 + final18 PostgreSQL PASS, system/drift PASS; browser22/22 desktop/mobile RU/KK/EN PASS, focused frontend23 PASS, final build/types/i18n PASS. Fixed callback reinitialization race; isolated browser batch rates raised only for fixtures. Actual Google client/popup and deployment remain unverified/unperformed. Evidence: [google-auth-20261119](../evidence/google-auth-20261119.md); setup: [Google sign-in](../../current/google-sign-in.md). Foreign password/evidence WIP retained; only task-owned hunks publish.

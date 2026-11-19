@@ -249,7 +249,7 @@ class AuthSecurityBaselineTests(TestCase):
             cache.clear()
 
     @patch("apps.accounts.views.verify_social_id_token")
-    def test_social_login_creates_merchant_user_and_business(self, verify_token):
+    def test_legacy_google_login_requires_browser_bound_flow(self, verify_token):
         verify_token.return_value = SocialUserClaims(
             provider=SocialIdentity.Providers.GOOGLE,
             subject="google-user-1",
@@ -265,20 +265,11 @@ class AuthSecurityBaselineTests(TestCase):
             format="json",
         )
 
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("access", response.data)
-        self.assertNotIn("refresh", response.data)
-        self.assertIn(settings.AUTH_REFRESH_COOKIE_NAME, response.cookies)
-        self.assertTrue(response.data["created"])
-        user = User.objects.get(email="social-owner@example.com")
-        self.assertEqual(user.role, User.Roles.BUSINESS_OWNER)
-        self.assertFalse(user.has_usable_password())
-        self.assertTrue(SocialIdentity.objects.filter(user=user, provider=SocialIdentity.Providers.GOOGLE).exists())
-        self.assertTrue(BusinessMember.objects.filter(user=user, role=BusinessMember.Roles.OWNER, is_active=True).exists())
-        business = Business.objects.get(owner=user)
-        self.assertTrue(BusinessRole.objects.filter(business=business, preset_key=BusinessMember.Roles.OWNER, is_active=True).exists())
-        self.assertTrue(Pipeline.objects.filter(business=business).exists())
-        self.assertTrue(LoginHistory.objects.filter(user=user, status=LoginHistory.Statuses.SUCCESS).exists())
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data["code"], "google_flow_required")
+        verify_token.assert_not_called()
+        self.assertFalse(User.objects.filter(email="social-owner@example.com").exists())
+        self.assertFalse(SocialIdentity.objects.filter(provider="google", subject="google-user-1").exists())
 
     @patch("apps.accounts.views.verify_social_id_token")
     def test_social_login_links_existing_user_by_email(self, verify_token):

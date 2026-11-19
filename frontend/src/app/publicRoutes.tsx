@@ -6,8 +6,10 @@ import { LoginPage } from "../features/auth/LoginPage";
 import { LandingHome } from "./LandingHome";
 
 import { PublicRoute, PageLoader } from "./routeGuards";
+import { GoogleCompletePage } from "./routeLoaders";
 import { InviteAcceptPage, SignupPage, DocumentsPage, ForgotPasswordPage, ResetPasswordPage, AccountRecoveryPage, MfaPage } from "./routeLoaders";
 export const publicRoutes = [
+{ path: "/google/complete", errorElement: <RouteErrorBoundary />, element: <PageLoader><GoogleCompletePage /></PageLoader> },
 { path: "/documents", element: <PageLoader><DocumentsPage /></PageLoader> },
 { path: "/documents/:documentId", element: <PageLoader><DocumentsPage /></PageLoader> },
 {

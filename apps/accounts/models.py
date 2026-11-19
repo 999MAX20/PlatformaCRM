@@ -103,6 +103,19 @@ class MfaChallenge(models.Model):
         ]
 
 
+class GoogleAuthFlow(models.Model):
+    browser_hash = models.CharField(max_length=64, unique=True)
+    nonce_hash = models.CharField(max_length=64)
+    expires_at = models.DateTimeField(db_index=True)
+    verified_at = models.DateTimeField(null=True)
+    consumed_at = models.DateTimeField(null=True)
+    subject = models.CharField(max_length=255, blank=True)
+    email = models.EmailField(blank=True)
+    full_name = models.CharField(max_length=255, blank=True)
+    failed_attempts = models.PositiveSmallIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
 class SocialIdentity(models.Model):
     class Providers(models.TextChoices):
         GOOGLE = "google", "Google"

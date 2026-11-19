@@ -50,6 +50,7 @@ export function PublicRoute({ children }: { children: React.ReactNode }) {
   const fallback = isPlatformUser ? "/platform" : "/app";
 
   if (!intendedPath) return <Navigate to={fallback} replace />;
+  if (intendedPath === "/google/complete") return <Navigate to={intendedPath} replace />;
   if (intendedPath.startsWith("/invite/")) return <Navigate to={intendedPath} replace />;
   if (!isSafeInternalReturnPath(intendedPath)) return <Navigate to={fallback} replace />;
   if (isPlatformUser && !intendedPath.startsWith("/platform")) return <Navigate to={fallback} replace />;

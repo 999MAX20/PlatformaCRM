@@ -113,6 +113,8 @@ class SocialAuthView(AuthCookieCsrfMixin, APIView):
     def post(self, request):
         serializer = SocialAuthSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        if serializer.validated_data["provider"] == "google":
+            return Response({"code": "google_flow_required", "detail": "Start a browser-bound Google sign-in."}, status=400)
         claims = verify_social_id_token(
             serializer.validated_data["provider"],
             serializer.validated_data["id_token"],
@@ -226,43 +228,8 @@ class OwnerSignupView(AuthCookieCsrfMixin, APIView):
         if User.objects.filter(email__iexact=email).exists():
             return Response({"email": ["User with this email already exists."]}, status=400)
 
-        user = User.objects.create_user(
-            username=email,
-            email=email,
-            password=data["password"],
-            full_name=data.get("full_name", "").strip(),
-            phone=data.get("phone", "").strip(),
-            role=User.Roles.BUSINESS_OWNER,
-            is_active=True,
-        )
-        business = Business.objects.create(
-            owner=user,
-            name=data["business_name"].strip(),
-            slug=self._unique_business_slug(data["business_name"]),
-            business_type=data.get("business_type") or Business.BusinessTypes.OTHER,
-            city=data.get("city", "").strip(),
-            phone=data.get("phone", "").strip(),
-            whatsapp=data.get("phone", "").strip(),
-            timezone="Asia/Almaty",
-            status=Business.Statuses.TRIAL,
-        )
-        ensure_default_roles(business)
-        apply_business_type_defaults(business, configured_by=user)
-        from apps.branches.single_location import ensure_initial_location
-        ensure_initial_location(business)
-        ensure_default_pipeline(business)
-        owner_role = BusinessRole.objects.filter(
-            business=business,
-            preset_key=BusinessMember.Roles.OWNER,
-            is_active=True,
-        ).first()
-        BusinessMember.objects.create(
-            business=business,
-            user=user,
-            role=BusinessMember.Roles.OWNER,
-            business_role=owner_role,
-            is_active=True,
-        )
+        from apps.accounts.google_auth_signup import create_owner_account
+        user, business = create_owner_account(data)
         record_signup_acknowledgements(request, user, data["accepted_documents"])
         if requires_mfa(user):
             return Response(
