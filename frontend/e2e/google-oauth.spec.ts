@@ -25,6 +25,8 @@ async function google(page: Page, email: string, sub = email) {
         const button=document.createElement('button'); button.textContent='Synthetic Google';
         button.dataset.googleText=appearance.text;
         button.dataset.googleSize=appearance.size;
+        button.dataset.googleWidth=appearance.width;
+        button.style.width=appearance.width+'px';
         button.onclick=async()=>options.callback({credential:await window.syntheticGoogleToken(options.nonce)});
         parent.appendChild(button);
       }}}};`,
@@ -103,6 +105,23 @@ test("expired flow offers restart without creating an account", async ({ page },
 });
 
 for (const entry of ["login", "signup"]) {
+test(`${entry}: resizing the Google button preserves the current attempt`, async ({ page }, info) => {
+  await google(page, `resize-${entry}-${info.project.name}@example.test`);
+  let starts = 0;
+  page.on("request", request => { if (request.url().endsWith("/api/auth/google/start/")) starts += 1; });
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto(`/${entry}`);
+  const button = page.getByRole("button", { name: "Synthetic Google", exact: true });
+  await expect(button).toHaveAttribute("data-google-width", "400");
+  const before = starts;
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect.poll(async () => Number(await button.getAttribute("data-google-width"))).toBeLessThan(390);
+  expect(await button.evaluate(element => element.getBoundingClientRect().right <= element.parentElement!.getBoundingClientRect().right)).toBe(true);
+  expect(starts).toBe(before);
+  await button.click();
+  await expect(page).toHaveURL(/\/google\/complete$/);
+});
+
 test(`${entry}: idle expiry renews silently and Google still works`, async ({ page }, info) => {
   await google(page, `idle-${entry}-${info.project.name}@example.test`);
   await page.clock.install();

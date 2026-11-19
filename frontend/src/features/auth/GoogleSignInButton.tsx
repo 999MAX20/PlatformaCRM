@@ -52,6 +52,7 @@ export function GoogleSignInButton({ disabled, onCredential, text = "continue_wi
     let refreshing = false;
     let generation = 0;
     let expiresAt = 0;
+    let draw: ((restoreFocus?: boolean) => void) | undefined;
     let expiry: number | undefined;
     setReady(false);
     setHasButton(false);
@@ -83,18 +84,25 @@ export function GoogleSignInButton({ disabled, onCredential, text = "continue_wi
             });
           },
         });
-        mount.replaceChildren();
-        identity.renderButton(mount, {
-          type: "standard", theme: "outline", size: "medium", text,
-          width: Math.min(400, Math.floor(mount.getBoundingClientRect().width)), locale: language,
-        });
+        let lastWidth = 0;
+        draw = (restore = false) => {
+          const width = Math.min(400, Math.floor(mount.getBoundingClientRect().width));
+          if (!active || width <= 0 || width === lastWidth) return;
+          lastWidth = width;
+          restore ||= mount.contains(document.activeElement);
+          mount.replaceChildren();
+          identity.renderButton(mount, {
+            type: "standard", theme: "outline", size: "medium", text, width, locale: language,
+          });
+          if (restore) window.requestAnimationFrame(() => {
+            if (active && document.activeElement === document.body) {
+              mount.querySelector<HTMLElement>('iframe, button, [role="button"]')?.focus();
+            }
+          });
+        };
+        draw(restoreFocus);
         setHasButton(true);
         setReady(true);
-        if (restoreFocus) window.requestAnimationFrame(() => {
-          if (active && document.activeElement === document.body) {
-            mount.querySelector<HTMLElement>('iframe, button, [role="button"]')?.focus();
-          }
-        });
         expiresAt = Date.now() + flow.expires_in * 1000;
         expiry = window.setTimeout(() => {
           if (document.visibilityState === "visible") void prepare();
@@ -112,6 +120,10 @@ export function GoogleSignInButton({ disabled, onCredential, text = "continue_wi
         void prepare();
       }
     };
+    const resize = new ResizeObserver(() => {
+      if (!refreshing && !submitted) draw?.();
+    });
+    if (mount) resize.observe(mount);
     void prepare();
     document.addEventListener("visibilitychange", resume);
     window.addEventListener("focus", resume);
@@ -120,6 +132,7 @@ export function GoogleSignInButton({ disabled, onCredential, text = "continue_wi
       window.clearTimeout(expiry);
       document.removeEventListener("visibilitychange", resume);
       window.removeEventListener("focus", resume);
+      resize.disconnect();
       mount?.replaceChildren();
     };
   }, [attempt, language, t, text]);
