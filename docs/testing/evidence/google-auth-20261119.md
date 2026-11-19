@@ -178,3 +178,64 @@ reset. Local locale screenshots/keyboard/error-retention evidence supplement liv
 RU GIS evidence. New decoration/colors/assets N/A; reused official SDK and existing
 tokens. Legal text readiness and earlier full production signup/repeat-login scope
 remain separate; this verifies the new entry point and isolated end-to-end creation.
+
+## Static Google entry correction (2026-11-19)
+
+Owner requested generic buttons without remembered name/email/avatar and no passive
+expiry alert on login/signup. Reused shared GoogleSignInButton and existing protected
+nonce/API flow; backend, cookies/TTL policy, identity linking and MFA unchanged.
+Official GIS medium setting disables personalized presentation per Google's linked
+personalized-button guide. Expired idle preparation renews without replacing the
+button with an alert/loading paragraph; input stays intact. Hidden-tab return checks
+expiry. Renewal stops before credential verification; generation rejects stale
+callbacks. Actual verified onboarding retains its expiry and retry behavior.
+
+Source commits 4063c2125e5a662802fd8c0823288719a8854c69 and
+2e423f3b8ec54faab3818396c136071d853b18f7, normal-pushed/read back from origin/main.
+First focused run 44/44 PASS. Live inspection found fixed-width overflow when the
+window narrowed; added ResizeObserver redraw without a new auth attempt and reran
+affected suite: `.venv/Scripts/python.exe scripts/verify_google_oauth_browser.py
+google-static-button-final-20261119`, 48/48 PASS in 3.1m, desktop/mobile RU/KK/EN.
+New cases cover idle renewal retaining input, slow credential verification without
+rotation, and resize preserving the attempt then successful callback. Existing new
+owner, explicit link, known identity/MFA, expiry and script/verification retry pass.
+Google SDK/JWKS and accelerated expiry are synthetic; backend is real and isolated.
+Both owned test runtimes stopped and fixtures deleted. Local screenshots inspected;
+local working-tree form/CSS WIP is not presented as exact deployed visual evidence.
+
+Deployed frontend is intentionally f43f2ba2 plus ONLY the two Google runtime/type
+paths from the task commits. Other published form/CSS changes and dirty password
+work are excluded. Exact artifact tree f7613883a30bbd0739fb15674aba524eb5b0212c;
+source binding differs from committed blobs only in CRLF/LF, verified after newline
+normalization. Immutable tree/source hashes remain recorded. Frozen npm install,
+i18n/types/app/widget build PASS;3480 source files and580 build files verified.
+Bundle budget PASS on manifest-listed new assets: shell356.6kB <400kB. Existing
+RU/KK dictionaries603.1/604.8kB warnings retained. Initial post-retention bundle check
+included legacy cached assets and failed the single-shell assertion; rerun against
+the complete current manifest assets passed, no gate or production asset deletion.
+
+Final frontend switch 2026-11-19T14:19:40Z. Receipt:
+output/google-static-release-final-20261119/static-receipt.json. Backend ac9a8d71,
+service identities/restart counters, env, DB/migrations and other Caddy sites unchanged.
+Previous static artifacts/Caddy retained for static-only rollback. HTTPS login,
+signup, ready and exact entry asset hashes PASS. CI44542486686 in_progress at readback;
+full CI not awaited by owner instruction. Earlier4063 run44541061154 also in_progress
+when inspected, not claimed green.
+
+Actual Chrome server acceptance: generic Google labels on login/signup despite
+remembered Google accounts; login keyboard Enter opens account chooser, closing it
+leaves generic button. Final signup after desktop-to390px resize opens chooser too.
+No account chosen, real registration, new consent grant or account mutation performed.
+Signup button267px and login332px fit mobile forms; resized back to desktop and
+inspected. Temporary viewport reset; owned popups/signup tab closed, login retained.
+Screenshots saved AND visually inspected under output/google-static-release-final-20261119:
+login-desktop.jpg, login-mobile.jpg, signup-desktop.jpg, signup-mobile.jpg.
+
+Scoped UI delivery gate: PASS geometry/no overflow, real actions, keyboard, retained
+input, loading/error/retry and responsive/localized checks. Official Google branding
+and its intrinsic medium control retained to meet the no-personalization request;
+no custom colors/assets/motion or adjacent layout introduced. Provider-internal
+contrast/target dimensions not restyled. Purpose/liveliness: existing green form
+identity and hierarchy preserved; no new decorative technique. Full production
+registration/repeat-login remains outside this correction's live acceptance; isolated
+end-to-end coverage is explicitly distinguished above.

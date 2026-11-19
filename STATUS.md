@@ -2585,3 +2585,5 @@ AUTH-HALVES-20261119 follow-up: login/signup/forgot/reset/MFA form cards and con
 are shadow-free; keyboard outline retained. Desktop/mobile visual checks and build/
 types/bundle PASS. Legal-document work paused by owner; no legal product edits.
 Evidence: [checkpoint](docs/testing/task-state/PRIMARY-SESSION.md#auth-halves-20261119--shadow-free-forms).
+
+GOOGLE-STATIC-BUTTON-20261119: generic Google buttons and silent idle renewal deployed on login/signup; responsive redraw preserves attempts. Focused48/48 and immutable build/types PASS, real server desktop/mobile chooser checks PASS. Google-only overlay2e423f3b on deployedf43; backendac9 unchanged. Evidence: docs/testing/evidence/google-auth-20261119.md.

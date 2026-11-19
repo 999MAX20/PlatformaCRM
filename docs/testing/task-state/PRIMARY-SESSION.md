@@ -15004,3 +15004,33 @@ Scoped Anti Slop gate PASS: geometry, no shadows, visible keyboard focus, contro
 error state and responsive layout. Frontend contract updated; no domain/passport or
 roadmap behavior change. Legal files untouched; deferred analysis remains under output/
 legal-documents-20261119, no published legal changes. No remaining local CSS criteria.
+
+### GOOGLE-STATIC-BUTTON-20261119
+
+Prior f43 signup entry/live callback PASS -> owner reports personalized Google
+identity and passive expiry -> narrow shared-button correction on login/signup.
+Base f81a2695, canonical Desktop/PlatformaCRM, existing branch; dirty password,
+SignupPage and evidence work remains foreign. Reuse GIS/API/session/MFA contracts.
+Official GIS medium button prevents personalization; renew expired idle preparation
+without a timeout alert, preserve email input and in-flight credential verification.
+No backend, migration, permission, AI, notification or provider scope changes.
+Skills antislop during + UI/human: preserve approved green form/tokens, official
+Google branding, no new assets; keyboard/retry and mobile screenshots. Existing
+visual direction retained (energy/rhythm/motion 1/1/1 for this bounded control).
+Checks: focused Google browser suite plus idle renewal/slow verification/recovery,
+real Google button screenshots and interaction, build/types, exact source-only
+publication and frontend rollout within ongoing server-form audit. No full CI wait.
+
+### GOOGLE-STATIC-BUTTON-20261119: closure
+
+Generic GIS medium label and silent idle renewal implemented4063c212. Actual browser
+resize exposed overflow -> minimal ResizeObserver redraw2e423f3b without rotating
+nonce -> final48/48 focused Google cases PASS, immutable build/types/bundle PASS.
+Both commits published normally. Artifact f7613883 is deployedf43 plus only Google
+component/type changes, source equality verified with CRLF/LF normalization; foreign
+committed/uncommitted form work excluded. Final switch2026-11-19T14:19:40Z; backendac9,
+DB/env/services untouched and static rollback retained. Real desktop/mobile generic
+labels, keyboard chooser/cancel and resize chooser PASS; screenshots inspected.
+UI gate PASS within scope; full production account creation not performed. CI44542486686
+in_progress at inspection, not awaited. All task-owned test processes stopped/fixtures
+deleted. Evidence: [Google auth](../evidence/google-auth-20261119.md#static-google-entry-correction-2026-11-19).
