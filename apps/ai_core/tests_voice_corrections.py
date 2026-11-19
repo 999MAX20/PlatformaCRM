@@ -9,13 +9,53 @@ from apps.ai_core.conversation_state import cancel_turn, reset_memory, start_tur
 from apps.ai_core.services import process_ai_job
 from apps.ai_core.tests_conversation_execution import action_route, create_step, output
 from apps.ai_core.tool_registry import tool_call_fingerprint
-from apps.ai_core.voice_schedule_patch import apply_schedule_patch, unchanged_correction
+from apps.ai_core.voice_schedule_patch import apply_schedule_patch, unchanged_correction, uncertain_kazakh_name
 from apps.clients.models import Client
 from apps.core.domain_errors import IdempotencyConflict
 from apps.scheduling.models import Appointment
 
 
 class SchedulePatchTests(SimpleTestCase):
+    def test_uncertain_time_can_still_be_cleared_for_clarification(self):
+        previous = {"visits": [{"time": "12:00", "time_text": "noon", "time_basis": "business"}]}
+        result = apply_schedule_patch(previous, {"patch": {}, "visits": [{"index": 1, "time": "", "time_text": ""}]}, "Время пока неизвестно")
+        self.assertEqual(result["visits"][0]["time"], "")
+
+    def test_case_ending_is_only_a_clarification_signal_not_a_name_rewrite(self):
+        self.assertTrue(uncertain_kazakh_name("Айжан Қасымованы", "Жаңа клиент Айжан Қасымованы қабылдауға жаз"))
+        self.assertTrue(uncertain_kazakh_name("Марат Алтынды", "Жаңа клиент Марат Алтынды қабылдауға жаз"))
+        self.assertFalse(uncertain_kazakh_name("Айжан Қасымова", "Жаңа клиент Айжан Қасымованы қабылдауға жаз"))
+        self.assertFalse(uncertain_kazakh_name("Марат Алтынды", "Book Марат Алтынды at noon"))
+        self.assertFalse(uncertain_kazakh_name("Әсел", "Жаңа клиент Әсел Сынақты жаз"))
+
+    def test_repeated_time_evidence_is_allowed_only_for_unchanged_time(self):
+        previous = {"client_phone": "+77012345678", "visits": [{"time": "12:00", "time_text": "noon", "time_basis": "business"}]}
+        patch = {"patch": {"client_phone": "+77012345679"}, "visits": [{"index": 1, **previous["visits"][0]}]}
+        self.assertEqual(apply_schedule_patch(previous, patch, "last digit nine")["client_phone"], "+77012345679")
+        for field, changed in (("time", "13:00"), ("time_basis", "utc")):
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                invalid = deepcopy(patch)
+                invalid["visits"][0][field] = changed
+                apply_schedule_patch(previous, invalid, "last digit nine")
+
+    def test_changed_phone_cannot_hide_ignored_name_in_same_answer(self):
+        previous = {"client_name": "Әсел Сынақ", "client_phone": "+77012345678", "visits": []}
+        changed = {**previous, "client_phone": "+77012345679"}
+        self.assertEqual(unchanged_correction(previous, changed, "Фамилия Тестова, телефон +77012345679"), "client_name")
+        self.assertEqual(unchanged_correction(previous, changed, "Әсел емес, Әсем, телефон +77012345679"), "client_name")
+        both = {**changed, "client_name": "Әсел Тестова"}
+        self.assertEqual(unchanged_correction(previous, both, "Фамилия Тестова, телефон +77012345679"), "")
+        self.assertEqual(unchanged_correction(previous, {**both, "client_phone": previous["client_phone"]},
+                                            "Фамилия Тестова, телефон +77012345679"), "client_phone")
+
+    def test_ignored_surname_correction_is_not_hidden_by_time_change(self):
+        previous = {"client_name": "Әсел Сынақ", "client_phone": "", "visits": [{"time": "12:00"}]}
+        changed = {**previous, "visits": [{"time": "13:00"}]}
+        for message in ("Фамилия Тестова, время 13:00", "Тегі Тестова, сағат 13:00",
+                        "Surname Testova, time 13:00", "Last name Testova, time 13:00"):
+            with self.subTest(message=message):
+                self.assertEqual(unchanged_correction(previous, changed, message), "client_name")
+
     def test_kazakh_time_negation_is_not_a_name_correction(self):
         previous = {"client_name": "Әсел Сынақ", "client_phone": "", "visits": [{"time": "12:00"}]}
         corrected = {**previous, "visits": [{"time": "13:00"}]}
@@ -63,6 +103,30 @@ class VoiceCorrectionTests(TestCase):
         turn.refresh_from_db()
         return turn
 
+    def test_initial_kazakh_case_form_asks_full_name_and_preserves_booking(self):
+        draft = self.draft(client_name="Әсел Сынақты", client_phone="+77012345678")
+        draft["visits"][0]["time_text"] = "сағат он екіге"
+        initial = self.run_turn(draft, confirm_client=False, message=
+            "Жаңа клиент Әсел Сынақты екі мың отызыншы жылғы жетінші қарашада сағат он екіге Консультация қызметіне Аннаға жаз.")
+        self.assertEqual(initial.status, "clarifying", initial.error_code)
+        self.assertFalse(initial.tool_calls.exists())
+        self.assertEqual(initial.context_json["schedule_draft"]["client_name"], "")
+        self.assertEqual(initial.context_json["schedule_draft"]["visits"], draft["visits"])
+        self.assertEqual(initial.context_json["schedule_draft"]["client_phone"], draft["client_phone"])
+        recovered = self.correct("Әсел Сынақ", {"patch": {"client_name": "Әсел Сынақ"}, "visits": []})
+        self.assertEqual(recovered.status, "awaiting_confirmation", recovered.error_code)
+        self.assertFalse(Client.objects.exists())
+        fixtures.confirm_prepared_creation(recovered, self.owner)
+        self.assertEqual(Client.objects.get().full_name, "Әсел Сынақ")
+        self.assertEqual(Appointment.objects.count(), 1)
+
+    def test_explicit_full_name_reply_keeps_a_real_name_ending_in_case_letters(self):
+        draft = self.draft(client_name="Марат Алтынды")
+        self.run_turn(draft, confirm_client=False, message="Жаңа клиент Марат Алтынды at noon November 7 2030, Consultation with Anna, жаз")
+        recovered = self.correct("Толық аты-жөні Марат Алтынды", {"patch": {"client_name": "Марат Алтынды"}, "visits": []})
+        self.assertEqual(recovered.status, "awaiting_confirmation", recovered.error_code)
+        self.assertEqual(recovered.context_json["schedule_draft"]["client_name"], "Марат Алтынды")
+
     def test_live_pilot_unchanged_phone_requires_clarification_and_recovery(self):
         initial = self.run_turn(self.draft(client_phone="+77012345678"), confirm_client=False)
         corrected = self.correct("Соңғы сан сегіз емес, тоғыз. Остальные цифры не меняй.",
@@ -74,6 +138,44 @@ class VoiceCorrectionTests(TestCase):
         recovered = self.correct("Телефон +77012345679", {"patch": {"client_phone": "+77012345679"}, "visits": []}, key="recovered")
         self.assertEqual(recovered.status, "awaiting_confirmation", recovered.error_code)
         self.assertEqual(recovered.context_json["schedule_draft"]["client_phone"], "+77012345679")
+
+    def test_live_corrected_phone_with_repeated_visit_fields_requires_review(self):
+        initial = self.run_turn(self.draft(client_name="Әсел Сынақ", client_phone="+77012345678"), confirm_client=False)
+        repeated = deepcopy(initial.context_json["schedule_draft"]["visits"][0])
+        corrected = self.correct("Соңғы сан сегіз емес, тоғыз. Остальные цифры не меняй.", {"schedule": {
+            "patch": {"client_name": "Әсел Сынақ", "client_phone": "+77012345679", "client_id": None},
+            "visits": [{"index": 1, **repeated}]}})
+        self.assertEqual(corrected.status, "awaiting_confirmation", corrected.error_code)
+        self.assertEqual(corrected.context_json["schedule_draft"]["visits"], initial.context_json["schedule_draft"]["visits"])
+        self.assertEqual(corrected.context_json["schedule_draft"]["client_phone"], "+77012345679")
+        self.assertFalse(Client.objects.exists())
+        self.assertFalse(Appointment.objects.exists())
+        fixtures.confirm_prepared_creation(corrected, self.owner)
+        self.assertEqual(Client.objects.get().phone, "+77012345679")
+        self.assertEqual(Appointment.objects.count(), 1)
+
+    def test_ignored_surname_requires_full_name_and_fresh_approval(self):
+        initial = self.run_turn(self.draft(client_name="Әсел Сынақ"), confirm_client=False)
+        old = initial.tool_calls.get()
+        ignored = self.correct("Фамилия Тестова, время 13:00", {"patch": {}, "visits": [
+            {"index": 1, "time": "13:00", "time_text": "13:00"}]})
+        self.assertEqual(ignored.status, "clarifying", ignored.error_code)
+        self.assertEqual(ignored.context_json["schedule_correction_field"], "client_name")
+        self.assertFalse(ignored.tool_calls.exists())
+        self.assertFalse(Client.objects.exists())
+        bypass = self.correct("В 14:00", {"patch": {}, "visits": [
+            {"index": 1, "time": "14:00", "time_text": "14:00"}]}, key="bypass-name")
+        self.assertEqual(bypass.status, "clarifying", bypass.error_code)
+        self.assertFalse(bypass.tool_calls.exists())
+        recovered = self.correct("Әсел Тестова", {"patch": {"client_name": "Әсел Тестова"}, "visits": []}, key="full-name")
+        self.assertEqual(recovered.status, "awaiting_confirmation", recovered.error_code)
+        self.assertEqual(recovered.context_json["schedule_draft"]["visits"], initial.context_json["schedule_draft"]["visits"])
+        with self.assertRaises(IdempotencyConflict):
+            confirm_turn(conversation_id=self.thread.pk, turn_id=initial.pk, user=self.owner,
+                expected_revision=initial.sequence, actions=[{"id": old.pk, "fingerprint": tool_call_fingerprint(old)}])
+        fixtures.confirm_prepared_creation(recovered, self.owner)
+        self.assertEqual(Client.objects.get().full_name, "Әсел Тестова")
+        self.assertEqual(Appointment.objects.count(), 1)
 
     def test_unresolved_phone_correction_cannot_be_bypassed_by_name_change(self):
         initial = self.run_turn(self.draft(client_phone="+77012345678"), confirm_client=False)

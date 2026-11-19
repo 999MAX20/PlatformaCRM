@@ -1264,7 +1264,7 @@ class WhatsAppIntegrationFoundationTests(TestCase):
                     "business": self.business.id,
                     "code": "embedded-code",
                     "state": start_response.data["state"],
-                    "redirect_uri": "https://app.zani.kz/app/integrations",
+                    "redirect_uri": start_response.data["redirect_uri"],
                     "phone_number_id": "phone-embedded",
                     "waba_id": "waba-embedded",
                     "registration_pin": "123456",

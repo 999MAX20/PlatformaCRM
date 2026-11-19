@@ -11,7 +11,8 @@ from apps.ai_core.agent_runtime import bind_command
 from apps.ai_core.crm_tools import scoped_entities
 from apps.ai_core.services import run_ai_request
 from apps.ai_core.voice_schedule_commands import MAX_VISITS, validate_schedule
-from apps.ai_core.voice_schedule_patch import PATCH_CONTRACT, apply_schedule_patch, pending_schedule, unchanged_correction, UnchangedScheduleCorrection
+from apps.ai_core.voice_schedule_patch import (PATCH_CONTRACT, apply_schedule_patch, pending_schedule,
+    unchanged_correction, uncertain_kazakh_name, UnchangedScheduleCorrection, UncertainScheduleName)
 from apps.ai_core.voice_schedule_schema import SCHEMA_CONTRACT, schedule_schema
 from apps.clients.identity import normalize_phone
 from apps.core.domain_errors import ScheduleConflict
@@ -38,6 +39,11 @@ must be empty strings, never 00:00 or a default appointment hour. If date is abs
 date must be empty; retain the supplied time. Never invent a date or a time.
 Do not guess missing client, date, time, service, specialist or branch. Use empty strings.
 Normalize inflected personal names to their nominative lookup form, preserving identity.
+Retain every supplied component of the full name, including a surname that is also
+an ordinary word. Never shorten a full name to its first name. In Kazakh booking
+requests a grammatical case ending on the final name component is not part of the
+surname's nominative form. If that form is uncertain, leave client_name empty for
+clarification rather than guessing, dropping the surname or claiming it is resolved.
 Explicit corrections override the rejected value: "Әсел емес, Әсем" selects Әсем;
 "не в 12, а в 13" selects 13. Do not combine names or retain a negated time.
 If the intended corrected value is unclear, leave that field empty for clarification.
@@ -197,6 +203,7 @@ def extract_schedule(turn, memory, language):
                 visit["time"] = ""
             if selected_branch and not visit["branch"].strip():
                 visit["branch"] = selected_branch.name
+        new_booking = False
         if draft:
             from apps.ai_core.voice_policy import voice_booking_request
             new_booking = not patched and voice_booking_request(turn.message) and re.search(
@@ -205,6 +212,9 @@ def extract_schedule(turn, memory, language):
                 draft, value, turn.message, pending.get("schedule_correction_field", ""))
             if field:
                 raise UnchangedScheduleCorrection(field, log.pk)
+        if (not draft or new_booking) and value["client_id"] is None and uncertain_kazakh_name(value["client_name"], turn.message):
+            value["client_name"] = ""
+            raise UncertainScheduleName(value, log.pk)
         return value, log.pk
     except (ValueError, KeyError, TypeError):
         raise AIClientError(code="invalid_action_plan", retryable=False) from None
@@ -391,7 +401,8 @@ def prepare_schedule(turn, plan, memory, language):
         question = questions.get(language, questions["ru"])[exc.field]
         return {"plan": plan, "prepared": [], "references": [], "question": question, "response": question,
                 "status": "clarifying", "request_log_id": exc.request_id,
-                "context": {"schedule_draft": pending_schedule(turn, memory), "schedule_correction_field": exc.field}}
+                "context": {"schedule_draft": exc.draft if isinstance(exc, UncertainScheduleName) else pending_schedule(turn, memory),
+                            "schedule_correction_field": exc.field}}
     payload, question, references = resolve_schedule(business=turn.conversation.business,
         user=turn.conversation.owner, draft=draft, language=language, focused=bool(pending_schedule(turn, memory)))
     prepared = []

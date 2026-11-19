@@ -31,7 +31,7 @@ function readPending(): MfaPendingResponse | null {
   }
 }
 
-export function MfaPage() {
+export function MfaPage({ embedded = false, onComplete }: { embedded?: boolean; onComplete?: () => Promise<void> } = {}) {
   const { t } = useI18n();
   const navigate = useNavigate();
   const location = useLocation();
@@ -69,6 +69,7 @@ export function MfaPage() {
   async function finishSession() {
     const user = await completeMfaSession();
     sessionStorage.removeItem("zani_mfa_pending");
+    if (onComplete) { await onComplete(); return; }
     const storedReturnTo = consumeSessionExpiredReturnTo();
     const intendedPath = getAuthReturnPathFromState(location.state) || storedReturnTo;
     navigate(getPostAuthReturnPath(user.is_platform_user, intendedPath), { replace: true });
@@ -116,10 +117,11 @@ export function MfaPage() {
 
   const title = !pending ? t("mfa.sessionExpiredTitle") : t("mfa.title");
   const description = !pending ? t("mfa.sessionExpiredText") : verified ? t("mfa.completingText") : pending.code === "mfa_enrollment_required" ? t("mfa.addAuthenticator") : t("mfa.text");
+  const Surface = embedded ? "div" : "main";
 
   return (
-    <main className="serenity-login serenity-login--signal-field serenity-login--mfa">
-      <div className="serenity-login__ambient" aria-hidden="true"><span /><span /><span /><span /><span /></div>
+    <Surface className={embedded ? "space-y-4" : "serenity-login serenity-login--signal-field serenity-login--mfa"}>
+      {!embedded && <><div className="serenity-login__ambient" aria-hidden="true"><span /><span /><span /><span /><span /></div>
       <header className="serenity-login__header">
         <Link className="serenity-login__brand" to="/login">
           <img className="serenity-login__brand-logo" src="/brand/platforma-crm-logo-transparent.png" alt="PlatformaCRM" width={2170} height={725} />
@@ -127,14 +129,14 @@ export function MfaPage() {
         <div className="serenity-login__header-actions">
           <LanguageSelector className="serenity-login__language" />
         </div>
-      </header>
+      </header></>}
 
-      <div className="serenity-login__layout">
-        <section className="serenity-login__story" aria-label={t("mfa.title")}>
+      <div className={embedded ? "" : "serenity-login__layout"}>
+        {!embedded && <section className="serenity-login__story" aria-label={t("mfa.title")}>
           <h1>{t("mfa.hero")}</h1>
-        </section>
-        <section className="serenity-login__form-area" aria-label={title}>
-          <div className="serenity-login__card">
+        </section>}
+        <section className={embedded ? "" : "serenity-login__form-area"} aria-label={title}>
+          <div className={embedded ? "space-y-4" : "serenity-login__card"}>
             <h2 aria-live="polite">{title}</h2>
             <p className="serenity-login__card-copy">{description}</p>
 
@@ -182,6 +184,6 @@ export function MfaPage() {
           </div>
         </section>
       </div>
-    </main>
+    </Surface>
   );
 }

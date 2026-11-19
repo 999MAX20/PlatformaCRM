@@ -1041,3 +1041,253 @@ CI44404460792 was in_progress at inspection, not PASS. Full intended patch,
 index/working/committed diff hygiene and evidence links checked. Foreign WIP
 preserved, shared STATUS/frontend hunks staged separately. Working migration/worker
 rollout remain deployment work, not silently completed. Final receipt in checkpoint.
+
+## Inbox AI pilot candidate review — 19.11.2026
+
+Authorized by Manager delegation: assess customer Inbox AI tenant isolation,
+replay, staff handoff/app echo, no AI on imported history, outage fallback and
+confirmation. Verification/evidence only; no provider/server activation, paid
+calls, product changes, STATUS/PRIMARY edits or commit/push.
+Snapshot: canonical PlatformaCRM, codex/ui-testing-toolkit,
+HEAD b9415d71e89167fcbf74c55187009481da066389. Foreign invitations/access/signup
+WIP remains excluded; starting index empty. Skills: zani-evaluate-ai-grounding,
+zani-run-verification. No UI changes; UI delivery gate not applicable.
+Prior result: batching/continuity local PASS at85d086e6 and YCloud history PASS
+before that runtime delta -> missing combined current-snapshot evidence -> run
+only history/echo, deterministic outage/handoff, confirmation and tenant API
+checks with isolated_runtime and mocked providers. Existing200-scenario evidence
+is retained as historical scoped evidence, not a new run or live certification.
+Risk: outbound/CRM effects and foreign-tenant disclosure. Reuse existing tests,
+services and contracts; no implementation planned. Completion: focused results,
+exact included code/migration/worker requirements and explicit live limitations.
+
+### Result and candidate boundary
+
+**PASS: 60 tests, zero failures/skips, 118.400s test execution**, exit0.
+Django system check: no issues. Disposable SQLite via isolated_runtime; provider
+clients mocked, no real messages/model calls. Test DB destroyed; runtime exited
+and temporary resources cleaned normally. Full log:
+`output/ai-agents-message-batch-20261119/verify-1795069338934731600-0.log`.
+Exact command from canonical root:
+
+```powershell
+.venv/Scripts/python.exe output/ai-agents-message-batch-20261119/verify.py apps.integrations.tests_ycloud_history apps.integrations.tests_ycloud_coexistence apps.bots.tests_handoff_notice apps.conversations.tests_ai_confirmation apps.bots.tests.InboxBackendTests.test_inbox_summary_is_tenant_safe apps.bots.tests.InboxBackendTests.test_inbox_conversations_are_tenant_filtered apps.bots.tests.InboxBackendTests.test_outbound_send_enforces_permission_and_tenant_scope
+```
+
+| Coverage | Current result |
+| --- | --- |
+| YCloud history14 | No AI/outbox/unread/customer-window effects; foreign/unsigned rejection, replay, identity conflict, history/echo ordering, rollback/recovery |
+| YCloud coexistence19 | App echo imports once, staff handoff/cancel, no resend/window extension, stale/wrong route rejection, dispatch rechecks staff takeover |
+| Handoff notice13 | Classification/reply outage and empty output use deterministic handoff, no second model reply; no-send policy/quota, retry same outbox, stale notice revoked |
+| Confirmation11 | Read-only preview, selected actions once, missing/mismatched/stale/new-message rejection, role/tenant denial without writes, atomic service boundary |
+| Inbox tenant API3 | Scoped summary/list; outbound denied by permission and foreign conversation |
+
+Existing batching/continuity final47 and dependent97/unchanged56 evidence above
+remains applicable to unchanged production paths (not rerun and not added to60
+as distinct tests). Existing focused booking/action policy evidence retained.
+Source review confirms business/agent identity checks in inbox_memory_conversation,
+message/conversation binding in run_inbound_once and queue_inbound, replay-scoped
+record lookup, history bypass and staff checks before dispatch. No new code gap
+was reproduced within the requested boundary.
+
+Included feature composition at b9415d71: existing customer knowledge/safety/
+handoff and per-action policies (62e9e5e8 plus subsequent published fixes),
+current-message language priority7cb9bb59, YCloud history9c86bc76, and
+85d086e6 preview explanations + durable opt-in batching; b9415d71 is its docs
+receipt. This is a feature inventory, not a cherry-pick/deployment recipe.
+Batching requires bots.0015_inbound_message_batch (after0014), updated beat task
+bots.process_due_inbound_batches every1s, worker queue integrations; up to20 due
+groups/pass. Setting defaults0; allowed2/3/5s waits,15s group deadline, queue delay
+can extend actual response latency. Do not enable existing agents automatically.
+Existing action settings require explicit upgrade/save; policies are not migrated
+silently. Preview remains simulation and does not exercise the batching timer.
+
+Remaining environment/evidence: exact server SHA/schema/beat-worker deployment,
+live provider/phone history consent, live echo/delivery/uncertain-send recovery,
+real-model KK-to-EN retest. No new threaded PostgreSQL batch concurrency or live
+Celery restart certification. Earlier PostgreSQL YCloud evidence remains a
+separate boundary. Local PASS is not production admission or whole-release PASS.
+No implementation/owner-policy blocker found for these local tested scenarios.
+
+Only this existing thematic evidence file changed by this task. No product code,
+STATUS/PRIMARY, ycloud/signup WIP, branch, commit/push or server changes. Foreign
+voice test edits appeared during the run and were preserved; no targeted runtime
+production files changed and HEAD remained b9415d71. Frontend build/browser and
+migration drift were not rerun: no relevant UI/schema/config/dependency delta;
+prior scoped evidence retained. Coordinator owns final candidate build and any
+broader integration gate. Recheck if targeted code/dependencies/config changes.
+
+### Durable batching PostgreSQL concurrency boundary follow-up
+
+Read-only source/evidence review requested by Manager, same HEAD b9415d71.
+No threaded PostgreSQL batching test or applicable PG batching PASS found.
+Search across apps test files and verification scripts for InboundMessageBatch,
+process_batch/process_due_batches and inbound_wait_seconds identifies only
+apps/bots/tests_inbound_batching.py: InboundBatchTests inherits TestCase.
+Its overlapping-worker case invokes process_batch synchronously inside the
+patched pipeline; new-inbound case uses Context().run on the same thread.
+These prove deterministic interleavings, not separate-connection lock behavior.
+Existing PG booking/handoff-recovery/YCloud tests exercise different boundaries.
+The final47 log above remains valid for its isolated SQLite boundary only.
+
+Unproven race: two workers can both read the same due batch before entering
+run_inbound_once admission. PostgreSQL must serialize admission so exactly one
+AgentTurn/provider pipeline/outbox effect exists, with pending retirement in the
+same committed admission and no automatic replay of an uncertain accepted turn.
+This is an evidence gap, not a reproduced duplicate-effect defect.
+
+Minimal proposed regression (not implemented/run under this request): a PG-only
+TransactionTestCase with committed fixtures, two independent DB connections and
+an Event/Barrier at the boundary after batch read but before admission. Release
+both workers, mock model/transport boundaries, assert one AgentTurn for the latest
+message, one pipeline/model sequence, at most one outbound/effect, pending=False,
+and harmless third replay. Close each thread connection; use bounded waits and
+assert worker exceptions rather than swallowing them. Extend with failed-after-
+admission replay proving no second call.
+For full requested race boundary add two controlled interleavings: (1) commit a
+new inbound after old admission while generation is held, then complete old work;
+assert new batch stays pending and processes once, stale result sends nothing;
+(2) commit staff handoff/app echo on an independent connection while generation
+is held, then release; assert no subsequent AI action/outbox dispatch. Test barriers
+must not wait for a competing transaction while deliberately holding the same row
+lock. No live Celery or real provider needed.
+
+No PG runtime started: there is no existing focused concurrency set to run.
+Concurrency acceptance remains UNVERIFIED. No new code/tests, frontend build,
+commit/push, server or shared STATUS/PRIMARY changes. Evidence-only diff hygiene
+checked; implementation of the proposed regression is a separate next instruction.
+
+### PG batching regression implementation authorized
+
+Manager explicitly authorized three missing PG-only concurrency regressions.
+Prior sequential PASS -> separate-connection admission/new-inbound/handoff gap ->
+tests-only extension using existing fixtures/runtime, no production change planned.
+Starting HEAD b9415d71; foreign voice/export/invite/signup WIP preserved. Reuse
+scripts/verify_ycloud.py with explicit batching labels and disposable PostgreSQL17,
+unique auto-selected port/temp directory. Gates: three actual threaded PG cases,
+existing20 batching cases, system/drift; further affected checks only on a defect.
+No live Celery/provider, frontend build or automatic setting change.
+
+### PG concurrency result: requested three races verified
+
+Supersedes the earlier UNVERIFIED finding for these three database races only.
+New file: apps/bots/tests_inbound_batching_concurrency.py. PostgreSQL-only
+TransactionTestCase; independent thread connections closed in finally, bounded
+Barrier/Event waits, exceptions propagated through future.result. Mock model and
+transport boundaries; production admission/state/outbox paths exercised.
+
+- Two workers rendezvous after reading the same due group, before admission:
+  exactly one AgentTurn, classification/reply/send and outbound; pending cleared;
+  subsequent replay has no effect.
+- New inbound committed while the old classification waits: old reply/actions/
+  transport and non-staff outbound absent; new batch survives old completion,
+  then runs/sends once with two distinct turns total.
+- Staff handoff and manager message committed while classification waits:
+  handoff remains active, AI disabled, no subsequent reply/actions/transport or
+  non-staff outbound; batch retired and replay does nothing.
+
+Exact command (canonical checkout, PostgreSQL17 installed binaries):
+
+```powershell
+.venv/Scripts/python.exe scripts/verify_ycloud.py --postgres-bin 'C:/Program Files/PostgreSQL/17/bin' apps.bots.tests_inbound_batching_concurrency apps.bots.tests_inbound_batching
+```
+
+First run:21PASS/2FAIL, retained at
+output/ai-agents-message-batch-20261119/pg-batching-concurrency-20261119.log.
+New fixture inherited a conversation with no external_user_id; outbox correctly
+refused transport. Added explicit synthetic recipient; assertions not weakened,
+no production change. Second run:23/23 PASS,12.484s, zero skips; system/drift PASS.
+Log: output/ai-agents-message-batch-20261119/pg-batching-concurrency-final-20261119.log.
+While reviewing that run, strengthened the intervention assertion to reject every
+non-manager outbound (not only literal sender_type ai). Reran the final source:
+
+```powershell
+.venv/Scripts/python.exe scripts/verify_ycloud.py --postgres-bin 'C:/Program Files/PostgreSQL/17/bin' apps.bots.tests_inbound_batching_concurrency
+```
+
+Final3/3 PASS,5.320s, zero skips; system/drift PASS. Log:
+output/ai-agents-message-batch-20261119/pg-batching-concurrency-assertions-20261119.log.
+Applicable coverage is23 distinct tests across final3 + unchanged20, not26.
+Each run used isolated_runtime, its own temporary directory and auto-selected
+unused PostgreSQL port. Runner finally stops its own PG; exit0 and destroyed test
+DB/normal temporary cleanup confirmed on both successful runs. No shared DB,
+server, frontend output, live Celery or real provider was touched.
+
+Current production snapshot remains b9415d71; production delta NONE. Only new
+test file plus this evidence are task-owned/uncommitted. Full new test source
+reviewed, untracked-file and evidence diff hygiene PASS. No broader backend run
+needed after tests-only changes; existing scoped200 and current60 evidence retain
+their stated boundaries. General project contracts/passport need no behavior
+update: this narrows a verification gap only. STATUS/PRIMARY intentionally untouched.
+No commit/push by coordination instruction. Live restart/uncertain-provider delivery,
+server schema/worker deployment and real-model acceptance remain separate boundaries;
+this PASS does not authorize enabling batching for an existing agent.
+
+### Celery restart acceptance authorized
+
+User requests isolated real Celery restart verification, no real providers,
+server AI activation or commit/push. HEAD b9415d71; existing foreign WIP retained.
+Gap: database races verified, process restart not certified. Reuse recovery_runtime
+(disposable PG/Redis), real solo worker and isolated beat schedule; synthetic
+recipient and mock classification/reply/transport only. Verify pending survives
+worker loss and processes once after restart; crash after admission never blindly
+replays uncertain work. Record actual process/recovery outcomes and cleanup.
+No production edit planned; no frontend gate required.
+
+### Isolated real Celery restart result — 19.11.2026
+
+PASS on final probe at production HEAD b9415d71 (no production source changes).
+New task-owned operational probe: scripts/verify_inbound_batch_recovery.py;
+not imported/referenced by apps, config, CI or codex_verify full gate. Created
+12:15:39 Asia/Qyzylorda, last source change12:19:34; final run completed about12:21.
+It reuses recovery_runtime plus configured_app ownership/DB/broker guards;
+AI enabled only for synthetic local fixtures, AI_PROVIDER=mock. Classification,
+reply and transport boundaries are patched inside worker processes. Socket
+connect rejects non-loopback destinations. No production credentials/provider
+calls, server activation, working DB or frontend build.
+
+Exact command:
+
+```powershell
+.venv/Scripts/python.exe scripts/verify_inbound_batch_recovery.py --pg-bin 'C:/Program Files/PostgreSQL/17/bin' --redis-server output/crm-s04-20261014/deps/redis/Redis-7.4.9-Windows-x64-msys2/redis-server.exe
+```
+
+Final report: output/ai-agents-message-batch-20261119/celery-recovery-1795072749343759600.json.
+Adjacent .log contains setup, outcome and PG/Redis shutdown; same-basename folder
+contains three worker logs, beat log, PG log and synthetic effects.jsonl.
+Final report asserts beat_schedule_only_batching=PASS from actual scheduler log.
+Real Redis7.4.9 / PostgreSQL17, Celery solo worker (Windows), eager=False.
+
+1. Pending group persisted before stopping first worker; no AgentTurn/model call.
+   After marking it due while worker was down, replacement worker plus real beat
+   processed it exactly once: one completed turn, one reply, one mock send.
+2. Two additional real due-task dispatches completed without another effect.
+3. Second group admitted, pending atomically cleared, mock classification held.
+   Worker process tree force-stopped at this boundary. Replacement worker plus
+   repeated due tasks and duplicate inbound did not replay it: preparing turn
+   retained, duplicate returns skipped_preparing, no second reply/send. This
+   proves conservative no-replay, not automatic repair of an uncertain request.
+
+Observed effects: classification/reply/transport for recovered group, then only
+classification for interrupted group; two turns and one outbound total.
+Final ports PG50069/Redis50070, own temp zani-quality-gate-16hpfx3j. Worker/beat
+process trees stopped in finally, Redis shutdown and pg_ctl stop logged; runtime
+exit0 and temporary directory removed. No other processes stopped.
+
+First probe1795072554567784900 also passed recovery assertions and cleaned its
+PG60982/Redis60983, but beat used inherited schedule name inbound-message-batches.
+Retained its report/logs. Corrected harness via Django CELERY_BEAT_SCHEDULE override
+and added actual schedule-log assertion; final run above proves only batch-recovery
+was scheduled. No production fix or weakened assertion. Redis reduced maxclients
+to3168 due Windows file-descriptor limit; local drill completed without impact.
+
+SHA256 final probe: 6efda25b4d7d13b87205676a78e5113f74ba03a0951349e18e320a784ade5191.
+SHA256 final JSON: 100af88a87e600431bedca198b8dc34c1478eb1a31cf07f3c9aa0359e737c606.
+This closes isolated real worker-restart evidence, superseding the earlier local
+restart gap only. Does not certify Linux prefork/systemd rollout, Redis loss or
+visibility-timeout redelivery, real-provider uncertain delivery, production
+throughput, or live-model acceptance. No commit/push. No further heavy repeats
+started after coordinator resource warning; all owned probe resources released.
+Only probe and this evidence changed in this request; existing concurrency test
+from the previous request and all foreign WIP preserved. Product contracts have
+no behavior change; this section records the narrower new verification boundary.

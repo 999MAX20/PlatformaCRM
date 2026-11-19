@@ -1272,6 +1272,30 @@ FB009 отложен и исключён из условий закрытия э
 
 ### CRM-R02 — граница пилота и решения запуска
 
+19.11.2026, решение владельца для стартового допуска: только WhatsApp.
+Telegram не блокирует старт. Названия реальных бизнесов и назначения сотрудников
+не блокируют подготовку; права и изоляция двух Business проверяются на тестовых
+данных. D01 и остальные критерии безопасности/рабочего дня не исключены.
+Предыдущий manifest не служит основанием повторно запрашивать названия.
+
+Пилотный кандидат19.11: общий isolated full gate PASS; локальные WhatsApp cross-flow
+двух Business,6 consumer browser и2 money browser сценария PASS,32 итоговых снимка
+осмотрены. [Матрица AC01–14 и ограничения](../testing/comprehensive-audit-20261103/tests.md#итоговая-матрица-ac0114-этого-продолжения).
+WSL restore/PITR и пять миграций проверены с сохранением прежних данных; code-only
+rollback несовместим с новой схемой, полный бизнес-RPO/RTO не сертифицирован.
+Финальный текстовый повтор D01/D02 прошёл; audio/fullD01 остаются открытыми.
+Это локальная подготовка кандидата: target deployment, employee live auth,
+worker/beat/provider receipts и расширенные документы обработки данных не закрыты.
+[Сводный checkpoint](../testing/task-state/PRIMARY-SESSION.md#pilot-release-20261119--coordination-and-candidate-preparation).
+
+YCloud history preparation19.11 supersedes the initial29.10 scope below:
+Coexistence onboarding/app echoes and text history import implemented, scoped
+PostgreSQL/browser checks passed; source9c86bc76 CI44392825855 backend/frontend
+jobs confirmed success19.11. No live/provider acceptance or media download claimed.
+Current console still shows disabled application entry and no partner tools;
+Tech Partner approval remains unconfirmed. See
+[current evidence](../testing/evidence/ycloud-coexistence-20261109.md#2026-11-19-history-import-preparation).
+
 31.10, PILOT-ACCESS: локальный пакет регистрации и доступа двух синтетических
 Business проверен: приглашения, текущие роли, отзыв/восстановление, MFA/session/reset,
 tenant isolation и гонки PostgreSQL. Интегрированы необходимые существующие
@@ -1292,8 +1316,9 @@ YCloud TP Lite — серверное подключение одного API-н
 Среда/решение владельца: активация TP Lite у YCloud, серверные ключи, целевой HTTPS
 webhook, доступ к номеру/аккаунту и разрешение реального теста остаются открытыми.
 Доказательства: live delivery, целевые worker/beat и deployment не выполнены.
-Код вне этого этапа: templates/reminders/media/history/Coexistence не реализованы
-для YCloud. R02/R03 не закрываются этим локальным результатом; следующий критерий —
+В исходный этап29.10 templates/reminders/media/history/Coexistence не входили;
+history/Coexistence дополнены19.11, как указано выше. R02/R03 не закрываются
+этим локальным результатом; следующий критерий —
 согласованный target и доступ TP Lite, затем отдельная реальная приёмка.
 
 Результат: определены участники, каналы/провайдеры, получатели,
@@ -1328,8 +1353,11 @@ CRM-R02-AI-RETURN: возврат после успешного ответа с�
 DoD: записаны решения и разрешённые эффекты, необходимые credentials заведены безопасно
 в отдельно разрешённой операции, цели RPO≤15мин/RTO≤4ч обеспечены проектом
 и измерениями; retention, дежурные/замещение и эксплуатационные процедуры оформлены.
-Для реальных данных определена готовность юридических документов: текущие signup
-страницы имеют placeholder-тексты; принятые тексты предоставляет владелец.
+Для реальных данных требуется применимая версия документов: общие signup/legal
+тексты остаются draft. Опубликованные pilot-privacy/pilot-data-deletion покрывают
+только закрытый ручной Meta-тест без AI и не подтверждают допуск расширенного
+CRM + YCloud + AI пилота. Получатели, фактическая обработка и retention должны
+соответствовать целевой среде; прежние сроки/контакты не переносятся автоматически.
 Нерешённое блокирует только зависимый сценарий. Этот roadmap решений не подменяет.
 
 ### CRM-R03 — реальное обращение и доставка

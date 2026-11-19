@@ -32,6 +32,20 @@ class UnchangedScheduleCorrection(Exception):
         self.field, self.request_id = field, request_id
 
 
+class UncertainScheduleName(UnchangedScheduleCorrection):
+    def __init__(self, draft, request_id):
+        super().__init__("client_name", request_id)
+        self.draft = draft
+
+
+def uncertain_kazakh_name(name, message):
+    name = " ".join(name.split()).casefold()
+    source = " ".join(message.split()).casefold()
+    return bool(name and re.search(r"(?:ны|ні|ды|ді|ты|ті)$", name)
+                and re.search(r"\b" + re.escape(name) + r"\b", source)
+                and re.search(r"\b(?:жаз\w*|қабылдау\w*|жаңа)\b", source))
+
+
 def unchanged_correction(previous, value, message, pending_field=""):
     if pending_field in {"client_phone", "client_name"}:
         before, after = previous[pending_field], value[pending_field]
@@ -39,14 +53,14 @@ def unchanged_correction(previous, value, message, pending_field=""):
             before, after = re.sub(r"\D", "", before), re.sub(r"\D", "", after)
         if not after.strip() or " ".join(before.split()).casefold() == " ".join(after.split()).casefold():
             return pending_field
-    field = ""
+    fields = []
     if re.search(r"\b(?:телефон\w*|номер\w*|phone|number|соңғы\s+(?:сан|цифр\w*)|последн\w*\s+цифр\w*|last\s+digit)\b", message, re.I):
-        field = "client_phone"
-    elif (re.search(r"\b(?:имя|аты|аты-жөні|name)\b", message, re.I)
+        fields.append("client_phone")
+    if (re.search(r"\b(?:имя|фамили(?:я|ю|и|ей)|аты|аты-жөні|тегі|тегін|name|surname)\b", message, re.I)
           or any(word.casefold() in previous["client_name"].casefold().split()
                  for word in re.findall(r"\b([\w-]+)\s+емес\b", message, re.I))):
-        field = "client_name"
-    if field in {"client_phone", "client_name"}:
+        fields.append("client_name")
+    for field in fields:
         normalize = (lambda text: re.sub(r"\D", "", text)) if field == "client_phone" else (lambda text: " ".join(text.split()).casefold())
         if not normalize(value[field]) or normalize(previous[field]) == normalize(value[field]):
             return field
@@ -78,7 +92,9 @@ def apply_schedule_patch(previous, value, message):
         fields = {key: val for key, val in patch.items() if key != "index"}
         if set(fields) - set(draft["visits"][index - 1]):
             raise ValueError
-        if fields.get("time") or "time_basis" in fields:
+        time_fields = ("time", "time_text", "time_basis")
+        time_changed = any(key in fields and fields[key] != draft["visits"][index - 1][key] for key in time_fields)
+        if (fields.get("time") or "time_basis" in fields) and time_changed:
             evidence = fields.get("time_text")
             if not isinstance(evidence, str) or not evidence.strip() or " ".join(evidence.split()).casefold() not in " ".join(message.split()).casefold():
                 raise ValueError

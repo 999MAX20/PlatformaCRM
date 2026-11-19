@@ -158,6 +158,25 @@ completion. Archive completeness must be checked against the actual phone.
 Current external blocker: Tech Partner application submitted, approval not yet
 observed. No promise that provider admission removes number-level Meta restrictions.
 
+19Nov2026 live read-only recheck: authenticated Platforma Digital console at
+`https://www.ycloud.com/console/#/app/partner` still shows disabled Become a Tech
+Partner and no Partner menu/Direct Link configuration. Screenshot captured and
+visually inspected. This confirms no observed approval, not a rejection; contact
+email was not inspected. No application resubmission, credential exposure, number
+activation, settings mutation or purchase. GitHub connector latest-attempt jobs for
+run44392825855 both completed/success (backend checks/tests and frontend build,
+including dependency audits). This verifies source9c86bc76 CI, not a later release.
+
+Later19Nov read-only ticket observation:
+https://www.ycloud.com/resource/t/2532 is In Progress. It already contains today's
+account-specific follow-up requesting Free-plan TP Lite/Coexistence review status,
+missing documents/ETA and applicable DPA/subprocessor/processing-location details.
+No response after that follow-up was visible. Earlier10Nov human support referred
+the account to Victor Zhang for Free Tech Partner/TP Lite assistance; earlier
+automated replies did not grant approval. This coordinator only read the existing
+ticket, did not send/reopen/subscribe or claim authorship of the follow-up. No
+activation, billing commitment or guaranteed Free-plan eligibility inferred.
+
 ### Local verification, 19.11.2026
 
 - Disposable PostgreSQL17 via `scripts/verify_ycloud.py --postgres-bin "C:/Program Files/PostgreSQL/17/bin"`: 116 tests PASS across YCloud foundation/dispatch/Coexistence/history, PostgreSQL concurrency, direct Meta Coexistence and handoff recovery. Log: `output/ycloud-history-backend.log`. No concurrency skips. System and migration drift PASS. Two final history validation cases were added afterwards and are covered by the final focused run below.

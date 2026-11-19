@@ -138,6 +138,19 @@ delays the 30-second code exchange. An incomplete callback expires locally after
 The login URL requests only the two WhatsApp scopes. v4 is selected by a new
 Cloud API product configuration in Meta, not by `sessionInfoVersion`.
 
+New WhatsApp signup attempts use one callback per frontend origin:
+`/app/ai-agents?zani_provider=whatsapp`. The start API validates the supplied
+origin, replaces its path/query with this fixed route and returns the canonical
+URI in both the response and signed state. Completion must echo that returned
+URI; existing signed attempts keep their original URI until they expire.
+The SDK still owns its popup redirect and returns the code through its callback;
+do not override its internal redirect or add `redirect_uri` to the SDK code exchange.
+Agent IDs are carried in signed state, not in the allowlisted callback. The shared
+`/api/integrations/whatsapp/webhook/` routes by verified phone identity and each
+successful signup subscribes its WABA automatically. A new tenant must not require
+adding a tenant/agent URL in Meta. Live proof on an unseen agent remains required;
+mocked SDK/API tests cannot verify Meta's domain/redirect allowlist or entitlement.
+
 Signed Meta `account_update` notifications are accepted separately from phone
 messages. Allowlisted account metadata is written to IntegrationEventLog; no
 activation, credential change or message is triggered. Events preceding local

@@ -1,6 +1,23 @@
+INVITATIONS-FLOW-20261119: wide no-blur modal, readable grants, inline password/MFA
+and direct CRM entry implemented and exact13-file patch deployed. Focused18 and
+104 dependent backend PASS; all14 scoped browser scenarios have current PASS;
+server build/types/i18n/readiness PASS. Live Chrome confirmed member removal and
+modal opening; owner form desktop/mobile/actions verified after Chrome recovery;
+employee live acceptance/MFA/revoked browser checks remain open.
+Disabled membership29 removed from Business18; server account retained, local
+account absent. No new invites sent. Own commit/push pending coordinated publication.
+Evidence: docs/testing/evidence/invitations-24h-20261112.md.
+
 ## GOOGLE-SHEETS-20261119 — local verification / live acceptance pending
 
 OAuth + Sheets import/export implemented; Cloud test project, OAuth client and restricted Picker key configured. Backend72 PASS, final build PASS, RU/KK/EN desktop/mobile synthetic flows verified; PostgreSQL3 race tests PASS; published918096ce to origin/main (remote SHA verified); CI44397837621 running, not PASS. Local PostgreSQL platformacrm: approved migrations0012/0013 applied, Django check and Google tables verified. Live Google grant/transfer and Calendar sync not claimed. Evidence: ../evidence/google-sheets-20261119.md.
+
+INVITATIONS-ACCESS-UX-20261118: terminal invite errors/expiry hidden; access toggle at top.
+Revoked employee gets explicit auth-me state and separate empty screen; RU/KK/EN.
+14 focused + 90 dependent backend PASS; build PASS; browser 4+2 PASS.
+Exact 9-file patch deployed, live owner UI/readiness and read-only employee state PASS.
+Live revoked-employee browser check awaits owner login. No mail/membership mutations.
+Evidence: docs/testing/evidence/invitations-24h-20261112.md.
 
 INVITATIONS-SMTP-20261118: restored Resend SMTP + HTTPS FRONTEND_URL on live stand.
 New invitations 3 Manager / 4 Operator: SMTP accepted and Resend Delivered confirmed.
@@ -14139,6 +14156,18 @@ Chrome ordinary5173 AX verified absence of header button and retained centralCTA
 native screenshot failed Debugger unattached, isolated screenshots used for visual
 acceptance. Existing Chrome tab retained; no working DB mutation or deployment.
 
+### META-COMMON-CALLBACK-20261118 (side conversation, local authorized implementation)
+Prior SDK onboarding/common webhook implemented -> owner requests fixed callback and new-client proof -> canonicalize new signup callbacks, preserve signed tenant/channel/replay checks and existing connections.
+Root C:/Users/user/Desktop/PlatformaCRM; branch codex/ui-testing-toolkit; base f7fe7029. Meta source paths initially clean; payments/scheduling and shared status WIP preserved. Local scope only; no release, account creation, messaging, grants or external publication authorized in this side conversation.
+Plan: backend normalizes validated redirect origin to /app/ai-agents?zani_provider=whatsapp; frontend requests same address; retain SDK exchange without redirect_uri and legacy in-flight state compatibility. Shared webhook/subscription unchanged. No schema/env/AI/business-event change.
+Risk/checks: OAuth identity and replay; focused API tests for two new businesses sharing callback, denied origin/state mismatch, automatic subscription and isolated credentials; affected signup/binding/coexistence suites + isolated system/drift. Frontend existing signup browser regression plus new-agent common URL, production build/types. No appearance/copy/layout changes: visual redesign/asset skills N/A; preserve existing controls, errors and cancellation.
+Live observation this turn: existing Meta popup still shows3441107 partner app not set up for Business App numbers. No new consent, registration, SMS or send attempted. Full new-client live acceptance remains blocked by Meta approval and un-deployed local changes.
+
+META-COMMON-CALLBACK-20261118 result: local implementation verified on f7fe7029 + scoped dirty patch. Start API and frontend now use /app/ai-agents?zani_provider=whatsapp per trusted origin; signed tenant/channel identity and old in-flight attempt validation preserved. SDK redirect/exchange and shared webhook/subscription are unchanged.
+Checks: isolated_runtime + manage.py check and makemigrations --check --dry-run PASS; test apps.integrations.tests_whatsapp_signup apps.integrations.tests_whatsapp_binding apps.integrations.tests_meta_coexistence apps.integrations.tests_channel_setup_consistency apps.integrations.tests.WhatsAppIntegrationFoundationTests: 103 run, 101 PASS, 2 PostgreSQL-only locking cases skipped on SQLite. Existing locking logic unchanged; this run is not PostgreSQL concurrency certification. Full log output/meta-common-callback-backend.log. Initial focused run failed new synthetic duplicate-empty-email fixture; unique fixture emails fixed, entire affected rerun PASS.
+Frontend: npx playwright test --config=playwright.whatsapp-signup.config.ts --output=../output/meta-common-callback-browser: 25 PASS. Includes two previously unseen synthetic businesses/channels on different agent paths, identical common callback and successful mocked SDK/API completion; cancellation, duplicate/stale events, wrong origin/state, recovery, Coexistence, RU/KK/EN, keyboard/axe and desktop/mobile. Production Meta was NOT exercised by this suite. npm run build (i18n/types/app/widget) and npm run check:bundle PASS; existing RU/KK dictionary chunks above500kB warn, app shell within400kB. Logs output/meta-common-callback-{browser,build,bundle}.log. Visually inspected ru-390 PIN and coexistence-ru-1440 screenshots in output/meta-common-callback-browser: labels, focus and controls readable, no clipping; no appearance/copy changes.
+Entire scoped code/test/contract diff reviewed and diff hygiene PASS. Other payment/plan work advanced during checks and remains untouched. No commit/push/CI/deploy or Meta allowlist mutation in this side task. Live existing popup read confirmed3441107; no new signup run or successful live completion. Remaining: integrate/deploy this patch through main release; verify app domain/one shared URI as required by chosen Meta flow once per environment; resolve partner entitlement/App Review; then prove unseen business signup and messaging/history with no per-agent URL additions. Do not represent mocked success as Meta approval or infer the sole cause of3441107.
+
 ## VISIT-PLAN-PAYMENTS-20261118
 
 Authorized stage2 money scope and approved references implemented and locally verified. Positive package with all-zero bases rejected. Original payment checks retained in evidence. Owner then approved five correction/legacy rules: owner-only annulment, retained reversal, linked replacement, explicit reuse and whole unused legacy attachment implemented; references preceded UI edits. Follow-up PostgreSQL19, dependent126 and final pricing/correction31 PASS; final build/types/i18n and real RU/KK/EN desktop/mobile/retry/stale/draft flow PASS. No working DB migration/deployment; full AC01–14 not closed. Implementation c42c4711 normal-pushed to origin/main with remote SHA read-back; CI473 in_progress at inspection. Foreign integration changes preserved. Detailed contract, snapshots, checks and publication receipt: [evidence](../evidence/visit-plan-payments-20261118.md).
@@ -14331,4 +14360,246 @@ Publication: implementation commit 986c31384e7237b99b8c9a1c0cddcbbcd733d2d0 norm
 Owner authorized preparation while YCloud Tech Partner approval is pending. Previous verified YCloud onboarding/echo pipeline preserved; explicit history exclusion superseded by text import. New unbound channel can select YCloud, paused/connected channels protected. Signed history shares tenant/message locks, no unread/window/AI side effects; app echo dedup/handoff preserved. UI counts observed records without claiming complete archive. No media download, schema/dependency/credential changes or deployment.
 
 Canonical repo C:/Users/user/Desktop/PlatformaCRM, branch codex/ui-testing-toolkit; starting HEAD d8ec748aa46782051198b13c8a547d2f49d13850. Foreign Google/access/Meta-signup WIP preserved and excluded from staging; shared docs staged as task-only append.
-Checks: PostgreSQL dependent 116 PASS, final history 14 PASS, system/drift PASS; browser 18 PASS RU/KK/EN desktop/mobile with captured and visually inspected screenshots; build/types/i18n/bundle PASS (existing locale warnings). Full release suite not requested/run. Details, logs, provider contract and activation runbook: docs/testing/evidence/ycloud-coexistence-20261109.md. Next: normal task-only commit/push and actual CI inspection; then partner approval/configuration/release/handset consent before live end-to-end acceptance.
+Checks: PostgreSQL dependent 116 PASS, final history 14 PASS, system/drift PASS; browser 18 PASS RU/KK/EN desktop/mobile with captured and visually inspected screenshots; build/types/i18n/bundle PASS (existing locale warnings). Full release suite not requested/run in that preparation. Source9c86bc76 published; CI44392825855 backend/frontend success confirmed19Nov. Details: docs/testing/evidence/ycloud-coexistence-20261109.md. Partner approval/configuration/release/handset consent and live end-to-end acceptance remain open.
+
+## PILOT-RELEASE-20261119 — coordination and candidate preparation
+
+Owner explicitly requested YCloud/CI verification, actual server version reconciliation,
+an exact pilot release manifest, parallel thematic checks and closure of readiness gaps.
+Mode: verification/preparation; gap: evidence/environment plus reproduced scoped defects.
+Canonical root unchanged, branch codex/ui-testing-toolkit, starting HEAD b9415d71.
+Prior scoped results -> current server/main and acceptance gaps -> verify/reuse first;
+do not rebuild finished domain layers. Existing dirty paths belong to their active owners.
+No deployment or working-database mutation is performed by this coordination record.
+
+Parallel scopes: Integrations + Deploy owns read-only server/hash/CI/release manifest;
+invite chat owns existing access WIP and isolated/live acceptance where accessible;
+CRM audit chat maps AC-CRM-PILOT-01–14 and missing focused domain checks;
+voice chat owns D01 remaining name/ASR/correction defects and repeat-live preparation;
+AI agents chat verifies Inbox isolation/replay/history/handoff/outage boundaries.
+Each writes its existing thematic evidence; shared STATUS/PRIMARY and publication are
+coordinated here. No competing branches, working DB changes or customer activation.
+Owner subsequently authorized exact D01–D04 repeat-live synthetic matrix (12
+text/voice combinations, up to24 turns) capped at200 ElevenLabs credits and
+$0.15 OpenRouter; voice chat owns execution, accounting and stop guards.
+Acceptance: exact candidate including deployed invite patches, applicable focused
+results, candidate release gates and live/provider/restore boundaries explicitly mapped.
+Existing obligations for two independent businesses and D01 remain; deferred Market,
+campaigns, SaaS billing and expanded AI analytics do not become launch requirements.
+Owner clarification during coordination: only WhatsApp at startup; Telegram is not
+a launch gate. Real names/employee assignments are not needed for preparation;
+verify roles and tenant separation with two synthetic Business fixtures.
+
+Verified now via GitHub connector: run44392825855 latest-attempt backend and frontend
+jobs completed/success, all returned steps success. This is the YCloud history source
+CI, not certification of later commits or current deployment.
+Verified via Chrome extension in Platforma Digital YCloud console: /app/partner shows
+disabled Become a Tech Partner, with no Partner menu or Direct Link configuration.
+Approval is not confirmed; this does not prove rejection. Contact email was not checked.
+Read-only screenshot captured and inspected; no secrets revealed, application resubmitted,
+number connected, provider activation, purchase or settings mutation.
+Server investigator preliminary result: base58a6427e plus invite overlays vs main b9415d71,
+33 commits difference; exact file-hash reconciliation remains in progress.
+
+Server reconciliation completed: source58a6427e +17 invitation/access overlays,
+16 match worktree and invitations.py differs only by an EOF empty line. Main/HEAD
+b9415d71 has33 commits/206 paths after deployed base; current-main CI44404635483
+backend/frontend success. Five migrations are absent on server: bots0015,
+integrations0013, payments0002/0003, scheduling0015. Existing locks unchanged.
+No beat process observed; integrations queue consumed. Backup metadata healthy,
+but isolated restore/PITR and measured RPO/RTO remain unverified. Exact manifest:
+output/digital-deploy-20261109/CHECKPOINT.md, pilot-manifest-20261119.json and
+pilot-normalized-20261119.json. Dist provenance follow-up pending.
+Inbox scoped60 PASS with mocks/current snapshot; no implementation change.
+Invite local repeat and CRM AC/domain checks still running. Reproduced voice surname
+correction and AC10 export limit/count defects assigned to their scoped owners.
+Live CRM owner session read/dashboard/settings successful after user reconnect;
+team-access URL reached, then CDP focus/input timeouts blocked AX/DOM/screenshots.
+No invitations/access changes performed; live form/auth acceptance not closed.
+Subsequent original-page recovery after isolated invite tests ended: screenshot and
+AX worked in the same Chrome tab. Live owner form desktop/mobile390x844 captured
+and visually inspected: role grants readable, wide desktop/full-screen mobile,
+footer reachable, no overflow; no-access expansion works; Escape restores opener
+focus. Accepted/revoked result rows have no stale expiry/delivery error/resend.
+Member disable confirmation CANCEL returns focus; operator remains active. No
+message/access/data mutations. Viewport reset. This closes owner form/actions only;
+employee login/MFA/acceptance/revoked state remain live-unverified.
+Invite current isolated result:122 backend PASS, system/drift PASS,14/14 browser
+PASS single final run. Earlier11PASS/3FAIL retained; corrected test-only synthetic
+company capacity, real quotas/guards unchanged. Exact paths/hashes in invite evidence.
+Owner authorized preparing existing Ubuntu WSL with PostgreSQL17 and compatible
+backup tools, restoring protected working-data/files copy into isolated target with
+no external sends/production connections, and rehearsing candidate migrations.
+Production and Windows working PG55432 remain untouched. Deploy chat owns this
+operation; memory-heavy install/restore waits for coordinated resource slot after
+current tests. Existing WSL had no suitable tools; no restore PASS yet.
+Frozen verification proposal: b9415d71 plus current52 dirty tracked/untracked files,
+including preserved invite overlays, export/voice fixes, regression tests and
+separately identified Direct Meta callback WIP. Not publication/deployment approval.
+One full isolated gate started against real deployed ancestor58a6427e via
+scripts/codex_verify.py --mode full; log output/pilot-release-20261119-full.log.
+Process session49310 owned by Manager. Full-gate input hash snapshot retained in
+Manager work/full-gate-inputs.json; candidate manifest in Manager outputs.
+Voice final local240PASS/4SQLite skips,4browser PASS; live13 user turns/22 provider
+requests,$0.0061383,STT0. Last reference2/4 strict dialogues PASS; initial-name
+accuracy/audio/customer privacy remain open. New full-name safeguard locally tested.
+No further paid tests or customer activation implied. WSL install/restore waits
+until full gate exits; other scoped test runtimes cleaned by their owners.
+
+Provider documentation review19Nov (official sources; no account changes):
+YCloud terms require an executed DPA for end-user processing; public console/site
+privacy policy is not a complete WhatsApp-content processing register. Obtain the
+applicable DPA, subprocessors and processing/retention details before expanded
+client pilot: https://www.ycloud.com/terms-service and
+https://www.ycloud.com/privacy-policy.
+OpenRouter request zdr:true follows account/guardrail settings; self-serve default
+allows Safety Retention, so zdr:true/data_collection:deny alone does not prove zero
+storage. Actual account setting and routed endpoint remain unverified:
+https://openrouter.ai/docs/guides/features/zdr.
+Direct OpenAI API no-training default is distinct from retention/approved ZDR and
+does not establish our contract or routed provider through OpenRouter:
+https://developers.openai.com/api/docs/guides/your-data and
+https://openai.com/policies/data-processing-addendum/.
+ElevenLabs enable_logging=false requires eligible account/API Zero Retention Mode;
+local flags do not prove entitlement. Client direct Scribe stays disabled:
+https://elevenlabs.io/docs/eleven-api/resources/zero-retention-mode.
+Resend publishes DPA and subprocessors; account applicability, actual processing
+locations and retention still require mapping, not inference from company address:
+https://resend.com/legal/dpa and https://resend.com/legal/subprocessors.
+These are technical evidence limits, not a legal conclusion or replacement policy.
+Existing manual Meta pilot policies are preserved; they do not certify expanded
+CRM/YCloud/AI processing. No new retention periods or government transfers assumed.
+
+Read-only candidate audit: five migration names match deployed-base..HEAD delta;
+all29 runtime overlay files match full-gate start snapshot. Important rollout gap:
+scheduling0015 adds NOT NULL termination_reason/refusal_reason without db_default,
+so old58a6427e code-only rollback is not certified. payments reverse migrations
+discard new monetary tables/links. WSL owner assigned upgrade plus code/schema
+rollback rehearsal before write traffic; no silent loss of later monetary writes.
+Server worker command includes default,reports_exports,file_scans,ai,integrations;
+YCloud task name routes to default (not apps.integrations.*), batching to integrations.
+Beat absent; runtime command-line check is not broker-delivery evidence.
+
+Separate direct-user-authorized isolated Celery restart probe completed PASS:
+real PG17/Redis7.4.9/solo worker/beat, mock providers, loopback-only; pending group
+processed once after restart, duplicate dispatch no extra effects, post-admission
+crash conservatively retained preparing state without replay (not auto-repair).
+Probe resources cleaned. Evidence ai-agents-redesign-20261113.md final section.
+New scripts/verify_inbound_batch_recovery.py is not imported by app/full gate;
+existing frozen application/test inputs unchanged, only docs updated during gate.
+
+Full candidate gate completed19Nov about07:58UTC, session49310 exit0:
+QUALITY GATE PASSED(full). Backend3689 run/3591PASS/98skips in2335.918s;
+system/migration drift, deterministic npm install, Vite env isolation,
+build/types/i18n/bundle,2mobile role smoke, Python lock installability,
+pip/npm audits0 known vulnerabilities and final diff hygiene PASS.
+Existing RU/KK locale chunk warnings remain; app-shell budget passes.
+Log output/pilot-release-20261119-full.log SHA256
+f6b32cf608f0e26c7df55684760f83ee581bc27baa24a6b0ac40840daa6d2fda.
+Post-run snapshot comparison: only three evidence/checkpoint Markdown files
+changed; all frozen app/test/dependency inputs unchanged. Separately added
+standalone Celery probe is not imported by full gate. No immutable commit/artifact
+or deployment claimed. WSL owner received resource slot; fresh host available RAM
+~330–420MiB still requires feasibility check with existing WSL allocation.
+
+Read-only Chrome OpenRouter account privacy observation19Nov after full gate:
+https://openrouter.ai/settings/privacy, authenticated Personal account. Global
+ZDR switches All other models/Anthropic/OpenAI/Google/SpaceXAI all0; paid training
+endpoints0, free training endpoints1, free public-prompts0,1%data-discount0.
+No account/key/privacy settings changed and no key exposed. This is account UI
+evidence, not proof this Personal workspace/key is the deployed CRM route; per-key
+guardrails may further restrict it. Request flags and actual upstream still need
+mapping before client AI activation. Existing AI-disabled state preserved.
+Full gate frontend/dist uses isolated loopback VITE_API_URL by design; do not ship
+that test dist as a production artifact. Target build needs same-origin/approved
+production frontend environment and its own artifact hash at packaging time.
+
+Owner explicitly approved including the pre-existing Direct Meta common callback
+patch in the combined pilot commit via async reply19Nov. Scope: /app/ai-agents
+callback, tenant/channel identity retained in signed state and associated tests/docs.
+Already covered by current full gate; do not discard/rewrite the verified patch.
+This resolves inclusion only, not provider activation, number connection or deployment.
+
+WSL rehearsal completed PASS; all own PG/test processes stopped, resource slot
+released to AC01–14 sequential WhatsApp backend/consumer/money browser harnesses.
+Actual encrypted repositories copied5818 files/142250822bytes with SHA256/length
+verification; S3 credentials remained on source. PostgreSQL17.12/locale matched.
+PITR18Nov21:30Z paused correctly; latest restore replayLSN matched source read-only
+sample. Restic --verify recovered files/config;3 stored connector credentials
+decrypted with restored keys, no values printed. Five migrations applied; original
+column digests10123rows/154tables preserved; system/drift/no pending migrations PASS.
+Historical model INSERT on upgraded schema reproduced23502; current models passed;
+separate pre-migration dump restore preserved data and old-model INSERT passed.
+This is not a complete old-application smoke or permission to lose post-release writes.
+PG focused31 cases:29PASS/2environmentERROR initially, three batching cases rerun
+PASS after correcting local Celery memory:// to cache+memory://. No app fix.
+Transfer-to-physical/files recovery9m2.36s includes diagnostics; actual latest restore
+26.11s/files4.449s. These are component measurements, not certified whole-business
+RPO/RTO. Attachment-record matching N/A: restored DB has no FileAttachment rows.
+Protected copies remain /srv/platforma-restore-20261119; no production/WindowsDB
+mutations. Details and safe JSON: output/digital-deploy-20261109/CHECKPOINT.md,
+section Isolated restore and migration rehearsal19Nov; no blanket restore claims.
+
+Final review found an inert AUTH_LOGIN_RATE override in invitation verification
+runner, removed by its owner plus stale comments. Focused effective-environment
+comparison before/after identical including auth_login10/min; AST/diff PASS.
+Prior14/14 browser PASS used that same effective runtime; no app/config/shared helper
+change, no need to rerun unchanged product gates. Remaining test/script diff review
+found no actionable issue or real secrets. Google live-evidence and older Meta App
+Review hunks are unrelated pre-existing WIP and excluded from coordinated commit.
+
+YCloud ticket2532 read-only recheck: In Progress; today's account-specific Free-plan
+TP Lite/Coexistence application status and DPA inquiry already exists, no later
+reply visible. This coordinator did not send the inquiry or another message.
+Exact ticket URL and boundary added to existing YCloud evidence.
+
+Post-gate WhatsApp cross-flow final1795077023593116900 PASS: two Business,
+signed HTTP webhook/durable event/Inbox/client/handoff/rate-limit retry/delivery,
+manual plan and repeat visits with AI off, duplicate suppression and 403/404.
+Isolated SQLite/API/domain with mock provider transport; not live provider.
+Consumers final1795077653680698400:6/6 browser PASS, RU desktop and KK/EN mobile
+across two Business; exact IDs through list/calendar/card/search/notification/
+reports, filters, 503/retry, keyboard and foreign-object denial. All24 screenshots
+captured/visually inspected; existing minor KK bottom-label wrap noted. Source
+drift=[] and own processes/DB cleaned. Money-day browser next; no full AC closure.
+Read-only frontend profile confirmed server same-origin VITE_API_URL='', no active
+production dotenv or other VITE_SAFE_ENV overrides. Historical build environment
+not completely retained. Separate isolated review artifact runner prepared,
+envFile=false and dedicated output; no build/deploy yet. Existing deploy script
+automatic code-only rollback must be adapted before any separately authorized
+switch, given reproduced23502. Review rollout plan recorded by deploy owner in
+output/digital-deploy-20261109/CHECKPOINT.md; no production execution authorized.
+
+Money final visual repeat1795079004778775900:2/2 browser PASS,8 screenshots
+captured and visually inspected, source drift=[]; isolated runtime cleaned.
+Each Business: UI plan/pricing, partial payment, lost HTTP response after commit,
+same-key retry without duplicate, schedule/early completion and repeat visit.
+Package240 allocated80+160; per-visit300 allocated100+200; exactly2 receipts and
+2 completed appointments each, zero remaining. Initial numeric-string oracle and
+early screenshot capture gaps corrected in ignored harness only; failed attempts
+retained, no app rewrite. All three post-gate acceptance harnesses now complete.
+
+Final frozen voice D01/D02 reference repeat:2/2 dialogues,4/4 scored turns PASS,
+exact saved identities/times, stale approval denied and replay without duplicate.
+Cumulative17/24 scored turns,30 OpenRouter requests,$0.00847635/$0.15,STT0.
+Correct names returned directly; ambiguity clarification branch was not triggered
+live and retains local/mock/browser evidence only. Audio/fullD01 remain open.
+Fresh read-only Chrome ElevenLabs account usage is now accessible; the earlier
+browser-access failure is no longer current. Workspace/API-key correspondence
+and guaranteed account credit conversion/rounding remain unverified; no new STT,
+permission expansion, subscription purchase or customer activation performed.
+
+Final review artifact prepared19Nov09:08UTC: same-origin app/widget build
+and static login smoke PASS, no external requests/JS errors/telemetry.
+Vite envDir=false, standard config loader; initial widget loader failure
+retained and corrected only in ignored build harness. Product source/audit
+dist unchanged; roadmap-only documentation delta recorded separately.
+Archive SHA256:013990d2dfc75d884b33ba69679a172309206d84525072a783dd7137da78cbf3.
+Node local24.18.0/server24.22.3; historical binary parity not claimed.
+Artifact/receipt/rollout plan in Manager outputs; no env/DB/keys bundled.
+All own runtimes cleaned. Reviewed52-file combined candidate staged;
+foreign Google-live and older Meta App Review hunks remain unstaged.
+Normal origin/main publication and fresh CI result are recorded separately
+in Manager pilot-readiness-20261119.md and pilot-release-manifest-20261119.json.
+This source/evidence preparation does not authorize deployment or close
+live YCloud/employee auth/audio/privacy/operational acceptance.

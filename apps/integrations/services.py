@@ -1,3 +1,5 @@
+from urllib.parse import urlsplit, urlunsplit
+
 from django.conf import settings
 from django.utils import timezone
 from rest_framework.exceptions import ValidationError
@@ -228,6 +230,9 @@ def save_whatsapp_connection_request(*, business, user, config, request=None):
 
 
 def start_whatsapp_embedded_signup(*, business, user, redirect_uri, bot_channel=None, onboarding_mode="cloud", expected_phone=""):
+    # Tenant/channel identity belongs to signed state, never the callback path.
+    origin = urlsplit(redirect_uri)
+    redirect_uri = urlunsplit((origin.scheme, origin.netloc, "/app/ai-agents", "zani_provider=whatsapp", ""))
     authorization_url, state = build_embedded_signup_url(
         business=business,
         user=user,

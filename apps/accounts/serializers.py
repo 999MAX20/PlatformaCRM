@@ -23,6 +23,7 @@ class CurrentUserSerializer(serializers.ModelSerializer):
     is_business_manager = serializers.BooleanField(read_only=True)
     businesses = serializers.SerializerMethodField()
     memberships = serializers.SerializerMethodField()
+    business_access_revoked = serializers.SerializerMethodField()
     effective_permissions = serializers.SerializerMethodField()
     preferences = serializers.SerializerMethodField()
     social_identities = serializers.SerializerMethodField()
@@ -41,6 +42,7 @@ class CurrentUserSerializer(serializers.ModelSerializer):
             "is_business_manager",
             "businesses",
             "memberships",
+            "business_access_revoked",
             "effective_permissions",
             "capabilities",
             "preferences",
@@ -52,6 +54,14 @@ class CurrentUserSerializer(serializers.ModelSerializer):
             return []
         businesses = self._get_businesses(obj)
         return BusinessSerializer(businesses, many=True).data
+
+    def get_business_access_revoked(self, obj):
+        from apps.businesses.models import BusinessInvitation
+        if self._get_businesses(obj):
+            return False
+        return BusinessMember.objects.filter(user=obj, is_active=False).exists() or BusinessInvitation.objects.filter(
+            email__iexact=obj.email, accepted_at__isnull=False
+        ).exists()
 
     def get_memberships(self, obj):
         result = []

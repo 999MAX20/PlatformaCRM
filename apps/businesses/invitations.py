@@ -147,3 +147,26 @@ def deliver_invitation(invitation_id, token, request):
     invitation.save(update_fields=["delivery_status", "delivery_error", "delivery_attempted_at", "updated_at"])
     write_audit_log(request, AuditLog.Actions.UPDATE, invitation, business=invitation.business,
         metadata={"event": "invitation_email", "delivery_status": invitation.delivery_status, "error": invitation.delivery_error})
+
+
+def invitation_access_summary(invitation):
+    """Configured role grants only; object and branch checks still apply at use."""
+    from .access import PERMISSION_CATALOG, role_allows, role_permission_allows
+    from .models import RolePermission
+
+    role = invitation.business_role
+    if role and (role.business_id != invitation.business_id or not role.is_active):
+        return []
+    if role:
+        role._permission_read_rules = {
+            (resource, action): (allowed, scope)
+            for resource, action, allowed, scope in role.permissions.values_list("resource", "action", "is_allowed", "scope")
+        }
+    result = []
+    for resource, actions in PERMISSION_CATALOG.items():
+        for action in actions:
+            explicit = role_permission_allows(role, resource, action)
+            scope = explicit if explicit is not None else role_allows(invitation.role, resource, action)
+            if scope and scope != RolePermission.Scopes.NONE:
+                result.append({"resource": resource, "action": action, "scope": scope})
+    return result

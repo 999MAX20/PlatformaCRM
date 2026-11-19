@@ -6,13 +6,14 @@ from django.db import connection, connections
 from django.db.models.query import QuerySet
 from django.db.migrations.executor import MigrationExecutor
 from django.http import HttpResponse
-from django.test import TestCase, TransactionTestCase, skipUnlessDBFeature
+from django.test import TestCase, TransactionTestCase, override_settings, skipUnlessDBFeature
 from django.utils import timezone
 from rest_framework.test import APIClient
 
 from apps.accounts.models import User
 from apps.businesses.models import Business
-from apps.core.export_jobs import process_export_job
+from apps.clients.models import Client
+from apps.core.export_jobs import process_export_job, request_entity_export
 from apps.core.models import ExportJob
 
 
@@ -135,6 +136,53 @@ class ExportAttemptTests(TestCase):
         self.files.append(result.result_file.name)
         self.assertEqual(generator.call_count, 1)
         self.assertEqual(result.status, "succeeded")
+
+    @override_settings(EXPORT_SYNC_MAX_ROWS=0, EXPORT_MAX_ROWS=1)
+    def test_growth_after_enqueue_rejects_export_before_generation(self):
+        Client.objects.create(business=self.business, full_name="First")
+        _, job = request_entity_export(business=self.business, actor=self.owner, export_key="clients")
+        Client.objects.create(business=self.business, full_name="Second")
+        with patch("apps.core.export_jobs.export_entity_response") as generate:
+            result = process_export_job(job.pk)
+        self.assertEqual(result.status, "failed")
+        self.assertIn("cannot exceed", result.error)
+        self.assertFalse(result.result_file)
+        generate.assert_not_called()
+
+    @override_settings(EXPORT_MAX_ROWS=1)
+    def test_growth_during_generation_does_not_publish_over_limit(self):
+        with patch("apps.core.export_jobs.export_entity_response", return_value=HttpResponse(b"name\nfirst\nsecond\n")), \
+             patch.object(self.storage, "save") as save:
+            result = process_export_job(self.job.pk)
+        self.assertEqual(result.status, "failed")
+        self.assertFalse(result.result_file)
+        save.assert_not_called()
+
+    @override_settings(EXPORT_MAX_ROWS=1)
+    def test_exact_limit_counts_multiline_quoted_csv_as_one_record(self):
+        Client.objects.create(business=self.business, full_name='First\n"Second"\r\nThird')
+        result = process_export_job(self.job.pk)
+        self.files.append(result.result_file.name)
+        self.assertEqual(result.status, "succeeded", result.error)
+        self.assertEqual(result.row_count, 1)
+
+    @override_settings(EXPORT_MAX_ROWS=1)
+    def test_empty_export_succeeds_with_zero_records(self):
+        result = process_export_job(self.job.pk)
+        self.files.append(result.result_file.name)
+        self.assertEqual(result.status, "succeeded", result.error)
+        self.assertEqual(result.row_count, 0)
+
+    @override_settings(EXPORT_MAX_ROWS=1)
+    def test_large_text_field_preserves_export_and_record_count(self):
+        notes = 'Long notes with "quotes"\r\nand newlines\n' * 6000
+        Client.objects.create(business=self.business, full_name="Large notes", notes=notes)
+        result = process_export_job(self.job.pk)
+        self.files.append(result.result_file.name)
+        self.assertEqual(result.status, "succeeded", result.error)
+        self.assertEqual(result.row_count, 1)
+        with self.storage.open(result.result_file.name) as stream:
+            self.assertIn(notes.replace('"', '""').encode(), stream.read())
 
 
 @skipUnlessDBFeature("has_select_for_update")

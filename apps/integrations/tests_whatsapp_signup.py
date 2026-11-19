@@ -55,6 +55,59 @@ class WhatsAppSignupTests(TestCase):
         self.assertEqual(parse_qs(urlparse(url).query)["scope"],
                          ["whatsapp_business_management,whatsapp_business_messaging"])
 
+    def test_new_businesses_share_callback_and_subscribe_their_own_accounts(self):
+        from apps.integrations.whatsapp.embedded_signup import load_embedded_signup_state
+
+        redirects = []
+        for index in (1, 2):
+            user = get_user_model().objects.create_user(username=f"new-owner-{index}", email=f"new-owner-{index}@example.com", role="business_owner")
+            business = Business.objects.create(owner=user, name=f"New business {index}", slug=f"new-{index}")
+            BusinessMember.objects.create(business=business, user=user, role=BusinessMember.Roles.OWNER)
+            channel = BotChannel.objects.create(bot=Bot.objects.create(business=business, name="New agent"), channel="whatsapp", status="draft")
+            self.api.force_authenticate(user)
+            start = self.api.post("/api/business-connectors/whatsapp-embedded-signup/start/", {
+                "business": business.pk, "bot_channel": channel.pk,
+                "redirect_uri": f"https://app.zani.kz/app/ai-agents/{channel.bot_id}/channels?channel=whatsapp",
+            }, format="json")
+            self.assertEqual(start.status_code, 200, start.data)
+            redirect = start.data["redirect_uri"]
+            redirects.append(redirect)
+            self.assertEqual(redirect, "https://app.zani.kz/app/ai-agents?zani_provider=whatsapp")
+            self.assertEqual(parse_qs(urlparse(start.data["authorization_url"]).query)["redirect_uri"], [redirect])
+            state = load_embedded_signup_state(start.data["state"])
+            self.assertEqual((state["business_id"], state["user_id"], state["bot_channel_id"]), (business.pk, user.pk, channel.pk))
+            phone_id, waba_id = f"phone-{index}", f"waba-{index}"
+            original = self.respond
+            self.graph.side_effect = lambda edge, token, **kw: (
+                {"data": [{"id": phone_id, "display_phone_number": f"+7701000000{index}", "platform_type": "CLOUD_API"}]}
+                if edge.endswith("/phone_numbers") else original(edge, token, **kw)
+            )
+            completed = self.api.post("/api/business-connectors/whatsapp-embedded-signup/complete/", {
+                "business": business.pk, "state": start.data["state"], "redirect_uri": redirect,
+                "code": f"code-{index}", "phone_number_id": phone_id, "waba_id": waba_id, "registration_pin": "123456",
+            }, format="json")
+            self.assertEqual(completed.status_code, 200, completed.data)
+            channel.refresh_from_db()
+            self.assertEqual(channel.external_id, phone_id)
+            self.assertEqual(channel.config_json["business_account_id"], waba_id)
+            connector = BusinessConnector.objects.get(business=business, config_json__bot_channel_id=channel.pk)
+            self.assertTrue(connector.credentials.filter(key="access_token").exists())
+            self.assertIn(f"{waba_id}/subscribed_apps", [edge for edge, _ in self.calls])
+        self.assertEqual(len(set(redirects)), 1)
+
+    def test_common_callback_does_not_accept_foreign_origin_or_changed_callback(self):
+        endpoint = "/api/business-connectors/whatsapp-embedded-signup/"
+        denied = self.api.post(endpoint + "start/", {"business": self.business.pk, "redirect_uri": "https://evil.example/app/ai-agents"}, format="json")
+        self.assertEqual(denied.status_code, 400)
+        self.assertFalse(WhatsAppSignupAttempt.objects.exists())
+        start = self.api.post(endpoint + "start/", {"business": self.business.pk, "bot_channel": self.channel.pk,
+                              "redirect_uri": self.redirect}, format="json")
+        self.assertEqual(start.status_code, 200)
+        denied = self.api.post(endpoint + "complete/", {"business": self.business.pk, "state": start.data["state"],
+            "redirect_uri": self.redirect, "code": "code", "phone_number_id": "123", "waba_id": "456", "registration_pin": "123456"}, format="json")
+        self.assertEqual(denied.status_code, 400)
+        self.exchange.assert_not_called()
+
     def test_coexistence_discovers_only_requested_phone_and_skips_registration(self):
         original = self.respond
         self.graph.side_effect = lambda edge, token, **kw: (

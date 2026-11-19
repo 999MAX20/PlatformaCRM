@@ -13,8 +13,24 @@ from scripts.codex_verify import isolated_runtime
 FIXTURE = """
 from django.utils import timezone
 from apps.businesses.models import Business, BusinessInvitation
+from apps.accounts.models import User, MfaDevice
+from apps.billing.models import SubscriptionPlan
+from apps.integrations.credential_encryption import encrypt_credential_value
 b = Business.objects.get(slug='e2e-business')
+subscription = b.subscription
+base_plan = subscription.plan
+# Both browser projects retain accepted recipients in this disposable business.
+# Keep entitlement checks enabled, with capacity for the complete flow suite.
+subscription.plan = SubscriptionPlan.objects.create(
+    name='Invitation flow fixture', code='invitation-flow-fixture',
+    limits_json={**base_plan.limits_json, 'users': 50},
+    features_json=base_plan.features_json,
+)
+subscription.save(update_fields=['plan'])
 for project in ('desktop-chromium','mobile-chromium'):
+    user = User.objects.create_user(username=f'invite-mfa-{project}', email=f'invite-mfa-{project}@example.com', password='InviteMfa123!', role=User.Roles.BUSINESS_OPERATOR)
+    MfaDevice.objects.create(user=user, encrypted_secret=encrypt_credential_value('JBSWY3DPEHPK3PXP'), confirmed_at=timezone.now())
+    BusinessInvitation.objects.create(business=b, email=user.email, role='operator', expires_at=timezone.now()+timezone.timedelta(hours=24), delivery_channel='manual')
     BusinessInvitation.objects.create(business=b, email=f'expired-{project}@example.com', role='operator',
         expires_at=timezone.now()-timezone.timedelta(hours=1), delivery_channel='email')
     BusinessInvitation.objects.create(business=b, email=f'states-{project}@example.com', role='operator',
@@ -38,7 +54,7 @@ if __name__ == "__main__":
             command += ["--grep", args.grep]
         fixture = FIXTURE.replace("e2e-business", runtime.environment["E2E_BUSINESS_SLUG"])
         for cmd, cwd in [([shutil.which("node"), "e2e/django-e2e.mjs", "prepare"], ROOT / "frontend"),
-                         ([sys.executable, "manage.py", "shell", "-c", fixture], ROOT),
+                         ([sys.executable, "-c", "from scripts.browser_test_runtime import configure_browser_runtime; configure_browser_runtime(); import django; django.setup(); exec(" + repr(fixture) + ")"], ROOT),
                          (command, ROOT / "frontend")]:
             result = subprocess.run(cmd, cwd=cwd, env=runtime.environment, stdout=log, stderr=subprocess.STDOUT)
             if result.returncode:

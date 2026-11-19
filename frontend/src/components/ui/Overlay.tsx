@@ -229,6 +229,8 @@ export function Dialog({
   focusReturnId,
   presentation = "dialog",
   backdropBlur = true,
+  backdropClassName,
+  mobileFullScreen = false,
   headerActions,
   footer,
 }: {
@@ -244,6 +246,8 @@ export function Dialog({
   focusReturnId?: string;
   presentation?: "dialog" | "entity";
   backdropBlur?: boolean;
+  backdropClassName?: string;
+  mobileFullScreen?: boolean;
   headerActions?: ReactNode;
   footer?: ReactNode;
 }) {
@@ -259,7 +263,7 @@ export function Dialog({
 
   return createPortal(
     <div
-      className="platforma-overlay-backdrop fixed inset-0 grid place-items-center p-3 sm:p-5"
+      className={cn("platforma-overlay-backdrop fixed inset-0 grid place-items-center", backdropClassName || "p-3 sm:p-5")}
       style={{ zIndex: presentation === "entity" ? "var(--platforma-z-drawer)" : "var(--platforma-z-modal)", ...(presentation === "entity" || !blur || !backdropBlur ? { backdropFilter: "none" } : {}) }}
       onMouseDown={closeOnBackdrop ? onClose : undefined}
     >
@@ -275,7 +279,7 @@ export function Dialog({
           "platforma-dialog-surface flex w-full flex-col overflow-hidden",
           presentation === "entity"
             ? "h-[calc(100dvh-1.5rem)] max-h-[calc(100dvh-1.5rem)] max-w-[1080px] sm:h-[90dvh] sm:max-h-[90dvh]"
-            : cn("max-h-[calc(100dvh-1.5rem)] sm:max-h-[90vh]", dialogSizeClass[size]),
+            : cn(mobileFullScreen ? "h-dvh max-h-dvh sm:h-auto sm:max-h-[90dvh]" : "max-h-[calc(100dvh-1.5rem)] sm:max-h-[90vh]", dialogSizeClass[size]),
           className,
         )}
         onMouseDown={(event) => event.stopPropagation()}

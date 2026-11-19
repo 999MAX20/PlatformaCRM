@@ -36,10 +36,10 @@ export function TeamAccessControl({ member, canManage }: { member: TeamMember; c
     if (result.confirmed) mutation.mutate({ id: member.id, payload: { is_active: !member.is_active } });
   }
   return <div className="mt-4 space-y-3">
-    <TeamBranchAccess key={`${member.id}:${JSON.stringify(member.branch_access)}`} member={member} />
-    <Button type="button" data-testid="team-access-toggle" variant={member.is_active ? "warning" : "secondary"}
+    <Button type="button" size="lg" data-testid="team-access-toggle" variant={member.is_active ? "warning" : "secondary"}
       isLoading={mutation.isPending} onClick={() => void changeAccess()}>{label}</Button>
     {mutation.error && <ErrorState error={mutation.error} message={getApiErrorMessage(mutation.error)} />}
     {mutation.isSuccess && <p role="status" className="text-sm text-platforma-success">{t("common.saved")}</p>}
+    <TeamBranchAccess key={`${member.id}:${JSON.stringify(member.branch_access)}`} member={member} />
   </div>;
 }

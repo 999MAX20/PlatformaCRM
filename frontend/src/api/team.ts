@@ -51,7 +51,7 @@ export const teamApi = {
     return data;
   },
   previewInvitation: async (token: string) => {
-    const { data } = await apiClient.get<Pick<BusinessInvitation, "business" | "business_name" | "email" | "full_name" | "role" | "status" | "expires_at"> & { requires_authentication: boolean }>(
+    const { data } = await apiClient.get<Pick<BusinessInvitation, "business" | "business_name" | "email" | "full_name" | "role" | "status" | "expires_at"> & { requires_authentication: boolean; role_name?: string | null; access_summary?: { resource: string; action: string; scope: RolePermission["scope"] }[] }>(
       `/api/team/invitations/preview/${token}/`,
     );
     return data;

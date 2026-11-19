@@ -5,7 +5,7 @@ let pageErrors: string[];
 test.beforeEach(({ page }) => { pageErrors = []; page.on("pageerror", (error) => pageErrors.push(error.message)); });
 test.afterEach(() => { expect(pageErrors).toEqual([]); });
 
-async function setup(page: Page, locale = "en") {
+async function setup(page: Page, locale = "en", newClient?: { business: number; channel: number }) {
   let starts = 0;
   const completions: Record<string, unknown>[] = [];
   const startPayloads: Record<string, unknown>[] = [];
@@ -22,18 +22,37 @@ async function setup(page: Page, locale = "en") {
     if (path.endsWith("/whatsapp-embedded-signup/start/")) {
       starts++;
       startPayloads.push(route.request().postDataJSON());
-      return route.fulfill({ json: { app_configured: true, config_id_configured: true, app_id: "fake-app", config_id: "fake-config", state: `state-${starts}`, redirect_uri: "http://127.0.0.1:5173/callback", graph_api_version: "v27.0" } });
+      return route.fulfill({ json: { app_configured: true, config_id_configured: true, app_id: "fake-app", config_id: "fake-config", state: `state-${starts}`, redirect_uri: `${new URL(route.request().url()).origin}/app/ai-agents?zani_provider=whatsapp`, graph_api_version: "v27.0" } });
     }
     if (path.endsWith("/whatsapp-embedded-signup/complete/")) {
       completions.push(route.request().postDataJSON());
-      return route.fulfill({ status: completions.length === 1 ? 400 : 200, json: completions.length === 1 ? { oauth: "Restart setup and try again." } : { ok: true, channel_id: 17 } });
+      const fail = !newClient && completions.length === 1;
+      return route.fulfill({ status: fail ? 400 : 200, json: fail ? { oauth: "Restart setup and try again." } : { ok: true, channel_id: newClient?.channel || 17 } });
     }
     return route.fulfill({ json: { phone_number_id_configured: false, access_token_configured: false } });
   });
-  await page.goto("/e2e/fixtures/whatsapp-signup.html");
+  await page.goto(`/e2e/fixtures/whatsapp-signup.html${newClient ? `?business=${newClient.business}&channel=${newClient.channel}` : ""}`);
   await expect(page.getByRole("button", { name: /^(Connect|Подключить|Қосу)$/ })).toBeVisible();
   await expect(page.locator("main")).not.toContainText(/Meta|YCloud/i);
   return { completions, startPayloads, starts: () => starts };
+}
+
+for (const client of [{ business: 901, channel: 1901 }, { business: 902, channel: 1902 }]) {
+  test(`new business ${client.business} completes SDK signup using the common callback`, async ({ page }) => {
+    const { startPayloads, completions } = await setup(page, "en", client);
+    await page.evaluate((id) => history.replaceState({}, "", `/app/ai-agents/${id}/channels?channel=whatsapp`), client.channel);
+    const callback = `${new URL(page.url()).origin}/app/ai-agents?zani_provider=whatsapp`;
+    await page.getByLabel(/PIN/).fill("123456");
+    await page.getByRole("button", { name: "Connect", exact: true }).click();
+    await code(page, 0, `new-client-${client.business}`);
+    await finish(page);
+    await expect(page.getByLabel(/PIN/)).toHaveValue("");
+    expect(startPayloads).toHaveLength(1);
+    expect(startPayloads[0]).toMatchObject({ business: client.business, bot_channel: client.channel, redirect_uri: callback });
+    expect(completions).toHaveLength(1);
+    expect(completions[0]).toMatchObject({ business: client.business, state: "state-1", redirect_uri: callback });
+    expect(await page.evaluate(() => (window as unknown as { signupOptions: unknown[] }).signupOptions[0])).not.toHaveProperty("redirect_uri");
+  });
 }
 
 test("Business App uses coexistence callback without a phone ID or PIN and retains number on error", async ({ page }, testInfo) => {

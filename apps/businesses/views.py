@@ -410,12 +410,15 @@ class BusinessInvitationViewSet(TeamAccessMixin, ModelViewSet):
             token = UUID(str(token))
         except (ValueError, TypeError, AttributeError):
             raise ValidationError("Invitation was not found.") from None
-        invitation = BusinessInvitation.objects.select_related("business").filter(token=token).first()
+        invitation = BusinessInvitation.objects.select_related("business", "business_role").filter(token=token).first()
         if invitation is None:
             raise ValidationError("Invitation was not found.")
+        from .invitations import invitation_access_summary
         return Response(
             {
                 "business_name": invitation.business.name,
+                "role_name": invitation.business_role.name if invitation.business_role and invitation.business_role.business_id == invitation.business_id and not invitation.business_role.is_system else None,
+                "access_summary": invitation_access_summary(invitation) if invitation.status == "pending" else [],
                 "business": invitation.business_id,
                 "email": invitation.email,
                 "full_name": invitation.full_name,

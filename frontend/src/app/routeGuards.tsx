@@ -13,14 +13,17 @@ import { useActiveBusiness } from "../hooks/useBusiness";
 import { useI18n } from "../lib/i18n";
 import { hasPermission, permissionForbiddenMessage } from "../lib/permissions";
 import { getUserStartPath } from "../lib/startPage";
+import { BusinessAccessRevoked } from "../features/auth/BusinessAccessRevoked";
 export function MerchantRoute({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, isLoading, isMerchantUser, isPlatformUser } =
+  const { isAuthenticated, isLoading, isMerchantUser, isPlatformUser, user } =
     useAuth();
   const location = useLocation();
   if (isLoading) return <LoadingState scope="page" />;
   if (!isAuthenticated) return <Navigate to="/login" replace state={{ from: location }} />;
   if (!isMerchantUser && isPlatformUser)
     return <Navigate to="/platform" replace />;
+  if (isMerchantUser && user?.business_access_revoked && !user.businesses.length)
+    return <BusinessAccessRevoked />;
   return isMerchantUser ? children : <Navigate to="/login" replace />;
 }
 export function PlatformRoute({ children }: { children: React.ReactNode }) {

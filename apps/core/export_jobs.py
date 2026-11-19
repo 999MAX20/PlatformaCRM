@@ -1,4 +1,5 @@
 import logging
+import re
 import uuid
 
 from django.conf import settings
@@ -17,6 +18,22 @@ from apps.integrations.sanitization import sanitize_error_text
 
 
 logger = logging.getLogger(__name__)
+
+
+def _csv_row_count(content):
+    """Count csv.writer records without imposing a parser's field-size limit."""
+    quoted = False
+    rows = 0
+    last_boundary = 0
+    for token in re.finditer(rb'"|\r\n|\r|\n', content):
+        if token.group() == b'"':
+            quoted = not quoted
+        elif not quoted:
+            rows += 1
+            last_boundary = token.end()
+    if last_boundary < len(content):
+        rows += 1
+    return max(rows - 1, 0)
 
 
 def export_resource(export_key):
@@ -136,6 +153,8 @@ def process_export_job(job_id):
         ):
             raise PermissionDenied("Export access is no longer available.")
         if job.kind == ExportJob.Kinds.ENTITY:
+            if entity_export_queryset(job.business, job.export_key, user=job.actor).count() > settings.EXPORT_MAX_ROWS:
+                raise ValidationError({"export": f"Export cannot exceed {settings.EXPORT_MAX_ROWS} rows."})
             response = export_entity_response(job.business, job.export_key, user=job.actor)
         elif job.kind == ExportJob.Kinds.ANALYTICS_REPORT:
             from apps.analytics.reports import export_report_csv
@@ -150,6 +169,9 @@ def process_export_job(job_id):
         else:
             raise ValidationError("Unsupported export job kind.")
         content = bytes(response.content)
+        row_count = _csv_row_count(content)
+        if job.kind == ExportJob.Kinds.ENTITY and row_count > settings.EXPORT_MAX_ROWS:
+            raise ValidationError({"export": f"Export cannot exceed {settings.EXPORT_MAX_ROWS} rows."})
         if export_access_fingerprint(job, job.actor) != fingerprint:
             raise PermissionDenied("Export access changed during generation. Request a new export.")
         job.parameters_json = {**job.parameters_json, "access_fingerprint_v1": fingerprint}
@@ -157,7 +179,7 @@ def process_export_job(job_id):
         job.result_file.save(filename, ContentFile(content), save=False)
         output_name = job.result_file.name
         published = owned.update(result_file=output_name, parameters_json=job.parameters_json,
-            row_count=max(content.count(b"\n") - 1, 0), status=ExportJob.Statuses.SUCCEEDED,
+            row_count=row_count, status=ExportJob.Statuses.SUCCEEDED,
             completed_at=timezone.now(), error="", updated_at=timezone.now()) == 1
     except Exception as exc:
         logger.exception("exports.job_failed", extra={"export_job_id": job.id})

@@ -73,7 +73,7 @@ export function useWhatsAppSignup(businessId: Id, channelId: Id | undefined, not
       launchPin.current = mode === "cloud" ? pin : "";
       launchMode.current = mode;
       const attempt = generation.current;
-      const redirect = `${window.location.origin}${window.location.pathname}?zani_provider=whatsapp`;
+      const redirect = `${window.location.origin}/app/ai-agents?zani_provider=whatsapp`;
       const data = await businessConnectorsApi.startWhatsAppEmbeddedSignup({ business: businessId, botChannel: channelId, redirectUri: redirect,
         onboardingMode: mode, expectedPhone: mode === "coexistence" ? phone : undefined });
       if (attempt !== generation.current) return;

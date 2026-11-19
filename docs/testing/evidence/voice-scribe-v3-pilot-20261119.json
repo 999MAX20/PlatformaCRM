@@ -1,0 +1,2526 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-19",
+  "synthetic_only": true,
+  "source_base": "b9415d71e89167fcbf74c55187009481da066389",
+  "source_boundaries": [
+    "surname and compound identity guards",
+    "plus retained-time patch fix and full-name extraction instruction",
+    "final frozen initial-name ambiguity safeguard; unchanged application source; D01/D02 reference-only repeat"
+  ],
+  "limits": {
+    "elevenlabs_credits": 200,
+    "openrouter_usd": 0.15
+  },
+  "attempts": [
+    {
+      "live": true,
+      "synthetic_only": true,
+      "limits": {
+        "elevenlabs": 200,
+        "openrouter_usd": 0.15
+      },
+      "tracks": [
+        {
+          "track": "reference",
+          "case": "D01",
+          "turns": [
+            {
+              "turn": 1,
+              "transcript": "Жаңа клиент Әсел Сынақты екі мың отызыншы жылғы жетінші қарашада сағат он екіге Консультация қызметіне Аннаға жаз.",
+              "normalized": "Жаңа клиент Әсел Сынақты екі мың отызыншы жылғы жетінші қарашада сағат он екіге Консультация қызметіне Аннаға жаз.",
+              "status": "awaiting_confirmation",
+              "error_code": "",
+              "response": "",
+              "draft": {
+                "client_name": "Әсел Сынақ",
+                "client_phone": "",
+                "client_id": null,
+                "plan": false,
+                "visits": [
+                  {
+                    "date": "2030-11-07",
+                    "time": "12:00",
+                    "time_text": "сағат он екіге",
+                    "time_basis": "business",
+                    "service": "Консультация",
+                    "specialist": "Анна",
+                    "branch": "",
+                    "any_resource": false
+                  }
+                ]
+              },
+              "plan": {
+                "intent": "actions",
+                "question": "",
+                "steps": [
+                  {
+                    "entity": "appointments",
+                    "operation": "create",
+                    "target_id": null,
+                    "query": "",
+                    "request": "Жаңа клиент Әсел Сынақты екі мың отызыншы жылғы жетінші қарашада сағат он екіге Консультация қызметіне Аннаға жаз.",
+                    "after": null,
+                    "tool_call_id": 1
+                  }
+                ],
+                "period": null,
+                "read": null
+              },
+              "tools": [
+                {
+                  "tool_name": "crm_schedule",
+                  "input_json": {
+                    "entity": "appointments",
+                    "values": {
+                      "client": {
+                        "full_name": "Әсел Сынақ"
+                      },
+                      "plan": false,
+                      "visits": [
+                        {
+                          "service": 1,
+                          "resource": 1,
+                          "branch": null,
+                          "start_at": "2030-11-07T12:00:00+05:00",
+                          "expected_price": "100.00",
+                          "expected_duration_minutes": 30
+                        }
+                      ]
+                    },
+                    "requires_confirmation": true,
+                    "preview": {
+                      "client_name": "Әсел Сынақ",
+                      "visits": [
+                        {
+                          "service_name": "Консультация",
+                          "resource_name": "Анна",
+                          "start_at": "2030-11-07T12:00:00+05:00",
+                          "branch_name": ""
+                        }
+                      ]
+                    },
+                    "_agent": {
+                      "runtime": "interface_voice",
+                      "agent_fingerprint": "22a87c87a3c0d4631318f7006a17e5f5618b8395fbecf88c2807b77ee46232a7"
+                    }
+                  },
+                  "status": "suggested"
+                }
+              ],
+              "passed": true,
+              "seconds": 4.156
+            },
+            {
+              "turn": 2,
+              "transcript": "Жоқ, сағат он үшке.",
+              "normalized": "Жоқ, сағат он үшке.",
+              "status": "awaiting_confirmation",
+              "error_code": "",
+              "response": "",
+              "draft": {
+                "client_name": "Әсел Сынақ",
+                "client_phone": "",
+                "client_id": null,
+                "plan": false,
+                "visits": [
+                  {
+                    "date": "2030-11-07",
+                    "time": "13:00",
+                    "time_text": "сағат он үшке",
+                    "time_basis": "business",
+                    "service": "Консультация",
+                    "specialist": "Анна",
+                    "branch": "",
+                    "any_resource": false
+                  }
+                ]
+              },
+              "plan": {
+                "intent": "actions",
+                "question": "",
+                "steps": [
+                  {
+                    "entity": "appointments",
+                    "operation": "create",
+                    "target_id": null,
+                    "query": "",
+                    "request": "Жоқ, сағат он үшке.",
+                    "after": null,
+                    "tool_call_id": 2
+                  }
+                ],
+                "period": null,
+                "read": null
+              },
+              "tools": [
+                {
+                  "tool_name": "crm_schedule",
+                  "input_json": {
+                    "entity": "appointments",
+                    "values": {
+                      "client": {
+                        "full_name": "Әсел Сынақ"
+                      },
+                      "plan": false,
+                      "visits": [
+                        {
+                          "service": 1,
+                          "resource": 1,
+                          "branch": null,
+                          "start_at": "2030-11-07T13:00:00+05:00",
+                          "expected_price": "100.00",
+                          "expected_duration_minutes": 30
+                        }
+                      ]
+                    },
+                    "requires_confirmation": true,
+                    "preview": {
+                      "client_name": "Әсел Сынақ",
+                      "visits": [
+                        {
+                          "service_name": "Консультация",
+                          "resource_name": "Анна",
+                          "start_at": "2030-11-07T13:00:00+05:00",
+                          "branch_name": ""
+                        }
+                      ]
+                    },
+                    "_agent": {
+                      "runtime": "interface_voice",
+                      "agent_fingerprint": "22a87c87a3c0d4631318f7006a17e5f5618b8395fbecf88c2807b77ee46232a7"
+                    }
+                  },
+                  "status": "suggested"
+                }
+              ],
+              "passed": true,
+              "seconds": 3.953,
+              "stale_approval_denied": true
+            }
+          ],
+          "confirmation_status": "completed",
+          "created_clients": [
+            {
+              "full_name": "Әсел Сынақ",
+              "phone": ""
+            }
+          ],
+          "created_appointments": [
+            {
+              "start_at": "2030-11-07T08:00:00+00:00",
+              "client_id": 1,
+              "resource_id": 1,
+              "service_id": 1
+            }
+          ],
+          "persisted_fields_exact": true,
+          "confirmation_replay_no_duplicate": true
+        },
+        {
+          "track": "reference",
+          "case": "D02",
+          "turns": [
+            {
+              "turn": 1,
+              "transcript": "Жаңа клиент Әсел Сынақты екі мың отызыншы жылғы жетінші қарашада сағат он екіге Консультация қызметіне Аннаға жаз.",
+              "normalized": "Жаңа клиент Әсел Сынақты екі мың отызыншы жылғы жетінші қарашада сағат он екіге Консультация қызметіне Аннаға жаз.",
+              "status": "awaiting_confirmation",
+              "error_code": "",
+              "response": "",
+              "draft": {
+                "client_name": "Әсел Сынақты",
+                "client_phone": "",
+                "client_id": null,
+                "plan": false,
+                "visits": [
+                  {
+                    "date": "2030-11-07",
+                    "time": "12:00",
+                    "time_text": "сағат он екіге",
+                    "time_basis": "business",
+                    "service": "Консультация",
+                    "specialist": "Анна",
+                    "branch": "",
+                    "any_resource": false
+                  }
+                ]
+              },
+              "plan": {
+                "intent": "actions",
+                "question": "",
+                "steps": [
+                  {
+                    "entity": "appointments",
+                    "operation": "create",
+                    "target_id": null,
+                    "query": "",
+                    "request": "Жаңа клиент Әсел Сынақты екі мың отызыншы жылғы жетінші қарашада сағат он екіге Консультация қызметіне Аннаға жаз.",
+                    "after": null,
+                    "tool_call_id": 1
+                  }
+                ],
+                "period": null,
+                "read": null
+              },
+              "tools": [
+                {
+                  "tool_name": "crm_schedule",
+                  "input_json": {
+                    "entity": "appointments",
+                    "values": {
+                      "client": {
+                        "full_name": "Әсел Сынақты"
+                      },
+                      "plan": false,
+                      "visits": [
+                        {
+                          "service": 1,
+                          "resource": 1,
+                          "branch": null,
+                          "start_at": "2030-11-07T12:00:00+05:00",
+                          "expected_price": "100.00",
+                          "expected_duration_minutes": 30
+                        }
+                      ]
+                    },
+                    "requires_confirmation": true,
+                    "preview": {
+                      "client_name": "Әсел Сынақты",
+                      "visits": [
+                        {
+                          "service_name": "Консультация",
+                          "resource_name": "Анна",
+                          "start_at": "2030-11-07T12:00:00+05:00",
+                          "branch_name": ""
+                        }
+                      ]
+                    },
+                    "_agent": {
+                      "runtime": "interface_voice",
+                      "agent_fingerprint": "22a87c87a3c0d4631318f7006a17e5f5618b8395fbecf88c2807b77ee46232a7"
+                    }
+                  },
+                  "status": "suggested"
+                }
+              ],
+              "passed": false,
+              "seconds": 3.781
+            }
+          ]
+        },
+        {
+          "track": "reference",
+          "case": "D03",
+          "turns": [
+            {
+              "turn": 1,
+              "transcript": "Әсел Сынақты ертең сағат он екіге қабылдауға жазып жіберме.",
+              "normalized": "Әсел Сынақты ертең сағат он екіге қабылдауға жазып жіберме.",
+              "status": "clarifying",
+              "error_code": "",
+              "response": "Запись не подготовлена. Что нужно сделать?",
+              "draft": null,
+              "plan": {
+                "intent": "clarify",
+                "question": "Запись не подготовлена. Что нужно сделать?",
+                "steps": [],
+                "period": null,
+                "read": null
+              },
+              "tools": [],
+              "passed": true,
+              "seconds": 1.703
+            },
+            {
+              "turn": 2,
+              "transcript": "Алдыңғы әрекеттен бас тарт.",
+              "normalized": "Алдыңғы әрекеттен бас тарт.",
+              "status": "cancelled",
+              "error_code": "",
+              "response": "Ожидающие действия отменены. Уже выполненные изменения сохранены.",
+              "draft": null,
+              "plan": {
+                "intent": "cancel",
+                "question": "",
+                "steps": [],
+                "period": null,
+                "read": null
+              },
+              "tools": [],
+              "passed": true,
+              "seconds": 1.204
+            }
+          ]
+        },
+        {
+          "track": "reference",
+          "case": "D04",
+          "turns": [
+            {
+              "turn": 1,
+              "transcript": "Запиши нового клиента Әсел Сынақ на Консультацию к Анне на седьмое ноября две тысячи тридцатого года в двенадцать часов. Телефон плюс семь семь ноль один два три четыре пять шесть семь восемь.",
+              "normalized": "Запиши нового клиента Әсел Сынақ на Консультацию к Анне на седьмое ноября две тысячи тридцатого года в двенадцать часов. Телефон +77012345678.",
+              "status": "awaiting_confirmation",
+              "error_code": "",
+              "response": "",
+              "draft": {
+                "client_name": "Әсел Сынақ",
+                "client_phone": "+77012345678",
+                "client_id": null,
+                "plan": false,
+                "visits": [
+                  {
+                    "date": "2030-11-07",
+                    "time": "12:00",
+                    "time_text": "в двенадцать часов",
+                    "time_basis": "business",
+                    "service": "Консультация",
+                    "specialist": "Анна",
+                    "branch": "",
+                    "any_resource": false
+                  }
+                ]
+              },
+              "plan": {
+                "intent": "actions",
+                "question": "",
+                "steps": [
+                  {
+                    "entity": "appointments",
+                    "operation": "create",
+                    "target_id": null,
+                    "query": "",
+                    "request": "Запиши нового клиента Әсел Сынақ на Консультацию к Анне на седьмое ноября две тысячи тридцатого года в двенадцать часов. Телефон +77012345678.",
+                    "after": null,
+                    "tool_call_id": 1
+                  }
+                ],
+                "period": null,
+                "read": null
+              },
+              "tools": [
+                {
+                  "tool_name": "crm_schedule",
+                  "input_json": {
+                    "entity": "appointments",
+                    "values": {
+                      "client": {
+                        "full_name": "Әсел Сынақ",
+                        "phone": "+77012345678"
+                      },
+                      "plan": false,
+                      "visits": [
+                        {
+                          "service": 1,
+                          "resource": 1,
+                          "branch": null,
+                          "start_at": "2030-11-07T12:00:00+05:00",
+                          "expected_price": "100.00",
+                          "expected_duration_minutes": 30
+                        }
+                      ]
+                    },
+                    "requires_confirmation": true,
+                    "preview": {
+                      "client_name": "Әсел Сынақ",
+                      "visits": [
+                        {
+                          "service_name": "Консультация",
+                          "resource_name": "Анна",
+                          "start_at": "2030-11-07T12:00:00+05:00",
+                          "branch_name": ""
+                        }
+                      ]
+                    },
+                    "_agent": {
+                      "runtime": "interface_voice",
+                      "agent_fingerprint": "22a87c87a3c0d4631318f7006a17e5f5618b8395fbecf88c2807b77ee46232a7"
+                    }
+                  },
+                  "status": "suggested"
+                }
+              ],
+              "passed": true,
+              "seconds": 4.5
+            },
+            {
+              "turn": 2,
+              "transcript": "Соңғы сан сегіз емес, тоғыз. Остальные цифры не меняй.",
+              "normalized": "Соңғы сан сегіз емес, тоғыз. Остальные цифры не меняй.",
+              "status": "failed",
+              "error_code": "invalid_action_plan",
+              "response": "",
+              "draft": null,
+              "plan": {},
+              "tools": [],
+              "passed": false,
+              "seconds": 4.016,
+              "stale_approval_denied": true
+            }
+          ]
+        }
+      ],
+      "audio_stop_reason": "Reference critical-field/intent failure; no STT dispatched.",
+      "openrouter_reserved_or_charged_usd": 0.0034578,
+      "elevenlabs_credit_reserve": 0.0,
+      "production_privacy_flags": [
+        false,
+        false
+      ]
+    },
+    {
+      "live": true,
+      "synthetic_only": true,
+      "limits": {
+        "elevenlabs": 200,
+        "openrouter_usd": 0.15
+      },
+      "tracks": [
+        {
+          "track": "reference",
+          "case": "D01",
+          "turns": [
+            {
+              "turn": 1,
+              "transcript": "Жаңа клиент Әсел Сынақты екі мың отызыншы жылғы жетінші қарашада сағат он екіге Консультация қызметіне Аннаға жаз.",
+              "normalized": "Жаңа клиент Әсел Сынақты екі мың отызыншы жылғы жетінші қарашада сағат он екіге Консультация қызметіне Аннаға жаз.",
+              "status": "awaiting_confirmation",
+              "error_code": "",
+              "response": "",
+              "draft": {
+                "client_name": "Әсел Сынақты",
+                "client_phone": "",
+                "client_id": null,
+                "plan": false,
+                "visits": [
+                  {
+                    "date": "2030-11-07",
+                    "time": "12:00",
+                    "time_text": "сағат он екіге",
+                    "time_basis": "business",
+                    "service": "Консультация",
+                    "specialist": "Анна",
+                    "branch": "",
+                    "any_resource": false
+                  }
+                ]
+              },
+              "plan": {
+                "intent": "actions",
+                "question": "",
+                "steps": [
+                  {
+                    "entity": "appointments",
+                    "operation": "create",
+                    "target_id": null,
+                    "query": "",
+                    "request": "Жаңа клиент Әсел Сынақты екі мың отызыншы жылғы жетінші қарашада сағат он екіге Консультация қызметіне Аннаға жаз.",
+                    "after": null,
+                    "tool_call_id": 1
+                  }
+                ],
+                "period": null,
+                "read": null
+              },
+              "tools": [
+                {
+                  "tool_name": "crm_schedule",
+                  "input_json": {
+                    "entity": "appointments",
+                    "values": {
+                      "client": {
+                        "full_name": "Әсел Сынақты"
+                      },
+                      "plan": false,
+                      "visits": [
+                        {
+                          "service": 1,
+                          "resource": 1,
+                          "branch": null,
+                          "start_at": "2030-11-07T12:00:00+05:00",
+                          "expected_price": "100.00",
+                          "expected_duration_minutes": 30
+                        }
+                      ]
+                    },
+                    "requires_confirmation": true,
+                    "preview": {
+                      "client_name": "Әсел Сынақты",
+                      "visits": [
+                        {
+                          "service_name": "Консультация",
+                          "resource_name": "Анна",
+                          "start_at": "2030-11-07T12:00:00+05:00",
+                          "branch_name": ""
+                        }
+                      ]
+                    },
+                    "_agent": {
+                      "runtime": "interface_voice",
+                      "agent_fingerprint": "22a87c87a3c0d4631318f7006a17e5f5618b8395fbecf88c2807b77ee46232a7"
+                    }
+                  },
+                  "status": "suggested"
+                }
+              ],
+              "passed": false,
+              "seconds": 4.219
+            }
+          ]
+        },
+        {
+          "track": "reference",
+          "case": "D02",
+          "turns": [
+            {
+              "turn": 1,
+              "transcript": "Жаңа клиент Әсел Сынақты екі мың отызыншы жылғы жетінші қарашада сағат он екіге Консультация қызметіне Аннаға жаз.",
+              "normalized": "Жаңа клиент Әсел Сынақты екі мың отызыншы жылғы жетінші қарашада сағат он екіге Консультация қызметіне Аннаға жаз.",
+              "status": "awaiting_confirmation",
+              "error_code": "",
+              "response": "",
+              "draft": {
+                "client_name": "Әсел Сынақты",
+                "client_phone": "",
+                "client_id": null,
+                "plan": false,
+                "visits": [
+                  {
+                    "date": "2030-11-07",
+                    "time": "12:00",
+                    "time_text": "сағат он екіге",
+                    "time_basis": "business",
+                    "service": "Консультация",
+                    "specialist": "Анна",
+                    "branch": "",
+                    "any_resource": false
+                  }
+                ]
+              },
+              "plan": {
+                "intent": "actions",
+                "question": "",
+                "steps": [
+                  {
+                    "entity": "appointments",
+                    "operation": "create",
+                    "target_id": null,
+                    "query": "",
+                    "request": "Жаңа клиент Әсел Сынақты екі мың отызыншы жылғы жетінші қарашада сағат он екіге Консультация қызметіне Аннаға жаз.",
+                    "after": null,
+                    "tool_call_id": 1
+                  }
+                ],
+                "period": null,
+                "read": null
+              },
+              "tools": [
+                {
+                  "tool_name": "crm_schedule",
+                  "input_json": {
+                    "entity": "appointments",
+                    "values": {
+                      "client": {
+                        "full_name": "Әсел Сынақты"
+                      },
+                      "plan": false,
+                      "visits": [
+                        {
+                          "service": 1,
+                          "resource": 1,
+                          "branch": null,
+                          "start_at": "2030-11-07T12:00:00+05:00",
+                          "expected_price": "100.00",
+                          "expected_duration_minutes": 30
+                        }
+                      ]
+                    },
+                    "requires_confirmation": true,
+                    "preview": {
+                      "client_name": "Әсел Сынақты",
+                      "visits": [
+                        {
+                          "service_name": "Консультация",
+                          "resource_name": "Анна",
+                          "start_at": "2030-11-07T12:00:00+05:00",
+                          "branch_name": ""
+                        }
+                      ]
+                    },
+                    "_agent": {
+                      "runtime": "interface_voice",
+                      "agent_fingerprint": "22a87c87a3c0d4631318f7006a17e5f5618b8395fbecf88c2807b77ee46232a7"
+                    }
+                  },
+                  "status": "suggested"
+                }
+              ],
+              "passed": false,
+              "seconds": 3.954
+            }
+          ]
+        },
+        {
+          "track": "reference",
+          "case": "D03",
+          "turns": [
+            {
+              "turn": 1,
+              "transcript": "Әсел Сынақты ертең сағат он екіге қабылдауға жазып жіберме.",
+              "normalized": "Әсел Сынақты ертең сағат он екіге қабылдауға жазып жіберме.",
+              "status": "clarifying",
+              "error_code": "",
+              "response": "Запись не подготовлена. Что нужно сделать?",
+              "draft": null,
+              "plan": {
+                "intent": "clarify",
+                "question": "Запись не подготовлена. Что нужно сделать?",
+                "steps": [],
+                "period": null,
+                "read": null
+              },
+              "tools": [],
+              "passed": true,
+              "seconds": 2.125
+            },
+            {
+              "turn": 2,
+              "transcript": "Алдыңғы әрекеттен бас тарт.",
+              "normalized": "Алдыңғы әрекеттен бас тарт.",
+              "status": "cancelled",
+              "error_code": "",
+              "response": "Ожидающие действия отменены. Уже выполненные изменения сохранены.",
+              "draft": null,
+              "plan": {
+                "intent": "cancel",
+                "question": "",
+                "steps": [],
+                "period": null,
+                "read": null
+              },
+              "tools": [],
+              "passed": true,
+              "seconds": 1.454
+            }
+          ]
+        },
+        {
+          "track": "reference",
+          "case": "D04",
+          "turns": [
+            {
+              "turn": 1,
+              "transcript": "Запиши нового клиента Әсел Сынақ на Консультацию к Анне на седьмое ноября две тысячи тридцатого года в двенадцать часов. Телефон плюс семь семь ноль один два три четыре пять шесть семь восемь.",
+              "normalized": "Запиши нового клиента Әсел Сынақ на Консультацию к Анне на седьмое ноября две тысячи тридцатого года в двенадцать часов. Телефон +77012345678.",
+              "status": "awaiting_confirmation",
+              "error_code": "",
+              "response": "",
+              "draft": {
+                "client_name": "Әсел Сынақ",
+                "client_phone": "+77012345678",
+                "client_id": null,
+                "plan": false,
+                "visits": [
+                  {
+                    "date": "2030-11-07",
+                    "time": "12:00",
+                    "time_text": "в двенадцать часов",
+                    "time_basis": "business",
+                    "service": "Консультация",
+                    "specialist": "Анна",
+                    "branch": "",
+                    "any_resource": false
+                  }
+                ]
+              },
+              "plan": {
+                "intent": "actions",
+                "question": "",
+                "steps": [
+                  {
+                    "entity": "appointments",
+                    "operation": "create",
+                    "target_id": null,
+                    "query": "",
+                    "request": "Запиши нового клиента Әсел Сынақ на Консультацию к Анне на седьмое ноября две тысячи тридцатого года в двенадцать часов. Телефон +77012345678.",
+                    "after": null,
+                    "tool_call_id": 1
+                  }
+                ],
+                "period": null,
+                "read": null
+              },
+              "tools": [
+                {
+                  "tool_name": "crm_schedule",
+                  "input_json": {
+                    "entity": "appointments",
+                    "values": {
+                      "client": {
+                        "full_name": "Әсел Сынақ",
+                        "phone": "+77012345678"
+                      },
+                      "plan": false,
+                      "visits": [
+                        {
+                          "service": 1,
+                          "resource": 1,
+                          "branch": null,
+                          "start_at": "2030-11-07T12:00:00+05:00",
+                          "expected_price": "100.00",
+                          "expected_duration_minutes": 30
+                        }
+                      ]
+                    },
+                    "requires_confirmation": true,
+                    "preview": {
+                      "client_name": "Әсел Сынақ",
+                      "visits": [
+                        {
+                          "service_name": "Консультация",
+                          "resource_name": "Анна",
+                          "start_at": "2030-11-07T12:00:00+05:00",
+                          "branch_name": ""
+                        }
+                      ]
+                    },
+                    "_agent": {
+                      "runtime": "interface_voice",
+                      "agent_fingerprint": "22a87c87a3c0d4631318f7006a17e5f5618b8395fbecf88c2807b77ee46232a7"
+                    }
+                  },
+                  "status": "suggested"
+                }
+              ],
+              "passed": true,
+              "seconds": 3.984
+            },
+            {
+              "turn": 2,
+              "transcript": "Соңғы сан сегіз емес, тоғыз. Остальные цифры не меняй.",
+              "normalized": "Соңғы сан сегіз емес, тоғыз. Остальные цифры не меняй.",
+              "status": "awaiting_confirmation",
+              "error_code": "",
+              "response": "",
+              "draft": {
+                "client_name": "Әсел Сынақ",
+                "client_phone": "+77012345679",
+                "client_id": null,
+                "plan": false,
+                "visits": [
+                  {
+                    "date": "2030-11-07",
+                    "time": "12:00",
+                    "time_text": "в двенадцать часов",
+                    "time_basis": "business",
+                    "service": "Консультация",
+                    "specialist": "Анна",
+                    "branch": "",
+                    "any_resource": false
+                  }
+                ]
+              },
+              "plan": {
+                "intent": "actions",
+                "question": "",
+                "steps": [
+                  {
+                    "entity": "appointments",
+                    "operation": "create",
+                    "target_id": null,
+                    "query": "",
+                    "request": "Соңғы сан сегіз емес, тоғыз. Остальные цифры не меняй.",
+                    "after": null,
+                    "tool_call_id": 2
+                  }
+                ],
+                "period": null,
+                "read": null
+              },
+              "tools": [
+                {
+                  "tool_name": "crm_schedule",
+                  "input_json": {
+                    "entity": "appointments",
+                    "values": {
+                      "client": {
+                        "full_name": "Әсел Сынақ",
+                        "phone": "+77012345679"
+                      },
+                      "plan": false,
+                      "visits": [
+                        {
+                          "service": 1,
+                          "resource": 1,
+                          "branch": null,
+                          "start_at": "2030-11-07T12:00:00+05:00",
+                          "expected_price": "100.00",
+                          "expected_duration_minutes": 30
+                        }
+                      ]
+                    },
+                    "requires_confirmation": true,
+                    "preview": {
+                      "client_name": "Әсел Сынақ",
+                      "visits": [
+                        {
+                          "service_name": "Консультация",
+                          "resource_name": "Анна",
+                          "start_at": "2030-11-07T12:00:00+05:00",
+                          "branch_name": ""
+                        }
+                      ]
+                    },
+                    "_agent": {
+                      "runtime": "interface_voice",
+                      "agent_fingerprint": "22a87c87a3c0d4631318f7006a17e5f5618b8395fbecf88c2807b77ee46232a7"
+                    }
+                  },
+                  "status": "suggested"
+                }
+              ],
+              "passed": true,
+              "seconds": 3.797,
+              "stale_approval_denied": true
+            }
+          ],
+          "confirmation_status": "completed",
+          "created_clients": [
+            {
+              "full_name": "Әсел Сынақ",
+              "phone": "+77012345679"
+            }
+          ],
+          "created_appointments": [
+            {
+              "start_at": "2030-11-07T07:00:00+00:00",
+              "client_id": 1,
+              "resource_id": 1,
+              "service_id": 1
+            }
+          ],
+          "persisted_fields_exact": true,
+          "confirmation_replay_no_duplicate": true
+        }
+      ],
+      "audio_stop_reason": "Reference critical-field/intent failure; no STT dispatched.",
+      "openrouter_reserved_or_charged_usd": 0.0061383,
+      "elevenlabs_credit_reserve": 0.0,
+      "production_privacy_flags": [
+        false,
+        false
+      ]
+    },
+    {
+      "live": true,
+      "synthetic_only": true,
+      "limits": {
+        "elevenlabs": 200,
+        "openrouter_usd": 0.15
+      },
+      "tracks": [
+        {
+          "track": "reference",
+          "case": "D01",
+          "turns": [
+            {
+              "turn": 1,
+              "transcript": "Жаңа клиент Әсел Сынақты екі мың отызыншы жылғы жетінші қарашада сағат он екіге Консультация қызметіне Аннаға жаз.",
+              "normalized": "Жаңа клиент Әсел Сынақты екі мың отызыншы жылғы жетінші қарашада сағат он екіге Консультация қызметіне Аннаға жаз.",
+              "status": "awaiting_confirmation",
+              "error_code": "",
+              "response": "",
+              "draft": {
+                "client_name": "Әсел Сынақ",
+                "client_phone": "",
+                "client_id": null,
+                "plan": false,
+                "visits": [
+                  {
+                    "date": "2030-11-07",
+                    "time": "12:00",
+                    "time_text": "сағат он екіге",
+                    "time_basis": "business",
+                    "service": "Консультация",
+                    "specialist": "Анна",
+                    "branch": "",
+                    "any_resource": false
+                  }
+                ]
+              },
+              "plan": {
+                "intent": "actions",
+                "question": "",
+                "steps": [
+                  {
+                    "entity": "appointments",
+                    "operation": "create",
+                    "target_id": null,
+                    "query": "",
+                    "request": "Жаңа клиент Әсел Сынақты екі мың отызыншы жылғы жетінші қарашада сағат он екіге Консультация қызметіне Аннаға жаз.",
+                    "after": null,
+                    "tool_call_id": 1
+                  }
+                ],
+                "period": null,
+                "read": null
+              },
+              "tools": [
+                {
+                  "tool_name": "crm_schedule",
+                  "input_json": {
+                    "entity": "appointments",
+                    "values": {
+                      "client": {
+                        "full_name": "Әсел Сынақ"
+                      },
+                      "plan": false,
+                      "visits": [
+                        {
+                          "service": 1,
+                          "resource": 1,
+                          "branch": null,
+                          "start_at": "2030-11-07T12:00:00+05:00",
+                          "expected_price": "100.00",
+                          "expected_duration_minutes": 30
+                        }
+                      ]
+                    },
+                    "requires_confirmation": true,
+                    "preview": {
+                      "client_name": "Әсел Сынақ",
+                      "visits": [
+                        {
+                          "service_name": "Консультация",
+                          "resource_name": "Анна",
+                          "start_at": "2030-11-07T12:00:00+05:00",
+                          "branch_name": ""
+                        }
+                      ]
+                    },
+                    "_agent": {
+                      "runtime": "interface_voice",
+                      "agent_fingerprint": "22a87c87a3c0d4631318f7006a17e5f5618b8395fbecf88c2807b77ee46232a7"
+                    }
+                  },
+                  "status": "suggested"
+                }
+              ],
+              "passed": true,
+              "seconds": 4.187,
+              "business_write_counts": {
+                "clients": 0,
+                "appointments": 0,
+                "tasks": 0
+              },
+              "safe_clarification": false
+            },
+            {
+              "turn": 2,
+              "transcript": "Жоқ, сағат он үшке.",
+              "normalized": "Жоқ, сағат он үшке.",
+              "status": "awaiting_confirmation",
+              "error_code": "",
+              "response": "",
+              "draft": {
+                "client_name": "Әсел Сынақ",
+                "client_phone": "",
+                "client_id": null,
+                "plan": false,
+                "visits": [
+                  {
+                    "date": "2030-11-07",
+                    "time": "13:00",
+                    "time_text": "сағат он үшке",
+                    "time_basis": "business",
+                    "service": "Консультация",
+                    "specialist": "Анна",
+                    "branch": "",
+                    "any_resource": false
+                  }
+                ]
+              },
+              "plan": {
+                "intent": "actions",
+                "question": "",
+                "steps": [
+                  {
+                    "entity": "appointments",
+                    "operation": "create",
+                    "target_id": null,
+                    "query": "",
+                    "request": "Жоқ, сағат он үшке.",
+                    "after": null,
+                    "tool_call_id": 2
+                  }
+                ],
+                "period": null,
+                "read": null
+              },
+              "tools": [
+                {
+                  "tool_name": "crm_schedule",
+                  "input_json": {
+                    "entity": "appointments",
+                    "values": {
+                      "client": {
+                        "full_name": "Әсел Сынақ"
+                      },
+                      "plan": false,
+                      "visits": [
+                        {
+                          "service": 1,
+                          "resource": 1,
+                          "branch": null,
+                          "start_at": "2030-11-07T13:00:00+05:00",
+                          "expected_price": "100.00",
+                          "expected_duration_minutes": 30
+                        }
+                      ]
+                    },
+                    "requires_confirmation": true,
+                    "preview": {
+                      "client_name": "Әсел Сынақ",
+                      "visits": [
+                        {
+                          "service_name": "Консультация",
+                          "resource_name": "Анна",
+                          "start_at": "2030-11-07T13:00:00+05:00",
+                          "branch_name": ""
+                        }
+                      ]
+                    },
+                    "_agent": {
+                      "runtime": "interface_voice",
+                      "agent_fingerprint": "22a87c87a3c0d4631318f7006a17e5f5618b8395fbecf88c2807b77ee46232a7"
+                    }
+                  },
+                  "status": "suggested"
+                }
+              ],
+              "passed": true,
+              "seconds": 3.657,
+              "business_write_counts": {
+                "clients": 0,
+                "appointments": 0,
+                "tasks": 0
+              },
+              "safe_clarification": false,
+              "stale_approval_denied": true
+            }
+          ],
+          "confirmation_status": "completed",
+          "created_clients": [
+            {
+              "full_name": "Әсел Сынақ",
+              "phone": ""
+            }
+          ],
+          "created_appointments": [
+            {
+              "start_at": "2030-11-07T08:00:00+00:00",
+              "client_id": 1,
+              "resource_id": 1,
+              "service_id": 1
+            }
+          ],
+          "persisted_fields_exact": true,
+          "confirmation_replay_no_duplicate": true
+        },
+        {
+          "track": "reference",
+          "case": "D02",
+          "turns": [
+            {
+              "turn": 1,
+              "transcript": "Жаңа клиент Әсел Сынақты екі мың отызыншы жылғы жетінші қарашада сағат он екіге Консультация қызметіне Аннаға жаз.",
+              "normalized": "Жаңа клиент Әсел Сынақты екі мың отызыншы жылғы жетінші қарашада сағат он екіге Консультация қызметіне Аннаға жаз.",
+              "status": "awaiting_confirmation",
+              "error_code": "",
+              "response": "",
+              "draft": {
+                "client_name": "Әсел Сынақ",
+                "client_phone": "",
+                "client_id": null,
+                "plan": false,
+                "visits": [
+                  {
+                    "date": "2030-11-07",
+                    "time": "12:00",
+                    "time_text": "сағат он екіге",
+                    "time_basis": "business",
+                    "service": "Консультация",
+                    "specialist": "Анна",
+                    "branch": "",
+                    "any_resource": false
+                  }
+                ]
+              },
+              "plan": {
+                "intent": "actions",
+                "question": "",
+                "steps": [
+                  {
+                    "entity": "appointments",
+                    "operation": "create",
+                    "target_id": null,
+                    "query": "",
+                    "request": "Жаңа клиент Әсел Сынақты екі мың отызыншы жылғы жетінші қарашада сағат он екіге Консультация қызметіне Аннаға жаз.",
+                    "after": null,
+                    "tool_call_id": 1
+                  }
+                ],
+                "period": null,
+                "read": null
+              },
+              "tools": [
+                {
+                  "tool_name": "crm_schedule",
+                  "input_json": {
+                    "entity": "appointments",
+                    "values": {
+                      "client": {
+                        "full_name": "Әсел Сынақ"
+                      },
+                      "plan": false,
+                      "visits": [
+                        {
+                          "service": 1,
+                          "resource": 1,
+                          "branch": null,
+                          "start_at": "2030-11-07T12:00:00+05:00",
+                          "expected_price": "100.00",
+                          "expected_duration_minutes": 30
+                        }
+                      ]
+                    },
+                    "requires_confirmation": true,
+                    "preview": {
+                      "client_name": "Әсел Сынақ",
+                      "visits": [
+                        {
+                          "service_name": "Консультация",
+                          "resource_name": "Анна",
+                          "start_at": "2030-11-07T12:00:00+05:00",
+                          "branch_name": ""
+                        }
+                      ]
+                    },
+                    "_agent": {
+                      "runtime": "interface_voice",
+                      "agent_fingerprint": "22a87c87a3c0d4631318f7006a17e5f5618b8395fbecf88c2807b77ee46232a7"
+                    }
+                  },
+                  "status": "suggested"
+                }
+              ],
+              "passed": true,
+              "seconds": 4.375,
+              "business_write_counts": {
+                "clients": 0,
+                "appointments": 0,
+                "tasks": 0
+              },
+              "safe_clarification": false
+            },
+            {
+              "turn": 2,
+              "transcript": "Әсел емес, Әсем Сынақ.",
+              "normalized": "Әсел емес, Әсем Сынақ.",
+              "status": "awaiting_confirmation",
+              "error_code": "",
+              "response": "",
+              "draft": {
+                "client_name": "Әсем Сынақ",
+                "client_phone": "",
+                "client_id": null,
+                "plan": false,
+                "visits": [
+                  {
+                    "date": "2030-11-07",
+                    "time": "12:00",
+                    "time_text": "сағат он екіге",
+                    "time_basis": "business",
+                    "service": "Консультация",
+                    "specialist": "Анна",
+                    "branch": "",
+                    "any_resource": false
+                  }
+                ]
+              },
+              "plan": {
+                "intent": "actions",
+                "question": "",
+                "steps": [
+                  {
+                    "entity": "appointments",
+                    "operation": "create",
+                    "target_id": null,
+                    "query": "",
+                    "request": "Әсел емес, Әсем Сынақ.",
+                    "after": null,
+                    "tool_call_id": 2
+                  }
+                ],
+                "period": null,
+                "read": null
+              },
+              "tools": [
+                {
+                  "tool_name": "crm_schedule",
+                  "input_json": {
+                    "entity": "appointments",
+                    "values": {
+                      "client": {
+                        "full_name": "Әсем Сынақ"
+                      },
+                      "plan": false,
+                      "visits": [
+                        {
+                          "service": 1,
+                          "resource": 1,
+                          "branch": null,
+                          "start_at": "2030-11-07T12:00:00+05:00",
+                          "expected_price": "100.00",
+                          "expected_duration_minutes": 30
+                        }
+                      ]
+                    },
+                    "requires_confirmation": true,
+                    "preview": {
+                      "client_name": "Әсем Сынақ",
+                      "visits": [
+                        {
+                          "service_name": "Консультация",
+                          "resource_name": "Анна",
+                          "start_at": "2030-11-07T12:00:00+05:00",
+                          "branch_name": ""
+                        }
+                      ]
+                    },
+                    "_agent": {
+                      "runtime": "interface_voice",
+                      "agent_fingerprint": "22a87c87a3c0d4631318f7006a17e5f5618b8395fbecf88c2807b77ee46232a7"
+                    }
+                  },
+                  "status": "suggested"
+                }
+              ],
+              "passed": true,
+              "seconds": 3.797,
+              "business_write_counts": {
+                "clients": 0,
+                "appointments": 0,
+                "tasks": 0
+              },
+              "safe_clarification": false,
+              "stale_approval_denied": true
+            }
+          ],
+          "confirmation_status": "completed",
+          "created_clients": [
+            {
+              "full_name": "Әсем Сынақ",
+              "phone": ""
+            }
+          ],
+          "created_appointments": [
+            {
+              "start_at": "2030-11-07T07:00:00+00:00",
+              "client_id": 1,
+              "resource_id": 1,
+              "service_id": 1
+            }
+          ],
+          "persisted_fields_exact": true,
+          "confirmation_replay_no_duplicate": true
+        }
+      ],
+      "prior_scored_turns": 13,
+      "new_scored_turns": 4,
+      "cumulative_scored_turns": 17,
+      "audio_stop_reason": "Reference-only D01/D02 bounded repeat; STT excluded.",
+      "openrouter_reserved_or_charged_usd": 0.00847635,
+      "elevenlabs_credit_reserve": 0.0,
+      "production_privacy_flags": [
+        false,
+        false
+      ]
+    }
+  ],
+  "provider_calls": [
+    {
+      "provider": "openrouter",
+      "reserved": 0.00297315,
+      "state": "completed",
+      "case": "D01",
+      "track": "reference",
+      "turn": 1,
+      "message": "Жаңа клиент Әсел Сынақты екі мың отызыншы жылғы жетінші қарашада сағат он екіге Консультация қызметіне Аннаға жаз.",
+      "input_token_upper_bound": 15021,
+      "charged": 0.000462,
+      "usage": {
+        "prompt_tokens": 2748,
+        "completion_tokens": 83,
+        "total_tokens": 2831,
+        "cost": 0.000462,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.000462,
+          "upstream_inference_prompt_cost": 0.0004122,
+          "upstream_inference_completions_cost": 4.98e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "request_id": "gen-1795070894-VPLCqpLR6z9sHs4no4vL",
+      "seconds": 2.109,
+      "output": "{\"intent\":\"actions\",\"question\":\"\",\"steps\":[{\"entity\":\"appointments\",\"operation\":\"create\",\"target_id\":null,\"query\":\"Әсел Сынақты\",\"request\":\"Жаңа клиент Әсел Сынақты екі мың отызыншы жылғы жетінші қарашада сағат он екіге Консультация қызметіне Аннаға жаз.\",\"after\":null}],\"period\":null,\"read\":null}"
+    },
+    {
+      "provider": "openrouter",
+      "reserved": 0.00197775,
+      "state": "completed",
+      "case": "D01",
+      "track": "reference",
+      "turn": 1,
+      "message": "Жаңа клиент Әсел Сынақты екі мың отызыншы жылғы жетінші қарашада сағат он екіге Консультация қызметіне Аннаға жаз.",
+      "input_token_upper_bound": 8385,
+      "charged": 0.000285,
+      "usage": {
+        "prompt_tokens": 1588,
+        "completion_tokens": 78,
+        "total_tokens": 1666,
+        "cost": 0.000285,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.000285,
+          "upstream_inference_prompt_cost": 0.0002382,
+          "upstream_inference_completions_cost": 4.68e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "request_id": "gen-1795070896-SntvKQaO81IG6gCljQlU",
+      "seconds": 1.875,
+      "output": "{\"schedule\":{\"client_name\":\"Әсел Сынақ\",\"client_phone\":\"\",\"client_id\":null,\"plan\":false,\"visits\":[{\"date\":\"2030-11-07\",\"time\":\"12:00\",\"time_text\":\"сағат он екіге\",\"time_basis\":\"business\",\"service\":\"Консультация\",\"specialist\":\"Анна\",\"branch\":\"\",\"any_resource\":false}]}}"
+    },
+    {
+      "provider": "openrouter",
+      "reserved": 0.003144,
+      "state": "completed",
+      "case": "D01",
+      "track": "reference",
+      "turn": 2,
+      "message": "Жоқ, сағат он үшке.",
+      "input_token_upper_bound": 16160,
+      "charged": 0.00033855,
+      "usage": {
+        "prompt_tokens": 3037,
+        "completion_tokens": 77,
+        "total_tokens": 3114,
+        "cost": 0.00033855,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 2176,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00033855,
+          "upstream_inference_prompt_cost": 0.00029235,
+          "upstream_inference_completions_cost": 4.62e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "request_id": "gen-1795070898-rIOobav8veF0ddClxG3M",
+      "seconds": 1.984,
+      "output": "{\"intent\":\"actions\",\"question\":\"\",\"steps\":[{\"entity\":\"appointments\",\"operation\":\"create\",\"target_id\":null,\"query\":\"\",\"request\":\"Жаңа клиент Әсел Сынақты екі мың отызыншы жылғы жетінші қарашада сағат он үшке Консультация қызметіне Аннаға жаз.\",\"after\":null}],\"period\":null,\"read\":null}"
+    },
+    {
+      "provider": "openrouter",
+      "reserved": 0.0021939,
+      "state": "completed",
+      "case": "D01",
+      "track": "reference",
+      "turn": 2,
+      "message": "Жоқ, сағат он үшке.",
+      "input_token_upper_bound": 9826,
+      "charged": 0.00027855,
+      "usage": {
+        "prompt_tokens": 2049,
+        "completion_tokens": 80,
+        "total_tokens": 2129,
+        "cost": 0.00027855,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 1024,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00027855,
+          "upstream_inference_prompt_cost": 0.00023055,
+          "upstream_inference_completions_cost": 4.8e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "request_id": "gen-1795070900-m5cixvmGKpOs9QdFIkTB",
+      "seconds": 1.797,
+      "output": "{\"schedule\":{\"patch\":{\"client_name\":\"Әсел Сынақ\",\"client_phone\":\"\",\"client_id\":null},\"visits\":[{\"index\":1,\"date\":\"2030-11-07\",\"time\":\"13:00\",\"time_text\":\"сағат он үшке\",\"time_basis\":\"business\",\"service\":\"Консультация\",\"specialist\":\"Анна\",\"branch\":\"\",\"any_resource\":false}]}}"
+    },
+    {
+      "provider": "openrouter",
+      "reserved": 0.00297315,
+      "state": "completed",
+      "case": "D02",
+      "track": "reference",
+      "turn": 1,
+      "message": "Жаңа клиент Әсел Сынақты екі мың отызыншы жылғы жетінші қарашада сағат он екіге Консультация қызметіне Аннаға жаз.",
+      "input_token_upper_bound": 15021,
+      "charged": 0.0002604,
+      "usage": {
+        "prompt_tokens": 2748,
+        "completion_tokens": 83,
+        "total_tokens": 2831,
+        "cost": 0.0002604,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 2688,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0002604,
+          "upstream_inference_prompt_cost": 0.0002106,
+          "upstream_inference_completions_cost": 4.98e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "request_id": "gen-1795070904-numu17ck5HCCz5l1YZGF",
+      "seconds": 1.844,
+      "output": "{\"intent\":\"actions\",\"question\":\"\",\"steps\":[{\"entity\":\"appointments\",\"operation\":\"create\",\"target_id\":null,\"query\":\"Әсел Сынақты\",\"request\":\"Жаңа клиент Әсел Сынақты екі мың отызыншы жылғы жетінші қарашада сағат он екіге Консультация қызметіне Аннаға жаз.\",\"after\":null}],\"period\":null,\"read\":null}"
+    },
+    {
+      "provider": "openrouter",
+      "reserved": 0.00197775,
+      "state": "completed",
+      "case": "D02",
+      "track": "reference",
+      "turn": 1,
+      "message": "Жаңа клиент Әсел Сынақты екі мың отызыншы жылғы жетінші қарашада сағат он екіге Консультация қызметіне Аннаға жаз.",
+      "input_token_upper_bound": 8385,
+      "charged": 0.0001698,
+      "usage": {
+        "prompt_tokens": 1588,
+        "completion_tokens": 78,
+        "total_tokens": 1666,
+        "cost": 0.0001698,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 1536,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0001698,
+          "upstream_inference_prompt_cost": 0.000123,
+          "upstream_inference_completions_cost": 4.68e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "request_id": "gen-1795070906-griNKa8TyHT0SiF3luqs",
+      "seconds": 1.703,
+      "output": "{\"schedule\":{\"client_name\":\"Әсел Сынақты\",\"client_phone\":\"\",\"client_id\":null,\"plan\":false,\"visits\":[{\"date\":\"2030-11-07\",\"time\":\"12:00\",\"time_text\":\"сағат он екіге\",\"time_basis\":\"business\",\"service\":\"Консультация\",\"specialist\":\"Анна\",\"branch\":\"\",\"any_resource\":false}]}}"
+    },
+    {
+      "provider": "openrouter",
+      "reserved": 0.00295785,
+      "state": "completed",
+      "case": "D03",
+      "track": "reference",
+      "turn": 1,
+      "message": "Әсел Сынақты ертең сағат он екіге қабылдауға жазып жіберме.",
+      "input_token_upper_bound": 14919,
+      "charged": 0.000258,
+      "usage": {
+        "prompt_tokens": 2732,
+        "completion_tokens": 67,
+        "total_tokens": 2799,
+        "cost": 0.000258,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 2560,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.000258,
+          "upstream_inference_prompt_cost": 0.0002178,
+          "upstream_inference_completions_cost": 4.02e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "request_id": "gen-1795070909-3o0RmqwAIVXSH24R26vy",
+      "seconds": 1.625,
+      "output": "{\"intent\":\"actions\",\"question\":\"\",\"steps\":[{\"entity\":\"appointments\",\"operation\":\"create\",\"target_id\":null,\"query\":\"Әсел Сынақты\",\"request\":\"Әсел Сынақты ертең сағат он екіге қабылдауға жазып жіберме\",\"after\":null}],\"period\":null,\"read\":null}"
+    },
+    {
+      "provider": "openrouter",
+      "reserved": 0.0030486,
+      "state": "completed",
+      "case": "D03",
+      "track": "reference",
+      "turn": 2,
+      "message": "Алдыңғы әрекеттен бас тарт.",
+      "input_token_upper_bound": 15524,
+      "charged": 0.0002778,
+      "usage": {
+        "prompt_tokens": 2868,
+        "completion_tokens": 18,
+        "total_tokens": 2886,
+        "cost": 0.0002778,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 2176,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0002778,
+          "upstream_inference_prompt_cost": 0.000267,
+          "upstream_inference_completions_cost": 1.08e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "request_id": "gen-1795070911-tLwBleusnjvnPGu8IR1M",
+      "seconds": 1.125,
+      "output": "{\"intent\":\"cancel\",\"question\":\"\",\"steps\":[],\"period\":null,\"read\":null}"
+    },
+    {
+      "provider": "openrouter",
+      "reserved": 0.002979,
+      "state": "completed",
+      "case": "D04",
+      "track": "reference",
+      "turn": 1,
+      "message": "Запиши нового клиента Әсел Сынақ на Консультацию к Анне на седьмое ноября две тысячи тридцатого года в двенадцать часов. Телефон +77012345678.",
+      "input_token_upper_bound": 15060,
+      "charged": 0.00027675,
+      "usage": {
+        "prompt_tokens": 2757,
+        "completion_tokens": 92,
+        "total_tokens": 2849,
+        "cost": 0.00027675,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 2560,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00027675,
+          "upstream_inference_prompt_cost": 0.00022155,
+          "upstream_inference_completions_cost": 5.52e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "request_id": "gen-1795070913-TnP1WIObDvfQisFHth6l",
+      "seconds": 1.906,
+      "output": "{\"intent\":\"actions\",\"question\":\"\",\"steps\":[{\"entity\":\"appointments\",\"operation\":\"create\",\"target_id\":null,\"query\":\"Әсел Сынақ\",\"request\":\"Запиши нового клиента Әсел Сынақ на Консультацию к Анне на седьмое ноября две тысячи тридцатого года в двенадцать часов. Телефон +77012345678.\",\"after\":null}],\"period\":null,\"read\":null}"
+    },
+    {
+      "provider": "openrouter",
+      "reserved": 0.00198945,
+      "state": "completed",
+      "case": "D04",
+      "track": "reference",
+      "turn": 1,
+      "message": "Запиши нового клиента Әсел Сынақ на Консультацию к Анне на седьмое ноября две тысячи тридцатого года в двенадцать часов. Телефон +77012345678.",
+      "input_token_upper_bound": 8463,
+      "charged": 0.0002145,
+      "usage": {
+        "prompt_tokens": 1606,
+        "completion_tokens": 84,
+        "total_tokens": 1690,
+        "cost": 0.0002145,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 1024,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0002145,
+          "upstream_inference_prompt_cost": 0.0001641,
+          "upstream_inference_completions_cost": 5.04e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "request_id": "gen-1795070915-g8fqJ9W35JsR5qBh9NW2",
+      "seconds": 2.468,
+      "output": "{\"schedule\":{\"client_name\":\"Әсел Сынақ\",\"client_phone\":\"+77012345678\",\"client_id\":null,\"plan\":false,\"visits\":[{\"date\":\"2030-11-07\",\"time\":\"12:00\",\"time_text\":\"в двенадцать часов\",\"time_basis\":\"business\",\"service\":\"Консультация\",\"specialist\":\"Анна\",\"branch\":\"\",\"any_resource\":false}]}}"
+    },
+    {
+      "provider": "openrouter",
+      "reserved": 0.0031683,
+      "state": "completed",
+      "case": "D04",
+      "track": "reference",
+      "turn": 2,
+      "message": "Соңғы сан сегіз емес, тоғыз. Остальные цифры не меняй.",
+      "input_token_upper_bound": 16322,
+      "charged": 0.00034905,
+      "usage": {
+        "prompt_tokens": 3071,
+        "completion_tokens": 86,
+        "total_tokens": 3157,
+        "cost": 0.00034905,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 2176,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00034905,
+          "upstream_inference_prompt_cost": 0.00029745,
+          "upstream_inference_completions_cost": 5.16e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "request_id": "gen-1795070917-mxZUbuKWoLekuymkV08Y",
+      "seconds": 2.0,
+      "output": "{\"intent\":\"actions\",\"question\":\"\",\"steps\":[{\"entity\":\"appointments\",\"operation\":\"create\",\"target_id\":null,\"query\":\"\",\"request\":\"Запиши нового клиента Әсел Сынақ на Консультацию к Анне на седьмое ноября две тысячи тридцатого года в двенадцать часов. Телефон +77012345678.\",\"after\":null}],\"period\":null,\"read\":null}"
+    },
+    {
+      "provider": "openrouter",
+      "reserved": 0.00222195,
+      "state": "completed",
+      "case": "D04",
+      "track": "reference",
+      "turn": 2,
+      "message": "Соңғы сан сегіз емес, тоғыз. Остальные цифры не меняй.",
+      "input_token_upper_bound": 10013,
+      "charged": 0.0002874,
+      "usage": {
+        "prompt_tokens": 2084,
+        "completion_tokens": 86,
+        "total_tokens": 2170,
+        "cost": 0.0002874,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 1024,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0002874,
+          "upstream_inference_prompt_cost": 0.0002358,
+          "upstream_inference_completions_cost": 5.16e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "request_id": "gen-1795070919-7up6LfPNRXgA2DqMphWN",
+      "seconds": 1.969,
+      "output": "{\"schedule\":{\"patch\":{\"client_name\":\"Әсел Сынақ\",\"client_phone\":\"+77012345679\",\"client_id\":null},\"visits\":[{\"index\":1,\"date\":\"2030-11-07\",\"time\":\"12:00\",\"time_text\":\"в двенадцать часов\",\"time_basis\":\"business\",\"service\":\"Консультация\",\"specialist\":\"Анна\",\"branch\":\"\",\"any_resource\":false}]}}"
+    },
+    {
+      "provider": "openrouter",
+      "reserved": 0.00297315,
+      "state": "completed",
+      "case": "D01",
+      "track": "reference",
+      "turn": 1,
+      "attempt": 2,
+      "message": "Жаңа клиент Әсел Сынақты екі мың отызыншы жылғы жетінші қарашада сағат он екіге Консультация қызметіне Аннаға жаз.",
+      "input_token_upper_bound": 15021,
+      "charged": 0.0002604,
+      "usage": {
+        "prompt_tokens": 2748,
+        "completion_tokens": 83,
+        "total_tokens": 2831,
+        "cost": 0.0002604,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 2688,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0002604,
+          "upstream_inference_prompt_cost": 0.0002106,
+          "upstream_inference_completions_cost": 4.98e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "request_id": "gen-1795071220-9hDEEJ0XNZMLW76stYqZ",
+      "seconds": 2.219,
+      "output": "{\"intent\":\"actions\",\"question\":\"\",\"steps\":[{\"entity\":\"appointments\",\"operation\":\"create\",\"target_id\":null,\"query\":\"Әсел Сынақты\",\"request\":\"Жаңа клиент Әсел Сынақты екі мың отызыншы жылғы жетінші қарашада сағат он екіге Консультация қызметіне Аннаға жаз.\",\"after\":null}],\"period\":null,\"read\":null}"
+    },
+    {
+      "provider": "openrouter",
+      "reserved": 0.00204045,
+      "state": "completed",
+      "case": "D01",
+      "track": "reference",
+      "turn": 1,
+      "attempt": 2,
+      "message": "Жаңа клиент Әсел Сынақты екі мың отызыншы жылғы жетінші қарашада сағат он екіге Консультация қызметіне Аннаға жаз.",
+      "input_token_upper_bound": 8803,
+      "charged": 0.00029775,
+      "usage": {
+        "prompt_tokens": 1673,
+        "completion_tokens": 78,
+        "total_tokens": 1751,
+        "cost": 0.00029775,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00029775,
+          "upstream_inference_prompt_cost": 0.00025095,
+          "upstream_inference_completions_cost": 4.68e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "request_id": "gen-1795071222-xkSabd4LTSmocCI3n4u7",
+      "seconds": 1.86,
+      "output": "{\"schedule\":{\"client_name\":\"Әсел Сынақты\",\"client_phone\":\"\",\"client_id\":null,\"plan\":false,\"visits\":[{\"date\":\"2030-11-07\",\"time\":\"12:00\",\"time_text\":\"сағат он екіге\",\"time_basis\":\"business\",\"service\":\"Консультация\",\"specialist\":\"Анна\",\"branch\":\"\",\"any_resource\":false}]}}"
+    },
+    {
+      "provider": "openrouter",
+      "reserved": 0.00297315,
+      "state": "completed",
+      "case": "D02",
+      "track": "reference",
+      "turn": 1,
+      "attempt": 2,
+      "message": "Жаңа клиент Әсел Сынақты екі мың отызыншы жылғы жетінші қарашада сағат он екіге Консультация қызметіне Аннаға жаз.",
+      "input_token_upper_bound": 15021,
+      "charged": 0.0002604,
+      "usage": {
+        "prompt_tokens": 2748,
+        "completion_tokens": 83,
+        "total_tokens": 2831,
+        "cost": 0.0002604,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 2688,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0002604,
+          "upstream_inference_prompt_cost": 0.0002106,
+          "upstream_inference_completions_cost": 4.98e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "request_id": "gen-1795071225-5HWjVQOIaPtlzXjV75MW",
+      "seconds": 2.094,
+      "output": "{\"intent\":\"actions\",\"question\":\"\",\"steps\":[{\"entity\":\"appointments\",\"operation\":\"create\",\"target_id\":null,\"query\":\"Әсел Сынақты\",\"request\":\"Жаңа клиент Әсел Сынақты екі мың отызыншы жылғы жетінші қарашада сағат он екіге Консультация қызметіне Аннаға жаз.\",\"after\":null}],\"period\":null,\"read\":null}"
+    },
+    {
+      "provider": "openrouter",
+      "reserved": 0.00204045,
+      "state": "completed",
+      "case": "D02",
+      "track": "reference",
+      "turn": 1,
+      "attempt": 2,
+      "message": "Жаңа клиент Әсел Сынақты екі мың отызыншы жылғы жетінші қарашада сағат он екіге Консультация қызметіне Аннаға жаз.",
+      "input_token_upper_bound": 8803,
+      "charged": 0.00029775,
+      "usage": {
+        "prompt_tokens": 1673,
+        "completion_tokens": 78,
+        "total_tokens": 1751,
+        "cost": 0.00029775,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00029775,
+          "upstream_inference_prompt_cost": 0.00025095,
+          "upstream_inference_completions_cost": 4.68e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "request_id": "gen-1795071227-4PszE7bJ08h8g9WMzMTd",
+      "seconds": 1.766,
+      "output": "{\"schedule\":{\"client_name\":\"Әсел Сынақты\",\"client_phone\":\"\",\"client_id\":null,\"plan\":false,\"visits\":[{\"date\":\"2030-11-07\",\"time\":\"12:00\",\"time_text\":\"сағат он екіге\",\"time_basis\":\"business\",\"service\":\"Консультация\",\"specialist\":\"Анна\",\"branch\":\"\",\"any_resource\":false}]}}"
+    },
+    {
+      "provider": "openrouter",
+      "reserved": 0.00295785,
+      "state": "completed",
+      "case": "D03",
+      "track": "reference",
+      "turn": 1,
+      "attempt": 2,
+      "message": "Әсел Сынақты ертең сағат он екіге қабылдауға жазып жіберме.",
+      "input_token_upper_bound": 14919,
+      "charged": 0.0002484,
+      "usage": {
+        "prompt_tokens": 2732,
+        "completion_tokens": 67,
+        "total_tokens": 2799,
+        "cost": 0.0002484,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 2688,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0002484,
+          "upstream_inference_prompt_cost": 0.0002082,
+          "upstream_inference_completions_cost": 4.02e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "request_id": "gen-1795071229-UAguwtKH94duWGCOVWTK",
+      "seconds": 2.047,
+      "output": "{\"intent\":\"actions\",\"question\":\"\",\"steps\":[{\"entity\":\"appointments\",\"operation\":\"create\",\"target_id\":null,\"query\":\"Әсел Сынақты\",\"request\":\"Әсел Сынақты ертең сағат он екіге қабылдауға жазып жіберме\",\"after\":null}],\"period\":null,\"read\":null}"
+    },
+    {
+      "provider": "openrouter",
+      "reserved": 0.0030486,
+      "state": "completed",
+      "case": "D03",
+      "track": "reference",
+      "turn": 2,
+      "attempt": 2,
+      "message": "Алдыңғы әрекеттен бас тарт.",
+      "input_token_upper_bound": 15524,
+      "charged": 0.0002298,
+      "usage": {
+        "prompt_tokens": 2868,
+        "completion_tokens": 18,
+        "total_tokens": 2886,
+        "cost": 0.0002298,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 2816,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0002298,
+          "upstream_inference_prompt_cost": 0.000219,
+          "upstream_inference_completions_cost": 1.08e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "request_id": "gen-1795071232-PU5RMcro24LFBIrL3c0C",
+      "seconds": 1.328,
+      "output": "{\"intent\":\"cancel\",\"question\":\"\",\"steps\":[],\"period\":null,\"read\":null}"
+    },
+    {
+      "provider": "openrouter",
+      "reserved": 0.002979,
+      "state": "completed",
+      "case": "D04",
+      "track": "reference",
+      "turn": 1,
+      "attempt": 2,
+      "message": "Запиши нового клиента Әсел Сынақ на Консультацию к Анне на седьмое ноября две тысячи тридцатого года в двенадцать часов. Телефон +77012345678.",
+      "input_token_upper_bound": 15060,
+      "charged": 0.00026715,
+      "usage": {
+        "prompt_tokens": 2757,
+        "completion_tokens": 92,
+        "total_tokens": 2849,
+        "cost": 0.00026715,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 2688,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00026715,
+          "upstream_inference_prompt_cost": 0.00021195,
+          "upstream_inference_completions_cost": 5.52e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "request_id": "gen-1795071234-MzCWfPPdDu1fPJDyoA7R",
+      "seconds": 2.015,
+      "output": "{\"intent\":\"actions\",\"question\":\"\",\"steps\":[{\"entity\":\"appointments\",\"operation\":\"create\",\"target_id\":null,\"query\":\"Әсел Сынақ\",\"request\":\"Запиши нового клиента Әсел Сынақ на Консультацию к Анне на седьмое ноября две тысячи тридцатого года в двенадцать часов. Телефон +77012345678.\",\"after\":null}],\"period\":null,\"read\":null}"
+    },
+    {
+      "provider": "openrouter",
+      "reserved": 0.00205215,
+      "state": "completed",
+      "case": "D04",
+      "track": "reference",
+      "turn": 1,
+      "attempt": 2,
+      "message": "Запиши нового клиента Әсел Сынақ на Консультацию к Анне на седьмое ноября две тысячи тридцатого года в двенадцать часов. Телефон +77012345678.",
+      "input_token_upper_bound": 8881,
+      "charged": 0.00022725,
+      "usage": {
+        "prompt_tokens": 1691,
+        "completion_tokens": 84,
+        "total_tokens": 1775,
+        "cost": 0.00022725,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 1024,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00022725,
+          "upstream_inference_prompt_cost": 0.00017685,
+          "upstream_inference_completions_cost": 5.04e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "request_id": "gen-1795071236-8Dm12K2AKoSJI0G7Hfh0",
+      "seconds": 1.828,
+      "output": "{\"schedule\":{\"client_name\":\"Әсел Сынақ\",\"client_phone\":\"+77012345678\",\"client_id\":null,\"plan\":false,\"visits\":[{\"date\":\"2030-11-07\",\"time\":\"12:00\",\"time_text\":\"в двенадцать часов\",\"time_basis\":\"business\",\"service\":\"Консультация\",\"specialist\":\"Анна\",\"branch\":\"\",\"any_resource\":false}]}}"
+    },
+    {
+      "provider": "openrouter",
+      "reserved": 0.0031683,
+      "state": "completed",
+      "case": "D04",
+      "track": "reference",
+      "turn": 2,
+      "attempt": 2,
+      "message": "Соңғы сан сегіз емес, тоғыз. Остальные цифры не меняй.",
+      "input_token_upper_bound": 16322,
+      "charged": 0.00029145,
+      "usage": {
+        "prompt_tokens": 3071,
+        "completion_tokens": 86,
+        "total_tokens": 3157,
+        "cost": 0.00029145,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 2944,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00029145,
+          "upstream_inference_prompt_cost": 0.00023985,
+          "upstream_inference_completions_cost": 5.16e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "request_id": "gen-1795071238-BfO3tItR8V1DUdA0TRqA",
+      "seconds": 1.782,
+      "output": "{\"intent\":\"actions\",\"question\":\"\",\"steps\":[{\"entity\":\"appointments\",\"operation\":\"create\",\"target_id\":null,\"query\":\"\",\"request\":\"Запиши нового клиента Әсел Сынақ на Консультацию к Анне на седьмое ноября две тысячи тридцатого года в двенадцать часов. Телефон +77012345678.\",\"after\":null}],\"period\":null,\"read\":null}"
+    },
+    {
+      "provider": "openrouter",
+      "reserved": 0.00228465,
+      "state": "completed",
+      "case": "D04",
+      "track": "reference",
+      "turn": 2,
+      "attempt": 2,
+      "message": "Соңғы сан сегіз емес, тоғыз. Остальные цифры не меняй.",
+      "input_token_upper_bound": 10431,
+      "charged": 0.00030015,
+      "usage": {
+        "prompt_tokens": 2169,
+        "completion_tokens": 86,
+        "total_tokens": 2255,
+        "cost": 0.00030015,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 1024,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00030015,
+          "upstream_inference_prompt_cost": 0.00024855,
+          "upstream_inference_completions_cost": 5.16e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "request_id": "gen-1795071240-4B0fKJPAKx6Nzx2D04kh",
+      "seconds": 1.782,
+      "output": "{\"schedule\":{\"patch\":{\"client_name\":\"Әсел Сынақ\",\"client_phone\":\"+77012345679\",\"client_id\":null},\"visits\":[{\"index\":1,\"date\":\"2030-11-07\",\"time\":\"12:00\",\"time_text\":\"в двенадцать часов\",\"time_basis\":\"business\",\"service\":\"Консультация\",\"specialist\":\"Анна\",\"branch\":\"\",\"any_resource\":false}]}}"
+    },
+    {
+      "provider": "openrouter",
+      "reserved": 0.00297315,
+      "state": "completed",
+      "case": "D01",
+      "track": "reference",
+      "turn": 1,
+      "attempt": 3,
+      "message": "Жаңа клиент Әсел Сынақты екі мың отызыншы жылғы жетінші қарашада сағат он екіге Консультация қызметіне Аннаға жаз.",
+      "input_token_upper_bound": 15021,
+      "charged": 0.000462,
+      "usage": {
+        "prompt_tokens": 2748,
+        "completion_tokens": 83,
+        "total_tokens": 2831,
+        "cost": 0.000462,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.000462,
+          "upstream_inference_prompt_cost": 0.0004122,
+          "upstream_inference_completions_cost": 4.98e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "request_id": "gen-1795078893-TjkGi7kaUD5NdcG8R2qf",
+      "seconds": 2.296,
+      "output": "{\"intent\":\"actions\",\"question\":\"\",\"steps\":[{\"entity\":\"appointments\",\"operation\":\"create\",\"target_id\":null,\"query\":\"Әсел Сынақты\",\"request\":\"Жаңа клиент Әсел Сынақты екі мың отызыншы жылғы жетінші қарашада сағат он екіге Консультация қызметіне Аннаға жаз.\",\"after\":null}],\"period\":null,\"read\":null}"
+    },
+    {
+      "provider": "openrouter",
+      "reserved": 0.00204045,
+      "state": "completed",
+      "case": "D01",
+      "track": "reference",
+      "turn": 1,
+      "attempt": 3,
+      "message": "Жаңа клиент Әсел Сынақты екі мың отызыншы жылғы жетінші қарашада сағат он екіге Консультация қызметіне Аннаға жаз.",
+      "input_token_upper_bound": 8803,
+      "charged": 0.00029775,
+      "usage": {
+        "prompt_tokens": 1673,
+        "completion_tokens": 78,
+        "total_tokens": 1751,
+        "cost": 0.00029775,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00029775,
+          "upstream_inference_prompt_cost": 0.00025095,
+          "upstream_inference_completions_cost": 4.68e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "request_id": "gen-1795078895-l43plbgugR6i2b781TO8",
+      "seconds": 1.718,
+      "output": "{\"schedule\":{\"client_name\":\"Әсел Сынақ\",\"client_phone\":\"\",\"client_id\":null,\"plan\":false,\"visits\":[{\"date\":\"2030-11-07\",\"time\":\"12:00\",\"time_text\":\"сағат он екіге\",\"time_basis\":\"business\",\"service\":\"Консультация\",\"specialist\":\"Анна\",\"branch\":\"\",\"any_resource\":false}]}}"
+    },
+    {
+      "provider": "openrouter",
+      "reserved": 0.003144,
+      "state": "completed",
+      "case": "D01",
+      "track": "reference",
+      "turn": 2,
+      "attempt": 3,
+      "message": "Жоқ, сағат он үшке.",
+      "input_token_upper_bound": 16160,
+      "charged": 0.00033855,
+      "usage": {
+        "prompt_tokens": 3037,
+        "completion_tokens": 77,
+        "total_tokens": 3114,
+        "cost": 0.00033855,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 2176,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00033855,
+          "upstream_inference_prompt_cost": 0.00029235,
+          "upstream_inference_completions_cost": 4.62e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "request_id": "gen-1795078897-eZOtldt9tbL8FXOd81qB",
+      "seconds": 1.922,
+      "output": "{\"intent\":\"actions\",\"question\":\"\",\"steps\":[{\"entity\":\"appointments\",\"operation\":\"create\",\"target_id\":null,\"query\":\"\",\"request\":\"Жаңа клиент Әсел Сынақты екі мың отызыншы жылғы жетінші қарашада сағат он үшке Консультация қызметіне Аннаға жаз.\",\"after\":null}],\"period\":null,\"read\":null}"
+    },
+    {
+      "provider": "openrouter",
+      "reserved": 0.0022566,
+      "state": "completed",
+      "case": "D01",
+      "track": "reference",
+      "turn": 2,
+      "attempt": 3,
+      "message": "Жоқ, сағат он үшке.",
+      "input_token_upper_bound": 10244,
+      "charged": 0.0002913,
+      "usage": {
+        "prompt_tokens": 2134,
+        "completion_tokens": 80,
+        "total_tokens": 2214,
+        "cost": 0.0002913,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 1024,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0002913,
+          "upstream_inference_prompt_cost": 0.0002433,
+          "upstream_inference_completions_cost": 4.8e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "request_id": "gen-1795078899-YHT8B7M3awXqyoVeazRK",
+      "seconds": 1.641,
+      "output": "{\"schedule\":{\"patch\":{\"client_name\":\"Әсел Сынақ\",\"client_phone\":\"\",\"client_id\":null},\"visits\":[{\"index\":1,\"date\":\"2030-11-07\",\"time\":\"13:00\",\"time_text\":\"сағат он үшке\",\"time_basis\":\"business\",\"service\":\"Консультация\",\"specialist\":\"Анна\",\"branch\":\"\",\"any_resource\":false}]}}"
+    },
+    {
+      "provider": "openrouter",
+      "reserved": 0.00297315,
+      "state": "completed",
+      "case": "D02",
+      "track": "reference",
+      "turn": 1,
+      "attempt": 3,
+      "message": "Жаңа клиент Әсел Сынақты екі мың отызыншы жылғы жетінші қарашада сағат он екіге Консультация қызметіне Аннаға жаз.",
+      "input_token_upper_bound": 15021,
+      "charged": 0.0002604,
+      "usage": {
+        "prompt_tokens": 2748,
+        "completion_tokens": 83,
+        "total_tokens": 2831,
+        "cost": 0.0002604,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 2688,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0002604,
+          "upstream_inference_prompt_cost": 0.0002106,
+          "upstream_inference_completions_cost": 4.98e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "request_id": "gen-1795078901-oNQpPPvgTwLFwToOv3HA",
+      "seconds": 2.313,
+      "output": "{\"intent\":\"actions\",\"question\":\"\",\"steps\":[{\"entity\":\"appointments\",\"operation\":\"create\",\"target_id\":null,\"query\":\"Әсел Сынақты\",\"request\":\"Жаңа клиент Әсел Сынақты екі мың отызыншы жылғы жетінші қарашада сағат он екіге Консультация қызметіне Аннаға жаз.\",\"after\":null}],\"period\":null,\"read\":null}"
+    },
+    {
+      "provider": "openrouter",
+      "reserved": 0.00204045,
+      "state": "completed",
+      "case": "D02",
+      "track": "reference",
+      "turn": 1,
+      "attempt": 3,
+      "message": "Жаңа клиент Әсел Сынақты екі мың отызыншы жылғы жетінші қарашада сағат он екіге Консультация қызметіне Аннаға жаз.",
+      "input_token_upper_bound": 8803,
+      "charged": 0.00018255,
+      "usage": {
+        "prompt_tokens": 1673,
+        "completion_tokens": 78,
+        "total_tokens": 1751,
+        "cost": 0.00018255,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 1536,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00018255,
+          "upstream_inference_prompt_cost": 0.00013575,
+          "upstream_inference_completions_cost": 4.68e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "request_id": "gen-1795078903-8RC6bOau6x4pOkkvHC1c",
+      "seconds": 1.985,
+      "output": "{\"schedule\":{\"client_name\":\"Әсел Сынақ\",\"client_phone\":\"\",\"client_id\":null,\"plan\":false,\"visits\":[{\"date\":\"2030-11-07\",\"time\":\"12:00\",\"time_text\":\"сағат он екіге\",\"time_basis\":\"business\",\"service\":\"Консультация\",\"specialist\":\"Анна\",\"branch\":\"\",\"any_resource\":false}]}}"
+    },
+    {
+      "provider": "openrouter",
+      "reserved": 0.0031449,
+      "state": "completed",
+      "case": "D02",
+      "track": "reference",
+      "turn": 2,
+      "attempt": 3,
+      "message": "Әсел емес, Әсем Сынақ.",
+      "input_token_upper_bound": 16166,
+      "charged": 0.0002811,
+      "usage": {
+        "prompt_tokens": 3038,
+        "completion_tokens": 77,
+        "total_tokens": 3115,
+        "cost": 0.0002811,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 2944,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0002811,
+          "upstream_inference_prompt_cost": 0.0002349,
+          "upstream_inference_completions_cost": 4.62e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "request_id": "gen-1795078906-gh5G1iInIwr91YN42OKY",
+      "seconds": 1.89,
+      "output": "{\"intent\":\"actions\",\"question\":\"\",\"steps\":[{\"entity\":\"appointments\",\"operation\":\"create\",\"target_id\":null,\"query\":\"\",\"request\":\"Жаңа клиент Әсем Сынақты екі мың отызыншы жылғы жетінші қарашада сағат он екіге Консультация қызметіне Аннаға жаз.\",\"after\":null}],\"period\":null,\"read\":null}"
+    },
+    {
+      "provider": "openrouter",
+      "reserved": 0.0022584,
+      "state": "completed",
+      "case": "D02",
+      "track": "reference",
+      "turn": 2,
+      "attempt": 3,
+      "message": "Әсел емес, Әсем Сынақ.",
+      "input_token_upper_bound": 10256,
+      "charged": 0.0002244,
+      "usage": {
+        "prompt_tokens": 2136,
+        "completion_tokens": 80,
+        "total_tokens": 2216,
+        "cost": 0.0002244,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 1920,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0002244,
+          "upstream_inference_prompt_cost": 0.0001764,
+          "upstream_inference_completions_cost": 4.8e-05
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "request_id": "gen-1795078907-KaN3Lp0HtBs3cv0VBzea",
+      "seconds": 1.797,
+      "output": "{\"schedule\":{\"patch\":{\"client_name\":\"Әсем Сынақ\",\"client_phone\":\"\",\"client_id\":null},\"visits\":[{\"index\":1,\"date\":\"2030-11-07\",\"time\":\"12:00\",\"time_text\":\"сағат он екіге\",\"time_basis\":\"business\",\"service\":\"Консультация\",\"specialist\":\"Анна\",\"branch\":\"\",\"any_resource\":false}]}}"
+    }
+  ],
+  "summary": {
+    "openrouter_requests": 30,
+    "prompt_tokens": 72193,
+    "completion_tokens": 2303,
+    "cost_usd": 0.00847635,
+    "stt_attempts": 0,
+    "audio_stop": "Final repeat reference-only; STT excluded. Historical name failures retained; full audio acceptance open.",
+    "customer_flags": [
+      false,
+      false
+    ],
+    "scored_turns": 17,
+    "scored_turn_limit": 24,
+    "latest_repeat_scored_turns": 4,
+    "latest_repeat_cost_usd": 0.00233805,
+    "latest_repeat_dialogues_passed": 2,
+    "latest_repeat_dialogues_total": 2,
+    "stop_rule": "Maximum4 new original D01/D02 turns; stop each case at first critical error or unexpected clarification; no recovery reply, automatic retry or additional corpus.",
+    "remaining_audio_boundary": {
+      "remaining_scored_turns": 7,
+      "remaining_openrouter_usd": 0.14152365,
+      "remaining_credit_ceiling": 200,
+      "full_audio_turns_required": 16,
+      "credit_upper_bound_verified": false,
+      "saved_subscription_error": "401 missing_permissions",
+      "missing_evidence": "Actual CRM API key/workspace correspondence and applicable scribe_v3 credits conversion, rounding/minimum and failed/timeout billing sufficient for a conservative per-request bound, or a verified provider-enforced remaining cap <=200 credits. Aggregate account usage and USD/hour pricing are insufficient; no permission widening.",
+      "proposed_subset_only": [
+        "D01-f",
+        "D03-m",
+        "D04-f"
+      ],
+      "proposed_subset_turns": 6,
+      "proposed_subset_seconds": 39.144,
+      "historical_unverified_reservation": 48,
+      "dispatched": false,
+      "account_credit_counter_available": true,
+      "account_observation_source": "Coordinator authenticated read-only Chrome observation19Nov; no account totals published.",
+      "actual_api_key_workspace_verified": false,
+      "historical_stt_ledger_attempts": 10,
+      "historical_stt_provider_charged_credit_entries": 0
+    }
+  },
+  "final_source_reference_live_tested": true,
+  "initial_name_clarification_branch_observed_live": false
+}

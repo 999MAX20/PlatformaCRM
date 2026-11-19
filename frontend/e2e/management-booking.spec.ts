@@ -39,7 +39,9 @@ test("Management configuration governs manual booking, transfer and AI confirmat
   await page.getByTestId("appointment-reschedule-submit").click();
   await expect(page.getByTestId("appointment-reschedule-form")).not.toBeVisible();
   expect((await session.read(`appointments/${visit.id}`)).start_at).not.toBe(visit.start_at);
-  await page.screenshot({ path: info.outputPath("manual-transfer.png"), fullPage: true });
+  await expect(page.getByText(/Booking Service.*10:00.*Booking Specialist/)).toBeVisible();
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.screenshot({ path: info.outputPath("manual-transfer.png") });
 
   const bot = await session.create<{ id: number }>("bots", { name: "Booking Verification", scenario: "crm", status: "draft" });
   const profile = (await session.list<{ id: number; bot: number }>("ai/agent-profiles")).find(row => row.bot === bot.id)!;
@@ -50,7 +52,7 @@ test("Management configuration governs manual booking, transfer and AI confirmat
   await session.action(`bots/${bot.id}/activate`);
   await page.goto(`/app/ai-agents/${bot.id}/profile`);
   const editor = page.getByTestId("ai-agent-editor");
-  await editor.getByRole("tab", { name: "Работа с CRM", exact: true }).click();
+  await editor.getByRole("button", { name: "Работа с CRM", exact: true }).click();
   await editor.locator("summary").filter({ hasText: "Действия с CRM" }).click();
   for (const [tool_name, args] of [
     ["crm_create", { entity: "appointments", values: { client: client.id, service: service.id, resource: staff.id, branch: f.branch, start_at: "2030-01-07T12:00:00+06:00" } }],

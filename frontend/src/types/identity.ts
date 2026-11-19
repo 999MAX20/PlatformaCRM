@@ -14,6 +14,7 @@ export type User = {
 
 export type CurrentUser = User & {
   businesses: Business[];
+  business_access_revoked?: boolean;
   memberships?: BusinessMembershipSummary[];
   effective_permissions?: Record<string, EffectivePermission[]>;
   capabilities?: Record<string, BusinessCapabilitySummary>;

@@ -1,6 +1,46 @@
+PILOT-RELEASE-20261119: owner authorized coordinated readiness; startup channel
+WhatsApp only, real names/assignments not a preparation blocker. YCloud source CI
+44392825855 and main b9415d71 CI44404635483 backend/frontend success confirmed.
+Tech Partner approval not observed in authenticated console; no number activation.
+Server58a6427e+17 invite/access overlays; main delta33 commits/206paths and5 unapplied
+candidate migrations. Preserve overlays; combined52-file candidate prepared.
+Same-origin app/widget review artifact and static smoke PASS; publication/CI
+receipt tracked in Manager pilot report. Client activation remains blocked.
+Full gate PASS:3689 backend/98skips,build/types/i18n/bundle,2mobile smoke,audits0;
+frozen app inputs unchanged; inert test-runner override removed with equivalent-env proof.
+WSL restore/PITR/files/5migrations/data-preservation PASS; old-code INSERT23502
+reproduced, pre-migration schema restore fixes tested inserts. Full businessRPO/RTO
+and post-write reconciliation not certified. WhatsApp cross-flow twoBusiness PASS;
+consumers6/6 and money2/2 browser PASS, inspected24+8screenshots, no source drift.
+Fresh invite122 backend/14browser PASS and live owner form desktop/mobile/actions
+verified; employee live auth still open. Inbox60 focused and3 PG batching races
+PASS (23 distinct in PG run),isolated real Celery restart PASS; AC10 export fixed/
+scoped verified. Voice local240PASS/4skips,4browser; final D01/D02 text2/2 PASS,
+17scored turns/$0.00847635/STT0; audio/fullD01 open. No deployment/working DB changes.
+Owner approved Direct Meta callback inclusion in combined pilot commit; unrelated
+Google-live/older Meta App Review evidence WIP remains excluded.
+Checkpoint: docs/testing/task-state/PRIMARY-SESSION.md#pilot-release-20261119--coordination-and-candidate-preparation.
+
+INVITATIONS-FLOW-20261119: wide no-blur modal, readable grants, inline password/MFA
+and direct CRM entry implemented and exact13-file patch deployed. Focused18 and
+104 dependent backend PASS; all14 scoped browser scenarios have current PASS;
+server build/types/i18n/readiness PASS. Live Chrome confirmed member removal and
+modal opening; owner form desktop/mobile/actions verified after Chrome recovery;
+employee live acceptance/MFA/revoked browser checks remain open.
+Disabled membership29 removed from Business18; server account retained, local
+account absent. No new invites sent. Own commit/push pending coordinated publication.
+Evidence: docs/testing/evidence/invitations-24h-20261112.md.
+
 ## GOOGLE-SHEETS-20261119 — local verification / live acceptance pending
 
 OAuth + Sheets import/export implemented; Cloud test project, OAuth client and restricted Picker key configured. Backend72 PASS, final build PASS, RU/KK/EN desktop/mobile synthetic flows verified; PostgreSQL3 race tests PASS; published918096ce to origin/main (remote SHA verified); CI44397837621 running, not PASS. Local PostgreSQL platformacrm: approved migrations0012/0013 applied, Django check and Google tables verified. Live Google grant/transfer and Calendar sync not claimed. Evidence: docs/testing/evidence/google-sheets-20261119.md.
+
+INVITATIONS-ACCESS-UX-20261118: terminal invite errors/expiry hidden; access toggle at top.
+Revoked employee gets explicit auth-me state and separate empty screen; RU/KK/EN.
+14 focused + 90 dependent backend PASS; build PASS; browser 4+2 PASS.
+Exact 9-file patch deployed, live owner UI/readiness and read-only employee state PASS.
+Live revoked-employee browser check awaits owner login. No mail/membership mutations.
+Evidence: docs/testing/evidence/invitations-24h-20261112.md.
 
 ## SETTINGS-CLARITY-20261118 — локально проверено
 
@@ -2451,6 +2491,12 @@ filtered empty keeps reset only; populated list restores header create.
 Build/types/i18n and RU desktop/mobile state-transition/create-focus scenarios
 PASS. Current contracts updated; no backend/permission/API changes.
 Evidence and publication receipt: output/records-empty-20261118/CHECKPOINT.md.
+
+META-COMMON-CALLBACK-20261118: fixed WhatsApp callback per frontend origin implemented locally;
+new tenant/agent identity stays in signed state; shared webhook and automatic WABA subscription retained.
+101 backend PASS/2 PostgreSQL-only skips,25 mocked browser PASS, system/drift/build/types/bundle PASS.
+No commit/push/deploy/Meta URL changes. Live Coexistence blocked by observed3441107;
+new-business live acceptance remains open. Details: PRIMARY-SESSION META-COMMON-CALLBACK-20261118.
 
 VISIT-PLAN-PAYMENTS-20261118: authorized money scope implemented and locally verified.
 Terms/package/per-visit, advances/allocations/refund-retain/same-client credit and approved UI delivered locally; zero-base positive package forbidden.

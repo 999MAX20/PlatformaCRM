@@ -12,10 +12,11 @@ import "@fontsource-variable/manrope";
 import "@fontsource-variable/noto-sans";
 import "../../src/styles.css";
 
-const channel = { id: 17, bot: 9, channel: "whatsapp", status: "draft", external_id: "", config_json: {} } as BotChannel;
+const fixtureParams = new URLSearchParams(location.search);
+const channel = { id: Number(fixtureParams.get("channel") || 17), bot: 9, channel: "whatsapp", status: "draft", external_id: "", config_json: {} } as BotChannel;
 function Fixture() {
   const [open, setOpen] = useState(false);
-  const setup = <WhatsAppInlineSetup businessId={7} channel={channel} canManage={!location.search.includes("readonly")} />;
+  const setup = <WhatsAppInlineSetup businessId={Number(fixtureParams.get("business") || 7)} channel={channel} canManage={!location.search.includes("readonly")} />;
   if (!location.search.includes("dialog")) return setup;
   return <>
     <button id="open-whatsapp" onClick={() => setOpen(true)}>Open WhatsApp</button>
