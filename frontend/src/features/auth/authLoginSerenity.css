@@ -855,25 +855,45 @@
   text-align: center;
 }
 
-.serenity-login--signup {
+.serenity-login.serenity-login--signup {
+  --signup-header-height: 72px;
+  height: 100dvh;
+  min-height: 0;
+  max-height: 100dvh;
+  grid-template-rows: var(--signup-header-height) minmax(0, 1fr);
+  overflow: hidden;
+}
+
+.serenity-login--signup .serenity-login__header {
+  position: relative;
+  inset: auto;
   height: auto;
-  min-height: 100dvh;
-  max-height: none;
-  overflow: clip;
+}
+
+.serenity-login.serenity-login--signup .serenity-login__layout {
+  height: 100%;
+  overflow: hidden;
+  padding-block: 8px 12px;
 }
 
 .serenity-login--signup .serenity-login__layout {
-  overflow: visible;
   align-items: safe center;
-  padding-block: 12px;
   width: min(1760px, calc(100% - 72px));
   grid-template-columns: minmax(0, 1fr) minmax(560px, 760px);
   gap: clamp(38px, 4.6vw, 78px);
 }
 
 .serenity-login--signup .serenity-login__form-area {
+  min-height: 0;
   max-width: 760px;
   justify-self: end;
+}
+
+.serenity-login--signup .serenity-login__card--signup {
+  max-height: calc(100dvh - var(--signup-header-height) - 20px);
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scrollbar-gutter: stable;
 }
 
 .serenity-login--signup .serenity-login__story h1 {
@@ -963,7 +983,7 @@
 }
 
 .serenity-login--signup .serenity-login__card {
-  padding: 20px 28px;
+  padding: 20px 24px;
 }
 
 .serenity-login--signup .serenity-login__card h2 {
@@ -971,7 +991,31 @@
 }
 
 .serenity-login--signup .serenity-login__form--signup {
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.serenity-login--signup .serenity-login__card input:not([type="checkbox"]) {
+  height: 44px;
+  min-height: 44px;
+}
+
+.serenity-login--signup .serenity-login__documents > div {
   gap: 8px;
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.serenity-login--signup .serenity-login__documents {
+  gap: 4px;
+}
+
+.serenity-login__consent-notice {
+  margin: 0;
+  color: var(--serenity-copy);
+  font-size: 12px;
+  line-height: 18px;
+  text-align: center;
 }
 
 .serenity-login--signup .serenity-login__field-grid > label > span:first-child {
@@ -1016,8 +1060,8 @@
 }
 
 @media (max-width: 560px) {
-  .serenity-login--signup {
-    grid-template-rows: 108px minmax(0, 1fr);
+  .serenity-login.serenity-login--signup {
+    --signup-header-height: 108px;
   }
 
   .serenity-login--signal-field .serenity-login__header {
@@ -1107,7 +1151,7 @@
   }
 
   .serenity-login--signup .serenity-login__form--signup {
-    gap: 8px;
+    gap: 12px;
   }
 
   .serenity-login--signup .serenity-login__card input,
@@ -1170,11 +1214,6 @@
     padding-block: 16px;
   }
 
-  .serenity-login--signup .serenity-login__card input:not([type="checkbox"]),
-  .serenity-login--signup .serenity-login__card [role="combobox"] {
-    min-height: 40px;
-  }
-
   .serenity-login--signup .serenity-login__documents {
     gap: 4px;
   }
@@ -1210,20 +1249,6 @@
 
   .serenity-login--signup .serenity-login__form-area {
     justify-self: center;
-  }
-
-  .serenity-login--signup {
-    grid-template-rows: minmax(0, 1fr);
-  }
-
-  .serenity-login--signup .serenity-login__header {
-    position: absolute;
-    inset: 0 0 auto;
-    height: 72px;
-  }
-
-  .serenity-login--signup .serenity-login__layout {
-    padding-block: 72px;
   }
 }
 

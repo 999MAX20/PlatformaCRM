@@ -200,7 +200,7 @@ class GoogleSignupView(GoogleView):
                 data.setdefault("full_name", flow.full_name)
                 user, business = create_owner_account(data)
                 SocialIdentity.objects.create(user=user, provider="google", subject=flow.subject, email=flow.email, email_verified=True)
-                record_signup_acknowledgements(request, user, data["accepted_documents"])
+                record_signup_acknowledgements(request, user, data["accepted_documents"], acceptance_method=data["acceptance_method"])
                 _consume(flow)
                 return _session(request, user, business=business)
         except IntegrityError:

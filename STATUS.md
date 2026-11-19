@@ -2,7 +2,13 @@ AUTH-HALVES-20261119: /login, /signup, /mfa centered in equal desktop halves;
 mobile layout retained. Browser geometry/screenshots, navigation/validation/focus,
 RU/KK/EN sampled; build/types/i18n/bundle PASS. Follow-up: login/signup decorative
 top stripe removed, including MFA; expired MFA return centered with 24/32px spacing.
-Desktop/mobile screenshots and fresh build PASS. No deployment.
+Desktop/mobile screenshots and fresh build PASS. Compact signup implemented:
+five44px fields, unified background, internal card scrolling; phone/niche in settings.
+RU/KK/EN browser checks PASS; test account/business cleaned with owner approval.
+Email placeholder updated; approved name/email pair and submit consent notice implemented.
+Backend consent/system/drift, build/types/bundle and focused browser PASS.
+RU/KK/EN retry/link/retained input and desktop/mobile screenshots verified.
+Signup follow-up ready for publication; foreign WIP preserved. No deployment.
 Evidence: [checkpoint](docs/testing/task-state/PRIMARY-SESSION.md#auth-halves-20261119).
 
 AUTH-FORMS-AUDIT-20261119: lost-access public link/contact removed; password eyes

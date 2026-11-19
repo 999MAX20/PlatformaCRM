@@ -26,10 +26,9 @@ test("owner signup and password change persist and invalidate old credentials", 
   const company = `Pilot signup ${Date.now()}`;
   await page.goto("/signup");
   for (const [name, value] of Object.entries({
-    full_name: "Pilot owner", phone: "+77770001234", email,
+    full_name: "Pilot owner", email,
     business_name: company, password, password_confirm: password,
   })) await page.locator(`form input[name="${name}"]`).fill(value);
-  for (const checkbox of await page.getByTestId("signup-documents").getByRole("checkbox").all()) await checkbox.check();
   const registration = page.waitForResponse(response => response.request().method() === "POST" && response.url().endsWith("/api/auth/signup/owner/"));
   await page.locator('form button[type="submit"]').click();
   const registered = await registration;

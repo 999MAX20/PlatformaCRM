@@ -195,6 +195,7 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
 
 class OwnerSignupSerializer(serializers.Serializer):
     accepted_documents = serializers.ListField(child=serializers.ChoiceField(choices=REQUIRED_DOCUMENT_IDS), allow_empty=False)
+    acceptance_method = serializers.ChoiceField(choices=("checkboxes", "signup_submit"), default="checkboxes")
 
     def validate_accepted_documents(self, value):
         if set(value) != set(REQUIRED_DOCUMENT_IDS):

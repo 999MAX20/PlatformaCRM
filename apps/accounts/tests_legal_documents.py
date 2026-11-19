@@ -36,3 +36,34 @@ class SignupDocumentTests(TestCase):
         self.assertEqual(event.business, Business.objects.get(owner=user))
         self.assertEqual(event.metadata["document_ids"], self.documents)
         self.assertEqual(event.metadata["content_status"], "placeholder")
+        self.assertEqual(event.metadata["acceptance_method"], "checkboxes")
+        self.assertIsNone(event.metadata["notice_version"])
+
+    def test_submit_notice_records_method_version_and_all_documents_once(self):
+        payload = {**self.payload, "accepted_documents": self.documents, "acceptance_method": "signup_submit"}
+        response = self.api.post("/api/auth/signup/owner/", payload, format="json")
+        self.assertEqual(response.status_code, 201, response.data)
+        user = User.objects.get(email=self.payload["email"])
+        event = AuditLog.objects.get(actor=user, metadata__event="signup_document_acknowledgements")
+        self.assertEqual(event.business.owner, user)
+        self.assertEqual(event.metadata["document_ids"], self.documents)
+        self.assertEqual(event.metadata["acceptance_method"], "signup_submit")
+        self.assertEqual(event.metadata["notice_version"], "signup-submit-2026-11-19")
+        self.assertEqual(event.metadata["content_status"], "placeholder")
+        response = self.api.post("/api/auth/signup/owner/", payload, format="json")
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(AuditLog.objects.filter(metadata__event="signup_document_acknowledgements").count(), 1)
+
+    def test_invalid_method_and_incomplete_submit_create_nothing(self):
+        for extra in (
+            {"acceptance_method": "automatic", "accepted_documents": self.documents},
+            {"acceptance_method": "signup_submit", "accepted_documents": self.documents[:-1]},
+            {"acceptance_method": "signup_submit"},
+        ):
+            with self.subTest(extra=extra):
+                cache.clear()
+                response = self.api.post("/api/auth/signup/owner/", {**self.payload, **extra}, format="json")
+                self.assertEqual(response.status_code, 400)
+                self.assertFalse(User.objects.filter(email=self.payload["email"]).exists())
+                self.assertFalse(Business.objects.exists())
+                self.assertFalse(AuditLog.objects.filter(metadata__event="signup_document_acknowledgements").exists())

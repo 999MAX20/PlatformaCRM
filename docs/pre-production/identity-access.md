@@ -37,6 +37,14 @@ checkpoint AUD-14-20261017. AUD-17 закрыт в прежнем shared-read sc
 
 ## Реализованные процессы
 
+Регистрация19.11.2026: `/signup` содержит имя/email, название бизнеса и пару
+пароль/повтор. Телефон/ниша доступны в настройках, начальная ниша `other`.
+Под кнопкой размещено уведомление со ссылкой на общий каталог документов;
+четырёх чекбоксов нет. Успешная отправка фиксирует document IDs, способ
+`signup_submit`, версию уведомления и прежний статус `placeholder` атомарно
+с созданием аккаунта. Юридические тела пока не опубликованы; технический audit
+не закрывает юридическую приёмку. [Проверки](../testing/task-state/PRIMARY-SESSION.md#auth-halves-20261119).
+
 BusinessMember/BusinessRole/RolePermission/Team задают membership и
 NONE/OWN/TEAM/BUSINESS. Presets owner/admin/manager/operator/specialist сохраняются;
 Director — название admin, профессия не permission. Backend сохраняет атомарный

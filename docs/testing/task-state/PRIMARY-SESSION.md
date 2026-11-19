@@ -14427,6 +14427,100 @@ larger deliberate spacing, mobile reflow retained. No text/control/auth logic ch
 active MFA/embedded state and localization matrix not rerun for this scoped style.
 Foreign password-policy WIP remains excluded. No remaining local scoped criteria.
 
+Signup follow-up (owner19Nov): same background as login/MFA (explicit answer),
+unscrollable page, inspect email/phone requirements. Prior scrolling signup accepted
+-> new fixed-page request -> bound card scrolling only when needed, retain every
+field/legal link/action. Start78cfbfcf. Existing password changes in SignupPage and
+serializers belong to others; only owned markup/CSS/docs hunks may be staged.
+Skills zani-review-frontend, antislop during/ui/layoutmobile/human: reuse signal-field
+background, fixed header/page, accessible internal scrolling, portal niche menu.
+Risk local responsive layout; checks desktop/mobile/short viewport, retained input,
+keyboard/menu/errors where available, screenshots inspected, build/types/bundle.
+Email/phone check is read-only: report existing server/client rules and mismatch;
+do not invent stricter country/verification policy or modify foreign password WIP.
+Owner subsequently approved the full compact proposal: remove card explanation,
+phone/niche fields (existing business settings retain them), keep password repeat,
+44px inputs,20-24px padding,12px row spacing, compact four independent legal rows.
+Default business_type other already supported; omit optional phone from request.
+Functional UI checks now include request payload, validation/recovery and retained
+legal requirements, initially intended without real account creation. Preserve foreign password changes.
+
+Implemented compact signup: five44px inputs,12px gaps,20/24px desktop card padding,
+same five-span signal-field background; fixed viewport with internal card overflow.
+Phone omitted, business_type other; existing business settings retain both fields.
+Build/types/i18n, bundle and login-page-policy tests PASS in output/signup-compact-*
+logs. Browser1536x639 and390x844 inspected: no document overflow, mobile card scroll
+and keyboard access, invalid email blocked, synthetic503 retained input. RU/KK/EN
+screenshots inspected in output/auth-halves-20261119/signup-compact-*.jpg.
+Hot reload during concurrent i18n edits caused an I18nProvider error; clean reload
+restored signup and language switching. No application fix required for that event.
+The retry escaped interception and created local layout-check@example.test /
+Layout verification. Disclosed immediately; owner explicitly authorized exact cleanup.
+Transactional cleanup removed User23/Business18 and their dependent synthetic rows;
+all other User/Business IDs preserved. Two failed schema-drift attempts rolled back;
+final schema-aware cleanup PASS, output/cleanup-signup-layout-test.log. No migrations.
+Email format and case-insensitive uniqueness checked in existing backend; ownership
+verification absent. Prior phone frontend min5/server optional max32 mismatch is
+removed from signup by deferring phone to settings, not by inventing a phone policy.
+No backend/API schema/permissions/notification/AI changes. Frontend contract updated;
+roadmap/README unchanged because no release/setup/domain change.
+
+Owner latest steering: replace shared email placeholder (RU Ваш email, KK Сіздің email,
+EN Your email), propose balanced email layout and fewer document controls. Placeholder
+implemented; proposed layout/legal interaction awaits owner's choice. Current legal
+pages are placeholders and backend requires all four document IDs; no automatic
+acceptance introduced. Existing foreign staged Google changes in SignupPage/i18n
+prevent task-only publication now; index preserved. Foreign password browser test
+still fills removed phone and needs compatible adjustment before its own acceptance.
+Prior local compact checks do not certify concurrent Google/password changes.
+Final working-tree build/types/i18n and bundle PASS after email placeholder edit:
+output/signup-compact-final-{build,bundle}-20261119.log. Diff hygiene PASS.
+Latest placeholder screenshot remains unverified: browser debugger detached after
+DOM reload; earlier layout/localization screenshots remain valid for their snapshot.
+Proposal only: name/email pair, business name full row, password/repeat pair.
+Document controls unchanged pending owner choice; no new acceptance mechanism.
+Owner approved next delta: name/email pair, business name full row, password/repeat
+pair; replace four checkboxes with12px notice under submit and /documents link.
+Reuse existing documents index (new tab preserves input). Add validated optional
+acceptance_method with backward-compatible checkbox default; audit button submission
+and server-owned notice version alongside all four document IDs and placeholder status.
+Risk consent attribution/auth signup; no migrations, no legal text invention.
+Skills antislop/ui/layoutmobile/human/copywriting and zani-run-verification: semantic
+linked notice, retained inputs, keyboard access, accurate audit. Checks isolated
+legal-document API + Google dependency tests, system/drift, focused frontend tests,
+build/bundle and browser desktop/mobile/locales. Never submit to working DB again.
+
+Final consent scope verified19Nov on canonical checkout/codex/ui-testing-toolkit.
+Base advanced independently to60332dc4 (published Google source/docs); preserve it.
+Backend: isolated_runtime check, makemigrations --check --dry-run and test
+apps.accounts.tests_legal_documents apps.accounts.tests_google_auth -v1 PASS:
+20 passed,2 PostgreSQL-only concurrency tests skipped under SQLite. Log
+output/signup-consent-backend.log. Own new coverage: submit method/version/IDs,
+business/actor binding, duplicate attempt no second consent event, invalid method
+and incomplete lists create neither account nor audit; legacy checkbox default.
+Frontend npm run build, npm run check:bundle, node --test
+scripts/tests/login-page-policy.test.mjs PASS; output/signup-consent-{build,bundle,policy}.log.
+Isolated Playwright legal-documents.spec.ts --grep signup desktop/mobile first run:
+3PASS/1desktop-only skip/6 failures from incorrect raw503-text expectation. Existing
+error contract localizes503; corrected assertion to actions.errorTemporary dictionary.
+Focused --grep "submit carries" rerun6PASS. Combined scoped9PASS/1intentional skip;
+output/signup-consent-browser.log and signup-consent-recheck.log. No app defect hidden.
+Verified invalid-email focus/no request, full consent payload/defaultother/no phone,
+error and retry retained input, no page overflow, document index/all four links
+in new tab preserving form; desktop matrix1280/1366/1536/1920 and mobile.
+CUA screenshots signup-consent-{desktop,mobile,focus}.jpg in output/auth-halves-20261119
+captured and visually inspected; RU layout/44px fields/12px notice/Tab focus PASS.
+KK mobile and EN desktop error screenshots from output/signup-consent-recheck
+also visually inspected. Anti Slop scoped delivery PASS; no dialogs/media/new motion.
+No real signup or working-DB mutation in this new consent phase. Full release,
+live provider and PostgreSQL concurrency certification not claimed; schema unchanged.
+Foreign password test fixture adapted locally to removed phone/checkbox controls,
+but its uncommitted suite/policy remain outside this publication. Reviewed staged
+SignupPage retains existing committed password validator and Google entry.
+Access/frontend contracts and identity passport updated; README/roadmap unchanged
+(no setup/release/CRM-domain change). All scoped code/UI/API acceptance complete;
+legal placeholder content remains the existing external acceptance limitation.
+
 ## SETTINGS-CLARITY-20261118
 
 Implementation authorized after read-only settings audit. Prior functional settings flows retained; owner-approved delta: unified message saving, protected drafts, readable time/timezone controls, server-side security history filtering/pagination, quieter navigation and historical-field grouping, explicit local voice preferences.

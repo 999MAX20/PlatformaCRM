@@ -230,7 +230,7 @@ class OwnerSignupView(AuthCookieCsrfMixin, APIView):
 
         from apps.accounts.google_auth_signup import create_owner_account
         user, business = create_owner_account(data)
-        record_signup_acknowledgements(request, user, data["accepted_documents"])
+        record_signup_acknowledgements(request, user, data["accepted_documents"], acceptance_method=data["acceptance_method"])
         if requires_mfa(user):
             return Response(
                 {
