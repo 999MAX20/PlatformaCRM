@@ -14408,6 +14408,25 @@ mobile and functional links retained. Copy/locales, loading/error/auth behavior,
 MFA and other cards unchanged; no backend/E2E rerun for pseudo-element removal.
 No remaining scoped acceptance. README/passport/roadmap unchanged (no flow change).
 
+Owner next follow-up: remove the same top stripe on standalone /mfa. Reuse the
+scoped pseudo-element rule, preserve embedded MFA and geometry. Anti Slop during/ui:
+remove decoration, retain controls/tokens. Verify desktop/mobile screenshot and
+return link, build/types/bundle, diff hygiene; no auth/backend behavior changes.
+Owner clarification adds centered expired-session return button and larger spacing
+between title/description/action. Scope standalone expired MFA card only; retain
+active challenge/enrollment and embedded MFA. Check keyboard return and mobile.
+
+Verified follow-up on base4c6ae2ec: desktop1536 and mobile390 screenshots inspected,
+stripe none; card/button centers both1151.99px, description margins24/32px.
+Enter on return link opens /login; no console errors in stripe check. Evidence:
+output/auth-halves-20261119/mfa-spacing-{desktop,mobile}.jpg (final layout),
+mfa-no-stripe{,-mobile}.jpg (earlier stripe-only state). Final build/types/i18n
+and bundle PASS, output/mfa-spacing-{build,bundle}-20261119.log; existing locale
+chunk warnings only. Scoped Anti Slop visual gate PASS: no stripe, centered action,
+larger deliberate spacing, mobile reflow retained. No text/control/auth logic change;
+active MFA/embedded state and localization matrix not rerun for this scoped style.
+Foreign password-policy WIP remains excluded. No remaining local scoped criteria.
+
 ## SETTINGS-CLARITY-20261118
 
 Implementation authorized after read-only settings audit. Prior functional settings flows retained; owner-approved delta: unified message saving, protected drafts, readable time/timezone controls, server-side security history filtering/pagination, quieter navigation and historical-field grouping, explicit local voice preferences.

@@ -450,6 +450,16 @@
   display: block;
 }
 
+.serenity-login--mfa .serenity-login__card--mfa-expired .serenity-login__card-copy {
+  margin-block: 24px 32px;
+}
+
+.serenity-login__card--mfa-expired > .serenity-login__signup-link {
+  display: flex;
+  width: fit-content;
+  margin-inline: auto;
+}
+
 .serenity-login__badge {
   display: inline-flex;
   width: fit-content;
@@ -602,7 +612,8 @@
 }
 
 .serenity-login__card--login::before,
-.serenity-login__card--signup::before {
+.serenity-login__card--signup::before,
+.serenity-login--mfa .serenity-login__card::before {
   content: none;
 }
 

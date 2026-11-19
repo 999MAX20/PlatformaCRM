@@ -136,7 +136,7 @@ export function MfaPage({ embedded = false, onComplete }: { embedded?: boolean; 
           <h1>{t("mfa.hero")}</h1>
         </section>}
         <section className={embedded ? "" : "serenity-login__form-area"} aria-label={title}>
-          <div className={embedded ? "space-y-4" : "serenity-login__card"}>
+          <div className={embedded ? "space-y-4" : `serenity-login__card${!pending ? " serenity-login__card--mfa-expired" : ""}`}>
             <h2 aria-live="polite">{title}</h2>
             <p className="serenity-login__card-copy">{description}</p>
 

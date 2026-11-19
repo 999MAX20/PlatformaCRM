@@ -1,7 +1,8 @@
 AUTH-HALVES-20261119: /login, /signup, /mfa centered in equal desktop halves;
 mobile layout retained. Browser geometry/screenshots, navigation/validation/focus,
 RU/KK/EN sampled; build/types/i18n/bundle PASS. Follow-up: login/signup decorative
-top stripe removed; desktop/mobile screenshots and fresh build PASS. No deployment.
+top stripe removed, including MFA; expired MFA return centered with 24/32px spacing.
+Desktop/mobile screenshots and fresh build PASS. No deployment.
 Evidence: [checkpoint](docs/testing/task-state/PRIMARY-SESSION.md#auth-halves-20261119).
 
 AUTH-FORMS-AUDIT-20261119: lost-access public link/contact removed; password eyes
