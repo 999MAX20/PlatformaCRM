@@ -78,3 +78,103 @@ synthetic boundary tests. No production deployment was performed. Legal document
 bodies remain the previously owner-approved placeholders; this change records
 acknowledgements but does not supply approved legal content. Fill those bodies
 before publishing the public consent URLs.
+
+## Authorized Cloud setup / rollout preparation (2026-11-19)
+
+Owner reopened Chrome Platforma Digital; live Cloud account/project verified:
+platforma.digitalkz@gmail.com, platformacrm-integrations-dev (844826644933).
+After explicit action-time confirmation, created Web application client
+PlatformaCRM Server Sign-In:
+`844826644933-l70iv9kalh1eausb7ujo9sj9dsljid40.apps.googleusercontent.com`.
+Readback confirms the only JavaScript origin is `https://platformacrm.kz`, no
+redirect URIs, agent option off. Existing Local Dev client preserved. Secret is
+not needed by GIS ID-token login and was not copied into config or artifacts.
+Screenshot: output/google-signin-client-created.jpg. Audience remains External /
+Testing, one existing test user (owner). Branding name/support contact exist;
+home/privacy/terms fields are blank. Public publication/verified legal text is not
+claimed. No billing/trial or Google API scope expansion.
+
+Server source-only stage ac9a8d71:3480/3480 hashes match. Preparatory snapshot
+restored into disposable DB:167 tables; accounts0012 only pending, applied to copy;
+166 pre-existing non-metadata tables/10923 rows have identical full row digests.
+System check PASS, pending0, new flow table empty; disposable DB removed and absence
+verified. Live service/config identities unchanged. Old release extras: RELEASE.json,
+1118 built frontend files, .env symlink; no extra source overlays found. Evidence:
+output/digital-deploy-20261109/rehearsal-receipt-ac9a8d71.json. This does not replace
+the fresh paused-writer backup required before live mutation. Actual deployment
+and real Google login still pending at this checkpoint; full CI not awaited.
+
+## Server rollout and real Google boundary
+
+Exact ac9a8d71 deployed and public CRM reopened 2026-11-19T13:05:32Z. Final
+receipt: output/digital-deploy-20261109/final-receipt-ac9a8d71.json. Frozen-lock
+build/i18n/types/app/widget PASS;3480 source/580 frontend hashes verified.
+Fresh paused dump restored167 tables;164 nonmetadata tables/10134 rows unchanged
+through accounts0012 and transactional access/auth smoke. These counts exclude
+metadata and are not the same boundary as the earlier preparatory snapshot.
+Backups: pgBackRest20261115-200004F_20261119-125648I, restic dadba5b7/b9a3039e;
+server-local dump/recovery DB retained. After reopening, no stale DB restore is safe.
+
+Five services use new root. First beat startup failed because umask made operations
+directory0700; fixed that directory0755 and verified crm access.6 failed wrapper
+starts/5 historical systemd restarts preserved; final70s stable window had0 additional
+restarts and at least2 consumed restricted polls. Beat remains ycloud-events only.
+Bounded Google-flow expiry service succeeded; hourly timer enabled. AI/Scribe/YCloud
+and inline automation remain false. Env changed only Google audience; permissions,
+stand gate and non-CRM Caddy blocks preserved. HTTPS gated login/ready/asset200,
+asset hash matches; ungated401, anonymous clients401, missing-CSRF Google start403.
+
+Real Chrome Platforma Digital: new Google button visible on server. Actual Google
+popup requested only name/profile photo/email. Owner explicitly approved Continue;
+real Google credential accepted and /google/complete displayed verified owner email
+and new-business form. Existing user count0/Google identity0 before this test;
+no silent account/business creation. Form prepared with test business and unselected
+legal acknowledgements; awaiting explicit registration approval. Terms route shows
+only heading; legal text readiness not claimed. Screenshot captured and inspected:
+output/google-signin-signup-review.jpg. Popup screenshots failed (CDP timeout),
+while AX reading and keyboard action succeeded; no browser protocol/native bypass.
+Full authenticated CRM session and repeat-login/no-duplicate proof still pending.
+
+## Signup entry closure (2026-11-19)
+
+User authorized Google registration button on /signup, scenario checks and server
+rollout. Source f43f2ba271149e69e2c98d4cc10eca9ffd7805af, exact tree
+868a3c8cb9efc01cf20ae17ac58f4270387181b7, normal-pushed/read back from origin/main.
+Eight scoped files; partial SignupPage staging preserves/excludes foreign password,
+form simplification and CSS work. No backend/schema/config change. Reused official
+GoogleSignInButton with signup_with text; login default unchanged; signup handles
+new identity, explicit link, existing session and MFA with error/retry/submit guard.
+Label option verified against https://developers.google.com/identity/gsi/web/reference/js-reference#text.
+
+Command `.venv/Scripts/python.exe scripts/verify_google_oauth_browser.py
+google-signup-entry-final-20261119`:36/36 PASS4.3m, desktop/mobile RU/KK/EN. Real
+isolated CRM backend and signed RS256 fixture tokens; Google SDK/JWKS synthetic.
+New owner/docs required/success, both entry paths, matching-email explicit link,
+known identity/MFA, failed verification retry and script retry with retained inputs,
+expiry/recovery, keyboard activation and no horizontal overflow covered. Runtime
+stopped and fixture removed. Earlier preparation cancelled to separate signup MFA
+fixtures before final run. Working-tree browser run coexisted with foreign form
+WIP; not represented as an exact release visual snapshot. Changed Google handlers
+unchanged through verification. Exact immutable tree independently passed frozen
+install/i18n/types/app/widget build on server; source3480/frontend580 hashes verified.
+No full CI awaited; automated push CI is not claimed green.
+
+Frontend-only published2026-11-19T13:26:53Z (18:26:53 Asia/Qyzylorda). Backend remains
+ac9a8d71. Caddy changed only CRM static root; env/service identities/restart counters,
+DB and other sites unchanged. Previous static artifact and Caddy retained for
+static-only rollback. Receipt: output/digital-deploy-20261109/static-receipt-f43f2ba2.json.
+Postflight signup/login/ready/entryasset200 and exact hashes PASS. One deployment
+postflight helper shadowed http module; fixed helper only, repeated postflight PASS.
+
+Live Chrome Platforma Digital: official Google button present with signup_with;
+Google personalized its displayed label for the signed-in owner. Actual keyboard
+activation -> account selection -> verified /google/complete business/documents
+form PASS. Existing approved Google access reused, no broader scope requested.
+Production business/documents submission NOT performed. Screenshot gate: inspected
+output/google-signup-server-desktop.jpg, google-signup-server-mobile.jpg and
+google-signup-server-callback.jpg. Mobile390x844, scrollWidth375 <= innerWidth390;
+button fits, clear labels, desktop/mobile geometry and reachable flow PASS. Viewport
+reset. Local locale screenshots/keyboard/error-retention evidence supplement live
+RU GIS evidence. New decoration/colors/assets N/A; reused official SDK and existing
+tokens. Legal text readiness and earlier full production signup/repeat-login scope
+remain separate; this verifies the new entry point and isolated end-to-end creation.

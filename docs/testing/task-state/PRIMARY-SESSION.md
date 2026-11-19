@@ -14835,3 +14835,21 @@ Risk: authentication, replay, duplicate identity/business, cross-account linking
 Skills: Anti Slop during (UI/human/layout/copy) and Design Taste/app-screens. Applied requirements: preserve approved login background/components/tokens; explicit labels and keyboard focus; retain form input on errors and support retry/expiry; inspect desktop/mobile RU/KK/EN screenshots and changed actions. Delivery: verified scoped source commit + normal publication per AGENTS §6, with CI status and Google Cloud setup instructions.
 
 Google result: backend affected65 + final18 PostgreSQL PASS, system/drift PASS; browser22/22 desktop/mobile RU/KK/EN PASS, focused frontend23 PASS, final build/types/i18n PASS. Fixed callback reinitialization race; isolated browser batch rates raised only for fixtures. Actual Google client/popup and deployment remain unverified/unperformed. Evidence: [google-auth-20261119](../evidence/google-auth-20261119.md); setup: [Google sign-in](../../current/google-sign-in.md). Foreign password/evidence WIP retained; only task-owned hunks publish.
+
+### GOOGLE-SIGNUP-ENTRY-20261119 — deployed closure
+
+Prior Google login -> authorized signup entry -> shared GIS button and existing
+protected onboarding/link/MFA handlers. Source f43f2ba2, tree 868a3c8c, published
+to origin/main and frontend deployed 2026-11-19T13:26:53Z. Backend ac9a8d71,
+database/config/services unchanged; previous static artifact retained for rollback.
+Foreign working changes preserved and excluded from release.
+
+Focused browser checks 36/36 PASS (desktop/mobile RU/KK/EN; isolated backend,
+synthetic Google boundary). Exact immutable build/types/i18n PASS. Real Chrome
+signup -> Google account selection -> verified business/documents form PASS;
+desktop/mobile screenshots inspected. No real business or document acceptance
+submitted. Full CI not awaited as requested. Earlier full real registration and
+repeat-login acceptance remain pending; full creation is verified in isolation.
+Skills applied: antislop during, UI/human/copy; existing tokens, official GIS,
+keyboard, retry/input retention and responsive/localized checks. Detailed evidence:
+[Google auth](../evidence/google-auth-20261119.md).

@@ -3,6 +3,11 @@
 Google authentication uses the Google Identity Services button with a JavaScript
 callback. It grants access to the CRM account, not Google Sheets/Calendar APIs.
 
+Both `/login` and `/signup` start the same protected flow. Signup uses the official
+GIS `signup_with` button text; Google may personalize it for a signed-in account.
+New identities continue to business/documents onboarding, existing identities sign
+in (including MFA), and matching-email accounts require explicit linking.
+
 ## Account flow
 
 - Existing `(provider=google, subject)` signs in to that same active user. Required
