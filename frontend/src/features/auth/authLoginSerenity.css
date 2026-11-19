@@ -20,6 +20,15 @@
   isolation: isolate;
 }
 
+.serenity-login.serenity-login--password-reset {
+  min-height: 100dvh;
+  height: auto;
+  max-height: none;
+  grid-template-rows: none;
+  place-items: center;
+  padding: 2rem 1rem;
+}
+
 .serenity-login::before {
   content: "";
   position: absolute;
@@ -762,12 +771,6 @@
   background: transparent;
   color: var(--color-text-muted);
   cursor: pointer;
-  transition: background 160ms ease, color 160ms ease;
-}
-
-.serenity-login__password-toggle:hover {
-  background: rgb(var(--color-surface-default-rgb) / 0.9);
-  color: var(--color-brand-content);
 }
 
 .serenity-login__password-toggle:focus-visible:not(:where(html[data-platforma-focus="pointer"] *)) {

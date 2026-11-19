@@ -78,7 +78,9 @@ class LoginCsrfTests(TestCase):
         self.assertEqual(allowed.status_code, 200)
         self.user.refresh_from_db()
         self.assertTrue(self.user.check_password(payload["password"]))
-        self.assertEqual(self.client.post("/api/auth/password-reset/confirm/", payload, format="json", **headers).status_code, 400)
+        reused = self.client.post("/api/auth/password-reset/confirm/", payload, format="json", **headers)
+        self.assertEqual(reused.status_code, 400)
+        self.assertEqual(reused.json()["code"], "password_reset_link_invalid")
 
     @override_settings(AUTH_PRIVILEGED_MFA_REQUIRED=True)
     def test_mfa_enrollment_issues_cookie_only_with_csrf(self):

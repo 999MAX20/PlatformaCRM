@@ -501,6 +501,10 @@ class AuthSecurityBaselineTests(TestCase):
         self.user.refresh_from_db()
         self.assertTrue(self.user.check_password("NewStrongPass123"))
 
+        login_response = self.login(password="NewStrongPass123")
+        self.assertEqual(login_response.status_code, 200)
+        self.assertEqual(self.access_status(login_response.data["access"]), 200)
+
     def test_password_reset_revokes_all_existing_refresh_sessions(self):
         first_login = self.login(APIClient())
         second_login = self.login(APIClient())
@@ -597,6 +601,26 @@ class AuthSecurityBaselineTests(TestCase):
         )
 
         self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json()["code"], "password_reset_link_invalid")
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.check_password("ChangedBeforeConfirm123"))
+
+    def test_password_reset_rejects_expired_link_without_changing_password(self):
+        uid = urlsafe_base64_encode(force_bytes(self.user.pk))
+        issued_at = default_token_generator._now()
+        with patch.object(default_token_generator, "_now", return_value=issued_at):
+            token = default_token_generator.make_token(self.user)
+        expired_at = issued_at + timedelta(seconds=settings.PASSWORD_RESET_TIMEOUT + 1)
+        with patch.object(default_token_generator, "_now", return_value=expired_at):
+            response = self.api.post(
+                "/api/auth/password-reset/confirm/",
+                {"uid": uid, "token": token, "password": "NewStrongPass123"},
+                format="json",
+            )
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json()["code"], "password_reset_link_invalid")
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.check_password("StrongPass123"))
 
 
 class CreatePlatformAdminCommandTests(TestCase):

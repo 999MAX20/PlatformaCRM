@@ -121,6 +121,7 @@ export function WildberriesInlineSetup({
           onChange={(event) => setApiToken(event.target.value)}
           placeholder={tokenConfigured ? t("integrations.setupAction.accessKeyReplacePlaceholder") : t("integrations.wildberries.accessKeyPlaceholder")}
           type="password"
+          passwordReveal={false}
           autoComplete="off"
         />
       )}

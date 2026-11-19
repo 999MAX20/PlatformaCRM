@@ -14663,3 +14663,74 @@ acceptance pending, no full employee login/MFA claim. No credentials changed.
 Auth refresh returned401 at15:19:53 UTC+5; exact rejection reason is not logged.
 JWT/device-session policy and crm.env unchanged, auth/session rows preserved
 before reopening; expiration is not established as the cause.
+
+### AUTH-FORMS-AUDIT-20261119
+
+Owner manual audit: remove lost-access link/page, eye visibility for password
+inputs only, forgot-password background matching login, verify password reset.
+Email delivery is owner-observed; screenshot reset failure cause not established.
+Prior deployed3e605431 -> generic reset error hides backend field errors -> scoped
+form/error fix; preserve password policy, CSRF, token expiry, MFA and session revoke.
+Canonical branch codex/ui-testing-toolkit, start HEAD1d0e17d0; foreign STATUS2,
+Google evidence9 and PRIMARY101 added lines preserved. No server deployment
+authorization inferred from earlier exact3e rollout. Mode implementation/evidence.
+Reuse Input, existing eye icon/i18n, serenity login background, token API/error
+normalizer; remove public recover-account form without deleting support audit data.
+Skills antislop during(global preference), ui/human/layoutmobile/copywriting:
+preserve approved login palette/background, native named keyboard eye toggle44px,
+independent initially-hidden fields and retained typed values, localized actionable
+validation/recovery without overflow. No adjacent redesign or new dependencies.
+Checks: scoped isolated reset/security backend tests, focused password form browser
+interactions including failure/retry/success and non-password fields, desktop/mobile
+RU/KK/EN screenshots inspected, keyboard/focus, build/types/i18n once at completion,
+source/index/committed diff and publication CI. Shared Input caller inventory covers
+auth/account/integration credentials; preserve custom rightIcon behavior.
+Delegate backend-only reset error code/tests to pilot_acceptance; coordinator owns
+frontend and shared docs. No production password change or reuse of attached token.
+
+Owner follow-up: reuse login background on reset-password too; remove password-eye
+hover effects everywhere, preserve keyboard focus. Both implemented. Public
+lost-access contact removed; support-issued UUID/secret fragment still opens its
+existing form and is removed from address bar. No support completion policy change.
+API emits password_reset_link_invalid for invalid/expired/used links; UI retains
+password-policy errors at the field, offers fresh-link recovery, and localizes
+request acknowledgement without revealing whether an email exists.
+Input adds independent initially-hidden 44px toggles; existing auth custom toggles
+remain single. Explicit opt-outs preserve ProviderCard/CredentialInput and five
+inline Ozon/WB/MoySklad/Kaspi secret fields. React skill review: hooks unconditional,
+local state, functional toggle updates, no additional requests/dependencies.
+
+Verification (canonical dirty task snapshot before commit):
+- Backend13 tests PASS13.829s, system check and migration drift PASS:
+  output/auth-reset-code-focused-20261119.log. Invalid/expired/reused links,
+  password policy, reset then login, prior-session revocation and CSRF covered.
+- Frontend26 focused policy/error tests PASS: output/auth-forms-unit-20261119.log.
+- Initial browser run desktop11 PASS, mobile9 PASS/2 FAIL from shared local
+  password-reset throttle5/hour (HTTP429), not relabelled as a product PASS.
+  Isolated fresh backend, same unchanged throttle: mobile12/12 PASS1.2m in
+  output/auth-forms-mobile-20261119/browser.log. Desktop affected8/8 PASS37.2s
+  in output/auth-forms-desktop-final-20261119.log. Prior desktop real API/reset/
+  signup/account outcomes reused only for unchanged behavior; mobile retested all.
+  Runner output/auth-forms-run.py uses codex_verify.isolated_runtime and disposable
+  fixtures (E2E_AUTH_FORMS_FIXTURES); split per project to isolate throttle state.
+  No live providers/mail; local backends/DBs/fixtures removed on completion.
+- npm run build PASS (i18n7632 RU/KK/EN, tsc, app and widget):
+  output/auth-forms-final-build-20261119.log, after final source changes.
+- Delivery Gate scoped PASS: inspected forgot/reset desktop1280x720/mobile412x839
+  RU/KK/EN screenshots, final reset backgrounds and keyboard-focus image. No overflow,
+  labels/errors legible, values retained, Enter/Space independent toggles, no hover
+  color/background changes, new targets44px. Eye/icon contrast6.83:1 on white;
+  focus ring5.35:1. Request failure/retry/loading, mismatch, policy error/correction,
+  invalid-link fresh request, signup and account-password modal covered.
+  Chrome extension additionally verified initial forgot background/independent eye;
+  final follow-up CSS verified by real Chromium screenshots/tests above.
+  Empty/list states not applicable; no new dialog. Existing modal submission checked.
+- Source review fixed synthetic hash separator and missing inline-secret opt-outs.
+  No full-project certification or new live owner password reset claimed. Owner
+  confirms email arrival; exact screenshot failure cannot be recovered from image.
+  platform-recovery broad support workflow not rerun (unchanged service); its old
+  public-contact expectation updated, focused public/fragment routes both PASS.
+
+No migration/env/permission/BusinessEvent/AI/provider/number change. Publication
+is source-only; server remains at previously deployed3e605431 until a new rollout
+is explicitly authorized. Foreign Google/Meta WIP remains unstaged and preserved.

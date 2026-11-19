@@ -354,8 +354,8 @@ export function ProviderCard({
                   {manualSetupOpen && canManage ? (
                     <div className="space-y-3 rounded-card border border-platforma-border bg-surface-muted p-3">
                       <Input label={t("integrations.card.accountId")} value={accountId} onChange={(event) => setAccountId(event.target.value)} placeholder={t("integrations.card.accountIdPlaceholder")} />
-                      <Input label={t("integrations.card.accessKey")} value={apiKey} onChange={(event) => setApiKey(event.target.value)} placeholder={t("integrations.card.accessKeyPlaceholder")} type="password" autoComplete="off" />
-                      <Input label={t("integrations.card.webhookSecret")} value={webhookSecret} onChange={(event) => setWebhookSecret(event.target.value)} placeholder={t("common.optional")} type="password" autoComplete="off" />
+                      <Input label={t("integrations.card.accessKey")} value={apiKey} onChange={(event) => setApiKey(event.target.value)} placeholder={t("integrations.card.accessKeyPlaceholder")} type="password" passwordReveal={false} autoComplete="off" />
+                      <Input label={t("integrations.card.webhookSecret")} value={webhookSecret} onChange={(event) => setWebhookSecret(event.target.value)} placeholder={t("common.optional")} type="password" passwordReveal={false} autoComplete="off" />
                     </div>
                   ) : null}
                 </div>

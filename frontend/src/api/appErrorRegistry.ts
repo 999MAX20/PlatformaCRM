@@ -37,6 +37,7 @@ function errorCode(
 
 export const appErrorCodeRegistry: readonly AppErrorCodePolicy[] = [
   errorCode("validation_error", "validation"),
+  errorCode("password_reset_link_invalid", "validation", { messageKey: "passwordReset.invalidLink" }),
   errorCode("request_failed", "validation"),
   errorCode("method_not_allowed", "validation"),
   errorCode("authentication_required", "authentication"),

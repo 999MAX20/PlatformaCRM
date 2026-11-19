@@ -281,6 +281,8 @@ export const identity: Record<string, string> = {
   "invite.signInToAccept": "Войти и принять",
   "invite.wrongAccount": "Приглашение адресовано другому аккаунту. Войдите с указанным в приглашении email.",
   "passwordReset.requestTitle": "Восстановление пароля",
+  "passwordReset.requestSent": "Если аккаунт с таким email существует, мы отправили ссылку для восстановления пароля.",
+  "passwordReset.invalidLink": "Ссылка недействительна или устарела. Запросите новую ссылку для восстановления пароля.",
   "passwordReset.requestText":
     "Укажите email аккаунта. Мы подготовим ссылку для восстановления пароля.",
   "passwordReset.deliveryChannel": "Канал доставки",

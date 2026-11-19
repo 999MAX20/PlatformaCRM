@@ -6,11 +6,13 @@ import { Link, useNavigate, useParams } from "react-router";
 import { z } from "zod";
 
 import { confirmPasswordReset } from "../../api/auth";
-import { getApiErrorMessage } from "../../api/client";
+import { getApiErrorMessage, getApiFieldErrors } from "../../api/client";
+import { normalizeAppError } from "../../api/appError";
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
 import { ErrorState } from "../../components/ui/StateViews";
 import { useI18n } from "../../lib/i18n";
+import "./authLoginSerenity.css";
 
 type FormValues = {
   password: string;
@@ -30,7 +32,8 @@ export function ResetPasswordPage() {
   });
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormValues>({
+  const [invalidLink, setInvalidLink] = useState(false);
+  const { register, handleSubmit, setError: setFieldError, formState: { errors, isSubmitting } } = useForm<FormValues>({
     resolver: zodResolver(schema),
   });
 
@@ -41,12 +44,21 @@ export function ResetPasswordPage() {
       setDone(true);
       window.setTimeout(() => navigate("/login"), 1200);
     } catch (err) {
-      setError(getApiErrorMessage(err));
+      const fieldErrors = getApiFieldErrors(err);
+      if (fieldErrors.password?.length) {
+        setFieldError("password", { type: "server", message: fieldErrors.password.join(" ") }, { shouldFocus: true });
+      } else {
+        setInvalidLink(normalizeAppError(err).code === "password_reset_link_invalid");
+        setError(getApiErrorMessage(err));
+      }
     }
   }
 
   return (
-    <main className="grid min-h-screen place-items-center bg-soft-mesh px-4 py-8">
+    <main className="serenity-login serenity-login--signal-field serenity-login--password-reset">
+      <div className="serenity-login__ambient" aria-hidden="true">
+        <span /><span /><span /><span /><span />
+      </div>
       <section className="glass-panel w-full max-w-lg rounded-[2rem] p-6 sm:p-8">
         <div className="mb-7">
           <div className="mb-4 grid h-14 w-14 place-items-center rounded-3xl bg-brand-500 text-white shadow-glow">
@@ -62,10 +74,12 @@ export function ResetPasswordPage() {
 
         {error ? <div className="mb-5"><ErrorState message={error} /></div> : null}
 
-        {!done ? (
+        {invalidLink ? <Link className="platforma-focus-ring mb-5 inline-flex min-h-11 items-center font-bold text-brand-700 underline" to="/forgot-password">{t("passwordReset.getLink")}</Link> : null}
+
+        {!done && !invalidLink ? (
           <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-            <Input label={t("invite.newPassword")} type="password" error={errors.password?.message} {...register("password")} />
-            <Input label={t("passwordReset.repeatPassword")} type="password" error={errors.password_confirm?.message} {...register("password_confirm")} />
+            <Input label={t("invite.newPassword")} type="password" autoComplete="new-password" error={errors.password?.message} {...register("password")} />
+            <Input label={t("passwordReset.repeatPassword")} type="password" autoComplete="new-password" error={errors.password_confirm?.message} {...register("password_confirm")} />
             <Button variant="primary" className="w-full" type="submit" isLoading={isSubmitting}>
               {t("passwordReset.savePassword")}
             </Button>

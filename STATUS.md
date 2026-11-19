@@ -1,3 +1,12 @@
+AUTH-FORMS-AUDIT-20261119: lost-access public link/contact removed; password eyes
+added across account/auth fields without hover, keyboard focus retained. Forgot
+and reset backgrounds match login; localized acknowledgement and actionable reset
+errors. Backend13, frontend26, fresh mobile12 and affected desktop8 PASS;
+build/types/i18n PASS. Prior desktop API outcomes unchanged, initial shared-runtime
+mobile429 failures resolved by separate isolated backend, throttle unchanged.
+RU/KK/EN desktop/mobile screenshots inspected. Source-only; new deployment not
+authorized. Checkpoint: docs/testing/task-state/PRIMARY-SESSION.md#auth-forms-audit-20261119.
+
 PILOT-RELEASE-20261119: owner authorized coordinated readiness; startup channel
 WhatsApp only, real names/assignments not a preparation blocker. YCloud source CI
 44392825855 and main b9415d71 CI44404635483 backend/frontend success confirmed.

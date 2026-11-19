@@ -152,7 +152,6 @@ test('recovery owner evidence draft error recovery locales and contact', async (
   await expect(page.getByTestId('business-recovery')).toHaveCount(0);
   await page.unroute('**/account-recovery/');
   await page.goto('/recover-account');
-  const contact = page.getByRole('link', { name: 'support@example.com', exact: true });
-  await expect(contact).toHaveAttribute('href', 'mailto:support@example.com');
-  await contact.focus(); await expect(contact).toBeFocused();
+  await expect(page).toHaveURL(/\/(app|platform)/);
+  await expect(page.getByRole('link', { name: 'support@example.com', exact: true })).toHaveCount(0);
 });

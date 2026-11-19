@@ -194,7 +194,7 @@ class PasswordResetConfirmView(AuthCookieCsrfMixin, APIView):
         except Exception:
             user = None
         if user is None or not default_token_generator.check_token(user, serializer.validated_data["token"]):
-            return Response({"detail": "Invalid or expired reset link."}, status=400)
+            return Response({"code": "password_reset_link_invalid", "detail": "Invalid or expired reset link."}, status=400)
         try:
             enforce_password_policy(serializer.validated_data["password"], user=user)
         except ValidationError as exc:

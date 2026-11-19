@@ -279,6 +279,8 @@ export const identity: Record<string, string> = {
   "invite.signInToAccept": "Кіру және қабылдау",
   "invite.wrongAccount": "Шақыру басқа аккаунтқа арналған. Шақыруда көрсетілген email арқылы кіріңіз.",
   "passwordReset.requestTitle": "Құпиясөзді қалпына келтіру",
+  "passwordReset.requestSent": "Осы email мекенжайы бар аккаунт болса, құпиясөзді қалпына келтіру сілтемесін жібердік.",
+  "passwordReset.invalidLink": "Сілтеме жарамсыз немесе оның мерзімі өткен. Құпиясөзді қалпына келтіру үшін жаңа сілтеме сұраңыз.",
   "passwordReset.requestText":
     "Аккаунт email-ін енгізіңіз. Құпиясөзді қалпына келтіру сілтемесін дайындаймыз.",
   "passwordReset.deliveryChannel": "Жеткізу арнасы",

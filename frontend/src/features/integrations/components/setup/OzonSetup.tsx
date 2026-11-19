@@ -127,6 +127,7 @@ export function OzonInlineSetup({
             onChange={(event) => setClientId(event.target.value)}
             placeholder={accessConfigured ? t("integrations.ozon.sellerIdReplacePlaceholder") : t("integrations.ozon.sellerIdPlaceholder")}
             type="password"
+            passwordReveal={false}
             autoComplete="off"
           />
           <Input
@@ -135,6 +136,7 @@ export function OzonInlineSetup({
             onChange={(event) => setApiKey(event.target.value)}
             placeholder={accessConfigured ? t("integrations.setupAction.accessKeyReplacePlaceholder") : t("integrations.ozon.accessKeyPlaceholder")}
             type="password"
+            passwordReveal={false}
             autoComplete="off"
           />
         </div>

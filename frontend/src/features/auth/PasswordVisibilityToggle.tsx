@@ -18,7 +18,6 @@ export function PasswordVisibilityToggle({ visible, onToggle }: PasswordVisibili
       className="serenity-login__password-toggle"
       aria-label={label}
       aria-pressed={visible}
-      title={label}
       onClick={onToggle}
     >
       <Icon size={18} aria-hidden="true" />

@@ -311,7 +311,6 @@ export function LoginPage() {
               />
               <div className="serenity-login__links">
                 <Link to="/forgot-password">{t("auth.forgotPassword")}</Link>
-                <Link to="/recover-account">{t("recovery.lostAccess")}</Link>
                 <Link to="/signup">{t("auth.registerBusiness")}</Link>
               </div>
               <Button

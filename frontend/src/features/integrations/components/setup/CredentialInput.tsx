@@ -10,7 +10,7 @@ export function CredentialInput({ revealable = false, ...props }: Omit<InputProp
   const [visible, setVisible] = useState(false);
   useEffect(() => { if (!props.value) setVisible(false); }, [props.value]);
   return <form autoComplete="off" onSubmit={event => event.preventDefault()}>
-    <Input {...props} name={`connector-credential-${id}`} type={visible ? "text" : "password"} autoComplete="new-password"
+    <Input {...props} passwordReveal={false} name={`connector-credential-${id}`} type={visible ? "text" : "password"} autoComplete="new-password"
       rightIcon={revealable ? <button type="button" className="platforma-focus-ring -mr-3 flex h-11 w-11 items-center justify-center rounded-control hover:bg-surface-hover disabled:cursor-not-allowed"
         aria-label={t(visible ? "integrations.setup.hideKey" : "integrations.setup.showKey")} aria-pressed={visible}
         disabled={props.disabled} onClick={() => setVisible(value => !value)}>

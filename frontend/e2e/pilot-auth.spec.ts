@@ -14,7 +14,7 @@ test("password reset acknowledges the generic response without exposing account 
   const body = await response.json();
   expect(body.reset_path).toBeUndefined();
   expect(body.token).toBeUndefined();
-  await expect(page.getByRole("status")).toContainText(body.message);
+  await expect(page.getByRole("status")).toContainText("Если аккаунт с таким email существует");
   await expect(page.getByRole("combobox")).toHaveCount(0);
 });
 
@@ -44,6 +44,12 @@ test("owner signup and password change persist and invalidate old credentials", 
   await dialog.getByLabel("Текущий пароль", { exact: true }).fill(password);
   await dialog.getByLabel("Новый пароль", { exact: true }).fill(replacement);
   await dialog.getByLabel("Повторите пароль", { exact: true }).fill(replacement);
+  const eyes = dialog.getByRole("button", { name: "Показать пароль", exact: true });
+  await expect(eyes).toHaveCount(3);
+  await eyes.first().click();
+  await expect(dialog.getByLabel("Текущий пароль", { exact: true })).toHaveAttribute("type", "text");
+  await expect(dialog.getByLabel("Новый пароль", { exact: true })).toHaveAttribute("type", "password");
+  await dialog.getByRole("button", { name: "Скрыть пароль", exact: true }).click();
   const changed = page.waitForResponse(response => response.request().method() === "POST" && response.url().endsWith("/api/auth/change-password/"));
   await dialog.getByRole("button", { name: "Изменить пароль", exact: true }).click();
   expect((await changed).ok()).toBeTruthy();

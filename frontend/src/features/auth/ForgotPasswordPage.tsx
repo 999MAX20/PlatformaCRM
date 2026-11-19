@@ -12,6 +12,7 @@ import { Input } from "../../components/ui/Input";
 import { ErrorState } from "../../components/ui/StateViews";
 import { StatusNotice } from "../../components/ui/StatusNotice";
 import { useI18n } from "../../lib/i18n";
+import "./authLoginSerenity.css";
 
 type FormValues = {
   email: string;
@@ -31,15 +32,18 @@ export function ForgotPasswordPage() {
     setError(null);
     setRequestMessage(null);
     try {
-      const response = await requestPasswordReset({ ...values, delivery_channel: "email" });
-      setRequestMessage(response.message);
+      await requestPasswordReset({ ...values, delivery_channel: "email" });
+      setRequestMessage(t("passwordReset.requestSent"));
     } catch (err) {
       setError(getApiErrorMessage(err));
     }
   }
 
   return (
-    <main className="grid min-h-screen place-items-center bg-soft-mesh px-4 py-8">
+    <main className="serenity-login serenity-login--signal-field serenity-login--password-reset">
+      <div className="serenity-login__ambient" aria-hidden="true">
+        <span /><span /><span /><span /><span />
+      </div>
       <section className="glass-panel w-full max-w-lg rounded-[2rem] p-6 sm:p-8">
         <div className="mb-7">
           <div className="mb-4 grid h-14 w-14 place-items-center rounded-3xl bg-brand-500 text-white shadow-glow">

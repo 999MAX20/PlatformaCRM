@@ -279,6 +279,8 @@ export const identity: Record<string, string> = {
   "invite.signInToAccept": "Sign in to accept",
   "invite.wrongAccount": "This invitation belongs to another account. Sign in with the invited email address.",
   "passwordReset.requestTitle": "Password recovery",
+  "passwordReset.requestSent": "If an account with this email exists, we have sent a password reset link.",
+  "passwordReset.invalidLink": "This link is invalid or has expired. Request a new password reset link.",
   "passwordReset.requestText":
     "Enter the account email. We will prepare a password reset link.",
   "passwordReset.deliveryChannel": "Delivery channel",
