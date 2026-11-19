@@ -4,7 +4,8 @@ Google authentication uses the Google Identity Services button with a JavaScript
 callback. It grants access to the CRM account, not Google Sheets/Calendar APIs.
 
 Both `/login` and `/signup` start the same protected flow. Signup uses the official
-GIS `signup_with` button text; Google may personalize it for a signed-in account.
+GIS `signup_with` button text. Both entry points use the official `medium` button,
+which does not display a remembered Google name, email or profile picture.
 New identities continue to business/documents onboarding, existing identities sign
 in (including MFA), and matching-email accounts require explicit linking.
 
@@ -26,6 +27,11 @@ in (including MFA), and matching-email accounts require explicit linking.
   hashed random nonce; signature/audience/issuer/expiry/email verification are
   checked on the server. Raw Google credentials never go in URLs or browser storage.
   Legacy Google `/api/auth/social/` calls are rejected. Apple behavior is unchanged.
+- An idle entry page silently renews its expired preparation while keeping the
+  Google button and entered email form values. Returning to a suspended tab also
+  renews expired preparation. Renewal stops as soon as credential verification
+  starts, and stale callbacks cannot use a newer attempt. Network failures retain
+  the retry action; actual verified onboarding still has its normal expiry.
 
 ## Google Cloud configuration
 
@@ -56,7 +62,8 @@ in (including MFA), and matching-email accounts require explicit linking.
 
 Sources: [Google GIS setup](https://developers.google.com/identity/gsi/web/guides/get-google-api-clientid),
 [server ID-token verification](https://developers.google.com/identity/gsi/web/guides/verify-google-id-token),
-[GIS button](https://developers.google.com/identity/gsi/web/guides/display-button).
+[GIS button](https://developers.google.com/identity/gsi/web/guides/display-button),
+[personalization conditions](https://developers.google.com/identity/gsi/web/guides/personalized-button).
 
 ## Rollout and verification
 

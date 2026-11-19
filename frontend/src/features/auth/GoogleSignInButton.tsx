@@ -43,51 +43,90 @@ export function GoogleSignInButton({ disabled, onCredential, text = "continue_wi
   blocked.current = disabled;
   const [attempt, setAttempt] = useState(0);
   const [ready, setReady] = useState(false);
+  const [hasButton, setHasButton] = useState(false);
   const [error, setError] = useState<string>();
 
   useEffect(() => {
     let active = true;
     let submitted = false;
+    let refreshing = false;
+    let generation = 0;
+    let expiresAt = 0;
     let expiry: number | undefined;
     setReady(false);
+    setHasButton(false);
     setError(undefined);
     const mount = container.current;
     mount?.replaceChildren();
-    void (async () => {
-      await loadGoogle();
-      if (!active) return;
-      const flow = await startGoogleFlow();
-      if (!active || !mount) return;
-      const identity = window.google!.accounts!.id!;
-      identity.initialize({
-        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID!, nonce: flow.nonce, auto_select: false,
-        callback: response => {
-          if (!active || blocked.current || submitted) return;
-          if (!response.credential) { setError(t("auth.socialFailed")); return; }
-          submitted = true;
-          blocked.current = true;
-          void callback.current(response.credential).then(completed => {
-            if (active && !completed) setAttempt(value => value + 1);
-          });
-        },
-      });
-      identity.renderButton(mount, {
-        type: "standard", theme: "outline", size: "large", text,
-        width: Math.min(400, Math.floor(mount.getBoundingClientRect().width)), locale: language,
-      });
-      setReady(true);
-      expiry = window.setTimeout(() => {
-        mount.replaceChildren(); setReady(false); setError(t("googleAuth.expired"));
-      }, flow.expires_in * 1000);
-    })().catch(err => {
-      if (active) setError(err instanceof Error && err.message === "Google Identity Services unavailable" ? t("auth.socialFailed") : getApiErrorMessage(err));
-    });
-    return () => { active = false; window.clearTimeout(expiry); mount?.replaceChildren(); };
+    async function prepare() {
+      if (!active || submitted || refreshing) return;
+      refreshing = true;
+      const restoreFocus = mount?.contains(document.activeElement);
+      setReady(false);
+      const currentGeneration = ++generation;
+      try {
+        await loadGoogle();
+        if (!active) return;
+        const flow = await startGoogleFlow();
+        if (!active || !mount) return;
+        const identity = window.google!.accounts!.id!;
+        identity.initialize({
+          client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID!, nonce: flow.nonce, auto_select: false,
+          callback: response => {
+            if (!active || refreshing || currentGeneration !== generation || blocked.current || submitted) return;
+            if (!response.credential) { setError(t("auth.socialFailed")); return; }
+            submitted = true;
+            window.clearTimeout(expiry);
+            blocked.current = true;
+            void callback.current(response.credential).then(completed => {
+              if (active && !completed) setAttempt(value => value + 1);
+            });
+          },
+        });
+        mount.replaceChildren();
+        identity.renderButton(mount, {
+          type: "standard", theme: "outline", size: "medium", text,
+          width: Math.min(400, Math.floor(mount.getBoundingClientRect().width)), locale: language,
+        });
+        setHasButton(true);
+        setReady(true);
+        if (restoreFocus) window.requestAnimationFrame(() => {
+          if (active && document.activeElement === document.body) {
+            mount.querySelector<HTMLElement>('iframe, button, [role="button"]')?.focus();
+          }
+        });
+        expiresAt = Date.now() + flow.expires_in * 1000;
+        expiry = window.setTimeout(() => {
+          if (document.visibilityState === "visible") void prepare();
+        }, Math.max(1000, flow.expires_in * 1000));
+      } catch (err) {
+        expiresAt = 0;
+        if (active) setError(err instanceof Error && err.message === "Google Identity Services unavailable" ? t("auth.socialFailed") : getApiErrorMessage(err));
+      } finally {
+        refreshing = false;
+      }
+    }
+    const resume = () => {
+      if (document.visibilityState === "visible" && expiresAt && Date.now() >= expiresAt) {
+        window.clearTimeout(expiry);
+        void prepare();
+      }
+    };
+    void prepare();
+    document.addEventListener("visibilitychange", resume);
+    window.addEventListener("focus", resume);
+    return () => {
+      active = false;
+      window.clearTimeout(expiry);
+      document.removeEventListener("visibilitychange", resume);
+      window.removeEventListener("focus", resume);
+      mount?.replaceChildren();
+    };
   }, [attempt, language, t, text]);
 
   return <div className="col-span-full w-full min-w-0" aria-busy={!ready && !error}>
-    <div ref={container} inert={disabled} className={disabled ? "pointer-events-none opacity-60" : undefined} />
-    {!ready && !error ? <p role="status" className="text-sm text-platforma-subtle">{t("googleAuth.loading")}</p> : null}
+    <div ref={container} inert={disabled || !ready} className={disabled ? "pointer-events-none opacity-60" : undefined} />
+    {!hasButton && !ready && !error ? <p role="status" className="text-sm text-platforma-subtle">{t("googleAuth.loading")}</p> : null}
     {error ? <div className="space-y-2"><p role="alert" className="text-sm text-platforma-danger">{error}</p>
       <Button type="button" variant="secondary" disabled={disabled} onClick={() => setAttempt(value => value + 1)}>{t("common.retry")}</Button>
     </div> : null}

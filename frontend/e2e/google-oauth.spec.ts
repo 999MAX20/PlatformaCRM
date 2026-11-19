@@ -24,6 +24,7 @@ async function google(page: Page, email: string, sub = email) {
       window.google = {accounts:{id:{initialize(value){options=value},renderButton(parent,appearance){
         const button=document.createElement('button'); button.textContent='Synthetic Google';
         button.dataset.googleText=appearance.text;
+        button.dataset.googleSize=appearance.size;
         button.onclick=async()=>options.callback({credential:await window.syntheticGoogleToken(options.nonce)});
         parent.appendChild(button);
       }}}};`,
@@ -39,6 +40,7 @@ for (const language of ["ru", "kk", "en"] as const) {
     await page.goto(`/${entry}`);
     const button = page.getByRole("button", { name: "Synthetic Google", exact: true });
     await expect(button).toHaveAttribute("data-google-text", entry === "signup" ? "signup_with" : "continue_with");
+    await expect(button).toHaveAttribute("data-google-size", "medium");
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await button.focus();
     await page.screenshot({ path: info.outputPath(`${language}-${entry}-google-entry.png`), fullPage: true });
@@ -101,6 +103,60 @@ test("expired flow offers restart without creating an account", async ({ page },
 });
 
 for (const entry of ["login", "signup"]) {
+test(`${entry}: idle expiry renews silently and Google still works`, async ({ page }, info) => {
+  await google(page, `idle-${entry}-${info.project.name}@example.test`);
+  await page.clock.install();
+  let starts = 0;
+  await page.route("**/api/auth/google/start/", async route => {
+    starts += 1;
+    const response = await route.fetch();
+    await route.fulfill({ response, json: { ...await response.json(), expires_in: 2 } });
+  });
+  await page.goto(`/${entry}`);
+  const button = page.getByRole("button", { name: "Synthetic Google", exact: true });
+  await expect(button).toBeVisible();
+  await page.locator('input[name="email"]').fill("retained@example.test");
+  const before = starts;
+  await page.clock.fastForward(2100);
+  await expect.poll(() => starts).toBe(before + 1);
+  await expect(button.locator("..")).not.toHaveAttribute("inert");
+  await expect(page.getByRole("alert")).toHaveCount(0);
+  await expect(page.getByText(ru["googleAuth.loading"], { exact: true })).toHaveCount(0);
+  await expect(page.locator('input[name="email"]')).toHaveValue("retained@example.test");
+  await button.focus();
+  await page.screenshot({ path: info.outputPath(`${entry}-idle-renewed.png`), fullPage: true });
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(/\/google\/complete$/);
+});
+
+test(`${entry}: renewal does not race credential verification`, async ({ page }, info) => {
+  await google(page, `slow-${entry}-${info.project.name}@example.test`);
+  await page.clock.install();
+  let starts = 0;
+  await page.route("**/api/auth/google/start/", async route => {
+    starts += 1;
+    const response = await route.fetch();
+    await route.fulfill({ response, json: { ...await response.json(), expires_in: 2 } });
+  });
+  let release!: () => void;
+  const gate = new Promise<void>(resolve => { release = resolve; });
+  let verifying = false;
+  await page.route("**/api/auth/google/verify/", async route => {
+    verifying = true;
+    await gate;
+    await route.continue();
+  });
+  await page.goto(`/${entry}`);
+  await page.getByRole("button", { name: "Synthetic Google", exact: true }).click();
+  await expect.poll(() => verifying).toBe(true);
+  const before = starts;
+  await page.clock.fastForward(5000);
+  expect(starts).toBe(before);
+  await expect(page.getByText(ru["googleAuth.expired"], { exact: true })).toHaveCount(0);
+  release();
+  await expect(page).toHaveURL(/\/google\/complete$/);
+});
+
 test(`${entry}: Google script failure can be retried without losing password form input`, async ({ page }) => {
   await page.route("https://accounts.google.com/gsi/client", route => route.abort());
   await page.goto(`/${entry}`);
