@@ -2580,3 +2580,8 @@ remote SHA matched. CI44369480025 in_progress at inspection. Details:
 YCloud entry for new CRM channels, Coexistence text history import, observed counts and retry are implemented. Isolated PostgreSQL dependent suite 116 PASS plus final focused 14 PASS; browser 18 PASS desktop/mobile, build/types/bundle PASS. No deployment or live number connection; partner approval, server configuration and handset history consent remain. Media content unavailable. Evidence: [YCloud preparation](docs/testing/evidence/ycloud-coexistence-20261109.md#2026-11-19-history-import-preparation).
 
 GOOGLE-AUTH-20261119: deployed backend ac9a8d71 / frontend f43f2ba2 with Google entry on login and signup. Signup checks 36/36 PASS; immutable build/types PASS; real server Google callback reaches business/documents form. No real business created; full production registration/repeat-login remains pending. Evidence: docs/testing/evidence/google-auth-20261119.md.
+
+AUTH-HALVES-20261119 follow-up: login/signup/forgot/reset/MFA form cards and contents
+are shadow-free; keyboard outline retained. Desktop/mobile visual checks and build/
+types/bundle PASS. Legal-document work paused by owner; no legal product edits.
+Evidence: [checkpoint](docs/testing/task-state/PRIMARY-SESSION.md#auth-halves-20261119--shadow-free-forms).

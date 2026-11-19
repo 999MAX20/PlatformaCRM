@@ -29,6 +29,23 @@
   padding: 2rem 1rem;
 }
 
+.serenity-login :is(.serenity-login__card, .glass-panel),
+.serenity-login :is(.serenity-login__card, .glass-panel) *,
+.serenity-login :is(.serenity-login__card, .glass-panel)::before,
+.serenity-login :is(.serenity-login__card, .glass-panel)::after,
+.serenity-login :is(.serenity-login__card, .glass-panel) *::before,
+.serenity-login :is(.serenity-login__card, .glass-panel) *::after {
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
+
+.serenity-login :is(.serenity-login__card, .glass-panel)
+  :is(input, button, a, [role="combobox"]):focus-visible:not(:where(html[data-platforma-focus="pointer"] *)) {
+  outline: 3px solid var(--color-focus-ring);
+  outline-offset: 3px;
+}
+
 .serenity-login::before {
   content: "";
   position: absolute;

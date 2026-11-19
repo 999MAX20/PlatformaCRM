@@ -14976,3 +14976,31 @@ repeat-login acceptance remain pending; full creation is verified in isolation.
 Skills applied: antislop during, UI/human/copy; existing tokens, official GIS,
 keyboard, retry/input retention and responsive/localized checks. Detailed evidence:
 [Google auth](../evidence/google-auth-20261119.md).
+
+### AUTH-HALVES-20261119 — shadow-free forms
+Owner pauses legal-document work; source analysis only, no legal product edits made.
+Prior centered/compact forms and uniform buttons verified -> explicit removal of all
+form shadows -> scoped Serenity card/panel descendants, including icons and states.
+Mode implementation; code gap; start f81a2695, canonical root/current branch retained.
+Foreign password/Google WIP preserved. Skills antislop during/ui/human: retain geometry,
+colors and actions; remove box/text/drop shadows; replace focus halo with visible outline.
+Risk local CSS; no API, consent, DB, permission, notification or AI changes. Checks:
+actual five-route desktop/mobile screenshots, hover/keyboard/password reveal/error
+representatives, build/types/bundle and diff hygiene. Legal questions remain deferred.
+Verified shadow-free scope: all five routes desktop1536 and mobile390 screenshots
+captured/visually inspected; computed box/text/drop shadows absent throughout cards
+and pseudo-elements (output/auth-halves-20261119/shadow-checks.json). Screenshots
+*-no-shadows{,-mobile}.jpg. Forgot malformed email blocked locally; keyboard outline
+visible; login empty errors retained; reset visibility toggle and MFA back-link PASS.
+Initial login validation attempt encountered browser autofill and signed into existing
+local demo account; immediately logged out through Account. No account/password or
+business edits, signup, reset request or legal acceptance. Auth audit/session changes
+from that login/logout are expected; no claim of zero working-DB activity.
+MFA expired view checked; active OTP enrollment/Google iframe flows not rerun for
+CSS-only delta. Localized geometry unchanged, no copy changes; full E2E/backend N/A.
+Build/types/i18n and bundle PASS (output/auth-no-shadows-{build,bundle}.log); existing
+RU/KK >500kB warnings, shell budget PASS. Existing canonical localhost processes reused.
+Scoped Anti Slop gate PASS: geometry, no shadows, visible keyboard focus, controls,
+error state and responsive layout. Frontend contract updated; no domain/passport or
+roadmap behavior change. Legal files untouched; deferred analysis remains under output/
+legal-documents-20261119, no published legal changes. No remaining local CSS criteria.
