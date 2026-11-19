@@ -8,7 +8,8 @@ RU/KK/EN browser checks PASS; test account/business cleaned with owner approval.
 Email placeholder updated; approved name/email pair and submit consent notice implemented.
 Backend consent/system/drift, build/types/bundle and focused browser PASS.
 RU/KK/EN retry/link/retained input and desktop/mobile screenshots verified.
-Signup follow-up ready for publication; foreign WIP preserved. No deployment.
+Signup follow-up1541933a pushed to main; CI44535029646 in_progress at observation.
+Foreign WIP preserved. No deployment.
 Evidence: [checkpoint](docs/testing/task-state/PRIMARY-SESSION.md#auth-halves-20261119).
 
 AUTH-FORMS-AUDIT-20261119: lost-access public link/contact removed; password eyes

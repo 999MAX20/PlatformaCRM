@@ -14520,6 +14520,12 @@ SignupPage retains existing committed password validator and Google entry.
 Access/frontend contracts and identity passport updated; README/roadmap unchanged
 (no setup/release/CRM-domain change). All scoped code/UI/API acceptance complete;
 legal placeholder content remains the existing external acceptance limitation.
+Publication:1541933ac048332382b6508e1d4a42fa9bf68a0c committed on
+codex/ui-testing-toolkit and normal-pushed to origin/main; remote SHA matched.
+Committed-range/index/working diff hygiene PASS. CI44535029646 observed in_progress,
+conclusion null; no CI success or deployment claimed. Other writers' password WIP
+preserved. Owner subsequently asks opinion on button width; recommend280px centered
+desktop with mobile full width, not implemented without a new action request.
 
 ## SETTINGS-CLARITY-20261118
 
