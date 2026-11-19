@@ -11,3 +11,9 @@ Chrome extension inspection used real Google SDK with a synthetic preview API on
 Applied Anti Slop during, UI/human/layoutmobile: scoped geometry, official logo, responsive width, keyboard focus PASS. Provider-controlled official outline/40px button retained; SDK styling is not overridden to impose a different border/tap height. Existing reserved mount remains44px. No new motion, copy, assets or dialogs. Other locales and a full live OAuth round trip were not rerun for presentation-only options.
 
 Screenshots and build log: output/google-button-design-20261119/. Existing unrelated WIP is excluded from this change. Local preview remains available for owner review; no server deployment performed.
+
+## Pre-deployment correction after manager coordination
+
+2032202e was not deployed. Manager identified that large may restore personalized name/avatar for an approved Google session; official Google documentation confirms only medium/small exclude personalization: https://developers.google.com/identity/gsi/web/guides/personalized-button . Returned renderer to medium and narrowed its type accordingly; kept pill, outline, full official G, center,16px margins and44px reserved mount. Final visible gaps are22px above/below on both forms (medium32px height centered in44px mount); earlier18px measurements describe the superseded large preview only.
+
+Final local build/i18n/types/app+widget PASS (build-static.log). RealSDK local login/signup inspected: static labels, complete G, equal22px vertical gaps, equal horizontal margins. Server deployment will be combined with manager's multitab auth candidate; no independent server change made.

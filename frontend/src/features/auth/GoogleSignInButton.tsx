@@ -92,7 +92,7 @@ export function GoogleSignInButton({ disabled, onCredential, text = "continue_wi
           restore ||= mount.contains(document.activeElement);
           mount.replaceChildren();
           identity.renderButton(mount, {
-            type: "standard", theme: "outline", size: "large", shape: "pill", logo_alignment: "left", text, width, locale: language,
+            type: "standard", theme: "outline", size: "medium", shape: "pill", logo_alignment: "left", text, width, locale: language,
           });
           if (restore) window.requestAnimationFrame(() => {
             if (active && document.activeElement === document.body) {
