@@ -1,5 +1,6 @@
 export const identity: Record<string, string> = {
   "googleAuth.loading": "Connecting to Google…",
+  "googleAuth.signupEmailDivider": "or sign up with email",
   "googleAuth.expired": "Google sign-in expired or is unavailable. Return to sign-in and start again.",
   "googleAuth.signupTitle": "Complete your registration",
   "googleAuth.signupText": "Enter your business details and review the documents. You will sign in to CRM with Google.",

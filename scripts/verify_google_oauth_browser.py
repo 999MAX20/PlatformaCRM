@@ -29,7 +29,7 @@ fixtures['mfa_hex'] = secrets.token_bytes(20).hex()
 fixtures['recovery'] = {}
 from apps.accounts.mfa import _replace_recovery_codes
 for project in ('desktop-chromium', 'mobile-chromium'):
-    for mode in ('known', 'mfa', 'mfa-link'):
+    for mode in ('known', 'mfa', 'known-signup', 'mfa-signup', 'mfa-link'):
         email = mode + '-' + project + '@google.example.test'
         user = User.objects.create_user(username=email, email=email, password='ExistingSynthetic123', role='business_operator')
         if mode != 'mfa-link':

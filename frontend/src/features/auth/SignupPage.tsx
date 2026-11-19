@@ -14,6 +14,9 @@ import { LanguageSelector } from "../../components/layout/LanguageSelector";
 import { useI18n } from "../../lib/i18n";
 import { useAuth } from "./AuthProvider";
 import { PasswordVisibilityToggle } from "./PasswordVisibilityToggle";
+import { GoogleSignInButton } from "./GoogleSignInButton";
+import { isGooglePending } from "../../api/token";
+import { getPostAuthReturnPath } from "./authReturnPath";
 import { documentPath, legalDocuments } from "../documents/documents";
 import "./authLoginSerenity.css";
 
@@ -30,7 +33,8 @@ type FormValues = {
 
 export function SignupPage() {
   const navigate = useNavigate();
-  const { signupOwner } = useAuth();
+  const { signupOwner, loginWithGoogle } = useAuth();
+  const [googleLoading, setGoogleLoading] = useState(false);
   const { t } = useI18n();
   const schema = z.object({
     full_name: z.string().min(2, t("validation.name")),
@@ -73,6 +77,7 @@ export function SignupPage() {
   const allDocumentsAccepted = legalDocuments.every(document => acceptedDocuments.includes(document.id));
 
   async function onSubmit(values: FormValues) {
+    if (googleLoading) return;
     setError(null);
     try {
       const response = await signupOwner({
@@ -92,6 +97,28 @@ export function SignupPage() {
       navigate("/app");
     } catch (err) {
       setError(getApiErrorMessage(err));
+    }
+  }
+
+  async function completeGoogleSignup(idToken: string) {
+    setError(null);
+    setGoogleLoading(true);
+    try {
+      const result = await loginWithGoogle(idToken);
+      if (isGooglePending(result)) {
+        navigate("/google/complete");
+      } else if (isMfaPendingResponse(result)) {
+        sessionStorage.setItem("zani_mfa_pending", JSON.stringify(result));
+        navigate("/mfa", { replace: true });
+      } else {
+        navigate(getPostAuthReturnPath(result.is_platform_user), { replace: true });
+      }
+      return true;
+    } catch (err) {
+      setError(getApiErrorMessage(err));
+      return false;
+    } finally {
+      setGoogleLoading(false);
     }
   }
 
@@ -150,6 +177,13 @@ export function SignupPage() {
               </div>
             ) : null}
 
+            {import.meta.env.VITE_GOOGLE_CLIENT_ID ? <>
+              <div className="serenity-login__social-row">
+                <GoogleSignInButton text="signup_with" disabled={isSubmitting || googleLoading} onCredential={completeGoogleSignup} />
+              </div>
+              <div className="serenity-login__divider"><span>{t("googleAuth.signupEmailDivider")}</span></div>
+            </> : null}
+
             <form className="serenity-login__form serenity-login__form--signup" noValidate onSubmit={handleSubmit(onSubmit)}>
               <div className="serenity-login__field-grid">
                 <Input label={t("signup.yourName")} autoComplete="name" placeholder={t("signup.namePlaceholder")} error={errors.full_name?.message} {...register("full_name")} />
@@ -201,7 +235,7 @@ export function SignupPage() {
                 </div>)}
                 {errors.accepted_documents ? <p id="documents-error" role="alert" className="text-sm text-platforma-danger">{errors.accepted_documents.message}</p> : null}
               </fieldset>
-              <Button className="serenity-login__primary" type="submit" disabled={!allDocumentsAccepted} isLoading={isSubmitting}>
+              <Button className="serenity-login__primary" type="submit" disabled={!allDocumentsAccepted || googleLoading} isLoading={isSubmitting}>
                 {t("signup.freeSubmit")}
                 <ArrowRight size={18} />
               </Button>

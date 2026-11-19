@@ -21,8 +21,9 @@ async function google(page: Page, email: string, sub = email) {
   });
   await page.route("https://accounts.google.com/gsi/client", route => route.fulfill({
     contentType: "application/javascript", body: `let options;
-      window.google = {accounts:{id:{initialize(value){options=value},renderButton(parent){
+      window.google = {accounts:{id:{initialize(value){options=value},renderButton(parent,appearance){
         const button=document.createElement('button'); button.textContent='Synthetic Google';
+        button.dataset.googleText=appearance.text;
         button.onclick=async()=>options.callback({credential:await window.syntheticGoogleToken(options.nonce)});
         parent.appendChild(button);
       }}}};`,
@@ -30,12 +31,18 @@ async function google(page: Page, email: string, sub = email) {
 }
 
 for (const language of ["ru", "kk", "en"] as const) {
-  test(`${language}: new Google owner accepts documents and creates one business`, async ({ page }, info) => {
+ for (const entry of ["login", "signup"] as const) {
+  test(`${language} ${entry}: new Google owner accepts documents and creates one business`, async ({ page }, info) => {
     await page.addInitScript(lang => localStorage.setItem("ai_smb_language", lang), language);
-    const email = `${language}-${info.project.name}@google-new.example.test`;
+    const email = `${entry}-${language}-${info.project.name}@google-new.example.test`;
     await google(page, email);
-    await page.goto("/login");
-    await page.getByRole("button", { name: "Synthetic Google", exact: true }).click();
+    await page.goto(`/${entry}`);
+    const button = page.getByRole("button", { name: "Synthetic Google", exact: true });
+    await expect(button).toHaveAttribute("data-google-text", entry === "signup" ? "signup_with" : "continue_with");
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await button.focus();
+    await page.screenshot({ path: info.outputPath(`${language}-${entry}-google-entry.png`), fullPage: true });
+    await page.keyboard.press("Enter");
     await expect(page).toHaveURL(/\/google\/complete$/);
     await expect(page.getByRole("heading", { name: dictionaries[language]["googleAuth.signupTitle"] })).toBeVisible();
     await expect(page.locator('input[name="full_name"]')).toHaveValue("Synthetic Google");
@@ -53,12 +60,13 @@ for (const language of ["ru", "kk", "en"] as const) {
     expect((await response).status()).toBe(201);
     await expect(page).toHaveURL(/\/app(?:\/|$)/);
   });
+ }
 
   test(`${language}: existing email requires password login and explicit link`, async ({ page }, info) => {
     const email = `${language}-${info.project.name}@google-existing.example.test`;
     await page.addInitScript(lang => localStorage.setItem("ai_smb_language", lang), language);
     await google(page, email);
-    await page.goto("/login");
+    await page.goto(language === "kk" ? "/signup" : "/login");
     await page.getByRole("button", { name: "Synthetic Google", exact: true }).click();
     await expect(page.getByText(dictionaries[language]["googleAuth.loginFirst"])).toBeVisible();
     await page.getByRole("link", { name: dictionaries[language]["auth.submit"], exact: true }).click();
@@ -92,9 +100,10 @@ test("expired flow offers restart without creating an account", async ({ page },
   await expect(page).toHaveURL(/\/login$/);
 });
 
-test("Google script failure can be retried without losing password form input", async ({ page }) => {
+for (const entry of ["login", "signup"]) {
+test(`${entry}: Google script failure can be retried without losing password form input`, async ({ page }) => {
   await page.route("https://accounts.google.com/gsi/client", route => route.abort());
-  await page.goto("/login");
+  await page.goto(`/${entry}`);
   await page.locator('input[name="email"]').fill("retained@example.test");
   await expect(page.getByRole("button", { name: ru["common.retry"] })).toBeVisible();
   await page.unroute("https://accounts.google.com/gsi/client");
@@ -103,12 +112,14 @@ test("Google script failure can be retried without losing password form input", 
   await expect(page.getByRole("button", { name: "Synthetic Google", exact: true })).toBeVisible();
   await expect(page.locator('input[name="email"]')).toHaveValue("retained@example.test");
 });
+}
 
+for (const entry of ["login", "signup"]) {
 for (const mode of ["known", "mfa"] as const) {
-  test(`${mode}: existing Google identity enters the same account`, async ({ page }, info) => {
-    const email = `${mode}-${info.project.name}@google.example.test`;
+  test(`${entry} ${mode}: existing Google identity enters the same account`, async ({ page }, info) => {
+    const email = `${mode}${entry === "signup" ? "-signup" : ""}-${info.project.name}@google.example.test`;
     await google(page, email);
-    await page.goto("/login");
+    await page.goto(`/${entry}`);
     const verification = page.waitForResponse(r => r.url().endsWith("/api/auth/google/verify/"));
     const currentUser = page.waitForResponse(r => r.url().endsWith("/api/auth/me/") && r.status() === 200);
     await page.getByRole("button", { name: "Synthetic Google", exact: true }).click();
@@ -131,6 +142,20 @@ for (const mode of ["known", "mfa"] as const) {
     expect((await (await currentUser).json()).email).toBe(email);
   });
 }
+}
+
+test("signup: failed Google verification retains form input and permits retry", async ({ page }) => {
+  await google(page, "signup-retry@example.test");
+  await page.route("**/api/auth/google/verify/", route => route.fulfill({ status: 400, contentType: "application/json", body: JSON.stringify({ detail: "Synthetic identity rejected" }) }));
+  await page.goto("/signup");
+  await page.locator('input[name="email"]').fill("retained@example.test");
+  await page.getByRole("button", { name: "Synthetic Google", exact: true }).click();
+  await expect(page.getByRole("alert")).toBeVisible();
+  await expect(page.locator('input[name="email"]')).toHaveValue("retained@example.test");
+  await page.unroute("**/api/auth/google/verify/");
+  await page.getByRole("button", { name: "Synthetic Google", exact: true }).click();
+  await expect(page).toHaveURL(/\/google\/complete$/);
+});
 
 test("link continuation survives MFA and requires a fresh factor", async ({ page }, info) => {
   const email = `mfa-link-${info.project.name}@google.example.test`;

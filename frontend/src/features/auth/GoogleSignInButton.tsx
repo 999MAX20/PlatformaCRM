@@ -30,9 +30,10 @@ function loadGoogle() {
   return scriptRequest;
 }
 
-export function GoogleSignInButton({ disabled, onCredential }: {
+export function GoogleSignInButton({ disabled, onCredential, text = "continue_with" }: {
   disabled: boolean;
   onCredential: (credential: string) => Promise<boolean>;
+  text?: "continue_with" | "signup_with";
 }) {
   const { t, language } = useI18n();
   const container = useRef<HTMLDivElement>(null);
@@ -71,7 +72,7 @@ export function GoogleSignInButton({ disabled, onCredential }: {
         },
       });
       identity.renderButton(mount, {
-        type: "standard", theme: "outline", size: "large", text: "continue_with",
+        type: "standard", theme: "outline", size: "large", text,
         width: Math.min(400, Math.floor(mount.getBoundingClientRect().width)), locale: language,
       });
       setReady(true);
@@ -82,7 +83,7 @@ export function GoogleSignInButton({ disabled, onCredential }: {
       if (active) setError(err instanceof Error && err.message === "Google Identity Services unavailable" ? t("auth.socialFailed") : getApiErrorMessage(err));
     });
     return () => { active = false; window.clearTimeout(expiry); mount?.replaceChildren(); };
-  }, [attempt, language, t]);
+  }, [attempt, language, t, text]);
 
   return <div className="col-span-full w-full min-w-0" aria-busy={!ready && !error}>
     <div ref={container} inert={disabled} className={disabled ? "pointer-events-none opacity-60" : undefined} />

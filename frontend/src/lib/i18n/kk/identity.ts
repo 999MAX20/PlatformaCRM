@@ -1,5 +1,6 @@
 export const identity: Record<string, string> = {
   "googleAuth.loading": "Google-ге қосылуда…",
+  "googleAuth.signupEmailDivider": "немесе email арқылы тіркеліңіз",
   "googleAuth.expired": "Google арқылы кіру мерзімі аяқталды немесе қолжетімсіз. Кіру бетіне оралып, қайта бастаңыз.",
   "googleAuth.signupTitle": "Тіркеуді аяқтаңыз",
   "googleAuth.signupText": "Бизнес деректерін енгізіп, құжаттармен танысыңыз. CRM-ге Google арқылы кіре аласыз.",
