@@ -875,6 +875,10 @@
 }
 
 @media (max-width: 1180px) {
+  .serenity-login--signup .serenity-login__header-actions > span {
+    display: none;
+  }
+
   .serenity-login__layout {
     grid-template-columns: minmax(0, 0.9fr) minmax(380px, 450px);
     gap: 34px;
@@ -1157,6 +1161,53 @@
 
   .serenity-login--signup .serenity-login__documents {
     gap: 4px;
+  }
+}
+
+@media (min-width: 901px) {
+  .serenity-login__layout,
+  .serenity-login--signup .serenity-login__layout {
+    --column-gutter: clamp(32px, 4vw, 72px);
+    width: calc(100% - var(--column-gutter));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--column-gutter);
+    justify-items: center;
+  }
+
+  .serenity-login__story {
+    width: min(100%, 720px);
+    text-align: center;
+  }
+
+  .serenity-login__story h1,
+  .serenity-login__story .serenity-login__lead {
+    margin-inline: auto;
+  }
+
+  .serenity-login--signup .serenity-login__story {
+    width: min(100%, 620px);
+  }
+
+  .serenity-login__form-area {
+    max-width: 480px;
+  }
+
+  .serenity-login--signup .serenity-login__form-area {
+    justify-self: center;
+  }
+
+  .serenity-login--signup {
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  .serenity-login--signup .serenity-login__header {
+    position: absolute;
+    inset: 0 0 auto;
+    height: 72px;
+  }
+
+  .serenity-login--signup .serenity-login__layout {
+    padding-block: 72px;
   }
 }
 

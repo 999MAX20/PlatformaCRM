@@ -1,3 +1,8 @@
+AUTH-HALVES-20261119: /login, /signup, /mfa centered in equal desktop halves;
+mobile layout retained. Browser geometry/screenshots, navigation/validation/focus,
+RU/KK/EN sampled; build/types/i18n/bundle PASS. Scoped CSS only, no deployment.
+Evidence: [checkpoint](docs/testing/task-state/PRIMARY-SESSION.md#auth-halves-20261119).
+
 AUTH-FORMS-AUDIT-20261119: lost-access public link/contact removed; password eyes
 added across account/auth fields without hover, keyboard focus retained. Forgot
 and reset backgrounds match login; localized acknowledgement and actionable reset

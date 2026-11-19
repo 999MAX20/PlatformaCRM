@@ -14338,6 +14338,53 @@ triggered by this change. GitHub Actions run44369480025 observed in_progress via
 GitHub API (combined-status connector returned no legacy statuses), no CI PASS claimed.
 CI: https://github.com/999MAX20/PlatformaCRM/actions/runs/44369480025 .
 
+## AUTH-HALVES-20261119
+
+Owner requests /login, /signup and /mfa text/form centered in equal screen halves.
+Prior auth design retained -> explicit new geometry requirement -> CSS-only delta.
+Root C:/Users/user/Desktop/PlatformaCRM; branch codex/ui-testing-toolkit;
+start ac9a8d712e2b990e39ca702a2908ae46d5e80ade. Existing password-policy/auth
+TSX/tests and shared document WIP is foreign; preserve, stage only owned hunks.
+Mode implementation; gap code; reuse serenity CSS, existing tokens/forms/content.
+Skills antislop during (owner instruction), ui/layoutmobile: equal desktop halves,
+center bounded blocks, retain mobile stack and keyboard focus, no clipping/overflow.
+Direction is the supplied existing screen; palette/type/background unchanged.
+Scope geometry only; no API/auth/permission/notification/BusinessEvent/AI/migration
+changes. Checks: desktop/tablet/mobile browser screenshots and inspection, RU/KK/EN,
+navigation/validation/focus, build/types/i18n/bundle and diff hygiene. Backend/full
+E2E not required for CSS placement. Publication after scoped gates only.
+
+Implemented: desktop equal tracks with matched outer/inner gutters; story centered,
+bounded form centered at 75% viewport width; signup safe vertical centering with
+scroll for tall content. Hide signup header helper text <=1180px after reproducing
+its overlap with logo at1024px. Embedded MFA has no serenity classes and is unchanged.
+Verified canonical Vite5173 PID908 and Django8000 PID11484 command lines; no processes
+started/stopped, no DB changes. Chrome extension current task tab only.
+Browser PASS: login1536x639 centers384/1152, signup1280x900 centers320/960 and y450,
+MFA1280x900 centers320/960 and y450; signup1024 centers256/768, no horizontal
+overflow. Inspected RU desktop login/signup/MFA, KK MFA1024/mobile390 and login
+mobile errors, EN signup390/full-page and1024/1280. Header correction rechecked
+at1024 RU with visible keyboard focus. Signup tall content scrolls; mobile keeps
+single-column forms. Login/signup links and Enter navigation, MFA expired-session
+return, locale switch, empty-login field validation PASS. Console error log empty.
+Two transient capture timeouts recovered after settled locale/viewport changes;
+final required captures succeeded. Screenshots captured and visually inspected:
+output/auth-halves-20261119/{login-ru-final,signup-ru-1024-focus-final,
+signup-en-desktop-final,signup-en-mobile,mfa-kk-1024,mfa-kk-mobile}.jpg.
+No credential submission, signup/legal acceptance or live MFA code verification;
+MFA visual coverage uses expired-session surface. Auth behavior is unchanged.
+Final npm run build (i18n/types/app/widget) and npm run check:bundle PASS;
+logs output/auth-halves-{build,bundle}-final-20261119.log. Existing RU/KK chunk
+warnings remain within shell budget. Build includes foreign password-policy WIP;
+this is scoped layout verification, not certification/publication of that work.
+Anti Slop scoped gate PASS: equal measured centers, no new content/assets/tokens,
+mobile reflow/screenshots, keyboard focus/navigation and error labels inspected.
+Existing visual identity retained (energy2/rhythm1; motion unchanged); animation,
+backend/loading/retry/auth security are unchanged and not recertified by this delta.
+Frontend contract updated; identity passport/CRM roadmap/README unchanged because
+no identity/domain/setup behavior changed. No remaining code or visual criteria in
+this local geometry scope; publication/CI recorded separately.
+
 ## SETTINGS-CLARITY-20261118
 
 Implementation authorized after read-only settings audit. Prior functional settings flows retained; owner-approved delta: unified message saving, protected drafts, readable time/timezone controls, server-side security history filtering/pagination, quieter navigation and historical-field grouping, explicit local voice preferences.
