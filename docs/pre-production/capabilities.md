@@ -1,3 +1,12 @@
+## Ядро и стоматологическая кастомизация — 22.11.2026
+
+[Карта24 backend apps, frontend и интеграционных связей](../testing/evidence/crm-core-dentistry-map-20261122.md)
+на4a3214a6 + WIP: планы/плановые деньги/UI/голосовая plan-ветка отнесены владельцем
+к dental-модулю. Также найдены dentistry-presets onboarding/Inbox; общие сущности,
+AI runtime, каналы, записи и обычные платежи остаются общими. Pricing — отдельная
+торговая подсистема Kaspi. Клинические модели/пациентский портал не обнаружены
+в этой инвентаризации. Это статический анализ, не новый runtime PASS или code split.
+
 ## Границы модулей — 21.11.2026
 
 BusinessCapability и сервисы/API/UI планов существуют, но отдельная активация
@@ -10,7 +19,9 @@ BusinessCapability и сервисы/API/UI планов существуют, �
 (добавляет общие visit_plans/plan_payments), общий серверный инициализатор и пять
 путей создания Business. Новых keys/профилей в runtime пока нет. Обнаружены writers
 onboarding/capability PATCH/business update: их совместимость входит в будущую
-реализацию. Следующее — схема профильной метки/legacy/guards. Scope остаётся docs-only;
+реализацию. Наd4085a5e + WIP описаны nullable-метка Business, прежние capability rows,
+legacy resolver без backfill и серверные guards. Это спецификация, не миграция
+и не runtime-защита. Следующее — отдельно порученная реализация. Scope остаётся docs-only;
 текущие функции и прежние scoped evidence сохранены.
 
 ## Глобальный поиск — 18.11.2026

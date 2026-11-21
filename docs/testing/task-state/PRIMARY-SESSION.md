@@ -118,6 +118,69 @@ working-tree EOF warning remains foreign and unchanged, as recorded above.
 
 ## CRM-D04-MAP-20261121 — документационная подготовка
 
+Анализ22.11, base4a3214a624d2bb1bf22b9f2daa22cd682fcebb93, codex/ui-testing-toolkit,
+canonical C:/Users/user/Desktop/PlatformaCRM. Поручение: подробный функциональный
+анализ ядра и уже начатой dental-кастомизации; план посещений отнесён владельцем
+к dental. Режим: статическое чтение + docs, без code split/runtime/DB/deploy.
+Предыдущая карта → фактическая AST-инвентаризация24 apps и маршрутов/страниц →
+[полная классификация](../evidence/crm-core-dentistry-map-20261122.md), без переписывания
+закрытых функций. Число24 сверено по каталогам apps, исключён __pycache__.
+Прочитаны отраслевые presets, Plan-модели/операции, voice plan=true, shared UI,
+merge/archive/read scope; generic dentalRole keys и pricing исправлены в трактовке.
+Scope выполнен: классификация всех apps; dental data/commands/UI/presets; нейтральные
+области; mixed швы; отсутствие обнаруженных клинических моделей отмечено с границей.
+Следующее — отдельно порученная реализация по crm-modularity-plan, не автостарт.
+Тесты/build/browser/провайдеры не запускались: docs-only, нет runtime PASS.
+Проверки: AST-инвентаризация, локальные ссылки, registry JSON/уникальность, полный
+собственный diff и working/index/committed-range hygiene; команды/итоги в финале.
+Сохранены собственные неопубликованные документы схемы21.11. Прочитано релевантное
+reconstruction evidence соседней задачи: ошибочный b9f30b9f заменён владельцем
+на e1886fea, наша документация оставлена в working tree; это не работа данного чата.
+Текущий push допускается только после fetch/проверки outgoing. Чтобы не повторить
+гонку общего staging, готовить private Git index (не worktree/не копия исходников),
+проверять HEAD/index перед публикацией commit и сохранять все чужие working bytes.
+Собственные пути: новое evidence, registry/docs README/product/plan/roadmap/capabilities;
+также старый CRM-D04 prefix access и только CRM-D04 section/line PRIMARY/STATUS.
+Все прочие auth/password/google/integrations WIP и другие task records чужие.
+Процессы/браузер/БД отсутствуют; миграции и external effects не выполнялись.
+
+
+Публикационный конфликт21.11: во время docs verification другая задача создала
+b9f30b9f7336e707c54f26ca1b6b6e0f168c7a28 (fix auth), включив подготовленные CRM-D04
+документы вместе с чужим frontend/auth. Это не наш task-only commit. Его история
+не переписывалась; push из этой задачи не выполнялся. Последняя read-back main:
+d4085a5eae556e9c29e50f9c19b027c5d1a78900. Публикация смешанного outgoing range
+не разрешена scope этой задачи; требуется разбор владельцем параллельной публикации.
+Собственная docs-часть проверена:33 ссылки плана, добавленные ссылки, JSON registry,
+scoped committed diff hygiene d4085a5e..b9f30b9f PASS; runtime тесты не запускались.
+Эта запись и примечание STATUS оставлены в working tree, без нового staging,
+чтобы повторно не вмешиваться в общий индекс. Техническая схема в указанном
+смешанном commit присутствует; не заявлять её отдельный commit/push или общий CI PASS.
+
+
+Техническая схема21.11, based4085a5eae556e9c29e50f9c19b027c5d1a78900:
+владелец поручил только документирование хранения/legacy/защиты старых API.
+Прочитаны Business/BusinessCapability, serializer __all__/read_only, capability
+resolver/PATCH, Business update, platform_details allowlist и admin. Спецификация:
+три nullable поля Business; all-null legacy без backfill; полный снимок в прежних
+capability rows и неизменяемый реестр версий; legacy keys планов вычисляются без
+записи; серверные guards/lock и явные400/409/403/503; read payload и порядок
+безопасного rollout. Прямой SQL не объявляется защищённым сервисным guard.
+Предыдущий критерий «метка/legacy/guards» закрыт документацией. Следующее —
+отдельно порученная реализация с isolated тестами, не следующая проектная фаза
+по умолчанию. Код/DB/миграции/deploy/процессы не менялись.
+Собственное: план, roadmap, capabilities; отдельная секция access; только CRM-D04
+в STATUS/PRIMARY. Весь исходный auth/frontend/integration WIP чужой и сохранён.
+Проверки: scoped полный diff, ссылки, JSON registry и working/index/committed
+hygiene. Build/tests/browser/DB не запускаются для docs-only. Команды проверки:
+Python pathlib/re/json по локальным ссылкам и registry; git diff --check по своим
+чистым путям; git diff --cached --check; git diff --check d4085a5e..HEAD после commit.
+Исторический общий diff warning в чужом Google evidence не исправляется этой задачей.
+Продуктовый состав не меняется; product/CRM/README/registry без новых правок,
+т.к. используется прежний зарегистрированный план и runtime не меняется.
+Фактическая публикация/CI сообщаются в финале, чужие commits не публикуются.
+
+
 Состав и точки создания21.11, basef46ed56bb60761326440787c1875f5a6370a0b8a:
 поручено определить ядро/dentistry и серверные точки, только документация.
 Прочитаны OwnerSignupView/create_owner_account, GoogleSignupView, BusinessViewSet,
