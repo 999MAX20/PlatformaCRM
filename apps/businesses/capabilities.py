@@ -16,6 +16,11 @@ MODULE_REGISTRY = (
 )
 
 RESOURCE_MODULES = {
+    "medical_patients": "medical_records",
+    "medical_records": "medical_records",
+    "medical_documents": "medical_records",
+    "medical_prescriptions": "medical_records",
+    "medical_files": "medical_records",
     "payments": "clients",
     "conversations": "inbox",
     "leads": "leads",
@@ -81,6 +86,14 @@ def module_for_resource(resource):
 def is_module_enabled(business, module_key):
     if not module_key:
         return True
+    if module_key == "medical_records":
+        # Clinical access must observe revocation, even on a cached Business.
+        return BusinessCapability.objects.filter(
+            business_id=business.pk,
+            business__business_type=Business.BusinessTypes.DENTISTRY,
+            module_key=module_key,
+            is_enabled=True,
+        ).exists()
     capability_map = getattr(business, "_capability_map", None)
     if capability_map is None:
         ensure_business_capabilities(business)

@@ -1,3 +1,5 @@
+DENTAL-MCS-20261122 ACTIVE: ТЗ полностью прочитано, единая матрица сохранена. Добавлен строгий medical capability gate; 6 isolated tests + check/drift PASS. Профили/медицинский ACL и все E0–E7 остаются в работе; рабочая БД не менялась. [Checkpoint](docs/testing/task-state/DENTAL-MCS-20261122.md).
+
 QA-016-20261121 LOCAL VERIFIED: automatic tasks searchable by displayed RU/KK/EN title; editor preserves original copy on unrelated edits. 66 backend, 9 node, 6 desktop/mobile browser scenarios, build/types/i18n/check/drift PASS; Code 8a240ad3 pushed to main; CI44937543011 queued (not PASS). Working DB untouched. [Evidence](docs/testing/evidence/qa-016-task-search-20261121.md).
 
 QA-006-20261121 LOCAL VERIFIED: client custom-field filtering restored under QA specification; 28 backend, 15 node and 8 browser scenarios (RU/KK/EN desktop/mobile plus API-error recovery) PASS; build/types/i18n/check/drift PASS. Code c9570fa5 pushed to main; CI44934913440 in_progress (conclusion=None); working DB untouched. [Evidence](docs/testing/evidence/qa-006-client-filters-20261121.md).

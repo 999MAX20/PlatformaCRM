@@ -1,3 +1,10 @@
+## DENTAL-MCS-20261122
+
+22.11: владелец поручил полную реализацию внешнего ТЗ v1.2 и дизайн-спецификации.
+[Единый checkpoint](DENTAL-MCS-20261122.md): текущий шаг, scope, исходный Git/WIP,
+координация CRM-D04 и обязательные проверки. Матрица готова; добавлен строгий
+medical capability gate, 6 isolated tests + check/drift PASS. Рабочая БД не изменена.
+
 ## AUTH-ENTRY-FEEDBACK-20261121
 
 Implementation; code gap. Owner request: precise signup password error, reload
