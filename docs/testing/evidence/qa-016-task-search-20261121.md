@@ -26,7 +26,7 @@ missing-provenance/tenant/pagination/summary tests and dependent task suites,
 system/migration drift. Frontend query/formatter tests, targeted desktop/mobile
 browser search-clear/open/edit/retention with screenshots, types/i18n and separate
 build outputs. AC1-3 locally verified is phase boundary, not live certification.
-Status: QA-016 AC1-3 locally verified; publication pending. Eight of29 report
+Status: QA-016 AC1-3 locally verified; code published to main. Eight of29 report
 items have scoped local closures,21 remain open. No remaining code/evidence gap
 within QA-016; live deployment and PostgreSQL execution are outside this boundary.
 
@@ -87,3 +87,12 @@ Contracts: crm/frontend and tasks-automations passport updated. Roadmap, README,
 access and AI contracts unchanged: this repairs existing search/editor semantics,
 with no permission/setup/automation/lifecycle change. QA-003 broader event/error
 localization remains open; this phase only addresses QA-016 AC1-3.
+
+Publication: code 8a240ad39348a62bcebd714a7699c3f6b0eec653 on branch
+`codex/ui-testing-toolkit`, normal-pushed to origin/main; remote SHA readback matched.
+Only reviewed task paths and the own STATUS entry staged; foreign WIP preserved.
+Working/index/committed-range diff hygiene passed; registry JSON parses and new
+relative evidence links resolve. CI44937543011 queued, conclusion null at readback
+(https://github.com/999MAX20/PlatformaCRM/actions/runs/44937543011); not a CI PASS.
+Working DB, shared servers, deployment untouched. Next scope: highest-priority
+remaining locally reproducible QA issue; QA-003 and live QA-025/027 remain open.
