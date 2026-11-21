@@ -1,3 +1,20 @@
+## MFA-OPTIONAL-20261121 — implementation
+
+Owner-approved requirement change: business signup/invitation/password login must issue a session without enrollment; confirmed MFA remains mandatory. Self-enrollment is available to all active authenticated users. Platform staff compulsory MFA and sensitive-operation step-up stay intact. Prior forced business-role policy → explicit owner decision → narrow shared MFA policy change.
+Root: C:/Users/user/Desktop/PlatformaCRM; branch codex/ui-testing-toolkit; base 0adbbce6. Existing dirty files are foreign, including access.md/STATUS/this index; preserve their hunks. No schema change planned; inspect migration drift before applying any task-required migration. No notification, BusinessEvent or AI change.
+Risk: high (authentication). Reuse shared MFA service, session issuance and existing account UI. Skills: zani-review-access and zani-run-verification. Check enabled/disabled/pending factors, signup/invites, roles, refresh, replay/recovery, tenant binding and admin protection. Focused isolated backend first, dependent suites plus system/drift checks at completion; reachable browser flow where available. Publish only reviewed task-owned changes after gates. Live deployment not yet verified.
+
+Verification (canonical dirty snapshot; unrelated password-policy/Google UI WIP preserved):
+- Isolated `manage.py test apps.accounts.tests_mfa -v 1`: 17 PASS before invitation regression added; outputs/mfa-optional-focused.log.
+- Isolated `check`, `makemigrations --check --dry-run`: PASS, no schema drift. Final `test` labels: apps.accounts.tests_mfa, tests_admin_mfa, tests_google_auth, tests_recovery, tests_login_csrf, tests_device_sessions, tests_session_policy; apps.businesses.tests_ownership, tests_invitation_token, tests_invitation_preview_access. 141 total, 133 PASS, 8 PostgreSQL-only concurrency skips (unchanged transactions; SQLite run). outputs/mfa-optional-dependent.log.
+- Working local DB: `manage.py migrate --plan`: no planned operations; no working DB writes or synthetic migration. Existing confirmed devices/secrets retained.
+- Existing Playwright account-mfa-qr.spec.ts: desktop/mobile 2 PASS against isolated real backend. Login → CRM → account enrollment, bad-code recovery, QR decoding/TOTP, next login challenge and verified CRM entry. Both affected screenshots visually inspected in output/account-qr-{desktop,mobile}-chromium.png; synthetic keys only, not published. No product UI appearance/copy changed.
+- `npm run build`: PASS (i18n, TypeScript, app/widget). `npm run check:bundle`: PASS shell budget; existing RU/KK >500kB warnings retained. Logs outputs/mfa-optional-{build,bundle}.log.
+- Auth service review: requests remain user/challenge-bound, no target-user parameter added; platform required MFA, tenant checks, audit, session revocation, factor replay and sensitive-operation step-up preserved. No money/BusinessEvent/AI/external notification change.
+- Current access/Google contracts and capability passport updated; no roadmap phase opened, README setup unchanged. Task-owned diff hygiene PASS; global dirty diff has pre-existing unrelated EOF blank line in google-button-design evidence (not edited).
+- Recovery browser first attempt failed: authenticated session redirected public /mfa to CRM. Test clears its own browser cookies before resuming pending enrollment; no product failure or code change. Retest PASS: voluntary enrollment profile-load 503 → keyboard retry → CRM → next-login MFA, 1 browser test; outputs/mfa-optional-recovery-browser-retry.log.
+- Local acceptance complete; task-only publication follows verification. Target deployment/live acceptance not performed; no schema migration required. No remaining local implementation criteria. Commit/remote SHA and CI reported in final response.
+
 INVITATIONS-FLOW-20261119: wide no-blur modal, readable grants, inline password/MFA
 and direct CRM entry implemented and exact13-file patch deployed. Focused18 and
 104 dependent backend PASS; all14 scoped browser scenarios have current PASS;

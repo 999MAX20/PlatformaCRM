@@ -84,7 +84,7 @@ class LoginCsrfTests(TestCase):
 
     @override_settings(AUTH_PRIVILEGED_MFA_REQUIRED=True)
     def test_mfa_enrollment_issues_cookie_only_with_csrf(self):
-        self.user.role = User.Roles.BUSINESS_OWNER
+        self.user.role = User.Roles.PLATFORM_MANAGER
         self.user.save()
         args = {"HTTP_X_CSRFTOKEN": self.bootstrap(), "HTTP_ORIGIN": "http://testserver"}
         login = self.client.post("/api/auth/token/", {"email": self.user.email, "password": "SyntheticCsrf123!"}, format="json", **args)

@@ -22,7 +22,8 @@ in (including MFA), and matching-email accounts require explicit linking.
 - A new email opens `/google/complete`: owner name/phone, business name/type/city,
   and the existing four legal acknowledgements. User, business defaults, member,
   legal receipts and identity are created atomically only after submission.
-  The account has no generated password. Existing policy can require MFA enrollment.
+  The account has no generated password. Business signup issues a CRM session without
+  mandatory MFA enrollment; users may enable MFA later in their account settings.
 - Attempts use CSRF and a 10-minute single-use HttpOnly browser cookie with a
   hashed random nonce; signature/audience/issuer/expiry/email verification are
   checked on the server. Raw Google credentials never go in URLs or browser storage.

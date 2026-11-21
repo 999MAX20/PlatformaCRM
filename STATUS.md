@@ -1,3 +1,5 @@
+MFA-OPTIONAL-20261121: voluntary business-user MFA implemented and locally verified; signup/invites enter CRM, confirmed factors enforced. Backend 133 PASS/8 PostgreSQL skips, browser 3 PASS, build/check/drift PASS; local DB has no pending migrations. Live deployment not performed. Evidence: docs/testing/task-state/PRIMARY-SESSION.md.
+
 AUTH-HALVES-20261119: /login, /signup, /mfa centered in equal desktop halves;
 mobile layout retained. Browser geometry/screenshots, navigation/validation/focus,
 RU/KK/EN sampled; build/types/i18n/bundle PASS. Follow-up: login/signup decorative

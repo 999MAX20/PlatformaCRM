@@ -120,14 +120,14 @@ class OwnershipTests(OwnershipFixture, TestCase):
             client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
             self.assertEqual(client.get("/api/auth/me/").status_code, 401)
 
-    def test_new_owner_requires_privileged_mfa_and_old_role_does_not_grant_owner_permissions(self):
+    def test_new_owner_mfa_is_optional_and_old_role_does_not_grant_owner_permissions(self):
         from apps.accounts.mfa import requires_mfa
         from apps.businesses.access import Actions, Resources, can
         transfer_id = self.ready()
         self.assertEqual(self.execute(transfer_id).status_code, 200)
         self.business.refresh_from_db(); self.owner.refresh_from_db(); self.recipient.refresh_from_db()
         with self.settings(AUTH_PRIVILEGED_MFA_REQUIRED=True):
-            self.assertTrue(requires_mfa(self.recipient))
+            self.assertFalse(requires_mfa(self.recipient))
         self.assertFalse(can(self.owner, self.business, Resources.TEAM, Actions.MANAGE).allowed)
         self.assertTrue(can(self.recipient, self.business, Resources.TEAM, Actions.MANAGE).allowed)
 

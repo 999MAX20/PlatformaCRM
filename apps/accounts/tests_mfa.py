@@ -11,7 +11,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from apps.accounts.mfa import MfaStepUpRequired, issue_step_up_token, validate_step_up_token
 from apps.accounts.models import MfaChallenge, MfaDevice, MfaRecoveryCode, User
 from apps.accounts.session_security import revoke_user_refresh_sessions
-from apps.businesses.models import Business, BusinessMember
+from apps.businesses.models import Business, BusinessInvitation, BusinessMember
 from apps.core.models import AuditLog
 from apps.integrations.credential_encryption import decrypt_credential_value
 
@@ -42,17 +42,7 @@ class PrivilegedMfaTests(TestCase):
         )
 
     def test_owner_enrolls_then_uses_totp_at_login_and_replay_is_rejected(self):
-        login = self._login()
-        self.assertEqual(login.status_code, 202)
-        self.assertEqual(login.data["code"], "mfa_enrollment_required")
-        self.assertNotIn("access", login.data)
-        self.assertNotIn("refresh", login.data)
-
-        start = self.client.post(
-            "/api/auth/mfa/enrollment/start/",
-            {"challenge_token": login.data["challenge_token"]},
-            format="json",
-        )
+        start = self._start_enrollment()
         self.assertEqual(start.status_code, 200)
         self.assertIn("otpauth_uri", start.data)
         self.assertIn("manual_key", start.data)
@@ -60,7 +50,7 @@ class PrivilegedMfaTests(TestCase):
         code = pyotp.TOTP(start.data["manual_key"]).now()
         confirm = self.client.post(
             "/api/auth/mfa/enrollment/confirm/",
-            {"challenge_token": login.data["challenge_token"], "code": code},
+            {"challenge_token": start.data["challenge_token"], "code": code},
             format="json",
         )
         self.assertEqual(confirm.status_code, 200)
@@ -91,7 +81,7 @@ class PrivilegedMfaTests(TestCase):
         self.assertEqual(replay.data.get("code"), "mfa_code_invalid", replay.data)
 
     def test_enrollment_start_is_idempotent_for_the_same_challenge(self):
-        login = self._login()
+        login = self._start_enrollment()
         payload = {"challenge_token": login.data["challenge_token"]}
 
         first = self.client.post("/api/auth/mfa/enrollment/start/", payload, format="json")
@@ -177,6 +167,7 @@ class PrivilegedMfaTests(TestCase):
         self.assertIn("access", response.data)
 
     def test_legacy_privileged_refresh_without_mfa_claim_is_rejected(self):
+        self._enroll_owner()
         raw_refresh = str(RefreshToken.for_user(self.owner))
         self.client.cookies[settings.AUTH_REFRESH_COOKIE_NAME] = raw_refresh
 
@@ -202,15 +193,14 @@ class PrivilegedMfaTests(TestCase):
             {"password": self.password, "code": code, "reason": "Owner changed authenticator device"},
             format="json",
         )
-        self.assertEqual(response.status_code, 202)
-        self.assertEqual(response.data["code"], "mfa_enrollment_required")
-        self.assertNotIn("access", response.data)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("access", response.data)
         self.assertFalse(MfaDevice.objects.filter(user=self.owner).exists())
         audit = AuditLog.objects.filter(actor=self.owner, metadata__event="mfa_disabled").first()
         self.assertIsNotNone(audit)
         self.assertEqual(audit.metadata["reason"], "Owner changed authenticator device")
 
-    def test_active_business_admin_is_forced_into_mfa(self):
+    def test_active_business_admin_is_not_forced_into_mfa(self):
         admin = User.objects.create_user(
             username="admin@example.com",
             email="admin@example.com",
@@ -230,9 +220,8 @@ class PrivilegedMfaTests(TestCase):
             format="json",
         )
 
-        self.assertEqual(response.status_code, 202)
-        self.assertEqual(response.data["code"], "mfa_enrollment_required")
-        self.assertNotIn("access", response.data)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("access", response.data)
 
     def test_platform_manager_is_forced_into_mfa_and_can_enroll(self):
         platform_manager = User.objects.create_user(
@@ -260,7 +249,7 @@ class PrivilegedMfaTests(TestCase):
         self.assertIn("manual_key", enrollment.data)
 
     def test_expired_challenge_is_rejected(self):
-        login = self._login()
+        login = self._start_enrollment()
         MfaChallenge.objects.filter(purpose=MfaChallenge.Purposes.ENROLLMENT).update(
             expires_at=timezone.now() - timedelta(seconds=1)
         )
@@ -325,7 +314,7 @@ class PrivilegedMfaTests(TestCase):
         self.owner.refresh_from_db()
         self.assertTrue(self.owner.check_password(new_password))
 
-    def test_owner_signup_requires_enrollment_before_session_is_issued(self):
+    def test_owner_signup_issues_session_without_enrollment(self):
         response = self.client.post(
             "/api/auth/signup/owner/",
             {
@@ -339,9 +328,8 @@ class PrivilegedMfaTests(TestCase):
             format="json",
         )
 
-        self.assertEqual(response.status_code, 202)
-        self.assertEqual(response.data["code"], "mfa_enrollment_required")
-        self.assertNotIn("access", response.data)
+        self.assertEqual(response.status_code, 201)
+        self.assertIn("access", response.data)
         self.assertNotIn("refresh", response.data)
 
     def test_mfa_endpoints_cannot_target_another_tenant_user(self):
@@ -374,16 +362,11 @@ class PrivilegedMfaTests(TestCase):
         )
 
     def _enroll_owner(self):
-        login = self._login()
-        start = self.client.post(
-            "/api/auth/mfa/enrollment/start/",
-            {"challenge_token": login.data["challenge_token"]},
-            format="json",
-        )
+        start = self._start_enrollment()
         secret = start.data["manual_key"]
         confirm = self.client.post(
             "/api/auth/mfa/enrollment/confirm/",
-            {"challenge_token": login.data["challenge_token"], "code": pyotp.TOTP(secret).now()},
+            {"challenge_token": start.data["challenge_token"], "code": pyotp.TOTP(secret).now()},
             format="json",
         )
         self.assertEqual(confirm.status_code, 200)
@@ -394,3 +377,54 @@ class PrivilegedMfaTests(TestCase):
         self.assertTrue(all(len(value) == 64 for value in stored_hashes))
         self.assertTrue(all(code.replace("-", "") not in stored_hashes for code in confirm.data["recovery_codes"]))
         return confirm.data["recovery_codes"], secret
+
+    def _start_enrollment(self):
+        login = self._login()
+        self.assertEqual(login.status_code, 200)
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {login.data['access']}")
+        status = self.client.get("/api/auth/mfa/status/")
+        self.assertTrue(status.data["available"])
+        self.assertFalse(status.data["required"])
+        start = self.client.post("/api/auth/mfa/enrollment/start/", {}, format="json")
+        self.client.credentials()
+        self.assertEqual(start.status_code, 200, start.data)
+        return start
+
+    def test_unconfirmed_enrollment_does_not_require_mfa_at_login(self):
+        self._start_enrollment()
+        self.assertEqual(self._login().status_code, 200)
+
+    def test_employee_can_opt_in_and_then_requires_mfa(self):
+        self.owner.role = User.Roles.BUSINESS_OPERATOR
+        self.owner.save(update_fields=["role"])
+        BusinessMember.objects.filter(user=self.owner).update(role=BusinessMember.Roles.OPERATOR)
+        self._enroll_owner()
+        login = self._login()
+        self.assertEqual(login.status_code, 202)
+        self.assertEqual(login.data["code"], "mfa_required")
+
+    def test_anonymous_user_cannot_begin_enrollment_without_challenge(self):
+        response = self.client.post("/api/auth/mfa/enrollment/start/", {}, format="json")
+        self.assertGreaterEqual(response.status_code, 400)
+        self.assertFalse(MfaDevice.objects.exists())
+
+    def test_invited_admin_accepts_and_enters_crm_without_enrollment(self):
+        invitation = BusinessInvitation.objects.create(
+            business=self.business, email="invited-admin@example.com",
+            role=BusinessMember.Roles.ADMIN,
+            expires_at=timezone.now() + timedelta(days=1),
+        )
+        accepted = self.client.post("/api/team/invitations/accept/", {
+            "token": str(invitation.token), "password": self.password,
+        }, format="json")
+        self.assertEqual(accepted.status_code, 200, accepted.data)
+        login = self.client.post("/api/auth/token/", {
+            "email": invitation.email, "password": self.password,
+        }, format="json")
+        self.assertEqual(login.status_code, 200, login.data)
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {login.data['access']}")
+        self.assertEqual(self.client.get("/api/auth/me/").status_code, 200)
+        status = self.client.get("/api/auth/mfa/status/")
+        self.assertTrue(status.data["available"])
+        self.assertFalse(status.data["required"])
+        self.assertFalse(status.data["enabled"])

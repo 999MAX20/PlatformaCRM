@@ -12,7 +12,6 @@ from rest_framework.exceptions import ValidationError
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from apps.accounts.models import MfaChallenge, MfaDevice, MfaRecoveryCode, User
-from apps.businesses.models import BusinessMember
 from apps.core.domain_errors import DomainAPIException
 from apps.integrations.credential_encryption import decrypt_credential_value, encrypt_credential_value
 
@@ -63,17 +62,10 @@ class RecentAuthenticationFailed(DomainAPIException):
 def is_privileged_mfa_user(user):
     if not user or not user.is_authenticated:
         return False
-    if user.is_superuser or user.role in {
+    return user.is_superuser or user.role in {
         User.Roles.PLATFORM_ADMIN,
         User.Roles.PLATFORM_MANAGER,
-        User.Roles.BUSINESS_OWNER,
-    }:
-        return True
-    return BusinessMember.objects.filter(
-        user=user,
-        is_active=True,
-        role__in={BusinessMember.Roles.OWNER, BusinessMember.Roles.ADMIN},
-    ).exists()
+    }
 
 
 def has_confirmed_mfa(user):
@@ -145,8 +137,8 @@ def start_enrollment(*, challenge_token):
 
 @transaction.atomic
 def begin_authenticated_enrollment(user):
-    if not is_privileged_mfa_user(user):
-        raise ValidationError({"detail": "MFA is available to privileged accounts.", "code": "mfa_not_available"})
+    if not user or not user.is_authenticated or not user.is_active:
+        raise ValidationError({"detail": "MFA requires an active authenticated account.", "code": "mfa_not_available"})
     MfaDevice.objects.filter(user=user, confirmed_at__isnull=True).delete()
     token, _ = _create_challenge(user, MfaChallenge.Purposes.ENROLLMENT)
     return start_enrollment(challenge_token=token)
@@ -256,7 +248,7 @@ def mfa_status(user):
     except MfaDevice.DoesNotExist:
         confirmed_at = None
     return {
-        "available": is_privileged_mfa_user(user),
+        "available": bool(user and user.is_authenticated and user.is_active),
         "required": bool(getattr(settings, "AUTH_PRIVILEGED_MFA_REQUIRED", False)) and is_privileged_mfa_user(user),
         "enabled": confirmed,
         "method": "totp" if confirmed else None,

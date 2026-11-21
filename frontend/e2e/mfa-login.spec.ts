@@ -14,17 +14,26 @@ function totp(secret: string, offset = 0) {
   return ((digest.readUInt32BE(digest[19] & 15) & 0x7fffffff) % 1000000).toString().padStart(6, "0");
 }
 
-test("enrollment enters automatically, retries profile loading and next login never starts a QR", async ({ page }) => {
-  test.skip(process.env.ZANI_QUALITY_GATE !== "1" || process.env.AUTH_PRIVILEGED_MFA_REQUIRED !== "true", "Requires isolated mandatory-MFA fixtures");
+test("voluntary enrollment retries profile loading and next login never starts a QR", async ({ page }) => {
+  test.skip(process.env.ZANI_QUALITY_GATE !== "1", "Requires isolated MFA fixtures");
   test.setTimeout(90000);
   const email = process.env.E2E_OWNER_EMAIL || "business_owner@example.com";
   const password = process.env.E2E_PASSWORD || "ZaniTest123!";
   await page.goto("/login");
   await page.getByLabel("Email", { exact: true }).fill(email);
   await page.locator('form input[type="password"]').fill(password);
-  const started = page.waitForResponse(r => r.url().endsWith("/mfa/enrollment/start/"));
   await page.locator('form button[type="submit"]').click();
+  await expect(page).toHaveURL(/\/app\//);
+  await page.goto("/app/account");
+  const started = page.waitForResponse(r => r.url().endsWith("/mfa/enrollment/start/"));
+  await page.getByRole("button", { name: "Подключить MFA", exact: true }).click();
   const enrollment = await (await started).json();
+  // Resume the user's pending enrollment in the public flow to exercise session recovery.
+  await page.evaluate(data => sessionStorage.setItem("zani_mfa_pending", JSON.stringify({
+    code: "mfa_enrollment_required", ...data,
+  })), enrollment);
+  await page.context().clearCookies();
+  await page.goto("/mfa");
   await expect(page.getByTestId("authenticator-qr")).toBeVisible();
   let invalid = "000000";
   while ([-1, 0, 1].some(offset => totp(enrollment.manual_key, offset) === invalid)) invalid = String(Number(invalid) + 1).padStart(6, "0");

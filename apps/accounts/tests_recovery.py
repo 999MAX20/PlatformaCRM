@@ -92,12 +92,12 @@ class RecoveryTests(TestCase):
         self.assertNotIn(token, str(list(AuditLog.objects.values_list("metadata", flat=True))))
 
     @override_settings(AUTH_PRIVILEGED_MFA_REQUIRED=True)
-    def test_next_login_requires_mfa_enrollment(self):
+    def test_recovered_owner_can_login_without_mfa_enrollment(self):
         id, token = self.send()
         self.assertEqual(self.finish(id, token).status_code, 200)
         response = self.public.post("/api/auth/token/", {"email": "recovered@example.com", "password": "NewVerifiedPassword123!"})
-        self.assertEqual(response.data["code"], "mfa_enrollment_required")
-        self.assertNotIn("access", response.data)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("access", response.data)
 
     def test_staff_requires_real_owner_confirmation(self):
         response = self.prepare(self.staff, verified_reference="")

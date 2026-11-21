@@ -606,11 +606,15 @@ Support-note требует platform_admin (с существующей superuse
 `can_log_support_action`, POST повторно проверяет сервер. BE-GAP-004/D-09 решены.
 
 Для staging/production/первого платного пилота `AUTH_PRIVILEGED_MFA_REQUIRED=True`.
-Обязательные identities: superuser, platform_admin, platform_manager, owner и
-активные owner/admin memberships. Одна лишь роль manager/operator/specialist
-не требует MFA этой политикой, но уже включённый фактор остаётся обязательным.
+Обязательные identities: superuser, platform_admin, platform_manager. Пользователи
+бизнеса, включая owner и активные owner/admin memberships, подключают MFA добровольно
+в кабинете. Регистрация, принятие приглашения и вход без подтверждённой MFA не
+требуют enrollment. Настройка доступна каждому активному авторизованному пользователю;
+фактор включается только после успешного подтверждения. Уже включённый фактор
+обязателен при входе независимо от роли и значения этой настройки.
 
-Primary factor выдаёт одноразовый challenge, не JWT-сессию до проверки фактора.
+При включённой или обязательной MFA primary factor выдаёт одноразовый challenge,
+не JWT-сессию до проверки фактора; иначе сразу выдаёт сессию CRM.
 TOTP replay отсекается счётчиком, recovery codes одноразовые и хранятся хешами;
 TOTP secrets зашифрованы keyring. Секреты/коды/refresh/challenge не логируются.
 Вход Django admin применяет ту же политику MFA: TOTP или одноразовый recovery code
@@ -626,7 +630,8 @@ auth epoch и устройства; прежняя password-only сессия н
 используют отдельный locmem cache; staging/production такой backend отвергают.
 Password/security/MFA reset проверяют текущий пароль/фактор по своему контракту,
 отзывают сессии и audit. Reset обязательной MFA требует повторного enrollment,
-не выдаёт MFA-free privileged session. Step-up привязан к user/auth epoch.
+не выдаёт MFA-free platform session. После подтверждённого отключения добровольной
+MFA пользователь бизнеса получает обычную сессию. Step-up привязан к user/auth epoch.
 Нет фактора — только отдельно авторизованное восстановление после проверки
 владельца; экспорт/восстановление старого секрета недопустимы.
 

@@ -214,13 +214,12 @@ class GoogleAuthTests(TestCase):
         self.assertNotIn(settings.AUTH_REFRESH_COOKIE_NAME, response.cookies)
 
     @override_settings(AUTH_PRIVILEGED_MFA_REQUIRED=True)
-    def test_new_owner_requires_enrollment_before_session(self):
+    def test_new_owner_receives_session_without_enrollment(self):
         self.verify()
         response = self.post("signup", self.signup_data())
-        self.assertEqual(response.status_code, 202, response.data)
-        self.assertEqual(response.data["code"], "mfa_enrollment_required")
-        self.assertNotIn("access", response.data)
-        self.assertNotIn(settings.AUTH_REFRESH_COOKIE_NAME, response.cookies)
+        self.assertEqual(response.status_code, 201, response.data)
+        self.assertIn("access", response.data)
+        self.assertIn(settings.AUTH_REFRESH_COOKIE_NAME, response.cookies)
 
     def test_existing_identity_requires_mfa(self):
         user = self.user()
