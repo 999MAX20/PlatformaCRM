@@ -132,6 +132,10 @@ runtime evidence before closure.
 All three commands ran in one disposable runtime; final-backend.log retained.
 No required local check remains for QA-023/024. Live acceptance/deployment is not
 claimed. Code was tested in the identified dirty checkout with foreign WIP preserved.
-Only task-owned paths/hunks are eligible for publication; normal push/CI pending.
+Task-only commit `9d7d038cdc9b77030c4137375b5795dd71912d0d` normal-pushed
+to origin/main; remote SHA matched. Branch remains codex/ui-testing-toolkit.
+Outgoing range contained only this reviewed change. Task working/index/committed
+diff hygiene and registry/link checks PASS. CI44928103156 was in_progress at
+publication check; not a claimed PASS. No deployment was performed.
 Whole-tree whitespace debt in foreign google-button-design-20261119.md is excluded;
 no foreign file is repaired or staged for this phase.
