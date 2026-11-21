@@ -12,6 +12,7 @@ import { Input } from "../../components/ui/Input";
 import { LanguageSelector } from "../../components/layout/LanguageSelector";
 import { useI18n } from "../../lib/i18n";
 import { useAuth } from "./AuthProvider";
+import { useUnsavedEntryWarning } from "./useUnsavedEntryWarning";
 import { PasswordVisibilityToggle } from "./PasswordVisibilityToggle";
 import { GoogleSignInButton } from "./GoogleSignInButton";
 import { isGooglePending } from "../../api/token";
@@ -51,10 +52,12 @@ export function SignupPage() {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isDirty },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
+    defaultValues: { full_name: "", email: "", business_name: "", password: "", password_confirm: "" },
   });
+  useUnsavedEntryWarning(isDirty || isSubmitting);
 
   async function onSubmit(values: FormValues) {
     if (googleLoading) return;

@@ -379,7 +379,7 @@ export const identity: Record<string, string> = {
   "permissions.scope.own": "Өз жазбаларым",
   "permissions.scope.none": "Қолжетімділік жоқ",
   "signup.passwordMinCheck": "Кемінде 8 таңба",
-  "signup.passwordLettersNumbersCheck": "Әріптер мен сандар",
+  "signup.passwordLettersNumbersCheck": "Кемінде бір әріп пен бір сан қосыңыз",
   "signup.passwordNoSpacesCheck": "Бос орынсыз",
   "signup.createCompanyTitle": "Жұмыс кеңістігін жасаңыз",
   "signup.createCompanyText": "CRM жүйесін баптау үшін бизнес деректерін көрсетіңіз.",

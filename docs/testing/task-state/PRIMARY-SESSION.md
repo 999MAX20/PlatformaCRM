@@ -1,3 +1,111 @@
+## AUTH-ENTRY-FEEDBACK-20261121
+
+Implementation; code gap. Owner request: precise signup password error, reload
+warning for entered data, login background on public invitation acceptance, remove
+role-access details there. Prior Google medium-button fix remains closed; new owner
+requirements -> scoped form feedback/presentation delta, preserve Google sizing.
+Root C:/Users/user/Desktop/PlatformaCRM, branch codex/ui-testing-toolkit,
+starting HEAD 9bbca1018c63a29884e500982f51e632655e96ea.
+Existing Signup passwordPolicy import/schema and backend password changes are
+foreign WIP, excluded from this task's staging/deployment. Preserve other WIP.
+Reuse react-hook-form dirty state, native beforeunload, login Serenity background,
+existing role label/error/retry/MFA flows and existing i18n keys. No backend policy,
+permission, tenant, notification, BusinessEvent, AI, migration or env changes.
+No account creation, real invitation acceptance or working-DB changes.
+Skills: Anti Slop core/ui/human/layoutmobile/copywriting, during mode. Applied:
+accurate actionable password copy in RU/KK/EN; warn only on modified/pending forms;
+retain keyboard/focus and mobile reachability; use existing background and controls.
+Functional frontend verification: build/types/i18n/bundle; isolated mocked browser
+suite on desktop/mobile, password errors, reload cancel/confirm/clean/unmount,
+invitation error/retry and role label preservation; capture and inspect screenshots.
+Preserve Google medium size/44px slot. No seeded E2E/full backend suite for UI-only
+change. Delivery: task-only commit and normal push to origin main; current server
+frontend rollout retains previous Google fix, isolated candidate before activation.
+Plan recorded at first edit; results and exact checks follow below.
+
+Results21Nov: password letter/digit error is an actionable sentence in RU/KK/EN;
+8-character/no-space and server validators unchanged. Shared beforeunload hook
+protects signup/invite edits and pending submissions, cleanup on SPA unmount.
+Invite prefill sets its default baseline; login background reused, access details
+removed, role/email/business/status/recovery/MFA preserved. Wrapped field errors
+stay within their columns. Settings invitation drawer is unchanged.
+
+Verification (canonical source on5173; all auth-entry API calls mocked):
+- `npm run build` and `npm run check:bundle`: PASS (i18n/types/app/widget); local
+  initial build preceded final error-wrapping CSS; final exact server build below.
+- `npx playwright test --config=playwright.auth-entry.config.ts
+  --output=../output/auth-entry-local-v2`:18 PASS; recovery assertion expected raw
+  server text instead of existing localized fallback. Corrected test, focused
+  `--grep 'preview retry' --output=../output/auth-entry-recovery`:2 PASS.
+- Earlier native reload test incorrectly awaited cancelled navigation. Replaced
+  that test trigger with scheduled location.reload, real dialog cancel/accept;
+  focused `--grep 'reload warns' --project=desktop`:2 PASS, full candidate/live below.
+- Exact server candidate: i18n7654keys/types/Vite PASS, app-shell356.9KiB below400;
+  RU/KK chunks retain >500KiB advisory. `AUTH_ENTRY_URL=https://platformacrm.kz`,
+  `AUTH_ENTRY_ARTIFACT=../output/auth-entry-20261121/artifact`, same20 browser cases:
+  20 PASS. Final deployed assets with AUTH_ENTRY_ARTIFACT unset:20 PASS.
+- Real Google SDK on deployed login/signup: `GOOGLE_ENTRY_LIVE=1`,
+  `GOOGLE_ENTRY_URL=https://platformacrm.kz`,
+  `npx playwright test --config=playwright.google-entry.config.ts`:4 PASS;
+  desktop/mobile first load/reload displacement0px, medium content32px in44px slot.
+- RU/KK/EN desktop/mobile screenshots captured. RU desktop/mobile signup+invite
+  visually inspected: background, wrapping, field/CTA reachability, no horizontal
+  overflow, keyboard focus visible. Capture waits for fonts. Native browser dialog
+  text is browser-controlled. No custom dialog/focus-return implementation needed.
+- Existing seeded pilot invitation test updated to accept its intentional reload
+  warning; seeded suite NOT run (user prohibits new accounts). Backend suites,
+  migrations and full-project E2E N/A: frontend-only, no contract/policy changes.
+- Anti Slop delivery checks above passed; React Best Practices review: effect
+  cleanup/primitive dependency, no new fetch/storage/dependency, preserve labels.
+
+Deployment:20261121-auth-entry-feedback frontend only. Exact baseline hashes
+checked before temporary source patch, originals restored in finally. Foreign
+password-policy/WhatsApp WIP excluded. Google medium/readiness source retained.
+Caddy config validated and four CRM roots switched from20261121-google-static;
+old hashed assets retained, unrelated domain roots/backend/env/DB untouched.
+Rollback config /opt/platforma/shared/auth-entry-feedback-20261121/Caddyfile.
+Health/ready/login/signup/invite shell HTTP200. Deployed index SHA256:
+c008e06b35ba085f6dd443ca1c64ad0821c0944b7d65d8ba5e94f5b44395a6c1.
+Logs/manifest/scripts: output/auth-entry-20261121; browser screenshots:
+output/auth-entry-local-v2, output/auth-entry-candidate, output/auth-entry-live.
+No accounts created or real invitations accepted; no ordinary DB write tests.
+Frontend contract updated in place; access/API/roadmap/README need no changes
+because auth policy and API remain unchanged. Scope has no remaining product work.
+Concurrent docs-only commits f46ed56b/d4085a5e already matched origin/main before
+our publication; no foreign outgoing commits are included in this task push.
+
+Publication blocker21Nov: shared index changed between review and commit. Agent
+mistakenly committed foreign CRM-D04 documentation together with auth code in
+b9f30b9f7336e707c54f26ca1b6b6e0f168c7a28. Origin/main still d4085a5e when checked;
+no push performed. Foreign paths: access, crm-modularity-plan, roadmap,
+capabilities and CRM-D04 hunks of STATUS/PRIMARY. Own evidence prefixes remain in
+working files. Owner asked whether to reconstruct only this unpublished commit,
+retain all foreign work in working tree, verify and normal-push task-only result.
+The owner explicitly approved rebuilding only this unpublished commit and normal push in the next reply.
+Real Google post-deploy verification:4 PASS, desktop/mobile login/signup first
+load/reload, content32px and displacement0px. All9 deployed source files matched
+reviewed index before shared-index race; product source is correctly deployed.
+
+Final checks before pending owner answer: scoped committed diff hygiene PASS.
+`codex_verify.py --mode static --base-ref d4085a5e` stopped at unrelated pre-existing
+working-tree blank line at EOF in docs/testing/evidence/google-button-design-20261119.md:41.
+Not changed/relabelled; full static gate is FAIL, own frontend/manual diff checks
+remain PASS. All owned test/build processes have finished. No CUA session used.
+The publication approval blocker is resolved by that explicit owner reply.
+
+Owner-approved reconstruction follow-up21Nov: old HEAD b9f30b9f is still local;
+remote main remains d4085a5e. Reconstruct via a private Git index based on d4085a5e:
+only auth source/tests, frontend contract and this task's STATUS/PRIMARY prefixes.
+Retain all foreign CRM-D04 files/hunks and existing WIP in the working tree. Verify
+all9 deployed source hashes against the reconstructed tree and byte hashes of
+working files around the ref/index update. Acquire the shared index lock only for
+the guarded ref/index replacement; fail if HEAD/index changed since inspection.
+No product/source/environment changes in this follow-up: previous build/browser
+results remain applicable. Recheck scoped full diff/hygiene and exact outgoing
+range; full static gate's unrelated documented EOF warning remains unresolved.
+Then normal-push the single corrected commit to origin/main and read back its SHA;
+actual CI is reported separately, without claiming a queued run is green.
+
 ## CRM-D04-MAP-20261121 — документационная подготовка
 
 Состав и точки создания21.11, basef46ed56bb60761326440787c1875f5a6370a0b8a:

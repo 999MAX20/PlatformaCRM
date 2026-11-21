@@ -379,7 +379,7 @@ export const identity: Record<string, string> = {
   "permissions.scope.own": "Own records",
   "permissions.scope.none": "No access",
   "signup.passwordMinCheck": "At least 8 characters",
-  "signup.passwordLettersNumbersCheck": "Letters and numbers",
+  "signup.passwordLettersNumbersCheck": "Include at least one letter and one digit",
   "signup.passwordNoSpacesCheck": "No spaces",
   "signup.createCompanyTitle": "Create your workspace",
   "signup.createCompanyText": "Add your business details to set up the CRM.",

@@ -13,13 +13,12 @@ import { Input } from "../../components/ui/Input";
 import { ErrorState, LoadingState } from "../../components/ui/StateViews";
 import { StatusNotice } from "../../components/ui/StatusNotice";
 import { useI18n } from "../../lib/i18n";
-import { permissionResourceLabel } from "../../lib/permissions";
-import { roleActionLabel } from "../settings/roleAccess";
-import { translatedVisibilityLabel } from "../settings/settingsUtils";
 import { useAuth } from "./AuthProvider";
 import { MfaPage } from "./MfaPage";
 import { PasswordVisibilityToggle } from "./PasswordVisibilityToggle";
 import { useInvitationEntry } from "./useInvitationEntry";
+import { useUnsavedEntryWarning } from "./useUnsavedEntryWarning";
+import "./authLoginSerenity.css";
 
 type FormValues = { full_name: string; phone: string; password: string; password_confirm: string };
 const emptyForm = { full_name: "", phone: "", password: "", password_confirm: "" };
@@ -43,17 +42,18 @@ function InvitationForm({ token }: { token: string }) {
     password: z.string().min(existing ? 1 : 8, t(existing ? "validation.passwordRequired" : "validation.passwordMin")), password_confirm: z.string(),
   }).refine(values => existing || values.password === values.password_confirm, { message: t("passwordReset.passwordMismatch"), path: ["password_confirm"] });
   const form = useForm<FormValues>({ resolver: zodResolver(schema), defaultValues: emptyForm });
+  useUnsavedEntryWarning(form.formState.isDirty || entry.mutation.isPending);
   useEffect(() => { const timer = window.setInterval(() => setClock(Date.now()), 1000); return () => window.clearInterval(timer); }, []);
-  useEffect(() => { if (preview.data?.full_name && !form.getFieldState("full_name").isDirty) form.setValue("full_name", preview.data.full_name); }, [preview.data?.full_name, form]);
+  useEffect(() => { if (preview.data?.full_name && !form.getFieldState("full_name").isDirty) form.resetField("full_name", { defaultValue: preview.data.full_name }); }, [preview.data?.full_name, form]);
   const matched = Boolean(isAuthenticated && user?.email.trim().toLowerCase() === preview.data?.email.trim().toLowerCase());
   const expired = preview.data?.status === "expired" || (preview.data?.status === "pending" && !entry.hasAccepted && new Date(preview.data.expires_at).getTime() <= clock);
   const usable = Boolean(preview.data && !expired && preview.data.status !== "revoked" && !preview.isError);
   const fieldErrors = getApiFieldErrors(entry.mutation.error);
   const invalidLink = [400, 404].includes(normalizeAppError(preview.error).status || 0);
 
-  if (preview.isLoading || isAuthLoading) return <LoadingState scope="page" />;
-  return <main className="min-h-dvh bg-surface px-4 py-5 sm:py-8">
-    <section className="mx-auto w-full max-w-xl rounded-panel border border-platforma-border bg-surface-card p-5 sm:p-8">
+  return <main className="serenity-login serenity-login--signal-field serenity-login--invitation">
+    <div className="serenity-login__ambient" aria-hidden="true"><span /><span /><span /><span /><span /></div>
+    {preview.isLoading || isAuthLoading ? <LoadingState scope="page" /> : <section className="mx-auto w-full max-w-xl rounded-panel border border-platforma-border bg-surface-card p-5 sm:p-8">
       <header className="mb-6 flex items-center justify-between gap-4">
         <img src="/brand/platforma-crm-logo-transparent.png" alt="PlatformaCRM" width={150} height={50} className="h-auto w-32 sm:w-36" />
         <LanguageSelector />
@@ -69,14 +69,6 @@ function InvitationForm({ token }: { token: string }) {
           <div><dt className="text-platforma-subtle">{t("invite.email")}</dt><dd className="mt-1 break-all font-semibold">{preview.data?.email}</dd></div>
           <div><dt className="text-platforma-subtle">{t("invite.assignedRole")}</dt><dd className="mt-1 font-semibold">{preview.data?.role_name || t(`settings.role.${preview.data?.role}`)}</dd></div>
         </dl>
-        {!!preview.data?.access_summary?.length && !entry.hasAccepted && <details className="mb-4 text-sm">
-          <summary className="platforma-focus-ring min-h-11 cursor-pointer rounded-control py-3 font-semibold">{t("settings.redesign.rolePreview")}</summary>
-          <div className="divide-y divide-platforma-border">{Array.from(new Set(preview.data.access_summary.map(item => item.resource))).map(resource => <div className="py-2" key={resource}>
-            <p className="font-semibold">{permissionResourceLabel(resource, t)}</p>
-            {preview.data!.access_summary!.filter(item => item.resource === resource).map(item => <p className="text-platforma-subtle" key={item.action}>{roleActionLabel(item.action, t)} · {translatedVisibilityLabel(item.scope, t)}</p>)}
-          </div>)}</div>
-          <p className="mt-3 text-xs text-platforma-subtle">{t("settings.redesign.roleScopeNote")}</p>
-        </details>}
         {!entry.hasAccepted && <p className="mb-4 text-xs text-platforma-subtle">{t("invite.expires", { date: new Date(preview.data!.expires_at).toLocaleString(locale, { dateStyle: "medium", timeStyle: "short" }) })}</p>}
         {entry.mfa ? <MfaPage embedded onComplete={entry.completeMfa} /> : <>
           {entry.mutation.isError && <ErrorState error={entry.mutation.error} message={getApiErrorMessage(entry.mutation.error)} />}
@@ -101,6 +93,6 @@ function InvitationForm({ token }: { token: string }) {
           </form>}
         </>}
       </>}
-    </section>
+    </section>}
   </main>;
 }

@@ -335,6 +335,10 @@ test("preview retry and failed acceptance retain the draft; new-account form ref
   await expect(page.locator('input[name="password"]')).toHaveValue("RecoveryPassword123!");
   await expect(page.locator('input[name="full_name"]')).toHaveValue("Synthetic retained draft");
   await page.setViewportSize({ width: info.project.name.startsWith("mobile") ? 320 : 1440, height: 900 });
+  page.once("dialog", async dialog => {
+    expect(dialog.type()).toBe("beforeunload");
+    await dialog.accept();
+  });
   for (const language of ["ru", "kk", "en"]) {
     await page.evaluate(lang => localStorage.setItem("ai_smb_language", lang), language);
     await page.reload();

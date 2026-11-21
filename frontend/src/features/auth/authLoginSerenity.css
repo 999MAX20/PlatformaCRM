@@ -20,7 +20,8 @@
   isolation: isolate;
 }
 
-.serenity-login.serenity-login--password-reset {
+.serenity-login.serenity-login--password-reset,
+.serenity-login.serenity-login--invitation {
   min-height: 100dvh;
   height: auto;
   max-height: none;
@@ -722,6 +723,15 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
+}
+
+.serenity-login__field-grid > label {
+  min-width: 0;
+}
+
+.serenity-login__field-grid [role="alert"] {
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .serenity-login__card label > span:first-child {
