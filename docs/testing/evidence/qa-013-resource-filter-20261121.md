@@ -120,7 +120,14 @@ or external sends. Full-project certification is not claimed. Twenty-four other
 source report IDs remain open; continue with a reproducible P2 (for example
 QA-015 visit-plan refresh or QA-017 custom-field keys), retaining original-runtime
 gaps for QA-025/026/027. Existing WhatsApp work is not reclassified as delivered.
-Publication is pending the task-only commit and remote verification below.
+Task-only implementation commit `0029b2c5d9fad1e90d1199c75981875945d636eb`
+normal-pushed to origin/main; remote SHA readback matched. Branch remains
+codex/ui-testing-toolkit. Outgoing range contained only this reviewed task change.
+Working/index/actual committed-range diff hygiene and registry/link checks PASS.
+Only the QA-013/004 line from STATUS was staged; all foreign WIP preserved.
+CI44931895566 is in_progress at publication check, not a claimed PASS.
+No deployment was performed. Browser runners completed and their disposable
+runtime cleanup ran; shared processes were not stopped.
 
 Registry/link checks PASS. CRM API and frontend behavior contracts updated in
 their existing sections. No new roadmap phase, setup or release capability claim:
