@@ -15,6 +15,20 @@ test("ordinary list uses a business day with an exclusive end", () => {
   assert.equal(query.business, 7);
 });
 
+test("physical resource drilldown is distinct from specialist and composes with an explicit period", () => {
+  const current = new URLSearchParams("physical_resource=12&resource=3&from=2030-01-07&to=2030-01-07&page=2");
+  const query = recordWorkspaceParams(current, "2026-11-21", 7);
+  assert.equal(query.physical_resource, "12");
+  assert.equal(query.resource, "3");
+  assert.equal(query.start_to, "2030-01-08");
+  const cleared = patchRecordFilters(current, { physical_resource: "" });
+  assert.equal(cleared.get("resource"), "3");
+  assert.equal(cleared.get("from"), "2030-01-07");
+  assert.equal(cleared.get("page"), null);
+  assert.equal(resetRecordFilters(current).get("physical_resource"), null);
+  assert.equal(recordWorkspaceParams(new URLSearchParams("physical_resource=12"), "2026-11-21", 7).start_from, undefined);
+});
+
 test("pending outcomes and client drilldown retain their scope across all dates", () => {
   const query = recordWorkspaceParams(new URLSearchParams("attention=pending_result&client=42&page=2"), "2026-11-02", 7);
   assert.equal(query.attention, "pending_result");

@@ -59,7 +59,7 @@ for (const [language, copy] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
     await expect(cta.getByRole("heading")).toHaveText(copy["records.emptySearch"]);
     await expect(cta.getByRole("button")).toHaveCount(1);
     await expect(page.getByRole("button", { name: copy["appointments.create"], exact: true })).toHaveCount(0);
-    await cta.getByRole("button", { name: copy["records.reset"], exact: true }).click();
+    await cta.getByRole("button", { name: copy["records.resetToday"], exact: true }).click();
     await expect(page).not.toHaveURL(/search=|2030/);
     await page.goto("/app/appointments?from=2030-12-15&to=2030-12-15&workflow=completed");
     await expect(cta.getByRole("heading")).toHaveText(copy["records.emptySearch"]);

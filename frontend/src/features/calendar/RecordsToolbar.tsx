@@ -7,7 +7,7 @@ import { RecordsSearch } from "./RecordsSearch";
 import { CalendarPopover } from "../../components/ui/CalendarPopover";
 import { Select } from "../../components/ui/Select";
 import { useI18n } from "../../lib/i18n";
-import { patchRecordFilters, recordAdvancedKeys, recordWorkspaceParams, recordWorkflows, resetRecordFilters } from "./recordFilters";
+import { patchRecordFilters, recordAdvancedKeys, recordWorkspaceParams, recordWorkflows } from "./recordFilters";
 
 type Option = { value: string | number; label: string };
 type Props = {
@@ -17,6 +17,7 @@ type Props = {
   filters: ReturnType<typeof recordWorkspaceParams>;
   summary?: Partial<Record<typeof recordWorkflows[number], number>>;
   resources: Option[];
+  physicalResources: Option[];
   branches: Option[];
   members: Option[];
   periodOpen: boolean;
@@ -24,7 +25,7 @@ type Props = {
   calendarOnly?: boolean;
 };
 
-export function RecordsToolbar({ today, params, setParams, filters, summary, resources, branches, members, periodOpen, setPeriodOpen, calendarOnly = false }: Props) {
+export function RecordsToolbar({ today, params, setParams, filters, summary, resources, physicalResources, branches, members, periodOpen, setPeriodOpen, calendarOnly = false }: Props) {
   const { t, language } = useI18n();
   const navigate = useNavigate();
   const filterTrigger = useRef<HTMLButtonElement>(null);
@@ -33,10 +34,10 @@ export function RecordsToolbar({ today, params, setParams, filters, summary, res
   const periodTrigger = useRef<HTMLButtonElement>(null);
   const closePeriod = (restoreFocus = true) => { setPeriodOpen(false); if (restoreFocus) periodTrigger.current?.focus({ preventScroll: true }); };
   const [draft, setDraft] = useState<Record<string, string>>({});
-  const [resetAll, setResetAll] = useState(false);
   const update = (patch: Record<string, string>) => setParams(current => patchRecordFilters(current, patch));
   const fields = [
     { key: "resource", label: t("records.specialist"), options: resources },
+    { key: "physical_resource", label: t("records.physicalResource"), options: physicalResources },
     { key: "responsible_user", label: t("appointment.responsible"), options: members },
     { key: "confirmed", label: t("records.confirmation"), options: [{ value: "true", label: t("appointments.confirmed") }, { value: "false", label: t("records.unconfirmed") }] },
     { key: "branch", label: t("records.branch"), options: branches },
@@ -56,7 +57,6 @@ export function RecordsToolbar({ today, params, setParams, filters, summary, res
   const period = from === today && to === today ? `${t("crmFilters.today")}, ${formatDay(today)}` : from && to ? from === to ? formatDay(from) : `${formatDay(from)} — ${formatDay(to)}` : from || to ? `${t(from ? "records.from" : "records.to")} ${formatDay(from || to)}` : t("records.periodAll");
   const openFilters = () => {
     setPeriodOpen(false);
-    setResetAll(false);
     setDraft(Object.fromEntries([...recordAdvancedKeys, "client", "attention"].map(key => [key, params.get(key) || ""])));
     setDialog("filters");
   };
@@ -77,7 +77,7 @@ export function RecordsToolbar({ today, params, setParams, filters, summary, res
     </div>
     {periodOpen && <RecordsPeriodPanel anchor={periodTrigger} from={from} to={to} today={today} onClose={closePeriod} onApply={range => { update(range); closePeriod(); }} />}
     {dialog && <CalendarPopover anchor={filterTrigger} id="records-filter-panel" label={t("crmFilters.filters")} onClose={closeFilters}>
-      <form className="space-y-4" onSubmit={event => { event.preventDefault(); setParams(current => patchRecordFilters(resetAll ? resetRecordFilters(current, today) : current, draft)); closeFilters(); }}>
+      <form className="space-y-4" onSubmit={event => { event.preventDefault(); setParams(current => patchRecordFilters(current, draft)); closeFilters(); }}>
         {dialog === "filters" ? chips.filter(chip => ["client", "attention"].includes(chip.key) && draft[chip.key]).map(chip => <Button key={chip.key} type="button" variant="secondary" aria-label={`${t("crmFilters.remove")}: ${chip.label}`} onClick={() => setDraft(current => ({ ...current, [chip.key]: "" }))}>{chip.label} {chip.value}<X size={14} /></Button>) : null}
         {fields.filter(field => field.key !== "branch" || branches.length || params.has("branch")).map(field => {
           const value = draft[field.key] || "";
@@ -87,7 +87,7 @@ export function RecordsToolbar({ today, params, setParams, filters, summary, res
             onChange={event => setDraft(current => ({ ...current, [field.key]: event.target.value }))} />;
         })}
         <div className="sticky bottom-0 flex flex-wrap items-center justify-between gap-2 border-t border-platforma-border bg-surface-card pt-3">
-          {dialog === "filters" ? <Button type="button" variant="ghost" onClick={() => { setResetAll(true); setDraft(Object.fromEntries([...recordAdvancedKeys, "client", "attention"].map(key => [key, ""]))); }}>{t("common.reset")}</Button> : null}
+          {dialog === "filters" ? <Button type="button" variant="ghost" onClick={() => setDraft(Object.fromEntries([...recordAdvancedKeys, "client", "attention"].map(key => [key, ""])))}>{t("common.reset")}</Button> : null}
           <div className="ml-auto flex gap-2"><Button type="button" variant="secondary" onClick={() => closeFilters()}>{t("common.cancel")}</Button><Button type="submit">{t("crmFilters.apply")}</Button></div>
         </div>
       </form>

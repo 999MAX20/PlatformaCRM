@@ -20,7 +20,7 @@ export function EntityActions({ business, kind, id, name, active, archived, canM
     if (!(await confirm({ title: `${t(`management.${operation}`)}: ${name}`, description: t(operation === "delete" ? "management.deleteHint" : "management.historyHint"), confirmLabel: t(`management.${operation}`), tone: operation === "activate" || operation === "restore" ? "neutral" : "warning" })).confirmed) return;
     mutation.mutate(operation);
   };
-  const calendar = new URLSearchParams({ [kind === "services" ? "service" : kind === "branches" ? "branch" : "resource"]: String(id) });
+  const calendar = new URLSearchParams({ [kind === "rooms" ? "physical_resource" : kind === "services" ? "service" : kind === "branches" ? "branch" : "resource"]: String(id) });
   if (branch && kind !== "branches") calendar.set("branch", String(branch));
   return <div className="space-y-2">
     <div className="flex flex-wrap items-center gap-2">
@@ -28,7 +28,7 @@ export function EntityActions({ business, kind, id, name, active, archived, canM
       <details ref={details} className="relative" onKeyDown={event => { if (event.key === "Escape" && details.current) { details.current.open = false; details.current.querySelector("summary")?.focus(); } }}>
         <summary className="platforma-focus-ring flex min-h-11 cursor-pointer list-none items-center rounded-control border border-platforma-border px-3 text-sm" aria-label={`${t("management.actions")}: ${name}`}>···</summary>
         <div className="absolute right-0 z-20 grid w-56 gap-1 rounded-control border border-platforma-border bg-white p-2 shadow-lg">
-          <Link className="platforma-focus-ring p-2 text-sm text-brand-700" to={`/app/calendar?${calendar}`}>{t("management.appointments")}</Link>
+          <Link className="platforma-focus-ring p-2 text-sm text-brand-700" to={`/app/${kind === "rooms" ? "appointments" : "calendar"}?${calendar}`}>{t("management.appointments")}</Link>
           {absence && <Button variant="secondary" onClick={() => { if (details.current) details.current.open = false; absence(); }}>{t("management.unavailability")}</Button>}
           {canManage && <>
             {!archived && <Button variant="secondary" disabled={mutation.isPending} onClick={() => void perform(active ? "deactivate" : "activate")}>{t(active ? "management.deactivate" : "management.activate")}</Button>}

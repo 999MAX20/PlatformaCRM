@@ -11,7 +11,7 @@ export function useRecordsPeriod(businessId?: number, userId?: number) {
     try {
       const period = savedRecordPeriod(next.toString());
       if (period) sessionStorage.setItem(key, period.toString());
-      else if (!next.has("client") && !next.has("attention") && !next.has("create")) sessionStorage.removeItem(key);
+      else if (!next.has("client") && !next.has("attention") && !next.has("physical_resource") && !next.has("create")) sessionStorage.removeItem(key);
     } catch { /* URL filters remain usable without browser storage. */ }
   }, [key]);
   const updateParams: SetURLSearchParams = useCallback((nextInit, options) => {

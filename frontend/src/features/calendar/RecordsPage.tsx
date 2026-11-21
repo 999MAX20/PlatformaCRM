@@ -73,7 +73,7 @@ function RecordsListPage() {
     placeholderData: (previous, previousQuery) => previousQuery?.queryKey[2] === user?.id &&
       (previousQuery?.queryKey[3] as { business?: number } | undefined)?.business === business?.id ? previous : undefined });
   const showHeaderCreate = canCreate && !(records.isSuccess && !records.isPlaceholderData && records.data.results.length === 0);
-  const filtered = [filters.q, filters.workflow, filters.attention, filters.client, filters.resource, filters.responsible_user, filters.confirmed, filters.branch, filters.custom_field].some(Boolean);
+  const filtered = [filters.q, filters.workflow, filters.attention, filters.client, filters.resource, filters.physical_resource, filters.responsible_user, filters.confirmed, filters.branch, filters.custom_field].some(Boolean);
   const availability = useQuery({
     queryKey: ["appointments", "availability", business?.id, user?.id],
     queryFn: () => appointmentsApi.workspace({ business: business!.id, page_size: 1 }),
@@ -125,7 +125,8 @@ function RecordsListPage() {
   const catalogError = catalog.services.error || catalog.resources.error || branches.error || members.error;
   return <div className="flex min-h-[calc(100dvh-var(--app-header-height)-8.5rem)] flex-col gap-4 pt-2 sm:min-h-[calc(100dvh-var(--app-header-height)-9rem)] lg:min-h-[calc(100dvh-var(--app-header-height)-2rem)]" data-testid="records-workspace" aria-busy={records.isFetching}>
     <RecordsToolbar calendarOnly={isEmptyWorkspace} params={params} setParams={setParams} today={today} filters={filters} summary={records.data?.summary} periodOpen={periodOpen} setPeriodOpen={setPeriodOpen}
-      resources={(catalog.resources.data || []).map(item => ({ value: item.id, label: item.name }))}
+      resources={(catalog.resources.data || []).filter(item => item.resource_type === "staff").map(item => ({ value: item.id, label: item.name }))}
+      physicalResources={(catalog.resources.data || []).filter(item => item.resource_type === "room" || item.resource_type === "equipment").map(item => ({ value: item.id, label: item.name }))}
       branches={(branches.data || []).map(item => ({ value: item.id, label: item.name }))}
       members={[{ value: user!.id, label: user!.full_name || user!.email }, ...(members.data || []).filter(item => item.user.id !== user?.id && item.is_active).map(item => ({ value: item.user.id, label: item.user.full_name || item.user.email }))]} />
     {catalogError ? <ErrorState error={catalogError} action={<Button onClick={() => { void catalog.services.refetch(); void catalog.resources.refetch(); void branches.refetch(); if (members.isEnabled) void members.refetch(); }}>{t("common.retry")}</Button>} /> : null}

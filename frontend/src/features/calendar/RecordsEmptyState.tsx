@@ -24,7 +24,7 @@ export function RecordsEmptyState({ businessId, userId, filtered, singleDay, can
       <h2 id="records-empty-title" className="text-xl font-semibold text-platforma-text sm:text-2xl">{t(title)}</h2>
       {first && canCreate && <p className="text-sm text-platforma-subtle sm:text-base">{t("records.emptyFirstHint")}</p>}
       <div className="flex flex-wrap justify-center gap-3">
-        {filtered ? <Button className="min-h-11" onClick={onReset}>{t("records.reset")}</Button> : <>
+        {filtered ? <Button className="min-h-11" onClick={onReset}>{t("records.resetToday")}</Button> : <>
           {canCreate && <Button className="min-h-11" data-focus-return-id="records-empty-create" onClick={onCreate}>{t("appointments.create")}</Button>}
           {!first && <Button className="min-h-11" variant={canCreate ? "secondary" : "primary"} onClick={onChooseDate}>{t("records.chooseDate")}</Button>}
         </>}

@@ -68,7 +68,7 @@ for (const [language, copy] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
     expect((await response).url()).toContain("start_to=2026-12-22");
     await expect(page.getByText(copy["records.emptyPeriod"], { exact: true })).toBeVisible();
     await page.getByRole("textbox", { name: copy["records.search"], exact: true }).fill("NO SUCH FIXTURE CLIENT");
-    await page.getByTestId("records-empty").getByRole("button", { name: copy["records.reset"], exact: true }).click();
+    await page.getByTestId("records-empty").getByRole("button", { name: copy["records.resetToday"], exact: true }).click();
     await expect(page).not.toHaveURL(/from=2026-12-/);
     await expect(page.getByText(copy["records.emptyDay"], { exact: true })).toBeVisible();
     await page.setViewportSize({ width: 390, height: 844 });

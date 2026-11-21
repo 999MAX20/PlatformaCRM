@@ -242,10 +242,20 @@ Nullable responsible_user/source_conversation добавлены scheduling0010 
 
 `GET /api/appointments/workspace/` применяет существующий readable Appointment
 queryset и Business scope; валидирует период/поиск/workflow/confirmed/филиал/
-специалиста/ответственного/client/attention/ordering/page. Summary считается по
+специалиста/physical_resource/ответственного/client/attention/ordering/page. Summary считается по
 полной разрешённой выборке до workflow-фильтра и пагинации. Planned объединяет
 created/confirmed/rescheduled; pending_result — planned с end_at в прошлом.
 Поиск клиента не обходит его VIEW/field policy; неверный фильтр даёт400.
+
+`physical_resource` принимает положительный bigint и выбирает записи через
+Appointment.reserved_resources только для room/equipment того же Business.
+Действующие record permissions остаются обязательными; неизвестный, чужой Business или staff ID
+не возвращает совпадений. Фильтр совмещается с периодом/специалистом/workflow.
+История внутри Business остаётся общей согласно CRM-MB01; branch grants ограничивают
+изменение записей, а OWN/TEAM VIEW по-прежнему сужают читаемую выборку.
+Summary считает уникальные записи, включая сочетание primary и reserved resource.
+Отмена сохраняет историю резервов, освобождая время по прежним правилам бронирования.
+[QA-013: локальные проверки и границы](../testing/evidence/qa-013-resource-filter-20261121.md).
 
 `GET /api/appointments/legacy-links/` принимает kind=lead|deal и object_id,
 возвращает разрешённую source card и все доступные фактически связанные записи

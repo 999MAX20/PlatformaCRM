@@ -1,4 +1,4 @@
-from django.db.models import Count
+from django.db.models import Count, F
 from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.pagination import PageNumberPagination
@@ -13,6 +13,7 @@ class RecordWorkspaceQuery(serializers.Serializer):
     business = serializers.IntegerField(min_value=1)
     branch = serializers.IntegerField(min_value=1, required=False)
     resource = serializers.IntegerField(min_value=1, required=False)
+    physical_resource = serializers.IntegerField(min_value=1, max_value=2 ** 63 - 1, required=False)
     service = serializers.IntegerField(min_value=1, required=False)
     client = serializers.IntegerField(min_value=1, required=False)
     responsible_user = serializers.IntegerField(min_value=1, required=False)
@@ -40,6 +41,12 @@ class RecordWorkspacePagination(PageNumberPagination):
 
 def record_workspace(queryset, *, actor, filters):
     """Apply workspace filters to an already tenant/object/branch-scoped queryset."""
+    if filters.get("physical_resource"):
+        queryset = queryset.filter(
+            reserved_resources__resource_id=filters["physical_resource"],
+            reserved_resources__resource__business_id=F("business_id"),
+            reserved_resources__resource__resource_type__in=("room", "equipment"),
+        ).distinct()
     if filters.get("q"):
         queryset = queryset.filter(client_search_q(actor, filters["q"]))
     if filters.get("client"):
@@ -51,7 +58,7 @@ def record_workspace(queryset, *, actor, filters):
     if "confirmed" in filters:
         queryset = (queryset.filter(status="confirmed") if filters["confirmed"]
                     else queryset.exclude(status="confirmed"))
-    counts = {row["status"]: row["count"] for row in queryset.order_by().values("status").annotate(count=Count("pk"))}
+    counts = {row["status"]: row["count"] for row in queryset.order_by().values("status").annotate(count=Count("pk", distinct=True))}
     summary = {"planned": sum(counts.get(status, 0) for status in PLANNED_STATUSES),
                **{status: counts.get(status, 0) for status in ("completed", "cancelled", "no_show")}}
     workflow = filters.get("workflow")

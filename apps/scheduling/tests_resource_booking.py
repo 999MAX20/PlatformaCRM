@@ -7,11 +7,12 @@ from rest_framework.test import APIClient
 
 from apps.accounts.models import User
 from apps.branches.configuration import save_assignment, save_offer, save_schedule_day
-from apps.branches.models import ServiceResourceRequirement
+from apps.branches.models import BranchAccess, ServiceResourceRequirement
 from apps.branches.physical_resources import save_resource_requirements
 from apps.branches.services import create_branch
 from apps.branches.tests_legacy_fixtures import ensure_legacy_initial_location as ensure_initial_location
-from apps.businesses.models import Business
+from apps.businesses.access import Actions, Resources, can
+from apps.businesses.models import Business, BusinessMember, BusinessRole, RolePermission
 from apps.clients.models import Client
 from apps.core.domain_errors import ScheduleConflict
 from apps.services.models import Service
@@ -78,6 +79,53 @@ class ResourceBookingTests(TestCase):
         self.assertEqual(response.status_code, 409, response.data)
         self.assertEqual(Appointment.objects.count(), 1)
 
+    def workspace(self, **filters):
+        return self.api.get("/api/appointments/workspace/", {"business": self.business.pk, **filters})
+
+    def test_workspace_physical_filter_matches_reservations_not_primary_staff(self):
+        visit = self.book()
+        unused = create_resource(business=self.business, name="Unused", resource_type="room")
+        for resource in (self.room, self.device):
+            response = self.workspace(physical_resource=resource.pk, resource=self.staff.pk,
+                start_from="2030-01-07", start_to="2030-01-08", branch=self.branch.pk)
+            self.assertEqual(response.status_code, 200, response.data)
+            self.assertEqual([item["id"] for item in response.data["results"]], [visit.pk])
+            self.assertEqual(response.data["summary"]["planned"], 1)
+        for filters in ({"physical_resource": unused.pk}, {"physical_resource": self.staff.pk},
+                        {"physical_resource": self.room.pk, "resource": self.other_staff.pk},
+                        {"physical_resource": self.room.pk, "start_from": "2030-01-08", "start_to": "2030-01-09"}):
+            response = self.workspace(**filters)
+            self.assertEqual(response.status_code, 200, response.data)
+            self.assertEqual(response.data["count"], 0, filters)
+
+    def test_workspace_physical_filter_rejects_invalid_ids(self):
+        for value in ("abc", "0", "-1", str(2 ** 64)):
+            response = self.workspace(physical_resource=value)
+            self.assertEqual(response.status_code, 400, response.data)
+            self.assertIn("physical_resource", response.data)
+
+    def test_workspace_physical_filter_does_not_match_foreign_reservations(self):
+        visit = self.book()
+        foreign_owner = User.objects.create_user(username="other-room-owner")
+        foreign_business = Business.objects.create(owner=foreign_owner, name="Other", slug="other-rooms")
+        foreign_room = Resource.objects.create(business=foreign_business, name="Foreign", resource_type="room")
+        AppointmentResource.objects.create(appointment=visit, resource=foreign_room, resource_name="Foreign")
+        response = self.workspace(physical_resource=foreign_room.pk)
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(response.data["count"], 0)
+        self.api.force_authenticate(foreign_owner)
+        response = self.api.get("/api/appointments/workspace/", {"business": foreign_business.pk, "physical_resource": self.room.pk})
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(response.data["count"], 0)
+
+    def test_workspace_physical_filter_preserves_cancelled_history(self):
+        visit = self.book()
+        cancel_appointment(appointment=visit, actor=self.owner, reason="Client cancelled")
+        response = self.workspace(physical_resource=self.room.pk, workflow="cancelled")
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual([item["id"] for item in response.data["results"]], [visit.pk])
+        self.assertEqual(self.workspace(physical_resource=self.room.pk, workflow="planned").data["count"], 0)
+
     def test_cancel_releases_time_but_preserves_resource_history(self):
         visit = self.book()
         cancel_appointment(appointment=visit, actor=self.owner, reason="Client cancelled")
@@ -93,6 +141,10 @@ class ResourceBookingTests(TestCase):
         self.assertIn(self.start, self.slots())
         self.assertNotIn(moved.start_at, self.slots())
         self.assertEqual(moved.reserved_resources.count(), 2)
+        response = self.workspace(physical_resource=self.room.pk, resource=self.staff.pk)
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(response.data["count"], 1)
+        self.assertEqual(datetime.fromisoformat(response.data["results"][0]["start_at"]), moved.start_at)
 
     def test_reschedule_conflict_rolls_back_time_and_resources(self):
         visit = self.book()
@@ -161,6 +213,26 @@ class ResourceBookingTests(TestCase):
         self.book()
         other = self.book(resource=second_staff, branch=second)
         self.assertEqual(list(other.reserved_resources.values_list("resource_id", flat=True)), [room.pk])
+        self.assertEqual(self.workspace(physical_resource=room.pk).data["count"], 1)
+        admin = User.objects.create_user(username="first-location-admin")
+        member = BusinessMember.objects.create(business=self.business, user=admin, role="admin")
+        grant, _ = BranchAccess.objects.get_or_create(member=member)
+        grant.branches.set([self.branch])
+        self.api.force_authenticate(admin)
+        self.assertEqual(self.workspace(physical_resource=self.room.pk).data["count"], 1)
+        self.assertEqual(self.workspace(physical_resource=room.pk, branch=second.pk).data["count"], 1)
+        self.assertFalse(can(admin, self.business, Resources.APPOINTMENTS, Actions.UPDATE, obj=other).allowed)
+        role = BusinessRole.objects.create(business=self.business, name="Own visits")
+        RolePermission.objects.create(business_role=role, resource="appointments", action="view", scope="own", is_allowed=True)
+        member.business_role = role
+        member.save(update_fields=["business_role"])
+        self.staff.linked_user = admin
+        self.staff.save(update_fields=["linked_user"])
+        self.assertEqual(self.workspace(physical_resource=self.room.pk).data["count"], 1)
+        for filters in ({"physical_resource": room.pk}, {"physical_resource": room.pk, "branch": second.pk}):
+            response = self.workspace(**filters)
+            self.assertEqual(response.status_code, 200, response.data)
+            self.assertEqual(response.data["count"], 0)
 
     def test_configured_location_physical_schedule_is_enforced_and_projected(self):
         create_branch(business=self.business, actor=self.owner, name="Second")

@@ -11,7 +11,7 @@ export function savedRecordPeriod(value: string | null) {
   return valid(from) && valid(to) && from <= to ? new URLSearchParams({ from, to }) : null;
 }
 
-export const recordAdvancedKeys = ["resource", "responsible_user", "confirmed", "branch"] as const;
+export const recordAdvancedKeys = ["resource", "physical_resource", "responsible_user", "confirmed", "branch"] as const;
 const recordFilterKeys = ["search", "from", "to", "workflow", "attention", "client", ...recordAdvancedKeys, "ordering", "page", "custom_field", "custom_operator", "custom_value"];
 
 export function patchRecordFilters(current: URLSearchParams, patch: Record<string, string>) {
@@ -38,7 +38,8 @@ export function nextRecordDay(day: string) {
 export function recordWorkspaceParams(params: URLSearchParams, today: string, business: number) {
   const attention = params.get("attention") || undefined;
   const client = params.get("client") || undefined;
-  const from = params.get("from") || (attention || client ? undefined : today);
+  const physicalResource = params.get("physical_resource") || undefined;
+  const from = params.get("from") || (attention || client || physicalResource ? undefined : today);
   const to = params.get("to") || from;
   return {
     ...(params.has("custom_field") ? { custom_field: params.get("custom_field")!, custom_operator: params.get("custom_operator") || "equals", custom_value: params.get("custom_value") || "" } : {}),
@@ -48,6 +49,7 @@ export function recordWorkspaceParams(params: URLSearchParams, today: string, bu
     confirmed: params.get("confirmed") || undefined,
     branch: params.get("branch") || undefined,
     resource: params.get("resource") || undefined,
+    physical_resource: physicalResource,
     responsible_user: params.get("responsible_user") || undefined,
     ordering: params.get("ordering") || "start_at",
     page: params.get("page") || "1", page_size: params.get("page_size") || "20",
