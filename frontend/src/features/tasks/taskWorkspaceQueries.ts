@@ -2,11 +2,11 @@ import { infiniteQueryOptions } from "@tanstack/react-query";
 import { tasksApi, type TaskListParams } from "../../api/tasks";
 import type { Id } from "../../types";
 
-export function taskWorkspaceParams(business: Id, params: URLSearchParams, search = params.get("search") || "") {
+export function taskWorkspaceParams(business: Id, params: URLSearchParams, search = params.get("search") || "", locale = "ru") {
   const scope = params.get("tab") || "my";
   const bucket = params.get("bucket") || "active";
   const base: TaskListParams = {
-    business, tab: scope === "all" ? undefined : scope, search: search || undefined,
+    business, tab: scope === "all" ? undefined : scope, search: search || undefined, locale,
     priority: params.get("priority") || undefined, assignee: params.get("assignee") || undefined,
     appointment_ids: params.get("appointment_ids") || undefined,
   };

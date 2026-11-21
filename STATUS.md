@@ -1,3 +1,5 @@
+QA-016-20261121 LOCAL VERIFIED: automatic tasks searchable by displayed RU/KK/EN title; editor preserves original copy on unrelated edits. 66 backend, 9 node, 6 desktop/mobile browser scenarios, build/types/i18n/check/drift PASS; publication pending. Working DB untouched. [Evidence](docs/testing/evidence/qa-016-task-search-20261121.md).
+
 QA-006-20261121 LOCAL VERIFIED: client custom-field filtering restored under QA specification; 28 backend, 15 node and 8 browser scenarios (RU/KK/EN desktop/mobile plus API-error recovery) PASS; build/types/i18n/check/drift PASS. Code c9570fa5 pushed to main; CI44934913440 in_progress (conclusion=None); working DB untouched. [Evidence](docs/testing/evidence/qa-006-client-filters-20261121.md).
 
 QA-017-20261121 LOCAL VERIFIED: multilingual custom-field keys fixed; 31 backend and 6 RU/KK/EN desktop/mobile browser tests PASS, types/i18n/build/check/drift PASS. Code e7c6ee26 pushed to main; No CI run listed yet for this SHA; working DB untouched. [Evidence](docs/testing/evidence/qa-017-custom-field-keys-20261121.md).

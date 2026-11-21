@@ -6,10 +6,11 @@ import { leadsApi } from "./leads";
 import { resourcesApi } from "./resources";
 import { tasksApi } from "./tasks";
 import { formatDateTime } from "../lib/format";
+import { taskTitle } from "../lib/taskCopy";
 import type { Id } from "../types";
 
 export type TaskRelationType = "client" | "lead" | "deal" | "appointment" | "conversation" | "parent_task" | "specialist";
-export async function taskRelationOptions(type: TaskRelationType, business: Id, search: string, taskId?: Id, timezone = "UTC", locale = "ru-RU") {
+export async function taskRelationOptions(type: TaskRelationType, business: Id, search: string, taskId?: Id, timezone = "UTC", locale = "ru-RU", t?: Parameters<typeof taskTitle>[1]) {
   const params = { business, search, page_size: 30 };
   let rows: { id: Id; business: Id; label: string }[];
   switch (type) {
@@ -19,7 +20,7 @@ export async function taskRelationOptions(type: TaskRelationType, business: Id, 
     case "appointment": rows = (await appointmentsApi.list(params)).map(v => ({ ...v, label: [v.client_name, v.service_name, formatDateTime(v.start_at, timezone, true, locale)].filter(Boolean).join(" · ") })); break;
     case "conversation": rows = (await botConversationsApi.list(params)).map(v => ({ ...v, label: v.client_name || v.external_user_id || `#${v.id}` })); break;
     case "specialist": rows = (await resourcesApi.list({ ...params, status: "active" })).map(v => ({ ...v, label: v.name })); break;
-    case "parent_task": rows = (await tasksApi.list(params)).filter(v => v.id !== taskId).map(v => ({ ...v, label: v.title })); break;
+    case "parent_task": rows = (await tasksApi.list({ ...params, locale: locale.split("-")[0] })).filter(v => v.id !== taskId).map(v => ({ ...v, label: t ? taskTitle(v, t) : v.title })); break;
   }
   return rows.filter(v => String(v.business) === String(business)).map(v => ({ value: String(v.id), label: v.label }));
 }

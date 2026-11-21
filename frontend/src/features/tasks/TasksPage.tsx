@@ -56,7 +56,7 @@ function TaskQueue({ business, zone }: { business: Id; zone: string }) {
     if (value) next.set(key, value); else next.delete(key);
     return next;
   }, { replace: true, preventScrollReset: true });
-  const { base, list: listParams } = taskWorkspaceParams(business, params, debouncedSearch);
+  const { base, list: listParams } = taskWorkspaceParams(business, params, debouncedSearch, language);
   const list = useInfiniteQuery(taskWorkspaceQuery(listParams));
   const summary = useQuery({ queryKey: ["task-summary", base], queryFn: () => tasksApi.summary(base) });
   const team = useQuery({ queryKey: ["task-workload", base], queryFn: () => tasksApi.workload({ ...base, business }), enabled: view === "team" && canTeam });

@@ -14,7 +14,7 @@ export function TaskRelationPicker({ type, business, value, label, taskId, zone,
 }) {
   const { t, language } = useI18n();
   const [search, setSearch] = useState("");
-  const query = useQuery({ queryKey: ["task-relation-options", business, type, search, taskId, zone, language], queryFn: () => taskRelationOptions(type, business, search, taskId, zone, language) });
+  const query = useQuery({ queryKey: ["task-relation-options", business, type, search, taskId, zone, language], queryFn: () => taskRelationOptions(type, business, search, taskId, zone, language, t) });
   const options = query.data || [];
   return <div className="space-y-2">
     <Input aria-label={t("taskWorkspace.linkSearch")} placeholder={t("taskWorkspace.linkSearch")} value={search} onChange={e => setSearch(e.target.value)} />

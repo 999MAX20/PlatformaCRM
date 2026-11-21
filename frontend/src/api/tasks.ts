@@ -11,6 +11,7 @@ export type TaskListParams = {
   priority?: Task["priority"] | string;
   assignee?: Id | "unassigned" | string;
   search?: string;
+  locale?: string;
   due?: "past" | "today" | "none" | "future" | string;
   relation?: "client" | "lead" | "deal" | "appointment" | "conversation" | "none" | string;
   client_ids?: Id[] | string;

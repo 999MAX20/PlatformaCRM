@@ -1,4 +1,5 @@
 import { ClientPicker } from "../../../components/forms/ClientPicker";
+import { taskTitle, taskDescription } from "../../../lib/taskCopy";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useId, useRef, useState } from "react";
 import { tasksApi, type TaskCreatePayload } from "../../../api/tasks";
@@ -32,7 +33,7 @@ export function TaskEditor({ task, business, zone, initialClient, initialAppoint
   const confirm = useActionConfirm();
   const [version, setVersion] = useState(task);
   const initial = useRef<Record<string, string>>({
-    title: task?.title || "", description: task?.description || "", priority: task?.priority || "normal",
+    title: task ? taskTitle(task, t) : "", description: task ? taskDescription(task, t) : "", priority: task?.priority || "normal",
     assignee: String(task ? task.assignee ?? "" : user?.id ?? ""), due_at: taskDateInput(task?.due_at, zone), reminder_at: taskDateInput(task?.reminder_at, zone),
     ...Object.fromEntries(links.map(field => [field, String(task?.[field] ?? (field === "client" ? initialClient : field === "appointment" ? initialAppointment : "") ?? "")])),
   }).current;

@@ -19,6 +19,15 @@ function setup() {
   return { requests, ...api };
 }
 
+test("task locale participates in list and summary parameters and cache identity", () => {
+  const h = setup();
+  const ru = h.taskWorkspaceParams(7, new URLSearchParams(), "Связаться", "ru");
+  const kk = h.taskWorkspaceParams(7, new URLSearchParams(), "Связаться", "kk");
+  assert.equal(ru.base.locale, "ru");
+  assert.equal(kk.list.locale, "kk");
+  assert.notDeepEqual(h.taskWorkspaceQuery(ru.list).queryKey, h.taskWorkspaceQuery(kk.list).queryKey);
+});
+
 test("task hover warms the actual infinite workspace contract and supports the next page", async () => {
   const h = setup(), client = new QueryClient({ defaultOptions: { queries: { staleTime: 5 * 60_000, retry: false, gcTime: Infinity } } });
   const pending = [];

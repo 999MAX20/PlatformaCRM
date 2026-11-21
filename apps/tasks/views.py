@@ -1,4 +1,5 @@
 from apps.core.client_projection import client_relation_q, client_search_q
+from apps.tasks.localized_search import with_localized_search_title
 from django.db import transaction
 from django.db.models import Case, Count, IntegerField, Q, Value, When
 from django.utils import timezone
@@ -128,8 +129,10 @@ class TaskViewSet(IdempotentCRMCreateMixin, TenantModelViewSet):
         elif assignee_filter:
             queryset = queryset.filter(assignee_id=assignee_filter)
         if search:
+            queryset = with_localized_search_title(queryset, self.request.query_params.get("locale", "en"))
             queryset = queryset.filter(
                 Q(title__icontains=search)
+                | Q(localized_search_title__contains=search.casefold())
                 | Q(description__icontains=search)
                 | client_search_q(self.request.user, search, fields=("full_name",))
                 | Q(deal__title__icontains=search)
