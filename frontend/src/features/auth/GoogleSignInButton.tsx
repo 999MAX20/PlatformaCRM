@@ -53,6 +53,7 @@ export function GoogleSignInButton({ disabled, onCredential, text = "continue_wi
     let generation = 0;
     let expiresAt = 0;
     let draw: ((restoreFocus?: boolean) => void) | undefined;
+    let stopRender: (() => void) | undefined;
     let expiry: number | undefined;
     setReady(false);
     setHasButton(false);
@@ -90,24 +91,74 @@ export function GoogleSignInButton({ disabled, onCredential, text = "continue_wi
           if (!active || width <= 0 || width === lastWidth) return;
           lastWidth = width;
           restore ||= mount.contains(document.activeElement);
+          stopRender?.();
+          mount.style.visibility = "hidden";
+          setReady(false);
+          setHasButton(false);
           mount.replaceChildren();
-          identity.renderButton(mount, {
-            type: "standard", theme: "outline", size: "medium", shape: "pill", logo_alignment: "left", text, width, locale: language,
-          });
-          if (restore) window.requestAnimationFrame(() => {
-            if (active && document.activeElement === document.body) {
-              mount.querySelector<HTMLElement>('iframe, button, [role="button"]')?.focus();
+          let rendering = true;
+          let rendered = false;
+          let renderTimeout: number | undefined;
+          const renderSize = new ResizeObserver(checkRendered);
+          const renderChanges = new MutationObserver(checkRendered);
+          stopRender = () => {
+            rendering = false;
+            renderSize.disconnect();
+            renderChanges.disconnect();
+            window.clearTimeout(renderTimeout);
+          };
+          function checkRendered() {
+            if (!active || !rendering || !mount?.firstElementChild) return;
+            const content = mount.firstElementChild;
+            renderSize.observe(content);
+            const control = Array.from(mount.querySelectorAll<HTMLElement>('iframe, button, [role="button"]'))
+              .find(element => element.clientHeight > 0 && element.clientWidth > 0);
+            const height = content.getBoundingClientRect().height;
+            if (height <= 0 || height > mount.clientHeight || !control) {
+              if (rendered) {
+                rendered = false;
+                mount.style.visibility = "hidden";
+                setHasButton(false);
+                setReady(false);
+                waitForRender();
+              }
+              return;
             }
+            if (rendered) return;
+            rendered = true;
+            window.clearTimeout(renderTimeout);
+            mount.style.visibility = "visible";
+            setHasButton(true);
+            setReady(true);
+            setError(undefined);
+            if (restore) window.requestAnimationFrame(() => {
+              if (active && mount.contains(control) && document.activeElement === document.body) {
+                control.focus();
+              }
+            });
+          }
+          renderChanges.observe(mount, { childList: true, subtree: true, attributes: true });
+          function waitForRender() {
+            window.clearTimeout(renderTimeout);
+            renderTimeout = window.setTimeout(() => {
+              if (!rendering) return;
+              stopRender?.();
+              if (active) setError(t("auth.socialFailed"));
+            }, 15_000);
+          }
+          waitForRender();
+          identity.renderButton(mount, {
+            type: "standard", theme: "outline", size: "large", shape: "pill", logo_alignment: "left", text, width, locale: language,
           });
+          checkRendered();
         };
         draw(restoreFocus);
-        setHasButton(true);
-        setReady(true);
         expiresAt = Date.now() + flow.expires_in * 1000;
         expiry = window.setTimeout(() => {
           if (document.visibilityState === "visible") void prepare();
         }, Math.max(1000, flow.expires_in * 1000));
       } catch (err) {
+        stopRender?.();
         expiresAt = 0;
         if (active) setError(err instanceof Error && err.message === "Google Identity Services unavailable" ? t("auth.socialFailed") : getApiErrorMessage(err));
       } finally {
@@ -133,6 +184,7 @@ export function GoogleSignInButton({ disabled, onCredential, text = "continue_wi
       document.removeEventListener("visibilitychange", resume);
       window.removeEventListener("focus", resume);
       resize.disconnect();
+      stopRender?.();
       mount?.replaceChildren();
     };
   }, [attempt, language, t, text]);

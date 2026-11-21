@@ -239,3 +239,14 @@ contrast/target dimensions not restyled. Purpose/liveliness: existing green form
 identity and hierarchy preserved; no new decorative technique. Full production
 registration/repeat-login remains outside this correction's live acceptance; isolated
 end-to-end coverage is explicitly distinguished above.
+
+## Readiness and live rollout, 2026-11-21
+
+Owner authorized completion and deployment of the local large/readiness change,
+without new accounts. Real Chrome exposed the zero-size-helper-iframe selection
+bug; exact-artifact checks exposed late provider expansion after first readiness.
+Both fixed with semantic positive-size selection and continued observation.
+Frontend-only release20261121-google-ready-v2 is active; local/server databases
+remain0 users/0 businesses. Current checks, failed attempts, rollback and scope
+limits are in [the checkpoint](../task-state/PRIMARY-SESSION.md#google-entry-layout-20261119-authorized-completion21nov).
+Earlier local-only/deployed-medium statements describe their historical snapshots.

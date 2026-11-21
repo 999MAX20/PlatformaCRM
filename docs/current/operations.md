@@ -8,8 +8,10 @@ apps/accounts/mfa.py из b755c9e1. Владельцы и сотрудники �
 с подменой сохранения аккаунта/выдачи сессии; реальная регистрация запрещена
 владельцем и не выполнялась, аккаунтов/бизнесов осталось0/0. Полный signup E2E
 этой проверкой не заявляется. Rollback и точные hashes в [checkpoint](../testing/task-state/PRIMARY-SESSION.md#authorized-server-deployment-follow-up).
-Google frontend остаётся из20261119-fixed-slot-11c15d12; локальная readiness-правка
-кнопки не развёртывалась. W006/W019 системной проверки остаются вне этой правки.
+Google frontend отдельно обновлён21Nov до20261121-google-ready-v2: readiness и
+позднее изменение высоты проверены на login/signup без новых аккаунтов. Откат:
+/opt/platforma/shared/google-ready-20261121/Caddyfile; подробности в том же checkpoint.
+W006/W019 системной проверки остаются вне этой правки.
 
 ## Очистка тестовых аккаунтов CRM — 21.11.2026
 
