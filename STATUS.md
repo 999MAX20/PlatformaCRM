@@ -1,6 +1,8 @@
+MFA server deployment21Nov: verified mfa.py from b755c9e1 deployed, four CRM services active, health/ready/signup200, no migrations. Read-only policy/signup-branch checks PASS with mocked persistence/session, no real registration; DB remains0 accounts/0 businesses. Google readiness patch remains local and needs ordinary-profile loading acceptance before rollout. Evidence: docs/testing/task-state/PRIMARY-SESSION.md.
+
 TEST-ACCOUNT-PURGE-20261121: active local/server CRM DBs cleared, users/businesses0 in both; local22/17 and server37/19 removed with related records. Verified backups retained, reference tables/schema/sequences preserved, health/ready200; PlatformaMarket untouched. Evidence: docs/testing/task-state/PRIMARY-SESSION.md.
 
-MFA-OPTIONAL-20261121: voluntary business-user MFA implemented and locally verified; signup/invites enter CRM, confirmed factors enforced. Backend 133 PASS/8 PostgreSQL skips, browser 3 PASS, build/check/drift PASS; local DB has no pending migrations. Live deployment not performed. Evidence: docs/testing/task-state/PRIMARY-SESSION.md.
+MFA-OPTIONAL-20261121: voluntary business-user MFA implemented and locally verified; signup/invites enter CRM, confirmed factors enforced. Backend 133 PASS/8 PostgreSQL skips, browser 3 PASS, build/check/drift PASS; local DB has no pending migrations. Server MFA module deployed21Nov; read-only target checks PASS, no accounts created. Evidence: docs/testing/task-state/PRIMARY-SESSION.md.
 
 AUTH-HALVES-20261119: /login, /signup, /mfa centered in equal desktop halves;
 mobile layout retained. Browser geometry/screenshots, navigation/validation/focus,
