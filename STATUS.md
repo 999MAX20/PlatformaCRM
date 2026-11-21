@@ -1,3 +1,5 @@
+TEST-ACCOUNT-PURGE-20261121: active local/server CRM DBs cleared, users/businesses0 in both; local22/17 and server37/19 removed with related records. Verified backups retained, reference tables/schema/sequences preserved, health/ready200; PlatformaMarket untouched. Evidence: docs/testing/task-state/PRIMARY-SESSION.md.
+
 MFA-OPTIONAL-20261121: voluntary business-user MFA implemented and locally verified; signup/invites enter CRM, confirmed factors enforced. Backend 133 PASS/8 PostgreSQL skips, browser 3 PASS, build/check/drift PASS; local DB has no pending migrations. Live deployment not performed. Evidence: docs/testing/task-state/PRIMARY-SESSION.md.
 
 AUTH-HALVES-20261119: /login, /signup, /mfa centered in equal desktop halves;
