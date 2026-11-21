@@ -106,6 +106,16 @@ range; full static gate's unrelated documented EOF warning remains unresolved.
 Then normal-push the single corrected commit to origin/main and read back its SHA;
 actual CI is reported separately, without claiming a queued run is green.
 
+Publication result21Nov: corrected code commit e1886feae75d2e4827ef9467e04e2763d82dc352
+normal-pushed to origin/main, remote SHA read-back matches. Exactly one authorized
+commit above d4085a5e; scoped complete diff/hygiene PASS. All9 deployed source
+hashes match the corrected tree. Recorded working files stayed byte-identical
+across ref/index replacement; foreign CRM-D04 edits remain only in working tree.
+GitHub Actions run44921188977 is in_progress, not a CI PASS. This docs-only receipt
+adds no source changes; previous build/types/browser evidence remains valid.
+No remaining task implementation/deployment/publication blocker. General static
+working-tree EOF warning remains foreign and unchanged, as recorded above.
+
 ## CRM-D04-MAP-20261121 — документационная подготовка
 
 Состав и точки создания21.11, basef46ed56bb60761326440787c1875f5a6370a0b8a:
