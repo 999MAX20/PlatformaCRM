@@ -119,7 +119,7 @@ class DuplicateDetectionFoundationTests(TestCase):
     def test_generic_update_cannot_bypass_client_archive_endpoint(self):
         response = self.api.patch(
             f"/api/clients/{self.target.id}/",
-            {"is_archived": True, "archive_reason": "Bypass"},
+            {"is_archived": True, "archive_reason": "Bypass", "expected_updated_at": self.target.updated_at.isoformat()},
             format="json",
         )
 
@@ -133,6 +133,7 @@ class DuplicateDetectionFoundationTests(TestCase):
             f"/api/clients/{self.target.id}/",
             {
                 "source_detail": "Spring landing",
+                "expected_updated_at": self.target.updated_at.isoformat(),
                 "source_context_json": {"campaign": "spring", "page_domain": "example.com"},
             },
             format="json",

@@ -55,7 +55,7 @@ class ClientSensitiveNotesTests(TestCase):
 
     def test_masked_edit_preserves_notes_and_returns_no_private_value(self):
         self.api.force_authenticate(self.operator)
-        response = self.api.patch(f"/api/clients/{self.customer.pk}/", {"full_name": "Edited customer", "notes": ""}, format="json")
+        response = self.api.patch(f"/api/clients/{self.customer.pk}/", {"full_name": "Edited customer", "notes": "", "expected_updated_at": self.customer.updated_at.isoformat()}, format="json")
         self.assertEqual(response.status_code, 200, response.data)
         self.assertEqual(response.data["notes"], "")
         self.customer.refresh_from_db()
@@ -64,7 +64,7 @@ class ClientSensitiveNotesTests(TestCase):
         response = self.api.patch(f"/api/clients/{self.customer.pk}/", {"notes": "Overwrite"}, format="json")
         self.assertEqual(response.status_code, 403, response.data)
         self.api.force_authenticate(self.owner)
-        response = self.api.patch(f"/api/clients/{self.customer.pk}/", {"notes": ""}, format="json")
+        response = self.api.patch(f"/api/clients/{self.customer.pk}/", {"notes": "", "expected_updated_at": self.customer.updated_at.isoformat()}, format="json")
         self.assertEqual(response.status_code, 200, response.data)
         self.customer.refresh_from_db()
         self.assertEqual(self.customer.notes, "")

@@ -217,7 +217,8 @@ class ClientArchiveDependencyTests(TestCase):
     def test_generic_patch_cannot_bypass_archive_action(self):
         client = self.make_client()
         self.make_work("task", client, "open")
-        self.api.patch(f"/api/clients/{client.pk}/", {"is_archived": True, "archive_reason": "Bypass"}, format="json")
+        response = self.api.patch(f"/api/clients/{client.pk}/", {"is_archived": True, "archive_reason": "Bypass", "expected_updated_at": client.updated_at.isoformat()}, format="json")
+        self.assertEqual(response.status_code, 200)
         client.refresh_from_db()
         self.assertFalse(client.is_archived)
         self.assertEqual(client.archive_reason, "")

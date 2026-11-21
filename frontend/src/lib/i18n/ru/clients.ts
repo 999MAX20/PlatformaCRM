@@ -1,4 +1,8 @@
 export const clients: Record<string, string> = {
+  "clients.editConflictTitle": "Карточка клиента изменилась",
+  "clients.editConflictDescription": "Ваши изменения не сохранены, но остались в форме. Просмотрите актуальные значения. Продолжение сохранит ваш ввод и обновит остальные поля; затем проверьте форму и сохраните её.",
+  "clients.editConflictReview": "Посмотреть актуальные значения",
+  "clients.editConflictContinue": "Продолжить с моими изменениями",
   "clients.restoreAction": "Восстановить клиента",
   "clients.restoreConfirmText": "Клиент {name} будет восстановлен из архива.",
   "clients.noticeRestored": "Клиент восстановлен",

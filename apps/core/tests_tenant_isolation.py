@@ -206,7 +206,7 @@ class TenantObjectBoundaryTests(TestCase):
 
         response = self.api.patch(
             f"/api/clients/{client.id}/",
-            {"business": self.business_a.id, "full_name": "Renamed inside tenant"},
+            {"business": self.business_a.id, "full_name": "Renamed inside tenant", "expected_updated_at": client.updated_at.isoformat()},
             format="json",
         )
 
@@ -223,7 +223,7 @@ class TenantObjectBoundaryTests(TestCase):
 
         response = self.api.patch(
             f"/api/clients/{client.id}/",
-            {"business": self.business_b.id, "full_name": "Attempted tenant move"},
+            {"business": self.business_b.id, "full_name": "Attempted tenant move", "expected_updated_at": client.updated_at.isoformat()},
             format="json",
         )
 

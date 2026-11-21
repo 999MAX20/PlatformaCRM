@@ -61,6 +61,7 @@ export const appErrorCodeRegistry: readonly AppErrorCodePolicy[] = [
   errorCode("module_disabled", "permission"),
   errorCode("not_found", "not_found"),
   errorCode("invalid_transition", "conflict", { messageKey: "actions.errorInvalidTransition" }),
+  errorCode("client_edit_conflict", "conflict", { messageKey: "clients.editConflictDescription" }),
   errorCode("unfinished_work", "conflict", { messageKey: "actions.errorUnfinishedWork" }),
   errorCode("future_appointments_conflict", "conflict", { messageKey: "actions.errorFutureAppointments" }),
   errorCode("last_active_branch", "conflict", { messageKey: "actions.errorLastActiveBranch" }),

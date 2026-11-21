@@ -1,4 +1,8 @@
 export const clients: Record<string, string> = {
+  "clients.editConflictTitle": "This client has changed",
+  "clients.editConflictDescription": "Your changes were not saved but remain in the form. Review the latest values. Continuing keeps your edits and updates the other fields; then review and save the form.",
+  "clients.editConflictReview": "Review latest values",
+  "clients.editConflictContinue": "Continue with my changes",
   "clients.restoreAction": "Restore client",
   "clients.restoreConfirmText": "Client {name} will be restored from the archive.",
   "clients.noticeRestored": "Client restored",

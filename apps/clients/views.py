@@ -11,7 +11,7 @@ from apps.businesses.access import Actions, assert_can
 from apps.clients.lifecycle import archive_client
 from apps.clients.models import Client
 from apps.clients.selectors import build_client_facets, build_client_summary, client_queryset_for_request
-from apps.clients.serializers import ClientMergeDryRunSerializer, ClientMergeSerializer, ClientSerializer, DuplicateCheckSerializer
+from apps.clients.serializers import ClientMergeDryRunSerializer, ClientMergeSerializer, ClientSerializer, ClientUpdateSerializer, DuplicateCheckSerializer
 from apps.core.audit import write_audit_log
 from apps.core.crm_cards import client_crm_card
 from apps.core.models import AuditLog
@@ -45,6 +45,15 @@ class ClientViewSet(TenantModelViewSet):
     queryset = Client.objects.select_related("business")
     serializer_class = ClientSerializer
     pagination_class = ClientPagination
+
+    def get_serializer_class(self):
+        return ClientUpdateSerializer if self.action in {"update", "partial_update"} else super().get_serializer_class()
+
+    @transaction.atomic
+    def perform_update(self, serializer):
+        # The conditional write and its audit/activity must commit together.
+        return super().perform_update(serializer)
+
     action_permission_map = {
         **TenantModelViewSet.action_permission_map,
         "archive": Actions.DELETE,

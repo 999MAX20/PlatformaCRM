@@ -89,6 +89,28 @@ class ClientSerializer(serializers.ModelSerializer):
         return validate_client_write_fields(attrs, notes_allowed=self.notes_visible(business)) if business else attrs
 
 
+class ClientUpdateSerializer(ClientSerializer):
+    expected_updated_at = serializers.DateTimeField(write_only=True)
+
+    class Meta(ClientSerializer.Meta):
+        fields = [*ClientSerializer.Meta.fields, "expected_updated_at"]
+
+    def validate(self, attrs):
+        attrs = super().validate(attrs)
+        # PATCH skips required fields by default; the precondition is mandatory.
+        if "expected_updated_at" not in attrs:
+            raise serializers.ValidationError({"expected_updated_at": "Read the client before updating it."})
+        return attrs
+
+    def update(self, instance, validated_data):
+        from apps.clients.updates import update_client_snapshot
+
+        return update_client_snapshot(
+            client=instance, expected_updated_at=validated_data.pop("expected_updated_at"),
+            values=validated_data,
+        )
+
+
 class DuplicateCheckSerializer(serializers.Serializer):
     business = serializers.IntegerField()
     phone = serializers.CharField(required=False, allow_blank=True)

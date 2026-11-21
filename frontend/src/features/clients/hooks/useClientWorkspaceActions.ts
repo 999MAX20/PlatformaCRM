@@ -4,6 +4,7 @@ import { useNavigate } from "react-router";
 
 import { taggedObjectsApi, tagsApi } from "../../../api/activities";
 import { clientsApi } from "../../../api/clients";
+import { normalizeAppError } from "../../../api/appError";
 import { useActionConfirm } from "../../../components/actions/ActionConfirmProvider";
 import { useActionFeedback } from "../../../components/actions/useActionFeedback";
 import { useUndoToast } from "../../../components/actions/UndoToastProvider";
@@ -45,11 +46,13 @@ export function useClientWorkspaceActions(clientId: Id | null) {
       setEditOpen(false);
       notifySuccess(t("common.saved"));
     },
-    onError: (error) =>
+    onError: (error) => {
+      if (normalizeAppError(error).code === "client_edit_conflict") return;
       notifyError(error, {
         actionLabel: t("common.refresh"),
         retry: invalidateClient,
-      }),
+      });
+    },
   });
 
   const addTagMutation = useMutation({
