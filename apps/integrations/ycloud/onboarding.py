@@ -51,10 +51,14 @@ def start(channel, actor, *, onboarding_type=YCloudConnection.OnboardingTypes.PL
     customer_id = uuid4()
     result = client.create_link(customer_id, onboarding_type)
     try:
-        expiry = datetime.fromtimestamp(int(result["expiresAt"]) / 1000, tz=datetime_timezone.utc)
+        raw_expiry = result["expiresAt"]
+        if isinstance(raw_expiry, str) and not raw_expiry.isdecimal():
+            expiry = datetime.fromisoformat(raw_expiry)
+        else:
+            expiry = datetime.fromtimestamp(int(raw_expiry) / 1000, tz=datetime_timezone.utc)
     except (KeyError, ValueError, TypeError, OSError, OverflowError):
         raise client.YCloudError("invalid_provider_response") from None
-    if expiry <= timezone.now() or expiry > timezone.now() + timezone.timedelta(hours=3):
+    if timezone.is_naive(expiry) or expiry <= timezone.now() or expiry > timezone.now() + timezone.timedelta(hours=3):
         raise client.YCloudError("invalid_provider_response")
     channel.config_json = {"provider_mode": "ycloud", "setup_revision": revision, "connection_verified": False}
     channel.status = BotChannel.Statuses.DRAFT
