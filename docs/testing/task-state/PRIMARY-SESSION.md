@@ -1,5 +1,27 @@
 ## CRM-D04-MAP-20261121 — документационная подготовка
 
+Состав и точки создания21.11, basef46ed56bb60761326440787c1875f5a6370a0b8a:
+поручено определить ядро/dentistry и серверные точки, только документация.
+Прочитаны OwnerSignupView/create_owner_account, GoogleSignupView, BusinessViewSet,
+landing activation, legacy social auto-create, onboarding services, capability
+writers и CurrentUserSerializer. Пароль и Google разделяют helper; API, landing
+и legacy social отдельны. Инициализатор планируется в businesses. core_v1 сохраняет
+10 текущих keys; dentistry_v1 добавляет visit_plans/plan_payments. Прочие известные
+сферы получают общий профиль без обещания отраслевого модуля. Старые Business
+сохраняют доступ/данные. Регистрация не создаёт demo/цены/правила и не подключает
+провайдеров. Onboarding, Business update и capability PATCH отмечены для guards.
+Прежний следующий критерий «состав и точки создания» ниже закрыт этой статической
+спецификацией; следующий теперь — схема метки/legacy/guards, код не поручен.
+Собственный scope: plan/product/roadmap/capabilities и записи CRM-D04 STATUS/PRIMARY;
+чужой auth/integration/frontend WIP не включается в commit. Один служебный скрипт
+подготовки PRIMARY остановился на несовпадении LF/CRLF до записи этого файла;
+повтор с независимой вставкой сохраняет исходные байты чужих записей.
+Проверки: полный scoped diff, ссылки/JSON, working/index/committed diff hygiene.
+Runtime/build/browser/DB тесты пропущены по docs-only матрице. Миграций/изменений
+среды/процессов/permissions/AI runtime нет; старые PASS не переобъявляются.
+Фактические SHA/push/CI сообщаются в финале. Следующая фаза не начинается автоматически.
+
+
 Уточнение21.11 (base9bbca1018c63a29884e500982f51e632655e96ea): пользователь отказался
 от lifecycle модулей и управления ими. План пересмотрен: сфера при создании Business
 → серверный профиль → ядро и отраслевые возможности на первом рабочем экране.
