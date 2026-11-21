@@ -1,3 +1,25 @@
+## CRM-D04-MAP-20261121 — документационная подготовка
+
+Поручение: записать обсуждённый план и начать карту текущих связей; код не менять.
+Root C:/Users/user/Desktop/PlatformaCRM; branch codex/ui-testing-toolkit; base02682f04cdd9591302707e3b8f4e9fb799f4e485.
+[Контракт, карта, результат и остаток](../../current/crm-modularity-plan.md).
+Сделано: разделение логических областей; прямые связи plans/appointments/payments,
+client merge, activation, capabilities, AI/automations и UI. Это статическое чтение,
+не полный граф импортов и не runtime PASS. Новые политики обозначены предложениями.
+Собственные файлы: docs/current/crm-modularity-plan.md; точечные ссылки в roadmap,
+docs README, capabilities, registry; только эта запись и запись CRM-D04 в STATUS.
+Весь исходный auth/Google/password/integrations WIP и прежние STATUS/PRIMARY правки чужие.
+Проверки: 23 локальные ссылки плана существуют; JSON registry валиден, запись уникальна;
+review всего собственного diff и нового документа; scoped working/index/committed diff hygiene.
+Общий git diff --check выявил чужую пустую строку EOF в google-button-design-20261119.md;
+её нет в нашем commit, чужой файл не исправлялся. Build/tests/browser/DB пропущены по docs-only матрице.
+Настройка CI: push main запускает ci.yml; stand-access path filter эту дельту не включает;
+в просмотренных workflows автоматического deployment нет. Публикация только своего commit,
+после fetch исходный HEAD совпал с origin/main. Фактический SHA/push/CI сообщаются в финале.
+Риски: новые module gates пересекают денежную атомарность и существующий доступ;
+политика отключения/overrides ещё не утверждена. Следующая реализация не начата.
+Своих процессов/БД нет; working DB/.env не трогались; исторические evidence сохранены.
+
 ## TEST-ACCOUNT-PURGE-20261121 — operation
 
 Explicit owner request: delete all test CRM accounts and their records from local and server databases, including platform users. Canonical root C:/Users/user/Desktop/PlatformaCRM, branch codex/ui-testing-toolkit, starting HEAD b755c9e1; existing dirty changes are foreign and preserved. Target local PostgreSQL127.0.0.1:55432/platformacrm and actual crm-web database on94.131.87.21, verified from runtime. PlatformaMarket/other DBs, schema/migrations and global reference definitions are outside scope. No product code change.

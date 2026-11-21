@@ -1,3 +1,5 @@
+CRM-D04-MAP-20261121: docs-only план ядра/общих модулей/стоматологического профиля и статическая карта зависимостей завершены. Код/данные не менялись; runtime-разделение не начато. План: [crm-modularity-plan](docs/current/crm-modularity-plan.md). Следующее: правила активации/отключения до зависимой реализации; текущее поручение не разрешает код.
+
 MFA server deployment21Nov: verified mfa.py from b755c9e1 deployed, four CRM services active, health/ready/signup200, no migrations. Read-only policy/signup-branch checks PASS with mocked persistence/session, no real registration; DB remains0 accounts/0 businesses. Google readiness patch remains local and needs ordinary-profile loading acceptance before rollout. Evidence: docs/testing/task-state/PRIMARY-SESSION.md.
 
 TEST-ACCOUNT-PURGE-20261121: active local/server CRM DBs cleared, users/businesses0 in both; local22/17 and server37/19 removed with related records. Verified backups retained, reference tables/schema/sequences preserved, health/ready200; PlatformaMarket untouched. Evidence: docs/testing/task-state/PRIMARY-SESSION.md.
