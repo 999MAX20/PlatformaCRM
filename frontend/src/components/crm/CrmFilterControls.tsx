@@ -50,7 +50,7 @@ export function CrmFilterControls({ kind, searchLabel, counts, options = {}, act
   }
   function start() { setDraft({ ...state }); setError(""); setOpen(true); }
   function validation(value: CrmFilterValues) {
-    if (compact && kind !== "clients" && !validCustomFieldFilter(value, customDefinitions)) return t("clients.invalidCustomFilter");
+    if (compact && !validCustomFieldFilter(value, customDefinitions)) return t("clients.invalidCustomFilter");
     for (const key of ["created_from", "created_to", "expected_close_from", "expected_close_to", "appointment_from", "appointment_to"]) if (value[key] && !isCalendarDate(value[key])) return t("crmFilters.invalidDate");
     for (const prefix of ["created", "expected_close", "appointment"]) if (value[`${prefix}_from`] && value[`${prefix}_to`] && value[`${prefix}_from`] > value[`${prefix}_to`]) return t("crmFilters.invalidRange");
     if (value.appointment === "period" && !value.appointment_from && !value.appointment_to) return t("crmFilters.appointmentDateRequired");
@@ -78,7 +78,7 @@ export function CrmFilterControls({ kind, searchLabel, counts, options = {}, act
   const form = (
       <form onKeyDown={event => { if (event.key === "Escape" && event.defaultPrevented) event.stopPropagation(); }} onSubmit={event => { event.preventDefault(); const message = validation(draft); if (message) { setError(message); return; } update(draft); close(); }} className="space-y-5">
         <CrmFilterFields kind={kind} value={draft} onChange={patch => { setError(""); setDraft(current => ({ ...current, ...patch, ...(patch.assignees ? { scope: "all" } : {}) })); }} options={options} today={dateInTimeZone(new Date().toISOString(), business?.timezone || "UTC")} />
-        {compact && kind !== "clients" && <CustomFieldFilterFields definitions={customDefinitions} value={draft} onChange={patch => { setError(""); setDraft(current => ({ ...current, ...patch })); }} />}
+        {compact && <CustomFieldFilterFields definitions={customDefinitions} value={draft} onChange={patch => { setError(""); setDraft(current => ({ ...current, ...patch })); }} />}
         {kind !== "clients" && extraFilterAction && <div onClick={() => close(false)}>{extraFilterAction}</div>}
         {kind !== "clients" && <details className="rounded-control border border-platforma-border p-3"><summary className="platforma-focus-ring cursor-pointer text-sm font-medium">{t("crmFilters.savedViews")}</summary>
           <div className="mt-3 space-y-2">{views.map(view => <div key={view.id} className="flex items-center gap-2"><Button type="button" variant="secondary" size="sm" className="min-w-0 flex-1 justify-start" onClick={() => { const next = { ...defaults, ...Object.fromEntries(crmFilterKeysFor(kind).filter(key => typeof view.values[key] === "string").map(key => [key, view.values[key]])) }; setDraft(next); }}><span className="truncate">{view.name}</span></Button><Button type="button" size="icon" variant="ghost" aria-label={`${t("crmFilters.remove")}: ${view.name}`} onClick={() => saveViews(views.filter(item => item.id !== view.id))}><Trash2 size={15} /></Button></div>)}

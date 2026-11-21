@@ -33,6 +33,9 @@ type ClientListFilterParams = {
   page?: number;
   page_size?: number;
   client_ids?: string | number[];
+  custom_field?: string;
+  custom_operator?: string;
+  custom_value?: string;
 };
 
 export type ClientListResult = {

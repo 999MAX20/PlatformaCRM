@@ -38,6 +38,16 @@ test("reset clears additional fields as well as ordinary client conditions", () 
   assert.equal(f.run().hasFilters, false);
 });
 
+test("client URL restores custom filter and sends zero to the server; empty operator drops stale value", () => {
+  const f = filters("search=Alpha&source=manual&custom_field=8&custom_operator=gte&custom_value=0");
+  assert.equal(f.run().state.custom_field, "8");
+  assert.equal(f.hook.crmFilterParams("clients", f.run().state).custom_value, "0");
+  f.run().update({ custom_operator: "is_empty" });
+  assert.equal(f.params().has("custom_value"), false);
+  assert.equal(f.params().get("source"), "manual");
+  assert.equal(f.params().get("search"), "Alpha");
+});
+
 test("clearing a selected additional field drops its operator and value", () => {
   const f = filters("custom_field=8&custom_operator=contains&custom_value=Private");
   f.run().update({ custom_field: "" });

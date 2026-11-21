@@ -14,7 +14,7 @@ export function ClientsFilters({ tagOptions, sourceOptions, counts, visibleColum
   t: Translate;
 }) {
   return <CrmFilterControls kind="clients" compact searchLabel={t("clients.search")} counts={counts}
-    options={{ source: sourceOptions, tag: tagOptions }}
+    options={{ source: sourceOptions, tag: tagOptions }} customDefinitions={customTable.definitions}
     actions={<>
       <CrmWorkspacePopover label={t("clients.columns")} icon={<Columns3 size={16} />}>
         {(["source", "manager"] as const).map(column => <label key={column} className="flex min-h-11 items-center gap-3 rounded-control px-2 text-sm hover:bg-surface-hover"><input type="checkbox" checked={visibleColumns.has(column)} onChange={() => onToggleColumn(column)} />{t(`clients.${column}`)}</label>)}
