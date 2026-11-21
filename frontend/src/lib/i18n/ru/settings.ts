@@ -1,4 +1,5 @@
 export const settings: Record<string, string> = {
+  "settings.duplicateFieldKey": "Поле с таким ключом уже существует. Укажите другой ключ.",
   "settings.clarity.period": "Период",
   "settings.clarity.period.all": "За всё время",
   "settings.clarity.period.7": "Последние 7 дней",

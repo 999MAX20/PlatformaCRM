@@ -1,4 +1,5 @@
 export const settings: Record<string, string> = {
+  "settings.duplicateFieldKey": "Мұндай кілті бар өріс бұрыннан бар. Басқа кілтті көрсетіңіз.",
   "settings.clarity.period": "Кезең",
   "settings.clarity.period.all": "Барлық уақыт",
   "settings.clarity.period.7": "Соңғы 7 күн",

@@ -2,6 +2,7 @@ from django.utils import timezone
 from rest_framework import serializers
 
 from apps.core.custom_fields import validate_custom_field_value
+from apps.core.custom_field_definitions import create_custom_field_definition, generate_custom_field_key, validate_definition_key
 from apps.core.file_validation import validate_file_upload
 from apps.core.models import (
     AuditLog,
@@ -20,6 +21,8 @@ from apps.core.client_projection import reader_actor
 
 
 class CustomFieldDefinitionSerializer(serializers.ModelSerializer):
+    key = serializers.SlugField(max_length=64, default=serializers.CreateOnlyDefault(generate_custom_field_key))
+
     class Meta:
         model = CustomFieldDefinition
         fields = [
@@ -38,6 +41,10 @@ class CustomFieldDefinitionSerializer(serializers.ModelSerializer):
             "updated_at",
         ]
         read_only_fields = ["created_at", "updated_at"]
+        validators = []
+
+    def create(self, validated_data):
+        return create_custom_field_definition(**validated_data)
 
     def validate_permissions_json(self, value):
         if not isinstance(value, dict):
@@ -70,6 +77,11 @@ class CustomFieldDefinitionSerializer(serializers.ModelSerializer):
         return value
 
     def validate(self, attrs):
+        validate_definition_key(
+            business=attrs.get("business", getattr(self.instance, "business", None)),
+            entity_type=attrs.get("entity_type", getattr(self.instance, "entity_type", None)),
+            key=attrs.get("key", getattr(self.instance, "key", None)), instance=self.instance,
+        )
         if self.instance and self.instance.values.exists():
             for key in ("entity_type", "key", "field_type"):
                 if key in attrs and attrs[key] != getattr(self.instance, key):

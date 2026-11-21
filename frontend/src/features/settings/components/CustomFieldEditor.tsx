@@ -9,7 +9,6 @@ import { Select } from "../../../components/ui/Select";
 import { customFieldOptions } from "../../../lib/customFields";
 import { useI18n } from "../../../lib/i18n";
 import type { CustomFieldEntityType, CustomFieldDefinition, Id } from "../../../types";
-import { slugify } from "../settingsUtils";
 import { CustomFieldAccessMatrix, type FieldAccess } from "./CustomFieldAccessMatrix";
 import { SettingsDrawer, SettingsFeedback, SettingsSaveBar } from "./SettingsLayout";
 
@@ -37,6 +36,7 @@ export function CustomFieldEditor({ initial, entity, businessId, open, onClose, 
     onSuccess: field => { void cache.invalidateQueries({ queryKey: ["custom-fields"] }); void cache.invalidateQueries({ queryKey: ["custom-field-context"] }); void cache.invalidateQueries({ queryKey: ["crm-card"] }); onSaved(field); },
   });
   const errors = getApiFieldErrors(save.error);
+  const keyError = errors.key?.map(message => message === "A field with this key already exists for this entity type." ? t("settings.duplicateFieldKey") : message).join(" ");
   const hasFieldError = ["label", "entity_type", "field_type", "permissions_json", ...(initial ? ["key", "sort_order", "is_active"] : []), ...(["select", "multiselect"].includes(draft.field_type) ? ["options_json"] : [])].some(key => errors[key]?.length);
   const hasOptions = ["select", "multiselect"].includes(draft.field_type);
   function change(values: Partial<typeof draft>) { setDraft(current => ({ ...current, ...values })); save.reset(); }
@@ -55,9 +55,10 @@ export function CustomFieldEditor({ initial, entity, businessId, open, onClose, 
     const originalOptions = initial ? customFieldOptions(initial).map(option => option.value) : [];
     const changedOptions = JSON.stringify(cleanOptions) !== JSON.stringify(originalOptions);
     const optionValues = cleanOptions.map(value => initial?.options_json.options?.find(option => typeof option === "string" ? option === value : String(option.value ?? option.key ?? option.label) === value) || value);
+    const { key, ...definition } = draft;
     const payload: Partial<CustomFieldDefinition> = {
-      ...draft,
-      key: draft.key || slugify(draft.label).replace(/[^a-z0-9_-]/g, "").replace(/^[-_]+|[-_]+$/g, "").slice(0, 64) || "field_" + Date.now().toString(36),
+      ...definition,
+      ...(initial ? { key } : {}),
       permissions_json: { view_roles: access.allView ? [] : access.view, edit_roles: access.allEdit ? [] : access.edit },
       options_json: { ...initial?.options_json, ...(!initial || changedOptions && hasOptions ? { options: optionValues } : {}), display },
     };
@@ -94,7 +95,7 @@ export function CustomFieldEditor({ initial, entity, businessId, open, onClose, 
           <details open={Boolean(errors.key || errors.sort_order) || undefined} className="border-t border-platforma-border pt-3">
             <summary className="platforma-focus-ring min-h-11 cursor-pointer py-2 text-sm font-semibold">{t("settings.technicalDetails")}</summary>
             <div className="space-y-3 py-3">
-              <Input label={t("settings.fieldKey")} value={draft.key} required pattern="[a-zA-Z0-9_-]+" maxLength={64} error={errors.key?.join(" ")} onChange={event => change({ key: event.target.value })} />
+              <Input label={t("settings.fieldKey")} value={draft.key} required pattern="[a-zA-Z0-9_-]+" maxLength={64} error={keyError} onChange={event => change({ key: event.target.value })} />
               <Input label={t("settings.sortOrder")} type="number" step={1} value={draft.sort_order} error={errors.sort_order?.join(" ")} onChange={event => change({ sort_order: Number(event.target.value || 0) })} />
               <p className="text-xs text-platforma-subtle">{t("settings.customFieldRequiredMetadata")}: {t(initial.is_required ? "crmCard.yes" : "crmCard.no")}</p>
             </div>

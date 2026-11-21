@@ -1,4 +1,5 @@
 export const settings: Record<string, string> = {
+  "settings.duplicateFieldKey": "A field with this key already exists. Enter a different key.",
   "settings.clarity.period": "Period",
   "settings.clarity.period.all": "All time",
   "settings.clarity.period.7": "Last 7 days",
