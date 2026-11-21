@@ -25,7 +25,7 @@ Checks planned: browser reproducer before fix; isolated custom-field/client API
 regressions including permissions and summary; existing filter unit tests; targeted
 RU/KK/EN desktop/mobile flow with screenshots; types/i18n and separate app/widget
 build outputs. Full-project certification and live platformacrm.kz are out of scope.
-Status: locally verified; publication pending.
+Status: locally verified and code published to main.
 
 Prior clients-records-20261105 evidence reported client custom-filter support and
 12 node tests PASS. Subsequent CLIENTS-FILTERS-20261117 owner decision deliberately
@@ -88,3 +88,8 @@ usable toolbar. Total8 browser cases PASS across two scoped runs, not a full sui
 No code/evidence gap remains for the bounded QA-006 phase. Full-project gate,
 production-origin smoke and live deployment not run; no authorization for working
 DB operations was inferred. JSON registry/new-link and scoped diff hygiene PASS.
+
+Code `c9570fa55adc940d6a8c8ce080f8d93558b0d77e` committed on codex/ui-testing-toolkit and normal-pushed to
+origin main, remote SHA verified. Task-only12 paths/hunks reviewed; foreign WIP
+preserved. Index and real committed-range diff hygiene PASS. CI44934913440 in_progress (conclusion=None).
+No CI success or deployment is claimed. Publication record is a docs-only follow-up.

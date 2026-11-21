@@ -1,4 +1,4 @@
-QA-006-20261121 LOCAL VERIFIED: client custom-field filtering restored under QA specification; 28 backend, 15 node and 8 browser scenarios (RU/KK/EN desktop/mobile plus API-error recovery) PASS; build/types/i18n/check/drift PASS. Publication pending; working DB untouched. [Evidence](docs/testing/evidence/qa-006-client-filters-20261121.md).
+QA-006-20261121 LOCAL VERIFIED: client custom-field filtering restored under QA specification; 28 backend, 15 node and 8 browser scenarios (RU/KK/EN desktop/mobile plus API-error recovery) PASS; build/types/i18n/check/drift PASS. Code c9570fa5 pushed to main; CI44934913440 in_progress (conclusion=None); working DB untouched. [Evidence](docs/testing/evidence/qa-006-client-filters-20261121.md).
 
 QA-017-20261121 LOCAL VERIFIED: multilingual custom-field keys fixed; 31 backend and 6 RU/KK/EN desktop/mobile browser tests PASS, types/i18n/build/check/drift PASS. Code e7c6ee26 pushed to main; No CI run listed yet for this SHA; working DB untouched. [Evidence](docs/testing/evidence/qa-017-custom-field-keys-20261121.md).
 
