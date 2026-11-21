@@ -134,7 +134,7 @@ for (const entry of ["login", "signup"]) for (const language of ["ru", "kk", "en
     release();
     await expect(page.getByRole("button", { name: "Google", exact: true })).toHaveAttribute("data-ready", "true");
     await expect(page.getByRole("button", { name: "Google", exact: true })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Google", exact: true })).toHaveAttribute("data-size", "large");
+    await expect(page.getByRole("button", { name: "Google", exact: true })).toHaveAttribute("data-size", "medium");
     await expect(page.getByRole("button", { name: "Google", exact: true })).not.toHaveAttribute("data-boot-exposed", "true");
     await expect(page.getByRole("status")).toHaveCount(0);
     const bootstrapHeights = await card.evaluate(element => {

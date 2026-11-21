@@ -148,7 +148,7 @@ export function GoogleSignInButton({ disabled, onCredential, text = "continue_wi
           }
           waitForRender();
           identity.renderButton(mount, {
-            type: "standard", theme: "outline", size: "large", shape: "pill", logo_alignment: "left", text, width, locale: language,
+            type: "standard", theme: "outline", size: "medium", shape: "pill", logo_alignment: "left", text, width, locale: language,
           });
           checkRendered();
         };

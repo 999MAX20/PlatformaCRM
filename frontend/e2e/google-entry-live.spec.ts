@@ -41,6 +41,7 @@ for (const entry of ["login", "signup"]) {
       if (phase === "first") await page.goto(`/${entry}`); else await page.reload();
       await expect(page.locator(".serenity-login__card [aria-busy]")).toHaveAttribute("aria-busy", "false", { timeout: 20_000 });
       await expect(page.getByRole("alert")).toHaveCount(0);
+      await expect(page.locator('iframe[src*="accounts.google.com/gsi/button"]')).toHaveAttribute("src", /[?&]size=medium(?:&|$)/);
       const inlineButton = page.getByRole("button", { name: /Google/ });
       const framedButton = page.frameLocator('iframe[src*="accounts.google.com/gsi/button"]').getByRole("button");
       await expect.poll(async () => await inlineButton.isVisible() || await framedButton.isVisible()).toBe(true);
@@ -63,6 +64,8 @@ for (const entry of ["login", "signup"]) {
       expect(result.buttonY).toBeLessThanOrEqual(1);
       expect(result.maxContentHeight).toBeLessThanOrEqual(44);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      await expect(page.locator(".serenity-login__card [aria-busy]")).toHaveAttribute("aria-busy", "false");
+      await expect(page.getByRole("status")).toHaveCount(0);
       await page.screenshot({ path: info.outputPath(`${entry}-${phase}.png`), fullPage: true });
     }
   });

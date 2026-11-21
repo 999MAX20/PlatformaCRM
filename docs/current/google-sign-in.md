@@ -4,10 +4,11 @@ Google authentication uses the Google Identity Services button with a JavaScript
 callback. It grants access to the CRM account, not Google Sheets/Calendar APIs.
 
 Both `/login` and `/signup` start the same protected flow. Signup uses the official
-GIS `signup_with` button text. Both entry points use the official `large` button
-(owner decision 2026-11-20, deployed 2026-11-21). Google may personalize
-this size with a returning user's profile. The fixed44px slot reserves layout
-space; the provider mount stays hidden and inert until its rendered control has
+GIS `signup_with` button text. Both entry points use the official `medium` button
+(owner decision 2026-11-21, deployed), which suppresses account-name/email/photo
+personalization. This supersedes the earlier large-size choice. The fixed44px slot
+reserves layout space around the centered32px control; the provider mount stays
+hidden and inert until its rendered control has
 dimensions and its content fits the slot. Readiness accepts semantic HTML buttons
 as well as iframes, ignores zero-size helper frames, and keeps observing late
 provider resizing. Loading, retry and keyboard focus recovery remain available.

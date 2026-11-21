@@ -26,7 +26,7 @@ async function google(page: Page, email: string, sub = email) {
         button.dataset.googleText=appearance.text;
         button.dataset.googleSize=appearance.size;
         button.dataset.googleWidth=appearance.width;
-        button.style.height='40px';
+        button.style.height='32px';
         button.style.width=appearance.width+'px';
         button.onclick=async()=>options.callback({credential:await window.syntheticGoogleToken(options.nonce)});
         parent.appendChild(button);
@@ -43,7 +43,7 @@ for (const language of ["ru", "kk", "en"] as const) {
     await page.goto(`/${entry}`);
     const button = page.getByRole("button", { name: "Synthetic Google", exact: true });
     await expect(button).toHaveAttribute("data-google-text", entry === "signup" ? "signup_with" : "continue_with");
-    await expect(button).toHaveAttribute("data-google-size", "large");
+    await expect(button).toHaveAttribute("data-google-size", "medium");
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     await button.focus();
     await page.screenshot({ path: info.outputPath(`${language}-${entry}-google-entry.png`), fullPage: true });
