@@ -1,12 +1,15 @@
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
 
 from apps.businesses.access import Actions, Resources, assert_can
 from apps.businesses.models import BusinessMember
 from apps.core.viewsets import TenantModelViewSet
+from apps.core.permissions import accessible_businesses
+from .access import branch_grant_capabilities
 from .models import Branch
-from .serializers import BranchSerializer, BranchGrantSerializer
+from .serializers import BranchSerializer, BranchGrantSerializer, BranchGrantTargetSerializer
 from .services import set_branch_access
 from .config_views import BranchConfigurationMixin
 
@@ -37,8 +40,14 @@ class BranchViewSet(BranchConfigurationMixin, TenantModelViewSet):
     def perform_update(self, serializer):
         serializer.save()
 
-    @action(detail=False, methods=["post"], url_path="member-access")
+    @action(detail=False, methods=["get", "post"], url_path="member-access")
     def member_access(self, request):
+        if request.method == "GET":
+            query = BranchGrantTargetSerializer(data=request.query_params)
+            query.is_valid(raise_exception=True)
+            member = get_object_or_404(BusinessMember.objects.select_related("business").filter(
+                business__in=accessible_businesses(request.user)), pk=query.validated_data["member"])
+            return Response(branch_grant_capabilities(actor=request.user, member=member))
         data = BranchGrantSerializer(data=request.data)
         data.is_valid(raise_exception=True)
         member = BusinessMember.objects.select_related("business").filter(pk=data.validated_data["member"]).first()

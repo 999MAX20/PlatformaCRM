@@ -46,7 +46,7 @@ class TimelineQuery(serializers.Serializer):
         return value
 
 
-def read_timeline_query(request):
+def read_timeline_query(request, *, resource=Resources.ANALYTICS):
     params = request.query_params.copy()
     for canonical, alias in (("client", "client_id"), ("date_from", "created_after"), ("date_to", "created_before")):
         if not params.get(canonical) and params.get(alias):
@@ -60,9 +60,26 @@ def read_timeline_query(request):
         business = accessible_businesses(request.user).filter(pk=values["business"]).first()
         if business is None:
             raise NotFound()
-        assert_can(request.user, business, Resources.ANALYTICS, Actions.VIEW)
-        assert_resource_enabled(business, Resources.ANALYTICS)
+        assert_can(request.user, business, resource, Actions.VIEW)
+        assert_resource_enabled(business, resource)
     return values, business
+
+
+def task_history_queryset(queryset, *, actor, values, business):
+    """Exact task history inherits task VIEW, never general analytics access."""
+    from apps.tasks.models import Task
+
+    identifier = values["entity_id"]
+    if not identifier.isdecimal() or not 1 <= int(identifier) <= MAX_ID:
+        raise NotFound()
+    tasks = readable_across_businesses(
+        Task.objects.filter(pk=int(identifier)), actor=actor, resource=Resources.TASKS,
+        businesses=[business] if business is not None else None,
+    )
+    task = tasks.first()
+    if task is None:
+        raise NotFound()
+    return queryset.filter(business_id=task.business_id, entity_type__iexact="Task", entity_id=str(task.pk))
 
 
 def date_boundary(value, *, end, business):

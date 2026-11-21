@@ -1,4 +1,7 @@
 export const business: Record<string, string> = {
+  "branches.grantOutsideScope": "У сотрудника есть доступ к филиалам вне ваших полномочий. Изменить назначения может владелец или администратор с доступом к этим филиалам.",
+  "branches.futureGrantRestricted": "Вы можете назначить только доступные вам филиалы. Для доступа ко всем текущим и будущим филиалам нужны полномочия на всю сеть.",
+  "branches.ownerAccessFixed": "Владелец сохраняет доступ ко всем филиалам.",
   "business.previousWeek": "Предыдущая неделя",
   "business.nextWeek": "Следующая неделя",
   "business.today": "Сегодня",

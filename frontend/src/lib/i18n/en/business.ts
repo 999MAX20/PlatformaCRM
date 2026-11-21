@@ -1,4 +1,7 @@
 export const business: Record<string, string> = {
+  "branches.grantOutsideScope": "This employee has access to branches outside your scope. The owner or an administrator with access to those branches can change these assignments.",
+  "branches.futureGrantRestricted": "You can assign only branches within your scope. Access to all current and future branches requires network-wide permissions.",
+  "branches.ownerAccessFixed": "The owner retains access to every branch.",
   "business.previousWeek": "Previous week",
   "business.nextWeek": "Next week",
   "business.today": "Today",

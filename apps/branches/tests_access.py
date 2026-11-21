@@ -1,6 +1,7 @@
 from unittest.mock import patch
 
 from django.test import TestCase
+from django.utils import timezone
 from rest_framework.test import APIClient
 
 from apps.accounts.models import User
@@ -109,3 +110,71 @@ class BranchAccessTests(TestCase):
         self.assertFalse(BranchAccess.objects.exists())
         self.create()
         self.assertTrue(AuditLog.objects.filter(metadata__kind="branch").exists())
+
+    def capabilities(self, member=None):
+        return self.api.get("/api/branches/member-access/", {"member": (member or self.member).pk})
+
+    def test_grant_capabilities_match_limited_admin_write_scope(self):
+        first = self.create().data["id"]
+        second = self.create("Second").data["id"]
+        self.api.force_authenticate(self.admin)
+        response = self.capabilities()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data, {"can_edit": True, "can_grant_all": False, "branch_ids": [first], "reason": ""})
+        payload = {"member": self.member.pk, "branch_ids": [first], "all_branches": False}
+        self.assertEqual(self.api.post("/api/branches/member-access/", payload, format="json").status_code, 200)
+        before = AuditLog.objects.count()
+        self.assertEqual(self.api.post("/api/branches/member-access/", {**payload, "branch_ids": [second]}, format="json").status_code, 400)
+        self.assertEqual(AuditLog.objects.count(), before)
+        self.assertEqual(list(BranchAccess.objects.get(member=self.member).branches.values_list("pk", flat=True)), [first])
+
+    def test_capabilities_refuse_changes_to_existing_outside_grant(self):
+        first = self.create().data["id"]
+        second = self.create("Second").data["id"]
+        user = User.objects.create_user(username="grant-target", email="grant-target@example.test")
+        target = BusinessMember.objects.create(business=self.business, user=user, role="operator")
+        grant = BranchAccess.objects.create(member=target)
+        grant.branches.set([second])
+        self.api.force_authenticate(self.admin)
+        response = self.capabilities(target)
+        self.assertFalse(response.data["can_edit"])
+        self.assertEqual(response.data["reason"], "outside_branch_scope")
+        self.assertEqual(self.api.post("/api/branches/member-access/", {"member": target.pk, "branch_ids": [first]}, format="json").status_code, 400)
+        self.assertEqual(list(grant.branches.values_list("pk", flat=True)), [second])
+        Branch.objects.filter(pk=second).update(is_active=False, archived_at=timezone.now())
+        self.assertFalse(self.capabilities(target).data["can_edit"])
+        self.assertEqual(self.api.post("/api/branches/member-access/", {"member": target.pk, "branch_ids": []}, format="json").status_code, 400)
+
+    def test_owner_and_network_admin_can_grant_future_branches(self):
+        self.create()
+        self.assertTrue(self.capabilities().data["can_grant_all"])
+        grant = BranchAccess.objects.get(member=self.member)
+        grant.all_branches = True
+        grant.save()
+        self.api.force_authenticate(self.admin)
+        self.assertTrue(self.capabilities().data["can_grant_all"])
+        response = self.api.post("/api/branches/member-access/", {"member": self.member.pk, "branch_ids": [], "all_branches": True}, format="json")
+        self.assertEqual(response.status_code, 200)
+
+    def test_owner_target_and_foreign_member_capabilities_are_safe(self):
+        self.create()
+        owner_member = BusinessMember.objects.create(business=self.business, user=self.owner, role="owner")
+        response = self.capabilities(owner_member)
+        self.assertFalse(response.data["can_edit"])
+        self.assertEqual(response.data["reason"], "owner_access")
+        other = Business.objects.create(owner=self.owner, name="Other", slug="grant-other")
+        foreign = BusinessMember.objects.create(business=other, user=self.owner, role="owner")
+        self.api.force_authenticate(self.admin)
+        self.assertEqual(self.capabilities(foreign).status_code, 404)
+        self.member.role = "operator"
+        self.member.save()
+        self.assertEqual(self.capabilities().status_code, 403)
+        self.assertEqual(self.api.get("/api/branches/member-access/").status_code, 400)
+        self.assertEqual(self.api.get("/api/branches/member-access/", {"member": "9" * 30}).status_code, 400)
+
+    def test_failed_grant_audit_rolls_back_selection(self):
+        first = self.create().data["id"]
+        with patch("apps.branches.services.write_actor_audit_log", side_effect=RuntimeError("synthetic audit failure")):
+            response = self.api.post("/api/branches/member-access/", {"member": self.member.pk, "branch_ids": []}, format="json")
+        self.assertEqual(response.status_code, 500)
+        self.assertEqual(list(BranchAccess.objects.get(member=self.member).branches.values_list("pk", flat=True)), [first])

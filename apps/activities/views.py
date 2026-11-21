@@ -13,10 +13,11 @@ from apps.activities.serializers import (
     TaggedObjectSerializer,
 )
 from apps.clients.serializers import ClientSerializer
+from apps.businesses.access import Resources
 from apps.core.crm_read_scope import scope_entity_history
 from apps.core.viewsets import TenantModelViewSet
 from apps.activities.timeline_queries import (
-    ActivityPagination, actor_choice, filter_timeline, read_timeline_query, timeline_actor_rows,
+    ActivityPagination, actor_choice, filter_timeline, read_timeline_query, timeline_actor_rows, task_history_queryset,
 )
 
 
@@ -29,6 +30,11 @@ class ActivityEventViewSet(TenantModelViewSet):
         return ActivityTimelineSerializer if self.action in {"list", "retrieve"} else super().get_serializer_class()
 
     def get_queryset(self):
+        if (self.action == "list" and self.request.query_params.get("entity_type") == "Task"
+                and self.request.query_params.get("entity_id")):
+            values, business = read_timeline_query(self.request, resource=Resources.TASKS)
+            queryset = task_history_queryset(self.queryset, actor=self.request.user, values=values, business=business)
+            return filter_timeline(queryset, values, business, user=self.request.user)
         queryset = super().get_queryset()
         values, business = read_timeline_query(self.request)
         if self.action in {"list", "retrieve", "actors"}:

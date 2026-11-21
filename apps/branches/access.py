@@ -47,6 +47,30 @@ def assert_network_grant(user, business):
         raise PermissionDenied("This change requires access to all current and future branches.")
 
 
+def branch_grant_capabilities(*, actor, member):
+    from apps.businesses.access import Actions, Resources, assert_can
+
+    business = member.business
+    assert_can(actor, business, Resources.TEAM, Actions.MANAGE)
+    permitted = accessible_branches(actor, business)
+    current = BranchAccess.objects.filter(member=member).first()
+    affected = Branch.objects.none()
+    if current:
+        affected = Branch.objects.filter(business=business) if current.all_branches else current.branches.all()
+    reason = ""
+    if member.user_id == business.owner_id:
+        reason = "owner_access"
+    elif affected.exclude(pk__in=permitted).exists():
+        reason = "outside_branch_scope"
+    try:
+        assert_network_grant(actor, business)
+        can_grant_all = True
+    except PermissionDenied:
+        can_grant_all = False
+    return {"can_edit": not reason, "can_grant_all": can_grant_all,
+            "branch_ids": list(permitted.values_list("pk", flat=True)), "reason": reason}
+
+
 def branch_write_allowed(user, business, obj):
     model = getattr(getattr(obj, "_meta", None), "label_lower", "")
     if model == "services.service":

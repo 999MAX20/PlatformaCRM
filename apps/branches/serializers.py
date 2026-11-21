@@ -45,7 +45,10 @@ class BranchSerializer(serializers.ModelSerializer):
         return update_branch(branch=instance, actor=self.context["request"].user, changes=validated_data)
 
 
-class BranchGrantSerializer(serializers.Serializer):
-    member = serializers.IntegerField(min_value=1)
+class BranchGrantTargetSerializer(serializers.Serializer):
+    member = serializers.IntegerField(min_value=1, max_value=2**63 - 1)
+
+
+class BranchGrantSerializer(BranchGrantTargetSerializer):
     branch_ids = serializers.ListField(child=serializers.IntegerField(min_value=1), allow_empty=True)
     all_branches = serializers.BooleanField(default=False)

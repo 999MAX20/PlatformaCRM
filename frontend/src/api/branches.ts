@@ -13,6 +13,7 @@ export type PhysicalResource = Pick<Resource, "id" | "name" | "resource_type" | 
 export type BranchConfiguration = BranchCatalog & { days: BranchDay[]; travel: BranchTravel[]; physical_resources: PhysicalResource[]; resource_requirements: { service_id: Id; resource_id: Id }[] };
 export type Absence = { id: Id; branch: Id | null; starts_on: string; ends_on: string; reason: "unavailable" | "vacation" | "sick" };
 export type RetirementPreview = { pending: Record<string, number>; appointments: Appointment[]; appointments_count: number; appointments_truncated: boolean };
+export type BranchGrantCapabilities = { can_edit: boolean; can_grant_all: boolean; branch_ids: Id[]; reason: "" | "owner_access" | "outside_branch_scope" };
 export const branchesApi = {
   ...createCrudApi<Branch>("/api/branches/"),
   configuration: async (id: Id) => (await apiClient.get<BranchConfiguration>(`/api/branches/${id}/configuration/`)).data,
@@ -25,6 +26,7 @@ export const branchesApi = {
   travel: async (id: Id, payload: { other_branch: Id; minutes: number }) => (await apiClient.post(`/api/branches/${id}/travel/`, payload)).data,
   state: async (id: Id, state: "active" | "paused" | "archived") => (await apiClient.post<Branch>(`/api/branches/${id}/state/`, { state })).data,
   grant: async (payload: { member: Id; branch_ids: Id[]; all_branches: boolean }) => (await apiClient.post("/api/branches/member-access/", payload)).data,
+  grantCapabilities: async (member: Id) => (await apiClient.get<BranchGrantCapabilities>("/api/branches/member-access/", { params: { member } })).data,
 };
 export const specialistLifecycleApi = {
   absences: async (id: Id) => (await apiClient.get<Absence[]>(`/api/resources/${id}/absences/`)).data,
