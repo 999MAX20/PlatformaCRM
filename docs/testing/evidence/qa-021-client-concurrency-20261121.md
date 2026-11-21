@@ -95,7 +95,11 @@ new roadmap stage or permission/passport claim is needed for this defect correct
 existing roadmap and parallel capability work remain untouched. Other 28 QA IDs
 remain open. No notifications, AI, BusinessEvent or provider changes.
 
-Publication: task-only commit and normal push pending final diff/check review.
+Publication: code commit `dad129e6604a04e9894b6b78da4e58526624e5ec` normal-pushed
+to origin/main; remote SHA read back and matched. Branch remains
+`codex/ui-testing-toolkit`. Outgoing range contained only the reviewed QA-021 commit.
+Task index and committed-range diff hygiene PASS. CI run 44924920096 was
+`in_progress` at publication check, not a claimed PASS; no deployment performed.
 
 Final scoped status: QA-021 implemented and locally verified. No remaining code
 or local evidence gap in this phase. Deployment/live-server acceptance is separate.
