@@ -1,4 +1,4 @@
-QA-017-20261121 LOCAL VERIFIED: multilingual custom-field keys fixed; 31 backend and 6 RU/KK/EN desktop/mobile browser tests PASS, types/i18n/build/check/drift PASS. Publication pending; working DB untouched. [Evidence](docs/testing/evidence/qa-017-custom-field-keys-20261121.md).
+QA-017-20261121 LOCAL VERIFIED: multilingual custom-field keys fixed; 31 backend and 6 RU/KK/EN desktop/mobile browser tests PASS, types/i18n/build/check/drift PASS. Code e7c6ee26 pushed to main; No CI run listed yet for this SHA; working DB untouched. [Evidence](docs/testing/evidence/qa-017-custom-field-keys-20261121.md).
 
 QA-013/004-20261121 LOCAL VERIFIED: room/equipment links use reserved-resource Records filter; advanced reset preserves period; summary counts unique visits. Backend 62 + enhanced OWN/branch check, URL tests 9, browser 6 RU/KK/EN desktop/mobile + empty recovery 1, builds/types/i18n/check/drift PASS. Code 0029b2c5 pushed to main; CI44931895566 in progress. No working DB/deployment; 24 other report IDs remain open. [Evidence](docs/testing/evidence/qa-013-resource-filter-20261121.md).
 

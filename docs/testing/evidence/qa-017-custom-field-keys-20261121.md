@@ -24,7 +24,7 @@ stale-validation race tests, saved values and access controls, dependent custom-
 suites, check/migration drift. Real create/edit/retry browser flows RU/KK/EN desktop
 and mobile with inspected screenshots; types/i18n and separate-output builds.
 Use disposable DB/ports only. Shared server/build and production remain untouched.
-Status: locally verified; publication pending. QA-017 scoped acceptance passed.
+Status: locally verified and code published. QA-017 scoped acceptance passed.
 
 Before: API missing-key reproducer FAIL400 (before.log); UI slug expression maps
 both Russian QA labels to qa. After: 22 focused custom-field/key tests PASS
@@ -75,3 +75,8 @@ roadmap/README need no change because this fixes existing behavior without chang
 roadmap scope or setup. Of 29 source QA IDs, six have local closure evidence and
 23 remain open; next work is the highest-severity remaining locally reproducible
 issue. No remaining code gap in this QA-017 phase; live acceptance remains external.
+
+Publication: code `e7c6ee2620d393a65887b8e22c17a71bd83b4e88` on `codex/ui-testing-toolkit`, normal-pushed to
+origin main; remote SHA read back matches. Only 13 task-owned paths/hunks committed;
+foreign WIP preserved. Working/index/committed-range diff hygiene PASS, registry JSON
+and new evidence target PASS. No CI run listed yet for this SHA. CI is not claimed green.
