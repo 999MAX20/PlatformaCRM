@@ -1,4 +1,4 @@
-## Личные медицинские шаблоны: S17
+## Медицинские шаблоны: S17
 
 Settings → medical-templates подключён к /medical/document-templates/ для
 doctor/head с текущим медицинским доступом. Sidebar и route guard проверяют
@@ -13,7 +13,13 @@ workspace-access; эта проверка не предоставляет общ
 блокируется до обновления её version_id. Desktop/mobile RU/KK/EN проверены в
 8 browser scenarios, включая пагинацию и read recovery;2 settings boundary
 regressions PASS.22 снимка просмотрены; детали в DENTAL-MCS checkpoint.
-Утверждение/общие шаблоны, подстановки и PDF остаются отдельными открытыми критериями.
+Личная отправка/очередь/решение и статусы версий подключены; проверенный срез
+описан в DENTAL-MCS checkpoint. Общий режим использует common workspace-access,
+показывается только при действующем head business-scope view и повторно проверяет
+create/update. Editor/Detail/History/Submit используют отдельные common маршруты,
+а очередь и решение переиспользуются. Подстановки в документ и PDF остаются
+открытыми критериями. Common режим:6 RU/KK/EN desktop/mobile сценариев PASS после исправления подписи;
+15 personal/review регрессий PASS. Доказательства и ограничения в checkpoint.
 
 ## Медицинские роли: S18/M21, локально проверенный сценарий
 

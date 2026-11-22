@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { medicalTemplatesApi as api, type TemplateVersion } from "../../../api/medicalTemplates";
+import { medicalTemplatesApi, type TemplateVersion } from "../../../api/medicalTemplates";
 import { Input } from "../../../components/ui/Input";
 import { Textarea } from "../../../components/ui/Textarea";
 import { useI18n } from "../../../lib/i18n";
 import { MedicalRoleCommand, type RoleFormControl } from "../roles/MedicalRoleCommand";
 
-export function TemplateEditor({ businessId, version, control }: {
-  businessId: number; version: TemplateVersion | null; control: RoleFormControl;
+export function TemplateEditor({ businessId, version, control, api = medicalTemplatesApi }: {
+  api?: typeof medicalTemplatesApi; businessId: number; version: TemplateVersion | null; control: RoleFormControl;
 }) {
   const { t } = useI18n();
   const [title, setTitle] = useState(version?.template.title ?? "");

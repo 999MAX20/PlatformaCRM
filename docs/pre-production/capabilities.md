@@ -88,8 +88,11 @@ history/read: текущая роль doctor/head, own scope, server-owned ident
 и утверждение, metadata текущих прав; approved selector выдаёт только общие либо
 собственные утверждённые версии. Новый draft сохраняет прежнюю approved версию
 доступной.63 focused domain/API tests PASS в изолированной SQLite, включая personal
-регрессии, replay/stale, scope denial и audit rollback. Общий UI и интеграция
-selector в создаваемый документ ещё не реализованы; PostgreSQL concurrency не проверена.
+регрессии, replay/stale, scope denial и audit rollback. Общий UI подключён к S17:
+отдельный режим head, существующие редактор/история/отправка и очередь утверждения.
+6 common RU/KK/EN desktop/mobile сценариев и15 personal/review регрессий PASS;
+66 применимых снимков просмотрены, build/types/i18n PASS, подробности в checkpoint. Интеграция selector в создаваемый
+документ ещё не реализована; PostgreSQL concurrency не проверена.
 
 Добавлены source-scoped филиалы и исходящие предложения врача:82 focused/dependent
 backend tests/check/drift PASS в изолированном SQLite. UI из записи и active

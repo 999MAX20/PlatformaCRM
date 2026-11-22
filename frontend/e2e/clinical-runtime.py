@@ -98,7 +98,7 @@ if templates_fixture:
         member = BusinessMember.objects.create(business=business, user=head, role="specialist")
         role = BusinessRole.objects.create(business=business, name="Synthetic template reviewer")
         MedicalRoleAssignment.objects.create(member=member, business_role=role, kind="head", granted_by=business.owner)
-        for action in ("view", "approve"):
+        for action in ("view", "create", "update", "approve"):
             RolePermission.objects.create(business_role=role, resource="medical_documents",
                 action=action, scope="business", is_allowed=True)
 if participation_fixture:

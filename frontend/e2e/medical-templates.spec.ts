@@ -290,3 +290,64 @@ for (const language of ["ru", "kk", "en"] as const) for (const mobile of [false,
     await page.screenshot({ path: info.outputPath("list.png") });
   });
 }
+
+for (const [language, t] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
+  for (const width of [1440, 390]) test(`common template: ${language} ${width} lifecycle`, async ({ page }, info) => {
+    test.setTimeout(120_000);
+    await page.setViewportSize({ width, height: 900 });
+    await login(page, language, "medical-template-head@example.test");
+    const workspace = page.getByTestId("medical-template-workspace");
+    await workspace.getByRole("button", { name: t["medical.templates.common"], exact: true }).click();
+    const create = workspace.getByRole("button", { name: t["medical.templates.commonCreate"], exact: true });
+    await create.click();
+    const dialog = page.getByRole("dialog");
+    const title = `Synthetic common ${language} ${width}`;
+    await dialog.getByRole("textbox", { name: t["medical.templates.title"], exact: true }).fill(title);
+    await dialog.getByRole("textbox", { name: t["medical.templates.text"], exact: true }).fill("Synthetic common text");
+    let fail = true;
+    const keys: string[] = [];
+    await page.route("**/api/medical/document-templates/common/", route => {
+      if (route.request().method() !== "POST") return route.continue();
+      keys.push(route.request().headers()["idempotency-key"]);
+      return fail ? route.fulfill({ status: 503, json: { detail: "Synthetic retry" } }) : route.continue();
+    });
+    await dialog.getByRole("button", { name: t["common.save"], exact: true }).click();
+    await expect(dialog.getByRole("alert")).toBeVisible();
+    await expect(dialog.getByRole("textbox", { name: t["medical.templates.title"], exact: true })).toHaveValue(title);
+    await page.screenshot({ path: info.outputPath("common-retry.png"), animations: "disabled" });
+    fail = false;
+    await dialog.getByRole("button", { name: t["common.save"], exact: true }).click();
+    await expect(dialog).toHaveCount(0);
+    expect(keys[0]).toBe(keys[1]);
+    const row = workspace.getByRole("listitem").filter({ hasText: title });
+    await row.getByRole("button").click();
+    await dialog.getByRole("button", { name: t["medical.templates.submit"], exact: true }).click();
+    await dialog.getByRole("button", { name: t["medical.templates.submitConfirm"], exact: true }).click();
+    await expect(dialog).toHaveCount(0);
+    await workspace.getByRole("button", { name: t["medical.templates.queue"], exact: true }).click();
+    await row.getByRole("button").click();
+    await dialog.getByRole("button", { name: t["medical.templates.approve"], exact: true }).click();
+    await dialog.getByRole("button", { name: t["medical.templates.approveConfirm"], exact: true }).click();
+    await expect(dialog).toHaveCount(0);
+    await workspace.getByRole("button", { name: t["medical.templates.common"], exact: true }).click();
+    await row.getByRole("button").click();
+    await expect(dialog.getByText(t["medical.templates.state.approved"], { exact: true })).toBeVisible();
+    await page.screenshot({ path: info.outputPath("common-approved.png"), animations: "disabled" });
+    await dialog.getByRole("button", { name: t["medical.templates.newVersion"], exact: true }).click();
+    await dialog.getByRole("textbox", { name: t["medical.templates.text"], exact: true }).fill("Synthetic revised common text");
+    await dialog.getByRole("button", { name: t["common.save"], exact: true }).click();
+    await expect(dialog).toHaveCount(0);
+    await row.getByRole("button").click();
+    await expect(dialog.getByText(t["medical.templates.state.draft"], { exact: true })).toBeVisible();
+    const history = dialog.getByRole("region", { name: t["medical.templates.history"], exact: true });
+    await history.getByRole("button").last().click();
+    await expect(dialog.getByText(t["medical.templates.state.approved"], { exact: true })).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(dialog).toHaveCount(0);
+    await expect(row.getByRole("button")).toBeFocused();
+    await page.screenshot({ path: info.outputPath("common-list.png"), animations: "disabled" });
+    const audit = await new AxeBuilder({ page }).include('[data-testid="medical-template-workspace"]').analyze();
+    expect(audit.violations.filter(item => ["critical", "serious"].includes(item.impact ?? ""))).toEqual([]);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  });
+}

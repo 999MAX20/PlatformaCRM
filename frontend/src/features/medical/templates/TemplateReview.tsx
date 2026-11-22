@@ -16,10 +16,10 @@ export function TemplateReviewStatus({ review }: { review: TemplateReviewSummary
   </div>;
 }
 
-export function TemplateSubmit({ businessId, versionId, control }: { businessId: number; versionId: number; control: RoleFormControl }) {
+export function TemplateSubmit({ businessId, versionId, control, submit = api.submit }: { submit?: typeof api.submit; businessId: number; versionId: number; control: RoleFormControl }) {
   const { t } = useI18n();
   return <MedicalRoleCommand payload={{ business_id: businessId }} dirty={false} control={control}
-    label={t("medical.templates.submitConfirm")} submit={(payload, key) => api.submit(versionId, payload, key)}>
+    label={t("medical.templates.submitConfirm")} submit={(payload, key) => submit(versionId, payload, key)}>
     <p className="text-sm">{t("medical.templates.submitHint")}</p>
   </MedicalRoleCommand>;
 }

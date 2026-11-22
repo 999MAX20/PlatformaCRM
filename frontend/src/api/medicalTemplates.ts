@@ -37,3 +37,14 @@ export const medicalTemplatesApi = {
   create: (payload: TemplateDraft, key: string) => save("", payload, key),
   update: (template_id: number, payload: TemplateDraft & { expected_revision: number }, key: string) => save(`${template_id}/draft/`, payload, key),
 };
+
+export const commonTemplatesApi: typeof medicalTemplatesApi = {
+  ...medicalTemplatesApi,
+  access: (business_id, signal) => read<TemplateAccess>("common/workspace-access/", { business_id }, signal),
+  list: (business_id, before_id, signal) => read("common/", { business_id, before_id }, signal),
+  history: (business_id, template_id, before_revision, signal) => read(`common/${template_id}/revisions/`, { business_id, before_revision }, signal),
+  version: (business_id, version_id, signal) => read(`common/versions/${version_id}/`, { business_id }, signal),
+  submit: (version_id, payload, key) => reviewCommand(`common/versions/${version_id}/submit/`, payload, key),
+  create: (payload, key) => save("common/", payload, key),
+  update: (template_id, payload, key) => save(`common/${template_id}/draft/`, payload, key),
+};

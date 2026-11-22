@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { medicalTemplatesApi as api, type TemplateAccess, type TemplateRow, type TemplateVersion, type TemplateVersionRow } from "../../../api/medicalTemplates";
+import { medicalTemplatesApi as api, commonTemplatesApi, type TemplateAccess, type TemplateRow, type TemplateVersion, type TemplateVersionRow } from "../../../api/medicalTemplates";
 import { getApiErrorMessage } from "../../../api/client";
 import { Button } from "../../../components/ui/Button";
 import { Modal } from "../../../components/ui/Modal";
@@ -15,18 +15,19 @@ export function TemplateWorkspace({ businessId, active, onDraft }: {
 }) {
   const { t } = useI18n();
   const [access, setAccess] = useState<TemplateAccess | null>(null);
+  const [commonAccess, setCommonAccess] = useState<TemplateAccess | null>(null);
   const [rows, setRows] = useState<TemplateRow[]>([]);
   const [cursor, setCursor] = useState<number | null>(null);
   const [error, setError] = useState<unknown>(null);
   const [loading, setLoading] = useState(false);
   const [attempt, setAttempt] = useState(0);
-  const [mode, setMode] = useState<"personal" | "reviews">("personal");
+  const [mode, setMode] = useState<"personal" | "common" | "reviews">("personal");
   const [dialog, setDialog] = useState<"create" | TemplateRow | null>(null);
   const guard = useRef<RoleDraftState>({ dirty: false, pending: false });
   const request = useRef<AbortController | null>(null);
   const focusReturn = useRef("medical-template-create");
   const denied = useCallback((cause: unknown) => {
-    setRows([]); setAccess(null); setDialog(null); setCursor(null); setError(cause);
+    setRows([]); setAccess(null); setCommonAccess(null); setDialog(null); setCursor(null); setError(cause);
     guard.current = { dirty: false, pending: false }; onDraft(guard.current);
   }, [onDraft]);
   const load = useCallback(async (before?: number) => {
@@ -36,7 +37,15 @@ export function TemplateWorkspace({ businessId, active, onDraft }: {
     try {
       const permissions = await api.access(businessId, controller.signal);
       if (mode === "reviews" && !permissions.actions.approve) { setMode("personal"); setRows([]); setCursor(null); setAccess(permissions); return; }
-      const page = mode === "reviews" ? await api.pending(businessId, before, controller.signal) : await api.list(businessId, before, controller.signal);
+      let shared: TemplateAccess | null = null;
+      if (permissions.kind === "head") {
+        try { shared = await commonTemplatesApi.access(businessId, controller.signal); }
+        catch (cause) { if (!medicalRoleDenied(cause)) throw cause; }
+      }
+      if (controller.signal.aborted) return;
+      setCommonAccess(shared);
+      if (mode === "common" && !shared) { setMode("personal"); setRows([]); setCursor(null); setAccess(permissions); return; }
+      const page = mode === "common" ? await commonTemplatesApi.list(businessId, before, controller.signal) : mode === "reviews" ? await api.pending(businessId, before, controller.signal) : await api.list(businessId, before, controller.signal);
       if (controller.signal.aborted) return;
       const items = page.results.map(row => ({ ...row, created_at: "created_at" in row ? row.created_at : row.submitted_at }));
       setAccess(permissions); setRows(previous => before ? [...previous, ...items] : items); setCursor(page.next_before_id);
@@ -60,16 +69,19 @@ export function TemplateWorkspace({ businessId, active, onDraft }: {
     focusReturn.current = value === "create" ? "medical-template-create" : `medical-template-${value.template_id}`;
     setDialog(value);
   }
+  const draftApi = mode === "common" ? commonTemplatesApi : api;
+  const draftAccess = mode === "common" ? commonAccess : access;
+  const createLabel = mode === "common" ? "medical.templates.commonCreate" : "medical.templates.create";
   if (!active && !access) return null;
   return <div className="space-y-4" data-testid="medical-template-workspace">
     <p className="text-sm text-platforma-subtle" role="status">{t("medical.templates.draftStatus")}</p>
-    {access?.actions.approve ? <div className="flex flex-wrap gap-2">
-      {(["personal", "reviews"] as const).map(value => <Button key={value} variant={mode === value ? "primary" : "secondary"} aria-pressed={mode === value}
+    {access?.actions.approve || commonAccess ? <div className="flex flex-wrap gap-2">
+      {(["personal", ...(commonAccess ? ["common" as const] : []), ...(access?.actions.approve ? ["reviews" as const] : [])] as const).map(value => <Button key={value} variant={mode === value ? "primary" : "secondary"} aria-pressed={mode === value}
         onClick={() => { if (mode === value) return; setRows([]); setCursor(null); setLoading(true); setMode(value); }} disabled={loading}>
-        {t(value === "personal" ? "medical.templates.personal" : "medical.templates.queue")}</Button>)}
+        {t(value === "personal" ? "medical.templates.personal" : value === "common" ? "medical.templates.common" : "medical.templates.queue")}</Button>)}
     </div> : null}
     <div className="flex flex-wrap gap-2">
-      {mode === "personal" && access?.actions.create ? <Button id="medical-template-create" onClick={() => open("create")}>{t("medical.templates.create")}</Button> : null}
+      {mode !== "reviews" && draftAccess?.actions.create ? <Button id="medical-template-create" onClick={() => open("create")}>{t(createLabel)}</Button> : null}
       <Button variant="secondary" disabled={loading} onClick={() => setAttempt(value => value + 1)}>{t("medical.clinical.reload")}</Button>
     </div>
     {error ? <ErrorState message={getApiErrorMessage(error)} action={<Button variant="secondary" onClick={() => void load()}>{t("common.retry")}</Button>} /> : null}
@@ -77,19 +89,20 @@ export function TemplateWorkspace({ businessId, active, onDraft }: {
       <div className="min-w-0 flex-1 break-words"><p className="font-medium">{row.title}</p><p className="text-sm text-platforma-subtle">{t("medical.templates.version", { revision: row.revision })}</p></div>
       <Button id={`medical-template-${row.template_id}`} variant="secondary" disabled={loading} onClick={() => open(row)}>{t("medical.templates.open")}</Button>
     </li>)}</ul>
-    {loading ? <LoadingState /> : !error && !rows.length ? <p className="text-sm text-platforma-subtle">{t(mode === "personal" ? "medical.templates.empty" : "medical.templates.queueEmpty")}</p> : null}
+    {loading ? <LoadingState /> : !error && !rows.length ? <p className="text-sm text-platforma-subtle">{t(mode === "reviews" ? "medical.templates.queueEmpty" : mode === "common" ? "medical.templates.commonEmpty" : "medical.templates.empty")}</p> : null}
     {cursor && !error ? <Button variant="secondary" disabled={loading} onClick={() => void load(cursor)}>{t("medical.templates.more")}</Button> : null}
     <Modal open={dialog !== null} onClose={close} closeOnBackdrop={false} size="lg" focusReturnId={focusReturn.current}
-      title={t(dialog === "create" ? "medical.templates.create" : "medical.templates.open")}>
-      {dialog === "create" ? <TemplateEditor businessId={businessId} version={null} control={{ guard, onDraft, onSaved: saved, onDenied: denied }} /> : dialog && access ?
+      title={t(dialog === "create" ? createLabel : "medical.templates.open")}>
+      {dialog === "create" ? <TemplateEditor api={draftApi} businessId={businessId} version={null} control={{ guard, onDraft, onSaved: saved, onDenied: denied }} /> : dialog && access ?
         mode === "reviews" ? <TemplateReviewDetail businessId={businessId} versionId={dialog.version_id} control={{ guard, onDraft, onSaved: saved, onDenied: denied }} /> :
-        <TemplateDetail businessId={businessId} row={dialog} canUpdate={access.actions.update}
+        <TemplateDetail api={draftApi} businessId={businessId} row={dialog} canUpdate={!!draftAccess?.actions.update}
           control={{ guard, onDraft, onSaved: saved, onDenied: denied }} /> : null}
     </Modal>
   </div>;
 }
 
-function TemplateDetail({ businessId, row, canUpdate, control }: {
+function TemplateDetail({ businessId, row, canUpdate, control, api }: {
+  api: typeof commonTemplatesApi;
   businessId: number; row: TemplateRow; canUpdate: boolean;
   control: Parameters<typeof TemplateEditor>[0]["control"];
 }) {
@@ -105,10 +118,10 @@ function TemplateDetail({ businessId, row, canUpdate, control }: {
     void api.version(businessId, versionId, controller.signal).then(value => { if (!controller.signal.aborted) setVersion(value); })
       .catch(cause => { if (!controller.signal.aborted) { if (medicalRoleDenied(cause)) control.onDenied(cause); else setError(cause); } });
     return () => controller.abort();
-  }, [businessId, versionId, attempt, control.onDenied]);
+  }, [api, businessId, versionId, attempt, control.onDenied]);
   if (error) return <ErrorState message={getApiErrorMessage(error)} action={<Button onClick={() => setAttempt(value => value + 1)}>{t("common.retry")}</Button>} />;
   if (!version) return <LoadingState />;
-  if (editing) return <TemplateEditor version={version} businessId={businessId} control={control} />;
+  if (editing) return <TemplateEditor api={api} version={version} businessId={businessId} control={control} />;
   return <div className="space-y-4">
     <h2 className="break-words text-base font-semibold">{version.template.title}</h2>
     <p className="text-sm text-platforma-subtle">{t("medical.templates.version", { revision: version.revision })}</p>
@@ -117,13 +130,14 @@ function TemplateDetail({ businessId, row, canUpdate, control }: {
     {version.reason ? <p className="whitespace-pre-wrap break-words text-sm">{t("medical.templates.reason")}: {version.reason}</p> : null}
     {!submitting && canUpdate && version.revision === version.current_revision ? <Button onClick={() => setEditing(true)}>{t(version.review ? "medical.templates.newVersion" : "medical.templates.edit")}</Button> : null}
     {canUpdate && version.revision === version.current_revision && !version.review ?
-      submitting ? <TemplateSubmit key={version.version_id} businessId={businessId} versionId={version.version_id} control={control} /> :
+      submitting ? <TemplateSubmit submit={api.submit} key={version.version_id} businessId={businessId} versionId={version.version_id} control={control} /> :
         <Button onClick={() => setSubmitting(true)}>{t("medical.templates.submit")}</Button> : null}
-    {!submitting ? <TemplateHistory businessId={businessId} templateId={row.template_id} onSelect={setVersionId} onDenied={control.onDenied} /> : null}
+    {!submitting ? <TemplateHistory api={api} businessId={businessId} templateId={row.template_id} onSelect={setVersionId} onDenied={control.onDenied} /> : null}
   </div>;
 }
 
-function TemplateHistory({ businessId, templateId, onSelect, onDenied }: {
+function TemplateHistory({ businessId, templateId, onSelect, onDenied, api }: {
+  api: typeof commonTemplatesApi;
   businessId: number; templateId: number; onSelect: (id: number) => void; onDenied: (cause: unknown) => void;
 }) {
   const { t } = useI18n();
@@ -140,7 +154,7 @@ function TemplateHistory({ businessId, templateId, onSelect, onDenied }: {
       if (!controller.signal.aborted) { setRows(previous => before ? [...previous, ...page.results] : page.results); setCursor(page.next_before_revision); }
     } catch (cause) { if (!controller.signal.aborted) { if (medicalRoleDenied(cause)) onDenied(cause); else setError(cause); } }
     finally { if (!controller.signal.aborted) setLoading(false); }
-  }, [businessId, templateId, onDenied]);
+  }, [api, businessId, templateId, onDenied]);
   useEffect(() => { void load(); return () => request.current?.abort(); }, [load]);
   return <section className="space-y-2" aria-label={t("medical.templates.history")}>
     <h3 className="text-base font-semibold">{t("medical.templates.history")}</h3>
