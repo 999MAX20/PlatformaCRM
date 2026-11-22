@@ -473,6 +473,45 @@ class MedicalEncounterRevision(models.Model):
         ]
 
 
+class MedicalDocumentTemplate(TimeStampedModel):
+    business = models.ForeignKey("businesses.Business", on_delete=models.PROTECT,
+                                 related_name="medical_document_templates")
+    code = models.CharField(max_length=64,
+        validators=[RegexValidator(r"^[a-z][a-z0-9_]*$", "Provide a template identifier.")])
+    owner_member = models.ForeignKey("businesses.BusinessMember", on_delete=models.PROTECT, null=True, blank=True,
+                                     related_name="personal_document_templates")
+    revision = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["business", "code"], name="medical_template_code_unique"),
+            models.CheckConstraint(condition=~models.Q(code=""), name="medical_template_code_present"),
+        ]
+
+    def clean(self):
+        super().clean()
+        from apps.businesses.models import BusinessMember
+        if self.owner_member_id is not None and not BusinessMember.objects.filter(
+                pk=self.owner_member_id, business_id=self.business_id).exists():
+            raise ValidationError({"owner_member": "Select a member of this business."})
+
+
+class MedicalDocumentTemplateRevision(models.Model):
+    template = models.ForeignKey(MedicalDocumentTemplate, on_delete=models.PROTECT, related_name="versions")
+    revision = models.PositiveIntegerField()
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT,
+                              related_name="medical_template_versions")
+    snapshot_encrypted = models.TextField(editable=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["template", "revision"], name="medical_template_version_unique"),
+            models.CheckConstraint(condition=models.Q(revision__gte=1), name="medical_template_ver_positive"),
+            models.CheckConstraint(condition=~models.Q(snapshot_encrypted=""), name="medical_template_ver_content"),
+        ]
+
+
 class MedicalDocument(TimeStampedModel):
     business = models.ForeignKey("businesses.Business", on_delete=models.PROTECT, related_name="medical_documents")
     encounter = models.ForeignKey(MedicalEncounter, on_delete=models.PROTECT, related_name="documents")

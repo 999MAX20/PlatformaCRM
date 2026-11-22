@@ -22,7 +22,7 @@ def validate_document_template(value, code):
         raise ValidationError({"template": "Provide a versioned template snapshot."})
     if (not isinstance(code, str) or not re.fullmatch(r"[a-z][a-z0-9_]{0,63}", code)
             or value["code"] != code or type(value["version"]) is not int or value["version"] < 1
-            or not isinstance(value["title"], str) or not 1 <= len(value["title"]) <= 255
+            or not isinstance(value["title"], str) or not 1 <= len(value["title"]) <= 255 or not value["title"].strip()
             or not isinstance(value["text"], str) or len(value["text"]) > 131072):
         raise ValidationError({"template": "Provide valid template fields."})
     return dict(value)
