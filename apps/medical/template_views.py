@@ -4,6 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .serializers import StrictSerializer
+from .document_rendering import DOCUMENT_FIELDS
 from .common_template_services import (
     common_template_workspace_access, list_approved_templates, list_common_template_drafts,
     list_common_template_versions, read_approved_template_version, read_common_template_version,
@@ -91,6 +92,13 @@ class MedicalDocumentTemplateViewSet(viewsets.GenericViewSet):
         serializer.is_valid(raise_exception=True)
         return Response(personal_template_workspace_access(actor=request.user,
             **serializer.validated_data))
+
+    @action(detail=False, methods=["get"], url_path="field-options")
+    def field_options(self, request):
+        serializer = self.get_serializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+        personal_template_workspace_access(actor=request.user, **serializer.validated_data)
+        return Response({"fields": DOCUMENT_FIELDS})
 
     def list(self, request):
         serializer = self.get_serializer(data=request.query_params)

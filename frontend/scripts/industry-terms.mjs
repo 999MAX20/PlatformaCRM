@@ -1,7 +1,9 @@
 // Generic UI labels must not inherit the pilot industry's vocabulary.
 // Industry selectors and safety language are distinct from generic entity names.
 const explicitIndustryKeys = new Set(["businessType.dentistry", "businessType.medical"]);
-const medicalModuleKeys = new Set(["medical.fullName", "medical.create", "medical.clinical.verifyFirst", "medical.tooth.title", "medical.tooth.orientation", "medical.participation.invite", "medical.participation.doctor", "medical.participation.workDirectionHint"]);
+const medicalModuleKeys = new Set(["medical.fullName", "medical.create", "medical.clinical.verifyFirst", "medical.tooth.title", "medical.tooth.orientation", "medical.participation.invite", "medical.participation.doctor", "medical.participation.workDirectionHint",
+  "medical.fields.clinicName", "medical.fields.clinicLegalName", "medical.fields.clinicTaxId",
+  "medical.fields.clinicAddress", "medical.fields.clinicPhone", "medical.fields.doctorName"]);
 medicalModuleKeys.add("medical.roles.kind.doctor");
 medicalModuleKeys.add("medical.roles.resource.medical_patients");
 medicalModuleKeys.add("medical.templates.draftStatus");

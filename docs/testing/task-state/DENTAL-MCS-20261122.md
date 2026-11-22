@@ -1,5 +1,108 @@
 # DENTAL-MCS-20261122: полная реализация медицинского ТЗ
 
+Field picker local acceptance complete on base1fea4bb2, branch codex/ui-testing-toolkit,
+canonical C:/Users/user/Desktop/PlatformaCRM. R5 terminal PASS12/4.8m;
+R4 unchanged boundary PASS1 (whole R4 failed later on fixture, see attempts).
+Final build25564 PASS7907 keys/types/app/widget and static29149 PASS.
+Backend8196 PASS15/1.064s; industry label tests PASS5; check/drift PASS in R1
+isolated runtime. No schema/env/notification/BusinessEvent/AI changes.
+Commands: tests_template_api + tests_common_template_api --noinput in isolated
+runtime; node --test scripts/tests/industry-terms.test.mjs; npm run build;
+Playwright medical-templates.spec.ts --config=playwright.clinical.config.ts
+--grep 'templates (ru|kk|en)|common template:' --max-failures=1,
+E2E_MEDICAL_TEMPLATES=1. Boundary command adds 'template fields:' to grep.
+Logs: TEMP/dental-template-fields-browser-r5-20261122.log,
+TEMP/dental-template-fields-browser-r4-20261122.log,
+TEMP/dental-template-fields-build-final-20261122.log,
+TEMP/dental-template-fields-static-final-20261122.log,
+TEMP/dental-template-fields-api-20261122.log.
+Screenshots: output/playwright/medical-template-fields-20261122-r5 (48),
+r4 boundary folder (4); all52 captured and visually inspected. Existing tokens,
+control sizes, mobile stacking, localized labels, no overflow in affected area;
+keyboard/focus, dirty close, retained draft, empty/error/retry/denied and size
+boundary exercised. Axe WCAG2a/aa passes personal editors. No new assets/motion
+or decorative claims; Anti Slop scoped delivery gate PASS. Native device/provider/
+PostgreSQL/full-release acceptance not claimed. Tests use synthetic data and
+injected UI failures; backend authorization separately verified.
+M11 matrix/access/frontend/capabilities synchronized; spec/design/README require
+no change (approved requirements/design/setup unchanged). Entire goal ACTIVE:
+field authoring gap closed locally, full M11 still needs license/professional
+sources, PDF/checksum/lifecycle and remaining matrix. Commit/push pending.
+
+R4 process44338 terminal: boundary PASS1 (empty/limit/replacement/focus/denial),
+then personal RU desktop failed expecting catalog503 alert. One-shot route fault
+was consumed by dev StrictMode aborted first load; second GET200 succeeds.
+Confirmed React.StrictMode at frontend/src/main.tsx. Fault now remains503 until
+explicit retry click, no product change. R5 process82303 reruns only12 dependent
+personal/common scenarios; unchanged boundary evidence from R4 retained.
+Logs: TEMP/dental-template-fields-browser-r4-20261122.log and
+TEMP/dental-template-fields-browser-r5-20261122.log.
+
+R3 process17611 terminal: boundary passed length preservation/replacement/focus,
+but failed on expected medical.denied wording. Actual TemplateWorkspace deliberately
+uses shared getApiErrorMessage sanitizer; dialog closed, actions/data cleared.
+Verified current handler at TemplateWorkspace.tsx:29-30/87. Corrected test to
+existing contract: visible sanitized alert, no rows/create/dialog; no product
+wording change or weakened access criterion. R4 process44338 running13 scenarios,
+TEMP/dental-template-fields-browser-r4-20261122.log. No duplicate live runtime.
+
+Browser22838/R2 terminal FAIL boundary: after max-length insertion error,
+Textarea accessible name included nested error text, exact labelled locator no
+longer resolved. Screenshot inspected: content retained and limit error visible.
+Minimal product fix: explicit localized aria-label on TemplateEditor textarea;
+error remains aria-describedby. Added limit-state screenshot. R3 process17611
+rechecks boundary first then dependent12 scenarios; TEMP/dental-template-fields-browser-r3-20261122.log.
+Static77919 PASS before this aria-label delta; final build/static still required.
+
+Build73536 R3 PASS7907 i18n keys/types/app/widget. Browser76886 R1 terminal
+exit1: no tests matched (anchored --grep matched full Playwright title, not only
+test name); check/drift PASS, no browser acceptance executed. Corrected grep to
+unanchored scoped names and included new boundary case; R2 launched with
+TEMP/dental-template-fields-browser-r2-20261122.log and output/playwright/
+medical-template-fields-20261122-r2. No product change for this runner error.
+Boundary case covers empty catalog, length refusal without truncation, selection
+replacement recovering from limit and catalog403 clearing workspace.
+
+Field catalog backend8196 PASS15/1.064s (tests_template_api + tests_common_template_api),
+TEMP/dental-template-fields-api-20261122.log. Frontend insertion implemented after
+this PASS: server allowlist, localized existing/new labels, cursor/selection replace,
+focus return, length refusal, catalog503 retry preserves draft. Exact six medical
+label exemptions added to industry-terms guard; generic/unreviewed labels still
+rejected,5 node tests PASS. BuildR1 correctly caught unregistered medical-only
+labels; R2 caught Object.hasOwn unsupported by current TS target. Fixed exact
+keys and used hasOwnProperty.call, no tsconfig weakening. Logs TEMP/dental-template-fields-build[-r2]-20261122.log.
+Final build73536 R3 and browser76886 R1 running (12 personal/common RU/KK/EN
+390/1440 scenarios, isolated runtime + check/drift). Preserve attempts; no equivalent
+retry without changed inputs. Full goal ACTIVE; current field picker not yet verified.
+
+Field insertion continuation contract, base1fea4bb2, canonical root/current branch.
+Previous goal turn = progress: published verified source snapshots + reachable
+preview. Current gap: TemplateEditor requires manually typing known field tokens.
+Reuse renderer DOCUMENT_FIELDS, existing template workspace ACL, API adapter,
+Select/Button/Textarea and dirty/retry guards. Add authenticated field-options
+catalog without patient data, localized selection and insertion at saved selection
+with focus return, size limit and recoverable catalog errors preserving draft.
+No schema/env/notification/BusinessEvent/AI changes; no new medical policy.
+Skills reused antislop during/UI/human/layoutmobile/copywriting and zani domain/
+frontend/verification: same tokens/dials1/1/1, meaningful controls, keyboard/focus,
+RU/KK/EN +390/1440 layout and retained text. Test catalog scope/denial, then real
+personal/common editor insert/save/reopen/recovery; build/types/check/drift/static,
+capture+inspect affected screenshots. Full M11/goal remains open.
+
+Preview API/editor published1fea4bb22561abad3a3402bca10ad169b2cf2bcc,
+normal push origin/main and remote SHA exact.13 own files249+/24-; preceding
+snapshot/domain5469fee8 also published. Committed static26562 PASS:
+TEMP/dental-document-preview-ui-static-committed-20261122.log. CI45036064247
+in_progress (not PASS). Canonical C:/Users/user/Desktop/PlatformaCRM,
+branch codex/ui-testing-toolkit retained; foreign WIP excluded, index empty.
+Own test/build processes terminal, no deployment/working-DB mutation. This
+post-publication checkpoint remains WIP for next task commit, no publish loop.
+Turn progress: approved template auto-fill now reaches real document editor;
+server identity/source snapshots and stale-source guard verified. User decision
+head-only template approval retained in contract and implementation. Full goal
+ACTIVE; next dependent work is template-authoring field selection, then remaining
+M11 profiles/license/PDF/lifecycle and full matrix. Do not mark M11/goal complete.
+
 Final EN copy evidence:16 screenshots captured and visually inspected in
 output/playwright/medical-document-preview-en-final-20261122 (review-1..4.jpg).
 Final applicable set:32 unchanged RU/KK +16 final EN =48 screenshots;64 viewed
@@ -4147,7 +4250,7 @@ Git-среза находятся выше; runtime-доказательства
 | M08 §4.2–4.4; D05; B09–11; Q13–15 | Один Encounter на реальный Appointment того же Client/Business; свои клинические данные | Черновик/revision/обязательные разделы/явная неприменимость; обычный/частичный исход; walk-in текущим днём, ранний через руководителя | Чужие связи/revision отклонены; финансовый переход через существующий сервис ровно один раз, unpaid не блокирует помощь, rollback | Частично: chart/open/draft/read/workspace services и API, encrypted versions/audit, migrations0009–0011; current role/basis/identity/replay checks. Срезы30–37 содержат доказательства и исправление B03. Срез43 добавил calendar→chart/open/draft UI; текущая проверка в начале checkpoint. Срез44 добавил history/revision reader, current display labels; проверки ниже/в начале checkpoint. Full UI/team/temporary ACL, signatures/obligations, walk-in и atomic calendar completion ещё нужны | Chart/open/draft/versions/audit; current ACL | Appointment context; workspace; draft; history/revision | Calendar → приём/черновик/история | Завершение+calendar/money; walk-in; team/temporary; остальные вкладки | Подписи/формы см. M11–M12 |
 | M09 §2.2,4,16.2 | Одонтограмма постоянных/молочных/смешанных зубов, поверхности, наблюдения, авторство и история | Модели текущего состояния/append history, связи приём/план/снимки | Изменение сохраняет прежнее и новое, неверный зуб/поверхность отвергнуты, права/конкурентность | Частично: срез47 добавил state/history schema и migration0012;29 storage/dependent tests/check/drift PASS. Срез48 encrypted helpers:30 tests/check/drift PASS; Срез49 exact-version audit:380 medical tests PASS; срез50 primary command/exact reader:50 PASS; срез51 HTTP:40 PASS/check/drift. Срез52 snapshot/history API:41 tests PASS, дополнительные12 edge tests PASS. Срез53 typed frontend transport10 tests/types/build PASS; Срез54 read UI:6 localized+1 recovery browser PASS; Срез55 whole-tooth editor:6+1 browser PASS; Срез56 surface-options API/shared validator41 tests PASS; Срез58 surface UI:6 localized+1 Map regression browser PASS, types/build/i18n/screens PASS; team/linked plans/images/clinical legend/concurrency ещё открыты | Tooth state/encrypted append history; surface policy | Write/exact read/snapshot/history/surface options | Постоянные/молочные/смешанные зубы; история; редактор поверхностей | Планы/снимки/team; PG concurrency; клиническая легенда | Утверждённый справочник поверхностей не получен |
 | M10 §2.4,4,6 | Клинический план отдельно, ссылки на VisitPlan/Step и существующие деньги | Клинические шаги/версии/связи; подтверждённое преобразование в календарь без неявного долга | Изменение медплана не создаёт Payment/бронь, сохраняет организационные ссылки | Не реализовано | Не реализовано | Не реализовано | Не реализовано | Клинические шаги/версии/связи; подтверждённое преобразование в календарь без неявного долга | Внешний блокер независимой реализации не установлен |
-| M11 §5,16.2; D06; Q16–17 | Версионные шаблоны документов по виду/услуге, бренд и реквизиты, автор/врач/реальный подписант отдельно | Матрица обязательности/момента/подписантов; снапшоты источников, PDF, ограниченный DOCX, печать | Старый PDF/checksum не меняется после редактирования клиента/шаблона; новые исправления отдельными версиями | Частично: draft document/revision storage, зашифрованные снимки clinical/template/requisites/авторов; проверки в начале checkpoint | MedicalDocument/Revision + primary draft create/update/read, current ACL/audit/replay; approved source/template metadata + separate edited text in schema2,115 dependent/check/drift PASS; schema3 identity/encounter source + literal preview domain/digest,85 dependent/check/drift PASS; Template/Revision + own drafts; version review submit/approve/reject/read domain/API + pending queue,58 affected tests/check/drift PASS; signed/finalized открыты | Personal templates create/update/list/history/read + verified review summary/approve metadata; common management/history/submit + approved selector domain/API; document create/update/list/history/version API,82 backend/check/drift PASS; independent workspace actions/revisions,41 affected/check/drift PASS; preview/digest HTTP22 API/domain tests PASS | S17 личные и общие шаблоны, редактор/история/отправка/очередь/решения;21 browser PASS, 6 common r2 PASS после исправления подписи,66 применимых снимков просмотрены; document list/detail/history/approved editor:6 browser +8 clinical regressions PASS,61 новых снимков просмотрены; build/types/i18n PASS; preview/edit retention6 browser PASS,48 screenshots reviewed (final EN2 rerun PASS) | Утверждённые шаблоны/матрица, выбор полей в редакторе шаблона, snapshot лицензии/квалификации, PDF/asset bytes/checksum, lifecycle, assistant/team/temporary ACL, API/UI, DOCX/печать | Формы/подписи требуют внешней проверки |
+| M11 §5,16.2; D06; Q16–17 | Версионные шаблоны документов по виду/услуге, бренд и реквизиты, автор/врач/реальный подписант отдельно | Матрица обязательности/момента/подписантов; снапшоты источников, PDF, ограниченный DOCX, печать | Старый PDF/checksum не меняется после редактирования клиента/шаблона; новые исправления отдельными версиями | Частично: draft document/revision storage, зашифрованные снимки clinical/template/requisites/авторов; проверки в начале checkpoint | MedicalDocument/Revision + primary draft create/update/read, current ACL/audit/replay; approved source/template metadata + separate edited text in schema2,115 dependent/check/drift PASS; schema3 identity/encounter source + literal preview domain/digest,85 dependent/check/drift PASS; Template/Revision + own drafts; version review submit/approve/reject/read domain/API + pending queue,58 affected tests/check/drift PASS; signed/finalized открыты | Personal templates create/update/list/history/read + verified review summary/approve metadata; common management/history/submit + approved selector domain/API; document create/update/list/history/version API,82 backend/check/drift PASS; independent workspace actions/revisions,41 affected/check/drift PASS; preview/digest HTTP22 API/domain tests PASS | S17 личные и общие шаблоны, редактор/история/отправка/очередь/решения;21 browser PASS, 6 common r2 PASS после исправления подписи,66 применимых снимков просмотрены; document list/detail/history/approved editor:6 browser +8 clinical regressions PASS,61 новых снимков просмотрены; build/types/i18n PASS; preview/edit retention6 browser PASS,48 screenshots reviewed (final EN2 rerun PASS); field catalog15 API tests, authoring12 browser +1 boundary PASS,52 screenshots reviewed, build/types/static/check/drift PASS | Утверждённые шаблоны/матрица, snapshot лицензии/квалификации, PDF/asset bytes/checksum, lifecycle, assistant/team/temporary ACL, API/UI, DOCX/печать | Формы/подписи требуют внешней проверки |
 | M12 §5.6; D06; Q17 | Подпись desktop/Android/iPhone, черновик ≠ утверждение ≠ подтверждённая ЭЦП | Адаптер выбранного провайдера, проверка сертификата/подписи, несколько подписантов | Callback replay/поздний/отменённый/невалидный не финализирует; реальные испытания всех платформ | Не реализовано; провайдер/доступы не определены | Не реализовано | Не реализовано | Не реализовано | Адаптер выбранного провайдера, проверка сертификата/подписи, несколько подписантов | Провайдер подписи и доступы не определены |
 | M13 §2.5; D07; Q20–24; §22.7 | Приватные файлы, карантин/фактический MIME/антивирус, аудит без PHI; reuse private storage | Медицинский ACL на оригинал/preview/export; ключи/ротация; резервный защищённый журнал; retention по категориям | Сбой сканера не публикует; сбой аудита блокирует write/issue, read только с надёжным журналом; прямой URL не обходит ACL | Частично: криптография и patient-create/update audit rollback PASS; files/retention/read fallback ещё нет, сроки/ресурсы внешне не подтверждены | Medical crypto; атомарный аудит реализованных чтений/записей | Реализованные medical endpoints private/no-store | Файлы/retention отсутствуют | Quarantine/scanner/files ACL; read fallback; retention/rotation | Сроки хранения и инфраструктурные ресурсы не подтверждены |
 | M14 §5.5–5.6; D08; B12–19; Q25–27 | Лично отдельный случайный код, нейтральная ссылка; конкретные версии/комплект обращения, без оплаты/ежедневного OTP | Хеш секрета/лимиты попыток/сессия/новая вкладка; дистанционно дополнительная проверка | До готовности нет доступа; 72ч с активации; repeat/revoke/reissue/представитель/смена контакта; секрет не URL/log | Не реализовано | Не реализовано | Не реализовано | Не реализовано | Хеш секрета/лимиты попыток/сессия/новая вкладка; дистанционно дополнительная проверка | Удалённая проверка получателя и нормативная приёмка |

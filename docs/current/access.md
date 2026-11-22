@@ -101,6 +101,12 @@ HTTP/UI этой команды пока нет: полнота обязател
 быть подключена до приёмки обычного завершения. Head override не изменён.
 Миграции0007–0008 и0014 подготовлены, рабочая БД не изменялась. Композиция оснований ещё не завершена.
 
+GET /medical/document-templates/field-options/ принимает только business_id,
+повторяет current template workspace view для врача/медруководителя и возвращает
+разрешённые renderer field IDs. В ответе нет данных пациента или текста шаблона;
+чтение каталога не создаёт медицинский read audit. No-store/private применяется
+и к отказам. Это не разрешение на создание/изменение/утверждение шаблона.
+
 Document draft domain проверяет medical_documents:create/update, текущую роль,
 филиал и Appointment/Participation basis основного врача своего Encounter;
 verified identity и revisions проверяются перед новой записью. Replay заново

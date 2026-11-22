@@ -81,7 +81,8 @@ revisions для редактора;41 affected tests/check/drift PASS, вклю
 Preview и expected_source_digest подключены к HTTP/UI: новый текст заполняется
 из источника, ручные правки сохранённого документа не перезаписываются.22 API/domain
 теста PASS; браузерная приёмка нового среза указана в checkpoint. Выбор полей при
-создании шаблона, лицензия/квалификация и полный M11 ещё открыты. Проверки и точная граница M11 — в DENTAL-MCS checkpoint.
+создании личного/общего шаблона подключён к renderer catalog;15 API +12 browser
++1 boundary PASS,52 снимка просмотрены; build/types PASS. Лицензия/квалификация и полный M11 ещё открыты. Проверки и точная граница M11 — в DENTAL-MCS checkpoint.
 
 Добавлено внутреннее хранение MedicalDocumentTemplate/Revision для общих и личных
 шаблонов: scope Business/owner member, зашифрованные title/text/reason, отдельное

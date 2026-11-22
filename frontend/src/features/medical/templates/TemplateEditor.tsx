@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { medicalTemplatesApi, type TemplateVersion } from "../../../api/medicalTemplates";
 import { Input } from "../../../components/ui/Input";
 import { Textarea } from "../../../components/ui/Textarea";
 import { useI18n } from "../../../lib/i18n";
 import { MedicalRoleCommand, type RoleFormControl } from "../roles/MedicalRoleCommand";
+import { TemplateFields } from "./TemplateFields";
 
 export function TemplateEditor({ businessId, version, control, api = medicalTemplatesApi }: {
   api?: typeof medicalTemplatesApi; businessId: number; version: TemplateVersion | null; control: RoleFormControl;
@@ -12,12 +13,38 @@ export function TemplateEditor({ businessId, version, control, api = medicalTemp
   const [title, setTitle] = useState(version?.template.title ?? "");
   const [text, setText] = useState(version?.template.text ?? "");
   const [reason, setReason] = useState("");
+  const [insertError, setInsertError] = useState(false);
+  const textarea = useRef<HTMLTextAreaElement>(null);
+  const selection = useRef({ start: text.length, end: text.length });
+  const caret = useRef<number | null>(null);
+  useLayoutEffect(() => {
+    if (caret.current === null) return;
+    textarea.current?.focus();
+    textarea.current?.setSelectionRange(caret.current, caret.current);
+    selection.current = { start: caret.current, end: caret.current };
+    caret.current = null;
+  }, [text]);
+  function insert(field: string) {
+    const { start, end } = selection.current;
+    const token = `{{${field}}}`;
+    const next = text.slice(0, start) + token + text.slice(end);
+    if (next.length > 131072) { setInsertError(true); return; }
+    setInsertError(false);
+    if (next === text) {
+      textarea.current?.focus(); textarea.current?.setSelectionRange(start + token.length, start + token.length);
+      selection.current = { start: start + token.length, end: start + token.length };
+    } else { caret.current = start + token.length; setText(next); }
+  }
   const dirty = title !== (version?.template.title ?? "") || text !== (version?.template.text ?? "") || !!reason;
   const payload = title.trim() && dirty ? { business_id: businessId, title, text, reason } : null;
   return <MedicalRoleCommand payload={payload} dirty={dirty} control={control} label={t("common.save")}
     submit={(data, key) => version ? api.update(version.template_id, { ...data, expected_revision: version.revision }, key) : api.create(data, key)}>
     <Input label={t("medical.templates.title")} value={title} required maxLength={255} onChange={event => setTitle(event.target.value)} />
-    <Textarea label={t("medical.templates.text")} value={text} rows={12} maxLength={131072} onChange={event => setText(event.target.value)} />
+    <TemplateFields businessId={businessId} onInsert={insert} onDenied={control.onDenied} />
+    <Textarea ref={textarea} label={t("medical.templates.text")} aria-label={t("medical.templates.text")} value={text} rows={12} maxLength={131072}
+      error={insertError ? t("medical.fields.tooLong") : undefined}
+      onSelect={event => { selection.current = { start: event.currentTarget.selectionStart, end: event.currentTarget.selectionEnd }; }}
+      onChange={event => { setText(event.target.value); setInsertError(false); }} />
     <Textarea label={t("medical.templates.reason")} value={reason} rows={2} maxLength={2000} onChange={event => setReason(event.target.value)} />
   </MedicalRoleCommand>;
 }

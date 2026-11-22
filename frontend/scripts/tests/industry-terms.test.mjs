@@ -39,6 +39,9 @@ test("allows patient labels only in the explicit medical module keys", () => {
     ["medical.participation.workDirectionHint", "Врач увидит это до принятия приглашения."],
     ["medical.roles.kind.doctor", "Врач"], ["medical.roles.resource.medical_patients", "Пациенты"],
     ["medical.templates.draftStatus", "Клиникалық қолдану үшін бекітілмеген."],
+    ["medical.fields.clinicName", "Clinic name"], ["medical.fields.clinicLegalName", "Юридическое название клиники"],
+    ["medical.fields.clinicTaxId", "Clinic tax ID"], ["medical.fields.clinicAddress", "Адрес клиники"],
+    ["medical.fields.clinicPhone", "Клиника телефоны"], ["medical.fields.doctorName", "Doctor full name"],
     ["clients.create", "Создать пациента"], ["medical.unreviewed", "Doctor"],
   ]), ["clients.create", "medical.unreviewed"]);
 });

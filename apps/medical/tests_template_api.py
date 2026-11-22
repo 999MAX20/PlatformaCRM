@@ -36,6 +36,28 @@ class PersonalTemplateAPITests(TestCase):
         self.assertEqual(response["Cache-Control"], "no-store, private")
         self.assertEqual(response["Pragma"], "no-cache")
 
+    def test_field_options_match_renderer_and_require_current_template_access(self):
+        from .document_rendering import DOCUMENT_FIELDS
+        url = self.url + "field-options/"
+        before = MedicalAuditEvent.objects.count()
+        response = self.api.get(url, self.scope)
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(response.data, {"fields": DOCUMENT_FIELDS})
+        self.private(response)
+        self.assertEqual(MedicalAuditEvent.objects.count(), before)
+        self.assertEqual(self.api.get(url, self.scope | {"patient_id": 1}).status_code, 400)
+        other = Business.objects.create(owner=self.owner, name="Other", slug="fields-other")
+        self.assertEqual(self.api.get(url, {"business_id": other.pk}).status_code, 403)
+        self.api.force_authenticate(self.owner)
+        self.assertEqual(self.api.get(url, self.scope).status_code, 403)
+        self.api.force_authenticate(self.doctor)
+        RolePermission.objects.filter(business_role=self.role, resource="medical_documents", action="view").update(is_allowed=False)
+        denied = self.api.get(url, self.scope)
+        self.assertEqual(denied.status_code, 403)
+        self.private(denied)
+        self.api.force_authenticate(None)
+        self.assertIn(self.api.get(url, self.scope).status_code, (401, 403))
+
     def test_workspace_access_uses_current_actions_without_reading_templates(self):
         self.create()
         audit_count = MedicalAuditEvent.objects.count()

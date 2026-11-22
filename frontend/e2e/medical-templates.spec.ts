@@ -239,6 +239,46 @@ test("templates: list and history pagination, read recovery and navigation", asy
   await page.screenshot({ path: info.outputPath("pagination.png") });
 });
 
+test("template fields: empty catalog, text limit and denied catalog", async ({ page }, info) => {
+  const t = ru;
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await login(page, "ru");
+  const workspace = page.getByTestId("medical-template-workspace");
+  const create = workspace.getByRole("button", { name: t["medical.templates.create"], exact: true });
+  const dialog = page.getByRole("dialog");
+  await page.route("**/api/medical/document-templates/field-options/**", route => route.fulfill({ json: { fields: [] } }));
+  await create.click();
+  await expect(dialog.getByText(t["medical.fields.empty"], { exact: true })).toBeVisible();
+  await expect(dialog.getByRole("button", { name: t["medical.fields.insert"], exact: true })).toHaveCount(0);
+  await dialog.screenshot({ path: info.outputPath("fields-empty.png") });
+  await page.keyboard.press("Escape");
+  await page.unroute("**/api/medical/document-templates/field-options/**");
+  await create.click();
+  const text = dialog.getByRole("textbox", { name: t["medical.templates.text"], exact: true });
+  await text.fill("x".repeat(131072));
+  await text.press("ControlOrMeta+End");
+  await dialog.getByRole("button", { name: t["medical.fields.insert"], exact: true }).click();
+  await expect(dialog.getByText(t["medical.fields.tooLong"], { exact: true })).toBeVisible();
+  await dialog.screenshot({ path: info.outputPath("fields-limit.png") });
+  expect((await text.inputValue()).length).toBe(131072);
+  await text.focus();
+  await text.press("ControlOrMeta+A");
+  await dialog.getByRole("button", { name: t["medical.fields.insert"], exact: true }).click();
+  await expect(text).toHaveValue("{{patient.full_name}}");
+  await expect(text).toBeFocused();
+  await expect(dialog.getByText(t["medical.fields.tooLong"], { exact: true })).toHaveCount(0);
+  await dialog.screenshot({ path: info.outputPath("fields-limit-recovered.png") });
+  page.once("dialog", confirmation => confirmation.accept());
+  await page.keyboard.press("Escape");
+  await page.route("**/api/medical/document-templates/field-options/**", route => route.fulfill({ status: 403, json: { detail: "Synthetic revoked catalog" } }));
+  await create.click();
+  await expect(dialog).toHaveCount(0);
+  await expect(workspace.getByRole("alert")).toBeVisible();
+  await expect(workspace.getByRole("listitem")).toHaveCount(0);
+  await expect(create).toHaveCount(0);
+  await workspace.screenshot({ path: info.outputPath("fields-denied.png") });
+});
+
 for (const language of ["ru", "kk", "en"] as const) for (const mobile of [false, true]) {
   test(`templates ${language} ${mobile ? "mobile" : "desktop"}: create, edit, history and safe retry`, async ({ page }, info) => {
     test.setTimeout(120_000);
@@ -246,11 +286,37 @@ for (const language of ["ru", "kk", "en"] as const) for (const mobile of [false,
     await page.setViewportSize(mobile ? { width: 390, height: 844 } : { width: 1440, height: 1000 });
     await login(page, language);
     const workspace = page.getByTestId("medical-template-workspace");
+    let catalogFailure = true;
+    await page.route("**/api/medical/document-templates/field-options/**", route => {
+      if (catalogFailure) return route.fulfill({ status: 503, json: { detail: "Synthetic catalog outage" } });
+      return route.continue();
+    });
     await workspace.getByRole("button", { name: t["medical.templates.create"], exact: true }).click();
     const dialog = page.getByRole("dialog");
     const title = `Synthetic template ${language} ${mobile}`;
     await dialog.getByRole("textbox", { name: t["medical.templates.title"], exact: true }).fill(title);
-    await dialog.getByRole("textbox", { name: t["medical.templates.text"], exact: true }).fill("Synthetic version one\nLiteral <script> & {{patient}}");
+    const text = dialog.getByRole("textbox", { name: t["medical.templates.text"], exact: true });
+    await text.fill("Synthetic version one\nLiteral <script> & {{patient}}");
+    await expect(dialog.getByRole("alert")).toBeVisible();
+    catalogFailure = false;
+    await dialog.getByRole("button", { name: t["common.retry"], exact: true }).click();
+    await expect(text).toHaveValue("Synthetic version one\nLiteral <script> & {{patient}}");
+    await text.focus();
+    await text.press("End");
+    await dialog.getByRole("button", { name: t["medical.fields.insert"], exact: true }).click();
+    await expect(text).toBeFocused();
+    await expect(text).toHaveValue("Synthetic version one\nLiteral <script> & {{patient}}{{patient.full_name}}");
+    await text.press("ControlOrMeta+A");
+    const picker = dialog.getByTestId("medical-template-fields");
+    await picker.getByRole("combobox").click();
+    await picker.getByRole("option", { name: t["medical.fields.doctorName"], exact: true }).click();
+    await picker.getByRole("button", { name: t["medical.fields.insert"], exact: true }).click();
+    await expect(text).toHaveValue("{{doctor.full_name}}");
+    await expect(text).toBeFocused();
+    await text.press("End");
+    await text.pressSequentially(" Synthetic version one");
+    await dialog.screenshot({ path: info.outputPath("fields-inserted.png") });
+    expect((await new AxeBuilder({ page }).include('[role="dialog"]').withTags(["wcag2a", "wcag2aa"]).analyze()).violations).toEqual([]);
     page.once("dialog", confirmation => confirmation.dismiss());
     await page.keyboard.press("Escape");
     await expect(dialog.getByRole("textbox", { name: t["medical.templates.title"], exact: true })).toHaveValue(title);
@@ -270,6 +336,7 @@ for (const language of ["ru", "kk", "en"] as const) for (const mobile of [false,
     expect(keys[0]).toBe(keys[1]);
     const row = workspace.getByRole("listitem").filter({ hasText: title });
     await row.getByRole("button").click();
+    await expect(dialog.getByText("{{doctor.full_name}} Synthetic version one", { exact: true })).toBeVisible();
     await expect(dialog.getByText("Synthetic version one", { exact: false })).toBeVisible();
     await dialog.getByRole("button", { name: t["medical.templates.edit"], exact: true }).click();
     await dialog.getByRole("textbox", { name: t["medical.templates.text"], exact: true }).fill("Synthetic version two");
@@ -304,6 +371,12 @@ for (const [language, t] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
     const title = `Synthetic common ${language} ${width}`;
     await dialog.getByRole("textbox", { name: t["medical.templates.title"], exact: true }).fill(title);
     await dialog.getByRole("textbox", { name: t["medical.templates.text"], exact: true }).fill("Synthetic common text");
+    const commonText = dialog.getByRole("textbox", { name: t["medical.templates.text"], exact: true });
+    await commonText.press("End");
+    await dialog.getByRole("button", { name: t["medical.fields.insert"], exact: true }).click();
+    await expect(commonText).toHaveValue("Synthetic common text{{patient.full_name}}");
+    await expect(commonText).toBeFocused();
+    await dialog.screenshot({ path: info.outputPath("common-fields-inserted.png") });
     let fail = true;
     const keys: string[] = [];
     await page.route("**/api/medical/document-templates/common/", route => {
