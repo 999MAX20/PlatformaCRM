@@ -42,6 +42,11 @@ def personal_template_workspace_access(*, actor, business_id):
             actions[action] = False
         else:
             actions[action] = True
+    try:
+        approval = assert_medical_role_permission(actor, business, "medical_documents", "approve")
+        actions["approve"] = approval.scope == "business" and context.scope == "business"
+    except PermissionDenied:
+        actions["approve"] = False
     return {"business_id": business.pk, "member_id": context.member_id,
             "kind": context.kind, "actions": actions}
 
@@ -97,9 +102,18 @@ def read_personal_template_version(*, actor, business_id, version_id):
     if version is None:
         raise PermissionDenied()
     write_template_audit(actor=actor, business=business, version=version, action="read")
+    snapshot = read_template_revision(version)
+    from .template_reviews import read_review_decision
+    from .models import MedicalTemplateReview
+    review = MedicalTemplateReview.objects.filter(version=version).first()
+    summary = None
+    if review is not None:
+        summary = {"state": review.state, "submitted_at": review.submitted_at.isoformat(),
+            "decided_at": review.decided_at.isoformat() if review.decided_at else None,
+            "decision_reason": read_review_decision(review, snapshot["template"])}
     return {"template_id": version.template_id, "version_id": version.pk, "revision": version.revision,
         "current_revision": version.template.revision, "author_id": version.author_id,
-        "created_at": version.created_at, **read_template_revision(version)}
+        "created_at": version.created_at, "review": summary, **snapshot}
 
 
 @transaction.atomic

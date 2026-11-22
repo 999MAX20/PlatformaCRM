@@ -8,6 +8,7 @@ import { useI18n } from "../../../lib/i18n";
 import type { RoleDraftState } from "../roles/MedicalRoleCommand";
 import { medicalRoleDenied } from "../roles/useMedicalRolePage";
 import { TemplateEditor } from "./TemplateEditor";
+import { TemplateReviewDetail, TemplateReviewStatus, TemplateSubmit } from "./TemplateReview";
 
 export function TemplateWorkspace({ businessId, active, onDraft }: {
   businessId: number; active: boolean; onDraft: (state: RoleDraftState) => void;
@@ -19,6 +20,7 @@ export function TemplateWorkspace({ businessId, active, onDraft }: {
   const [error, setError] = useState<unknown>(null);
   const [loading, setLoading] = useState(false);
   const [attempt, setAttempt] = useState(0);
+  const [mode, setMode] = useState<"personal" | "reviews">("personal");
   const [dialog, setDialog] = useState<"create" | TemplateRow | null>(null);
   const guard = useRef<RoleDraftState>({ dirty: false, pending: false });
   const request = useRef<AbortController | null>(null);
@@ -33,13 +35,15 @@ export function TemplateWorkspace({ businessId, active, onDraft }: {
     setLoading(true); setError(null);
     try {
       const permissions = await api.access(businessId, controller.signal);
-      const page = await api.list(businessId, before, controller.signal);
+      if (mode === "reviews" && !permissions.actions.approve) { setMode("personal"); setRows([]); setCursor(null); setAccess(permissions); return; }
+      const page = mode === "reviews" ? await api.pending(businessId, before, controller.signal) : await api.list(businessId, before, controller.signal);
       if (controller.signal.aborted) return;
-      setAccess(permissions); setRows(previous => before ? [...previous, ...page.results] : page.results); setCursor(page.next_before_id);
+      const items = page.results.map(row => ({ ...row, created_at: "created_at" in row ? row.created_at : row.submitted_at }));
+      setAccess(permissions); setRows(previous => before ? [...previous, ...items] : items); setCursor(page.next_before_id);
     } catch (cause) {
       if (!controller.signal.aborted) { if (medicalRoleDenied(cause)) denied(cause); else setError(cause); }
     } finally { if (!controller.signal.aborted) setLoading(false); }
-  }, [businessId, denied]);
+  }, [businessId, denied, mode]);
   useEffect(() => {
     if (active && !guard.current.dirty && !guard.current.pending) void load();
     return () => request.current?.abort();
@@ -59,8 +63,13 @@ export function TemplateWorkspace({ businessId, active, onDraft }: {
   if (!active && !access) return null;
   return <div className="space-y-4" data-testid="medical-template-workspace">
     <p className="text-sm text-platforma-subtle" role="status">{t("medical.templates.draftStatus")}</p>
+    {access?.actions.approve ? <div className="flex flex-wrap gap-2">
+      {(["personal", "reviews"] as const).map(value => <Button key={value} variant={mode === value ? "primary" : "secondary"} aria-pressed={mode === value}
+        onClick={() => { if (mode === value) return; setRows([]); setCursor(null); setLoading(true); setMode(value); }} disabled={loading}>
+        {t(value === "personal" ? "medical.templates.personal" : "medical.templates.queue")}</Button>)}
+    </div> : null}
     <div className="flex flex-wrap gap-2">
-      {access?.actions.create ? <Button id="medical-template-create" onClick={() => open("create")}>{t("medical.templates.create")}</Button> : null}
+      {mode === "personal" && access?.actions.create ? <Button id="medical-template-create" onClick={() => open("create")}>{t("medical.templates.create")}</Button> : null}
       <Button variant="secondary" disabled={loading} onClick={() => setAttempt(value => value + 1)}>{t("medical.clinical.reload")}</Button>
     </div>
     {error ? <ErrorState message={getApiErrorMessage(error)} action={<Button variant="secondary" onClick={() => void load()}>{t("common.retry")}</Button>} /> : null}
@@ -68,11 +77,12 @@ export function TemplateWorkspace({ businessId, active, onDraft }: {
       <div className="min-w-0 flex-1 break-words"><p className="font-medium">{row.title}</p><p className="text-sm text-platforma-subtle">{t("medical.templates.version", { revision: row.revision })}</p></div>
       <Button id={`medical-template-${row.template_id}`} variant="secondary" disabled={loading} onClick={() => open(row)}>{t("medical.templates.open")}</Button>
     </li>)}</ul>
-    {loading ? <LoadingState /> : !error && !rows.length ? <p className="text-sm text-platforma-subtle">{t("medical.templates.empty")}</p> : null}
+    {loading ? <LoadingState /> : !error && !rows.length ? <p className="text-sm text-platforma-subtle">{t(mode === "personal" ? "medical.templates.empty" : "medical.templates.queueEmpty")}</p> : null}
     {cursor && !error ? <Button variant="secondary" disabled={loading} onClick={() => void load(cursor)}>{t("medical.templates.more")}</Button> : null}
     <Modal open={dialog !== null} onClose={close} closeOnBackdrop={false} size="lg" focusReturnId={focusReturn.current}
       title={t(dialog === "create" ? "medical.templates.create" : "medical.templates.open")}>
       {dialog === "create" ? <TemplateEditor businessId={businessId} version={null} control={{ guard, onDraft, onSaved: saved, onDenied: denied }} /> : dialog && access ?
+        mode === "reviews" ? <TemplateReviewDetail businessId={businessId} versionId={dialog.version_id} control={{ guard, onDraft, onSaved: saved, onDenied: denied }} /> :
         <TemplateDetail businessId={businessId} row={dialog} canUpdate={access.actions.update}
           control={{ guard, onDraft, onSaved: saved, onDenied: denied }} /> : null}
     </Modal>
@@ -89,6 +99,7 @@ function TemplateDetail({ businessId, row, canUpdate, control }: {
   const [error, setError] = useState<unknown>(null);
   const [attempt, setAttempt] = useState(0);
   const [editing, setEditing] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   useEffect(() => {
     const controller = new AbortController(); setVersion(null); setError(null);
     void api.version(businessId, versionId, controller.signal).then(value => { if (!controller.signal.aborted) setVersion(value); })
@@ -102,9 +113,13 @@ function TemplateDetail({ businessId, row, canUpdate, control }: {
     <h2 className="break-words text-base font-semibold">{version.template.title}</h2>
     <p className="text-sm text-platforma-subtle">{t("medical.templates.version", { revision: version.revision })}</p>
     <div className="whitespace-pre-wrap break-words text-sm">{version.template.text}</div>
+    <TemplateReviewStatus review={version.review} />
     {version.reason ? <p className="whitespace-pre-wrap break-words text-sm">{t("medical.templates.reason")}: {version.reason}</p> : null}
-    {canUpdate && version.revision === version.current_revision ? <Button onClick={() => setEditing(true)}>{t("medical.templates.edit")}</Button> : null}
-    <TemplateHistory businessId={businessId} templateId={row.template_id} onSelect={setVersionId} onDenied={control.onDenied} />
+    {!submitting && canUpdate && version.revision === version.current_revision ? <Button onClick={() => setEditing(true)}>{t(version.review ? "medical.templates.newVersion" : "medical.templates.edit")}</Button> : null}
+    {canUpdate && version.revision === version.current_revision && !version.review ?
+      submitting ? <TemplateSubmit key={version.version_id} businessId={businessId} versionId={version.version_id} control={control} /> :
+        <Button onClick={() => setSubmitting(true)}>{t("medical.templates.submit")}</Button> : null}
+    {!submitting ? <TemplateHistory businessId={businessId} templateId={row.template_id} onSelect={setVersionId} onDenied={control.onDenied} /> : null}
   </div>;
 }
 

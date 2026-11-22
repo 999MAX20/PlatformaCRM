@@ -118,12 +118,12 @@ own/Business scope и пишут exact template version audit без patient-с�
 Replay повторно проверяет роль/capability; audit failure блокирует read и
 откатывает write. Общие и чужие личные шаблоны этим API не выдаются.
 GET workspace-access/ проверяет текущий medical_documents:view для doctor/head
-и возвращает только business/member/kind и флаги view/create/update. Он не читает
+и возвращает только business/member/kind и флаги view/create/update/approve. Он не читает
 шаблоны и не создаёт аудит чтения медицинского содержимого; доступ к каждому
 документу и команда по-прежнему проверяются независимо при запросе.
-Это операции неутверждённых черновиков, без автоматической клинической authority;
-UI S17 личных черновиков подключён через Settings и workspace-access;
-domain утверждения добавлен, HTTP/UI workflow ещё не подключён. Владелец22.11.2026 согласовал: врач создаёт
+Сохранение черновика не утверждает его автоматически. UI S17 личных шаблонов
+подключён через Settings и workspace-access; domain/API/UI отправки и решений
+медруководителя реализованы. Владелец22.11.2026 согласовал: врач создаёт
 личные черновики; медруководитель утверждает их для клинического применения и
 управляет общими шаблонами. Владелец Business без медицинской роли этого права
 не получает. Вход по медицинской роли не выдаёт права
@@ -149,6 +149,14 @@ versions/{id}/submit/ и versions/{id}/decision/ используют Idempotenc
 действующие domain checks. Decision принимает approved/rejected и reason;
 отказ требует причины. Все ответы, включая ошибки, no-store/private. Чтение
 обычного personal API по-прежнему не открывает чужие личные черновики.
+
+Personal version response включает review=null для неотправленного черновика
+либо проверенные state/submitted_at/decided_at/decision_reason; проверка receipt
+идёт после авторизации, exact-version audit и расшифровки содержимого. Повреждённое
+решение не выдаётся как approved. Workspace-access.actions.approve требует
+действующих head approve/view с business scope. S17 использует эти права для
+очереди и решений; автор видит статус каждой открытой версии и отправляет текущий
+черновик с подтверждением. Новый draft не наследует статус предыдущей версии.
 
 Добавлена основа PatientProfile OneToOne Client с шифрованными полями и отдельным
 tenant-scoped индексом ИИН. Обычные merge и merge preview блокируются до переноса

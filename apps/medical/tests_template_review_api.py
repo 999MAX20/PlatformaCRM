@@ -38,11 +38,13 @@ class TemplateReviewAPITests(TestCase):
         self.assertEqual(response["Pragma"], "no-cache")
 
     def test_author_submission_head_queue_and_exact_decision(self):
+        self.assertIsNone(self.api.get(self.version_url, self.scope).data["review"])
         response = self.command("submit")
         self.assertEqual(response.status_code, 200, response.data)
         self.assertFalse(response.data["replayed"])
         self.assertTrue(self.command("submit").data["replayed"])
         self.api.force_authenticate(self.head)
+        self.assertTrue(self.api.get(self.root + "workspace-access/", self.scope).data["actions"]["approve"])
         response = self.api.get(self.root + "pending-reviews/", self.scope)
         self.private(response)
         self.assertEqual(response.status_code, 200)
@@ -58,6 +60,9 @@ class TemplateReviewAPITests(TestCase):
         self.assertEqual(self.api.get(self.root + "pending-reviews/", self.scope).data["results"], [])
         self.api.force_authenticate(self.doctor)
         self.assertEqual(self.api.get(self.version_url + "review/", self.scope).data["state"], "approved")
+        self.assertEqual(self.api.get(self.version_url, self.scope).data["review"]["state"], "approved")
+        MedicalTemplateReview.objects.update(decision_encrypted="corrupt")
+        self.assertEqual(self.api.get(self.version_url, self.scope).status_code, 503)
 
     def test_no_implicit_approval_or_private_head_read(self):
         self.api.force_authenticate(self.head)

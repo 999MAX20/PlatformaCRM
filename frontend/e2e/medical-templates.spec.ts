@@ -7,10 +7,10 @@ import { requireIsolatedEnvironment } from "./isolated-environment.mjs";
 
 requireIsolatedEnvironment();
 test.use({ actionTimeout: 15_000 });
-async function login(page: Page, language: string) {
+async function login(page: Page, language: string, email = "medical-role-doctor@example.test") {
   await page.addInitScript(value => localStorage.setItem("ai_smb_language", value), language);
   await page.goto("/login");
-  await page.locator('input[name="email"]').fill("medical-role-doctor@example.test");
+  await page.locator('input[name="email"]').fill(email);
   await page.locator('input[name="password"]').fill(process.env.E2E_PASSWORD!);
   const authentication = page.waitForResponse(response => response.url().endsWith("/api/auth/token/") && response.request().method() === "POST");
   await page.locator('form button[type="submit"]').click();
@@ -19,6 +19,143 @@ async function login(page: Page, language: string) {
   await page.goto("/app/settings#medical-templates");
   return token;
 }
+
+for (const [language, t] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
+  for (const width of [1440, 390]) test(`template review: ${language} ${width} submission rejection approval`, async ({ page, browser }, info) => {
+    test.setTimeout(150_000);
+    await page.setViewportSize({ width, height: 900 });
+    const token = await login(page, language);
+    const title = `Synthetic review ${language} ${width}`;
+    const response = await page.request.post(`${process.env.E2E_API_BASE_URL}/api/medical/document-templates/`, {
+      headers: { Authorization: `Bearer ${token}`, "Idempotency-Key": title },
+      data: { business_id: 1, title, text: "Synthetic review text", reason: "" },
+    });
+    expect(response.ok()).toBe(true);
+    const workspace = page.getByTestId("medical-template-workspace");
+    const dialog = page.getByRole("dialog");
+    const row = workspace.getByRole("listitem").filter({ hasText: title });
+    await workspace.getByRole("button", { name: t["medical.clinical.reload"], exact: true }).click();
+    await row.getByRole("button").click();
+    await expect(dialog.getByText(t["medical.templates.state.draft"], { exact: true })).toBeVisible();
+    await dialog.getByRole("button", { name: t["medical.templates.submit"], exact: true }).click();
+    await expect(dialog.getByRole("button", { name: t["medical.templates.edit"], exact: true })).toHaveCount(0);
+    await expect(dialog.getByRole("region", { name: t["medical.templates.history"], exact: true })).toHaveCount(0);
+    await dialog.getByRole("button", { name: t["medical.templates.submitConfirm"], exact: true }).click();
+    await expect(dialog).toHaveCount(0);
+    const context = await browser.newContext({ viewport: { width, height: 900 } });
+    try {
+      const head = await context.newPage();
+      await login(head, language, "medical-template-head@example.test");
+      const headWorkspace = head.getByTestId("medical-template-workspace");
+      await headWorkspace.getByRole("button", { name: t["medical.templates.queue"], exact: true }).click();
+      const headRow = headWorkspace.getByRole("listitem").filter({ hasText: title });
+      await expect(headRow).toBeVisible();
+      await head.screenshot({ path: info.outputPath("review-queue.png") });
+      await headRow.getByRole("button").click();
+      const review = head.getByRole("dialog");
+      await review.getByRole("button", { name: t["medical.templates.reject"], exact: true }).click();
+      const reject = review.getByRole("button", { name: t["medical.templates.rejectConfirm"], exact: true });
+      await expect(reject).toBeDisabled();
+      const comment = review.getByRole("textbox", { name: t["medical.templates.decisionReason"], exact: true });
+      await comment.fill("Synthetic required correction");
+      let failDecision = true;
+      const keys: string[] = [];
+      await head.route("**/api/medical/document-templates/versions/*/decision/", route => {
+        keys.push(route.request().headers()["idempotency-key"]);
+        return failDecision ? route.fulfill({ status: 503, json: { detail: "Synthetic retry" } }) : route.continue();
+      });
+      await reject.click();
+      await expect(review.getByRole("alert")).toBeVisible();
+      await expect(comment).toHaveValue("Synthetic required correction");
+      await head.screenshot({ path: info.outputPath("review-retry.png") });
+      failDecision = false;
+      await reject.click();
+      await expect(review).toHaveCount(0);
+      expect(keys[0]).toBe(keys[1]);
+      await row.getByRole("button").click();
+      await expect(dialog.getByText(t["medical.templates.state.rejected"], { exact: true })).toBeVisible();
+      await dialog.getByRole("button", { name: t["medical.templates.newVersion"], exact: true }).click();
+      await dialog.getByRole("textbox", { name: t["medical.templates.text"], exact: true }).fill("Synthetic revised text");
+      await dialog.getByRole("button", { name: t["common.save"], exact: true }).click();
+      await expect(dialog).toHaveCount(0);
+      await row.getByRole("button").click();
+      await expect(dialog.getByText(t["medical.templates.state.draft"], { exact: true })).toBeVisible();
+      await dialog.getByRole("button", { name: t["medical.templates.submit"], exact: true }).click();
+      await dialog.getByRole("button", { name: t["medical.templates.submitConfirm"], exact: true }).click();
+      await expect(dialog).toHaveCount(0);
+      await headWorkspace.getByRole("button", { name: t["medical.clinical.reload"], exact: true }).click();
+      await headRow.getByRole("button").click();
+      await review.getByRole("button", { name: t["medical.templates.approve"], exact: true }).click();
+      await head.screenshot({ path: info.outputPath("review-approve.png") });
+      const audit = await new AxeBuilder({ page: head }).include('[role="dialog"]').analyze();
+      expect(audit.violations.filter(item => ["critical", "serious"].includes(item.impact ?? ""))).toEqual([]);
+      expect(await head.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      await review.getByRole("button", { name: t["medical.templates.approveConfirm"], exact: true }).click();
+      await expect(review).toHaveCount(0);
+      await row.getByRole("button").click();
+      await expect(dialog.getByText(t["medical.templates.state.approved"], { exact: true })).toBeVisible();
+      await expect(dialog.getByRole("button", { name: t["medical.templates.version"].replace("{revision}", "1"), exact: true })).toBeVisible();
+      await page.screenshot({ path: info.outputPath("review-approved.png") });
+      await dialog.getByRole("button", { name: t["medical.templates.version"].replace("{revision}", "1"), exact: true }).click();
+      await expect(dialog.getByText(t["medical.templates.state.rejected"], { exact: true })).toBeVisible();
+      await page.keyboard.press("Escape");
+      await expect(row.getByRole("button")).toBeFocused();
+    } finally { await context.close(); }
+  });
+}
+
+test("template reviewer: stale decision and denied command clear private data", async ({ page, browser }, info) => {
+  test.setTimeout(120_000);
+  await page.setViewportSize({ width: 390, height: 900 });
+  const doctorContext = await browser.newContext();
+  let token: string;
+  try { token = await login(await doctorContext.newPage(), "ru"); }
+  finally { await doctorContext.close(); }
+  const root = `${process.env.E2E_API_BASE_URL}/api/medical/document-templates/`;
+  const headers = { Authorization: `Bearer ${token}`, "Idempotency-Key": "review-stale-create" };
+  const payload = { business_id: 1, title: "Synthetic reviewer boundaries", text: "Synthetic source", reason: "" };
+  const created = await page.request.post(root, { headers, data: payload });
+  expect(created.ok()).toBe(true);
+  const source = await created.json();
+  const submitted = await page.request.post(root + `versions/${source.version_id}/submit/`, { headers, data: { business_id: 1 } });
+  expect(submitted.ok()).toBe(true);
+  await login(page, "ru", "medical-template-head@example.test");
+  const t = ru;
+  const workspace = page.getByTestId("medical-template-workspace");
+  await workspace.getByRole("button", { name: t["medical.templates.queue"], exact: true }).click();
+  const row = workspace.getByRole("listitem").filter({ hasText: payload.title });
+  await expect(row.getByRole("button")).toBeEnabled();
+  const audit = await new AxeBuilder({ page }).include('[data-testid="medical-template-workspace"]').analyze();
+  expect(audit.violations.filter(item => ["critical", "serious"].includes(item.impact ?? ""))).toEqual([]);
+  await page.screenshot({ path: info.outputPath("review-queue-ready.png"), animations: "disabled" });
+  await row.getByRole("button").click();
+  const dialog = page.getByRole("dialog");
+  await dialog.getByRole("button", { name: t["medical.templates.approve"], exact: true }).click();
+  const updated = await page.request.post(root + source.id + "/draft/", {
+    headers, data: { ...payload, text: "Synthetic newer source", expected_revision: 1 },
+  });
+  expect(updated.ok()).toBe(true);
+  const next = await updated.json();
+  await dialog.getByRole("button", { name: t["medical.templates.approveConfirm"], exact: true }).click();
+  await expect(dialog.getByRole("alert")).toContainText(t["medical.clinical.conflict"]);
+  await page.screenshot({ path: info.outputPath("review-conflict.png"), animations: "disabled" });
+  page.once("dialog", confirmation => confirmation.accept());
+  await dialog.getByRole("button", { name: t["medical.clinical.reload"], exact: true }).click();
+  await expect(dialog).toHaveCount(0);
+  const resubmitted = await page.request.post(root + `versions/${next.version_id}/submit/`, {
+    headers: { ...headers, "Idempotency-Key": "review-stale-resubmit" }, data: { business_id: 1 },
+  });
+  expect(resubmitted.ok()).toBe(true);
+  await workspace.getByRole("button", { name: t["medical.clinical.reload"], exact: true }).click();
+  await row.getByRole("button").click();
+  await dialog.getByRole("button", { name: t["medical.templates.approve"], exact: true }).click();
+  await page.route("**/api/medical/document-templates/versions/*/decision/", route => route.fulfill({ status: 403, json: { detail: "Synthetic revoked role" } }));
+  await dialog.getByRole("button", { name: t["medical.templates.approveConfirm"], exact: true }).click();
+  await expect(dialog).toHaveCount(0);
+  await expect(workspace.getByRole("listitem")).toHaveCount(0);
+  await expect(workspace.getByText("Synthetic newer source", { exact: true })).toHaveCount(0);
+  await page.screenshot({ path: info.outputPath("review-denied.png"), animations: "disabled" });
+});
 
 test("templates: stale version and permission denial clear private state", async ({ page }, info) => {
   test.setTimeout(120_000);

@@ -20,10 +20,13 @@ test("template reads preserve business, cursor, exact version and cancellation",
   await api.list(8, 41, signal);
   await api.history(8, 12, 4, signal);
   await api.version(8, 99, signal);
-  assert.deepEqual(calls.map(call => call[0]), ["workspace-access/", "", "12/revisions/", "versions/99/"].map(path => "/api/medical/document-templates/" + path));
+  await api.pending(8, 21, signal);
+  await api.review(8, 99, signal);
+  assert.deepEqual(calls.map(call => call[0]), ["workspace-access/", "", "12/revisions/", "versions/99/", "pending-reviews/", "versions/99/review/"].map(path => "/api/medical/document-templates/" + path));
   for (const [, config] of calls) { assert.equal(config.params.business_id, 8); assert.equal(config.signal, signal); }
   assert.equal(calls[1][1].params.before_id, 41);
   assert.equal(calls[2][1].params.before_revision, 4);
+  assert.equal(calls[4][1].params.before_id, 21);
   assert.notEqual((await api.version(8, 99)).request, (await api.version(8, 99)).request);
 });
 
@@ -40,5 +43,21 @@ test("template commands preserve text, revision and caller retry key", async () 
   assert.equal(calls[2][0], "/api/medical/document-templates/12/draft/");
   assert.equal(calls[2][1], update);
   for (const key of ["", " ", "x".repeat(129)]) await assert.rejects(api.create(payload, key));
+  assert.equal(calls.length, 3);
+});
+
+test("review commands bind exact version and preserve retry key and decision reason", async () => {
+  const calls = [];
+  const api = load({ post: async (...args) => { calls.push(args); return { data: {} }; } });
+  await api.submit(99, { business_id: 8 }, "submit-key");
+  const decision = { business_id: 8, decision: "rejected", reason: " Literal\nreason " };
+  await api.decide(99, decision, "decision-key");
+  await api.decide(99, decision, "decision-key");
+  assert.equal(calls[0][0], "/api/medical/document-templates/versions/99/submit/");
+  assert.equal(calls[1][0], "/api/medical/document-templates/versions/99/decision/");
+  assert.equal(calls[1][1], decision);
+  assert.equal(calls[1][2].headers["Idempotency-Key"], calls[2][2].headers["Idempotency-Key"]);
+  await assert.rejects(api.submit(99, { business_id: 8 }, ""));
+  await assert.rejects(api.decide(99, decision, "x".repeat(129)));
   assert.equal(calls.length, 3);
 });

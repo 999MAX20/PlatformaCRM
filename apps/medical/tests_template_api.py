@@ -44,7 +44,7 @@ class PersonalTemplateAPITests(TestCase):
             response = self.api.get(url, self.scope)
         self.assertEqual(response.status_code, 200, response.data)
         self.assertEqual(response.data, {"business_id": self.business.pk, "member_id": self.member.pk,
-            "kind": "doctor", "actions": {"view": True, "create": True, "update": True}})
+            "kind": "doctor", "actions": {"view": True, "create": True, "update": True, "approve": False}})
         self.private(response)
         self.assertEqual(MedicalAuditEvent.objects.count(), audit_count)
         RolePermission.objects.filter(business_role=self.role, resource="medical_documents", action="update").delete()

@@ -64,14 +64,19 @@ snapshot не объявляется утверждённой формой. Ни
 авторство и история версий. Название не может состоять только из пробелов.
 Версия в registry не означает клиническое утверждение:22.11.2026 владелец согласовал
 утверждение личных шаблонов и управление общими медруководителем, без этого права
-у владельца Business без медицинской роли. Approval/выбор для реального документооборота пока
-не включены в пользовательский workflow. Добавлен domain submission/decision/read
+у владельца Business без медицинской роли. Выбор утверждённого шаблона при создании
+медицинского документа пока не подключён. Добавлен domain submission/decision/read
 MedicalTemplateReview: конкретная версия, head-only approve с business scope,
 encrypted receipt, audit/replay/stale/rollback;141 affected backend tests/check/drift
 и isolated migration roundtrip PASS. Добавлены review API submit/read/decision
 и очередь текущих pending версий с пагинацией;56 affected tests/check/drift PASS,
 дополнительный прогон6 HTTP tests с tenant/stale/revocation PASS.
-Review UI ещё не подключён,
+Review UI S17 подключён: автор отправляет версию с подтверждением, медруководитель
+открывает очередь, утверждает или возвращает с обязательным комментарием;
+статус и причина доступны в конкретной версии и её истории.6 review RU/KK/EN
+desktop/mobile сценариев и1 reviewer conflict/denial PASS;8 draft регрессий PASS,
+48 снимков просмотрены;58 affected backend tests/check/drift PASS. Полные команды
+и границы evidence в checkpoint, это не подтверждение PostgreSQL concurrency.
 PostgreSQL concurrency не подтверждена. Для личных черновиков реализованы domain/API create/update/list/
 history/read: текущая роль doctor/head, own scope, server-owned identifiers,
 точный version audit, no-store/private, replay/stale/rollback. UI S17 личных

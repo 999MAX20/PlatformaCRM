@@ -25,6 +25,21 @@ key_file = directory / "medical-browser-keys.json"
 if not key_file.exists():
     key_file.write_text(json.dumps([base64.urlsafe_b64encode(secrets.token_bytes(32)).decode("ascii") for _ in range(2)]), encoding="ascii")
 keys = json.loads(key_file.read_text(encoding="ascii"))
+if templates_fixture:
+    from threading import Lock
+
+    class SerialTemplateBrowserMiddleware:
+        """Keep SQLite UI fixtures serial without blocking independent browser sockets."""
+        lock = Lock()
+
+        def __init__(self, get_response):
+            self.get_response = get_response
+
+        def __call__(self, request):
+            with self.lock:
+                return self.get_response(request)
+
+    settings.MIDDLEWARE = ["__main__.SerialTemplateBrowserMiddleware", *settings.MIDDLEWARE]
 settings.MEDICAL_DATA_KEYS = {"browser": keys[0]}
 settings.MEDICAL_DATA_ACTIVE_KEY_ID = "browser"
 settings.MEDICAL_IDENTITY_INDEX_KEY = keys[1]
@@ -65,7 +80,8 @@ if not Business.objects.filter(slug="medical-role").exists():
             start_at=fixture.appointment.start_at + timedelta(days=index),
             end_at=fixture.appointment.end_at + timedelta(days=index))
 if templates_fixture:
-    from apps.businesses.models import RolePermission
+    from django.contrib.auth import get_user_model
+    from apps.businesses.models import BusinessMember, BusinessRole, RolePermission
     from apps.medical.models import MedicalRoleAssignment
     assignment = MedicalRoleAssignment.objects.get(member__user__email="medical-role-doctor@example.test")
     assignment.member.role = "specialist"
@@ -73,6 +89,18 @@ if templates_fixture:
     for action in ("view", "create", "update"):
         RolePermission.objects.get_or_create(business_role=assignment.business_role,
             resource="medical_documents", action=action, defaults={"scope": "own", "is_allowed": True})
+    head, created = get_user_model().objects.get_or_create(username="medical-template-head",
+        defaults={"email": "medical-template-head@example.test", "full_name": "Synthetic template reviewer"})
+    if created:
+        head.set_password(os.environ["E2E_PASSWORD"])
+        head.save(update_fields=["password"])
+        business = assignment.member.business
+        member = BusinessMember.objects.create(business=business, user=head, role="specialist")
+        role = BusinessRole.objects.create(business=business, name="Synthetic template reviewer")
+        MedicalRoleAssignment.objects.create(member=member, business_role=role, kind="head", granted_by=business.owner)
+        for action in ("view", "approve"):
+            RolePermission.objects.create(business_role=role, resource="medical_documents",
+                action=action, scope="business", is_allowed=True)
 if participation_fixture:
     from django.contrib.auth import get_user_model
     from apps.branches.models import BranchAccess
@@ -139,4 +167,5 @@ if len(sys.argv) > 1 and sys.argv[1] in ("revoke", "restore"):
     from apps.medical.models import MedicalRoleAssignment
     MedicalRoleAssignment.objects.filter(member__business__slug="medical-role").update(revoked_at=timezone.now() if sys.argv[1] == "revoke" else None)
     sys.exit(0)
-call_command("runserver", f"127.0.0.1:{os.environ['E2E_DJANGO_PORT']}", use_reloader=False, use_threading=False)
+call_command("runserver", f"127.0.0.1:{os.environ['E2E_DJANGO_PORT']}", use_reloader=False,
+             use_threading=templates_fixture)

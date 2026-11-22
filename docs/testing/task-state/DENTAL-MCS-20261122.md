@@ -1,5 +1,104 @@
 # DENTAL-MCS-20261122: полная реализация медицинского ТЗ
 
+## M11: S17 personal review UI локально проверен
+
+Наблюдаемый результат: врач отправляет точную текущую версию, head видит очередь,
+утверждает/возвращает с причиной; автор читает status/reason в истории. Создание
+новой версии не наследует approval. Owner без медицинской роли права не получает.
+Boundary30335 PASS1/1,13.9s (1.7m с setup);3 native screenshots просмотрены:
+queue-ready, conflict, denied. Всего применимых browser сценариев15:8 draft r3,
+6 review r4,1 boundary-r2.48 screenshots inspected. Backend58/check/drift, node8,
+build/types/i18n PASS; UI не заменяет PostgreSQL concurrency и внешнюю medical review.
+
+UI Delivery Gate в принятом scope PASS: существующие токены/Modal/Input/Button,
+ENERGY/RHYTHM/MOTION1/1/1 сохранены; primary обозначает выбранную очередь/действие.
+Каждый блок обслуживает список/версию/решение/ошибку; новых декоративных блоков нет.
+Geometry/locales/mobile PASS по48 снимкам, горизонтальный overflow отсутствует;
+клавиатура/Escape/focus return и axe serious/critical PASS в dialogs + queue.
+Loading/empty/retry/stale/denial/retained input PASS; pending не позволяет закрыть
+команду или сменить версию. React review: API слой, abort на reads, приватный текст
+только в component state, plain-text rendering, без новых dependencies/стилей.
+Новые provider/env/working migrations/notifications/BusinessEvent/AI изменения N/A.
+ТЗ/design/shared frontend contract/README не меняются: реализуются согласованные
+правила, setup не менялся. Access/capabilities/M11 matrix/STATUS синхронизированы.
+Остаток M11: общие шаблоны и clinical selector, metadata/search категории/услуги,
+revocation, snapshot/full identity, document API/UI, PDF/печать и подпись далее.
+Локальный UI-срез готов к own-only commit/push после static; цель ACTIVE.
+
+Текущий срез: API4bb12bb7 проверен → UI не подключён → добавить verified own-version
+review summary и approve metadata, затем существующий S17 review flow. Риски:
+ложное утверждение новой версии/утрата ввода/доступ после revoke. Backend focused:
+template API/review/service; UI: RU/KK/EN desktop/mobile, submit/reject/approve,
+503 retry, stale/revoke, keyboard/focus, screenshots inspected, build/types.
+Применяются прежние antislop during/ui/human/layoutmobile/copywriting и frontend
+контракт: существующие токены/Modal/Command, явная версия и действие, сохранение
+ввода при retry, перенос действий на mobile без горизонтального overflow.
+
+Metadata84142:27 PASS3.130s; affected8112:58 PASS6.773s +check/drift PASS.
+TEMP/dental-template-review-metadata-20261122.log,
+TEMP/dental-template-review-ui-backend-20261122.log. Node8 PASS (API reads/commands
+и industry terms). Build49575 PASS и финальный build90220 PASS после защиты
+подтверждения отправки от переключения истории/редактирования;7875 i18n keys.
+Логи TEMP/dental-template-review-ui-build(-r2)-20261122.log.
+Browser10985:13 PASS/1 FAIL5.2m (RU390 review GET остался pending; request initiated
+12:28:42.830, server completed only12:28:58.839 при teardown; screenshot loader).
+Trace в output/playwright/medical-template-reviews-20261122/...5f479.../trace.zip.
+Изменён hypothesis: два contexts на single-thread fixture могут блокировать
+соединения. Только templates fixture теперь use_threading=True, production не
+изменён. Повтор51309 в работе, output/...medical-template-reviews-20261122-r2,
+TEMP/dental-template-review-ui-browser-r2-20261122.log. Старый FAIL не скрывать.
+R2 получил medical_audit_unavailable503 при concurrent SQLite writes (trace
+response versions/2). Прогон51309 прерван после установленной причины, own shell
+PID13084 проверен по полной command line и остановлен вместе с деревом; exit1.
+В templates fixture добавлен lock middleware: запросы к SQLite последовательны,
+сокеты обслуживаются отдельными threads, чтобы aborted/preconnected sockets не
+блокировали второй context. Это сохраняет прежнюю serial DB границу browser
+evidence, НЕ доказывает PostgreSQL concurrency. Production/backend не менялся.
+R3 session32955 в работе, TEMP/dental-template-review-ui-browser-r3-20261122.log,
+output/playwright/medical-template-reviews-20261122-r3; добавлен queue screenshot.
+Static75244 PASS до последнего изменения только fixture; committed gate повторить.
+R3 завершён exit0:14 PASS4.2m. Все8 прежних draft сценариев сохранены;21 их
+скриншот просмотрен через visual-check-1..4.jpg в r3 output. Изменение среды
+устранило transport hang и SQLite audit collisions без изменения production.
+На review снимках обнаружена неоднозначная подпись edit у approved/rejected
+версии: заменена на «Создать новую версию» (RU/KK/EN), выбранный режим выделен
+существующим primary Button. Final build62054 PASS (7876 keys), лог
+TEMP/dental-template-review-ui-build-final-20261122.log. Повтор6 review сценариев
+12672 в работе, TEMP/dental-template-review-ui-browser-r4-20261122.log,
+output/playwright/medical-template-reviews-20261122-r4. Draft flow/геометрия
+редактора от этой правки не изменены,8 PASS r3 остаются применимы.
+R4 завершён exit0:6 PASS3.5m.24 review снимка просмотрены через r4 visual-check-1..4,
+RU mobile queue/approved также в native size. Вместе с21 draft snapshot r3
+просмотрено45 снимков применимого среза. Queue снимки при раннем screenshot
+частично захватывают150ms transition; дополнительно stable queue screenshot
+с animations disabled и workspace axe включены в boundary test12452 (в работе).
+Этот тест также проверяет head409 после новой авторской версии и очистку данных
+при403 на decision. HTTP реальный revoke/tenant deny уже покрыты backend.
+Production unchanged после R4; build62054 применим. Новый test не требует build.
+Boundary12452 FAIL на подготовке: прямой auth/token POST не установил CSRF cookie,
+403 до review flow. Исправлен только test: обычный browser login в отдельном doctor
+context, затем close, далее head login в основном context. Защита CSRF сохранена.
+Повтор30335 в работе; TEMP/dental-template-review-ui-boundaries-r2-20261122.log,
+output/playwright/medical-template-review-boundaries-20261122-r2. Никаких product
+изменений после R4; тестовый отказ не считается отказом готового review сценария,
+но boundary acceptance остаётся непроверенной до завершения повтора.
+
+Опубликован review API:4bb12bb7bc416af20526debc53497fca9b816523, normal push
+origin/main, exact remote SHA подтверждён. Canonical root/branch прежние,
+исходящий диапазон только этот own commit; чужие WIP сохранены. Committed
+static91668 PASS, TEMP/dental-template-review-api-static-committed-20261122.log.
+CI45021788122 in_progress, не PASS. Своих процессов нет, индекс пуст.
+Следующий шаг M11: подключить UI статусы/submit/head queue/approve/reject. Для
+авторского UI добавить verified review summary/null в personal version (сейчас
+GET review неотправленного draft возвращает403). Workspace-access должен сообщать
+approve только при head + approve/view business scope. Не трактовать простой state
+из DB как подтверждение: reuse read_review_decision после exact audit/decrypt.
+TemplateWorkspace draftStatus пока утверждает «не утверждены» для всех, заменить
+при подключении review UI; сохранить проверенные dirty/retry/focus/mobile сценарии.
+Переиспользовать MedicalRoleCommand, существующие Modal/Input/Textarea и языки.
+Нужны head browser fixture и desktop/mobile реальные сценарии с просмотром снимков.
+Полный goal ACTIVE; common/revoke/clinical selection и остальной ТЗ не закрыты.
+
 Продолжение M11: проверенный domain00f9c346 → отсутствует очередь рассмотрения →
 добавить tenant-scoped пагинацию только отправленных текущих pending версий.
 Переиспользуются _context/_head, version audit и receipt verification. Риск:
@@ -3595,7 +3694,7 @@ Git-среза находятся выше; runtime-доказательства
 | M08 §4.2–4.4; D05; B09–11; Q13–15 | Один Encounter на реальный Appointment того же Client/Business; свои клинические данные | Черновик/revision/обязательные разделы/явная неприменимость; обычный/частичный исход; walk-in текущим днём, ранний через руководителя | Чужие связи/revision отклонены; финансовый переход через существующий сервис ровно один раз, unpaid не блокирует помощь, rollback | Частично: chart/open/draft/read/workspace services и API, encrypted versions/audit, migrations0009–0011; current role/basis/identity/replay checks. Срезы30–37 содержат доказательства и исправление B03. Срез43 добавил calendar→chart/open/draft UI; текущая проверка в начале checkpoint. Срез44 добавил history/revision reader, current display labels; проверки ниже/в начале checkpoint. Full UI/team/temporary ACL, signatures/obligations, walk-in и atomic calendar completion ещё нужны | Chart/open/draft/versions/audit; current ACL | Appointment context; workspace; draft; history/revision | Calendar → приём/черновик/история | Завершение+calendar/money; walk-in; team/temporary; остальные вкладки | Подписи/формы см. M11–M12 |
 | M09 §2.2,4,16.2 | Одонтограмма постоянных/молочных/смешанных зубов, поверхности, наблюдения, авторство и история | Модели текущего состояния/append history, связи приём/план/снимки | Изменение сохраняет прежнее и новое, неверный зуб/поверхность отвергнуты, права/конкурентность | Частично: срез47 добавил state/history schema и migration0012;29 storage/dependent tests/check/drift PASS. Срез48 encrypted helpers:30 tests/check/drift PASS; Срез49 exact-version audit:380 medical tests PASS; срез50 primary command/exact reader:50 PASS; срез51 HTTP:40 PASS/check/drift. Срез52 snapshot/history API:41 tests PASS, дополнительные12 edge tests PASS. Срез53 typed frontend transport10 tests/types/build PASS; Срез54 read UI:6 localized+1 recovery browser PASS; Срез55 whole-tooth editor:6+1 browser PASS; Срез56 surface-options API/shared validator41 tests PASS; Срез58 surface UI:6 localized+1 Map regression browser PASS, types/build/i18n/screens PASS; team/linked plans/images/clinical legend/concurrency ещё открыты | Tooth state/encrypted append history; surface policy | Write/exact read/snapshot/history/surface options | Постоянные/молочные/смешанные зубы; история; редактор поверхностей | Планы/снимки/team; PG concurrency; клиническая легенда | Утверждённый справочник поверхностей не получен |
 | M10 §2.4,4,6 | Клинический план отдельно, ссылки на VisitPlan/Step и существующие деньги | Клинические шаги/версии/связи; подтверждённое преобразование в календарь без неявного долга | Изменение медплана не создаёт Payment/бронь, сохраняет организационные ссылки | Не реализовано | Не реализовано | Не реализовано | Не реализовано | Клинические шаги/версии/связи; подтверждённое преобразование в календарь без неявного долга | Внешний блокер независимой реализации не установлен |
-| M11 §5,16.2; D06; Q16–17 | Версионные шаблоны документов по виду/услуге, бренд и реквизиты, автор/врач/реальный подписант отдельно | Матрица обязательности/момента/подписантов; снапшоты источников, PDF, ограниченный DOCX, печать | Старый PDF/checksum не меняется после редактирования клиента/шаблона; новые исправления отдельными версиями | Частично: draft document/revision storage, зашифрованные снимки clinical/template/requisites/авторов; проверки в начале checkpoint | MedicalDocument/Revision + primary draft create/update/read, current ACL/audit/replay; Template/Revision + own drafts; version review submit/approve/reject/read domain,141 tests PASS; review API/UI и signed/finalized открыты | Personal templates create/update/list/history/read; document API ещё нет | S17 личные черновики: список/editor/history, RU/KK/EN desktop/mobile;8 browser +2 settings regressions PASS,22 снимка просмотрены | Утверждённые шаблоны/матрица, полный snapshot личности/лицензии, PDF/asset bytes/checksum, lifecycle, assistant/team/temporary ACL, API/UI, DOCX/печать | Формы/подписи требуют внешней проверки |
+| M11 §5,16.2; D06; Q16–17 | Версионные шаблоны документов по виду/услуге, бренд и реквизиты, автор/врач/реальный подписант отдельно | Матрица обязательности/момента/подписантов; снапшоты источников, PDF, ограниченный DOCX, печать | Старый PDF/checksum не меняется после редактирования клиента/шаблона; новые исправления отдельными версиями | Частично: draft document/revision storage, зашифрованные снимки clinical/template/requisites/авторов; проверки в начале checkpoint | MedicalDocument/Revision + primary draft create/update/read, current ACL/audit/replay; Template/Revision + own drafts; version review submit/approve/reject/read domain/API + pending queue,58 affected tests/check/drift PASS; signed/finalized открыты | Personal templates create/update/list/history/read + verified review summary/approve metadata; document API ещё нет | S17 личные черновики + отправка/очередь/решения/статусы версий; RU/KK/EN desktop/mobile:6 review+8 draft+1 reviewer boundary PASS,48 снимков просмотрены; build/types/i18n PASS | Утверждённые шаблоны/матрица, полный snapshot личности/лицензии, PDF/asset bytes/checksum, lifecycle, assistant/team/temporary ACL, API/UI, DOCX/печать | Формы/подписи требуют внешней проверки |
 | M12 §5.6; D06; Q17 | Подпись desktop/Android/iPhone, черновик ≠ утверждение ≠ подтверждённая ЭЦП | Адаптер выбранного провайдера, проверка сертификата/подписи, несколько подписантов | Callback replay/поздний/отменённый/невалидный не финализирует; реальные испытания всех платформ | Не реализовано; провайдер/доступы не определены | Не реализовано | Не реализовано | Не реализовано | Адаптер выбранного провайдера, проверка сертификата/подписи, несколько подписантов | Провайдер подписи и доступы не определены |
 | M13 §2.5; D07; Q20–24; §22.7 | Приватные файлы, карантин/фактический MIME/антивирус, аудит без PHI; reuse private storage | Медицинский ACL на оригинал/preview/export; ключи/ротация; резервный защищённый журнал; retention по категориям | Сбой сканера не публикует; сбой аудита блокирует write/issue, read только с надёжным журналом; прямой URL не обходит ACL | Частично: криптография и patient-create/update audit rollback PASS; files/retention/read fallback ещё нет, сроки/ресурсы внешне не подтверждены | Medical crypto; атомарный аудит реализованных чтений/записей | Реализованные medical endpoints private/no-store | Файлы/retention отсутствуют | Quarantine/scanner/files ACL; read fallback; retention/rotation | Сроки хранения и инфраструктурные ресурсы не подтверждены |
 | M14 §5.5–5.6; D08; B12–19; Q25–27 | Лично отдельный случайный код, нейтральная ссылка; конкретные версии/комплект обращения, без оплаты/ежедневного OTP | Хеш секрета/лимиты попыток/сессия/новая вкладка; дистанционно дополнительная проверка | До готовности нет доступа; 72ч с активации; repeat/revoke/reissue/представитель/смена контакта; секрет не URL/log | Не реализовано | Не реализовано | Не реализовано | Не реализовано | Хеш секрета/лимиты попыток/сессия/новая вкладка; дистанционно дополнительная проверка | Удалённая проверка получателя и нормативная приёмка |
