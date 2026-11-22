@@ -4,6 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .document_reads import document_workspace_access, list_document_revisions, list_patient_documents
+from .document_previews import preview_document_template
 from .document_services import read_document_for_treating_clinician, save_primary_document_draft
 from .serializers import StrictSerializer
 
@@ -33,6 +34,11 @@ class DocumentAccessSerializer(DocumentReadSerializer):
     encounter_id = serializers.IntegerField(min_value=1)
 
 
+class DocumentPreviewSerializer(DocumentAccessSerializer):
+    template_version_id = serializers.IntegerField(min_value=1)
+    document_id = serializers.IntegerField(min_value=1, required=False)
+
+
 class DocumentDraftSerializer(DocumentScopeSerializer):
     encounter_id = serializers.IntegerField(min_value=1)
     expected_encounter_revision = serializers.IntegerField(min_value=1)
@@ -41,6 +47,7 @@ class DocumentDraftSerializer(DocumentScopeSerializer):
     document_text = serializers.CharField(max_length=131072, allow_blank=True, trim_whitespace=False)
     reason = serializers.CharField(max_length=2000, allow_blank=True, required=False, trim_whitespace=False)
     participation_id = serializers.IntegerField(min_value=1, required=False)
+    expected_source_digest = serializers.RegexField(r"\A[a-f0-9]{64}\Z", required=False, trim_whitespace=False)
 
 
 class DocumentUpdateSerializer(DocumentDraftSerializer):
@@ -56,7 +63,7 @@ class MedicalDocumentViewSet(viewsets.GenericViewSet):
     def get_serializer_class(self):
         return {"create": DocumentDraftSerializer, "draft": DocumentUpdateSerializer,
                 "list": DocumentListSerializer, "revisions": DocumentHistorySerializer,
-                "workspace_access": DocumentAccessSerializer}.get(
+                "workspace_access": DocumentAccessSerializer, "preview": DocumentPreviewSerializer}.get(
                     self.action, DocumentReadSerializer)
 
     def finalize_response(self, request, response, *args, **kwargs):
@@ -88,6 +95,10 @@ class MedicalDocumentViewSet(viewsets.GenericViewSet):
     @action(detail=False, methods=["get"], url_path="workspace-access")
     def workspace_access(self, request):
         return self._read(request, document_workspace_access)
+
+    @action(detail=False, methods=["get"])
+    def preview(self, request):
+        return self._read(request, preview_document_template)
 
     @action(detail=True, methods=["post"])
     def draft(self, request, pk=None):

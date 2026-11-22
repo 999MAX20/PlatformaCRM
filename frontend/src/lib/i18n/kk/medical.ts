@@ -201,6 +201,8 @@ export const medical = {
   "medical.documents.back": "Құжаттар тізіміне оралу",
   "medical.documents.chooseTemplate": "Бекітілген үлгіні таңдаңыз",
   "medical.documents.noTemplates": "Бекітілген үлгілер әзірге жоқ. Медициналық басшыға хабарласыңыз.",
+  "medical.documents.missingFields": "Үлгідегі толтырылмаған өрістер саны: {count}. Сақтау алдында мәтінді тексеріп, толықтырыңыз.",
+  "medical.documents.unknownFields": "Үлгідегі белгісіз өрістер саны: {count}. Олар тексеру үшін мәтінде қалдырылды.",
   "medical.documents.text": "Құжат мәтіні",
   "medical.documents.sourceVersion": "Бекітілген үлгі нұсқасы: {revision}",
   "medical.documents.recorded": "Сақталды",

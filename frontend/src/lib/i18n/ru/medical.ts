@@ -201,6 +201,8 @@ export const medical = {
   "medical.documents.back": "К списку документов",
   "medical.documents.chooseTemplate": "Выберите утверждённый шаблон",
   "medical.documents.noTemplates": "Утверждённых шаблонов пока нет. Обратитесь к медруководителю.",
+  "medical.documents.missingFields": "В шаблоне не заполнено полей: {count}. Проверьте и дополните текст перед сохранением.",
+  "medical.documents.unknownFields": "В шаблоне есть неизвестные поля: {count}. Они оставлены в тексте для проверки.",
   "medical.documents.text": "Текст документа",
   "medical.documents.sourceVersion": "Версия утверждённого шаблона: {revision}",
   "medical.documents.recorded": "Сохранён",

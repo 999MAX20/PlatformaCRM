@@ -5,6 +5,9 @@ import type { TemplateVersion } from "./medicalTemplates";
 export type DocumentScope = ClinicalReadScope & { encounter_id: number };
 export type DocumentAccess = { patient_revision: number; encounter_revision: number;
   actions: { view: boolean; create: boolean; update: boolean } };
+export type DocumentPreview = { document_text: string; template: TemplateVersion;
+  patient_revision: number; encounter_revision: number; source_digest: string;
+  missing_fields: string[]; unknown_fields: string[]; available_fields: string[] };
 export type DocumentRow = { document_id: number; version_id: number; revision: number;
   encounter_id: number; state: string; created_at: string; title: string };
 export type DocumentRevision = { version_id: number; revision: number; author_id: number; created_at: string };
@@ -16,7 +19,7 @@ export type DocumentVersion = Omit<DocumentRow, "encounter_id" | "title"> & { sn
 } };
 export type DocumentDraft = { business_id: number; patient_id: number; encounter_id: number;
   expected_encounter_revision: number; expected_patient_revision: number; template_version_id: number;
-  document_text: string; reason: string; participation_id?: number };
+  document_text: string; reason: string; participation_id?: number; expected_source_digest?: string };
 const root = "/api/medical/documents/";
 async function read<T>(path: string, params: object, signal?: AbortSignal) {
   return (await apiClient.get<T>(root + path, { params, signal })).data;
@@ -28,6 +31,8 @@ async function save(path: string, payload: DocumentDraft & { expected_document_r
 }
 export const medicalDocumentsApi = {
   access: (scope: DocumentScope, signal?: AbortSignal) => read<DocumentAccess>("workspace-access/", scope, signal),
+  preview: (scope: DocumentScope, template_version_id: number, document_id?: number, signal?: AbortSignal) =>
+    read<DocumentPreview>("preview/", { ...scope, template_version_id, document_id }, signal),
   list: (scope: DocumentScope, before_id?: number, signal?: AbortSignal) =>
     read<{ results: DocumentRow[]; next_before_id: number | null }>("", { ...scope, before_id }, signal),
   version: (scope: ClinicalReadScope, id: number, signal?: AbortSignal) => read<DocumentVersion>(`versions/${id}/`, scope, signal),

@@ -39,7 +39,8 @@ for (const [language, t] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
         headers: { Authorization: `Bearer ${auth}`, "Idempotency-Key": crypto.randomUUID() }, data });
       expect(response.ok(), await response.text()).toBe(true); return response.json();
     };
-    const template = await command("", { business_id: 1, title, text: "Synthetic approved source", reason: "" });
+    const template = await command("", { business_id: 1, title,
+      text: "Synthetic approved source {{record.number}} / {{doctor.full_name}} / {{patient.full_name}} / {{clinical.plan}} / {{unsupported}}", reason: "" });
     await command(`versions/${template.version_id}/submit/`, { business_id: 1 });
     await command(`versions/${template.version_id}/decision/`, { business_id: 1, decision: "approved", reason: "Synthetic review" }, headToken);
     const response = await page.request.get(`${base}/api/appointments/${id}/`, { headers: { Authorization: `Bearer ${token}` } });
@@ -61,9 +62,21 @@ for (const [language, t] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
     const editor = page.getByTestId("medical-document-editor");
     await expect(editor.getByRole("button", { name: new RegExp(title) })).toBeVisible();
     await editor.screenshot({ path: info.outputPath("document-template-picker.png") });
+    let failPreview = true;
+    await page.route("**/api/medical/documents/preview/**", route => {
+      if (failPreview) { failPreview = false; return route.fulfill({ status: 503, contentType: "application/json", body: '{"detail":"Synthetic preview unavailable"}' }); }
+      return route.continue();
+    });
     await editor.getByRole("button", { name: new RegExp(title) }).click();
+    await expect(editor.getByRole("alert")).toBeVisible();
+    await editor.screenshot({ path: info.outputPath("document-preview-retry.png") });
+    await editor.getByRole("button", { name: t["common.retry"], exact: true }).click();
     const text = editor.getByRole("textbox", { name: t["medical.documents.text"], exact: true });
-    await expect(text).toHaveValue("Synthetic approved source");
+    await expect(text).toHaveValue(new RegExp(`Synthetic approved source DOC-${id} / Synthetic clinician / .+ /  / {{unsupported}}`));
+    expect(await text.inputValue()).not.toContain("{{patient.full_name}}");
+    await expect(editor.getByText(t["medical.documents.missingFields"].replace("{count}", "1"), { exact: true })).toBeVisible();
+    await expect(editor.getByText(t["medical.documents.unknownFields"].replace("{count}", "1"), { exact: true })).toBeVisible();
+    await editor.screenshot({ path: info.outputPath("document-preview-filled.png") });
     await text.fill(`Synthetic document original ${id}`);
     page.once("dialog", dialog => dialog.dismiss());
     await page.keyboard.press("Escape");
@@ -95,6 +108,7 @@ for (const [language, t] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
     await expect(detail.getByTestId("medical-document-text")).toHaveText(`Synthetic document original ${id}`);
     await expect(detail).toContainText("Synthetic clinician");
     await detail.getByRole("button", { name: t["medical.documents.edit"], exact: true }).click();
+    await expect(text).toHaveValue(`Synthetic document original ${id}`);
     await text.fill(`Synthetic document corrected ${id}`);
     await editor.getByRole("button", { name: t["medical.clinical.save"], exact: true }).click();
     await expect(editor).not.toBeVisible();

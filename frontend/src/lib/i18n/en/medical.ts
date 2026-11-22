@@ -201,6 +201,8 @@ export const medical = {
   "medical.documents.back": "Back to documents",
   "medical.documents.chooseTemplate": "Choose an approved template",
   "medical.documents.noTemplates": "No approved templates yet. Contact the medical director.",
+  "medical.documents.missingFields": "Fields without data: {count}. Review and complete the text before saving.",
+  "medical.documents.unknownFields": "Unknown template fields: {count}. Review them in the text before saving.",
   "medical.documents.text": "Document text",
   "medical.documents.sourceVersion": "Approved template version: {revision}",
   "medical.documents.recorded": "Saved",

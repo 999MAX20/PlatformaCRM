@@ -78,8 +78,10 @@ revisions для редактора;41 affected tests/check/drift PASS, вклю
 Текущие права create/update, утверждённый источник и аудит обязательны. HMAC
 источника проверяется до и после записи снимка; устаревший preview отклоняется,
 успешный replay возвращает прежнюю версию.85 affected tests/check/drift PASS.
-Preview и expected_source_digest ещё не подключены к HTTP/UI; полный сценарий
-автозаполнения остаётся открытым. Проверки и точная граница M11 — в DENTAL-MCS checkpoint.
+Preview и expected_source_digest подключены к HTTP/UI: новый текст заполняется
+из источника, ручные правки сохранённого документа не перезаписываются.22 API/domain
+теста PASS; браузерная приёмка нового среза указана в checkpoint. Выбор полей при
+создании шаблона, лицензия/квалификация и полный M11 ещё открыты. Проверки и точная граница M11 — в DENTAL-MCS checkpoint.
 
 Добавлено внутреннее хранение MedicalDocumentTemplate/Revision для общих и личных
 шаблонов: scope Business/owner member, зашифрованные title/text/reason, отдельное

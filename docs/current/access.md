@@ -122,8 +122,12 @@ workspace create/update, approved visibility и exact encounter read audit.
 Разрешённые поля подставляются буквально, без выполнения выражений. Необязательный
 expected_source_digest в domain save связывает preview с текущими данными и
 сохранённым снимком; несовпадение откатывает запись. Replay сохраняет прежний
-результат после повторной авторизации. HTTP/UI preview ещё не подключены;
-это не новая выдача доступа и не подтверждение подписи/лицензии.
+результат после повторной авторизации. GET /medical/documents/preview/ принимает
+строгий scope, encounter_id, template_version_id и optional document_id; требует
+соответственно create/update, возвращает текст, диагностику полей и source_digest.
+Draft HTTP принимает optional expected_source_digest (64 lowercase hex);
+no-store/private действует также для ошибок. Редактор передаёт этот digest.
+Это не новая выдача доступа и не подтверждение подписи/лицензии.
 
 HTTP /medical/documents/: POST создаёт primary draft из template_version_id и
 document_text, POST {id}/draft/ добавляет версию с expected_document_revision.
