@@ -51,7 +51,7 @@ M11 получил внутреннее хранение черновиков Me
 Business/Branch и раздельного авторства prepared_by/performed_by. Изменение текущих
 реквизитов не переписывает снимок. Это не готовая форма или подписанный документ:
 нет PDF/файла логотипа, полного снимка личности/лицензии, утверждённой матрицы,
-подписи, выдачи, UI. Добавлены доменные create/update своего черновика основным
+подписи и выдачи. Добавлены доменные create/update своего черновика основным
 врачом и read точной версии: current medical_documents role/branch/basis,
 verified identity для записи, audit exact version, HMAC replay и atomic rollback.
 Assistant/team/24h workflow ещё открыт; внутренний raw template
@@ -63,7 +63,12 @@ Schema2 хранит исходный template и source/approval metadata от�
 по-прежнему требуют авторизованного вызывающего сервиса и общей audit-транзакции.
 Добавлены /medical/documents/ create/update/list/history/version: строгий вход,
 no-store/private, current treatment basis и exact-version audit; ограниченная
-пагинация, фильтр приёма, audit failure rollback. UI ещё не подключён.
+пагинация, фильтр приёма, audit failure rollback. UI подключён через вкладку
+документов приёма: list/detail/history, создание из утверждённого шаблона и
+редактирование текущего черновика.6 document RU/KK/EN desktop/mobile сценариев,
+8 clinical регрессий, build/types/i18n PASS;61 снимок просмотрен. HTTP503/409/403
+в document UI проверены инъекцией ответов; backend ACL доказан отдельными тестами.
+Полный M11 остаётся открытым; результаты и граница в DENTAL-MCS checkpoint.
 Document workspace-access сообщает текущие самостоятельные права на документы и
 revisions для редактора;41 affected tests/check/drift PASS, включая отсутствие
 зависимости от clinical edit, unverified/finalized ограничения и owner/branch denial.

@@ -23,6 +23,9 @@ async function reviewCommand(path: string, payload: object, key: string) {
   return (await apiClient.post(root + path, payload, { headers: { "Idempotency-Key": key } })).data;
 }
 export const medicalTemplatesApi = {
+  approved: (business_id: number, before_id?: number, signal?: AbortSignal) =>
+    read<{ results: TemplateRow[]; next_before_id: number | null }>("approved/", { business_id, before_id }, signal),
+  approvedVersion: (business_id: number, version_id: number, signal?: AbortSignal) => read<TemplateVersion>(`approved/versions/${version_id}/`, { business_id }, signal),
   access: (business_id: number, signal?: AbortSignal) => read<TemplateAccess>("workspace-access/", { business_id }, signal),
   list: (business_id: number, before_id?: number, signal?: AbortSignal) =>
     read<{ results: TemplateRow[]; next_before_id: number | null }>("", { business_id, before_id }, signal),

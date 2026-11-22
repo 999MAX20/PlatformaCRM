@@ -13,6 +13,7 @@ import { Tabs } from "../../components/ui/Tabs";
 import { ClinicalHistory } from "./ClinicalHistory";
 import { ToothChart } from "./ToothChart";
 import { SourceProposalEntry } from "./SourceProposalWorkspace";
+import { DocumentWorkspace } from "./documents/DocumentWorkspace";
 
 export function ClinicalAppointmentEntry({ businessId, appointmentId }: { businessId: number; appointmentId: number }) {
   const { t } = useI18n();
@@ -27,6 +28,9 @@ export function ClinicalAppointmentEntry({ businessId, appointmentId }: { busine
   const [closeFailed, setCloseFailed] = useState(false);
   const draftControl = useRef<ClinicalDraftControl>(null);
   const closeInFlight = useRef(false);
+  const documentEditor = useRef(false);
+  const onDocumentEditor = useCallback((value: boolean) => { documentEditor.current = value; }, []);
+  const canEditDocument = useCallback(() => !draftControl.current?.isPending(), []);
   const [admitted, setAdmitted] = useState(false);
   useUnsavedEntryWarning(dirty);
   const focusId = `clinical-open-${businessId}-${appointmentId}`;
@@ -42,7 +46,7 @@ export function ClinicalAppointmentEntry({ businessId, appointmentId }: { busine
   const status = axios.isAxiosError(error) ? error.response?.status : undefined;
   const finishClose = () => { setConfirmClose(false); setOpen(false); setDirty(false); };
   const close = () => {
-    if (closeInFlight.current || draftControl.current?.isPending()) return;
+    if (documentEditor.current || closeInFlight.current || draftControl.current?.isPending()) return;
     if (draftControl.current?.isDirty() && context?.encounter) { setCloseFailed(false); setConfirmClose(true); return; }
     if (dirty && !window.confirm(t("medical.clinical.discard"))) return;
     finishClose();
@@ -69,7 +73,8 @@ export function ClinicalAppointmentEntry({ businessId, appointmentId }: { busine
     <Modal open={open} onClose={close} size="xl" title={t("medical.clinical.title")} testId="clinical-workspace" closeOnBackdrop={false} focusReturnId={focusId}>
       {loading ? <LoadingState /> : error ? <ErrorState message={status === 401 || status === 403 ? t("medical.denied") : getApiErrorMessage(error)}
         action={<Button size="lg" variant="secondary" onClick={reload}>{t("common.retry")}</Button>} /> : context ?
-        <ClinicalWorkspace draftControl={draftControl} context={context} onChanged={reload} onDirty={setDirty} onDenied={denied} /> : null}
+        <ClinicalWorkspace draftControl={draftControl} context={context} onChanged={reload} onDirty={setDirty} onDenied={denied}
+          onDocumentEditor={onDocumentEditor} canEditDocument={canEditDocument} /> : null}
     </Modal>
     <Modal open={confirmClose && open} onClose={() => { if (!closeInFlight.current) setConfirmClose(false); }}
       title={t("medical.clinical.unsavedTitle")} size="sm" closeOnBackdrop={false} testId="clinical-unsaved">
@@ -85,13 +90,14 @@ export function ClinicalAppointmentEntry({ businessId, appointmentId }: { busine
   </div>;
 }
 
-function ClinicalWorkspace({ context, onChanged, onDirty, onDenied, draftControl }: {
+function ClinicalWorkspace({ context, onChanged, onDirty, onDenied, draftControl, onDocumentEditor, canEditDocument }: {
+  onDocumentEditor: (open: boolean) => void; canEditDocument: () => boolean;
   draftControl: Ref<ClinicalDraftControl>;
   context: AppointmentClinicalContext; onChanged: () => void; onDirty: (value: boolean) => void; onDenied: (cause: unknown) => void;
 }) {
   const { t } = useI18n();
   const [number, setNumber] = useState("");
-  const [tab, setTab] = useState<"encounter" | "history" | "teeth">("encounter");
+  const [tab, setTab] = useState<"encounter" | "history" | "teeth" | "documents">("encounter");
   const tabPrefix = `clinical-${context.appointment.id}`;
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<unknown>(null);
@@ -119,8 +125,8 @@ function ClinicalWorkspace({ context, onChanged, onDirty, onDenied, draftControl
       }
     } finally { if (!signal.aborted) setPending(false); }
   }
-  return <div className="grid min-w-0 gap-5 lg:grid-cols-[minmax(0,2fr)_minmax(220px,1fr)]">
-    <aside className="min-w-0 space-y-3 lg:order-2">
+  return <div className={`grid min-w-0 gap-5 ${tab === "documents" ? "" : "lg:grid-cols-[minmax(0,2fr)_minmax(220px,1fr)]"}`}>
+    <aside className={`min-w-0 space-y-3 ${tab === "documents" ? "" : "lg:order-2"}`}>
       <h2 className="break-words text-lg font-semibold text-platforma-text">{context.patient.full_name}</h2>
       <p className="text-sm text-platforma-subtle">{t(`medical.${context.patient.identity_status}`)}</p>
       {context.active_record ? <p className="break-words text-sm">{t("medical.clinical.number")}: {context.active_record.number}</p> : null}
@@ -129,7 +135,8 @@ function ClinicalWorkspace({ context, onChanged, onDirty, onDenied, draftControl
     <div className="min-w-0 space-y-4">
       <Tabs value={tab} onChange={setTab} idPrefix={tabPrefix} ariaLabel={t("medical.clinical.title")}
         className="[&_[role=tab]]:min-h-11" appearance="underline"
-        options={[{ value: "encounter", label: t("medical.clinical.note") }, { value: "history", label: t("medical.clinical.history") }, { value: "teeth", label: t("medical.tooth.title") }]} />
+        options={[{ value: "encounter", label: t("medical.clinical.note") }, { value: "history", label: t("medical.clinical.history") }, { value: "teeth", label: t("medical.tooth.title") },
+          { value: "documents", label: t("medical.documents.title") }]} />
       <div role="tabpanel" id={`${tabPrefix}-panel-encounter`} aria-labelledby={`${tabPrefix}-tab-encounter`} hidden={tab !== "encounter"} className="space-y-4">
       {context.encounter ? <ClinicalDraftForm draftControl={draftControl} context={context} onDirty={onDirty} onDenied={onDenied} onReload={onChanged} /> : <>
         <p className="text-sm text-platforma-subtle">{t(context.active_record ? "medical.clinical.noEncounter" : "medical.clinical.noRecord")}</p>
@@ -149,6 +156,10 @@ function ClinicalWorkspace({ context, onChanged, onDirty, onDenied, draftControl
       </div>
       <div role="tabpanel" id={`${tabPrefix}-panel-history`} aria-labelledby={`${tabPrefix}-tab-history`} hidden={tab !== "history"}>
         {tab === "history" ? <ClinicalHistory context={context} onDenied={onDenied} /> : null}
+      </div>
+      <div role="tabpanel" id={`${tabPrefix}-panel-documents`} aria-labelledby={`${tabPrefix}-tab-documents`} hidden={tab !== "documents"}>
+        {context.encounter ? <DocumentWorkspace context={context} active={tab === "documents"} onEditor={onDocumentEditor} canEdit={canEditDocument} /> :
+          <p className="text-sm text-platforma-subtle">{t("medical.clinical.noEncounter")}</p>}
       </div>
     </div>
   </div>;
