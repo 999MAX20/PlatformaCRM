@@ -64,6 +64,9 @@ Schema2 хранит исходный template и source/approval metadata от�
 Добавлены /medical/documents/ create/update/list/history/version: строгий вход,
 no-store/private, current treatment basis и exact-version audit; ограниченная
 пагинация, фильтр приёма, audit failure rollback. UI ещё не подключён.
+Document workspace-access сообщает текущие самостоятельные права на документы и
+revisions для редактора;41 affected tests/check/drift PASS, включая отсутствие
+зависимости от clinical edit, unverified/finalized ограничения и owner/branch denial.
 Проверки и точная граница M11 — в DENTAL-MCS checkpoint.
 
 Добавлено внутреннее хранение MedicalDocumentTemplate/Revision для общих и личных

@@ -2,10 +2,52 @@ from django.db import transaction
 from django.db.models import F
 from rest_framework.exceptions import PermissionDenied, ValidationError
 
+from apps.core.domain_errors import InvalidTransition
 from .audit import write_patient_audit
+from .appointment_access import assert_appointment_medical_basis
+from .clinical_identity import assert_verified_clinical_identity
 from .document_services import document_read_context, document_version_payload
 from .identity_crypto import MedicalDataUnavailable
 from .models import MedicalDocument, MedicalDocumentRevision, MedicalEncounter
+from .participation_access import assert_treatment_medical_basis
+from .role_access import assert_medical_branch_permission
+
+
+@transaction.atomic
+def document_workspace_access(*, actor, business_id, patient_id, encounter_id,
+                              appointment_id=None, participation_id=None):
+    if type(encounter_id) is not int or encounter_id <= 0:
+        raise ValidationError({"encounter": "Provide a valid encounter."})
+    business, patient = document_read_context(actor=actor, business_id=business_id, patient_id=patient_id,
+        appointment_id=appointment_id, participation_id=participation_id)
+    encounter = MedicalEncounter.objects.select_related("branch", "record").filter(
+        pk=encounter_id, business=business, patient=patient).first()
+    if encounter is None:
+        raise PermissionDenied()
+    encounter.clean()
+
+    def allowed(action):
+        try:
+            context = assert_medical_branch_permission(actor, business, "medical_documents", action, branch=encounter.branch)
+            if encounter.primary_clinician_id != context.member_id or encounter.state != "draft" or encounter.record.state != "active":
+                return False
+            if participation_id is None:
+                assert_appointment_medical_basis(actor=actor, business=business, patient_id=patient_id,
+                    appointment_id=encounter.appointment_id, resource="medical_documents", action=action)
+            else:
+                basis = assert_treatment_medical_basis(actor=actor, business=business, patient_id=patient_id,
+                    participation_id=participation_id, resource="medical_documents", action=action)
+                if basis.branch_id != encounter.branch_id:
+                    return False
+            assert_verified_clinical_identity(patient)
+            return True
+        except (PermissionDenied, InvalidTransition):
+            return False
+
+    actions = {"view": True, "create": allowed("create"), "update": allowed("update")}
+    write_patient_audit(actor=actor, business=business, patient=patient, action="read", record=encounter.record)
+    return {"business_id": business.pk, "patient_id": patient.pk, "encounter_id": encounter.pk,
+            "patient_revision": patient.revision, "encounter_revision": encounter.revision, "actions": actions}
 
 
 def _page_arguments(cursor, limit):

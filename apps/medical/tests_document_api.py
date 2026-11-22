@@ -60,6 +60,15 @@ class DocumentAPITests(TestCase):
         self.assertEqual(self.read(f"{first['id']}/revisions/", before_revision=2).data["results"][0]["version_id"], first["version_id"])
         self.assertEqual(self.read(f"versions/{first['version_id']}/").data["snapshot"]["document_text"], self.payload["document_text"])
 
+    def test_workspace_access_uses_current_document_permissions_and_strict_scope(self):
+        response = self.read("workspace-access/", encounter_id=self.encounter_record.pk)
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(response.data["actions"], dict(view=True, create=True, update=True))
+        self.assertEqual(self.read("workspace-access/").status_code, 400)
+        self.assertEqual(self.read("workspace-access/", encounter_id=self.encounter_record.pk, create=True).status_code, 400)
+        self.api.force_authenticate(self.owner)
+        self.assertEqual(self.read("workspace-access/", encounter_id=self.encounter_record.pk).status_code, 403)
+
     def test_strict_fields_no_raw_template_or_client_approval(self):
         for field in ("template", "template_source", "approved_by", "state", "author_id"):
             response = self.command(payload=self.payload | {field: "forged"})

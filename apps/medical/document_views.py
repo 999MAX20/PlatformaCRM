@@ -3,7 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from .document_reads import list_document_revisions, list_patient_documents
+from .document_reads import document_workspace_access, list_document_revisions, list_patient_documents
 from .document_services import read_document_for_treating_clinician, save_primary_document_draft
 from .serializers import StrictSerializer
 
@@ -29,6 +29,10 @@ class DocumentHistorySerializer(DocumentReadSerializer):
     limit = serializers.IntegerField(min_value=1, max_value=50, required=False, default=20)
 
 
+class DocumentAccessSerializer(DocumentReadSerializer):
+    encounter_id = serializers.IntegerField(min_value=1)
+
+
 class DocumentDraftSerializer(DocumentScopeSerializer):
     encounter_id = serializers.IntegerField(min_value=1)
     expected_encounter_revision = serializers.IntegerField(min_value=1)
@@ -51,7 +55,8 @@ class MedicalDocumentViewSet(viewsets.GenericViewSet):
 
     def get_serializer_class(self):
         return {"create": DocumentDraftSerializer, "draft": DocumentUpdateSerializer,
-                "list": DocumentListSerializer, "revisions": DocumentHistorySerializer}.get(
+                "list": DocumentListSerializer, "revisions": DocumentHistorySerializer,
+                "workspace_access": DocumentAccessSerializer}.get(
                     self.action, DocumentReadSerializer)
 
     def finalize_response(self, request, response, *args, **kwargs):
@@ -79,6 +84,10 @@ class MedicalDocumentViewSet(viewsets.GenericViewSet):
 
     def list(self, request):
         return self._read(request, list_patient_documents)
+
+    @action(detail=False, methods=["get"], url_path="workspace-access")
+    def workspace_access(self, request):
+        return self._read(request, document_workspace_access)
 
     @action(detail=True, methods=["post"])
     def draft(self, request, pk=None):

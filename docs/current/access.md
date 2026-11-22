@@ -125,6 +125,12 @@ GET список и {id}/revisions/, GET versions/{id}/ требуют business_
 encounter_id только этого пациента. Cursor pages ограничены50, latest version
 списка и прочитанные строки истории аудируются; отсутствующая текущая версия
 вызывает отказ. Команды требуют Idempotency-Key, ответы/ошибки no-store/private.
+GET workspace-access/ требует тот же read basis и encounter_id этого пациента;
+возвращает patient/encounter revision и document view/create/update. Write actions
+проверяют собственные medical_documents permissions, primary clinician, branch,
+действующее основание записи, verified identity и draft encounter/active record.
+Они не наследуются от medical_records или CRM role. Чтение metadata аудируется
+по карте; отказ аудита блокирует ответ. Это подсказка UI, команды повторяют проверки.
 
 Личные черновики шаблонов доступны через /medical/document-templates/ только
 врачу/head с текущим medical_documents:create/update/view и собственным
