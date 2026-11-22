@@ -107,15 +107,23 @@ verified identity и revisions проверяются перед новой за
 проверяет доступ. Чтение точной версии требует medical_documents:view и текущего
 лечебного основания; владелец не получает его автоматически. Аудит связан с
 MedicalDocumentRevision; ошибка audit блокирует расшифровку/откатывает запись.
-UI документов пока нет; assistant/team/24h и подпись остаются открытыми.
+UI документов подключён к primary draft API; assistant/team/24h и подпись остаются открытыми.
 Передача raw template внутреннему сервису не утверждает форму. При выборе
 template_version_id сервис дополнительно проверяет approved selector: доступен
 общий либо собственный утверждённый шаблон, receipt проверяется до сохранения,
-включая replay. Schema2 хранит исходный template, IDs шаблона/версии/решения,
+включая replay. Schema3 хранит исходный template, IDs шаблона/версии/решения,
 approved_by/approved_at и отдельный document_text. Пользователь не задаёт эти
-source metadata. Schema1 сохраняет прежнее чтение. Старый документ не зависит
+source metadata. Schema1/2 сохраняют прежнее чтение. Старый документ не зависит
 от дальнейших изменений шаблона или текущего review receipt; это снимок на момент
 сохранения, не ЭЦП и не нормативное подтверждение формы.
+Schema3 дополнительно шифрует проверенную личность пациента и источник приёма;
+повреждённый источник блокирует запись. Внутренний preview повторяет current
+workspace create/update, approved visibility и exact encounter read audit.
+Разрешённые поля подставляются буквально, без выполнения выражений. Необязательный
+expected_source_digest в domain save связывает preview с текущими данными и
+сохранённым снимком; несовпадение откатывает запись. Replay сохраняет прежний
+результат после повторной авторизации. HTTP/UI preview ещё не подключены;
+это не новая выдача доступа и не подтверждение подписи/лицензии.
 
 HTTP /medical/documents/: POST создаёт primary draft из template_version_id и
 document_text, POST {id}/draft/ добавляет версию с expected_document_revision.

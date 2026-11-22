@@ -1,3 +1,6 @@
+import hmac
+import re
+
 from django.db import transaction
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
 
@@ -9,6 +12,7 @@ from .audit import write_patient_audit
 from .clinical_identity import assert_verified_clinical_identity
 from .common_template_services import read_approved_template_version
 from .document_content import append_document_revision, read_document_revision, validate_document_template
+from .document_rendering import document_snapshot_context, document_source_context, document_source_digest
 from .identity_crypto import MedicalDataUnavailable, medical_request_digest
 from .models import MedicalDocument, MedicalDocumentRevision, MedicalEncounter, MedicalEncounterRevision, MedicalTemplateReview, PatientProfile
 from .participation_access import assert_treatment_medical_basis
@@ -20,7 +24,7 @@ def save_primary_document_draft(*, actor, business_id, patient_id, encounter_id,
                                 expected_encounter_revision, expected_patient_revision,
                                 idempotency_key, template=None, document_id=None,
                                 expected_document_revision=None, participation_id=None, reason="",
-                                template_version_id=None, document_text=None):
+                                template_version_id=None, document_text=None, expected_source_digest=None):
     """Save a primary clinician's draft; template input does not certify an official form."""
     identifiers = [business_id, patient_id, encounter_id, expected_encounter_revision, expected_patient_revision]
     if document_id is not None:
@@ -35,6 +39,9 @@ def save_primary_document_draft(*, actor, business_id, patient_id, encounter_id,
         raise ValidationError({"idempotency_key": "Provide an idempotency key of at most 128 characters."})
     if not isinstance(reason, str) or len(reason) > 2000:
         raise ValidationError({"reason": "Provide a reason of at most 2000 characters."})
+    if expected_source_digest is not None and (template_version_id is None or
+            not isinstance(expected_source_digest, str) or not re.fullmatch(r"[a-f0-9]{64}", expected_source_digest)):
+        raise ValidationError({"expected_source_digest": "Provide a valid approved-template source digest."})
     if template_version_id is None:
         if document_text is not None:
             raise ValidationError({"document_text": "Select an approved template source."})
@@ -92,11 +99,23 @@ def save_primary_document_draft(*, actor, business_id, patient_id, encounter_id,
         source = MedicalEncounterRevision.objects.filter(encounter=encounter, revision=encounter.revision).first()
         if source is None:
             raise MedicalDataUnavailable()
+        if expected_source_digest is not None:
+            current_source = document_source_context(business=business, encounter=encounter, source=source)
+            actual_digest = document_source_digest(context=current_source, business_id=business_id,
+                encounter_id=encounter_id, template_version_id=template_version_id, actor_id=actor.pk)
+            if not hmac.compare_digest(actual_digest, expected_source_digest):
+                raise InvalidTransition("The document source changed; reload before saving.")
         draft = document or MedicalDocument.objects.create(business=business, encounter=encounter,
                                                             template_code=template["code"])
         version = append_document_revision(document=draft, source_version=source, author=actor,
                                            template=template, reason=reason,
                                            template_source=template_source, document_text=document_text)
+        if expected_source_digest is not None:
+            retained = document_snapshot_context(read_document_revision(version))
+            retained_digest = document_source_digest(context=retained, business_id=business_id,
+                encounter_id=encounter_id, template_version_id=template_version_id, actor_id=actor.pk)
+            if not hmac.compare_digest(retained_digest, expected_source_digest):
+                raise InvalidTransition("The document source changed during saving; reload before saving.")
         write_patient_audit(actor=actor, business=business, patient=patient,
             action="document_draft_saved" if document is not None else "document_draft_created",
             document_version=version)
@@ -105,6 +124,8 @@ def save_primary_document_draft(*, actor, business_id, patient_id, encounter_id,
     content = {"template": template, "reason": reason}
     if template_source is not None:
         content.update(template_source=template_source, document_text=document_text)
+    if expected_source_digest is not None:
+        content["expected_source_digest"] = expected_source_digest
     result = run_idempotent_crm_command(business=business, actor=actor, action="medical.document." + action,
         idempotency_key=medical_request_digest({"key": idempotency_key}, business_id=business_id),
         payload={"patient": patient_id, "encounter": encounter_id, "document": document_id,

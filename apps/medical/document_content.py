@@ -9,6 +9,7 @@ from rest_framework.exceptions import ValidationError
 from apps.businesses.models import Business, BusinessMember
 from apps.core.domain_errors import InvalidTransition
 from .encounter_content import read_encounter_revision, validate_clinical_draft
+from .document_identity import capture_document_identity, validate_document_identity, validate_encounter_source
 from .identity_crypto import MedicalDataUnavailable, decrypt_medical_value, encrypt_medical_value
 from .models import MedicalDocument, MedicalDocumentRevision, MedicalEncounterRevision
 
@@ -88,7 +89,7 @@ def append_document_revision(*, document, source_version, author, template, reas
         subject_id=current.pk, purpose="document_staging")
     version = MedicalDocumentRevision.objects.create(document=current, revision=current.revision + 1,
         source_version=source, author=member.user, snapshot_encrypted=staging)
-    payload = {**_binding(version, current, schema=2 if template_source is not None else 1), "snapshot": {
+    payload = {**_binding(version, current, schema=3 if template_source is not None else 1), "snapshot": {
         "template": template, "clinical": clinical, "reason": reason,
         "business": {field: getattr(business, field) for field in BUSINESS_FIELDS},
         "branch": {field: getattr(encounter.branch, field) for field in BRANCH_FIELDS},
@@ -100,6 +101,7 @@ def append_document_revision(*, document, source_version, author, template, reas
     }}
     if template_source is not None:
         payload["snapshot"].update(template_source=template_source, document_text=document_text)
+        payload["snapshot"].update(capture_document_identity(encounter=encounter, source=source, business=business))
     version.snapshot_encrypted = encrypt_medical_value(json.dumps(payload, ensure_ascii=False, sort_keys=True),
         business_id=business.pk, subject_id=version.pk, purpose="document_snapshot")
     version.save(update_fields=["snapshot_encrypted"])
@@ -118,7 +120,7 @@ def read_document_revision(version):
             raise ValueError
         payload = json.loads(decrypt_medical_value(current.snapshot_encrypted,
             business_id=document.business_id, subject_id=current.pk, purpose="document_snapshot"))
-        if not isinstance(payload, dict) or type(payload.get("schema")) is not int or payload["schema"] not in (1, 2):
+        if not isinstance(payload, dict) or type(payload.get("schema")) is not int or payload["schema"] not in (1, 2, 3):
             raise ValueError
         expected = _binding(current, document, schema=payload["schema"])
         if not isinstance(payload, dict) or set(payload) != set(expected) | {"snapshot"}:
@@ -129,13 +131,18 @@ def read_document_revision(version):
         fields = {
                 "template", "clinical", "reason", "business", "branch", "patient_id", "record_id",
                 "branch_id", "appointment_id", "prepared_by", "performed_by"}
-        if payload["schema"] == 2:
+        if payload["schema"] >= 2:
             fields |= {"template_source", "document_text"}
+        if payload["schema"] == 3:
+            fields |= {"patient_identity", "encounter_source"}
         if not isinstance(snapshot, dict) or set(snapshot) != fields:
             raise ValueError
         validate_document_template(snapshot["template"], document.template_code)
-        if payload["schema"] == 2:
+        if payload["schema"] >= 2:
             validate_document_source(snapshot["template_source"], snapshot["template"], snapshot["document_text"])
+        if payload["schema"] == 3:
+            validate_document_identity(snapshot["patient_identity"], patient_id=document.encounter.patient_id)
+            validate_encounter_source(snapshot["encounter_source"], source=current.source_version)
         validate_clinical_draft(snapshot["clinical"])
         if not isinstance(snapshot["reason"], str) or len(snapshot["reason"]) > 2000:
             raise ValueError

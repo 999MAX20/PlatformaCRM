@@ -50,15 +50,16 @@ M11 получил внутреннее хранение черновиков Me
 зашифрованные снимки клинического источника, версии текста шаблона, реквизитов
 Business/Branch и раздельного авторства prepared_by/performed_by. Изменение текущих
 реквизитов не переписывает снимок. Это не готовая форма или подписанный документ:
-нет PDF/файла логотипа, полного снимка личности/лицензии, утверждённой матрицы,
+нет PDF/файла логотипа, снимка медицинской лицензии/квалификации, утверждённой матрицы,
 подписи и выдачи. Добавлены доменные create/update своего черновика основным
 врачом и read точной версии: current medical_documents role/branch/basis,
 verified identity для записи, audit exact version, HMAC replay и atomic rollback.
 Assistant/team/24h workflow ещё открыт; внутренний raw template
 snapshot не объявляется утверждённой формой. Добавлен approved source path:
 основной врач выбирает доступную утверждённую версию и передаёт document_text.
-Schema2 хранит исходный template и source/approval metadata отдельно от текста
-документа; schema1 остаётся читаемой. Новые версии шаблона не меняют старые
+Schema3 хранит исходный template и source/approval metadata отдельно от текста
+документа, зашифрованную личность пациента и источник приёма (точная версия,
+номер карты, дата/время и timezone); schema1/2 остаются читаемыми. Новые версии шаблона не меняют старые
 документы. Проверки source path отмечены в checkpoint. Низкоуровневые storage helpers
 по-прежнему требуют авторизованного вызывающего сервиса и общей audit-транзакции.
 Добавлены /medical/documents/ create/update/list/history/version: строгий вход,
@@ -72,7 +73,13 @@ no-store/private, current treatment basis и exact-version audit; огранич
 Document workspace-access сообщает текущие самостоятельные права на документы и
 revisions для редактора;41 affected tests/check/drift PASS, включая отсутствие
 зависимости от clinical edit, unverified/finalized ограничения и owner/branch denial.
-Проверки и точная граница M11 — в DENTAL-MCS checkpoint.
+Добавлен внутренний preview: однопроходная подстановка разрешённых полей без
+вычисления выражений; неизвестные поля сохраняются, отсутствующие отмечаются.
+Текущие права create/update, утверждённый источник и аудит обязательны. HMAC
+источника проверяется до и после записи снимка; устаревший preview отклоняется,
+успешный replay возвращает прежнюю версию.85 affected tests/check/drift PASS.
+Preview и expected_source_digest ещё не подключены к HTTP/UI; полный сценарий
+автозаполнения остаётся открытым. Проверки и точная граница M11 — в DENTAL-MCS checkpoint.
 
 Добавлено внутреннее хранение MedicalDocumentTemplate/Revision для общих и личных
 шаблонов: scope Business/owner member, зашифрованные title/text/reason, отдельное
@@ -80,7 +87,7 @@ revisions для редактора;41 affected tests/check/drift PASS, вклю
 Версия в registry не означает клиническое утверждение:22.11.2026 владелец согласовал
 утверждение личных шаблонов и управление общими медруководителем, без этого права
 у владельца Business без медицинской роли. Выбор утверждённого шаблона при создании
-медицинского документа подключён на domain/HTTP уровне; UI этого сценария ещё нет.
+медицинского документа подключён на domain/HTTP/UI уровне через документы приёма.
 Добавлен domain submission/decision/read
 MedicalTemplateReview: конкретная версия, head-only approve с business scope,
 encrypted receipt, audit/replay/stale/rollback;141 affected backend tests/check/drift
