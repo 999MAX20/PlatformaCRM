@@ -5,7 +5,8 @@ export type ClinicalBasis =
   | { appointment_id: number; participation_id?: never }
   | { participation_id: number; appointment_id?: never };
 export type ClinicalReadScope = ClinicalScope & ClinicalBasis;
-export type ClinicalField = "complaints" | "anamnesis" | "examination" | "diagnosis" | "procedures" | "plan" | "epicrisis";
+export const clinicalFields = ["complaints", "anamnesis", "allergies", "contraindications", "examination", "diagnosis", "procedures", "plan", "epicrisis"] as const;
+export type ClinicalField = typeof clinicalFields[number];
 export type ClinicalContent = Partial<Record<ClinicalField, string>>;
 export type EncounterState = "draft" | "finalized";
 

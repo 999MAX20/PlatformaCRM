@@ -271,6 +271,8 @@ export const medical = {
   "medical.clinical.readOnly": "Тек оқу",
   "medical.clinical.complaints": "Шағымдар",
   "medical.clinical.anamnesis": "Анамнез",
+  "medical.clinical.allergies": "Аллергиялар",
+  "medical.clinical.contraindications": "Қарсы көрсетілімдер",
   "medical.clinical.examination": "Объективті деректер",
   "medical.clinical.diagnosis": "Қорытынды",
   "medical.clinical.procedures": "Орындалған жұмыс",

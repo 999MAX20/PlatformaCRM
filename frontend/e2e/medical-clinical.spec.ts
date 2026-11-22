@@ -36,11 +36,22 @@ for (const language of ["ru", "kk", "en"] as const) {
       await workspace.getByRole("button", { name: t["medical.clinical.start"], exact: true }).click();
       const complaint = workspace.getByLabel(t["medical.clinical.complaints"], { exact: true });
       await complaint.fill(`Synthetic clinical complaint ${id}`);
+      const allergies = workspace.getByLabel(t["medical.clinical.allergies"], { exact: true });
+      const contraindications = workspace.getByLabel(t["medical.clinical.contraindications"], { exact: true });
+      await expect(allergies).toHaveValue("");
+      await expect(contraindications).toHaveValue("");
+      await allergies.fill(`Synthetic allergy ${id} — оқу`);
+      await contraindications.fill(`Synthetic contraindication ${id}`);
       await workspace.getByLabel(t["medical.clinical.plan"], { exact: true }).fill("Synthetic follow-up plan");
       await workspace.getByRole("button", { name: t["medical.clinical.save"], exact: true }).click();
       await expect(workspace.getByText(t["common.saved"], { exact: true })).toBeVisible();
       await expect(workspace.getByRole("button", { name: t["medical.clinical.save"], exact: true })).toBeDisabled();
       await workspace.screenshot({ path: info.outputPath("clinical-draft.png") });
+      for (const [field, name] of [[allergies, "allergies"], [contraindications, "contraindications"]] as const) {
+        const container = field.locator("..");
+        await container.evaluate(element => element.scrollIntoView({ block: "center" }));
+        await container.screenshot({ path: info.outputPath(`clinical-${name}.png`) });
+      }
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
       expect((await new AxeBuilder({ page }).include('[data-testid="clinical-workspace"]').withTags(["wcag2a", "wcag2aa"]).analyze()).violations).toEqual([]);
       await page.keyboard.press("Escape");
@@ -48,17 +59,22 @@ for (const language of ["ru", "kk", "en"] as const) {
       await expect(entry.getByRole("button", { name: t["medical.clinical.open"], exact: true })).toBeFocused();
       await entry.getByRole("button", { name: t["medical.clinical.open"], exact: true }).click();
       await expect(complaint).toHaveValue(`Synthetic clinical complaint ${id}`);
+      await expect(allergies).toHaveValue(`Synthetic allergy ${id} — оқу`);
+      await expect(contraindications).toHaveValue(`Synthetic contraindication ${id}`);
       await complaint.fill(`Unsaved while reading history ${id}`);
       await workspace.getByRole("tab", { name: t["medical.clinical.history"], exact: true }).click();
       const history = workspace.getByTestId("clinical-history");
       await history.locator("button[aria-pressed]").first().click();
       const reader = workspace.getByTestId("clinical-version");
       await expect(reader).toContainText(`Synthetic clinical complaint ${id}`);
+      await expect(reader).toContainText(`Synthetic allergy ${id} — оқу`);
+      await expect(reader).toContainText(`Synthetic contraindication ${id}`);
       await expect(reader).toContainText("Synthetic clinician");
       await expect(reader.getByRole("textbox")).toHaveCount(0);
       const revisions = workspace.getByTestId("clinical-revisions");
       await revisions.getByRole("button").filter({ hasText: new RegExp(`^${t["medical.clinical.revision"]} 1`) }).click();
       await expect(reader).not.toContainText(`Synthetic clinical complaint ${id}`);
+      await expect(reader).not.toContainText(`Synthetic allergy ${id} — оқу`);
       await expect(reader).toContainText(t["medical.clinical.notRecorded"]);
       await workspace.screenshot({ path: info.outputPath("clinical-history.png") });
       expect((await new AxeBuilder({ page }).include('[data-testid="clinical-workspace"]').withTags(["wcag2a", "wcag2aa"]).analyze()).violations).toEqual([]);

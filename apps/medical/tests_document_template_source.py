@@ -67,6 +67,22 @@ class DocumentTemplateSourceTests(TestCase):
         self.assertTrue(self.save()[1])
         self.assertEqual(MedicalDocumentRevision.objects.count(), 1)
 
+    def test_risk_snapshot_does_not_follow_later_encounter_changes(self):
+        from .encounter_services import save_primary_encounter_draft
+        self.approve()
+        risks = {"allergies": "Synthetic original allergy", "contraindications": "Synthetic restriction"}
+        kwargs = dict(actor=self.doctor, business_id=self.business.pk, patient_id=self.patient.pk,
+                      encounter_id=self.encounter_record.pk, content=risks)
+        save_primary_encounter_draft(**kwargs, expected_revision=1, idempotency_key="risk-first")
+        document, _ = self.save(expected_encounter_revision=2)
+        before = document.snapshot_encrypted
+        self.assertEqual(read_document_revision(document)["clinical"], risks)
+        save_primary_encounter_draft(**(kwargs | {"content": {"allergies": "Later synthetic text"}}),
+                                    expected_revision=2, idempotency_key="risk-later")
+        document.refresh_from_db()
+        self.assertEqual(document.snapshot_encrypted, before)
+        self.assertEqual(read_document_revision(document)["clinical"], risks)
+
     def test_paused_template_blocks_new_use_but_preserves_saved_document(self):
         self.approve()
         document, _ = self.save()

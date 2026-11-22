@@ -7,6 +7,30 @@ import { requireIsolatedEnvironment } from "./isolated-environment.mjs";
 
 requireIsolatedEnvironment();
 test.use({ actionTimeout: 15_000 });
+
+for (const width of [1440, 390]) test(`template risk fields ${width}: insert and save literal placeholders`, async ({ page }, info) => {
+  await page.setViewportSize({ width, height: 900 });
+  await login(page, "ru");
+  const workspace = page.getByTestId("medical-template-workspace");
+  await workspace.getByRole("button", { name: ru["medical.templates.create"], exact: true }).click();
+  const dialog = page.getByRole("dialog");
+  const title = `Synthetic risk fields ${width}`;
+  await dialog.getByLabel(ru["medical.templates.title"], { exact: true }).fill(title);
+  const text = dialog.getByLabel(ru["medical.templates.text"], { exact: true });
+  for (const field of ["allergies", "contraindications"] as const) {
+    await dialog.getByLabel(ru["medical.fields.choose"], { exact: true }).click();
+    await page.getByRole("option", { name: ru[`medical.clinical.${field}`], exact: true }).click();
+    await dialog.getByRole("button", { name: ru["medical.fields.insert"], exact: true }).click();
+    await expect(text).toBeFocused();
+    await expect(text).toHaveValue(field === "allergies" ? "{{clinical.allergies}}"
+      : "{{clinical.allergies}}{{clinical.contraindications}}");
+  }
+  await dialog.getByTestId("medical-template-fields").screenshot({ path: info.outputPath("risk-placeholder-selector.png") });
+  await dialog.getByRole("button", { name: ru["common.save"], exact: true }).click();
+  await expect(dialog).toHaveCount(0);
+  await expect(workspace.getByText(title, { exact: true })).toBeVisible();
+});
+
 async function login(page: Page, language: string, email = "medical-role-doctor@example.test") {
   await page.addInitScript(value => localStorage.setItem("ai_smb_language", value), language);
   await page.goto("/login");

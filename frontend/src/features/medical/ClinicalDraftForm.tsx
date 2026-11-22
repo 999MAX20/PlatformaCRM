@@ -1,14 +1,12 @@
 import { useEffect, useImperativeHandle, useRef, useState, type Ref } from "react";
 import axios from "axios";
-import { medicalClinicalApi, type AppointmentClinicalContext, type ClinicalContent, type ClinicalField } from "../../api/medicalClinical";
+import { clinicalFields, medicalClinicalApi, type AppointmentClinicalContext, type ClinicalContent } from "../../api/medicalClinical";
 import { getApiErrorMessage } from "../../api/client";
 import { Button } from "../../components/ui/Button";
 import { Textarea } from "../../components/ui/Textarea";
 import { ErrorState, LoadingState } from "../../components/ui/StateViews";
 import { useI18n } from "../../lib/i18n";
 import { useUnsavedEntryWarning } from "../auth/useUnsavedEntryWarning";
-
-const fields: ClinicalField[] = ["complaints", "anamnesis", "examination", "diagnosis", "procedures", "plan", "epicrisis"];
 
 export type ClinicalDraftControl = { save: () => Promise<boolean>; isPending: () => boolean; isDirty: () => boolean };
 
@@ -74,7 +72,7 @@ export function ClinicalDraftForm({ context, onDirty, onDenied, onReload, draftC
   return <form autoComplete="off" className="space-y-4" onSubmit={event => { event.preventDefault(); void save(); }}>
     <h2 className="text-base font-semibold">{t("medical.clinical.note")}</h2>
     {!context.actions.save_draft ? <p role="status" className="text-sm text-platforma-subtle">{t("medical.clinical.readOnly")}</p> : null}
-    {fields.map(field => <Textarea key={field} label={t(`medical.clinical.${field}`)} aria-label={t(`medical.clinical.${field}`)} value={content[field] ?? ""} maxLength={32768}
+    {clinicalFields.map(field => <Textarea key={field} label={t(`medical.clinical.${field}`)} aria-label={t(`medical.clinical.${field}`)} value={content[field] ?? ""} maxLength={32768}
       disabled={pending} readOnly={!context.actions.save_draft || conflict}
       onChange={event => {
         const next = { ...content, [field]: event.target.value };

@@ -43,6 +43,16 @@ class LiteralDocumentRenderingTests(SimpleTestCase):
         with self.assertRaises(ValidationError):
             self.render("x" * 131073)
 
+    def test_risk_placeholders_keep_missing_distinct_from_clinician_text(self):
+        template = "{{clinical.allergies}} / {{clinical.contraindications}}"
+        missing = self.render(template)
+        self.assertEqual(missing["missing_fields"], ["clinical.allergies", "clinical.contraindications"])
+        self.assertEqual(missing["unknown_fields"], [])
+        self.context["clinical"].update(allergies="Synthetic allergy", contraindications="Synthetic restriction")
+        rendered = self.render(template)
+        self.assertEqual(rendered["document_text"], "Synthetic allergy / Synthetic restriction")
+        self.assertEqual(rendered["missing_fields"], [])
+
 
 @override_settings(MEDICAL_DATA_KEYS={"test": crypto_fixtures.key(7)}, MEDICAL_DATA_ACTIVE_KEY_ID="test",
                    MEDICAL_IDENTITY_INDEX_KEY=crypto_fixtures.key(8))

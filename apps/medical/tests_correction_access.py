@@ -147,10 +147,14 @@ class CorrectionAccessTests(TestCase):
         type(self.appointment).objects.filter(pk=self.appointment.pk).update(status="completed")
         item = self.review(self.request()[0])[0]
         kwargs = dict(actor=self.doctor, business_id=self.business.pk, patient_id=self.patient.pk,
-            encounter_id=self.encounter_record.pk, expected_revision=1, content={"plan": "Corrected synthetic plan"},
+            encounter_id=self.encounter_record.pk, expected_revision=1,
+            content={"plan": "Corrected synthetic plan", "allergies": "Corrected synthetic allergy",
+                     "contraindications": "Corrected synthetic contraindication"},
             reason="Synthetic correction", idempotency_key="save", correction_access_id=item.pk)
         version, _ = save_primary_encounter_draft(**kwargs)
         self.assertEqual(version.revision, 2)
+        from .encounter_content import read_encounter_revision
+        self.assertEqual(read_encounter_revision(version)["content"], kwargs["content"])
         self.assertEqual(MedicalAuditEvent.objects.get(action="encounter_draft_saved").correction_access_id, item.pk)
         self.assertTrue(save_primary_encounter_draft(**kwargs)[1])
         with patch("apps.medical.correction_access_context.timezone.now", return_value=item.expires_at):

@@ -35,6 +35,8 @@ test("clinical recovery: retained draft, stable retry, real conflict and revocat
   const complaint = workspace.getByLabel(ru["medical.clinical.complaints"], { exact: true });
   const save = workspace.getByRole("button", { name: ru["medical.clinical.save"], exact: true });
   await complaint.fill("Retained synthetic clinical draft");
+  const allergies = workspace.getByLabel(ru["medical.clinical.allergies"], { exact: true });
+  await allergies.fill("Retained synthetic allergy");
   const keys: string[] = [];
   let releaseSave!: () => void;
   const heldSave = new Promise<void>(resolve => { releaseSave = resolve; });
@@ -63,6 +65,7 @@ test("clinical recovery: retained draft, stable retry, real conflict and revocat
   await unsaved.screenshot({ path: info.outputPath("clinical-close-failed-mobile.png") });
   await unsaved.getByRole("button", { name: ru["medical.clinical.continueEditing"], exact: true }).click();
   await expect(complaint).toHaveValue("Retained synthetic clinical draft");
+  await expect(allergies).toHaveValue("Retained synthetic allergy");
   result = page.waitForResponse(r => r.url().endsWith("/draft/") && r.request().method() === "POST");
   await save.click();
   expect((await result).status()).toBe(200);
@@ -92,6 +95,7 @@ test("clinical recovery: retained draft, stable retry, real conflict and revocat
   expect((await result).status()).toBe(403);
   await expect(workspace.getByText(ru["medical.denied"], { exact: true })).toBeVisible();
   await expect(complaint).toHaveCount(0);
+  await expect(allergies).toHaveCount(0);
   expect(await page.evaluate(() => JSON.stringify({ ...localStorage, ...sessionStorage }))).not.toContain("Draft removed on revocation");
   await workspace.screenshot({ path: info.outputPath("clinical-revoked-mobile.png") });
 });

@@ -1,6 +1,60 @@
 # DENTAL-MCS-20261122: полная реализация медицинского ТЗ
 
-## Активный этап К05: основания и ограниченный медицинский доступ
+## Активный этап К06; К05 открыт и ожидает решений по assistant/support
+
+К05 regression tests опубликованы4a69f538e0c8cbbc6c93e0a54686033bdbc9be9b,
+normal FF origin/main и SHA readback PASS. CI текущего commit ещё не проверен.
+К05 не закрыт: два заданных вопроса о полномочиях блокируют оставшиеся assistant/
+support сценарии. Единственный активный этап теперь К06; К03/К04 вопросы сохранены.
+
+К06 contract before code: M08, §4.2, E2. First independent scenario — врач в текущем
+приёме записывает аллергии/противопоказания, перечитывает точную версию и использует
+эти поля в утверждённом шаблоне. Gap code: сейчас7 clinical fields, этих двух нет.
+Reuse encrypted encounter versions, primary/correction writers, read/audit/ACL,
+existing draft/history/forms and document snapshot/template field selector.
+Не новая модель/общий CRM текст; не автоматическое заключение «рисков нет».
+Scope не меняет назначение/лекарства/деньги/права/AI; team projections ждут К05.
+Риск PHI и потеря нового поля при чтении/исправлении/документе. Focused storage/
+service/API/snapshot tests, existing dependent read/write tests once at completion;
+RU/KK/EN desktop/mobile real save/read and applicable recovery, visual inspection,
+build/types/i18n once. Schema migrations не ожидаются. Skills: прежние zani-domain/
+frontend/access/verification, Anti Slop during +ui/layoutmobile/human/copy.
+Applied UI: existing Textarea/control sizes/tokens; labels RU/KK/EN from §4.2;
+memory-only PHI and retained input/retry; empty field means not recorded, never
+absence of risk. Полный К06 (план/назначения/неприменимость) остаётся открытым.
+
+К06 risk fields local acceptance: focused3PASS0.508s, dependent74PASS16.239s,
+TEMP/dental-k06-risk-fields-focused-20261123.log и dental-k06-risk-dependent-
+20261123.log. Покрыты encrypted API save/read/history/denial/invalid type, literal
+template placeholders/missing fields, immutable document snapshot после изменения
+encounter, новые поля через24h correction writer, прежние permission/replay/audit
+guards. Check/drift PASS (dental-k06-risk-check-drift-20261123.log), миграций нет.
+Build/types/i18n8014/widget PASS (dental-k06-risk-build-20261123.log), session89611exit0.
+Static basef745bab1 PASS (dental-k06-risk-static-20261123.log).
+
+Browser main7PASS2.8m:6RU/KK/EN desktop1440/mobile390 save/reopen/current+old history,
+unsaved navigation/focus/axe0/overflow0,1mobile503/retry same key/real409/revoke403.
+TEMP/dental-k06-risk-browser-20261123.log. R2 main6PASS2.2m: повтор для visual capture
+с явным scroll center; после проверки PNG выяснилось, что исходные файлы также
+полные130px, сокращённым выглядел вывод просмотрщика. Это повтор, не6 новых сценариев.
+TEMP/dental-k06-risk-browser-r2-20261123.log;12 final field screenshots из
+output/playwright/clinical-risk-fields-r2-20261123 просмотрены.3 recovery screenshots
+из первого run также просмотрены; длинная форма прокручивается внутри dialog.
+Template selector2PASS23.3s desktop/mobile, literal insertion/focus/save,2captures
+просмотрены: dental-k06-template-risk-browser-20261123.log,
+output/playwright/template-risk-fields-20261123.
+Correction consumer2PASS46s desktop/mobile request→approve→edit→reopen→finish;
+2captures просмотрены: dental-k06-correction-risk-browser-r2-20261123.log,
+output/playwright/correction-risk-fields-r2-20261123. R1: exact getByLabel не находил
+label с загруженным textarea content; trace подтверждает textbox с правильным
+именем/значением. Исправлен locator на getByRole(textbox), assertions сохранены.
+Второй R1 получил409 от оставшегося active request первого; R2 на свежей disposable
+fixture исключил зависимость. Product logic ради теста не изменялась.
+Anti Slop scoped gate PASS:19 final captures inspected, geometry/labels/states/
+keyboard/focus/locales/recovery; не весь модуль. Реальные PHI не использовались.
+README/access/operations/integrations/внешнее ТЗ не требуют изменения: права,
+провайдеры, окружение и уже описанное требование §4.2 прежние. Frontend contract/
+capabilities/modularity и матрица согласованы. Publication pending.
 
 Срез К05: проверка совместного существования appointment/participation/
 24h correction и приоритета security revoke. Prior result: каждое основание уже
@@ -2899,8 +2953,8 @@ push и фактический CI учитываются отдельно. Mock 
 | К02. Врач находит подходящий утверждённый шаблон; руководитель управляет его применимостью | M11/M16, D06/D09; E3/E4; К00 | Personal/common drafts/review/history, классификация и approved selector; поиск/фильтры, head pause/resume, encrypted история и UI реализованы | Код/пользовательский сценарий локально принят, остатка в этой границе нет; опубликован096cd591, CI45068261530 выполняется. CI fixture regression20 PASS/static PASS. Полные M11/M16 не закрываются этим этапом | Domain/API/migration/check/drift,12 distinct browser RU/KK/EN ×desktop/mobile +4 повтора, affected visual и final build PASS. Чужое/неутверждённое скрыто, paused create409, старый документ неизменен; p95/PG отдельно К17/К18. Точные доказательства в начале checkpoint |
 | К03. Новая и существующая стоматология получает модуль без сброса CRM | M01/M02; D01/D02/D03,B22; E0/E1 | Profile registry/resolver/guards/create paths, BusinessCapability, role settings; release-ready v2 и additive CLI реализованы, PG domain/concurrency10 PASS +API2 PASS | Переход опубликован3de53af2,6 browser/visual и static PASS; весь К03 открыт: owner-clinician ждёт решения. Защита новых jobs/files/AI остаётся обязательной в К07/К15; B22 новые настройки в К14, существующие false сохраняются здесь | Повтор backfill ничего не сбрасывает, IDs/настройки/не-стоматология сохранены, нет owner/platform bypass, изолированные миграции и PG; пользователь видит правильные доступные инструменты |
 | К04. Ресепшн находит пациента и безопасно оформляет личность/представителя/исправление | M03/M04/M05; D04,D07,B01–04,B26; E1; К03 | ClientWorkspace, identity/representatives/merge guard; К04 поиск, atomic registration и ИИН correction/head review: backend/PG/browser/build PASS | Reception list projection backend5/browser6/build PASS; перепривязка/разбор смешанных историй ждёт решения. Клинические вкладки К05/К06, recipient enforcement К12; L04 внешний протокол. Search/registration/IIN опубликованыe5546ea8; projection8f93c194 опубликован, CI success | Семейный телефон не объединяет пациентов; verified ИИН PG race, foreign/отзыв/возрастные сценарии, атомарный отказ merge; оформленный пациент доступен для приёма. Реальный протокол личности L04 остаётся отдельной приёмкой |
-| К05 ACTIVE. Врач получает доступ по записи/передаче, команда и исправления имеют точные границы | M02/M06/M07; D03,B05–08,B28; E1/E2; К03/К04 | Appointment basis, invitations/transfer/notifications/head-end, role UI;24h correction request/review/target-only draft/close/expiry с domain/API/PG/browser evidence выше | Комбинация appointment/participation/correction и security override6 focused PASS; командный ассистент ждёт назначения/подтверждения, support-инцидент≤4h readonly и проекции будущих files/export/AI consumers открыты; подписанная коррекция в К08/К09 | Нет доступа до принятия; запись сразу даёт основание; отзыв сильнее temporary; два основания независимы; запрещённые подпись/export/изменение отсутствуют и на API. Обычное завершение с полной проверкой обязательств закреплено за К11 |
-| К06. Врач ведёт карту, зубы, назначения и клинический план лечения | M08/M09/M10/M16; D05/D09; E2/E4; К04/К05 | Encounter draft/history, odontogram/surfaces, VisitPlan/Step, шаблоны | Клинический план/версии/шаги, назначения типов ТЗ/snippets, связи зубов/плана, остальные вкладки и доступ команды, явные неприменимые разделы | Врач сохраняет и перечитывает историю целого приёма/плана/назначений; клинический план не создаёт долг/бронь, stale/tenant/replay/PG. Снимки подключаются К07, финальное завершение К10; справочник L12 |
+| К05 WAITING owner decisions. Врач получает доступ по записи/передаче, команда и исправления имеют точные границы | M02/M06/M07; D03,B05–08,B28; E1/E2; К03/К04 | Appointment basis, invitations/transfer/notifications/head-end, role UI;24h correction request/review/target-only draft/close/expiry с domain/API/PG/browser evidence выше | Комбинация appointment/participation/correction и security override6 focused PASS; командный ассистент ждёт назначения/подтверждения, support-инцидент≤4h readonly и проекции будущих files/export/AI consumers открыты; подписанная коррекция в К08/К09 | Нет доступа до принятия; запись сразу даёт основание; отзыв сильнее temporary; два основания независимы; запрещённые подпись/export/изменение отсутствуют и на API. Обычное завершение с полной проверкой обязательств закреплено за К11 |
+| К06 ACTIVE. Врач ведёт карту, зубы, назначения и клинический план лечения | M08/M09/M10/M16; D05/D09; E2/E4; К04/К05 | Encounter draft/history, odontogram/surfaces, VisitPlan/Step, шаблоны; аллергии/противопоказания с snapshot/template/correction и scoped acceptance выше | Клинический план/версии/шаги, назначения типов ТЗ/snippets, связи зубов/плана, остальные вкладки и доступ команды, явные неприменимые разделы | Врач сохраняет и перечитывает историю целого приёма/плана/назначений; клинический план не создаёт долг/бронь, stale/tenant/replay/PG. Снимки подключаются К07, финальное завершение К10; справочник L12 |
 | К07. Врач безопасно прикрепляет и просматривает снимки/файлы | M09/M13; D07; E2/E3; К05/К06 | Private storage и crypto/audit, связи карты | Карантин/MIME/антивирус, preview/original ACL, связи с зубами/приёмом, история, отказ сканера, резервный защищённый read audit | Заражённое/непроверенное не открывается, URL не обходит ACL, отмена/повтор/tenant/прямое скачивание; разрешённый файл проходит загрузку→проверку→просмотр. Реальные форматы L12 и retention L08 остаются открытыми |
 | К08. Врач оформляет неизменяемую версию документа и печатает её | M11/M13; D06/D07; E3; К01/К02/К06/К07 | Document drafts/history/preview, source digest, template versions | Матрица обязательности/момента/подписантов, утверждение документа, PDF/логотип bytes/checksum, ограниченный DOCX/печать, исправления отдельной версией | Изменение профиля/клиники/шаблона не меняет прежний PDF; нет stale-source/HTML исполнения; точные bytes/версия в UI; документ не называется подписанным без К09. Реальные формы L05 |
 | К09. Подписант подписывает нужную версию на desktop/Android/iPhone | M12/M11; D06; E3; К08 | Версии документов/ACL, provider adapter patterns | Signature intent/states, provider adapter, сертификат/валидность, несколько подписантов, retry/cancel/late callback, рабочий UI на трёх платформах | Реальный полный цикл, в том числе на одном телефоне; callback replay/отмена не финализирует; точная версия неизменна. L06: без провайдера/условий/доступов этап не закрыт, локальные контракты не подменяют реальную подпись |

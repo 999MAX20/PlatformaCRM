@@ -18,6 +18,7 @@ const labels = {
   "record.number": "medical.clinical.number", "encounter.date": "medical.fields.encounterDate",
   "encounter.time": "medical.fields.encounterTime", "clinical.complaints": "medical.clinical.complaints",
   "clinical.anamnesis": "medical.clinical.anamnesis", "clinical.examination": "medical.clinical.examination",
+  "clinical.allergies": "medical.clinical.allergies", "clinical.contraindications": "medical.clinical.contraindications",
   "clinical.diagnosis": "medical.clinical.diagnosis", "clinical.procedures": "medical.clinical.procedures",
   "clinical.plan": "medical.clinical.plan", "clinical.epicrisis": "medical.clinical.epicrisis",
   "clinic.license": "medical.credentials.license", "doctor.specialty": "medical.credentials.specialty",

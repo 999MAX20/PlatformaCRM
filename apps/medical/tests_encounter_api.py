@@ -71,6 +71,28 @@ class MedicalEncounterAPITests(TestCase):
         self.assert_private(conflict)
         self.assertEqual(MedicalEncounter.objects.count(), 1)
 
+    def test_risk_fields_are_versioned_private_and_not_inferred_for_old_records(self):
+        opened = self.open()
+        risks = {"allergies": "Synthetic allergy — оқу", "contraindications": "Synthetic contraindication"}
+        saved = self.api.post(f"{self.url}{opened.data['id']}/draft/", {**self.scope,
+            "expected_revision": 1, "content": risks}, format="json", HTTP_IDEMPOTENCY_KEY="risk-save")
+        self.assertEqual(saved.status_code, 200, saved.data)
+        self.assertEqual(self.read(saved.data["version_id"]).data["content"], risks)
+        self.assertNotIn("allergies", self.read(opened.data["version_id"]).data["content"])
+        version = MedicalEncounterRevision.objects.get(pk=saved.data["version_id"])
+        for value in risks.values():
+            self.assertNotIn(value, version.content_encrypted)
+        invalid = self.api.post(f"{self.url}{opened.data['id']}/draft/", {**self.scope,
+            "expected_revision": 2, "content": {"allergies": {"absent": True}}},
+            format="json", HTTP_IDEMPOTENCY_KEY="invalid-risk")
+        self.assertEqual(invalid.status_code, 400)
+        self.assert_private(invalid)
+        self.assignment.branches.clear()
+        denied = self.read(saved.data["version_id"])
+        self.assertEqual(denied.status_code, 403)
+        self.assert_private(denied)
+        self.assertNotIn(risks["allergies"], denied.content.decode())
+
     def test_stale_save_returns_409_without_advancing_revision(self):
         opened = self.open()
         response = self.api.post(f"{self.url}{opened.data['id']}/draft/", {**self.scope,

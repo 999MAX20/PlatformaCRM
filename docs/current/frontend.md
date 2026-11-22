@@ -1,3 +1,14 @@
+## Аллергии и противопоказания в записи приёма: К06
+
+ClinicalDraftForm, ClinicalHistory и редактор24h correction используют один список
+clinicalFields. Добавлены allergies/contraindications с RU/KK/EN labels; сохранение,
+загрузка и история проходят прежний medical API и ACL. Пустое поле означает, что
+сведения не внесены; система не подставляет заключение об отсутствии рисков.
+TemplateFields предлагает clinical.allergies/clinical.contraindications для новых
+подстановок; ранее сформированный снимок документа остаётся неизменным.
+Это текст текущего приёма, не автоматически объединённый реестр рисков пациента.
+Статус browser/build и остаток полного К06 — в DENTAL-MCS checkpoint.
+
 ## Ограниченный доступ для исправлений: К05
 
 ClientWorkspace → медицинский профиль → филиал содержит CorrectionAccessPanel.

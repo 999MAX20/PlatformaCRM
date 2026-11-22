@@ -142,12 +142,25 @@ for (const language of ["ru", "kk", "en"] as const) for (const width of [1440, 3
     await row.getByRole("button", { name: t["medical.correctionAccess.edit"], exact: true }).click();
     dialog = page.getByRole("dialog");
     await dialog.getByRole("textbox", { name: document ? t["medical.correctionAccess.document"] : t["medical.clinical.plan"], exact: true }).fill(`Synthetic correction ${language} ${width}`);
+    if (!document) {
+      await dialog.getByRole("textbox", { name: t["medical.clinical.allergies"], exact: true }).fill(`Synthetic corrected allergy ${language}`);
+      await dialog.getByRole("textbox", { name: t["medical.clinical.contraindications"], exact: true }).fill("Synthetic corrected contraindication");
+    }
     await dialog.getByRole("textbox", { name: t["medical.reason"], exact: true }).fill("Synthetic draft correction");
     expect((await new AxeBuilder({ page }).include('[role="dialog"]').withTags(["wcag2a", "wcag2aa"]).analyze()).violations).toEqual([]);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     await dialog.screenshot({ path: info.outputPath("edit.png") });
     await dialog.getByRole("button", { name: t["medical.clinical.save"], exact: true }).click();
     await expect(dialog).toHaveCount(0);
+    if (!document) {
+      await row.getByRole("button", { name: t["medical.correctionAccess.edit"], exact: true }).click();
+      dialog = page.getByRole("dialog");
+      await expect(dialog.getByRole("textbox", { name: t["medical.clinical.allergies"], exact: true })).toHaveValue(`Synthetic corrected allergy ${language}`);
+      await expect(dialog.getByRole("textbox", { name: t["medical.clinical.contraindications"], exact: true })).toHaveValue("Synthetic corrected contraindication");
+      await dialog.getByRole("textbox", { name: t["medical.clinical.allergies"], exact: true }).locator("..").screenshot({ path: info.outputPath("corrected-allergies.png") });
+      await page.keyboard.press("Escape");
+      await expect(dialog).toHaveCount(0);
+    }
     await row.getByRole("button", { name: t["medical.correctionAccess.complete"], exact: true }).click();
     dialog = page.getByRole("dialog");
     await dialog.getByRole("textbox", { name: t["medical.reason"], exact: true }).fill("Synthetic completed");

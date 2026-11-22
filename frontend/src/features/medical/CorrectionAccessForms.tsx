@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { correctionAccessApi as api, type CorrectionAccess, type CorrectionScope, type CorrectionTargets, type CorrectionTargetContent } from "../../api/medicalCorrectionAccess";
-import type { ClinicalContent, ClinicalField } from "../../api/medicalClinical";
+import { clinicalFields, type ClinicalContent } from "../../api/medicalClinical";
 import { getApiErrorMessage } from "../../api/client";
 import { Button } from "../../components/ui/Button";
 import { Select } from "../../components/ui/Select";
@@ -67,7 +67,6 @@ export function CorrectionRequestForm({ scope, control }: { scope: CorrectionSco
   </MedicalRoleCommand>;
 }
 
-const fields: ClinicalField[] = ["complaints", "anamnesis", "examination", "diagnosis", "procedures", "plan", "epicrisis"];
 
 export function CorrectionDraftForm({ item, businessId, control }: { item: CorrectionAccess; businessId: number; control: RoleFormControl }) {
   const { t } = useI18n();
@@ -93,7 +92,7 @@ export function CorrectionDraftForm({ item, businessId, control }: { item: Corre
     {error ? <ErrorState message={getApiErrorMessage(error)} action={<Button type="button" variant="secondary" onClick={() => setAttempt(value => value + 1)}>{t("common.retry")}</Button>} /> : !data ? <LoadingState /> : <>
       {!editable ? <p role="status" className="text-sm text-platforma-subtle">{t("medical.correctionAccess.immutable")}</p> : null}
       {item.document_id ? <Textarea label={t("medical.correctionAccess.document")} value={text} onChange={event => setText(event.target.value)} readOnly={!editable} rows={12} maxLength={131072} />
-        : fields.map(field => <Textarea key={field} label={t(`medical.clinical.${field}`)} value={content[field] ?? ""}
+        : clinicalFields.map(field => <Textarea key={field} label={t(`medical.clinical.${field}`)} value={content[field] ?? ""}
           onChange={event => setContent(value => ({ ...value, [field]: event.target.value }))} readOnly={!editable} maxLength={32768} />)}
       {editable ? <Textarea label={t("medical.reason")} value={reason} onChange={event => setReason(event.target.value)} maxLength={2000} required /> : null}
     </>}

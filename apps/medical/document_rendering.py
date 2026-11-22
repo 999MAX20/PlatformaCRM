@@ -6,11 +6,10 @@ from rest_framework.exceptions import ValidationError
 from .document_content import BUSINESS_FIELDS, BRANCH_FIELDS
 from .document_identity import capture_document_identity
 from .credential_snapshot import capture_document_credentials
-from .encounter_content import read_encounter_revision
+from .encounter_content import CLINICAL_FIELDS, read_encounter_revision
 from .identity_crypto import medical_request_digest
 
 
-CLINICAL_FIELDS = ("complaints", "anamnesis", "examination", "diagnosis", "procedures", "plan", "epicrisis")
 DOCUMENT_FIELDS = (
     "patient.full_name", "patient.date_of_birth", "patient.sex", "patient.address", "patient.iin",
     "clinic.name", "clinic.legal_name", "clinic.tax_id", "clinic.address", "clinic.phone",

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
-import { medicalClinicalApi, type AppointmentClinicalContext, type ClinicalReadScope, type ClinicalWorkspace,
+import { clinicalFields, medicalClinicalApi, type AppointmentClinicalContext, type ClinicalReadScope, type ClinicalWorkspace,
   type EncounterHistory, type EncounterVersion } from "../../api/medicalClinical";
 import { getApiErrorMessage } from "../../api/client";
 import { Button } from "../../components/ui/Button";
@@ -127,7 +127,7 @@ function VersionReader({ versionId, scope, onDenied }: { versionId: number; scop
     <p className="text-sm font-semibold">{t("medical.clinical.readOnly")} · {t("medical.clinical.revision")} {data.revision}</p>
     <p className="break-words text-sm text-platforma-subtle">{data.author_name || t("medical.clinical.authorUnknown")} · {formatDateTime(data.created_at, undefined, true, localeByLanguage[language])}</p>
     <dl className="space-y-4">
-      {(["complaints", "anamnesis", "examination", "diagnosis", "procedures", "plan", "epicrisis"] as const).map(field => <div key={field}>
+      {clinicalFields.map(field => <div key={field}>
         <dt className="text-sm font-semibold text-platforma-subtle">{t(`medical.clinical.${field}`)}</dt>
         <dd className="mt-1 whitespace-pre-wrap break-words text-sm text-platforma-text">{data.content[field] || t("medical.clinical.notRecorded")}</dd>
       </div>)}

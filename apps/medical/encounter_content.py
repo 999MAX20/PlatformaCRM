@@ -10,7 +10,8 @@ from .identity_crypto import MedicalDataUnavailable, decrypt_medical_value, encr
 from .models import MedicalEncounter, MedicalEncounterRevision
 
 
-CLINICAL_TEXT_FIELDS = frozenset({"complaints", "anamnesis", "examination", "diagnosis", "procedures", "plan", "epicrisis"})
+CLINICAL_FIELDS = ("complaints", "anamnesis", "allergies", "contraindications", "examination", "diagnosis", "procedures", "plan", "epicrisis")
+CLINICAL_TEXT_FIELDS = frozenset(CLINICAL_FIELDS)
 CLINICAL_TEXT_LIMIT = 32768
 
 
