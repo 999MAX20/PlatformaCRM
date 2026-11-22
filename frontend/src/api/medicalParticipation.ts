@@ -25,6 +25,12 @@ export type Participation = {
   remaining_responsible_id: number | null;
 };
 export type ParticipationPage = { results: Participation[]; next_before_id: number | null };
+export type ParticipationNotificationContext = {
+  participation: Participation;
+  direction: "incoming" | "outgoing";
+  source_appointment_id: number | null;
+  source_participation_id: number | null;
+};
 export type ProposalSourceScope = ParticipationScope & ParticipationSource;
 export type ProposalBranches = { results: Array<{ id: number; name: string }>; next_after_branch_id: number | null };
 export type ParticipationWorkspaceAccess = {
@@ -71,6 +77,10 @@ async function command(path: string, payload: object, idempotencyKey: string, si
 }
 
 export const medicalParticipationApi = {
+  notificationContext: async (scope: { business_id: number; notification_id: number }, signal?: AbortSignal) => {
+    const { data } = await apiClient.get<ParticipationNotificationContext>(`${root}notification-context/`, { params: scope, signal });
+    return data;
+  },
   proposalBranches: async (scope: ProposalSourceScope & { after_branch_id?: number; limit?: number }, signal?: AbortSignal) => {
     const { data } = await apiClient.get<ProposalBranches>(`${root}proposal-branches/`, { params: scope, signal });
     return data;

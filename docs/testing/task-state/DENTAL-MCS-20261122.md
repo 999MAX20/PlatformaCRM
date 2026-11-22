@@ -1,6 +1,102 @@
 # DENTAL-MCS-20261122: полная реализация медицинского ТЗ
 
+## M06: подключение личной ленты
+
+UI продолжение: прежний backend — progress/201 PASS. Новый экран переиспользует
+PageHeader/Button/StateViews и существующие ParticipationEntry/SourceProposalEntry;
+данные только из private context/access API, без generic CRM permission grant.
+Anti Slop during + frontend/human/layoutmobile/copywriting и design-taste (направление
+существующего рабочего интерфейса, ENERGY1/RHYTHM1/MOTION1). Применяем: прежние
+токены/контролы; перенос длинных имён и кнопок на390px; загрузка/повтор/403/404/409
+без старых PHI; клавиатура/фокус после ответа; RU/KK/EN. Никаких новых assets/styles.
+Проверки: transport/types/build/i18n и реальный notification→context→respond flow,
+изолированный desktop/mobile browser, снимки получить И просмотреть. Объём полного
+ТЗ сохраняется; B07 причина отказа остаётся отдельным незакрытым критерием M06.
+
+Текущий результат: backend локально проверен, рабочее дерево поверх8d6a8e36,
+UI приёмка пройдена, подготовка публикации. Final runner98541 exit0:207 tests,
+201 PASS/6 PostgreSQL-only skips,89.096s; check/drift PASS. Лог
+TEMP/dental-participation-notifications-final-20261122.log. Isolated_runtime,
+manage.py test apps.medical.tests_participation_notifications
+apps.medical.tests_participation_notice_reads apps.medical.tests_participation_notice_migration
+apps.medical.tests_participation_source apps.medical.tests_participation_services
+apps.medical.tests_participation_closure apps.medical.tests_participation_api
+apps.notifications --noinput -v1; затем check; makemigrations --check --dry-run.
+Пропуски:3 personal concurrency и3 delivery concurrency требуют PostgreSQL;
+не объявлены PASS. Проверены fixed recipient/no owner fallback/preferences,
+atomic rollback/replay, current branch/role/module/original basis, foreign/corrupt
+source, list/detail/count/open/read/unread/read-all, private audited context API,
+пакетные permission queries без N+1 и migration0016 roundtrip без повторной отправки.
+Static40979 exit0/PASS с исходной базой656dbd1, лог
+TEMP/dental-notifications-static-20261122.log. Все local runners завершены.
+Frontend подключён: typed transport, route,6 ключей RU/KK/EN, карточка текущего
+участия, ответ и существующие окна. Node transport10 PASS; check:i18n7794 keys PASS;
+tsc-b PASS. Runner25474 build PASS; после onClosed refresh повтор21503 build PASS
+(TEMP/dental-notifications-final-build-20261122.log), прежнее предупреждение chunks.
+Browser6133 exit0:7 PASS,6 locale/viewport flows + negative mobile. Изолированная
+БД, реальные команды/права,503 response mock отдельно; stale409/revoke403 реальные.
+TEMP/dental-notifications-browser-retry-20261122.log;14 снимков в
+output/playwright/medical-notifications-retry получены и визуально просмотрены:
+перенос кнопок/текста, читаемость, error/denial, без overflow. Axe6 PASS, keyboard,
+focus, no PHI browser storage. Первый runner55921 упал на fixture CSRF до UI;
+исправлено получение CSRF перед setup token и очистка cookies, продукт auth не менялся.
+Runner41599:2 RU desktop/mobile PASS; дополнительный long-name/close тест FAIL
+до действия: одноразовая подстановка имени поглощена повторным context запросом.
+Подстановка теперь действует до снимка, затем явно unroute; runner22922 проверяет
+этот сценарий отдельно (TEMP/dental-notifications-long-20261122.log):exit0,1 PASS12.7s.
+Это не повтор неизменённого failed входа. Новое onClosed обновляет родителя после
+ответа внутри существующего окна; приёмка PASS, оба новых снимка просмотрены:
+длинное имя переносится на390px, новый статус и видимый focus после закрытия.
+Итого8 различных browser сценариев PASS;2 RU повторены после onClosed изменения.
+Backend не менялся после201 PASS/6 skips, повтор не требуется. Внешних отправок нет.
+Индекс пуст; изменения остаются одним неопубликованным срезом.
+Собственные новые файлы: medical/participation_notifications.py,
+participation_notice_reads.py, migrations/0016_participation_notice.py и3 tests;
+notifications/module_sources.py. Изменены medical apps/models/services/closure/views,
+notifications selectors/serializer/views/migration-test, CRM contract/capabilities,
+checkpoint и только первая строка STATUS. Foreign WIP не включать в будущий commit.
+
+База8d6a8e36; предыдущий шаг — progress (схема/команды/67 проверок/публикация).
+Режим implementation, gap code/UI: источник уже сохранён, уведомления отсутствуют.
+Добавляем medical-owned связь Notification с MedicalAuditEvent и адресный producer
+в той же транзакции. Общая лента получает нейтральную точку расширения через AppConfig;
+медицинские фильтры/проекция остаются в apps.medical. Фиксированный адресат, текущая
+роль/филиал/исходное основание до pagination/counts, без owner fallback и PHI.
+Повтор команды не создаёт второе уведомление; preferences переиспользуем.
+Проверки: event atomicity/replay/preferences, current role/module/branch/source,
+foreign/corrupt links, list/detail/count/read-all и существующие notification tests;
+check/drift/изолированная миграция. Следом private medical lookup и UI переход,
+desktop/mobile/i18n/browser. Пока этого нет, полный M06 не закрывается.
+Нет внешних отправок/AI/BusinessEvent/рабочей миграции. Чужие изменения сохраняются.
+
+Focused runner6332 exit0:66 tests PASS14.404s + check/drift. Лог
+TEMP/dental-participation-notifications-20261122.log. Затем добавлен private lookup
+и его4 проверки, tenant/link corruption и batch query-count тесты; повторная
+проверка включает весь apps.notifications и schema roundtrip. Core migration test
+теперь восстанавливает исходные leaf migrations, иначе новый зависимый medical
+0016 оставался бы снятым после его теста; прежние assertions не ослаблены.
+Новая миграция не применялась к рабочей БД. Для запуска обновлённого backend нужна
+обычная согласованная процедура миграции; это не её авторизация.
+Следующий UI: route /app/medical/participations?notification=<id>, server lookup,
+текущая карточка/ответ и переиспользование ParticipationEntry/SourceProposalWorkspace,
+6 medical.notifications.* переводов, typed API, desktop/mobile и recovery/403/404/409.
+Этот UI подключён выше; здесь сохранено исходное направление работы.
+Отдельный незакрытый критерий B07: существующий decline ещё не принимает причину;
+это нужно довести в M06, а не считать закрытым наличием уведомления об отказе.
+CI747e915/44998314566 и8d6a8e36/44999695951 completed success, проверено GitHub API.
+Final static98656 exit0/PASS, TEMP/dental-notifications-final-static-20261122.log.
+Рабочий/index/range diff hygiene PASS; весь собственный code/tests/docs diff просмотрен.
+README/testing без изменений: setup и запуск fixture не менялись.
+Fetch origin/main=8d6a8e36, исходящий диапазон до коммита пуст. Foreign WIP исключён.
+
 ## M06: уведомления и исходное основание, текущая работа
+
+Опубликовано8d6a8e365353b4ffe98ceca285be2e96952abf6d normal-push origin/main,
+remote SHA совпал. Веткаcodex/ui-testing-toolkit. CI44999695951 in_progress;
+зелёный CI не заявлен. В STATUS частично staged только собственная первая строка;
+чужие27 строк, как и остальной foreign WIP, сохранены вне коммита. Все локальные
+runners завершены. Следующий шаг: medical notification projection/producer/current
+access и UI переход; основание теперь доступно без восстановления по догадке.
 
 Режим implementation; gap code. Предыдущий срез747e915 доказал передачу между
 филиалами; проверка показала, что исходное основание проверяется командой, но не
@@ -2750,7 +2846,7 @@ Git-среза находятся выше; runtime-доказательства
 | M03 §2.2–2.4,3,16.1; D04; B02–04; Q09–12 | PatientProfile OneToOne Client, отдельные дети/представители; контакты из Client | Шифрованный ИИН + tenant HMAC, проверенная идентичность отдельно от синтаксиса; основание/срок/отзыв представительства | Семейный телефон не merge; конкурентный verified ИИН уникален; административные действия до проверки, клинические запрещены | Частично: patient schema/crypto/services/audit/reception API/UI с lifecycle/recovery/boundary evidence. Представители: schema/guards/services/audit/authority prerequisite + list/form/verify/revoke API; medical200 SQLite + labels34 PASS; S14 UI6 happy flows/build/screens PASS. UI boundary acceptance и интеграция recipient enforcement, ИИН/перепривязка/head approval и PostgreSQL race ещё нужны; документы/возраст внешне не подтверждены | Patient/identity/crypto и представитель lifecycle | Patient administration; representatives list/form/verify/revoke | ClientWorkspace: профиль/идентичность/представители | Перепривязка ИИН/head approval; recipient enforcement; UI negatives/PG | Документы/возраст и протоколы требуют подтверждения |
 | M04 §2.3–2.4; D04,D07; B04,26–27 | Медицинские зависимости блокируют обычный merge до любого переноса; архив сохраняет историю | Hooks существующего merge/dry-run/delete, контролируемое исправление с причиной и медсогласованием | Отказ атомарен, Appointment/VisitPlan не перемещены частично; hard delete не уничтожает PHI | Частично: merge/preview409 до переноса, PROTECT Client и архив PASS; контролируемые исправления и клиническая история ещё нужны | Merge guard/PROTECT/archive | Существующий merge/preview отклоняет медицинские зависимости | Отдельное медицинское исправление не завершено | Контролируемое исправление и его UI/аудит | Нет внешнего блокера merge guard |
 | M05 §3–4,11; D03; B01–04 | Существующие ClientsPage/ClientWorkspace/ClientForm; медицинские статусы только разрешённым ролям; свободные услуги | Resolve пациента/поиск ИИН с безопасными ошибками, вкладки и сохранение контекста | Список/поиск без утечки PHI; повтор создания/смена Business; свои реальные данные | Частично: PatientAdministrationPanel и patient API уже существуют; patient lifecycle/recovery evidence сохранено выше. Полный поиск/вкладки не приняты. | Patient resolve/administration на Client | Patient administration API | PatientAdministrationPanel в ClientWorkspace | Полный поиск по ИИН/список/вкладки и проверка всех путей | Протокол идентификации отдельно |
-| M06 §13; D03; B06–08; Q01–02,04 | Запись немедленно даёт основание; активное лечение независимо от следующей даты; передача требует принятия | Состояния приглашения/участия/причин доступа, филиальный scope, назначение медруководителя владельцем без саморасширения | Будущая запись >24ч доступна; отмена убирает только своё основание; до принятия нет карты; другой Business запрещён | Частично: прежние server/UI опубликованы9990bcbf/23a007a8, CI success. Новый source-scoped transfer:82 backend,14 node,types/build/i18n,6 locale/viewport +1 recovery +2 regression browser PASS;14 снимков просмотрены. Полный M06 открыт. | Appointment basis; propose/accept/decline/withdraw; head end | Commands; invitations/managed/mine; workspace-access; candidates; source-scoped proposal-branches/outgoing с текущим основанием и аудитом | Head invite/end, own accept/history; source-scoped филиал/получатель/предложение/исходящие/отзыв из записи или active-участия, проверены desktop/mobile RU/KK/EN | Transfer опубликован747e915d; источник предложения migration0015:67 backend/API/roundtrip PASS локально. Уведомления, полный ACL/назначение medical role и остальные критерии M06 открыты | Нет внешнего блокера основного сценария |
+| M06 §13; D03; B06–08; Q01–02,04 | Запись немедленно даёт основание; активное лечение независимо от следующей даты; передача требует принятия | Состояния приглашения/участия/причин доступа, филиальный scope, назначение медруководителя владельцем без саморасширения | Будущая запись >24ч доступна; отмена убирает только своё основание; до принятия нет карты; другой Business запрещён | Частично: прежние server/UI опубликованы9990bcbf/23a007a8, CI success. Новый source-scoped transfer:82 backend,14 node,types/build/i18n,6 locale/viewport +1 recovery +2 regression browser PASS;14 снимков просмотрены. Полный M06 открыт. | Appointment basis; propose/accept/decline/withdraw; head end | Commands; invitations/managed/mine; workspace-access; candidates; source-scoped proposal-branches/outgoing с текущим основанием и аудитом | Head invite/end, own accept/history; source-scoped филиал/получатель/предложение/исходящие/отзыв из записи или active-участия, проверены desktop/mobile RU/KK/EN | Transfer опубликован747e915d; источник предложения migration0015:67 backend/API/roundtrip PASS локально. Уведомления/context:201 PASS/6 PG skips; UI переход/ответ/окна подключены,8 browser сценариев,types/build/i18n/10 node PASS;16 снимков просмотрены, публикация pending. Полный ACL/назначение medical role, причина отказа B07 и остальные критерии M06 открыты | Нет внешнего блокера основного сценария |
 | M07 D03; Q01–05; B05,28 | Завершение участия отдельно от приёма; исправления 24ч; support один инцидент ≤4ч readonly; ассистент только команда/текущий приём | Проверки обязанностей/будущих записей, согласование не самим собой, досрочное закрытие/новое продление | Отзыв роли сильнее временного разрешения; точный scope; ассистент не подписывает/не выдаёт/не экспортирует историю | Частично: head end domain/API/responsible selector и форма локально проверены. Ordinary end/обязательства/security revoke/24h/support/team открыты. | Head end с причиной/ответственным | end-by-head; остальные команды отсутствуют | Head end с причиной/ответственным локально проверен; остальные временные/командные сценарии отсутствуют | Ordinary end/обязательства; security revoke; 24h correction; support/team | Правила уже согласованы; подтверждение заново не требуется |
 | M08 §4.2–4.4; D05; B09–11; Q13–15 | Один Encounter на реальный Appointment того же Client/Business; свои клинические данные | Черновик/revision/обязательные разделы/явная неприменимость; обычный/частичный исход; walk-in текущим днём, ранний через руководителя | Чужие связи/revision отклонены; финансовый переход через существующий сервис ровно один раз, unpaid не блокирует помощь, rollback | Частично: chart/open/draft/read/workspace services и API, encrypted versions/audit, migrations0009–0011; current role/basis/identity/replay checks. Срезы30–37 содержат доказательства и исправление B03. Срез43 добавил calendar→chart/open/draft UI; текущая проверка в начале checkpoint. Срез44 добавил history/revision reader, current display labels; проверки ниже/в начале checkpoint. Full UI/team/temporary ACL, signatures/obligations, walk-in и atomic calendar completion ещё нужны | Chart/open/draft/versions/audit; current ACL | Appointment context; workspace; draft; history/revision | Calendar → приём/черновик/история | Завершение+calendar/money; walk-in; team/temporary; остальные вкладки | Подписи/формы см. M11–M12 |
 | M09 §2.2,4,16.2 | Одонтограмма постоянных/молочных/смешанных зубов, поверхности, наблюдения, авторство и история | Модели текущего состояния/append history, связи приём/план/снимки | Изменение сохраняет прежнее и новое, неверный зуб/поверхность отвергнуты, права/конкурентность | Частично: срез47 добавил state/history schema и migration0012;29 storage/dependent tests/check/drift PASS. Срез48 encrypted helpers:30 tests/check/drift PASS; Срез49 exact-version audit:380 medical tests PASS; срез50 primary command/exact reader:50 PASS; срез51 HTTP:40 PASS/check/drift. Срез52 snapshot/history API:41 tests PASS, дополнительные12 edge tests PASS. Срез53 typed frontend transport10 tests/types/build PASS; Срез54 read UI:6 localized+1 recovery browser PASS; Срез55 whole-tooth editor:6+1 browser PASS; Срез56 surface-options API/shared validator41 tests PASS; Срез58 surface UI:6 localized+1 Map regression browser PASS, types/build/i18n/screens PASS; team/linked plans/images/clinical legend/concurrency ещё открыты | Tooth state/encrypted append history; surface policy | Write/exact read/snapshot/history/surface options | Постоянные/молочные/смешанные зубы; история; редактор поверхностей | Планы/снимки/team; PG concurrency; клиническая легенда | Утверждённый справочник поверхностей не получен |

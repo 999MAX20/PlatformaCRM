@@ -4,6 +4,7 @@ from apps.core.client_projection import ClientProjectionMixin
 from apps.notifications.models import Notification, NotificationPreference, NotificationRecipient
 from apps.notifications.personal_selectors import notification_subject
 from apps.notifications.service_messages import service_message_key
+from apps.notifications.module_sources import source_projection
 
 
 class NotificationSerializer(ClientProjectionMixin, serializers.ModelSerializer):
@@ -107,6 +108,9 @@ class NotificationSerializer(ClientProjectionMixin, serializers.ModelSerializer)
         data["action_label"] = ""
         data["last_error"] = ""
         data["provider_reference"] = ""
+        projection = source_projection(instance)
+        if projection is not None and instance.kind != Notification.Kinds.ANNOUNCEMENT:
+            data.update(projection)
         return data
 
 

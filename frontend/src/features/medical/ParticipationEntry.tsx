@@ -31,7 +31,7 @@ export function PatientParticipationEntry({ businessId, clientId, branchId }: { 
   return patientId ? <ParticipationEntry businessId={businessId} patientId={patientId} branchId={branchId} /> : null;
 }
 
-export function ParticipationEntry({ businessId, patientId, branchId }: { businessId: number; patientId?: number; branchId?: number }) {
+export function ParticipationEntry({ businessId, patientId, branchId, onClosed }: { businessId: number; patientId?: number; branchId?: number; onClosed?: () => void }) {
   const { t } = useI18n();
   const [access, setAccess] = useState<ParticipationWorkspaceAccess | null>(null);
   const [error, setError] = useState<unknown>(null);
@@ -62,7 +62,7 @@ export function ParticipationEntry({ businessId, patientId, branchId }: { busine
     {admitted ? <Button id={focusId} size="lg" variant="secondary" onClick={() => setOpen(true)}>{t("medical.participation.title")}</Button> : null}
     {error && !forbidden && !open ? <ErrorState message={getApiErrorMessage(error)} action={<Button variant="secondary" onClick={() => setAttempt(x => x + 1)}>{t("common.retry")}</Button>} /> : null}
     <Modal title={t("medical.participation.title")} open={open} size="xl" closeOnBackdrop={false} focusReturnId={focusId}
-      onClose={() => { if (!guard.current.pending && (!guard.current.dirty || window.confirm(t("medical.clinical.discard")))) { guard.current.dirty = false; setOpen(false); } }}>
+      onClose={() => { if (!guard.current.pending && (!guard.current.dirty || window.confirm(t("medical.clinical.discard")))) { guard.current.dirty = false; setOpen(false); onClosed?.(); } }}>
       {error ? <ErrorState message={forbidden ? t("medical.denied") : getApiErrorMessage(error)} action={<Button variant="secondary" onClick={() => setAttempt(x => x + 1)}>{t("common.retry")}</Button>} /> : access ?
         <ParticipationWorkspace key={`${businessId}:${patientId ?? "mine"}:${branchId ?? "all"}`} access={access} patientId={patientId} branchId={branchId} guard={guard} onDenied={denied} /> : <LoadingState />}
     </Modal>

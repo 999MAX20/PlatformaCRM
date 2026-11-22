@@ -11,6 +11,7 @@ from apps.core.viewsets import TenantModelViewSet
 from apps.notifications.delivery import retry_notification
 from apps.notifications.feed_filters import filter_personal_feed
 from apps.notifications.models import Notification, NotificationPreference, NotificationRecipient
+from apps.notifications.module_sources import source_relations
 from apps.businesses.models import Business
 from apps.notifications.announcement_api import AnnouncementActions, reject_state_payload
 from apps.notifications.personal_selectors import can_manage_announcements, personal_business, personal_states
@@ -61,7 +62,8 @@ class NotificationViewSet(AnnouncementActions, TenantModelViewSet):
         business = self.selected_personal_business()
         states = personal_states(actor=self.request.user, business=business)
         external = super().get_queryset().filter(business=business).exclude(channel=Notification.Channels.SYSTEM)
-        queryset = self.queryset.filter(Q(pk__in=external.values("pk")) | Q(pk__in=states.values("notification_id")))
+        queryset = self.queryset.select_related(*source_relations()).filter(
+            Q(pk__in=external.values("pk")) | Q(pk__in=states.values("notification_id")))
         state = NotificationRecipient.objects.filter(notification_id=OuterRef("pk"), user=self.request.user)
         queryset = queryset.annotate(
             personal_read_at=Subquery(state.values("read_at")[:1]),

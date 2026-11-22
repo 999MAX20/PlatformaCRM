@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from .participation_closure import end_participation_by_head
 from .participation_candidates import read_proposal_candidates, read_responsible_candidates
 from .participation_proposals import read_proposal_branches, read_outgoing_proposals
+from .participation_notice_reads import read_participation_notification
 from .participation_reads import (read_participation_invitations, read_managed_participations,
                                  read_own_participations, read_participation_workspace_access,
                                  read_participation_patient_context)
@@ -56,6 +57,10 @@ class ParticipationPatientContextSerializer(ParticipationAccessSerializer):
     branch_id = serializers.IntegerField(min_value=1)
 
 
+class ParticipationNotificationSerializer(ParticipationAccessSerializer):
+    notification_id = serializers.IntegerField(min_value=1)
+
+
 class ParticipationManagedSerializer(ParticipationListSerializer):
     branch_id = serializers.IntegerField(min_value=1)
     patient_id = serializers.IntegerField(min_value=1, required=False)
@@ -102,6 +107,7 @@ class TreatmentParticipationViewSet(viewsets.GenericViewSet):
                 "invitations": ParticipationListSerializer, "managed": ParticipationManagedSerializer,
                 "mine": ParticipationListSerializer, "workspace_access": ParticipationAccessSerializer,
                 "patient_context": ParticipationPatientContextSerializer,
+                "notification_context": ParticipationNotificationSerializer,
                 "proposal_branches": ParticipationBranchesSerializer,
                 "outgoing": ParticipationOutgoingSerializer,
                 "candidates": ParticipationCandidatesSerializer,
@@ -168,6 +174,12 @@ class TreatmentParticipationViewSet(viewsets.GenericViewSet):
         serializer = self.get_serializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
         return Response(read_participation_patient_context(actor=request.user, **serializer.validated_data))
+
+    @action(detail=False, methods=["get"], url_path="notification-context")
+    def notification_context(self, request):
+        serializer = self.get_serializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+        return Response(read_participation_notification(actor=request.user, **serializer.validated_data))
 
     @action(detail=False, methods=["get"])
     def mine(self, request):

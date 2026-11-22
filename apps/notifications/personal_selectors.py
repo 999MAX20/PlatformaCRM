@@ -11,6 +11,7 @@ from apps.businesses.capabilities import resource_is_enabled
 from apps.businesses.models import Business, BusinessMember
 from apps.core.crm_read_scope import readable_queryset
 from apps.notifications.models import Notification, NotificationRecipient
+from apps.notifications.module_sources import notification_sources
 
 
 ENTITY_ROUTES = {
@@ -123,10 +124,18 @@ def personal_states(*, actor, business, now=None):
         work = work.filter(Q(**{f"notification__{field}__isnull": True}) | Q(**{f"notification__{field}__in": readable}))
     # Legacy producers encode the source in their navigation URL. Resolve these
     # in batches before pagination/counts; no per-notification permission queries.
-    candidates = list(work.values_list("pk", "notification__action_url", "notification__category"))
+    candidates = list(work.values_list("pk", "notification__action_url", "notification__category", "notification_id"))
+    claimed, module_allowed = set(), set()
+    for source in notification_sources():
+        source_claimed, source_allowed = source.filter_ids(actor=actor, business=business,
+            notification_ids=[row[3] for row in candidates])
+        claimed.update(source_claimed)
+        module_allowed.update(source_allowed)
     parsed = {}
     requested = defaultdict(set)
-    for pk, url, category in candidates:
+    for pk, url, category, notification_id in candidates:
+        if notification_id in claimed:
+            continue
         subject = notification_subject(url)
         if subject is not None:
             parsed[pk] = (subject, category)
@@ -144,6 +153,7 @@ def personal_states(*, actor, business, now=None):
     allowed = [pk for pk, ((resource, subject_id, _), category) in parsed.items()
                if (subject_id in visible.get(resource, set()) if subject_id is not None else section_access[resource])
                and (category != Notification.Categories.FINANCE or section_access[Resources.BILLING])]
+    allowed.extend(pk for pk, _, _, notification_id in candidates if notification_id in module_allowed)
     return states.filter(Q(pk__in=announcements.values("pk")) | Q(pk__in=allowed)).select_related(
         "notification", "notification__author", "user",
     ).order_by("-received_at", "-pk")

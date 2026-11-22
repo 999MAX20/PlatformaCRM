@@ -1,4 +1,10 @@
 export const medical = {
+  "medical.notifications.participation_proposed": "New invitation to participate in treatment",
+  "medical.notifications.participation_accepted": "Treatment participation invitation accepted",
+  "medical.notifications.participation_declined": "Treatment participation invitation declined",
+  "medical.notifications.participation_withdrawn": "Treatment participation invitation withdrawn",
+  "medical.notifications.participation_ended": "Treatment participation ended",
+  "medical.notifications.unavailable": "Notification unavailable",
   "medical.participation.proposals": "Treatment handoff",
   "medical.participation.noOutgoing": "No sent invitations yet",
   "medical.participation.title": "Treatment participants",

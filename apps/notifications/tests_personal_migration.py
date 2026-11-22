@@ -11,6 +11,7 @@ class PersonalNotificationMigrationTests(TransactionTestCase):
         old_target = [("notifications", "0005_notification_attempts_notification_delivered_at_and_more")]
         new_target = [("notifications", "0007_backfill_personal_recipients")]
         executor = MigrationExecutor(connection)
+        leaves = executor.loader.graph.leaf_nodes()
         executor.migrate(old_target)
         try:
             executor = MigrationExecutor(connection)
@@ -55,4 +56,4 @@ class PersonalNotificationMigrationTests(TransactionTestCase):
                 import_module("apps.notifications.migrations.0007_backfill_personal_recipients").backfill(current, schema_editor)
             self.assertEqual(Recipient.objects.count(), 3)
         finally:
-            MigrationExecutor(connection).migrate(new_target)
+            MigrationExecutor(connection).migrate(leaves)

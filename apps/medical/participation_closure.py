@@ -11,6 +11,7 @@ from .audit import write_patient_audit
 from .identity_crypto import encrypt_medical_value, medical_request_digest
 from .models import MedicalRoleAssignment, TreatmentParticipation
 from .participation_services import _context, _positive
+from .participation_notifications import notify_participation_event
 from .role_access import assert_medical_branch_permission
 
 
@@ -51,8 +52,9 @@ def end_participation_by_head(*, actor, business_id, patient_id, participation_i
         item.full_clean()
         item.save(update_fields=["state", "closed_at", "closed_by", "remaining_responsible",
             "revision", "closure_reason_encrypted", "updated_at"])
-        write_patient_audit(actor=actor, business=business, patient=patient,
+        event = write_patient_audit(actor=actor, business=business, patient=patient,
             action="participation_ended", participation=item)
+        notify_participation_event(event)
         return CRMCommandResult(data={}, resource=item)
 
     result = run_idempotent_crm_command(business=business, actor=actor, action="medical.participation.end_head",

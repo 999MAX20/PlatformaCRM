@@ -1,5 +1,24 @@
 ## Завершение участия медруководителем — DENTAL-MCS, срез59
 
+Локальная доработка M06: propose/respond/withdraw/end создают нейтральное SYSTEM
+уведомление адресату через существующие Notification/NotificationRecipient.
+MedicalParticipationNotice связывает уведомление с medical audit (migration0016).
+Текст/клиент/запись/автор в общей строке не копируются. Предпочтения system/normal
+учитываются; owner fallback отсутствует. Хранение уведомления и переход атомарны,
+сбой возвращает503 с rollback; повтор команды не создаёт вторую строку.
+Core personal feed использует AppConfig.personal_notification_source: medical
+фильтрует по текущей роли/филиалам, а ответы инициатору — также по текущему исходному
+основанию или head scope. Проверка действует до пагинации/счётчиков и mark-all-read;
+подмена URL не переключает медицинскую строку на общий CRM ACL.
+GET /api/medical/participations/notification-context/ принимает business_id и
+notification_id, выдаёт текущую строку участия, incoming/outgoing и допустимое
+исходное основание. Медицинское чтение аудируется, ответ private/no-store.
+Переход из личной ленты подключён к /app/medical/participations?notification=<id>:
+текущий статус, ответ адресата и существующие окна участия/передачи. RU/KK/EN,
+desktop/mobile, отказ в доступе и восстановление проверены локально; проверка
+обновления после закрытия окна пройдена; публикация фиксируется в DENTAL-MCS checkpoint.
+Полный M06, включая B07 причину отказа, этим не закрыт.
+
 end_participation_by_head переводит active -> ended с revision, причиной,
 closed_by/closed_at и remaining_responsible (существующий BusinessMember, PROTECT).
 Ответственный выбирается явно; это запись ответственности за остаток, а не

@@ -14,6 +14,7 @@ from .audit import write_patient_audit
 from .identity_crypto import encrypt_medical_value, medical_request_digest
 from .models import MedicalRoleAssignment, PatientProfile, TreatmentParticipation
 from .participation_access import assert_treatment_medical_basis
+from .participation_notifications import notify_participation_event
 from .role_access import assert_medical_branch_permission, assert_medical_role_permission
 
 
@@ -120,8 +121,9 @@ def propose_treatment_participation(*, actor, business_id, patient_id, branch_id
         item.reason_encrypted = encrypt_medical_value(json.dumps({"reason": reason}, ensure_ascii=False),
             business_id=business_id, subject_id=item.pk, purpose="participation_proposal")
         item.save(update_fields=["reason_encrypted"])
-        write_patient_audit(actor=actor, business=business, patient=patient,
+        event = write_patient_audit(actor=actor, business=business, patient=patient,
             action="participation_proposed", participation=item)
+        notify_participation_event(event)
         return CRMCommandResult(data={}, status_code=201, resource=item)
 
     result = run_idempotent_crm_command(business=business, actor=actor, action="medical.participation.propose",
@@ -160,8 +162,9 @@ def respond_treatment_participation(*, actor, business_id, patient_id, participa
         item.revision += 1
         item.full_clean()
         item.save(update_fields=["state", "accepted_at", "closed_at", "closed_by", "revision", "updated_at"])
-        write_patient_audit(actor=actor, business=business, patient=patient,
+        event = write_patient_audit(actor=actor, business=business, patient=patient,
             action="participation_accepted" if decision == "accept" else "participation_declined", participation=item)
+        notify_participation_event(event)
         return CRMCommandResult(data={}, resource=item)
 
     result = run_idempotent_crm_command(business=business, actor=actor, action="medical.participation.respond",
@@ -195,8 +198,9 @@ def withdraw_treatment_participation(*, actor, business_id, patient_id, particip
         item.revision += 1
         item.full_clean()
         item.save(update_fields=["state", "closed_at", "closed_by", "revision", "updated_at"])
-        write_patient_audit(actor=actor, business=business, patient=patient,
+        event = write_patient_audit(actor=actor, business=business, patient=patient,
             action="participation_withdrawn", participation=item)
+        notify_participation_event(event)
         return CRMCommandResult(data={}, resource=item)
 
     result = run_idempotent_crm_command(business=business, actor=actor, action="medical.participation.withdraw",

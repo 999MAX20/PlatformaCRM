@@ -234,6 +234,13 @@ class TreatmentParticipation(TimeStampedModel):
             raise ValidationError({"remaining_responsible": "Select a member of the patient's business."})
 
 
+class MedicalParticipationNotice(models.Model):
+    notification = models.OneToOneField("notifications.Notification", on_delete=models.CASCADE,
+        related_name="medical_participation_notice")
+    event = models.OneToOneField("MedicalAuditEvent", on_delete=models.PROTECT,
+        related_name="participation_notice")
+
+
 class MedicalAuditEvent(models.Model):
     class Actions(models.TextChoices):
         PATIENT_CREATED = "patient_created", "Patient created"

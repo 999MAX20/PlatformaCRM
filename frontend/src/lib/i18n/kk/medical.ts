@@ -1,4 +1,10 @@
 export const medical = {
+  "medical.notifications.participation_proposed": "Емдеуге қатысуға жаңа шақыру",
+  "medical.notifications.participation_accepted": "Емдеуге қатысуға шақыру қабылданды",
+  "medical.notifications.participation_declined": "Емдеуге қатысуға шақыру қабылданбады",
+  "medical.notifications.participation_withdrawn": "Емдеуге қатысуға шақыру қайтарып алынды",
+  "medical.notifications.participation_ended": "Емдеуге қатысу аяқталды",
+  "medical.notifications.unavailable": "Хабарландыру қолжетімсіз",
   "medical.participation.proposals": "Емдеуді тапсыру",
   "medical.participation.noOutgoing": "Жіберілген шақырулар әзірге жоқ",
   "medical.participation.title": "Емдеуге қатысушылар",

@@ -17,6 +17,20 @@ function load(apiClient) {
   return exports.medicalParticipationApi;
 }
 
+test("notification context uses the selected business, notice and cancellation without caching", async () => {
+  const calls = [];
+  const api = load({ get: async (...args) => { calls.push(args); return { data: { revision: calls.length } }; } });
+  const signal = new AbortController().signal;
+  const scope = { business_id: 2, notification_id: 17 };
+  assert.notEqual(await api.notificationContext(scope, signal), await api.notificationContext(scope, signal));
+  assert.equal(calls.length, 2);
+  for (const [path, config] of calls) {
+    assert.equal(path, "/api/medical/participations/notification-context/");
+    assert.equal(config.params, scope);
+    assert.equal(config.signal, signal);
+  }
+});
+
 test("participation lists preserve tenant/filter/cursor and re-fetch instead of caching", async () => {
   const calls = [];
   const result = { results: [], next_before_id: 8 };

@@ -1,4 +1,10 @@
 export const medical = {
+  "medical.notifications.participation_proposed": "Новое приглашение к участию в лечении",
+  "medical.notifications.participation_accepted": "Приглашение к участию в лечении принято",
+  "medical.notifications.participation_declined": "Приглашение к участию в лечении отклонено",
+  "medical.notifications.participation_withdrawn": "Приглашение к участию в лечении отозвано",
+  "medical.notifications.participation_ended": "Участие в лечении завершено",
+  "medical.notifications.unavailable": "Уведомление недоступно",
   "medical.participation.proposals": "Передача лечения",
   "medical.participation.noOutgoing": "Отправленных приглашений пока нет",
   "medical.participation.title": "Участники лечения",
