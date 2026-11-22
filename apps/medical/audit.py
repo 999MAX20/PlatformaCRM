@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError as ModelValidationError
 from django.db import DatabaseError
+from django.db.models import Q
 
 from apps.core.domain_errors import DomainAPIException
 from .models import DentalToothHistory, DentalMedicalRecord, MedicalAuditEvent, PatientProfile, PatientRepresentative, TreatmentParticipation, MedicalEncounterRevision
@@ -32,8 +33,9 @@ def write_patient_audit(*, actor, business, patient, action, representative=None
         raise ValueError("A participation action requires its participation.")
     if action == MedicalAuditEvent.Actions.PARTICIPATION_ENDED and not TreatmentParticipation.objects.filter(
             pk=participation.pk, state="ended", revision=participation.revision, closed_by=actor,
-            remaining_responsible__business_id=business.pk).exclude(closure_reason_encrypted="").exists():
-        raise ValueError("A participation end event requires its current closure and responsible member.")
+            ).filter(Q(remaining_responsible__business_id=business.pk) |
+                     Q(remaining_responsible__isnull=True, member__user=actor)).exclude(closure_reason_encrypted="").exists():
+        raise ValueError("A participation end event requires current closure and own completion or a responsible member.")
     if action.startswith("encounter_") and encounter_version is None:
         raise ValueError("An encounter action requires its clinical version.")
     if encounter_version is not None:

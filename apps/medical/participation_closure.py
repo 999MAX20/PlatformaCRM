@@ -13,6 +13,51 @@ from .models import MedicalRoleAssignment, TreatmentParticipation
 from .participation_services import _context, _positive
 from .participation_notifications import notify_participation_event
 from .role_access import assert_medical_branch_permission
+from .participation_obligations import participation_obligations
+
+
+@transaction.atomic
+def end_own_participation(*, actor, business_id, patient_id, participation_id,
+                          expected_revision, idempotency_key):
+    _positive(participation_id=participation_id, expected_revision=expected_revision)
+    actor, business, patient, role = _context(actor, business_id, patient_id, idempotency_key, "update")
+    item = TreatmentParticipation.objects.select_for_update().select_related("branch", "member").filter(
+        pk=participation_id, patient=patient, member__business=business,
+        member__user=actor, branch__business=business).first()
+    if item is None:
+        raise PermissionDenied()
+    assert_medical_branch_permission(actor, business, "medical_participation", "update", branch=item.branch)
+
+    def operation():
+        now = timezone.now()
+        if item.revision != expected_revision or item.state != "active":
+            raise InvalidTransition("Participation changed; review its current state.")
+        if item.accepted_at is None or item.accepted_at > now:
+            raise InvalidTransition("Participation is not effective yet.")
+        remaining = participation_obligations(business=business, patient=patient, member=item.member)
+        if any(source["count"] for source in remaining.values()):
+            raise InvalidTransition("Resolve outstanding appointments and medical records before ending participation.",
+                                    errors={"obligations": remaining})
+        item.state, item.closed_at, item.closed_by = "ended", now, actor
+        item.remaining_responsible = None
+        item.revision += 1
+        item.closure_reason_encrypted = encrypt_medical_value(json.dumps({"reason": "",
+            "revision": item.revision, "responsible_member_id": None}, ensure_ascii=False),
+            business_id=business_id, subject_id=item.pk, purpose="participation_closure")
+        item.full_clean()
+        item.save(update_fields=["state", "closed_at", "closed_by", "remaining_responsible",
+                                "revision", "closure_reason_encrypted", "updated_at"])
+        event = write_patient_audit(actor=actor, business=business, patient=patient,
+                                   action="participation_ended", participation=item)
+        notify_participation_event(event)
+        return CRMCommandResult(data={}, resource=item)
+
+    result = run_idempotent_crm_command(business=business, actor=actor, action="medical.participation.end_own",
+        idempotency_key=medical_request_digest({"key": idempotency_key}, business_id=business_id),
+        payload={"patient": patient_id, "participation": participation_id, "expected_revision": expected_revision},
+        operation=operation)
+    item.refresh_from_db()
+    return item, result.replayed
 
 
 @transaction.atomic

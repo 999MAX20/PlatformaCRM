@@ -4,8 +4,9 @@
 назначения, отзыва и истории оснований. Основания шифруются в отдельной revision
 (migration0019); общий CRM audit не содержит текста. Старые назначения сохраняются
 без выдуманного основания.66 HTTP/domain/read/access/migration tests, check/drift
-PASS в isolated runtime; доказательства — DENTAL-MCS checkpoint. Интерфейс назначения ещё не подключён;
-это backend foundation, полный M02/M06/B08 не закрыт.
+PASS в isolated runtime; доказательства — DENTAL-MCS checkpoint. S18/M21 подключён
+и опубликованc135008d:9 browser PASS,26 снимков просмотрены,19 backend/check/drift,
+types/build/i18n PASS. Полный M02/M06 остаётся открытым.
 
 Локально реализована интеграция личных уведомлений об участии (migration0016):
 фиксированный адресат, нейтральная проекция без PHI, current ACL общей ленты,
@@ -39,7 +40,10 @@ transport реализован; workspace-access/mine и head patient-context п
 UI приглашения/принятия/head end локально проверен на desktop/mobile RU/KK/EN,
 включая loading/empty/read+write recovery, optimistic conflict и role revocation.
 Снимки просмотрены; доказательства в DENTAL-MCS checkpoint. Это не полный M06/M07.
-Обычное завершение с обязательствами и24h исправления ещё не готовы.
+Обычное завершение получает доменную основу: own-end с medical_participation:update,
+проверкой открытых назначенных Appointment и черновиков MedicalEncounter, audit/replay.
+44 affected tests/check/drift PASS. Полный набор обязательных MedicalDocument,
+HTTP/UI обычного завершения и24h исправления ещё не готовы.
 Назначения, задачи и оплаты автоматически не меняются.
 
 Добавлены source-scoped филиалы и исходящие предложения врача:82 focused/dependent
