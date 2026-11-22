@@ -84,6 +84,12 @@ history/read: текущая роль doctor/head, own scope, server-owned ident
 на RU/KK/EN с пагинацией/read recovery и2 settings regressions PASS;22 снимка
 просмотрены, подробные проверки в checkpoint. Добавлен workspace-access для получения текущих прав на личные
 шаблоны без чтения их содержимого. Подстановка полей и PDF также остаются открытыми.
+Добавлены domain/API общих шаблонов: head-only управление, версии, явная отправка
+и утверждение, metadata текущих прав; approved selector выдаёт только общие либо
+собственные утверждённые версии. Новый draft сохраняет прежнюю approved версию
+доступной.63 focused domain/API tests PASS в изолированной SQLite, включая personal
+регрессии, replay/stale, scope denial и audit rollback. Общий UI и интеграция
+selector в создаваемый документ ещё не реализованы; PostgreSQL concurrency не проверена.
 
 Добавлены source-scoped филиалы и исходящие предложения врача:82 focused/dependent
 backend tests/check/drift PASS в изолированном SQLite. UI из записи и active

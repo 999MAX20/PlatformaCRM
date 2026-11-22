@@ -4,6 +4,11 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .serializers import StrictSerializer
+from .common_template_services import (
+    common_template_workspace_access, list_approved_templates, list_common_template_drafts,
+    list_common_template_versions, read_approved_template_version, read_common_template_version,
+    save_common_template_draft, submit_common_template,
+)
 from .template_reviews import (
     decide_template_review, list_pending_template_reviews, read_submitted_template,
     submit_personal_template,
@@ -52,7 +57,11 @@ class MedicalDocumentTemplateViewSet(viewsets.GenericViewSet):
     http_method_names = ["get", "post", "head", "options"]
 
     def get_serializer_class(self):
+        if self.action == "common":
+            return TemplateDraftSerializer if self.request.method == "POST" else TemplateListSerializer
         return {"create": TemplateDraftSerializer, "draft": TemplateUpdateSerializer,
+                "common_draft": TemplateUpdateSerializer, "approved": TemplateListSerializer,
+                "common_revisions": TemplateHistorySerializer,
                 "list": TemplateListSerializer, "pending_reviews": TemplateListSerializer,
                 "decide": TemplateDecisionSerializer, "revisions": TemplateHistorySerializer}.get(
                     self.action, TemplateScopeSerializer)
@@ -63,10 +72,10 @@ class MedicalDocumentTemplateViewSet(viewsets.GenericViewSet):
         response["Pragma"] = "no-cache"
         return response
 
-    def _command(self, request, template_id=None):
+    def _command(self, request, template_id=None, service=save_personal_template_draft):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        version, replayed = save_personal_template_draft(actor=request.user,
+        version, replayed = service(actor=request.user,
             template_id=template_id, **serializer.validated_data,
             idempotency_key=request.headers.get("Idempotency-Key"))
         return Response({"id": version.template_id, "version_id": version.pk,
@@ -133,3 +142,42 @@ class MedicalDocumentTemplateViewSet(viewsets.GenericViewSet):
     @action(detail=False, methods=["post"], url_path=r"versions/(?P<version_id>[0-9]+)/decision")
     def decide(self, request, version_id=None):
         return self._review_command(request, version_id, decide_template_review)
+
+    def _read(self, request, service, **identifiers):
+        serializer = self.get_serializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+        return Response(service(actor=request.user, **identifiers, **serializer.validated_data))
+
+    @action(detail=False, methods=["get", "post"], url_path="common")
+    def common(self, request):
+        if request.method == "POST":
+            return self._command(request, service=save_common_template_draft)
+        return self._read(request, list_common_template_drafts)
+
+    @action(detail=False, methods=["get"], url_path="common/workspace-access")
+    def common_access(self, request):
+        return self._read(request, common_template_workspace_access)
+
+    @action(detail=False, methods=["post"], url_path=r"common/(?P<template_id>[0-9]+)/draft")
+    def common_draft(self, request, template_id=None):
+        return self._command(request, template_id=int(template_id), service=save_common_template_draft)
+
+    @action(detail=False, methods=["get"], url_path=r"common/(?P<template_id>[0-9]+)/revisions")
+    def common_revisions(self, request, template_id=None):
+        return self._read(request, list_common_template_versions, template_id=int(template_id))
+
+    @action(detail=False, methods=["get"], url_path=r"common/versions/(?P<version_id>[0-9]+)")
+    def common_version(self, request, version_id=None):
+        return self._read(request, read_common_template_version, version_id=int(version_id))
+
+    @action(detail=False, methods=["post"], url_path=r"common/versions/(?P<version_id>[0-9]+)/submit")
+    def common_submit(self, request, version_id=None):
+        return self._review_command(request, version_id, submit_common_template)
+
+    @action(detail=False, methods=["get"], url_path="approved")
+    def approved(self, request):
+        return self._read(request, list_approved_templates)
+
+    @action(detail=False, methods=["get"], url_path=r"approved/versions/(?P<version_id>[0-9]+)")
+    def approved_version(self, request, version_id=None):
+        return self._read(request, read_approved_template_version, version_id=int(version_id))

@@ -13,7 +13,7 @@ from .identity_crypto import MedicalDataUnavailable, decrypt_medical_value, encr
 from .models import MedicalDocumentTemplateRevision, MedicalTemplateReview
 from .role_access import assert_medical_role_permission
 from .template_audit import write_template_audit
-from .template_services import _context, _identifier
+from .template_services import _context, _identifier, assert_common_template_context
 
 
 def _key(value):
@@ -73,13 +73,20 @@ def read_review_decision(review, content):
         raise MedicalDataUnavailable() from None
 
 
-@transaction.atomic
 def submit_personal_template(*, actor, business_id, version_id, idempotency_key):
+    return _submit_template(actor=actor, business_id=business_id, version_id=version_id,
+                            idempotency_key=idempotency_key)
+
+
+@transaction.atomic
+def _submit_template(*, actor, business_id, version_id, idempotency_key, common=False):
     _key(idempotency_key)
     business, context = _context(actor, business_id, "update")
     assert_medical_role_permission(actor, business, "medical_documents", "view")
     version = _version(business, version_id)
-    if version.template.owner_member_id != context.member_id:
+    if common:
+        assert_common_template_context(actor, business, context)
+    if version.template.owner_member_id != (None if common else context.member_id):
         raise PermissionDenied()
 
     def operation():
@@ -94,7 +101,8 @@ def submit_personal_template(*, actor, business_id, version_id, idempotency_key)
         write_template_audit(actor=actor, business=business, version=version, action="template_submitted")
         return CRMCommandResult(data={}, status_code=201, resource=review)
 
-    result = run_idempotent_crm_command(business=business, actor=actor, action="medical.template.submit",
+    result = run_idempotent_crm_command(business=business, actor=actor,
+        action="medical.template.common.submit" if common else "medical.template.submit",
         idempotency_key=medical_request_digest({"key": idempotency_key}, business_id=business_id),
         payload={"version": version_id}, operation=operation)
     review = MedicalTemplateReview.objects.get(version__template__business=business,

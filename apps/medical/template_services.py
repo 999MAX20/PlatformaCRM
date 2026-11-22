@@ -51,9 +51,21 @@ def personal_template_workspace_access(*, actor, business_id):
             "kind": context.kind, "actions": actions}
 
 
-@transaction.atomic
 def save_personal_template_draft(*, actor, business_id, title, text, idempotency_key,
                                  template_id=None, expected_revision=None, reason=""):
+    return _save_template_draft(actor=actor, business_id=business_id, title=title, text=text,
+        idempotency_key=idempotency_key, template_id=template_id, expected_revision=expected_revision, reason=reason)
+
+
+def assert_common_template_context(actor, business, context):
+    viewing = assert_medical_role_permission(actor, business, "medical_documents", "view")
+    if context.kind != MedicalRoleAssignment.Kinds.HEAD or context.scope != "business" or viewing.scope != "business":
+        raise PermissionDenied()
+
+
+@transaction.atomic
+def _save_template_draft(*, actor, business_id, title, text, idempotency_key,
+                         template_id=None, expected_revision=None, reason="", common=False):
     if template_id is not None:
         _identifier(template_id)
         _identifier(expected_revision)
@@ -66,10 +78,13 @@ def save_personal_template_draft(*, actor, business_id, title, text, idempotency
         raise ValidationError({"reason": "Provide a reason of at most 2000 characters."})
     action = "create" if template_id is None else "update"
     business, context = _context(actor, business_id, action)
+    if common:
+        assert_common_template_context(actor, business, context)
+    owner_id = None if common else context.member_id
     template = None
     if template_id is not None:
         template = MedicalDocumentTemplate.objects.select_for_update().filter(pk=template_id,
-            business=business, owner_member_id=context.member_id).first()
+            business=business, owner_member_id=owner_id).first()
         if template is None:
             raise PermissionDenied()
 
@@ -77,19 +92,20 @@ def save_personal_template_draft(*, actor, business_id, title, text, idempotency
         if template is not None and template.revision != expected_revision:
             raise InvalidTransition("The template changed; reload its current revision.")
         draft = template or MedicalDocumentTemplate.objects.create(business=business,
-            owner_member_id=context.member_id, code="personal_" + uuid.uuid4().hex)
+            owner_member_id=owner_id, code=("common_" if common else "personal_") + uuid.uuid4().hex)
         version = append_template_revision(template=draft, author=actor, title=title, text=text, reason=reason)
         write_template_audit(actor=actor, business=business, version=version,
             action="template_draft_created" if template is None else "template_draft_saved")
         return CRMCommandResult(data={}, status_code=201 if template is None else 200, resource=version)
 
-    result = run_idempotent_crm_command(business=business, actor=actor, action="medical.template." + action,
+    result = run_idempotent_crm_command(business=business, actor=actor,
+        action=("medical.template.common." if common else "medical.template.") + action,
         idempotency_key=medical_request_digest({"key": idempotency_key}, business_id=business_id),
         payload={"template": template_id, "revision": expected_revision,
             "content_digest": medical_request_digest({"title": title, "text": text, "reason": reason}, business_id=business_id)},
         operation=operation)
     version = MedicalDocumentTemplateRevision.objects.get(template__business=business,
-        template__owner_member_id=context.member_id, pk=result.resource_id if result.replayed else result.resource.pk)
+        template__owner_member_id=owner_id, pk=result.resource_id if result.replayed else result.resource.pk)
     return version, result.replayed
 
 
@@ -101,6 +117,11 @@ def read_personal_template_version(*, actor, business_id, version_id):
         template__business=business, template__owner_member_id=context.member_id).first()
     if version is None:
         raise PermissionDenied()
+    return read_template_version_payload(actor=actor, business=business, version=version)
+
+
+def read_template_version_payload(*, actor, business, version):
+    """Internal audited payload; the caller must authorize the version's visibility."""
     write_template_audit(actor=actor, business=business, version=version, action="read")
     snapshot = read_template_revision(version)
     from .template_reviews import read_review_decision
@@ -142,16 +163,23 @@ def list_personal_template_drafts(*, actor, business_id, before_id=None, limit=2
     return {"results": rows, "next_before_id": rows[-1]["template_id"] if len(page) > limit else None}
 
 
-@transaction.atomic
 def list_personal_template_versions(*, actor, business_id, template_id, before_revision=None, limit=20):
+    return _list_template_versions(actor=actor, business_id=business_id, template_id=template_id,
+                                   before_revision=before_revision, limit=limit)
+
+
+@transaction.atomic
+def _list_template_versions(*, actor, business_id, template_id, before_revision=None, limit=20, common=False):
     _identifier(template_id)
     if before_revision is not None:
         _identifier(before_revision)
     if type(limit) is not int or not 1 <= limit <= 50:
         raise ValidationError({"limit": "Select a page size from 1 to 50."})
     business, context = _context(actor, business_id, "view")
+    if common:
+        assert_common_template_context(actor, business, context)
     template = MedicalDocumentTemplate.objects.filter(pk=template_id,
-        business=business, owner_member_id=context.member_id).first()
+        business=business, owner_member_id=None if common else context.member_id).first()
     if template is None:
         raise PermissionDenied()
     versions = MedicalDocumentTemplateRevision.objects.filter(template=template,
