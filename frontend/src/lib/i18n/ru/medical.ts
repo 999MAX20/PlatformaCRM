@@ -1,4 +1,8 @@
 export const medical = {
+  "medical.list.status": "Медицинская карта",
+  "medical.list.branch": "Филиал для медицинских статусов",
+  "medical.list.present": "Есть медкарта",
+  "medical.list.absent": "Медкарты нет",
   "medical.registration.title": "Новый пациент",
   "medical.registration.create": "Создать отдельного пациента",
   "medical.registration.matches": "Есть возможные совпадения. Проверьте их в поиске перед созданием отдельного человека.",

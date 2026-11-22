@@ -1,4 +1,8 @@
 export const medical = {
+  "medical.list.status": "Medical record",
+  "medical.list.branch": "Branch for medical statuses",
+  "medical.list.present": "Medical record exists",
+  "medical.list.absent": "No medical record",
   "medical.registration.title": "New patient",
   "medical.registration.create": "Create separate patient",
   "medical.registration.matches": "There are possible matches. Review them in search before creating a separate person.",

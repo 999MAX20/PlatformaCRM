@@ -1,4 +1,4 @@
-DENTAL-MCS: К04 ACTIVE — поиск, atomic Client+Patient и исправление ИИН с head review реализованы; PG82+12, browser8+7+6 и representative negative PASS, build PASS. Публикация К04 pending; mixed-history/К03 owner-clinician ждут решений, L04 внешне открыт. План/матрица: docs/testing/task-state/DENTAL-MCS-20261122.md.
+DENTAL-MCS: К04 search/registration/IIN опубликованы e5546ea8, static PASS; CI45077416096 in_progress. Reception list projection backend5/browser6/build PASS, publication pending. К04 whole OPEN по mixed-history решению/L04; далее независимый К05. План/матрица: docs/testing/task-state/DENTAL-MCS-20261122.md.
 
 QA-016-20261121 LOCAL VERIFIED: automatic tasks searchable by displayed RU/KK/EN title; editor preserves original copy on unrelated edits. 66 backend, 9 node, 6 desktop/mobile browser scenarios, build/types/i18n/check/drift PASS; Code 8a240ad3 pushed to main; CI44937543011 queued (not PASS). Working DB untouched. [Evidence](docs/testing/evidence/qa-016-task-search-20261121.md).
 

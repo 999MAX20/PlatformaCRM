@@ -28,6 +28,7 @@ import { useCustomColumns } from "../../components/crm/CustomFieldColumns";
 import { useClientsPageHeader } from "./hooks/useClientsPageHeader";
 import { useClientsWorkspace } from "./hooks/useClientsWorkspace";
 import { PatientSearchEntry } from "../medical/PatientSearchEntry";
+import { usePatientListProjection } from "../medical/usePatientListProjection";
 export function ClientsPage() {
   const { t } = useI18n();
   const confirmAction = useActionConfirm();
@@ -87,6 +88,8 @@ export function ClientsPage() {
   const canCreate = hasPermission(user, business?.id, "clients", "create");
   const isEmptyWorkspace = !hasClientFilters && filteredClients.isSuccess && !filteredClients.isPlaceholderData && rows.length === 0;
   const customTable = useCustomColumns(business?.id || 0, "client", rows.map(row => row.client.id));
+  const medicalList = usePatientListProjection(Number(business?.id || 0), Number(user?.id || 0), rows.map(row => Number(row.client.id)),
+    user?.capabilities?.[String(business?.id)]?.modules?.medical_records === true && !filteredClients.isPlaceholderData && !filteredClients.isError);
   useClientsPageHeader({
     t,
     onCreateClient: canCreate ? openCreateClient : undefined,
@@ -290,10 +293,11 @@ export function ClientsPage() {
             customTable={customTable} t={t} />}
         {pageError && <ErrorState error={pageError} message={getApiErrorMessage(pageError)} action={<Button variant="secondary" onClick={() => { void Promise.all([filteredClients.refetch(), tagsQuery.refetch(), segments.refetch(), taggedObjects.refetch()]); }}>{t("common.retry")}</Button>} />}
         {customTable.error}
+        {medicalList.controls}
         {!filteredClients.isError && <ClientsTable rows={rows} ordering={ordering} onOrderingChange={setOrdering}
           onOpenClient={openClientCard}
           hasFilters={hasClientFilters} onResetFilters={clearAllFilters} onCreateClient={canCreate ? openCreateClient : undefined}
-          visibleColumns={visibleClientColumns} customColumns={customTable.columns} t={t} />}
+          visibleColumns={visibleClientColumns} customColumns={[...medicalList.columns, ...customTable.columns]} t={t} />}
       </div>
 
       <ClientsModals

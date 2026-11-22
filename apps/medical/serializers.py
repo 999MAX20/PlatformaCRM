@@ -27,6 +27,10 @@ class PatientSearchAccessSerializer(StrictSerializer):
     business_id = serializers.IntegerField(min_value=1)
 
 
+class PatientListProjectionSerializer(PatientScopeSerializer):
+    client_ids = serializers.ListField(child=serializers.IntegerField(min_value=1), min_length=1, max_length=100)
+
+
 class PatientCreateSerializer(PatientScopeSerializer):
     client_id = serializers.IntegerField(min_value=1)
     demographics = serializers.DictField()

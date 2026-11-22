@@ -1,4 +1,8 @@
 export const medical = {
+  "medical.list.status": "Медициналық карта",
+  "medical.list.branch": "Медициналық мәртебелер үшін филиал",
+  "medical.list.present": "Медициналық карта бар",
+  "medical.list.absent": "Медициналық карта жоқ",
   "medical.registration.title": "Жаңа пациент",
   "medical.registration.create": "Бөлек пациентті жасау",
   "medical.registration.matches": "Ықтимал сәйкестіктер бар. Бөлек адамды жасамас бұрын оларды іздеуде тексеріңіз.",

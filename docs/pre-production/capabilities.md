@@ -235,6 +235,10 @@ idempotency store получает только keyed fingerprints, replay пр�
 Client+PatientProfile доступны из ClientsPage; verified ИИН не создаёт дубль,
 контактные совпадения требуют отдельного подтверждения. Scoped backend/PG/browser
 и сборка проверены; точная граница и публикация в DENTAL-MCS checkpoint.
+Дополнительный bounded list-projection показывает reception наличие медкарты и
+identity status только в разрешённом CRM/medical/branch scope, без clinical text.
+Колонка переиспользует desktop table/mobile card; отдельная клиническая проекция
+врача/команды и все вкладки остаются в К05/К06.
 Общие Client.save/import и conditional editor защищают имя
 verified пациента и Business привязанного Client; обычные контактные поля сохранены.
 Reception-only административный HTTP API соединяет create/read/preliminary/verify/

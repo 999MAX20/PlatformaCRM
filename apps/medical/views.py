@@ -13,6 +13,8 @@ from .patient_selectors import (patient_administration_access, patient_verificat
 from .patient_services import create_patient_profile, update_unverified_patient_profile
 from .patient_search import patient_search_access, record_denied_patient_search, resolve_patients
 from .patient_registration import register_new_patient
+from .patient_list_projection import patient_list_projection
+from .serializers import PatientListProjectionSerializer
 from .representative_views import PatientRepresentativesMixin
 from .serializers import (PatientCorrectionSerializer, PatientCreateSerializer, PatientPreliminarySerializer,
                           PatientRegistrationSerializer, PatientResolveSerializer, PatientSearchAccessSerializer, PatientScopeSerializer, PatientVerifySerializer)
@@ -62,6 +64,19 @@ class PatientAdministrationViewSet(PatientIdentityCorrectionsMixin, PatientRepre
         serializer = PatientSearchAccessSerializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
         return Response(patient_search_access(actor=request.user, **serializer.validated_data))
+
+    @action(detail=False, methods=["post"], url_path="list-projection")
+    def list_projection(self, request):
+        if request.query_params:
+            raise ValidationError({"request": "Provide projection fields only in the request body."})
+        serializer = PatientListProjectionSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            result = patient_list_projection(actor=request.user, **serializer.validated_data)
+        except (PermissionDenied, ModuleDisabled):
+            record_denied_patient_search(actor=request.user, business_id=serializer.validated_data["business_id"])
+            raise
+        return Response(result)
 
     @action(detail=False, methods=["get"], url_path="access")
     def administration_access(self, request):

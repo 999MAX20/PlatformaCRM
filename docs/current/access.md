@@ -13,6 +13,14 @@ POST register/ атомарно создаёт Client+PatientProfile с обыч
 Никаких новых provider/notification/AI вызовов. Точные проверки и открытая граница
 перепривязки находятся в [checkpoint](../testing/task-state/DENTAL-MCS-20261122.md).
 
+POST list-projection/ получает scope и1–100 client_ids текущей страницы. Reception
+с актуальными medical/CRM/branch правами видит только разрешённые Client IDs,
+has_record (реальный DentalMedicalRecord) и identity_status. Отсутствующий/чужой/
+скрытый Client не возвращается. Никакой расшифровки ИИН/анамнеза; наличие карты
+не означает проверку личности. Scope и patient read audit обязательны до ответа,
+сбой audit→503 без частичной выдачи; no-store. Клинические проекции врача/команды
+используют собственные основания К05, этот endpoint им не даёт reception-доступ.
+
 По §22.6 п.3 команды medical.record.open, medical.encounter.open и
 medical.encounter.primary_draft дополнительно требуют текущую проверенную личность
 пациента. Проверка выполняется до replay; непроверенная личность блокирует обычное

@@ -9,6 +9,7 @@ export type PatientSearchResult = {
   match: "exact_confirmed" | "possible";
 };
 export type PatientSearchPage = { results: PatientSearchResult[]; next_offset: number | null };
+export type PatientListStatus = { client_id: number; has_record: boolean; identity_status: "verified" | "unverified" | null };
 export type PatientRegistration = PatientScope & { full_name: string; phone: string; email: string; demographics: PatientDemographics;
   iin: string | null; confirmed_separate_person: boolean };
 export type IdentityCorrection = { id: number; patient_id: number; state: "pending" | "applied" | "rejected";
@@ -88,6 +89,10 @@ async function command(
 }
 
 export const medicalPatientsApi = {
+  listProjection: async (scope: PatientScope, clientIds: number[], signal?: AbortSignal) => {
+    const { data } = await apiClient.post<{ results: PatientListStatus[] }>(root + "list-projection/", { ...scope, client_ids: clientIds }, { signal });
+    return data.results;
+  },
   register: async (payload: PatientRegistration, key: string, signal?: AbortSignal) => {
     const { data } = await apiClient.post<PatientCommandResult>(root + "register/", payload, { headers: { "Idempotency-Key": key }, signal });
     return data;
