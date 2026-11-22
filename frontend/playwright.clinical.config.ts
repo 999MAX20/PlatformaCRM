@@ -1,7 +1,7 @@
 import { defineConfig } from "@playwright/test";
 
 export default defineConfig({
-  testDir: "./e2e", testMatch: ["medical-clinical.spec.ts", "medical-clinical-recovery.spec.ts", "medical-history-recovery.spec.ts", "medical-tooth.spec.ts", "medical-participation.spec.ts"], workers: 1, retries: 0,
+  testDir: "./e2e", testMatch: ["medical-clinical.spec.ts", "medical-clinical-recovery.spec.ts", "medical-history-recovery.spec.ts", "medical-tooth.spec.ts", "medical-participation.spec.ts", "medical-proposal.spec.ts"], workers: 1, retries: 0,
   timeout: 60_000, expect: { timeout: 12_000 }, reporter: "list",
   outputDir: process.env.E2E_MEDICAL_OUTPUT_DIR || "../output/playwright/clinical",
   use: { baseURL: process.env.E2E_BASE_URL, screenshot: "only-on-failure", trace: "retain-on-failure" },

@@ -1,4 +1,6 @@
 export const medical = {
+  "medical.participation.proposals": "Treatment handoff",
+  "medical.participation.noOutgoing": "No sent invitations yet",
   "medical.participation.title": "Treatment participants",
   "medical.participation.mine": "My participation",
   "medical.participation.managed": "Branch participation",

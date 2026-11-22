@@ -5,6 +5,7 @@ from rest_framework.response import Response
 
 from .participation_closure import end_participation_by_head
 from .participation_candidates import read_proposal_candidates, read_responsible_candidates
+from .participation_proposals import read_proposal_branches, read_outgoing_proposals
 from .participation_reads import (read_participation_invitations, read_managed_participations,
                                  read_own_participations, read_participation_workspace_access,
                                  read_participation_patient_context)
@@ -76,6 +77,20 @@ class ParticipationResponsibleSerializer(ParticipationScopeSerializer):
     query = serializers.CharField(required=False, allow_blank=True, max_length=100)
 
 
+class ParticipationSourceSerializer(ParticipationScopeSerializer):
+    source_appointment_id = serializers.IntegerField(required=False, min_value=1)
+    source_participation_id = serializers.IntegerField(required=False, min_value=1)
+    limit = serializers.IntegerField(min_value=1, max_value=50, required=False, default=20)
+
+
+class ParticipationBranchesSerializer(ParticipationSourceSerializer):
+    after_branch_id = serializers.IntegerField(required=False, min_value=1)
+
+
+class ParticipationOutgoingSerializer(ParticipationSourceSerializer):
+    before_id = serializers.IntegerField(required=False, min_value=1)
+
+
 class TreatmentParticipationViewSet(viewsets.GenericViewSet):
     permission_classes = [IsAuthenticated]
     lookup_value_regex = r"[0-9]+"
@@ -87,6 +102,8 @@ class TreatmentParticipationViewSet(viewsets.GenericViewSet):
                 "invitations": ParticipationListSerializer, "managed": ParticipationManagedSerializer,
                 "mine": ParticipationListSerializer, "workspace_access": ParticipationAccessSerializer,
                 "patient_context": ParticipationPatientContextSerializer,
+                "proposal_branches": ParticipationBranchesSerializer,
+                "outgoing": ParticipationOutgoingSerializer,
                 "candidates": ParticipationCandidatesSerializer,
                 "responsible_candidates": ParticipationResponsibleSerializer}.get(
                     self.action, ParticipationScopeSerializer)
@@ -114,6 +131,18 @@ class TreatmentParticipationViewSet(viewsets.GenericViewSet):
         serializer = self.get_serializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
         return Response(read_proposal_candidates(actor=request.user, **serializer.validated_data))
+
+    @action(detail=False, methods=["get"], url_path="proposal-branches")
+    def proposal_branches(self, request):
+        serializer = self.get_serializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+        return Response(read_proposal_branches(actor=request.user, **serializer.validated_data))
+
+    @action(detail=False, methods=["get"])
+    def outgoing(self, request):
+        serializer = self.get_serializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+        return Response(read_outgoing_proposals(actor=request.user, **serializer.validated_data))
 
     @action(detail=True, methods=["get"], url_path="responsible-candidates")
     def responsible_candidates(self, request, pk=None):

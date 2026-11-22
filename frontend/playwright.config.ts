@@ -10,6 +10,8 @@ const reuseExistingServer =
 
 export default defineConfig({
   testDir: "./e2e",
+  // Medical suites require the disposable medical/clinical fixture configurations.
+  testIgnore: "**/medical-*.spec.ts",
   timeout: 30_000,
   workers: 1,
   expect: {

@@ -11,6 +11,7 @@ sys.path.insert(0, str(ROOT))
 from scripts.browser_test_runtime import configure_browser_runtime
 
 participation_fixture = os.environ.get("E2E_PARTICIPATION") == "1"
+proposal_fixture = os.environ.get("E2E_PROPOSAL") == "1"
 configure_browser_runtime()
 import django
 django.setup()
@@ -83,6 +84,25 @@ if participation_fixture:
         assignment = MedicalRoleAssignment.objects.create(member=member, business_role=doctor_assignment.business_role,
             kind="head", granted_by=business.owner)
         assignment.branches.set(doctor_assignment.branches.all())
+if proposal_fixture:
+    from django.contrib.auth import get_user_model
+    from apps.branches.models import Branch, BranchAccess
+    from apps.businesses.models import BusinessMember
+    from apps.medical.models import MedicalRoleAssignment
+    business = Business.objects.get(slug="medical-role")
+    source = MedicalRoleAssignment.objects.get(member__user__email="medical-role-doctor@example.test")
+    recipient, created = get_user_model().objects.get_or_create(username="medical-transfer-recipient",
+        defaults={"email": "medical-transfer-recipient@example.test", "full_name": "Synthetic second-branch clinician"})
+    if created:
+        recipient.set_password(os.environ["E2E_PASSWORD"])
+        recipient.save(update_fields=["password"])
+        member = BusinessMember.objects.create(business=business, user=recipient, role="admin")
+        branch = Branch.objects.get(business=business, name="Second")
+        grant = BranchAccess.objects.create(member=member, all_branches=False)
+        grant.branches.add(branch)
+        assignment = MedicalRoleAssignment.objects.create(member=member, business_role=source.business_role,
+            kind="doctor", granted_by=business.owner)
+        assignment.branches.add(branch)
 settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["auth_login"] = "200/min"
 if len(sys.argv) > 1 and sys.argv[1] in ("revoke", "restore"):
     from apps.medical.models import MedicalRoleAssignment

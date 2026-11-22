@@ -55,6 +55,20 @@ This local catalogue does not replace authenticated CRM E2E certification.
 
 ## Verification Selection And Evidence
 
+### Medical browser fixtures
+
+`medical-*.spec.ts` suites use dedicated disposable databases and are excluded
+from the generic `playwright.config.ts` fixture. Run them inside `isolated_runtime`:
+`playwright.medical.config.ts` owns patient/representative administration;
+`playwright.clinical.config.ts` owns clinical, tooth and participation scenarios.
+For participation/proposal tests set `E2E_PARTICIPATION=1` and `E2E_PROPOSAL=1`
+in that isolated runtime's environment before invoking Playwright. These switches
+create synthetic staff and branch grants only in the guarded medical fixture;
+they are not product settings. Keep the runtime-generated ports, API/base URLs,
+database and Python path together. Never run fixture setup on a working database.
+Exact scoped checks and visual evidence are recorded in
+[DENTAL-MCS-20261122](task-state/DENTAL-MCS-20261122.md).
+
 ### Platform administrative acceptance (scoped stage6)
 
 Run the existing ADMIN01–04 and ADMIN05 foundation browser scenarios together:

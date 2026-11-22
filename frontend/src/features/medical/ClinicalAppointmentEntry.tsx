@@ -12,6 +12,7 @@ import { useUnsavedEntryWarning } from "../auth/useUnsavedEntryWarning";
 import { Tabs } from "../../components/ui/Tabs";
 import { ClinicalHistory } from "./ClinicalHistory";
 import { ToothChart } from "./ToothChart";
+import { SourceProposalEntry } from "./SourceProposalWorkspace";
 
 export function ClinicalAppointmentEntry({ businessId, appointmentId }: { businessId: number; appointmentId: number }) {
   const { t } = useI18n();
@@ -61,9 +62,10 @@ export function ClinicalAppointmentEntry({ businessId, appointmentId }: { busine
     {loading && !open ? <LoadingState /> : !open && error ? <ErrorState
       message={status === 404 ? t("medical.clinical.noProfile") : getApiErrorMessage(error)}
       action={<Button size="lg" variant="secondary" onClick={reload}>{t("common.retry")}</Button>} /> : null}
-    {admitted ? <Button size="lg" variant="secondary" data-focus-return-id={focusId} onClick={() => {
+    <div className="flex flex-wrap gap-2">{admitted ? <Button size="lg" variant="secondary" data-focus-return-id={focusId} onClick={() => {
       setLoading(true); setContext(null); setError(null); setOpen(true);
     }}>{t("medical.clinical.open")}</Button> : null}
+    {context ? <SourceProposalEntry scope={{ business_id: businessId, patient_id: context.patient.id, source_appointment_id: appointmentId }} /> : null}</div>
     <Modal open={open} onClose={close} size="xl" title={t("medical.clinical.title")} testId="clinical-workspace" closeOnBackdrop={false} focusReturnId={focusId}>
       {loading ? <LoadingState /> : error ? <ErrorState message={status === 401 || status === 403 ? t("medical.denied") : getApiErrorMessage(error)}
         action={<Button size="lg" variant="secondary" onClick={reload}>{t("common.retry")}</Button>} /> : context ?

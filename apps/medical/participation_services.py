@@ -49,19 +49,15 @@ def participation_context(actor, business_id, patient_id, action):
     return actor, business, patient, role
 
 
-def proposal_branch(*, actor, business, patient_id, role, branch_id,
-                    source_appointment_id=None, source_participation_id=None):
-    _positive(branch_id=branch_id)
+def assert_proposal_source(*, actor, business, patient_id, role,
+                           source_appointment_id=None, source_participation_id=None):
     for name, value in (("source_appointment_id", source_appointment_id), ("source_participation_id", source_participation_id)):
         if value is not None:
             _positive(**{name: value})
     if source_appointment_id is not None and source_participation_id is not None:
         raise ValidationError({"source": "Select one participation basis."})
-    branch = Branch.objects.filter(pk=branch_id, business=business, is_active=True, archived_at__isnull=True).first()
-    if branch is None:
-        raise PermissionDenied()
     if role.kind == MedicalRoleAssignment.Kinds.HEAD:
-        assert_medical_branch_permission(actor, business, "medical_participation", "create", branch=branch)
+        return
     elif source_appointment_id is not None:
         assert_appointment_medical_basis(actor=actor, business=business, patient_id=patient_id,
             appointment_id=source_appointment_id, resource="medical_participation", action="create")
@@ -70,6 +66,18 @@ def proposal_branch(*, actor, business, patient_id, role, branch_id,
             participation_id=source_participation_id, resource="medical_participation", action="create")
     else:
         raise PermissionDenied()
+
+
+def proposal_branch(*, actor, business, patient_id, role, branch_id,
+                    source_appointment_id=None, source_participation_id=None):
+    _positive(branch_id=branch_id)
+    assert_proposal_source(actor=actor, business=business, patient_id=patient_id, role=role,
+        source_appointment_id=source_appointment_id, source_participation_id=source_participation_id)
+    branch = Branch.objects.filter(pk=branch_id, business=business, is_active=True, archived_at__isnull=True).first()
+    if branch is None:
+        raise PermissionDenied()
+    if role.kind == MedicalRoleAssignment.Kinds.HEAD:
+        assert_medical_branch_permission(actor, business, "medical_participation", "create", branch=branch)
     return branch
 
 

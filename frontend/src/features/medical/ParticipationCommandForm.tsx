@@ -9,9 +9,10 @@ import { ErrorState, LoadingState } from "../../components/ui/StateViews";
 import { useI18n } from "../../lib/i18n";
 
 export type ParticipationFormScope = { businessId: number; patientId: number; branchId: number; source?: ParticipationSource };
-export function ParticipationCommandForm({ scope, item, onSaved, onDenied, guard }: {
+export function ParticipationCommandForm({ scope, item, onSaved, onDenied, guard, onStateChange }: {
   scope: ParticipationFormScope; item?: Participation; onSaved: () => void; onDenied: (error: unknown) => void;
   guard: { current: { dirty: boolean; pending: boolean } };
+  onStateChange?: (state: { dirty: boolean; pending: boolean }) => void;
 }) {
   const { t } = useI18n();
   const [options, setOptions] = useState<Array<{ member_id: number; name: string }>>([]);
@@ -28,6 +29,7 @@ export function ParticipationCommandForm({ scope, item, onSaved, onDenied, guard
   const [after, setAfter] = useState<number | undefined>();
   const retry = useRef<{ fingerprint: string; key: string } | null>(null);
   guard.current.dirty = Boolean(selected || reason);
+  useEffect(() => { onStateChange?.({ dirty: Boolean(selected || reason), pending }); }, [selected, reason, pending, onStateChange]);
   useEffect(() => {
     const controller = new AbortController();
     setLoading(true); setReadError(null);

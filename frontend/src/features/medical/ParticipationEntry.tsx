@@ -9,6 +9,7 @@ import { ErrorState, LoadingState } from "../../components/ui/StateViews";
 import { useI18n } from "../../lib/i18n";
 import { ParticipationCommandForm, type ParticipationFormScope } from "./ParticipationCommandForm";
 import { ParticipationClinicalHistory } from "./ClinicalHistory";
+import { SourceProposalWorkspace } from "./SourceProposalWorkspace";
 
 export function PatientParticipationEntry({ businessId, clientId, branchId }: { businessId: number; clientId: number; branchId: number }) {
   const { t } = useI18n();
@@ -81,6 +82,7 @@ function ParticipationWorkspace({ access, patientId, branchId, guard, onDenied }
   const [attempt, setAttempt] = useState(0);
   const [form, setForm] = useState<Participation | "invite" | null>(null);
   const [history, setHistory] = useState<Participation | null>(null);
+  const [proposal, setProposal] = useState<Participation | null>(null);
   const [pending, setPending] = useState<number | null>(null);
   const [conflict, setConflict] = useState(false);
   const retry = useRef<{ fingerprint: string; key: string } | null>(null);
@@ -104,11 +106,11 @@ function ParticipationWorkspace({ access, patientId, branchId, guard, onDenied }
     return () => controller.abort();
   }, [access.business_id, mode, branch, patientId, cursor, attempt, chosen, onDenied]);
   useLayoutEffect(() => {
-    if (!form && page && pending === null && focusAfterRefresh.current) {
+    if (!form && !proposal && page && pending === null && focusAfterRefresh.current) {
       const target = workspaceRef.current?.querySelector<HTMLElement>(`[data-participation-focus="${focusAfterRefresh.current}"]`);
       if (target) { target.focus(); focusAfterRefresh.current = null; }
     }
-  }, [form, page, pending]);
+  }, [form, proposal, page, pending]);
   function refresh() {
     if (form) focusAfterRefresh.current = form === "invite" ? "invite" : String(form.id);
     setForm(null); setPage(null); setHistory(null); guard.current.dirty = false; setAttempt(x => x + 1);
@@ -129,6 +131,12 @@ function ParticipationWorkspace({ access, patientId, branchId, guard, onDenied }
       else { setError(cause); if (axios.isAxiosError(cause) && cause.response?.status === 409) setConflict(true); }
     } finally { guard.current.pending = false; setPending(null); }
   }
+  if (proposal) return <div className="space-y-4">
+    <h3 className="text-base font-semibold">{t("medical.participation.proposals")}</h3>
+    <p className="break-words text-sm">{proposal.patient_name}</p>
+    <SourceProposalWorkspace scope={{ business_id: access.business_id, patient_id: proposal.patient_id, source_participation_id: proposal.id }}
+      guard={guard} onDenied={onDenied} onBack={() => { focusAfterRefresh.current = String(proposal.id); setProposal(null); }} />
+  </div>;
   if (form) return <div className="space-y-4">
     <h3 className="text-base font-semibold">{t(form === "invite" ? "medical.participation.invite" : "medical.participation.end")}</h3>
     {form !== "invite" ? <p className="break-words text-sm">{form.patient_name} · {form.member_name} · {form.branch_name}</p> : null}
@@ -159,6 +167,7 @@ function ParticipationWorkspace({ access, patientId, branchId, guard, onDenied }
             {item.state === "pending" && mode === "managed" && actions?.manage && actions.create ? <Button variant="secondary" disabled={pending !== null || conflict} onClick={() => void respond(item, "withdraw")}>{t("medical.participation.withdraw")}</Button> : null}
             {item.state === "active" && actions?.manage ? <Button size="lg" variant="secondary" disabled={pending !== null || conflict} onClick={() => setForm(item)}>{t("medical.participation.end")}</Button> : null}
             {item.state === "active" && item.member_id === access.member_id ? <Button variant="secondary" disabled={pending !== null || conflict} onClick={() => setHistory(item)}>{t("medical.clinical.history")}</Button> : null}
+            {item.state === "active" && item.member_id === access.member_id && actions?.create ? <Button size="lg" variant="secondary" disabled={pending !== null || conflict} onClick={() => setProposal(item)}>{t("medical.participation.proposals")}</Button> : null}
           </div>
         </li>;
       })}

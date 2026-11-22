@@ -1,5 +1,96 @@
 # DENTAL-MCS-20261122: полная реализация медицинского ТЗ
 
+## Врачебная передача между филиалами: локальная приёмка, 22.11.2026
+
+Результат: врач из действительной записи или собственного active-участия выбирает
+филиал/получателя, отправляет приглашение, видит собственные исходящие и отзывает
+pending. Получатель принимает через существующий список; до принятия нет clinical
+basis. Исходное назначение/участие не заканчивается автоматически. Прямые API
+перепроверяют Business, медицинскую роль, исходное основание, целевого получателя
+и филиальные права; чтения no-store с атомарным аудитом. Новых миграций нет.
+
+Проверено на базе23a007a8 плюс собственный diff:
+- 82 backend PASS:54 focused и28 API/responsible/closure dependent; check и
+ migration drift PASS. Логи/runner IDs ниже. SQLite; PostgreSQL не заявлен.
+- 14 node transport/terminology PASS, i18n7788 PASS. После исправления focus:
+ tsc-b + app build PASS, runner23825, TEMP/dental-proposal-final-build-20261122.log.
+ Неизменный widget использует прежний PASS; live/provider проверки не запускались.
+- 6 основных RU/KK/EN desktop/mobile сценариев PASS:4 RU/KK в runner87957,
+ TEMP/dental-proposal-browser-focus-20261122.log;2 EN в runner39499,
+ TEMP/dental-proposal-browser-en-recovery-20261122.log. Эти два запуска в целом
+ не PASS: первый остановился на неоднозначном EN locator, второй — на выборе
+ двух dialog для screenshot последнего recovery-теста. Продуктовый код после
+ успешных6 сценариев не менялся; locator уточнён по имени поля/окна.
+- Заключительный mobile loading/read503/retry/create409/withdraw409/role403 PASS:
+ runner86823 exit0,1 test(3.9m), TEMP/dental-proposal-final-recovery-20261122.log.
+- Регрессия: клинический черновик/история/unsaved desktop и participation mobile
+ decline/withdraw/head conflict/revocation,2 PASS(4.9m), runner49254 exit0,
+ TEMP/dental-proposal-existing-regression-20261122.log.
+- Все 12 новых снимков формы/исходящих RU/KK/EN desktop/mobile и2 итоговых mobile
+ conflict/denial получены и визуально просмотрены. Источники: output/playwright/
+ proposal-workspace-focus, proposal-workspace-en-recovery и proposal-final-recovery.
+ Геометрия/переносы/состояния/primary44px, ввод, keyboard focus и axe AA проверены
+ в соответствующих случаях; tablet/zoom/physical mobile/full S13 не сертифицированы.
+
+Исправлен реальный focus defect: refresh теперь убирает прежнюю страницу до layout
+focus; целевая кнопка фокусируется после новых данных и не исчезает сразу после этого.
+Test fixture fixes не ослабляют DB constraints; историю не переписываем в общий PASS.
+Общий Playwright ошибочно собирал21 медицинский сценарий с generic fixture:
+диагностика71138 подтвердила. Default config теперь исключает medical-*.spec.ts,
+специализированные configs сохраняют весь набор. Проверка collection0 и успешный
+специализированный запуск входят в86823. Инструкция в testing.md обновлена.
+
+Static39923 PASS(base656dbd1), TEMP/dental-proposal-static-retry-20261122.log.
+Первая попытка была отклонена из-за base=HEAD23a007a8; исправлен аргумент на исходную
+зафиксированную базу задачи, не изменены правила проверки. Завершающий static32666 PASS, TEMP/dental-proposal-final-static-20261122.log;
+working/index hygiene PASS, состав24 собственных файлов просмотрен. Чужие
+password/Google/WhatsApp изменения исключены. Commit/push выполняются после этой записи. Сервер9990bcbf и сохранённый
+UI23a007a8 уже имеют completed/success CI44994844553/44995519658.
+Остаток: уведомления/достижимые переходы, полный ACL/назначение роли, остальные
+M06/M07 и M01–M30/E0–E7, PG и внешняя приёмка. Согласованные19 направлений в §22.8–22.9
+действующего desktop ТЗ сохранены; внешние подтверждения не получены автоматически.
+README/operations не меняются этим срезом: настройки продукта и эксплуатация без
+дельты, рабочая БД и внешние каналы не затронуты. Активных local runner после86823 нет.
+
+
+## Врачебная передача: связный сценарий M06, 22.11.2026
+
+База23a007a82ae857ccbd48fe18f157d450a3a105cb опубликована normal-push,
+remote SHA совпал. Предыдущие UI/evidence сохранены; цель полная, не закрыта.
+Пробел code/UI: врач не может выбрать межфилиальную цель и просмотреть свои
+отправленные предложения через интерфейс. Существующие propose/respond/withdraw,
+кандидаты, основания appointment/participation и аудит переиспользуются.
+Добавить source-scoped список активных филиалов и собственных предложений по
+пациенту: действующее основание врача проверяется каждый раз; у медруководителя
+сохраняется область филиалов. Выбор филиала не даёт доступ к его пациентам/истории.
+Чужие предложения, причины, ИИН и клиническое содержимое не раскрываются.
+Затем подключить форму/отправленные предложения из приёма и активного участия,
+сохранить стабильный ключ повторов, ввод, текущую роль, фокус и существующий UI.
+Никаких рабочих миграций/уведомлений внешним получателям этим срезом.
+
+Срез проверки:54 backend PASS(2.986s), check/migration drift PASS,
+runner75333, TEMP/dental-proposal-workspace-backend-retry-20261122.log.
+Первый запуск49299: одна неверная fixture branch grant и незаполненный closed_by
+для ended нарушали ограничения; исправлены только fixtures, ожидания сохранены.
+Affected API/responsible/closure:28 PASS(4.448s), runner83125 exit0,
+TEMP/dental-proposal-dependent-backend-20261122.log. Node14 PASS,
+i18n7788 PASS, tsc-b PASS(runner16356). App build PASS(runner78857),
+TEMP/dental-proposal-build-20261122.log; неизменный widget не пересобирался.
+Первый browser82768 остановлен test timeout: точный accessible name Select
+содержит также выбранное значение. Снимок просмотрен; поле было на странице.
+Исправлен locator без изменения UI или ослабления сценария; retry12869 запущен.
+Новый browser/visual PASS ещё не заявлен. Последние проверенные CI двух commits
+44994844553/44995519658 in_progress, общий CI PASS не заявлен.
+
+Риск: tenant/branch/basis revocation, раскрытие пациента, повтор команды.
+Проверки сначала server: оба основания, head/owner/foreign, отмена/отзыв,
+пагинация, atomic audit failure, strict/private HTTP и регрессия participation.
+Затем transport/types/build и реальные RU/KK/EN desktop/mobile действия,
+retry/conflict/denial/dirty/focus с визуальным просмотром снимков.
+UI skills сохраняются: Anti Slop during, shared tokens/Modal/Select/StateViews,
+минимум44px для основных touch-действий, сохранение вводимых данных и keyboard focus.
+
+
 ## Сохранение проверенных медицинских интерфейсов, 22.11.2026
 
 Предыдущий goal-turn: прогресс — §22.8–22.9 действующего ТЗ и этот checkpoint
@@ -2608,7 +2699,7 @@ Git-среза находятся выше; runtime-доказательства
 | M03 §2.2–2.4,3,16.1; D04; B02–04; Q09–12 | PatientProfile OneToOne Client, отдельные дети/представители; контакты из Client | Шифрованный ИИН + tenant HMAC, проверенная идентичность отдельно от синтаксиса; основание/срок/отзыв представительства | Семейный телефон не merge; конкурентный verified ИИН уникален; административные действия до проверки, клинические запрещены | Частично: patient schema/crypto/services/audit/reception API/UI с lifecycle/recovery/boundary evidence. Представители: schema/guards/services/audit/authority prerequisite + list/form/verify/revoke API; medical200 SQLite + labels34 PASS; S14 UI6 happy flows/build/screens PASS. UI boundary acceptance и интеграция recipient enforcement, ИИН/перепривязка/head approval и PostgreSQL race ещё нужны; документы/возраст внешне не подтверждены | Patient/identity/crypto и представитель lifecycle | Patient administration; representatives list/form/verify/revoke | ClientWorkspace: профиль/идентичность/представители | Перепривязка ИИН/head approval; recipient enforcement; UI negatives/PG | Документы/возраст и протоколы требуют подтверждения |
 | M04 §2.3–2.4; D04,D07; B04,26–27 | Медицинские зависимости блокируют обычный merge до любого переноса; архив сохраняет историю | Hooks существующего merge/dry-run/delete, контролируемое исправление с причиной и медсогласованием | Отказ атомарен, Appointment/VisitPlan не перемещены частично; hard delete не уничтожает PHI | Частично: merge/preview409 до переноса, PROTECT Client и архив PASS; контролируемые исправления и клиническая история ещё нужны | Merge guard/PROTECT/archive | Существующий merge/preview отклоняет медицинские зависимости | Отдельное медицинское исправление не завершено | Контролируемое исправление и его UI/аудит | Нет внешнего блокера merge guard |
 | M05 §3–4,11; D03; B01–04 | Существующие ClientsPage/ClientWorkspace/ClientForm; медицинские статусы только разрешённым ролям; свободные услуги | Resolve пациента/поиск ИИН с безопасными ошибками, вкладки и сохранение контекста | Список/поиск без утечки PHI; повтор создания/смена Business; свои реальные данные | Частично: PatientAdministrationPanel и patient API уже существуют; patient lifecycle/recovery evidence сохранено выше. Полный поиск/вкладки не приняты. | Patient resolve/administration на Client | Patient administration API | PatientAdministrationPanel в ClientWorkspace | Полный поиск по ИИН/список/вкладки и проверка всех путей | Протокол идентификации отдельно |
-| M06 §13; D03; B06–08; Q01–02,04 | Запись немедленно даёт основание; активное лечение независимо от следующей даты; передача требует принятия | Состояния приглашения/участия/причин доступа, филиальный scope, назначение медруководителя владельцем без саморасширения | Будущая запись >24ч доступна; отмена убирает только своё основание; до принятия нет карты; другой Business запрещён | Частично:73 affected backend/check/drift PASS. Head invite → own accept/history → head end UI локально PASS:6 locale/viewport +negative/recovery, смотренные снимки. Typed transport committed05ed9ebb; остальное WIP. Полный M06 не закрыт. | Appointment basis; propose/accept/decline/withdraw; head end | Commands, invitations/managed/mine, workspace-access, proposal/responsible candidates | ClientWorkspace head invite/end; Calendar own accept/decline/history, локально проверено desktop/mobile RU/KK/EN | Review/commits полного своего server/UI diff; врачебные исходящие передачи, полный ACL/уведомления | Нет внешнего блокера основного сценария |
+| M06 §13; D03; B06–08; Q01–02,04 | Запись немедленно даёт основание; активное лечение независимо от следующей даты; передача требует принятия | Состояния приглашения/участия/причин доступа, филиальный scope, назначение медруководителя владельцем без саморасширения | Будущая запись >24ч доступна; отмена убирает только своё основание; до принятия нет карты; другой Business запрещён | Частично: прежние server/UI опубликованы9990bcbf/23a007a8, CI success. Новый source-scoped transfer:82 backend,14 node,types/build/i18n,6 locale/viewport +1 recovery +2 regression browser PASS;14 снимков просмотрены. Полный M06 открыт. | Appointment basis; propose/accept/decline/withdraw; head end | Commands; invitations/managed/mine; workspace-access; candidates; source-scoped proposal-branches/outgoing с текущим основанием и аудитом | Head invite/end, own accept/history; source-scoped филиал/получатель/предложение/исходящие/отзыв из записи или active-участия, проверены desktop/mobile RU/KK/EN | Публикация нового среза; уведомления, полный ACL/назначение medical role и остальные критерии M06 | Нет внешнего блокера основного сценария |
 | M07 D03; Q01–05; B05,28 | Завершение участия отдельно от приёма; исправления 24ч; support один инцидент ≤4ч readonly; ассистент только команда/текущий приём | Проверки обязанностей/будущих записей, согласование не самим собой, досрочное закрытие/новое продление | Отзыв роли сильнее временного разрешения; точный scope; ассистент не подписывает/не выдаёт/не экспортирует историю | Частично: head end domain/API/responsible selector и форма локально проверены. Ordinary end/обязательства/security revoke/24h/support/team открыты. | Head end с причиной/ответственным | end-by-head; остальные команды отсутствуют | Head end с причиной/ответственным локально проверен; остальные временные/командные сценарии отсутствуют | Ordinary end/обязательства; security revoke; 24h correction; support/team | Правила уже согласованы; подтверждение заново не требуется |
 | M08 §4.2–4.4; D05; B09–11; Q13–15 | Один Encounter на реальный Appointment того же Client/Business; свои клинические данные | Черновик/revision/обязательные разделы/явная неприменимость; обычный/частичный исход; walk-in текущим днём, ранний через руководителя | Чужие связи/revision отклонены; финансовый переход через существующий сервис ровно один раз, unpaid не блокирует помощь, rollback | Частично: chart/open/draft/read/workspace services и API, encrypted versions/audit, migrations0009–0011; current role/basis/identity/replay checks. Срезы30–37 содержат доказательства и исправление B03. Срез43 добавил calendar→chart/open/draft UI; текущая проверка в начале checkpoint. Срез44 добавил history/revision reader, current display labels; проверки ниже/в начале checkpoint. Full UI/team/temporary ACL, signatures/obligations, walk-in и atomic calendar completion ещё нужны | Chart/open/draft/versions/audit; current ACL | Appointment context; workspace; draft; history/revision | Calendar → приём/черновик/история | Завершение+calendar/money; walk-in; team/temporary; остальные вкладки | Подписи/формы см. M11–M12 |
 | M09 §2.2,4,16.2 | Одонтограмма постоянных/молочных/смешанных зубов, поверхности, наблюдения, авторство и история | Модели текущего состояния/append history, связи приём/план/снимки | Изменение сохраняет прежнее и новое, неверный зуб/поверхность отвергнуты, права/конкурентность | Частично: срез47 добавил state/history schema и migration0012;29 storage/dependent tests/check/drift PASS. Срез48 encrypted helpers:30 tests/check/drift PASS; Срез49 exact-version audit:380 medical tests PASS; срез50 primary command/exact reader:50 PASS; срез51 HTTP:40 PASS/check/drift. Срез52 snapshot/history API:41 tests PASS, дополнительные12 edge tests PASS. Срез53 typed frontend transport10 tests/types/build PASS; Срез54 read UI:6 localized+1 recovery browser PASS; Срез55 whole-tooth editor:6+1 browser PASS; Срез56 surface-options API/shared validator41 tests PASS; Срез58 surface UI:6 localized+1 Map regression browser PASS, types/build/i18n/screens PASS; team/linked plans/images/clinical legend/concurrency ещё открыты | Tooth state/encrypted append history; surface policy | Write/exact read/snapshot/history/surface options | Постоянные/молочные/смешанные зубы; история; редактор поверхностей | Планы/снимки/team; PG concurrency; клиническая легенда | Утверждённый справочник поверхностей не получен |

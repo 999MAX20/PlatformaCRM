@@ -35,6 +35,23 @@ test("participation lists preserve tenant/filter/cursor and re-fetch instead of 
   for (const [, config] of calls) assert.equal(config.signal, signal);
 });
 
+test("proposal destinations and outgoing preserve current source, pagination and cancellation", async () => {
+  const calls = [];
+  const api = load({ get: async (...args) => { calls.push(args); return { data: { results: [], next_after_branch_id: 8 } }; } });
+  const signal = new AbortController().signal;
+  const scope = { business_id: 2, patient_id: 7, source_appointment_id: 9, after_branch_id: 3, limit: 1 };
+  const result = await api.proposalBranches(scope, signal);
+  assert.equal(result.next_after_branch_id, 8);
+  assert.equal(calls[0][0], "/api/medical/participations/proposal-branches/");
+  assert.equal(calls[0][1].params, scope);
+  assert.equal(calls[0][1].signal, signal);
+  const outgoing = { business_id: 2, patient_id: 7, source_participation_id: 11, before_id: 5 };
+  await api.outgoing(outgoing, signal);
+  assert.equal(calls[1][0], "/api/medical/participations/outgoing/");
+  assert.equal(calls[1][1].params, outgoing);
+  assert.equal(calls[1][1].signal, signal);
+});
+
 test("workspace authorization and own participation are fetched for the current business", async () => {
   const calls = [];
   const api = load({ get: async (...args) => { calls.push(args); return { data: { revision: calls.length } }; } });

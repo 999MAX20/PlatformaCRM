@@ -25,6 +25,8 @@ export type Participation = {
   remaining_responsible_id: number | null;
 };
 export type ParticipationPage = { results: Participation[]; next_before_id: number | null };
+export type ProposalSourceScope = ParticipationScope & ParticipationSource;
+export type ProposalBranches = { results: Array<{ id: number; name: string }>; next_after_branch_id: number | null };
 export type ParticipationWorkspaceAccess = {
   business_id: number;
   member_id: number;
@@ -69,6 +71,14 @@ async function command(path: string, payload: object, idempotencyKey: string, si
 }
 
 export const medicalParticipationApi = {
+  proposalBranches: async (scope: ProposalSourceScope & { after_branch_id?: number; limit?: number }, signal?: AbortSignal) => {
+    const { data } = await apiClient.get<ProposalBranches>(`${root}proposal-branches/`, { params: scope, signal });
+    return data;
+  },
+  outgoing: async (scope: ProposalSourceScope & { before_id?: number; limit?: number }, signal?: AbortSignal) => {
+    const { data } = await apiClient.get<ParticipationPage>(`${root}outgoing/`, { params: scope, signal });
+    return data;
+  },
   patientContext: async (scope: { business_id: number; client_id: number; branch_id: number }, signal?: AbortSignal) => {
     const { data } = await apiClient.get<ParticipationScope & { branch_id: number }>(`${root}patient-context/`, { params: scope, signal });
     return data;

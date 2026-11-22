@@ -46,7 +46,16 @@ VIEW разрешить client_id в patient_id для управления уч
 Это не reception-only административный профиль и не чтение его ИИН/демографии.
 Typed frontend transport подключён; достижимый head invite/own accept/history/head
 end UI локально проверен на desktop/mobile RU/KK/EN с recovery/conflict/revocation.
-Врачебные исходящие передачи и прочие сценарии полной матрицы ещё открыты;
+GET /proposal-branches/ принимает business_id/patient_id, source_appointment_id
+либо source_participation_id, after_branch_id и limit20/max50. С create и текущим
+основанием врача возвращает активные филиалы Business: results(id/name),
+next_after_branch_id. Head ограничен собственным пересечением филиальных grants.
+GET /outgoing/ принимает тот же источник, before_id/limit и дополнительно требует
+view: только собственные предложения по пациенту, с текущими state/revision и READ
+audit. Это не доступ к клиническим данным целевого филиала. UI выбора филиала,
+приглашения, просмотра исходящих и отзыва подключён из записи и active participation;
+основные сценарии RU/KK/EN desktop/mobile и recovery/conflict/revocation проверены
+локально, доказательства и границы фиксируются в checkpoint. Прочие сценарии полной матрицы ещё открыты;
 ordinary end/obligation checks, security revoke и24h correction остаются в матрице. Проверки — DENTAL-MCS checkpoint.
 
 ## Одонтограмма: схема хранения — DENTAL-MCS, 22.11.2026
