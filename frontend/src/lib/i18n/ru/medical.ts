@@ -1,4 +1,5 @@
 export const medical = {
+  "medical.participation.declineReason": "Причина отказа",
   "medical.notifications.participation_proposed": "Новое приглашение к участию в лечении",
   "medical.notifications.participation_accepted": "Приглашение к участию в лечении принято",
   "medical.notifications.participation_declined": "Приглашение к участию в лечении отклонено",

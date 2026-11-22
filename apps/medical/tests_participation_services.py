@@ -73,7 +73,7 @@ class ParticipationCommandTests(TestCase):
 
     def test_decline_is_terminal_and_cannot_be_accepted_with_new_key(self):
         item, _ = self.propose()
-        result, _ = self.respond(item, decision="decline")
+        result, _ = self.respond(item, decision="decline", reason="Synthetic decline reason")
         self.assertEqual((result.state, result.closed_by_id), ("declined", self.recipient.pk))
         with self.assertRaises(InvalidTransition):
             self.respond(item, expected_revision=2, idempotency_key="new-response")

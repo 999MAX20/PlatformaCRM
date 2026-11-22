@@ -1,4 +1,5 @@
 export const medical = {
+  "medical.participation.declineReason": "Бас тарту себебі",
   "medical.notifications.participation_proposed": "Емдеуге қатысуға жаңа шақыру",
   "medical.notifications.participation_accepted": "Емдеуге қатысуға шақыру қабылданды",
   "medical.notifications.participation_declined": "Емдеуге қатысуға шақыру қабылданбады",

@@ -138,10 +138,14 @@ def propose_treatment_participation(*, actor, business_id, patient_id, branch_id
 
 @transaction.atomic
 def respond_treatment_participation(*, actor, business_id, patient_id, participation_id,
-                                    expected_revision, decision, idempotency_key):
+                                    expected_revision, decision, idempotency_key, reason=""):
     _positive(participation_id=participation_id, expected_revision=expected_revision)
     if decision not in ("accept", "decline"):
         raise ValidationError({"decision": "Select accept or decline."})
+    if not isinstance(reason, str) or len(reason) > 2000 or (decision == "decline" and not reason.strip()):
+        raise ValidationError({"reason": "Provide a reason of at most 2000 characters."})
+    if decision == "accept" and reason:
+        raise ValidationError({"reason": "A reason applies only to declining an invitation."})
     actor, business, patient, _ = _context(actor, business_id, patient_id, idempotency_key, "approve")
     item = TreatmentParticipation.objects.select_for_update().select_related("branch").filter(
         pk=participation_id, patient=patient, member__business_id=business_id,
@@ -159,9 +163,12 @@ def respond_treatment_participation(*, actor, business_id, patient_id, participa
             item.state, item.accepted_at = "active", timezone.now()
         else:
             item.state, item.closed_at, item.closed_by = "declined", timezone.now(), actor
+            item.decline_reason_encrypted = encrypt_medical_value(
+                json.dumps({"reason": reason, "revision": item.revision + 1}, ensure_ascii=False),
+                business_id=business_id, subject_id=item.pk, purpose="participation_decline")
         item.revision += 1
         item.full_clean()
-        item.save(update_fields=["state", "accepted_at", "closed_at", "closed_by", "revision", "updated_at"])
+        item.save(update_fields=["state", "accepted_at", "closed_at", "closed_by", "revision", "decline_reason_encrypted", "updated_at"])
         event = write_patient_audit(actor=actor, business=business, patient=patient,
             action="participation_accepted" if decision == "accept" else "participation_declined", participation=item)
         notify_participation_event(event)
@@ -170,7 +177,9 @@ def respond_treatment_participation(*, actor, business_id, patient_id, participa
     result = run_idempotent_crm_command(business=business, actor=actor, action="medical.participation.respond",
         idempotency_key=medical_request_digest({"key": idempotency_key}, business_id=business_id),
         payload={"patient": patient_id, "participation": participation_id,
-                 "expected_revision": expected_revision, "decision": decision}, operation=operation)
+                 "expected_revision": expected_revision, "decision": decision,
+                 **({"reason_digest": medical_request_digest({"reason": reason}, business_id=business_id)}
+                    if decision == "decline" else {})}, operation=operation)
     item.refresh_from_db()
     return item, result.replayed
 

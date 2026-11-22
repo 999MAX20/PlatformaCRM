@@ -10,6 +10,7 @@ import { useI18n } from "../../lib/i18n";
 import { ParticipationCommandForm, type ParticipationFormScope } from "./ParticipationCommandForm";
 import { ParticipationClinicalHistory } from "./ClinicalHistory";
 import { SourceProposalWorkspace } from "./SourceProposalWorkspace";
+import { ParticipationDeclineForm } from "./ParticipationDeclineForm";
 
 export function PatientParticipationEntry({ businessId, clientId, branchId }: { businessId: number; clientId: number; branchId: number }) {
   const { t } = useI18n();
@@ -83,6 +84,7 @@ function ParticipationWorkspace({ access, patientId, branchId, guard, onDenied }
   const [form, setForm] = useState<Participation | "invite" | null>(null);
   const [history, setHistory] = useState<Participation | null>(null);
   const [proposal, setProposal] = useState<Participation | null>(null);
+  const [declining, setDeclining] = useState<Participation | null>(null);
   const [pending, setPending] = useState<number | null>(null);
   const [conflict, setConflict] = useState(false);
   const retry = useRef<{ fingerprint: string; key: string } | null>(null);
@@ -106,12 +108,14 @@ function ParticipationWorkspace({ access, patientId, branchId, guard, onDenied }
     return () => controller.abort();
   }, [access.business_id, mode, branch, patientId, cursor, attempt, chosen, onDenied]);
   useLayoutEffect(() => {
-    if (!form && !proposal && page && pending === null && focusAfterRefresh.current) {
+    if (!form && !proposal && !declining && page && pending === null && focusAfterRefresh.current) {
       const target = workspaceRef.current?.querySelector<HTMLElement>(`[data-participation-focus="${focusAfterRefresh.current}"]`);
       if (target) { target.focus(); focusAfterRefresh.current = null; }
     }
-  }, [form, proposal, page, pending]);
+  }, [form, proposal, declining, page, pending]);
   function refresh() {
+    if (declining) focusAfterRefresh.current = String(declining.id);
+    setDeclining(null);
     if (form) focusAfterRefresh.current = form === "invite" ? "invite" : String(form.id);
     setForm(null); setPage(null); setHistory(null); guard.current.dirty = false; setAttempt(x => x + 1);
   }
@@ -131,6 +135,11 @@ function ParticipationWorkspace({ access, patientId, branchId, guard, onDenied }
       else { setError(cause); if (axios.isAxiosError(cause) && cause.response?.status === 409) setConflict(true); }
     } finally { guard.current.pending = false; setPending(null); }
   }
+  if (declining) return <div className="space-y-4">
+    <p className="break-words font-semibold">{declining.patient_name}</p>
+    <ParticipationDeclineForm businessId={access.business_id} item={declining} guard={guard} onSaved={refresh} onDenied={onDenied}
+      onCancel={() => { focusAfterRefresh.current = String(declining.id); setDeclining(null); }} />
+  </div>;
   if (proposal) return <div className="space-y-4">
     <h3 className="text-base font-semibold">{t("medical.participation.proposals")}</h3>
     <p className="break-words text-sm">{proposal.patient_name}</p>
@@ -158,11 +167,12 @@ function ParticipationWorkspace({ access, patientId, branchId, guard, onDenied }
         const actions = access.branches.find(row => row.id === item.branch_id)?.actions;
         return <li key={item.id} tabIndex={-1} className="space-y-3 py-4" data-participation-focus={item.id} data-testid={`participation-row-${item.id}`}>
           <div className="space-y-1 break-words"><p className="font-semibold">{item.patient_name}</p><p className="text-sm">{item.member_name} · {item.branch_name}</p>
-            <p className="text-sm text-platforma-subtle">{t(`medical.participation.state.${item.state}`)}</p></div>
+            <p className="text-sm text-platforma-subtle">{t(`medical.participation.state.${item.state}`)}</p>
+            {item.decline_reason ? <p className="whitespace-pre-wrap text-sm">{t("medical.participation.declineReason")}: {item.decline_reason}</p> : null}</div>
           <div className="flex flex-wrap gap-2">
             {item.state === "pending" && item.member_id === access.member_id && actions?.approve ? <>
               <Button size="lg" disabled={pending !== null || conflict} onClick={() => void respond(item, "accept")}>{t("medical.participation.accept")}</Button>
-              <Button size="lg" variant="secondary" disabled={pending !== null || conflict} onClick={() => void respond(item, "decline")}>{t("medical.participation.decline")}</Button>
+              <Button size="lg" variant="secondary" disabled={pending !== null || conflict} onClick={() => setDeclining(item)}>{t("medical.participation.decline")}</Button>
             </> : null}
             {item.state === "pending" && mode === "managed" && actions?.manage && actions.create ? <Button variant="secondary" disabled={pending !== null || conflict} onClick={() => void respond(item, "withdraw")}>{t("medical.participation.withdraw")}</Button> : null}
             {item.state === "active" && actions?.manage ? <Button size="lg" variant="secondary" disabled={pending !== null || conflict} onClick={() => setForm(item)}>{t("medical.participation.end")}</Button> : null}

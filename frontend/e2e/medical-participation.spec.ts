@@ -130,6 +130,8 @@ test("participation mobile: decline, withdraw, concurrent end and current role r
     await doctor.getByRole("button", { name: t["medical.participation.title"], exact: true }).click();
     const firstRow = doctor.getByTestId(`participation-row-${first.id}`);
     await firstRow.getByRole("button", { name: t["medical.participation.decline"], exact: true }).click();
+    await doctor.getByTestId("participation-decline-form").getByRole("textbox").fill("Synthetic private decline reason");
+    await doctor.getByTestId("participation-decline-form").getByRole("button", { name: t["medical.participation.decline"], exact: true }).click();
     await expect(firstRow).toContainText(t["medical.participation.state.declined"]);
     const second = await propose("negative-second");
     await page.goto("/app/clients/8");

@@ -39,7 +39,7 @@ class ParticipationCandidateTests(TestCase):
         self.assertEqual(MedicalAuditEvent.objects.filter(action="read").count(), 1)
         item, _ = self.propose()
         self.assertEqual(self.read()["results"], [])
-        self.respond(item, decision="decline")
+        self.respond(item, decision="decline", reason="Synthetic decline reason")
         self.assertEqual(len(self.read()["results"]), 1)
         BusinessMember.objects.filter(pk=self.target.pk).update(is_active=False)
         self.assertEqual(self.read()["results"], [])

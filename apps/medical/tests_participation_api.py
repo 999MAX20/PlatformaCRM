@@ -62,7 +62,7 @@ class ParticipationAPITests(TestCase):
 
     def test_decline_is_recipient_only_and_withdraw_is_a_separate_pending_action(self):
         identifier = self.post().data["id"]
-        body = {**self.scope, "expected_revision": 1, "decision": "decline"}
+        body = {**self.scope, "expected_revision": 1, "decision": "decline", "reason": "Synthetic decline reason"}
         self.private(self.post(f"{identifier}/respond/", body, "decline"), 403)
         self.api.force_authenticate(self.recipient)
         self.private(self.post(f"{identifier}/respond/", body, "decline"), 200)

@@ -11,6 +11,7 @@ from apps.clients.models import Client
 from .audit import MedicalAuditUnavailable, write_patient_audit
 from .models import MedicalAuditEvent, MedicalRoleAssignment, PatientProfile, TreatmentParticipation
 from .role_access import assert_medical_branch_permission, assert_medical_role_permission
+from .participation_reasons import decline_reason_for_initiator
 
 
 def _context(actor, business_id, before_id, limit):
@@ -53,7 +54,8 @@ def _page(actor, business, rows, before_id, limit):
             "member_name": item.member.user.full_name, "proposed_by_id": item.proposed_by_id,
             "proposer_name": item.proposed_by.full_name, "state": item.state, "revision": item.revision,
             "proposed_at": item.proposed_at, "accepted_at": item.accepted_at, "closed_at": item.closed_at,
-            "remaining_responsible_id": item.remaining_responsible_id})
+            "remaining_responsible_id": item.remaining_responsible_id,
+            "decline_reason": decline_reason_for_initiator(item, actor)})
     return {"results": result, "next_before_id": page[limit - 1].pk if len(page) > limit else None}
 
 

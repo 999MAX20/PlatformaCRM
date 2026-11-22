@@ -46,6 +46,7 @@ async function latestNotice(page: Page, token: string) {
   const data = await response.json();
   expect(JSON.stringify(data)).not.toContain("Synthetic clinical patient");
   expect(JSON.stringify(data)).not.toContain("Synthetic private invitation reason");
+  expect(JSON.stringify(data)).not.toContain("Synthetic private decline reason");
   return data.results[0];
 }
 
@@ -74,11 +75,20 @@ for (const language of ["ru", "kk", "en"] as const) for (const mobile of [false,
       if (keys.length === 1) await route.fulfill({ status: 503, json: { detail: "Synthetic outage" } });
       else await route.continue();
     });
-    const decision = mobile ? "decline" : "accept";
-    const state = mobile ? "declined" : "active";
+    const decision = "decline";
+    const state = "declined";
     const button = workspace.getByRole("button", { name: t[`medical.participation.${decision}`], exact: true });
     await button.click();
+    const form = page.getByTestId("participation-decline-form");
+    const reason = form.getByRole("textbox", { name: t["medical.participation.declineReason"] });
+    await expect(reason).toBeFocused();
+    await expect(form.getByRole("button", { name: t["medical.participation.decline"], exact: true })).toBeDisabled();
+    await reason.fill("Synthetic private decline reason\n" + "A".repeat(150));
+    await form.screenshot({ path: info.outputPath("decline-form.png") });
+    expect((await new AxeBuilder({ page }).include('[data-testid="participation-decline-form"]').withTags(["wcag2a", "wcag2aa"]).analyze()).violations).toEqual([]);
+    await button.click();
     await expect(workspace.getByRole("alert")).toContainText(t["actions.errorTemporary"]);
+    await expect(reason).toHaveValue("Synthetic private decline reason\n" + "A".repeat(150));
     await expect(workspace).toContainText(`Synthetic clinical patient ${id}`);
     await button.click();
     await expect(workspace).toContainText(t[`medical.participation.state.${state}`]);
@@ -99,9 +109,11 @@ for (const language of ["ru", "kk", "en"] as const) for (const mobile of [false,
       const replyWorkspace = sender.getByTestId("participation-notification");
       await expect(replyWorkspace).toContainText(`Synthetic clinical patient ${id}`);
       await expect(replyWorkspace).toContainText(t[`medical.participation.state.${state}`]);
+      await expect(replyWorkspace).toContainText("Synthetic private decline reason");
       await replyWorkspace.screenshot({ path: info.outputPath("notice-reply.png") });
       await replyWorkspace.getByRole("button", { name: t["medical.participation.proposals"], exact: true }).click();
       await expect(sender.getByTestId(`outgoing-${item.id}`)).toContainText(t[`medical.participation.state.${state}`]);
+      await expect(sender.getByTestId(`outgoing-${item.id}`)).toContainText("Synthetic private decline reason");
       await sender.keyboard.press("Escape");
     } finally { await senderContext.close(); }
     expect(await page.evaluate(() => JSON.stringify({ ...localStorage, ...sessionStorage }))).not.toContain("Synthetic clinical patient");
@@ -132,10 +144,14 @@ test("notice mobile: loading recovery, real conflict, revoked access and missing
   });
   expect(accepted.status()).toBe(200);
   await workspace.getByRole("button", { name: ru["medical.participation.decline"], exact: true }).click();
+  const decline = page.getByTestId("participation-decline-form");
+  await decline.getByRole("textbox").fill("Synthetic private decline reason");
+  await decline.getByRole("button", { name: ru["medical.participation.decline"], exact: true }).click();
   await expect(workspace.getByRole("alert")).toContainText(ru["medical.clinical.conflict"]);
-  await expect(workspace.getByRole("button", { name: ru["medical.participation.accept"], exact: true })).toBeDisabled();
+  await expect(decline.getByRole("button", { name: ru["medical.participation.decline"], exact: true })).toBeDisabled();
   await workspace.screenshot({ path: info.outputPath("notice-conflict.png") });
-  await workspace.getByRole("button", { name: ru["medical.clinical.reload"], exact: true }).click();
+  page.once("dialog", dialog => dialog.accept());
+  await decline.getByRole("button", { name: ru["medical.clinical.reload"], exact: true }).click();
   await expect(workspace).toContainText(ru["medical.participation.state.active"]);
   try {
     execFileSync(process.env.E2E_PYTHON!, ["e2e/clinical-runtime.py", "revoke"], { env: process.env });
@@ -180,4 +196,36 @@ test("notice mobile: long name and workspace result refresh on close", async ({ 
   await workspace.getByRole("button", { name: ru["header.notifications"], exact: true }).focus();
   await page.keyboard.press("Enter");
   await expect(page).toHaveURL(/\/app\/notifications$/);
+});
+
+test("notice mobile: decline cancellation preserves input and role denial clears it", async ({ page }, info) => {
+  test.setTimeout(120_000);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await invite(page, 4);
+  const token = await login(page, "medical-transfer-recipient@example.test", "ru");
+  const notice = await latestNotice(page, token);
+  await page.goto(notice.action_url);
+  const workspace = page.getByTestId("participation-notification");
+  await workspace.getByRole("button", { name: ru["medical.participation.decline"], exact: true }).click();
+  const form = page.getByTestId("participation-decline-form");
+  const field = form.getByRole("textbox");
+  await field.fill("Synthetic preserved refusal");
+  page.once("dialog", dialog => dialog.dismiss());
+  await form.getByRole("button", { name: ru["common.cancel"], exact: true }).click();
+  await expect(field).toHaveValue("Synthetic preserved refusal");
+  page.once("dialog", dialog => dialog.accept());
+  await form.getByRole("button", { name: ru["common.cancel"], exact: true }).click();
+  await expect(form).not.toBeVisible();
+  await expect(workspace.getByRole("heading")).toBeFocused();
+  await workspace.getByRole("button", { name: ru["medical.participation.decline"], exact: true }).click();
+  await expect(field).toHaveValue("");
+  await field.fill("Synthetic revoked refusal");
+  try {
+    execFileSync(process.env.E2E_PYTHON!, ["e2e/clinical-runtime.py", "revoke"], { env: process.env });
+    await form.getByRole("button", { name: ru["medical.participation.decline"], exact: true }).click();
+    await expect(workspace).toContainText(ru["medical.notifications.unavailable"]);
+    await expect(workspace).not.toContainText("Synthetic clinical patient");
+    await expect(form).not.toBeVisible();
+    await workspace.screenshot({ path: info.outputPath("decline-denied.png") });
+  } finally { execFileSync(process.env.E2E_PYTHON!, ["e2e/clinical-runtime.py", "restore"], { env: process.env }); }
 });

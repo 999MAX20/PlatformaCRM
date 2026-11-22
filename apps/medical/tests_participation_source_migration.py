@@ -21,7 +21,9 @@ class ParticipationSourceMigrationTests(TransactionTestCase):
             previous = old_model.objects.get(pk=item.pk)
             self.assertEqual(previous.reason_encrypted, "opaque-existing-value")
             executor.migrate([("medical", "0015_participation_source")])
-            item.refresh_from_db()
+            migrated_model = executor.loader.project_state(
+                [("medical", "0015_participation_source")]).apps.get_model("medical", "TreatmentParticipation")
+            item = migrated_model.objects.get(pk=item.pk)
             self.assertEqual((item.state, item.revision, item.reason_encrypted),
                              ("pending", 1, "opaque-existing-value"))
             self.assertIsNone(item.source_appointment_id)

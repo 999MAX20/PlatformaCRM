@@ -190,7 +190,7 @@ class ParticipationReadTests(TestCase):
 
     def test_cursor_is_bounded_and_empty_read_is_audited(self):
         first, _ = self.propose()
-        self.respond(first, decision="decline")
+        self.respond(first, decision="decline", reason="Synthetic decline reason")
         second, _ = self.propose(idempotency_key="second")
         page = self.managed(limit=1)
         self.assertEqual([row["id"] for row in page["results"]], [second.pk])

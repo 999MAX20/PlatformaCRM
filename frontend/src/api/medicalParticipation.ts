@@ -23,6 +23,7 @@ export type Participation = {
   accepted_at: string | null;
   closed_at: string | null;
   remaining_responsible_id: number | null;
+  decline_reason: string | null;
 };
 export type ParticipationPage = { results: Participation[]; next_before_id: number | null };
 export type ParticipationNotificationContext = {
@@ -119,7 +120,7 @@ export const medicalParticipationApi = {
   },
   propose: (payload: ParticipationProposal, idempotencyKey: string, signal?: AbortSignal) =>
     command(root, payload, idempotencyKey, signal),
-  respond: (id: number, payload: ParticipationCommand & { decision: "accept" | "decline" }, idempotencyKey: string, signal?: AbortSignal) =>
+  respond: (id: number, payload: ParticipationCommand & { decision: "accept" | "decline"; reason?: string }, idempotencyKey: string, signal?: AbortSignal) =>
     command(`${root}${id}/respond/`, payload, idempotencyKey, signal),
   withdraw: (id: number, payload: ParticipationCommand, idempotencyKey: string, signal?: AbortSignal) =>
     command(`${root}${id}/withdraw/`, payload, idempotencyKey, signal),

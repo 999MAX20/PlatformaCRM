@@ -35,6 +35,7 @@ class ParticipationCommandSerializer(ParticipationScopeSerializer):
 
 class ParticipationResponseSerializer(ParticipationCommandSerializer):
     decision = serializers.ChoiceField(choices=("accept", "decline"))
+    reason = serializers.CharField(required=False, allow_blank=True, max_length=2000, trim_whitespace=False)
 
 
 class ParticipationHeadEndSerializer(ParticipationCommandSerializer):

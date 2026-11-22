@@ -137,6 +137,7 @@ export function SourceProposalWorkspace({ scope, guard, onDenied, onBack }: {
         data-testid={`outgoing-${item.id}`} className="space-y-3 py-4">
         <p className="break-words font-semibold">{item.member_name} · {item.branch_name}</p>
         <p className="text-sm text-platforma-subtle">{t(`medical.participation.state.${item.state}`)}</p>
+        {item.decline_reason ? <p className="break-words whitespace-pre-wrap text-sm">{t("medical.participation.declineReason")}: {item.decline_reason}</p> : null}
         {item.state === "pending" ? <Button size="lg" variant="secondary" disabled={pending || conflict} onClick={() => void withdraw(item)}>{t("medical.participation.withdraw")}</Button> : null}
       </li>)}</ul>
       <div className="flex flex-wrap gap-2">

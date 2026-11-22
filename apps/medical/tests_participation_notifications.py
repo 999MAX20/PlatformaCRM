@@ -59,7 +59,7 @@ class ParticipationNotificationTests(TestCase):
         item, _ = self.propose()
         self.assertFalse(Notification.objects.exists())
         self.assertEqual(item.state, "pending")
-        self.respond(item, decision="decline")
+        self.respond(item, decision="decline", reason="Synthetic decline reason")
         self.assertEqual(Notification.objects.get().recipient_id, self.doctor.pk)
 
     def test_notification_failure_rolls_back_proposal_audit_and_command(self):

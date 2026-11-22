@@ -11,6 +11,7 @@ import { useI18n } from "../../lib/i18n";
 import { useAuth } from "../auth/AuthProvider";
 import { ParticipationEntry } from "./ParticipationEntry";
 import { SourceProposalEntry } from "./SourceProposalWorkspace";
+import { ParticipationDeclineForm } from "./ParticipationDeclineForm";
 
 export function ParticipationNotificationPage() {
   const { business, isLoading, error } = useActiveBusiness();
@@ -35,6 +36,8 @@ function NotificationWorkspace({ businessId, notificationId }: { businessId: num
   const [pending, setPending] = useState(false);
   const [conflict, setConflict] = useState(false);
   const [attempt, setAttempt] = useState(0);
+  const [declining, setDeclining] = useState(false);
+  const declineGuard = useRef({ dirty: false, pending: false });
   const inFlight = useRef(false);
   const retry = useRef<{ fingerprint: string; key: string } | null>(null);
   const title = useRef<HTMLHeadingElement>(null);
@@ -51,7 +54,7 @@ function NotificationWorkspace({ businessId, notificationId }: { businessId: num
   useLayoutEffect(() => { if (context && !loading) title.current?.focus(); }, [context, loading]);
   const status = axios.isAxiosError(error) ? error.response?.status : undefined;
   const unavailable = !notificationId || [401, 403, 404].includes(status ?? 0);
-  function refresh() { setContext(null); setAccess(null); setAttempt(value => value + 1); }
+  function refresh() { setDeclining(false); setContext(null); setAccess(null); setAttempt(value => value + 1); }
   async function respond(decision: "accept" | "decline") {
     if (!context || inFlight.current || conflict) return;
     const item = context.participation;
@@ -78,8 +81,8 @@ function NotificationWorkspace({ businessId, notificationId }: { businessId: num
   } : null;
   return <section className="max-w-3xl space-y-4" data-testid="participation-notification">
     <div className="flex flex-wrap gap-2">
-      <Button variant="secondary" disabled={pending} onClick={() => navigate("/app/notifications")}>{t("header.notifications")}</Button>
-      {notificationId ? <Button variant="secondary" disabled={pending || loading} onClick={refresh}>{t("medical.clinical.reload")}</Button> : null}
+      <Button variant="secondary" disabled={pending || declining} onClick={() => navigate("/app/notifications")}>{t("header.notifications")}</Button>
+      {notificationId ? <Button variant="secondary" disabled={pending || loading || declining} onClick={refresh}>{t("medical.clinical.reload")}</Button> : null}
     </div>
     {loading ? <LoadingState /> : null}
     {unavailable ? <ErrorState message={t("medical.notifications.unavailable")} /> : error ?
@@ -89,15 +92,18 @@ function NotificationWorkspace({ businessId, notificationId }: { businessId: num
         <h2 ref={title} tabIndex={-1} className="text-base font-semibold">{item.patient_name}</h2>
         <p className="text-sm">{item.member_name} · {item.branch_name}</p>
         <p role="status" className="text-sm text-platforma-subtle">{t(`medical.participation.state.${item.state}`)}</p>
+        {item.decline_reason ? <p className="whitespace-pre-wrap text-sm">{t("medical.participation.declineReason")}: {item.decline_reason}</p> : null}
       </div>
-      <div className="flex flex-wrap gap-2">
+      {declining ? <ParticipationDeclineForm businessId={businessId} item={item} guard={declineGuard} onSaved={refresh}
+        onCancel={() => { setDeclining(false); title.current?.focus(); }}
+        onDenied={cause => { setDeclining(false); setContext(null); setAccess(null); setError(cause); }} /> : <div className="flex flex-wrap gap-2">
         {context.direction === "incoming" && item.state === "pending" && item.member_id === access.member_id && actions?.approve ? <>
           <Button size="lg" disabled={pending || conflict} isLoading={pending} onClick={() => void respond("accept")}>{t("medical.participation.accept")}</Button>
-          <Button size="lg" variant="secondary" disabled={pending || conflict} onClick={() => void respond("decline")}>{t("medical.participation.decline")}</Button>
+          <Button size="lg" variant="secondary" disabled={pending || conflict} onClick={() => setDeclining(true)}>{t("medical.participation.decline")}</Button>
         </> : null}
         {!pending && !conflict ? source ? <SourceProposalEntry scope={source} /> :
           <ParticipationEntry businessId={businessId} patientId={item.patient_id} branchId={item.branch_id} onClosed={refresh} /> : null}
-      </div>
+      </div>}
     </div> : null}
   </section>;
 }

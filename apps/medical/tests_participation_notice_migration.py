@@ -24,7 +24,9 @@ class ParticipationNoticeMigrationTests(TransactionTestCase):
         try:
             executor.migrate([("medical", "0015_participation_source")])
             self.assertEqual(Notification.objects.count(), 1)
-            self.assertEqual(TreatmentParticipation.objects.get(pk=item.pk).state, "pending")
+            old_apps = executor.loader.project_state([("medical", "0015_participation_source")]).apps
+            old_participation = old_apps.get_model("medical", "TreatmentParticipation")
+            self.assertEqual(old_participation.objects.get(pk=item.pk).state, "pending")
             self.assertTrue(MedicalAuditEvent.objects.filter(pk=event.pk).exists())
             MigrationExecutor(connection).migrate(leaves)
             self.assertFalse(MedicalParticipationNotice.objects.exists())
