@@ -2,6 +2,37 @@
 
 ## Активный этап К05: основания и ограниченный медицинский доступ
 
+Срез К05: проверка совместного существования appointment/participation/
+24h correction и приоритета security revoke. Prior result: каждое основание уже
+проверено отдельно → недостаёт совместной матрицы → минимальная дельта focused
+regression tests, без переписывания writers/readers. Base f745bab1. Высокий риск:
+старые actor/basis и idempotency replay не должны переживать отзыв account/member/
+medical role/branch/module. Проверить независимость закрытия оснований, чтение и
+запись/replay, неизменность истории при отказе; изолированная SQLite, targeted suite.
+UI/миграций/провайдеров нет, прежние browser/build/PG результаты сохраняются при
+неизменном product code. Если обнаружится дефект, расширить проверки по его влиянию.
+Вопрос о назначении ассистента отправлен владельцу: primary physician/head,
+подтверждение ассистентом, отзыв и завершение вместе с приёмом. Ответ ожидается;
+это блокирует только зависимый assistant scenario, не независимые проверки К05.
+
+Результат:6 focused tests PASS (5 в1.543s, отдельный real role revoke в0.131s),
+TEMP/dental-k05-basis-combinations-r2-20261123.log и dental-k05-security-revoke-
+20261123.log. R1:3PASS/2ERROR из-за неверного аргумента action вместо decision
+в новом test helper; исправлен только тест, assertions сохранены. Проверены
+три одновременно действующих основания и7 вариантов security revoke для read/
+saved command replay; старые загруженные actor/Business не восстанавливают доступ.
+Реальный owner revoke с audit/idempotency работает при draft/active treatment,
+не меняет медицинскую историю/назначение/участие. Это service/read boundary;
+новые assistant/support/file/export/AI consumers сохраняют отдельную приёмку.
+Production code/API/UI/schema без изменений относительно f745bab1; прежние
+сборка/визуальные/PG результаты не запускались повторно. Static base8f93c194 PASS,
+TEMP/dental-k05-combinations-static-20261123.log. Новые тесты до публикации.
+SupportCase уже содержит business/assigned_to/status/resolved_at, повторно используем
+его вместо нового реестра инцидентов. Ожидается решение: конкретные цели и сотрудник
+поддержки, согласование head в своей филиальной области; owner без medical role
+не разрешает раскрытие PHI. Сам общий support ACL не предоставляет clinical access.
+Ответ по этому вопросу блокирует только реализацию support medical grant.
+
 К05 текущий незавершённый срез: добавлены модель/isolated migration0029,
 request/review/withdraw/complete/revoke/expiry services, versioned audit reference,
 узкий correction basis существующего encounter draft writer. SQLite focused8PASS
@@ -41,8 +72,12 @@ static basee5546ea8 PASS, TEMP/dental-k05-static-20261123.log. Fresh fixture/his
 1PASS21.5s (TEMP/dental-k05-browser-fresh-20261123.log),23-й финальный screenshot
 просмотрен: инициализация проверена отдельно без зависимости от прошлых browser tests;
 переиспользована только пустая disposable schema (Business count0), не рабочая БД.
-Публикация среза pending. CI опубликованного8f93c194 run45078503071 completed/success,
-frontend и backend jobs success; это не CI текущего dirty среза.
+Срез опубликован f745bab19f363fd44bec312a9de7ab84d088fe11, normal FF origin/main и
+remote SHA readback PASS; outgoing range состоял только из собственного commit31files.
+CI45082898662 in_progress (не green); исходный индекс был пуст,
+чужие STATUS/access hunks и password/Google/ycloud WIP не включены.
+CI опубликованного8f93c194 run45078503071 completed/success,
+frontend и backend jobs success; это не CI нового набора regression tests.
 README/operations/integrations не требуют изменений: новых env/provider/notification/
 BusinessEvent/AI эффектов нет. Access/frontend/capabilities/modularity и эта матрица
 обновлены вместе; внешние L IDs и подписанные коррекции К08/К09 сохранены.
@@ -2863,8 +2898,8 @@ push и фактический CI учитываются отдельно. Mock 
 | К01. Медруководитель подтверждает реквизиты клиники и врача; врач читает свои сведения | M11 §5.2–5.3, M02/M24/M25; E3; существующие medical role guards | CredentialProfile/Revision, encrypted history, Business/Member и shared forms; storage64 dependent PASS | В принятом сценарии остатка нет; подтверждение/API/UI/история/schema4 готовы; опубликован fff0555c |105 affected/dependent +1 migration roundtrip,8 credential browser +1 template regression,43 снимка,build/types/static PASS; собственная роль/head scope/tenant/stale/replay/audit rollback проверены. Госреестр и нормативная достаточность отдельно |
 | К02. Врач находит подходящий утверждённый шаблон; руководитель управляет его применимостью | M11/M16, D06/D09; E3/E4; К00 | Personal/common drafts/review/history, классификация и approved selector; поиск/фильтры, head pause/resume, encrypted история и UI реализованы | Код/пользовательский сценарий локально принят, остатка в этой границе нет; опубликован096cd591, CI45068261530 выполняется. CI fixture regression20 PASS/static PASS. Полные M11/M16 не закрываются этим этапом | Domain/API/migration/check/drift,12 distinct browser RU/KK/EN ×desktop/mobile +4 повтора, affected visual и final build PASS. Чужое/неутверждённое скрыто, paused create409, старый документ неизменен; p95/PG отдельно К17/К18. Точные доказательства в начале checkpoint |
 | К03. Новая и существующая стоматология получает модуль без сброса CRM | M01/M02; D01/D02/D03,B22; E0/E1 | Profile registry/resolver/guards/create paths, BusinessCapability, role settings; release-ready v2 и additive CLI реализованы, PG domain/concurrency10 PASS +API2 PASS | Переход опубликован3de53af2,6 browser/visual и static PASS; весь К03 открыт: owner-clinician ждёт решения. Защита новых jobs/files/AI остаётся обязательной в К07/К15; B22 новые настройки в К14, существующие false сохраняются здесь | Повтор backfill ничего не сбрасывает, IDs/настройки/не-стоматология сохранены, нет owner/platform bypass, изолированные миграции и PG; пользователь видит правильные доступные инструменты |
-| К04. Ресепшн находит пациента и безопасно оформляет личность/представителя/исправление | M03/M04/M05; D04,D07,B01–04,B26; E1; К03 | ClientWorkspace, identity/representatives/merge guard; К04 поиск, atomic registration и ИИН correction/head review: backend/PG/browser/build PASS | Reception list projection backend5/browser6/build PASS; перепривязка/разбор смешанных историй ждёт решения. Клинические вкладки К05/К06, recipient enforcement К12; L04 внешний протокол. Search/registration/IIN опубликованыe5546ea8; projection publication pending | Семейный телефон не объединяет пациентов; verified ИИН PG race, foreign/отзыв/возрастные сценарии, атомарный отказ merge; оформленный пациент доступен для приёма. Реальный протокол личности L04 остаётся отдельной приёмкой |
-| К05 ACTIVE. Врач получает доступ по записи/передаче, команда и исправления имеют точные границы | M02/M06/M07; D03,B05–08,B28; E1/E2; К03/К04 | Appointment basis, invitations/transfer/notifications/head-end, role UI;24h correction request/review/target-only draft/close/expiry с domain/API/PG/browser evidence выше | Полнота комбинации оснований, командный ассистент, security revoke, support-инцидент≤4h readonly, филиальные проекции во всех потребителях; подписанная коррекция в К08/К09 | Нет доступа до принятия; запись сразу даёт основание; отзыв сильнее temporary; два основания независимы; запрещённые подпись/export/изменение отсутствуют и на API. Обычное завершение с полной проверкой обязательств закреплено за К11 |
+| К04. Ресепшн находит пациента и безопасно оформляет личность/представителя/исправление | M03/M04/M05; D04,D07,B01–04,B26; E1; К03 | ClientWorkspace, identity/representatives/merge guard; К04 поиск, atomic registration и ИИН correction/head review: backend/PG/browser/build PASS | Reception list projection backend5/browser6/build PASS; перепривязка/разбор смешанных историй ждёт решения. Клинические вкладки К05/К06, recipient enforcement К12; L04 внешний протокол. Search/registration/IIN опубликованыe5546ea8; projection8f93c194 опубликован, CI success | Семейный телефон не объединяет пациентов; verified ИИН PG race, foreign/отзыв/возрастные сценарии, атомарный отказ merge; оформленный пациент доступен для приёма. Реальный протокол личности L04 остаётся отдельной приёмкой |
+| К05 ACTIVE. Врач получает доступ по записи/передаче, команда и исправления имеют точные границы | M02/M06/M07; D03,B05–08,B28; E1/E2; К03/К04 | Appointment basis, invitations/transfer/notifications/head-end, role UI;24h correction request/review/target-only draft/close/expiry с domain/API/PG/browser evidence выше | Комбинация appointment/participation/correction и security override6 focused PASS; командный ассистент ждёт назначения/подтверждения, support-инцидент≤4h readonly и проекции будущих files/export/AI consumers открыты; подписанная коррекция в К08/К09 | Нет доступа до принятия; запись сразу даёт основание; отзыв сильнее temporary; два основания независимы; запрещённые подпись/export/изменение отсутствуют и на API. Обычное завершение с полной проверкой обязательств закреплено за К11 |
 | К06. Врач ведёт карту, зубы, назначения и клинический план лечения | M08/M09/M10/M16; D05/D09; E2/E4; К04/К05 | Encounter draft/history, odontogram/surfaces, VisitPlan/Step, шаблоны | Клинический план/версии/шаги, назначения типов ТЗ/snippets, связи зубов/плана, остальные вкладки и доступ команды, явные неприменимые разделы | Врач сохраняет и перечитывает историю целого приёма/плана/назначений; клинический план не создаёт долг/бронь, stale/tenant/replay/PG. Снимки подключаются К07, финальное завершение К10; справочник L12 |
 | К07. Врач безопасно прикрепляет и просматривает снимки/файлы | M09/M13; D07; E2/E3; К05/К06 | Private storage и crypto/audit, связи карты | Карантин/MIME/антивирус, preview/original ACL, связи с зубами/приёмом, история, отказ сканера, резервный защищённый read audit | Заражённое/непроверенное не открывается, URL не обходит ACL, отмена/повтор/tenant/прямое скачивание; разрешённый файл проходит загрузку→проверку→просмотр. Реальные форматы L12 и retention L08 остаются открытыми |
 | К08. Врач оформляет неизменяемую версию документа и печатает её | M11/M13; D06/D07; E3; К01/К02/К06/К07 | Document drafts/history/preview, source digest, template versions | Матрица обязательности/момента/подписантов, утверждение документа, PDF/логотип bytes/checksum, ограниченный DOCX/печать, исправления отдельной версией | Изменение профиля/клиники/шаблона не меняет прежний PDF; нет stale-source/HTML исполнения; точные bytes/версия в UI; документ не называется подписанным без К09. Реальные формы L05 |
