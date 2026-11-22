@@ -1,4 +1,4 @@
-DENTAL-MCS M11: классификация личных/общих шаблонов доступна в редакторе, истории и рассмотрении; поиск/выбор услуг подключён.26 API +20 browser PASS,102 снимка просмотрены, final build PASS. Публикация текущего этапа; далее последовательный план полного ТЗ. Реквизиты подтверждает медруководитель (согласовано). [Checkpoint](docs/testing/task-state/DENTAL-MCS-20261122.md).
+DENTAL-MCS К00 опубликован be235444: классификация шаблонов,26 API/20 browser/102 просмотренных снимка/final build/static PASS; CI выполняется. Полный план M01–M30/E0–E7 упорядочен в существующем checkpoint, один активный этап К01: подтверждение медицинских реквизитов и снимок документа. Внешние L01–L19 сохранены отдельно. [Checkpoint](docs/testing/task-state/DENTAL-MCS-20261122.md).
 
 QA-016-20261121 LOCAL VERIFIED: automatic tasks searchable by displayed RU/KK/EN title; editor preserves original copy on unrelated edits. 66 backend, 9 node, 6 desktop/mobile browser scenarios, build/types/i18n/check/drift PASS; Code 8a240ad3 pushed to main; CI44937543011 queued (not PASS). Working DB untouched. [Evidence](docs/testing/evidence/qa-016-task-search-20261121.md).
 
