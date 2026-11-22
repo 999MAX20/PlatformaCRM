@@ -24,6 +24,7 @@ import {
 
 export function useSettingsModel() {
   const [profileDraftState, setProfileDraftState] = useState({ dirty: false, pending: false });
+  const [medicalDraftState, setMedicalDraftState] = useState({ dirty: false, pending: false });
   const { t, language } = useI18n();
 
   const confirmAction = useActionConfirm();
@@ -77,6 +78,9 @@ export function useSettingsModel() {
           return canManageSettings;
         if (section.id === "team-access") return canViewTeam;
         if (section.id === "roles") return canManageTeam;
+        if (section.id === "medical-access") return !!business && !!user && !user.is_platform_user
+          && String(business.owner) === String(user.id)
+          && (business.business_type === "dentistry" || user.capabilities?.[String(business.id)]?.modules?.medical_records === true);
         if (section.id === "security-center") return canViewAudit;
         if (section.id === "quick-replies") return canManageConversations;
         if (section.id === "billing" || section.id === "usage")
@@ -90,6 +94,8 @@ export function useSettingsModel() {
       }),
     [
       business?.id,
+      business?.owner,
+      business?.business_type,
       canManageConversations,
       canManageSettings,
       canManageTeam,
@@ -242,6 +248,8 @@ export function useSettingsModel() {
     setProfileDraftState,
     activeSettingsSection,
     allowedSettingsSectionIds,
+    medicalDraftState,
+    setMedicalDraftState,
     allowedSettingsSections,
     appointmentMessageDrafts,
     appointmentMessageMutation,

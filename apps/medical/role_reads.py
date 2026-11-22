@@ -86,9 +86,14 @@ def read_medical_role_member_context(*, actor, business_id, member_id):
     assignment = MedicalRoleAssignment.objects.select_related("business_role").filter(member=member).first()
     if assignment is not None and assignment.business_role.business_id != business.pk:
         raise NotFound()
+    assigned_branches = list(assignment.branches.all()) if assignment else []
+    if any(branch.business_id != business.pk for branch in assigned_branches):
+        raise NotFound()
     can_assign = (resource_is_enabled(business, "medical_records") and member.is_active
                   and member.user.is_active and not member.user.is_platform_user and member.user_id != actor.pk)
     return {"member": _member_data(member), "assignment": _snapshot(assignment),
+            "assigned_branches": [{"id": branch.pk, "name": branch.name, "is_active": branch.is_active}
+                                  for branch in assigned_branches],
             "role_name": assignment.business_role.name if assignment else None,
             "role_active": assignment.business_role.is_active if assignment else None,
             "can_assign": can_assign, "can_revoke": assignment is not None and assignment.revoked_at is None,

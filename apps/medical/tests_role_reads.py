@@ -39,11 +39,24 @@ class MedicalRoleReadTests(TestCase):
         result = self.context()
         self.assertEqual(result["assignment"]["revision"], assignment.revision)
         self.assertEqual(result["assignment"]["branches"], [self.branch.pk])
+        self.assertEqual(result["assigned_branches"], [{"id": self.branch.pk, "name": self.branch.name, "is_active": True}])
         self.assertTrue(result["can_assign"])
         self.assertTrue(result["can_revoke"])
         self.assertFalse(result["can_assign_all_branches"])
         with self.assertRaises(PermissionDenied):
             assert_medical_role_permission(self.owner, self.business, "medical_records", "view")
+
+    def test_assignment_branch_names_preserve_inactive_history_and_reject_foreign_links(self):
+        role, _ = self.define()
+        assignment, _ = self.assign(role)
+        Branch.objects.filter(pk=self.branch.pk).update(is_active=False)
+        self.assertEqual(self.context()["assigned_branches"], [
+            {"id": self.branch.pk, "name": self.branch.name, "is_active": False},
+        ])
+        foreign = Business.objects.create(owner=self.other, name="Other", slug="role-context-foreign")
+        assignment.branches.add(Branch.objects.create(business=foreign, name="Foreign private name"))
+        with self.assertRaises(NotFound):
+            self.context()
 
     def test_lists_are_tenant_scoped_paginated_and_searchable(self):
         first, _ = self.define()

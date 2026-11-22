@@ -103,7 +103,9 @@ Initializer создаёт core_v1/dentistry_v1 в существующих crea
 Owner define/assign/revoke services используют общие role/rules/idempotency,
 revision и атомарный audit; replay не восстанавливает отзыв. Общий CRM role/branch
 grant не меняется при медицинском назначении. Подтверждающий права владельцу-врачу
-пока не определён; самовыдача запрещена. Role-management API/UI ещё не подключены.
+пока не определён; самовыдача запрещена. Owner-only role-management API подключён;
+S18/M21 в настройках подключён:9 browser-сценариев PASS,26 снимков просмотрены,
+desktop/mobile RU/KK/EN. Это не закрывает полный ACL и остальные критерии M06.
 Доменное создание unverified пациента проверяет medical role/branch и CRM Client
 view; шифрует административные поля и атомарно пишет MedicalAuditEvent. Общий
 idempotency store получает только keyed fingerprints, replay проверяет отзыв прав.

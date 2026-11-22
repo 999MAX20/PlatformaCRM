@@ -12,6 +12,7 @@ from scripts.browser_test_runtime import configure_browser_runtime
 
 participation_fixture = os.environ.get("E2E_PARTICIPATION") == "1"
 proposal_fixture = os.environ.get("E2E_PROPOSAL") == "1"
+roles_fixture = os.environ.get("E2E_MEDICAL_ROLES") == "1"
 configure_browser_runtime()
 import django
 django.setup()
@@ -103,7 +104,27 @@ if proposal_fixture:
         assignment = MedicalRoleAssignment.objects.create(member=member, business_role=source.business_role,
             kind="doctor", granted_by=business.owner)
         assignment.branches.add(branch)
+if roles_fixture:
+    from django.contrib.auth import get_user_model
+    from apps.branches.models import Branch, BranchAccess
+    from apps.businesses.models import BusinessMember
+    business = Business.objects.get(slug="medical-role")
+    owner = business.owner
+    owner.set_password(os.environ["E2E_PASSWORD"])
+    owner.full_name = "Synthetic owner"
+    owner.save(update_fields=["password", "full_name"])
+    BusinessMember.objects.get_or_create(business=business, user=owner, defaults={"role": "owner"})
+    for index in range(7):
+        user, _ = get_user_model().objects.get_or_create(username=f"medical-role-target-{index}",
+            defaults={"email": f"medical-role-target-{index}@example.test", "full_name": f"Synthetic role target {index}"})
+        member, _ = BusinessMember.objects.get_or_create(business=business, user=user, defaults={"role": "specialist"})
+        grant, _ = BranchAccess.objects.get_or_create(member=member, defaults={"all_branches": False})
+        grant.branches.add(Branch.objects.get(business=business, name="First"))
 settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["auth_login"] = "200/min"
+if roles_fixture and len(sys.argv) > 1 and sys.argv[1] in ("disable-role-module", "enable-role-module"):
+    BusinessCapability.objects.filter(business__slug="medical-role", module_key="medical_records").update(
+        is_enabled=sys.argv[1] == "enable-role-module")
+    sys.exit(0)
 if len(sys.argv) > 1 and sys.argv[1] in ("revoke", "restore"):
     from apps.medical.models import MedicalRoleAssignment
     MedicalRoleAssignment.objects.filter(member__business__slug="medical-role").update(revoked_at=timezone.now() if sys.argv[1] == "revoke" else None)

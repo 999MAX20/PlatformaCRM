@@ -17,6 +17,7 @@ import { UsageSection } from "./sections/UsageSection";
 import { useSettingsModel } from "./useSettingsModel";
 import { VoiceInputSection } from "./sections/VoiceInputSection";
 import { IntegrationsSection } from "./sections/IntegrationsSection";
+import { MedicalAccessSection } from "./sections/MedicalAccessSection";
 
 const sections = [
   ["integrations", IntegrationsSection],
@@ -24,6 +25,7 @@ const sections = [
   ["business-profile", BusinessProfileSection],
   ["team-access", TeamSection],
   ["roles", RolesSection],
+  ["medical-access", MedicalAccessSection],
   ["security-center", SecuritySection],
   ["appointment-messages", AppointmentMessagesSection],
   ["quick-replies", QuickRepliesSection],
@@ -47,8 +49,8 @@ function BusinessSettingsPage() {
   if (!model.business) return <p className="p-5 text-sm text-platforma-subtle">{model.t("settings.redesign.noBusiness")}</p>;
   if (!model.allowedSettingsSections.length) return <ForbiddenState />;
   return <div data-testid="settings-workspace-ready" className="settings-workspace grid items-start gap-4 lg:grid-cols-[216px_minmax(0,1fr)]">
-    <DraftGuard allowHashNavigation dirty={model.profileDraftState.dirty || Object.keys(model.appointmentMessageDrafts).length > 0}
-      pending={model.profileDraftState.pending || model.appointmentMessageMutation.isPending} />
+    <DraftGuard allowHashNavigation dirty={model.profileDraftState.dirty || model.medicalDraftState.dirty || Object.keys(model.appointmentMessageDrafts).length > 0}
+      pending={model.profileDraftState.pending || model.medicalDraftState.pending || model.appointmentMessageMutation.isPending} />
     <SettingsNavigation activeSettingsSection={model.activeSettingsSection} navigationTitle={model.t("settings.navigationTitle")}
       setActiveSettingsSection={model.setActiveSettingsSection} translatedSettingsGroups={model.translatedSettingsGroups}
       translatedSettingsSections={model.translatedSettingsSections} />

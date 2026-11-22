@@ -37,6 +37,7 @@ test("allows patient labels only in the explicit medical module keys", () => {
     ["medical.tooth.title", "Dental chart"], ["medical.tooth.orientation", "Sides relative to the patient"],
     ["medical.participation.invite", "Пригласить врача"], ["medical.participation.doctor", "Дәрігер"],
     ["medical.participation.workDirectionHint", "Врач увидит это до принятия приглашения."],
+    ["medical.roles.kind.doctor", "Врач"], ["medical.roles.resource.medical_patients", "Пациенты"],
     ["clients.create", "Создать пациента"], ["medical.unreviewed", "Doctor"],
   ]), ["clients.create", "medical.unreviewed"]);
 });

@@ -1,4 +1,4 @@
-DENTAL-MCS-20261122 ACTIVE: B08 owner-only role-management API, обязательное encrypted основание grant/revoke и история migration0019 реализованы;66 backend/check/drift PASS. UI S18/M21 ещё не подключён, PG concurrency не подтверждена. Публикация поверх6b7153fc pending; полное ТЗ/M02/M06 открыты. [Checkpoint](docs/testing/task-state/DENTAL-MCS-20261122.md).
+DENTAL-MCS-20261122 ACTIVE: S18/M21 медицинские роли в настройках — создание/назначение/отзыв/история;9 browser и19 backend/check/drift PASS,26 снимков просмотрены,types/build/i18n/transport/terminology PASS. Публикация UI готовится; backend2fc04d04 CI success. Полное ТЗ/M02/M06 и PG concurrency открыты. [Checkpoint](docs/testing/task-state/DENTAL-MCS-20261122.md).
 
 QA-016-20261121 LOCAL VERIFIED: automatic tasks searchable by displayed RU/KK/EN title; editor preserves original copy on unrelated edits. 66 backend, 9 node, 6 desktop/mobile browser scenarios, build/types/i18n/check/drift PASS; Code 8a240ad3 pushed to main; CI44937543011 queued (not PASS). Working DB untouched. [Evidence](docs/testing/evidence/qa-016-task-search-20261121.md).
 
