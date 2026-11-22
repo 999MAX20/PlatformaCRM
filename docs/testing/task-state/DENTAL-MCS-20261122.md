@@ -1,6 +1,53 @@
 # DENTAL-MCS-20261122: полная реализация медицинского ТЗ
 
+## M11: личные черновики шаблонов, backend/API проверены
+
+Affected76510 exit0:63 tests PASS3.200s, check/drift PASS, isolated SQLite; ожидаемый
+503 в API test подтверждает audit-failure recovery (не regression). Clean migration
+0023 и0023→0022→0023 PASS в disposable DB. Static25022 exit0 PASS;
+TEMP/dental-personal-template-static-20261122.log. Working DB не менялась. UI/browser/build N/A для backend/API; S17 остаётся
+следующим независимым шагом. Permission contract/capabilities/M11 matrix
+обновлены; ТЗ/design/README не меняются: authority не выбрана, UI не заявлен.
+
+Focused44182 exit0:12 domain tests PASS0.319s/check PASS, isolated SQLite;
+TEMP/dental-personal-template-20261122.log. Migration0023 прочитана целиком.
+После domain PASS добавлены history/list и HTTP /medical/document-templates/:
+POST create, GET list, POST{id}/draft, GET{id}/revisions, GET versions/{id}.
+Strict serializers не принимают owner/code/approved; no-store/private на ответах.
+Affected76510:7 API +template services/storage +document services/shared audit
+suites, check/drift, isolated0023→0022→0023; итоговый PASS выше,
+TEMP/dental-personal-template-api-20261122.log. UI ещё не подключён (S17 в design);
+browser/build N/A для этого backend/API среза, UI-критерии остаются открытыми.
+
+Предыдущий turn progress:5f9a13e5 storage опубликован,43 tests/migration PASS.
+Новый gap: registry пока внутренний, авторизованного личного draft workflow нет.
+Scope: врач/head со своей явной medical_documents create/update/view ролью
+создаёт/редактирует/читает только собственные личные черновики. BusinessMember
+берём из текущего контекста, технический code генерирует сервер. Общие шаблоны,
+утверждение/подпись и просмотр чужих личных шаблонов не входят в этот срез;
+authority-решение всё ещё ожидается. Это не clinical approval.
+Reuse template storage, role/capability, Business lock, idempotency и MedicalAuditEvent;
+добавить exact template version audit без patient-связи/PHI в журнале.
+Root/ветка прежние, HEAD5f9a13e5/base656dbd19; foreign WIP сохраняется.
+Skills domain/access/verification: current role до replay, own scope, fail-closed
+read audit, atomic write. Notification/AI/BusinessEvent/рабочая DB не затрагиваются.
+Проверки: create/update/history/read/replay, другой member/tenant/owner/assistant,
+отзыв/module/permissions, stale/conflict, audit/key rollback; affected document/
+template/audit tests +check/drift +isolated migration roundtrip/static. После
+domain PASS подключить API с strict input/no-store и отрицательными HTTP checks.
+UI приёмка отдельна; весь M11 этим не закрывается.
+
 ## M11: версии общих и личных шаблонов, локально проверено
+
+Опубликовано5f9a13e57e80664de4894a5544953b4a358cc85d normal-push origin/main;
+remote SHA совпал. Root/ветка codex/ui-testing-toolkit прежние.8 files375+/3-,
+весь outgoing range свой; working/index/committed static/diff hygiene PASS.
+CI45015763336 queued, не PASS. Чужой WIP сохранён, STATUS staged частично.
+Своих процессов нет, goal ACTIVE. Async-вопрос об authority шаблонов ожидает
+ответа; не повторять его и не выбирать ответ за владельца. Независимый следующий
+шаг: личные черновики шаблонов (current medical role, ownership, audit, API/UI),
+связь exact template version с документом и подстановка snapshot-полей.
+Клиническое утверждение/допуск не включать до решения; полное M11 не закрыто.
 
 Affected69874 exit0:43 tests PASS2.083s, check/drift PASS, isolated SQLite.
 Clean migration0022 и0022→0021→0022 PASS в disposable DB; working DB не менялась. Новое поле владельца не выдаёт полномочий;
@@ -3345,7 +3392,7 @@ Git-среза находятся выше; runtime-доказательства
 | M08 §4.2–4.4; D05; B09–11; Q13–15 | Один Encounter на реальный Appointment того же Client/Business; свои клинические данные | Черновик/revision/обязательные разделы/явная неприменимость; обычный/частичный исход; walk-in текущим днём, ранний через руководителя | Чужие связи/revision отклонены; финансовый переход через существующий сервис ровно один раз, unpaid не блокирует помощь, rollback | Частично: chart/open/draft/read/workspace services и API, encrypted versions/audit, migrations0009–0011; current role/basis/identity/replay checks. Срезы30–37 содержат доказательства и исправление B03. Срез43 добавил calendar→chart/open/draft UI; текущая проверка в начале checkpoint. Срез44 добавил history/revision reader, current display labels; проверки ниже/в начале checkpoint. Full UI/team/temporary ACL, signatures/obligations, walk-in и atomic calendar completion ещё нужны | Chart/open/draft/versions/audit; current ACL | Appointment context; workspace; draft; history/revision | Calendar → приём/черновик/история | Завершение+calendar/money; walk-in; team/temporary; остальные вкладки | Подписи/формы см. M11–M12 |
 | M09 §2.2,4,16.2 | Одонтограмма постоянных/молочных/смешанных зубов, поверхности, наблюдения, авторство и история | Модели текущего состояния/append history, связи приём/план/снимки | Изменение сохраняет прежнее и новое, неверный зуб/поверхность отвергнуты, права/конкурентность | Частично: срез47 добавил state/history schema и migration0012;29 storage/dependent tests/check/drift PASS. Срез48 encrypted helpers:30 tests/check/drift PASS; Срез49 exact-version audit:380 medical tests PASS; срез50 primary command/exact reader:50 PASS; срез51 HTTP:40 PASS/check/drift. Срез52 snapshot/history API:41 tests PASS, дополнительные12 edge tests PASS. Срез53 typed frontend transport10 tests/types/build PASS; Срез54 read UI:6 localized+1 recovery browser PASS; Срез55 whole-tooth editor:6+1 browser PASS; Срез56 surface-options API/shared validator41 tests PASS; Срез58 surface UI:6 localized+1 Map regression browser PASS, types/build/i18n/screens PASS; team/linked plans/images/clinical legend/concurrency ещё открыты | Tooth state/encrypted append history; surface policy | Write/exact read/snapshot/history/surface options | Постоянные/молочные/смешанные зубы; история; редактор поверхностей | Планы/снимки/team; PG concurrency; клиническая легенда | Утверждённый справочник поверхностей не получен |
 | M10 §2.4,4,6 | Клинический план отдельно, ссылки на VisitPlan/Step и существующие деньги | Клинические шаги/версии/связи; подтверждённое преобразование в календарь без неявного долга | Изменение медплана не создаёт Payment/бронь, сохраняет организационные ссылки | Не реализовано | Не реализовано | Не реализовано | Не реализовано | Клинические шаги/версии/связи; подтверждённое преобразование в календарь без неявного долга | Внешний блокер независимой реализации не установлен |
-| M11 §5,16.2; D06; Q16–17 | Версионные шаблоны документов по виду/услуге, бренд и реквизиты, автор/врач/реальный подписант отдельно | Матрица обязательности/момента/подписантов; снапшоты источников, PDF, ограниченный DOCX, печать | Старый PDF/checksum не меняется после редактирования клиента/шаблона; новые исправления отдельными версиями | Частично: draft document/revision storage, зашифрованные снимки clinical/template/requisites/авторов; проверки в начале checkpoint | MedicalDocument/Revision + primary draft create/update/read, current ACL/audit/replay; Template/Revision storage; нет approval/signed/finalized | Новых API нет | Нового UI нет | Утверждённые шаблоны/матрица, полный snapshot личности/лицензии, PDF/asset bytes/checksum, lifecycle, assistant/team/temporary ACL, API/UI, DOCX/печать | Формы/подписи требуют внешней проверки |
+| M11 §5,16.2; D06; Q16–17 | Версионные шаблоны документов по виду/услуге, бренд и реквизиты, автор/врач/реальный подписант отдельно | Матрица обязательности/момента/подписантов; снапшоты источников, PDF, ограниченный DOCX, печать | Старый PDF/checksum не меняется после редактирования клиента/шаблона; новые исправления отдельными версиями | Частично: draft document/revision storage, зашифрованные снимки clinical/template/requisites/авторов; проверки в начале checkpoint | MedicalDocument/Revision + primary draft create/update/read, current ACL/audit/replay; Template/Revision storage + own draft services/audit; нет approval/signed/finalized | Personal templates create/update/list/history/read; document API ещё нет | S17 ещё не подключён | Утверждённые шаблоны/матрица, полный snapshot личности/лицензии, PDF/asset bytes/checksum, lifecycle, assistant/team/temporary ACL, API/UI, DOCX/печать | Формы/подписи требуют внешней проверки |
 | M12 §5.6; D06; Q17 | Подпись desktop/Android/iPhone, черновик ≠ утверждение ≠ подтверждённая ЭЦП | Адаптер выбранного провайдера, проверка сертификата/подписи, несколько подписантов | Callback replay/поздний/отменённый/невалидный не финализирует; реальные испытания всех платформ | Не реализовано; провайдер/доступы не определены | Не реализовано | Не реализовано | Не реализовано | Адаптер выбранного провайдера, проверка сертификата/подписи, несколько подписантов | Провайдер подписи и доступы не определены |
 | M13 §2.5; D07; Q20–24; §22.7 | Приватные файлы, карантин/фактический MIME/антивирус, аудит без PHI; reuse private storage | Медицинский ACL на оригинал/preview/export; ключи/ротация; резервный защищённый журнал; retention по категориям | Сбой сканера не публикует; сбой аудита блокирует write/issue, read только с надёжным журналом; прямой URL не обходит ACL | Частично: криптография и patient-create/update audit rollback PASS; files/retention/read fallback ещё нет, сроки/ресурсы внешне не подтверждены | Medical crypto; атомарный аудит реализованных чтений/записей | Реализованные medical endpoints private/no-store | Файлы/retention отсутствуют | Quarantine/scanner/files ACL; read fallback; retention/rotation | Сроки хранения и инфраструктурные ресурсы не подтверждены |
 | M14 §5.5–5.6; D08; B12–19; Q25–27 | Лично отдельный случайный код, нейтральная ссылка; конкретные версии/комплект обращения, без оплаты/ежедневного OTP | Хеш секрета/лимиты попыток/сессия/новая вкладка; дистанционно дополнительная проверка | До готовности нет доступа; 72ч с активации; repeat/revoke/reissue/представитель/смена контакта; секрет не URL/log | Не реализовано | Не реализовано | Не реализовано | Не реализовано | Хеш секрета/лимиты попыток/сессия/новая вкладка; дистанционно дополнительная проверка | Удалённая проверка получателя и нормативная приёмка |

@@ -63,8 +63,11 @@ snapshot не объявляется утверждённой формой. Ни
 шаблонов: scope Business/owner member, зашифрованные title/text/reason, отдельное
 авторство и история версий. Название не может состоять только из пробелов.
 Версия в registry не означает клиническое утверждение: authority утверждения
-уточняется у владельца; approval/выбор для реального документооборота/API/UI
-пока не включены. Подстановка полей и PDF также остаются открытыми.
+уточняется у владельца; approval/выбор для реального документооборота пока
+не включены. Для личных черновиков реализованы domain/API create/update/list/
+history/read: текущая роль doctor/head, own scope, server-owned identifiers,
+точный version audit, no-store/private, replay/stale/rollback. UI S17 ещё
+не подключён. Подстановка полей и PDF также остаются открытыми.
 
 Добавлены source-scoped филиалы и исходящие предложения врача:82 focused/dependent
 backend tests/check/drift PASS в изолированном SQLite. UI из записи и active
