@@ -1,4 +1,8 @@
 export const medical = {
+  "medical.participation.initiator": "Бастамашы",
+  "medical.participation.workDirection": "Жұмыс бағыты",
+  "medical.participation.workDirectionHint": "Дәрігер мұны шақыруды қабылдамас бұрын көреді. Диагноздарды немесе медициналық карта деректерін көрсетпеңіз.",
+  "medical.participation.plannedWorkDate": "Жұмыстың жоспарланған күні",
   "medical.participation.declineReason": "Бас тарту себебі",
   "medical.notifications.participation_proposed": "Емдеуге қатысуға жаңа шақыру",
   "medical.notifications.participation_accepted": "Емдеуге қатысуға шақыру қабылданды",

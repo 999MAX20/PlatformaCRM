@@ -174,6 +174,8 @@ class TreatmentParticipation(TimeStampedModel):
     reason_encrypted = models.TextField(blank=True, editable=False)
     closure_reason_encrypted = models.TextField(blank=True, editable=False)
     decline_reason_encrypted = models.TextField(blank=True, editable=False)
+    work_direction_encrypted = models.TextField(blank=True, editable=False)
+    planned_work_date = models.DateField(null=True, blank=True)
     remaining_responsible = models.ForeignKey("businesses.BusinessMember", on_delete=models.PROTECT,
         null=True, blank=True, related_name="closed_medical_participations")
     revision = models.PositiveIntegerField(default=1)

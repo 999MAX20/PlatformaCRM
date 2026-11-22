@@ -36,6 +36,7 @@ test("allows patient labels only in the explicit medical module keys", () => {
     ["medical.clinical.verifyFirst", "Verify the patient’s identity"],
     ["medical.tooth.title", "Dental chart"], ["medical.tooth.orientation", "Sides relative to the patient"],
     ["medical.participation.invite", "Пригласить врача"], ["medical.participation.doctor", "Дәрігер"],
+    ["medical.participation.workDirectionHint", "Врач увидит это до принятия приглашения."],
     ["clients.create", "Создать пациента"], ["medical.unreviewed", "Doctor"],
   ]), ["clients.create", "medical.unreviewed"]);
 });

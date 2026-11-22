@@ -4,6 +4,7 @@ import { medicalParticipationApi as api, type Participation, type ParticipationS
 import { getApiErrorMessage } from "../../api/client";
 import { Button } from "../../components/ui/Button";
 import { Select } from "../../components/ui/Select";
+import { Input } from "../../components/ui/Input";
 import { Textarea } from "../../components/ui/Textarea";
 import { ErrorState, LoadingState } from "../../components/ui/StateViews";
 import { useI18n } from "../../lib/i18n";
@@ -20,6 +21,8 @@ export function ParticipationCommandForm({ scope, item, onSaved, onDenied, guard
   const [revision, setRevision] = useState<number | null>(null);
   const [selected, setSelected] = useState("");
   const [reason, setReason] = useState("");
+  const [workDirection, setWorkDirection] = useState("");
+  const [plannedWorkDate, setPlannedWorkDate] = useState("");
   const [loading, setLoading] = useState(true);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<unknown>(null);
@@ -28,8 +31,8 @@ export function ParticipationCommandForm({ scope, item, onSaved, onDenied, guard
   const [attempt, setAttempt] = useState(0);
   const [after, setAfter] = useState<number | undefined>();
   const retry = useRef<{ fingerprint: string; key: string } | null>(null);
-  guard.current.dirty = Boolean(selected || reason);
-  useEffect(() => { onStateChange?.({ dirty: Boolean(selected || reason), pending }); }, [selected, reason, pending, onStateChange]);
+  guard.current.dirty = Boolean(selected || reason || workDirection || plannedWorkDate);
+  useEffect(() => { onStateChange?.({ dirty: Boolean(selected || reason || workDirection || plannedWorkDate), pending }); }, [selected, reason, workDirection, plannedWorkDate, pending, onStateChange]);
   useEffect(() => {
     const controller = new AbortController();
     setLoading(true); setReadError(null);
@@ -52,11 +55,12 @@ export function ParticipationCommandForm({ scope, item, onSaved, onDenied, guard
   useEffect(() => () => { guard.current = { dirty: false, pending: false }; }, [guard]);
   async function save(event: React.FormEvent) {
     event.preventDefault();
-    if (guard.current.pending || conflict || revision === null || !selected || (item && !reason.trim())) return;
+    if (guard.current.pending || conflict || revision === null || !selected || (item && !reason.trim()) || (!item && (!workDirection.trim() || !plannedWorkDate))) return;
     guard.current.pending = true; setPending(true); setError(null);
     const common = { business_id: scope.businessId, patient_id: scope.patientId };
     const payload = item ? { ...common, expected_revision: item.revision, responsible_member_id: Number(selected), reason }
-      : { ...common, branch_id: scope.branchId, target_member_id: Number(selected), expected_patient_revision: revision, reason, ...scope.source };
+      : { ...common, branch_id: scope.branchId, target_member_id: Number(selected), expected_patient_revision: revision, reason,
+        work_direction: workDirection, planned_work_date: plannedWorkDate, ...scope.source };
     const fingerprint = JSON.stringify(payload);
     if (retry.current?.fingerprint !== fingerprint) retry.current = { fingerprint, key: crypto.randomUUID() };
     try {
@@ -76,12 +80,19 @@ export function ParticipationCommandForm({ scope, item, onSaved, onDenied, guard
       disabled={pending || conflict || loading} onChange={event => setSelected(event.target.value)}
       options={[{ value: "", label: t("medical.participation.choose") }, ...options.map(row => ({ value: row.member_id, label: row.name }))]} />
     {cursor !== null ? <Button type="button" variant="secondary" disabled={loading || pending || conflict} onClick={() => setAfter(cursor)}>{t("medical.participation.more")}</Button> : null}
+    {!item ? <>
+      <Textarea label={t("medical.participation.workDirection")} value={workDirection} maxLength={2000} required
+        disabled={pending} readOnly={conflict} onChange={event => setWorkDirection(event.target.value)} />
+      <p className="text-sm text-platforma-subtle">{t("medical.participation.workDirectionHint")}</p>
+      <Input label={t("medical.participation.plannedWorkDate")} type="date" value={plannedWorkDate} required
+        disabled={pending} readOnly={conflict} onChange={event => setPlannedWorkDate(event.target.value)} />
+    </> : null}
     <Textarea label={t("medical.participation.reason")} aria-label={t("medical.participation.reason")} value={reason} maxLength={2000}
       required={!!item} disabled={pending} readOnly={conflict} onChange={event => setReason(event.target.value)} />
     {conflict || error ? <ErrorState message={conflict ? t("medical.clinical.conflict") : getApiErrorMessage(error)} /> : null}
     <div className="flex flex-wrap gap-2">
       {conflict ? <Button type="button" size="lg" variant="secondary" onClick={() => { if (window.confirm(t("medical.clinical.discard"))) onSaved(); }}>{t("medical.clinical.reload")}</Button> : null}
-      <Button type="submit" size="lg" isLoading={pending} disabled={loading || !!readError || conflict || !selected || (Boolean(item) && !reason.trim())}>{t(item ? "medical.participation.end" : "medical.participation.invite")}</Button>
+      <Button type="submit" size="lg" isLoading={pending} disabled={loading || !!readError || conflict || !selected || (Boolean(item) && !reason.trim()) || (!item && (!workDirection.trim() || !plannedWorkDate))}>{t(item ? "medical.participation.end" : "medical.participation.invite")}</Button>
     </div>
   </form>;
 }

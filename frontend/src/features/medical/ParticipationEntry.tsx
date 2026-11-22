@@ -11,6 +11,7 @@ import { ParticipationCommandForm, type ParticipationFormScope } from "./Partici
 import { ParticipationClinicalHistory } from "./ClinicalHistory";
 import { SourceProposalWorkspace } from "./SourceProposalWorkspace";
 import { ParticipationDeclineForm } from "./ParticipationDeclineForm";
+import { ParticipationInvitationDetails } from "./ParticipationInvitationDetails";
 
 export function PatientParticipationEntry({ businessId, clientId, branchId }: { businessId: number; clientId: number; branchId: number }) {
   const { t } = useI18n();
@@ -169,6 +170,7 @@ function ParticipationWorkspace({ access, patientId, branchId, guard, onDenied }
           <div className="space-y-1 break-words"><p className="font-semibold">{item.patient_name}</p><p className="text-sm">{item.member_name} · {item.branch_name}</p>
             <p className="text-sm text-platforma-subtle">{t(`medical.participation.state.${item.state}`)}</p>
             {item.decline_reason ? <p className="whitespace-pre-wrap text-sm">{t("medical.participation.declineReason")}: {item.decline_reason}</p> : null}</div>
+          <ParticipationInvitationDetails item={item} />
           <div className="flex flex-wrap gap-2">
             {item.state === "pending" && item.member_id === access.member_id && actions?.approve ? <>
               <Button size="lg" disabled={pending !== null || conflict} onClick={() => void respond(item, "accept")}>{t("medical.participation.accept")}</Button>

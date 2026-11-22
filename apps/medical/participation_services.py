@@ -1,4 +1,5 @@
 import json
+from datetime import date
 
 from django.contrib.auth import get_user_model
 from django.db import transaction
@@ -84,11 +85,15 @@ def proposal_branch(*, actor, business, patient_id, role, branch_id,
 
 @transaction.atomic
 def propose_treatment_participation(*, actor, business_id, patient_id, branch_id, target_member_id,
-                                    expected_patient_revision, idempotency_key, reason="",
-                                    source_appointment_id=None, source_participation_id=None):
+                                    expected_patient_revision, idempotency_key, reason="", work_direction="",
+                                    source_appointment_id=None, source_participation_id=None, planned_work_date=None):
     _positive(branch_id=branch_id, target_member_id=target_member_id, expected_patient_revision=expected_patient_revision)
     if not isinstance(reason, str) or len(reason) > 2000:
         raise ValidationError({"reason": "Provide at most 2000 characters."})
+    if not isinstance(work_direction, str) or len(work_direction) > 2000:
+        raise ValidationError({"work_direction": "Provide at most 2000 characters."})
+    if planned_work_date is not None and type(planned_work_date) is not date:
+        raise ValidationError({"planned_work_date": "Provide a calendar date."})
     if source_appointment_id is not None:
         _positive(source_appointment_id=source_appointment_id)
     if source_participation_id is not None:
@@ -107,12 +112,17 @@ def propose_treatment_participation(*, actor, business_id, patient_id, branch_id
     digest = medical_request_digest({"reason": reason}, business_id=business_id)
 
     def operation():
+        if not work_direction.strip():
+            raise ValidationError({"work_direction": "Provide the organizational scope of the work."})
+        if planned_work_date is None:
+            raise ValidationError({"planned_work_date": "Provide the planned date of the work."})
         if patient.revision != expected_patient_revision:
             raise InvalidTransition("Patient changed; review it before proposing participation.")
         if TreatmentParticipation.objects.filter(patient=patient, member=target, branch=branch,
                                                 state__in=["pending", "active"]).exists():
             raise InvalidTransition("An open participation already exists for this doctor and branch.")
-        item = TreatmentParticipation(patient=patient, member=target, branch=branch, proposed_by=actor)
+        item = TreatmentParticipation(patient=patient, member=target, branch=branch, proposed_by=actor,
+                                      planned_work_date=planned_work_date)
         if role.kind == MedicalRoleAssignment.Kinds.DOCTOR:
             item.source_appointment_id = source_appointment_id
             item.source_participation_id = source_participation_id
@@ -120,7 +130,10 @@ def propose_treatment_participation(*, actor, business_id, patient_id, branch_id
         item.save(force_insert=True)
         item.reason_encrypted = encrypt_medical_value(json.dumps({"reason": reason}, ensure_ascii=False),
             business_id=business_id, subject_id=item.pk, purpose="participation_proposal")
-        item.save(update_fields=["reason_encrypted"])
+        item.work_direction_encrypted = encrypt_medical_value(
+            json.dumps({"work_direction": work_direction}, ensure_ascii=False),
+            business_id=business_id, subject_id=item.pk, purpose="participation_work_direction")
+        item.save(update_fields=["reason_encrypted", "work_direction_encrypted"])
         event = write_patient_audit(actor=actor, business=business, patient=patient,
             action="participation_proposed", participation=item)
         notify_participation_event(event)
@@ -130,7 +143,10 @@ def propose_treatment_participation(*, actor, business_id, patient_id, branch_id
         idempotency_key=medical_request_digest({"key": idempotency_key}, business_id=business_id),
         payload={"patient": patient_id, "branch": branch_id, "target": target_member_id,
             "expected_patient_revision": expected_patient_revision, "reason_digest": digest,
-            "source_appointment": source_appointment_id, "source_participation": source_participation_id}, operation=operation)
+            "source_appointment": source_appointment_id, "source_participation": source_participation_id,
+            **({"work_direction_digest": medical_request_digest({"work_direction": work_direction}, business_id=business_id)}
+               if work_direction else {}),
+            **({"planned_work_date": planned_work_date.isoformat()} if planned_work_date is not None else {})}, operation=operation)
     item = TreatmentParticipation.objects.get(patient=patient, member=target, branch=branch,
         pk=result.resource_id if result.replayed else result.resource.pk)
     return item, result.replayed

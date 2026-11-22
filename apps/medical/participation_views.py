@@ -25,6 +25,8 @@ class ParticipationProposalSerializer(ParticipationScopeSerializer):
     target_member_id = serializers.IntegerField(min_value=1)
     expected_patient_revision = serializers.IntegerField(min_value=1)
     reason = serializers.CharField(required=False, allow_blank=True, max_length=2000, trim_whitespace=False)
+    work_direction = serializers.CharField(required=False, allow_blank=True, max_length=2000, trim_whitespace=False)
+    planned_work_date = serializers.DateField(required=False)
     source_appointment_id = serializers.IntegerField(required=False, min_value=1)
     source_participation_id = serializers.IntegerField(required=False, min_value=1)
 

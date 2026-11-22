@@ -128,7 +128,8 @@ test("commands preserve exact reason, scope, revisions and caller retry key", as
   const signal = new AbortController().signal;
   const scope = { business_id: 2, patient_id: 7, expected_revision: 3 };
   const proposal = { business_id: 2, patient_id: 7, branch_id: 4, target_member_id: 5,
-    expected_patient_revision: 8, reason: "  Себеп\n", source_participation_id: 10 };
+    expected_patient_revision: 8, reason: "  Себеп\n", source_participation_id: 10,
+    work_direction: "  Work scope\n", planned_work_date: "2026-12-01" };
   const response = { ...scope, decision: "decline", reason: "  Бас тарту\n" };
   const closure = { ...scope, responsible_member_id: 19, reason: "  Причина\n" };
   await api.propose(proposal, "proposal", signal);

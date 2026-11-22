@@ -46,6 +46,11 @@ for (const language of ["ru", "kk", "en"] as const) for (const mobile of [false,
     await page.getByRole("option", { name: "Synthetic second-branch clinician", exact: true }).click();
     const reason = form.getByRole("textbox", { name: t["medical.participation.reason"], exact: true });
     await reason.fill(`Synthetic handoff ${language} ${mobile}`);
+    const direction = form.getByRole("textbox", { name: t["medical.participation.workDirection"], exact: true });
+    const plannedDate = form.getByLabel(t["medical.participation.plannedWorkDate"], { exact: true });
+    await expect(form.getByRole("button", { name: t["medical.participation.invite"], exact: true })).toBeDisabled();
+    await direction.fill("Synthetic organizational work\n" + "A".repeat(140));
+    await plannedDate.fill("2026-12-01");
     page.once("dialog", dialog => dialog.dismiss());
     await page.keyboard.press("Escape");
     await expect(reason).toHaveValue(`Synthetic handoff ${language} ${mobile}`);
@@ -63,6 +68,8 @@ for (const language of ["ru", "kk", "en"] as const) for (const mobile of [false,
     const save = form.getByRole("button", { name: t["medical.participation.invite"], exact: true });
     await save.click();
     await expect(form.getByRole("alert")).toContainText(t["actions.errorTemporary"]);
+    await expect(direction).toHaveValue("Synthetic organizational work\n" + "A".repeat(140));
+    await expect(plannedDate).toHaveValue("2026-12-01");
     await expect(reason).toHaveValue(`Synthetic handoff ${language} ${mobile}`);
     await workspace.screenshot({ path: info.outputPath("proposal-recovery.png") });
     expect((await new AxeBuilder({ page }).include('[data-testid="source-proposal-workspace"]').withTags(["wcag2a", "wcag2aa"]).analyze()).violations).toEqual([]);
@@ -86,6 +93,10 @@ for (const language of ["ru", "kk", "en"] as const) for (const mobile of [false,
         await receiver.goto("/app/calendar");
         await receiver.getByRole("button", { name: t["medical.participation.title"], exact: true }).click();
         const row = receiver.getByTestId(`participation-row-${item.id}`);
+        await expect(row).toContainText("Synthetic organizational work");
+        await expect(row).toContainText("Synthetic clinician");
+        await expect(row.locator("time")).toHaveAttribute("datetime", "2026-12-01");
+        await row.screenshot({ path: info.outputPath("invitation-recipient.png") });
         await row.getByRole("button", { name: t["medical.participation.accept"], exact: true }).click();
         await expect(row).toContainText(t["medical.participation.state.active"]);
         expect((await receiver.request.get(clinicalUrl, { headers: { Authorization: `Bearer ${receiverToken}` } })).status()).toBe(200);
@@ -96,6 +107,8 @@ for (const language of ["ru", "kk", "en"] as const) for (const mobile of [false,
         await receiver.getByRole("option", { name: "First", exact: true }).click();
         await reverse.getByRole("combobox", { name: new RegExp(`^${t["medical.participation.doctor"]}(?:\\s|$)`) }).click();
         await receiver.getByRole("option", { name: "Synthetic clinician", exact: true }).click();
+        await reverse.getByRole("textbox", { name: t["medical.participation.workDirection"], exact: true }).fill("Synthetic follow-up work");
+        await reverse.getByLabel(t["medical.participation.plannedWorkDate"], { exact: true }).fill("2026-12-02");
         await reverse.getByRole("button", { name: t["medical.participation.invite"], exact: true }).click();
         await reverse.getByRole("button", { name: t["medical.participation.withdraw"], exact: true }).click();
         await expect(reverse).toContainText(t["medical.participation.state.withdrawn"]);
@@ -147,12 +160,15 @@ test("proposal mobile: loading, read recovery and actual role revocation", async
   await page.getByRole("option", { name: "Synthetic second-branch clinician", exact: true }).click();
   const reason = workspace.getByRole("textbox", { name: ru["medical.participation.reason"], exact: true });
   await reason.fill("Synthetic concurrent proposal");
+  await workspace.getByRole("textbox", { name: ru["medical.participation.workDirection"], exact: true }).fill("Synthetic organizational work");
+  await workspace.getByLabel(ru["medical.participation.plannedWorkDate"], { exact: true }).fill("2026-12-01");
   const headers = { Authorization: `Bearer ${token}` };
   const scope = { business_id: 1, patient_id: 8, branch_id: 2, source_appointment_id: 8 };
   const candidates = await (await page.request.get(`${process.env.E2E_API_BASE_URL}/api/medical/participations/candidates/`, { headers, params: scope })).json();
   const created = await page.request.post(`${process.env.E2E_API_BASE_URL}/api/medical/participations/`, {
     headers: { ...headers, "Idempotency-Key": "synthetic-concurrent-proposal" },
-    data: { ...scope, target_member_id: candidates.results[0].member_id, expected_patient_revision: candidates.patient_revision },
+    data: { ...scope, target_member_id: candidates.results[0].member_id, expected_patient_revision: candidates.patient_revision,
+      work_direction: "Synthetic organizational work", planned_work_date: "2026-12-01" },
   });
   expect(created.status()).toBe(201);
   const item = await created.json();

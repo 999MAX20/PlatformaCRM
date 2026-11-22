@@ -24,6 +24,8 @@ export type Participation = {
   closed_at: string | null;
   remaining_responsible_id: number | null;
   decline_reason: string | null;
+  work_direction: string | null;
+  planned_work_date: string | null;
 };
 export type ParticipationPage = { results: Participation[]; next_before_id: number | null };
 export type ParticipationNotificationContext = {
@@ -61,6 +63,8 @@ export type ParticipationProposal = ParticipationScope & ParticipationSource & {
   target_member_id: number;
   expected_patient_revision: number;
   reason?: string;
+  work_direction: string;
+  planned_work_date: string;
 };
 export type ParticipationCommand = ParticipationScope & { expected_revision: number };
 export type ParticipationResult = { id: number; state: ParticipationState; revision: number; replayed: boolean };

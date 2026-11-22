@@ -1,4 +1,4 @@
-DENTAL-MCS-20261122 ACTIVE: причина отказа B07 добавлена в domain/API/encrypted read и оба UI входа;backend runs67/30/30 PASS (пересекаются),10 browser PASS,15 снимков просмотрены,types/build/i18n/10 node/static PASS. Публикация pending поверхe4dca5c7. Полное ТЗ/M06 открыты. [Checkpoint](docs/testing/task-state/DENTAL-MCS-20261122.md).
+DENTAL-MCS-20261122 ACTIVE: B07 — направление, инициатор и плановая дата без автоматического отзыва реализованы;100 backend,24 distinct browser PASS,20 снимков просмотрены,types/build/i18n/15 node/static PASS. Дополнение локально принято, публикация следует; полный M06/ТЗ открыт. Далее API/UI медицинских ролей. [Checkpoint](docs/testing/task-state/DENTAL-MCS-20261122.md).
 
 QA-016-20261121 LOCAL VERIFIED: automatic tasks searchable by displayed RU/KK/EN title; editor preserves original copy on unrelated edits. 66 backend, 9 node, 6 desktop/mobile browser scenarios, build/types/i18n/check/drift PASS; Code 8a240ad3 pushed to main; CI44937543011 queued (not PASS). Working DB untouched. [Evidence](docs/testing/evidence/qa-016-task-search-20261121.md).
 

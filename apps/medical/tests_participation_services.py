@@ -1,5 +1,5 @@
 import json
-from datetime import timedelta
+from datetime import date, timedelta
 from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
@@ -40,6 +40,8 @@ class ParticipationCommandTests(TestCase):
         return propose_treatment_participation(**(dict(actor=self.doctor, business_id=self.business.pk,
             patient_id=self.patient.pk, branch_id=self.first.pk, target_member_id=self.target.pk,
             expected_patient_revision=1, idempotency_key="proposal", reason="Synthetic private reason",
+            work_direction="Synthetic organizational work",
+            planned_work_date=date(2026, 12, 1),
             source_appointment_id=self.appointment.pk) | overrides))
 
     def respond(self, item, **overrides):

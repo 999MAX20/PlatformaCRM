@@ -33,7 +33,8 @@ async function invite(page: Page, patient: number) {
   const candidates = await (await page.request.get(`${api}/api/medical/participations/candidates/`, { headers, params: scope })).json();
   const response = await page.request.post(`${api}/api/medical/participations/`, {
     headers: { ...headers, "Idempotency-Key": `notice-${patient}` },
-    data: { ...scope, target_member_id: candidates.results[0].member_id, expected_patient_revision: candidates.patient_revision, reason: "Synthetic private invitation reason" },
+    data: { ...scope, target_member_id: candidates.results[0].member_id, expected_patient_revision: candidates.patient_revision,
+      reason: "Synthetic private invitation reason", work_direction: "Synthetic organizational work", planned_work_date: "2026-12-01" },
   });
   expect(response.status()).toBe(201);
   await page.context().clearCookies();
@@ -47,6 +48,7 @@ async function latestNotice(page: Page, token: string) {
   expect(JSON.stringify(data)).not.toContain("Synthetic clinical patient");
   expect(JSON.stringify(data)).not.toContain("Synthetic private invitation reason");
   expect(JSON.stringify(data)).not.toContain("Synthetic private decline reason");
+  expect(JSON.stringify(data)).not.toContain("Synthetic organizational work");
   return data.results[0];
 }
 
@@ -66,6 +68,10 @@ for (const language of ["ru", "kk", "en"] as const) for (const mobile of [false,
     await page.locator(`a[href="${notice.action_url}"]`).click();
     const workspace = page.getByTestId("participation-notification");
     await expect(workspace).toContainText(`Synthetic clinical patient ${id}`);
+    await expect(workspace).toContainText(t["medical.participation.initiator"]);
+    await expect(workspace).toContainText("Synthetic organizational work");
+    await expect(workspace.locator("time")).toHaveAttribute("datetime", "2026-12-01");
+    await expect(workspace.locator("time")).toHaveText(language === "kk" ? "2026-12-01" : language === "en" ? "1 December 2026" : "1 декабря 2026 г.");
     await expect(workspace.getByRole("heading")).toBeFocused();
     await workspace.screenshot({ path: info.outputPath("notice-pending.png") });
     expect((await new AxeBuilder({ page }).include('[data-testid="participation-notification"]').withTags(["wcag2a", "wcag2aa"]).analyze()).violations).toEqual([]);

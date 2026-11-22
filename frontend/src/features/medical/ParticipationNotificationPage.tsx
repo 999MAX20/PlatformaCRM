@@ -12,6 +12,7 @@ import { useAuth } from "../auth/AuthProvider";
 import { ParticipationEntry } from "./ParticipationEntry";
 import { SourceProposalEntry } from "./SourceProposalWorkspace";
 import { ParticipationDeclineForm } from "./ParticipationDeclineForm";
+import { ParticipationInvitationDetails } from "./ParticipationInvitationDetails";
 
 export function ParticipationNotificationPage() {
   const { business, isLoading, error } = useActiveBusiness();
@@ -94,6 +95,7 @@ function NotificationWorkspace({ businessId, notificationId }: { businessId: num
         <p role="status" className="text-sm text-platforma-subtle">{t(`medical.participation.state.${item.state}`)}</p>
         {item.decline_reason ? <p className="whitespace-pre-wrap text-sm">{t("medical.participation.declineReason")}: {item.decline_reason}</p> : null}
       </div>
+      <ParticipationInvitationDetails item={item} />
       {declining ? <ParticipationDeclineForm businessId={businessId} item={item} guard={declineGuard} onSaved={refresh}
         onCancel={() => { setDeclining(false); title.current?.focus(); }}
         onDenied={cause => { setDeclining(false); setContext(null); setAccess(null); setError(cause); }} /> : <div className="flex flex-wrap gap-2">

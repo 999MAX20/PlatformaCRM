@@ -23,7 +23,8 @@ class ParticipationAPITests(TestCase):
         self.url = "/api/medical/participations/"
         self.scope = {"business_id": self.business.pk, "patient_id": self.patient.pk}
         self.proposal = {**self.scope, "branch_id": self.first.pk, "target_member_id": self.target.pk,
-            "expected_patient_revision": 1, "reason": "  Synthetic private proposal\n"}
+            "expected_patient_revision": 1, "reason": "  Synthetic private proposal\n",
+            "work_direction": "Synthetic organizational work", "planned_work_date": "2026-12-01"}
 
     def post(self, path="", data=None, token="proposal"):
         return self.api.post(self.url + path, data if data is not None else self.proposal,

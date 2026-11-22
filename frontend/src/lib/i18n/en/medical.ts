@@ -1,4 +1,8 @@
 export const medical = {
+  "medical.participation.initiator": "Initiator",
+  "medical.participation.workDirection": "Scope of work",
+  "medical.participation.workDirectionHint": "The clinician sees this before accepting. Do not include diagnoses or medical record details.",
+  "medical.participation.plannedWorkDate": "Planned work date",
   "medical.participation.declineReason": "Reason for declining",
   "medical.notifications.participation_proposed": "New invitation to participate in treatment",
   "medical.notifications.participation_accepted": "Treatment participation invitation accepted",

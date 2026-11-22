@@ -42,6 +42,16 @@ for (const language of ["ru", "kk", "en"] as const) for (const mobile of [false,
     await form.getByRole("combobox", { name: t["medical.participation.doctor"] }).click();
     await page.getByRole("option", { name: "Synthetic clinician", exact: true }).click();
     await form.getByRole("textbox", { name: t["medical.participation.reason"], exact: true }).fill("Synthetic referral reason");
+    await expect(form.getByRole("button", { name: t["medical.participation.invite"], exact: true })).toBeDisabled();
+    await form.getByRole("textbox", { name: t["medical.participation.workDirection"], exact: true }).fill("Synthetic organizational work");
+    await form.getByLabel(t["medical.participation.plannedWorkDate"], { exact: true }).fill("2026-12-01");
+    await form.getByLabel(t["medical.participation.plannedWorkDate"], { exact: true }).press("Alt+ArrowDown");
+    const calendar = page.getByRole("dialog", { name: t["medical.participation.plannedWorkDate"], exact: true });
+    await expect(calendar).toBeVisible();
+    await calendar.locator('[data-date="2026-12-02"]').click();
+    await expect(form.getByLabel(t["medical.participation.plannedWorkDate"], { exact: true })).toHaveValue("2026-12-02");
+    await expect(calendar).toHaveCount(0);
+    await form.screenshot({ path: info.outputPath("invitation-form.png") });
     page.once("dialog", dialog => dialog.dismiss());
     await page.keyboard.press("Escape");
     await expect(form.getByRole("textbox", { name: t["medical.participation.reason"], exact: true })).toHaveValue("Synthetic referral reason");
@@ -116,7 +126,7 @@ test("participation mobile: decline, withdraw, concurrent end and current role r
   async function propose(key: string) {
     const result = await page.request.post(root, { headers: { ...headers, "Idempotency-Key": key }, data: {
       business_id: 1, patient_id: 8, branch_id: 1, target_member_id: candidates.results[0].member_id,
-      expected_patient_revision: candidates.patient_revision,
+      expected_patient_revision: candidates.patient_revision, work_direction: "Synthetic organizational work", planned_work_date: "2026-12-01",
     } });
     expect(result.status()).toBe(201);
     return result.json();
