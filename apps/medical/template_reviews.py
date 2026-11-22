@@ -2,6 +2,7 @@ import hashlib
 import json
 
 from django.db import transaction
+from django.db.models import F
 from django.utils import timezone
 from rest_framework.exceptions import PermissionDenied, ValidationError
 
@@ -158,3 +159,31 @@ def read_submitted_template(*, actor, business_id, version_id):
             "submitted_at": review.submitted_at.isoformat(), "decided_by": review.decided_by_id,
             "decided_at": review.decided_at.isoformat() if review.decided_at else None,
             "decision_reason": reason, **snapshot}
+
+
+@transaction.atomic
+def list_pending_template_reviews(*, actor, business_id, before_id=None, limit=20):
+    if before_id is not None:
+        _identifier(before_id)
+    if type(limit) is not int or not 1 <= limit <= 50:
+        raise ValidationError({"limit": "Select a page size from 1 to 50."})
+    business, _ = _context(actor, business_id, "view")
+    _head(actor, business)
+    reviews = MedicalTemplateReview.objects.select_related("version__template").filter(
+        version__template__business=business, state="pending",
+        version__revision=F("version__template__revision")).order_by("-pk")
+    if before_id is not None:
+        reviews = reviews.filter(pk__lt=before_id)
+    page = list(reviews[:limit + 1])
+    results = []
+    for review in page[:limit]:
+        version = review.version
+        write_template_audit(actor=actor, business=business, version=version, action="read")
+        snapshot = read_template_revision(version)
+        read_review_decision(review, snapshot["template"])
+        results.append({"review_id": review.pk, "version_id": version.pk,
+            "template_id": version.template_id, "revision": version.revision,
+            "title": snapshot["template"]["title"], "state": review.state,
+            "submitted_by": review.submitted_by_id, "submitted_at": review.submitted_at.isoformat()})
+    return {"results": results,
+            "next_before_id": page[limit - 1].pk if len(page) > limit else None}

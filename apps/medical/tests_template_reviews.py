@@ -17,7 +17,7 @@ from .audit import MedicalAuditUnavailable
 from .identity_crypto import MedicalDataUnavailable, MedicalKeyUnavailable, decrypt_medical_value, encrypt_medical_value
 from .models import MedicalAuditEvent, MedicalDocumentTemplate, MedicalDocumentTemplateRevision, MedicalRoleAssignment, MedicalTemplateReview
 from .template_services import save_personal_template_draft
-from .template_reviews import submit_personal_template, decide_template_review, read_submitted_template
+from .template_reviews import submit_personal_template, decide_template_review, read_submitted_template, list_pending_template_reviews
 
 
 @override_settings(MEDICAL_DATA_KEYS={"test": crypto_fixtures.key(7)}, MEDICAL_DATA_ACTIVE_KEY_ID="test",
@@ -245,3 +245,42 @@ class TemplateReviewTests(TestCase):
         review.submitted_by = outsider
         with self.assertRaises(ModelValidationError):
             review.full_clean()
+
+    def test_queue_requires_head_and_excludes_unsubmitted_and_stale_versions(self):
+        def queue(actor=None, **kwargs):
+            return list_pending_template_reviews(actor=actor or self.head, business_id=self.business.pk, **kwargs)
+        self.assertEqual(queue()["results"], [])
+        self.submit()
+        self.assertEqual(queue()["results"][0]["version_id"], self.version.pk)
+        for actor in (self.doctor, self.owner):
+            with self.assertRaises(PermissionDenied):
+                queue(actor)
+        self.next_version()
+        self.assertEqual(queue()["results"], [])
+
+    def test_queue_pages_audits_and_removes_decided_versions(self):
+        first, _ = self.submit()
+        second, _ = save_personal_template_draft(actor=self.doctor, business_id=self.business.pk,
+            title="Second", text="", idempotency_key="new-template")
+        self.submit(version_id=second.pk, idempotency_key="submit-new")
+        before = MedicalAuditEvent.objects.filter(action="read").count()
+        page = list_pending_template_reviews(actor=self.head, business_id=self.business.pk, limit=1)
+        self.assertEqual([row["version_id"] for row in page["results"]], [second.pk])
+        self.assertEqual(MedicalAuditEvent.objects.filter(action="read").count(), before + 1)
+        page = list_pending_template_reviews(actor=self.head, business_id=self.business.pk,
+            before_id=page["next_before_id"], limit=1)
+        self.assertEqual(page["results"][0]["review_id"], first.pk)
+        self.assertIsNone(page["next_before_id"])
+        self.decide()
+        page = list_pending_template_reviews(actor=self.head, business_id=self.business.pk)
+        self.assertEqual([row["version_id"] for row in page["results"]], [second.pk])
+
+    def test_queue_denial_and_audit_failure_do_not_release_content(self):
+        self.submit()
+        with patch("apps.medical.template_reviews.write_template_audit", side_effect=MedicalAuditUnavailable):
+            with self.assertRaises(MedicalAuditUnavailable):
+                list_pending_template_reviews(actor=self.head, business_id=self.business.pk)
+        self.head_assignment.revoked_at = timezone.now()
+        self.head_assignment.save(update_fields=["revoked_at"])
+        with self.assertRaises(PermissionDenied):
+            list_pending_template_reviews(actor=self.head, business_id=self.business.pk)

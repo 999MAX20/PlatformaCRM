@@ -141,6 +141,15 @@ decider/time и зашифрованные reason/content digest; отказ т�
 версии шаблона, не ЭЦП или подпись медицинского документа. Общие шаблоны и отзыв
 утверждения остаются открытыми сценариями.
 
+Review API под /medical/document-templates/: GET pending-reviews/ выдаёт
+медруководителю только текущие отправленные pending версии своего Business,
+с ограниченной cursor-пагинацией и аудитом каждой прочитанной версии. GET
+versions/{id}/review/ доступен автору и уполномоченному медруководителю; POST
+versions/{id}/submit/ и versions/{id}/decision/ используют Idempotency-Key и
+действующие domain checks. Decision принимает approved/rejected и reason;
+отказ требует причины. Все ответы, включая ошибки, no-store/private. Чтение
+обычного personal API по-прежнему не открывает чужие личные черновики.
+
 Добавлена основа PatientProfile OneToOne Client с шифрованными полями и отдельным
 tenant-scoped индексом ИИН. Обычные merge и merge preview блокируются до переноса
 связей, если любая сторона имеет медицинский профиль, включая отключённый модуль.

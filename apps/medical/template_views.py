@@ -4,6 +4,10 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .serializers import StrictSerializer
+from .template_reviews import (
+    decide_template_review, list_pending_template_reviews, read_submitted_template,
+    submit_personal_template,
+)
 from .template_services import (
     list_personal_template_drafts, list_personal_template_versions,
     personal_template_workspace_access,
@@ -35,6 +39,12 @@ class TemplateHistorySerializer(TemplateScopeSerializer):
     limit = serializers.IntegerField(min_value=1, max_value=50, required=False, default=20)
 
 
+class TemplateDecisionSerializer(TemplateScopeSerializer):
+    decision = serializers.ChoiceField(choices=["approved", "rejected"])
+    reason = serializers.CharField(max_length=2000, allow_blank=True, required=False,
+                                   default="", trim_whitespace=False)
+
+
 class MedicalDocumentTemplateViewSet(viewsets.GenericViewSet):
     permission_classes = [IsAuthenticated]
     lookup_value_regex = r"[0-9]+"
@@ -43,7 +53,8 @@ class MedicalDocumentTemplateViewSet(viewsets.GenericViewSet):
 
     def get_serializer_class(self):
         return {"create": TemplateDraftSerializer, "draft": TemplateUpdateSerializer,
-                "list": TemplateListSerializer, "revisions": TemplateHistorySerializer}.get(
+                "list": TemplateListSerializer, "pending_reviews": TemplateListSerializer,
+                "decide": TemplateDecisionSerializer, "revisions": TemplateHistorySerializer}.get(
                     self.action, TemplateScopeSerializer)
 
     def finalize_response(self, request, response, *args, **kwargs):
@@ -94,3 +105,31 @@ class MedicalDocumentTemplateViewSet(viewsets.GenericViewSet):
         serializer.is_valid(raise_exception=True)
         return Response(read_personal_template_version(actor=request.user,
             version_id=int(version_id), **serializer.validated_data))
+
+    @action(detail=False, methods=["get"], url_path="pending-reviews")
+    def pending_reviews(self, request):
+        serializer = self.get_serializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+        return Response(list_pending_template_reviews(actor=request.user, **serializer.validated_data))
+
+    @action(detail=False, methods=["get"], url_path=r"versions/(?P<version_id>[0-9]+)/review")
+    def review(self, request, version_id=None):
+        serializer = self.get_serializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+        return Response(read_submitted_template(actor=request.user,
+            version_id=int(version_id), **serializer.validated_data))
+
+    def _review_command(self, request, version_id, service):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        review, replayed = service(actor=request.user, version_id=int(version_id),
+            idempotency_key=request.headers.get("Idempotency-Key"), **serializer.validated_data)
+        return Response({"review_id": review.pk, "version_id": review.version_id, "replayed": replayed})
+
+    @action(detail=False, methods=["post"], url_path=r"versions/(?P<version_id>[0-9]+)/submit")
+    def submit(self, request, version_id=None):
+        return self._review_command(request, version_id, submit_personal_template)
+
+    @action(detail=False, methods=["post"], url_path=r"versions/(?P<version_id>[0-9]+)/decision")
+    def decide(self, request, version_id=None):
+        return self._review_command(request, version_id, decide_template_review)

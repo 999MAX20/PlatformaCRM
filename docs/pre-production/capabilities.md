@@ -68,7 +68,10 @@ snapshot не объявляется утверждённой формой. Ни
 не включены в пользовательский workflow. Добавлен domain submission/decision/read
 MedicalTemplateReview: конкретная версия, head-only approve с business scope,
 encrypted receipt, audit/replay/stale/rollback;141 affected backend tests/check/drift
-и isolated migration roundtrip PASS. Review API/UI ещё не подключены,
+и isolated migration roundtrip PASS. Добавлены review API submit/read/decision
+и очередь текущих pending версий с пагинацией;56 affected tests/check/drift PASS,
+дополнительный прогон6 HTTP tests с tenant/stale/revocation PASS.
+Review UI ещё не подключён,
 PostgreSQL concurrency не подтверждена. Для личных черновиков реализованы domain/API create/update/list/
 history/read: текущая роль doctor/head, own scope, server-owned identifiers,
 точный version audit, no-store/private, replay/stale/rollback. UI S17 личных

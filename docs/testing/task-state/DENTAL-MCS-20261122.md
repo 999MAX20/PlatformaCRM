@@ -1,6 +1,31 @@
 # DENTAL-MCS-20261122: полная реализация медицинского ТЗ
 
+Продолжение M11: проверенный domain00f9c346 → отсутствует очередь рассмотрения →
+добавить tenant-scoped пагинацию только отправленных текущих pending версий.
+Переиспользуются _context/_head, version audit и receipt verification. Риск:
+раскрытие личных черновиков/чужого Business; проверки: head/doctor/owner denial,
+pagination, stale exclusion, audit rollback, затем affected backend/check/drift.
+Queue domain focused11248:19 PASS1.917s. HTTP submit/read/decision/pending-reviews
+добавлен поверх domain; affected76851:56 PASS3.004s, check/drift PASS.
+Логи TEMP/dental-template-queue-focused-20261122.log и
+TEMP/dental-template-review-api-20261122.log. Static65607 PASS, лог
+TEMP/dental-template-review-api-static-20261122.log. Дополнительный HTTP boundary
+прогон20034:6 PASS1.298s после добавления двух тестов tenant/stale/revocation;
+TEMP/dental-template-review-api-boundaries-20261122.log. Production code неизменен
+между affected и boundary прогонами. Новых миграций нет. Своих процессов нет.
+Схема не менялась, рабочая БД/провайдеры не затронуты. Notifications/BusinessEvent/AI
+N/A: только внутренний template review/audit. Build/browser N/A для этого backend
+среза; UI ещё не подключён и не признан готовым. Весь M11 остаётся открыт.
+
 ## M11: утверждение версии шаблона, domain в работе
+
+Опубликовано00f9c34640e24ac26b494f5edbed9b989068fae6 normal-push origin/main,
+remote SHA подтверждён;10 files614+/12-, outgoing только свой commit. Root/branch
+прежние. Working/index/committed static26927 PASS; чужой WIP сохранён, STATUS/access
+staged частично. CI45020659770 in_progress, не PASS. Своих процессов нет.
+Продолжить review HTTP/queue + UI статусы/send/approve/reject, используя этот
+domain и receipt verification; обычный personal API не расширять чтением чужих
+неотправленных черновиков. Общие шаблоны/revoke/clinical selection далее в M11.
 
 Affected23777 завершён exit0:141 tests PASS5.985s, check/drift PASS; clean migrate
 и0024→0023→0024 PASS в disposable SQLite. Этот roundtrip на пустой базе не доказывает
