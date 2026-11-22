@@ -18,6 +18,7 @@ from .template_services import (
     list_personal_template_drafts, list_personal_template_versions,
     personal_template_workspace_access,
     read_personal_template_version, save_personal_template_draft,
+    template_service_options,
 )
 
 
@@ -53,6 +54,10 @@ class TemplateHistorySerializer(TemplateScopeSerializer):
     limit = serializers.IntegerField(min_value=1, max_value=50, required=False, default=20)
 
 
+class TemplateServiceOptionsSerializer(TemplateListSerializer):
+    q = serializers.CharField(max_length=255, allow_blank=True, required=False, default="")
+
+
 class TemplateDecisionSerializer(TemplateScopeSerializer):
     decision = serializers.ChoiceField(choices=["approved", "rejected"])
     reason = serializers.CharField(max_length=2000, allow_blank=True, required=False,
@@ -69,6 +74,7 @@ class MedicalDocumentTemplateViewSet(viewsets.GenericViewSet):
         if self.action == "common":
             return TemplateDraftSerializer if self.request.method == "POST" else TemplateListSerializer
         return {"create": TemplateDraftSerializer, "draft": TemplateUpdateSerializer,
+                "service_options": TemplateServiceOptionsSerializer,
                 "common_draft": TemplateUpdateSerializer, "approved": TemplateListSerializer,
                 "common_revisions": TemplateHistorySerializer,
                 "list": TemplateListSerializer, "pending_reviews": TemplateListSerializer,
@@ -107,6 +113,12 @@ class MedicalDocumentTemplateViewSet(viewsets.GenericViewSet):
         serializer.is_valid(raise_exception=True)
         personal_template_workspace_access(actor=request.user, **serializer.validated_data)
         return Response({"fields": DOCUMENT_FIELDS})
+
+    @action(detail=False, methods=["get"], url_path="service-options")
+    def service_options(self, request):
+        serializer = self.get_serializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+        return Response(template_service_options(actor=request.user, **serializer.validated_data))
 
     def list(self, request):
         serializer = self.get_serializer(data=request.query_params)

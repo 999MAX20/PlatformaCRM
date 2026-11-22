@@ -1,4 +1,14 @@
 export const medical = {
+  "medical.templates.language": "Язык шаблона",
+  "medical.templates.unspecified": "Не указан",
+  "medical.templates.category": "Категория",
+  "medical.templates.specialty": "Специальность",
+  "medical.templates.services": "Услуги",
+  "medical.templates.servicesCount": "Услуги: {count} из 50",
+  "medical.templates.removeService": "Убрать",
+  "medical.templates.selectServices": "Выбрать услуги",
+  "medical.templates.searchServices": "Поиск услуг",
+
   "medical.fields.choose": "Данные для подстановки",
   "medical.fields.insert": "Вставить поле",
   "medical.fields.empty": "Доступных полей пока нет.",

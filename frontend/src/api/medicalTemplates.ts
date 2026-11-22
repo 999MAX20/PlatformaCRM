@@ -5,10 +5,13 @@ export type TemplateAccess = { business_id: number; member_id: number; kind: "do
 export type TemplateReviewSummary = { state: "pending" | "approved" | "rejected"; submitted_at: string; decided_at: string | null; decision_reason: string };
 export type TemplateRow = { template_id: number; version_id: number; revision: number; title: string; created_at: string };
 export type TemplateVersionRow = { version_id: number; revision: number; author_id: number; created_at: string };
+export type TemplateService = { id: number; name: string };
+export type TemplateMetadata = { language: "" | "ru" | "kk" | "en"; category: string; specialty: string; services: TemplateService[] };
 export type TemplateVersion = TemplateVersionRow & { template_id: number; current_revision: number;
-  template: { code: string; version: number; title: string; text: string }; reason: string; review: TemplateReviewSummary | null };
+  template: { code: string; version: number; title: string; text: string }; reason: string; review: TemplateReviewSummary | null; metadata?: TemplateMetadata };
 export type TemplateReview = TemplateReviewSummary & Omit<TemplateVersion, "review" | "author_id" | "created_at">;
-export type TemplateDraft = { business_id: number; title: string; text: string; reason: string };
+export type TemplateDraft = { business_id: number; title: string; text: string; reason: string;
+  metadata?: Omit<TemplateMetadata, "services"> & { service_ids: number[] } };
 export type TemplateResult = { id: number; version_id: number; revision: number; replayed: boolean };
 const root = "/api/medical/document-templates/";
 async function read<T>(path: string, params: object, signal?: AbortSignal) {
@@ -23,6 +26,8 @@ async function reviewCommand(path: string, payload: object, key: string) {
   return (await apiClient.post(root + path, payload, { headers: { "Idempotency-Key": key } })).data;
 }
 export const medicalTemplatesApi = {
+  services: (business_id: number, q: string, before_id?: number, signal?: AbortSignal) =>
+    read<{ results: TemplateService[]; next_before_id: number | null }>("service-options/", { business_id, q, before_id }, signal),
   fields: (business_id: number, signal?: AbortSignal) => read<{ fields: string[] }>("field-options/", { business_id }, signal),
   approved: (business_id: number, before_id?: number, signal?: AbortSignal) =>
     read<{ results: TemplateRow[]; next_before_id: number | null }>("approved/", { business_id, before_id }, signal),

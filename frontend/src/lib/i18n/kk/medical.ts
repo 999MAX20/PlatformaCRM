@@ -1,4 +1,14 @@
 export const medical = {
+  "medical.templates.language": "Үлгі тілі",
+  "medical.templates.unspecified": "Көрсетілмеген",
+  "medical.templates.category": "Санат",
+  "medical.templates.specialty": "Мамандық",
+  "medical.templates.services": "Қызметтер",
+  "medical.templates.servicesCount": "Қызметтер: {count} / 50",
+  "medical.templates.removeService": "Алып тастау",
+  "medical.templates.selectServices": "Қызметтерді таңдау",
+  "medical.templates.searchServices": "Қызметтерді іздеу",
+
   "medical.fields.choose": "Толтырылатын деректер",
   "medical.fields.insert": "Өрісті кірістіру",
   "medical.fields.empty": "Қолжетімді өрістер әзірге жоқ.",

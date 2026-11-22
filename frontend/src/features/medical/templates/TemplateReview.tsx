@@ -7,6 +7,7 @@ import { ErrorState, LoadingState } from "../../../components/ui/StateViews";
 import { useI18n } from "../../../lib/i18n";
 import { MedicalRoleCommand, type RoleFormControl } from "../roles/MedicalRoleCommand";
 import { medicalRoleDenied } from "../roles/useMedicalRolePage";
+import { TemplateClassificationSummary } from "./TemplateClassification";
 
 export function TemplateReviewStatus({ review }: { review: TemplateReviewSummary | null }) {
   const { t } = useI18n();
@@ -45,6 +46,7 @@ export function TemplateReviewDetail({ businessId, versionId, control }: { busin
     <h2 className="break-words text-base font-semibold">{version.template.title}</h2>
     <p className="text-sm text-platforma-subtle">{t("medical.templates.version", { revision: version.revision })}</p>
     <div className="whitespace-pre-wrap break-words text-sm">{version.template.text}</div>
+    <TemplateClassificationSummary value={version.metadata} />
     <TemplateReviewStatus review={version} />
     {!current ? <p role="alert" className="text-sm">{t("medical.templates.outdated")}</p> : null}
     {current && version.state === "pending" ? decision ?

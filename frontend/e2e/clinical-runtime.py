@@ -81,9 +81,15 @@ if not Business.objects.filter(slug="medical-role").exists():
             end_at=fixture.appointment.end_at + timedelta(days=index))
 if templates_fixture:
     from django.contrib.auth import get_user_model
+    from apps.services.models import Service
     from apps.businesses.models import BusinessMember, BusinessRole, RolePermission
     from apps.medical.models import MedicalRoleAssignment
     assignment = MedicalRoleAssignment.objects.get(member__user__email="medical-role-doctor@example.test")
+    for index in range(1, 26):
+        Service.objects.get_or_create(business=assignment.member.business,
+            name=f"Synthetic classification service {index:02d}")
+    Service.objects.get_or_create(business=assignment.member.business,
+        name="Synthetic long service " + "Ә" * 220)
     assignment.member.role = "specialist"
     assignment.member.save(update_fields=["role"])
     for action in ("view", "create", "update"):

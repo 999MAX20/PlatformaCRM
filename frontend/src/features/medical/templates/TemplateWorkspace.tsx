@@ -8,6 +8,7 @@ import { useI18n } from "../../../lib/i18n";
 import type { RoleDraftState } from "../roles/MedicalRoleCommand";
 import { medicalRoleDenied } from "../roles/useMedicalRolePage";
 import { TemplateEditor } from "./TemplateEditor";
+import { TemplateClassificationSummary } from "./TemplateClassification";
 import { TemplateReviewDetail, TemplateReviewStatus, TemplateSubmit } from "./TemplateReview";
 
 export function TemplateWorkspace({ businessId, active, onDraft }: {
@@ -127,6 +128,7 @@ function TemplateDetail({ businessId, row, canUpdate, control, api }: {
     <p className="text-sm text-platforma-subtle">{t("medical.templates.version", { revision: version.revision })}</p>
     <div className="whitespace-pre-wrap break-words text-sm">{version.template.text}</div>
     <TemplateReviewStatus review={version.review} />
+    <TemplateClassificationSummary value={version.metadata} />
     {version.reason ? <p className="whitespace-pre-wrap break-words text-sm">{t("medical.templates.reason")}: {version.reason}</p> : null}
     {!submitting && canUpdate && version.revision === version.current_revision ? <Button onClick={() => setEditing(true)}>{t(version.review ? "medical.templates.newVersion" : "medical.templates.edit")}</Button> : null}
     {canUpdate && version.revision === version.current_revision && !version.review ?

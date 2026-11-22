@@ -5,6 +5,7 @@ from django.db.models import F
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
 
 from apps.businesses.models import Business
+from apps.services.models import Service
 from apps.core.domain_errors import InvalidTransition
 from apps.core.idempotency import CRMCommandResult, run_idempotent_crm_command
 from .document_content import validate_document_template
@@ -50,6 +51,22 @@ def personal_template_workspace_access(*, actor, business_id):
         actions["approve"] = False
     return {"business_id": business.pk, "member_id": context.member_id,
             "kind": context.kind, "actions": actions}
+
+
+@transaction.atomic
+def template_service_options(*, actor, business_id, before_id=None, limit=20, q=""):
+    business, _ = _context(actor, business_id, "view")
+    if before_id is not None:
+        _identifier(before_id)
+    if type(limit) is not int or not 1 <= limit <= 50 or not isinstance(q, str) or len(q) > 255:
+        raise ValidationError({"services": "Provide a valid search and page size."})
+    services = Service.objects.filter(business=business).order_by("-pk")
+    if q.strip():
+        services = services.filter(name__icontains=q.strip())
+    if before_id is not None:
+        services = services.filter(pk__lt=before_id)
+    page = list(services.values("id", "name")[:limit + 1])
+    return {"results": page[:limit], "next_before_id": page[limit - 1]["id"] if len(page) > limit else None}
 
 
 def save_personal_template_draft(*, actor, business_id, title, text, idempotency_key,

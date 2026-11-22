@@ -1,4 +1,4 @@
-import { test, expect, type Page } from "@playwright/test";
+import { test, expect, type Page, type TestInfo } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { ru } from "../src/lib/i18n/ru";
 import { kk } from "../src/lib/i18n/kk";
@@ -20,6 +20,51 @@ async function login(page: Page, language: string, email = "medical-role-doctor@
   return token;
 }
 
+async function classify(page: Page, language: "ru" | "kk" | "en", info: TestInfo) {
+  const t = { ru, kk, en }[language];
+  const dialog = page.getByRole("dialog");
+  const metadata = dialog.getByTestId("template-classification");
+  await metadata.getByRole("combobox").click();
+  await metadata.getByRole("option", { name: t[`language.${language}`], exact: true }).click();
+  await metadata.getByRole("textbox", { name: t["medical.templates.category"], exact: true }).fill(`Synthetic category ${language}`);
+  await metadata.getByRole("textbox", { name: t["medical.templates.specialty"], exact: true }).fill(`Synthetic specialty ${language}`);
+  let unavailable = true;
+  await page.route("**/api/medical/document-templates/service-options/**", route => unavailable ? route.fulfill({ status: 503, json: { detail: "Synthetic services outage" } }) : route.continue());
+  const services = dialog.getByTestId("template-services");
+  const toggle = services.getByRole("button", { name: t["medical.templates.selectServices"], exact: true });
+  await toggle.click();
+  await expect(services.getByRole("alert")).toBeVisible();
+  if (language === "ru") await services.screenshot({ path: info.outputPath("service-retry.png") });
+  unavailable = false;
+  await services.getByRole("button", { name: t["common.retry"], exact: true }).click();
+  const longService = services.getByRole("button", { name: /^Synthetic long service/ });
+  await longService.click();
+  await expect(longService).toHaveAttribute("aria-pressed", "true");
+  await longService.press("Space");
+  await expect(longService).toHaveAttribute("aria-pressed", "false");
+  if (language === "ru") await longService.screenshot({ path: info.outputPath("service-long-name.png") });
+  await services.getByRole("button", { name: t["medical.templates.more"], exact: true }).click();
+  const option = services.getByRole("button", { name: "Synthetic classification service 01", exact: true });
+  await option.click();
+  await expect(option).toHaveAttribute("aria-pressed", "true");
+  const remove = services.getByRole("button", { name: `${t["medical.templates.removeService"]}: Synthetic classification service 01`, exact: true });
+  await remove.click();
+  await expect(toggle).toBeFocused();
+  await option.click();
+  const search = services.getByRole("textbox", { name: t["medical.templates.searchServices"], exact: true });
+  await search.fill("No matching synthetic procedure");
+  await search.press("Enter");
+  await expect(services.getByText(t["common.noResults"], { exact: true })).toBeVisible();
+  await expect(remove).toBeVisible();
+  if (language === "ru") await services.screenshot({ path: info.outputPath("service-empty-search.png") });
+  await search.fill("Synthetic classification service 25");
+  await services.getByRole("button", { name: t["common.search"], exact: true }).click();
+  await services.getByRole("button", { name: "Synthetic classification service 25", exact: true }).click();
+  await toggle.click();
+  await expect(metadata.getByRole("textbox", { name: t["medical.templates.category"], exact: true })).toHaveValue(`Synthetic category ${language}`);
+  await page.unroute("**/api/medical/document-templates/service-options/**");
+}
+
 for (const [language, t] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
   for (const width of [1440, 390]) test(`template review: ${language} ${width} submission rejection approval`, async ({ page, browser }, info) => {
     test.setTimeout(150_000);
@@ -28,7 +73,7 @@ for (const [language, t] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
     const title = `Synthetic review ${language} ${width}`;
     const response = await page.request.post(`${process.env.E2E_API_BASE_URL}/api/medical/document-templates/`, {
       headers: { Authorization: `Bearer ${token}`, "Idempotency-Key": title },
-      data: { business_id: 1, title, text: "Synthetic review text", reason: "" },
+      data: { business_id: 1, title, text: "Synthetic review text", reason: "", metadata: { language, category: "Synthetic review category", specialty: "Synthetic review specialty", service_ids: [] } },
     });
     expect(response.ok()).toBe(true);
     const workspace = page.getByTestId("medical-template-workspace");
@@ -53,6 +98,7 @@ for (const [language, t] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
       await head.screenshot({ path: info.outputPath("review-queue.png") });
       await headRow.getByRole("button").click();
       const review = head.getByRole("dialog");
+      await expect(review.getByTestId("template-classification-summary").getByText("Synthetic review category", { exact: true })).toBeVisible();
       await review.getByRole("button", { name: t["medical.templates.reject"], exact: true }).click();
       const reject = review.getByRole("button", { name: t["medical.templates.rejectConfirm"], exact: true });
       await expect(reject).toBeDisabled();
@@ -239,6 +285,29 @@ test("templates: list and history pagination, read recovery and navigation", asy
   await page.screenshot({ path: info.outputPath("pagination.png") });
 });
 
+test("template services: empty catalogue and revoked access", async ({ page }, info) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await login(page, "ru");
+  const workspace = page.getByTestId("medical-template-workspace");
+  const create = workspace.getByRole("button", { name: ru["medical.templates.create"], exact: true });
+  const dialog = page.getByRole("dialog");
+  await page.route("**/api/medical/document-templates/service-options/**", route => route.fulfill({ json: { results: [], next_before_id: null } }));
+  await create.click();
+  await dialog.getByRole("button", { name: ru["medical.templates.selectServices"], exact: true }).click();
+  await expect(dialog.getByText(ru["common.noResults"], { exact: true })).toBeVisible();
+  await dialog.getByTestId("template-services").screenshot({ path: info.outputPath("services-empty.png") });
+  await page.keyboard.press("Escape");
+  await page.unroute("**/api/medical/document-templates/service-options/**");
+  await page.route("**/api/medical/document-templates/service-options/**", route => route.fulfill({ status: 403, json: { detail: "Synthetic revoked service access" } }));
+  await create.click();
+  await dialog.getByRole("button", { name: ru["medical.templates.selectServices"], exact: true }).click();
+  await expect(dialog).toHaveCount(0);
+  await expect(workspace.getByRole("alert")).toBeVisible();
+  await expect(create).toHaveCount(0);
+  await expect(workspace.getByRole("listitem")).toHaveCount(0);
+  await workspace.screenshot({ path: info.outputPath("services-denied.png") });
+});
+
 test("template fields: empty catalog, text limit and denied catalog", async ({ page }, info) => {
   const t = ru;
   await page.setViewportSize({ width: 1440, height: 900 });
@@ -315,6 +384,8 @@ for (const language of ["ru", "kk", "en"] as const) for (const mobile of [false,
     await expect(text).toBeFocused();
     await text.press("End");
     await text.pressSequentially(" Synthetic version one");
+    await classify(page, language, info);
+    await dialog.getByTestId("template-classification").screenshot({ path: info.outputPath("classification.png") });
     await dialog.screenshot({ path: info.outputPath("fields-inserted.png") });
     expect((await new AxeBuilder({ page }).include('[role="dialog"]').withTags(["wcag2a", "wcag2aa"]).analyze()).violations).toEqual([]);
     page.once("dialog", confirmation => confirmation.dismiss());
@@ -337,16 +408,25 @@ for (const language of ["ru", "kk", "en"] as const) for (const mobile of [false,
     const row = workspace.getByRole("listitem").filter({ hasText: title });
     await row.getByRole("button").click();
     await expect(dialog.getByText("{{doctor.full_name}} Synthetic version one", { exact: true })).toBeVisible();
+    await expect(dialog.getByTestId("template-classification-summary").getByText(`Synthetic category ${language}`, { exact: true })).toBeVisible();
+    await expect(dialog.getByTestId("template-classification-summary")).toContainText("Synthetic classification service 01");
     await expect(dialog.getByText("Synthetic version one", { exact: false })).toBeVisible();
     await dialog.getByRole("button", { name: t["medical.templates.edit"], exact: true }).click();
+    const category = dialog.getByRole("textbox", { name: t["medical.templates.category"], exact: true });
+    const save = dialog.getByRole("button", { name: t["common.save"], exact: true });
+    await expect(save).toBeDisabled();
+    await category.fill(`Synthetic changed category ${language}`);
+    await expect(save).toBeEnabled();
     await dialog.getByRole("textbox", { name: t["medical.templates.text"], exact: true }).fill("Synthetic version two");
     await dialog.getByRole("textbox", { name: t["medical.templates.reason"], exact: true }).fill("Synthetic correction");
     await dialog.getByRole("button", { name: t["common.save"], exact: true }).click();
     await expect(dialog).toHaveCount(0);
     await row.getByRole("button").click();
     await expect(dialog.getByText("Synthetic version two", { exact: true })).toBeVisible();
+    await expect(dialog.getByTestId("template-classification-summary")).toContainText(`Synthetic changed category ${language}`);
     await dialog.getByRole("button", { name: t["medical.templates.version"].replace("{revision}", "1"), exact: true }).click();
     await expect(dialog.getByText("Synthetic version one", { exact: false })).toBeVisible();
+    await expect(dialog.getByTestId("template-classification-summary")).toContainText(`Synthetic category ${language}`);
     await expect(dialog.getByRole("button", { name: t["medical.templates.edit"], exact: true })).toHaveCount(0);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
     const audit = await new AxeBuilder({ page }).include('[role="dialog"]').analyze();
@@ -376,6 +456,8 @@ for (const [language, t] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
     await dialog.getByRole("button", { name: t["medical.fields.insert"], exact: true }).click();
     await expect(commonText).toHaveValue("Synthetic common text{{patient.full_name}}");
     await expect(commonText).toBeFocused();
+    await classify(page, language, info);
+    await dialog.getByTestId("template-classification").screenshot({ path: info.outputPath("common-classification.png") });
     await dialog.screenshot({ path: info.outputPath("common-fields-inserted.png") });
     let fail = true;
     const keys: string[] = [];

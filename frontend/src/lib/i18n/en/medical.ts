@@ -1,4 +1,14 @@
 export const medical = {
+  "medical.templates.language": "Template language",
+  "medical.templates.unspecified": "Not specified",
+  "medical.templates.category": "Category",
+  "medical.templates.specialty": "Specialty",
+  "medical.templates.services": "Services",
+  "medical.templates.servicesCount": "Services: {count} of 50",
+  "medical.templates.removeService": "Remove",
+  "medical.templates.selectServices": "Select services",
+  "medical.templates.searchServices": "Search services",
+
   "medical.fields.choose": "Data to insert",
   "medical.fields.insert": "Insert field",
   "medical.fields.empty": "No fields are available yet.",
