@@ -69,6 +69,13 @@ database and Python path together. Never run fixture setup on a working database
 Exact scoped checks and visual evidence are recorded in
 [DENTAL-MCS-20261122](task-state/DENTAL-MCS-20261122.md).
 
+`medical-rollout.spec.ts` additionally requires `E2E_MEDICAL_ROLLOUT=1`,
+`E2E_MEDICAL_TEMPLATES=1`, `E2E_MEDICAL_ROLES=1` and
+`DENTAL_MEDICAL_RELEASE_ENABLED=True` in that disposable runtime. It exercises
+the actual v1→v2 service and existing settings entry for a clinician, an owner
+without clinical access, and another industry at desktop/mobile widths. The
+production release flag is never enabled by the test outside its isolated env.
+
 ### Platform administrative acceptance (scoped stage6)
 
 Run the existing ADMIN01–04 and ADMIN05 foundation browser scenarios together:

@@ -14,11 +14,15 @@ participation_fixture = os.environ.get("E2E_PARTICIPATION") == "1"
 proposal_fixture = os.environ.get("E2E_PROPOSAL") == "1"
 roles_fixture = os.environ.get("E2E_MEDICAL_ROLES") == "1"
 templates_fixture = os.environ.get("E2E_MEDICAL_TEMPLATES") == "1"
+rollout_fixture = os.environ.get("E2E_MEDICAL_ROLLOUT") == "1"
 configure_browser_runtime()
 import django
 django.setup()
 from django.conf import settings
 from django.core.management import call_command
+
+if rollout_fixture:
+    settings.DENTAL_MEDICAL_RELEASE_ENABLED = True
 
 directory = Path(settings.DATABASES["default"]["NAME"]).parent
 key_file = directory / "medical-browser-keys.json"
@@ -79,6 +83,18 @@ if not Business.objects.filter(slug="medical-role").exists():
             resource=fixture.staff, branch=fixture.first,
             start_at=fixture.appointment.start_at + timedelta(days=index),
             end_at=fixture.appointment.end_at + timedelta(days=index))
+if rollout_fixture:
+    from apps.businesses.medical_rollout import activate_medical_profile
+    from apps.core.models import AuditLog
+    business = Business.objects.get(slug="medical-role")
+    rollout_audit = AuditLog.objects.filter(business=business, metadata__kind="dental_medical_profile_activated")
+    if not rollout_audit.exists():
+        business.profile_version = 1
+        business.save(update_fields=["profile_version"])
+        business.capabilities.filter(module_key="medical_records").update(is_enabled=False)
+        assert activate_medical_profile(business_id=business.pk)["status"] == "activated"
+    business.refresh_from_db()
+    assert business.profile_version == 2 and rollout_audit.count() == 1
 if templates_fixture:
     from django.contrib.auth import get_user_model
     from apps.services.models import Service
@@ -165,6 +181,12 @@ if roles_fixture:
         grant, _ = BranchAccess.objects.get_or_create(member=member, defaults={"all_branches": False})
         grant.branches.add(Branch.objects.get(business=business, name="First"))
 settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["auth_login"] = "200/min"
+if rollout_fixture:
+    from django.contrib.auth import get_user_model
+    from apps.accounts.google_auth_signup import create_owner_account
+    if not get_user_model().objects.filter(email="rollout-other@example.test").exists():
+        create_owner_account({"email": "rollout-other@example.test", "password": os.environ["E2E_PASSWORD"],
+            "business_name": "Synthetic other industry", "business_type": "beauty"})
 if roles_fixture and len(sys.argv) > 1 and sys.argv[1] in ("disable-role-module", "enable-role-module"):
     BusinessCapability.objects.filter(business__slug="medical-role", module_key="medical_records").update(
         is_enabled=sys.argv[1] == "enable-role-module")

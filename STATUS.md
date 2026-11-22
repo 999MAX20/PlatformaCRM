@@ -1,4 +1,4 @@
-DENTAL-MCS К02 локально принят: поиск и применение шаблонов, domain/API/migration,12 browser RU/KK/EN desktop/mobile, visual/final build/static PASS. CI fixture исправлена,20 focused tests PASS; готовится task-only публикация. Предыдущий CI272f5f23 backend failed, новый CI ещё не запущен. Полный M01–M30/E0–E7 и L01–L19 сохранены. [Checkpoint](docs/testing/task-state/DENTAL-MCS-20261122.md).
+DENTAL-MCS К02 опубликован096cd591; CI45068261530 frontend success/backend in_progress. К03: additive подключение профиля локально проверено (PG10 +API2 +6 desktop/mobile browser/visual), готовится публикация; весь этап открыт по owner-clinician решению. Следующая независимая работа К04. M01–M30/E0–E7 и L01–L19 сохранены. [Checkpoint](docs/testing/task-state/DENTAL-MCS-20261122.md).
 
 QA-016-20261121 LOCAL VERIFIED: automatic tasks searchable by displayed RU/KK/EN title; editor preserves original copy on unrelated edits. 66 backend, 9 node, 6 desktop/mobile browser scenarios, build/types/i18n/check/drift PASS; Code 8a240ad3 pushed to main; CI44937543011 queued (not PASS). Working DB untouched. [Evidence](docs/testing/evidence/qa-016-task-search-20261121.md).
 

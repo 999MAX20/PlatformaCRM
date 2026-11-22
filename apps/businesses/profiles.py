@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from types import MappingProxyType
+from django.conf import settings
 from django.db import transaction
 from django.utils import timezone
 
@@ -87,7 +88,9 @@ def profile_module_enabled(spec, stored, module_key):
 def profile_for_business_type(business_type):
     if business_type not in Business.BusinessTypes.values:
         raise ValidationError({"business_type": "Select a supported business type."})
-    return PROFILE_SPECS[("dentistry" if business_type == "dentistry" else "core", 1)]
+    if business_type == "dentistry":
+        return PROFILE_SPECS[("dentistry", 2 if settings.DENTAL_MEDICAL_RELEASE_ENABLED else 1)]
+    return PROFILE_SPECS[("core", 1)]
 
 
 @transaction.atomic

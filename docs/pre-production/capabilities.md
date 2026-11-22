@@ -199,7 +199,13 @@ API revisions перечисляет прежние редакции с авто
 Следующий срез содержит nullable схему профиля/DB check и реестр core_v1,
 dentistry_v1/v2: медицинские ресурсы требуют v2 и явных зависимых разрешений;
 отзыв читается без устаревшего кеша, лишние строки не расширяют профиль.
-Initializer создаёт core_v1/dentistry_v1 в существующих create paths; серверные
+Initializer создаёт core_v1/dentistry_v1 в существующих create paths, а К03
+добавляет dentistry_v2 для новых стоматологий при release-ready config (default
+false). Additive CLI для существующих legacy/v1 имеет dry-run по умолчанию,
+атомарный audit и безопасный повтор. Domain/concurrency10 проверок PG17 и2 API
+проверки SQLite PASS;6 distinct desktop/mobile browser и visual PASS. К03 открыт
+по owner-clinician решению; проверки/публикация в checkpoint. Working rollout
+не запускался, медицинские данные и роли автоматически не создаются. Серверные
 планы и деньги проверяют профиль. Добавлен apps/medical: криптография с отдельными
 ключами и привязкой к Business/Client/полю, PatientProfile OneToOne Client,
 ограничения подтверждённой идентичности и защита ordinary merge/hard delete Client.
@@ -282,20 +288,20 @@ AI runtime, каналы, записи и обычные платежи оста
 
 ## Границы модулей — 21.11.2026
 
-BusinessCapability и сервисы/API/UI планов существуют, но отдельная активация
-планов/их оплаты и стоматологический профиль ещё не реализованы. Планы связаны
-с lifecycle записи, платежами и merge клиентов. [Карта связей и план CRM-D04](../current/crm-modularity-plan.md)
-основаны на статическом чтении02682f04 + WIP; новая runtime-приёмка не выполнялась.
+BusinessCapability, профильный resolver/initializer и сервисы/API/UI планов
+реализованы. Планы связаны с lifecycle записи, платежами и merge клиентов.
+[Карта связей и план CRM-D04](../current/crm-modularity-plan.md) сохраняют исходное
+статическое обследование02682f04; актуальные проверки реализации находятся в
+[DENTAL-MCS checkpoint](../testing/task-state/DENTAL-MCS-20261122.md).
 Уточнение владельца21.11: только однократное серверное назначение профиля при
 создании бизнеса по выбранной сфере, без пользовательского управления/смены/отключения.
-Наf46ed56b + WIP документированы core_v1 (текущие общие capabilities) и dentistry_v1
-(добавляет общие visit_plans/plan_payments), общий серверный инициализатор и пять
-путей создания Business. Новых keys/профилей в runtime пока нет. Обнаружены writers
-onboarding/capability PATCH/business update: их совместимость входит в будущую
-реализацию. Наd4085a5e + WIP описаны nullable-метка Business, прежние capability rows,
-legacy resolver без backfill и серверные guards. Это спецификация, не миграция
-и не runtime-защита. Следующее — отдельно порученная реализация. Scope остаётся docs-only;
-текущие функции и прежние scoped evidence сохранены.
+Первоначальная спецификация core_v1/dentistry_v1, пяти create paths, nullable-метки,
+legacy resolver и writer guards реализована в отдельно разрешённом DENTAL-MCS.
+Dentistry_v1 добавляет visit_plans/plan_payments; medical_records требует v2.
+Серверные writers запрещают пользовательскую смену сферы/состава. К03 реализует
+согласованное D02 подключение v2 после готовности выпуска; его проверки и открытый
+owner-clinician сценарий описаны выше. Это не разрешение рабочей миграции или
+deployment; прежние scoped evidence не превращаются в полную приёмку модуля.
 
 ## Глобальный поиск — 18.11.2026
 

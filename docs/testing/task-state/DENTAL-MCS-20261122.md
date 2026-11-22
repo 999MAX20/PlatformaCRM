@@ -1,10 +1,122 @@
 # DENTAL-MCS-20261122: полная реализация медицинского ТЗ
 
-## Активный этап К02: поиск и применимость шаблонов
+## Активный этап К03: автоматическое подключение стоматологии
+
+К02 завершён в принятой локальной границе и опубликован096cd591bbdb04d27741cfe31cf13fee00dfd9ca
+в origin/main обычным fast-forward; remote SHA совпал. Committed-range static
+на base272f5f23 PASS (TEMP/dental-template-availability-static-committed-20261123.log).
+CI45068261530 in_progress, не green. Внешняя/PG/нагрузочная приёмка остаётся К17/К18.
+
+К03 начинает с существующих profiles.py/capabilities/initializer/medical role guards
+и сохранённых evidence M01/M02. Новый полный аудит не проводится. D02 означает
+автоматическое additive подключение после готовности модуля; не интерфейс выбора
+модулей/смены сферы. Перед кодом уточнить фактический остаток и записать ниже контракт
+backfill/новых create paths/owner-clinician, проверки и критерии; прежние flow сохранить.
+Текущий source base096cd591, branch прежний, foreign auth/integrations WIP сохраняется.
+Живых owned серверов/тестовых runtime после К02 нет. Рабочая БД не менялась.
+
+### Контракт К03, 23.11.2026 — до реализации
+
+Mode implementation, gaps code/evidence и один owner decision. Переиспользуем
+PROFILE_SPECS dentistry2, BusinessCapability, create_profiled_business и все5
+готовых callers, medical роль/branch/доступ и S18. Изменяем только профильный
+переход/его запуск и зависимый достигнутый UI; чужой serializers/auth WIP не трогаем.
+
+Наблюдаемый результат: после явной технической готовности релиза новые стоматологии
+получают v2 при создании; существующие переходят одной служебной процедурой для
+всех dentistry без ручного списка и без потери Client/Appointment/Service/Payment,
+ID, CRM capabilities/settings или создания patient/record/role grants. До готовности
+новые остаются v1. Готовность задаётся общей конфигурацией выпуска (default false),
+а не merchant toggle; она не означает внешнюю приёмку или аварийный отзыв доступа.
+
+Additive backfill: только legacy/dentistry1 → dentistry2; готовый v2 не чинится и не
+перезаписывается повтором. Существующие обычные capability rows/явные false сохранять,
+отсутствующие базовые defaults добавить; медицинскую capability назначить в рамках
+согласованного D02. Другую/неизвестную конфигурацию не переклассифицировать. По одному
+Business под блокировкой, атомарные profile/capabilities/audit, повтор без новых audit.
+CLI по умолчанию dry-run; --apply требует release-ready конфигурации. Прерванный
+запуск возобновляется безопасно. Никакого выполнения --apply на working DB сейчас.
+Закупочных настроек в текущей модели ещё нет: новые настройки/сохранение false
+реализуются в К14; профильный переход не сбрасывает никаких имеющихся настроек.
+
+Риски: tenant/profile authorization, stale cache, гонки создания/перехода и частичный
+сбой. Focused tests: legacy/v1/v2/другая сфера, no-data/ID/настройки preservation,
+dry-run/flag false, retry/no-op, invalid config, audit rollback; затем create-path
+dependent suites и check/drift, PostgreSQL конкурентность при доступной isolated среде.
+UI: существующий entry после назначенной роли, owner без медицинского доступа,
+другая сфера; browser desktop/mobile и affected build при UI изменениях. Полный
+аудит не повторять; прежние неизменённые доказательства использовать по входам.
+
+Owner-clinician decision ранее оставался pending: async вопрос повторно показан
+23.11 о подтверждении роли врача другим head/deputy в своей области. До ответа
+запрет owner→self остаётся, независимый профильный переход продолжается. Будущие
+jobs/files/AI endpoints наследуют тот же gate в К07/К15; их ещё нет, это не PASS
+несуществующих интеграций. К03 не закрывать при непроверенном обязательном остатке.
+
+Первый К03 domain/initializer gate1672:23 tests,22 PASS/1 fixture error
+(Django TestCase.client затенял нашу Client fixture). Переименована только fixture
+в patient_client; production/assertions не ослаблены. TEMP/dental-medical-rollout-
+domain-20261123.log. Добавлен отдельный PG concurrency test двух одновременных
+rollout: один activated, один unchanged, одна audit row и один набор capabilities.
+Session11490 завершился exit0: isolated PostgreSQL17 check/drift и tests_medical_rollout/
+profile_initialization/profiles/medical_capabilities. TEMP/dental-medical-rollout-
+postgres-20261123.log. Новый initdb внутри isolated_runtime, случайный localhost port,
+синтетический codex_dental/dental_gate, stop в finally. Обычный local-postgres и
+working DB не используются. Внешнее перенаправление вывода не сохранило stdout
+вложенных native subprocess: exit0 подтверждён, счётчики/skip не заявляются.
+После добавления двух dependent API/signup проверок выполняется focused PG R2
+только tests_medical_rollout с явными stdout/stderr handles в logfile; туда входит
+реальная конкурентность. Новые клиники должны получить v2 без patient/record/role
+и без owner medical access. Широкие наборы повторно не запускаются.
+
+PG R2: 12 tests/10 PASS/2 test-helper errors (ошибочный lookup business вместо
+member__business у MedicalRoleAssignment). Все9 domain checks и конкурентность
+двух PostgreSQL17 transactions PASS; audit/профиль создаются один раз. Исправлен
+только lookup двух API tests; повторяются эти2 API checks +check/drift в isolated
+SQLite с явным logfile TEMP/dental-medical-rollout-api-r3-20261123.log. R2 полный
+лог TEMP/dental-medical-rollout-postgres-r2-20261123.log; PG остановлен/удалён.
+CI К0245068261530: Frontend build success, Backend checks and tests ещё in_progress.
+
+API R3: 2 PASS0.659s, check PASS, migration drift отсутствует, session88102 exit0.
+Production после PG10 PASS не менялся; исправлена только test query. Браузерная
+проверка К03 использует существующий UI без его переработки: opt-in fixture
+E2E_MEDICAL_ROLLOUT переводит synthetic v1→v2 реальным service, затем проверяются
+врач/owner без роли/другая сфера на1440/390. Existing templates/roles fixtures
+переиспользуются; обычные suites без нового env сохраняют прежнюю подготовку.
+Owned runtime93527 держит отдельную SQLite только для этих проверок/повторов.
+Browser R1:4 passed/2 failed, но это не rollout evidence: configure_browser_runtime
+удалил непропущенный E2E flag, поэтому новый переход и other-industry fixture не
+запустились. Минимальная диагностика подтвердила отсутствие synthetic пользователя.
+Флаг захватывается до guard, release setting задаётся только после его успешной
+проверки; fixture утверждает profile2 и ровно1 rollout audit. R2 повторяет все6
+сценариев с фактическим переходом на том же disposable runtime, новый logfile
+TEMP/dental-medical-rollout-browser-r2-20261123.log и output/playwright/medical-rollout-r2-20261123.
+
+**К03 rollout принят локально, весь этап не закрыт.** R2:6 PASS39.3s (врач/owner/
+другая сфера ×1440/390). Visually inspected все6; один other-industry mobile снимок
+поймал загрузку. R3 ждёт завершения loading и проверяет отсутствие medical option
+в мобильном Select:4 denied cases PASS28.8s, все4 снимка просмотрены. Итог6 distinct
+сценариев +4 адресных повтора; наличие/отсутствие entry, dialog open/Escape/focus,
+real API200/403, overflow PASS. RU достаточно: UI/copy/layout в К03 не изменены;
+К02 RU/KK/EN, recovery/keyboard/axe и final build переиспользуются с неизменными
+frontend source/dependencies/config сборки. Новый full build/full suite не нужен
+для backend профиля и opt-in browser fixtures. Test TS исполнен Playwright.
+Runtime93527 exit0, процессы/одноразовая БД убраны; working DB не затронута.
+
+Публикуемый остаток: review/static/commit/normal push. После него остаётся owner
+decision (кто подтверждает медицинскую роль владельца-врача), без самовыдачи;
+его отсутствие не блокирует независимый К04 с уже назначенными ролями. Полный
+К03/M01/M02 не отмечать закрытым. К07/К15 проверяют новые files/jobs/AI consumers,
+К14 реализует новые закупочные настройки, К17/К18 — общую интеграцию/нагрузку;
+эти требования не удаляются. App README/product/spec не требуют изменения:
+бизнес-правила прежние; config/runbook обновлены в .env.example и модульном плане,
+права в access, паспорт в capabilities, browser flags в testing.md.
+
+## К02: поиск и применимость шаблонов — локально принят и опубликован
 
 Код и пользовательские сценарии приняты локально; CI fixture regression20 PASS,
-документация/static PASS, остаётся публикация. HEAD/base этапа272f5f23; branch codex/ui-testing-toolkit,
-canonical root C:/Users/user/Desktop/PlatformaCRM. Ничего из К02 пока не staged/committed.
+документация/static PASS. Опубликован096cd591, base этапа272f5f23; branch codex/ui-testing-toolkit,
+canonical root C:/Users/user/Desktop/PlatformaCRM. В commit только30 task-owned paths.
 Один активный этап; M01–M30/E0–E7, К03–К18 и внешние L01–L19 ниже сохранены.
 
 **Поведение и граница.** Personal/common/approved поиск по названию, сохранённому
@@ -82,14 +194,14 @@ ci-regression-r2-20261123.log. Первая попытка завершилас�
 но не setup (без DJANGO_SETTINGS_MODULE). Повтор через manage.py с -u -X faulthandler
 успешен, assertions/production не менялись. Полный CI повторно будет проверен после push.
 
-**Runtime/следующий шаг.** Python REPL69863 завершён через exit(); disposable runtime
+**Runtime/публикация.** Python REPL69863 завершён через exit(); disposable runtime
 очищается штатным context cleanup, browser processes завершены. Финальный static35551
 exit0, base656dbd19318b6e146dbc0026afd1727fa719c14e (исходный base полной задачи),
 TEMP/dental-template-availability-static-final-20261123.log. После правки только
 Markdown diff hygiene повторён; новые executable inputs после gate не менялись.
 Контракт access, frontend, capabilities и матрица согласованы; README не требует
-правки (команды setup и публичный статус не изменены). Следующий шаг task-only
-commit/normal push/remote SHA/CI, затем К03 без нового разрешения. Рабочая БД/реальные
+правки (команды setup и публичный статус не изменены). Task-only commit/normal push
+и remote SHA подтверждены выше; следующим выполняется К03. Рабочая БД/реальные
 данные/провайдеры не затронуты. Внешние проверки не выдаются за выполненные.
 
 К01 завершён и опубликован fff0555c1b6842eac933970ad865ed0f5d659518 в origin/main;
@@ -2332,8 +2444,8 @@ push и фактический CI учитываются отдельно. Mock 
 | --- | --- | --- | --- | --- |
 | К00. Автор задаёт классификацию шаблона, руководитель видит её при рассмотрении | M11/M24/M25; E3; D06 | Версии, утверждение, editor, Service, typed API | Остатка этого сценария нет; template search не входит в его закрытие |26 API +20 browser,102 снимка, final build/static PASS; опубликован be235444. Полный M11 открыт |
 | К01. Медруководитель подтверждает реквизиты клиники и врача; врач читает свои сведения | M11 §5.2–5.3, M02/M24/M25; E3; существующие medical role guards | CredentialProfile/Revision, encrypted history, Business/Member и shared forms; storage64 dependent PASS | В принятом сценарии остатка нет; подтверждение/API/UI/история/schema4 готовы; опубликован fff0555c |105 affected/dependent +1 migration roundtrip,8 credential browser +1 template regression,43 снимка,build/types/static PASS; собственная роль/head scope/tenant/stale/replay/audit rollback проверены. Госреестр и нормативная достаточность отдельно |
-| К02. Врач находит подходящий утверждённый шаблон; руководитель управляет его применимостью | M11/M16, D06/D09; E3/E4; К00 | Personal/common drafts/review/history, классификация и approved selector; поиск/фильтры, head pause/resume, encrypted история и UI реализованы | Код/пользовательский сценарий локально принят; CI fixture regression20 PASS/static PASS; завершить task-only публикацию. Полные M11/M16 не закрываются этим этапом | Domain/API/migration/check/drift,12 distinct browser RU/KK/EN ×desktop/mobile +4 повтора, affected visual и final build PASS. Чужое/неутверждённое скрыто, paused create409, старый документ неизменен; p95/PG отдельно К17/К18. Точные доказательства в начале checkpoint |
-| К03. Новая и существующая стоматология получает модуль без сброса CRM | M01/M02; D01/D02/D03,B22; E0/E1 | Profile registry/resolver/guards/create paths, BusinessCapability, role settings | Additive backfill, настройки активации, защита jobs/search/files/AI на новых путях, оставшийся owner-clinician сценарий по принятым правилам | Повтор backfill ничего не сбрасывает, IDs/настройки/не-стоматология сохранены, нет owner/platform bypass, изолированные миграции и PG; пользователь видит правильные доступные инструменты |
+| К02. Врач находит подходящий утверждённый шаблон; руководитель управляет его применимостью | M11/M16, D06/D09; E3/E4; К00 | Personal/common drafts/review/history, классификация и approved selector; поиск/фильтры, head pause/resume, encrypted история и UI реализованы | Код/пользовательский сценарий локально принят, остатка в этой границе нет; опубликован096cd591, CI45068261530 выполняется. CI fixture regression20 PASS/static PASS. Полные M11/M16 не закрываются этим этапом | Domain/API/migration/check/drift,12 distinct browser RU/KK/EN ×desktop/mobile +4 повтора, affected visual и final build PASS. Чужое/неутверждённое скрыто, paused create409, старый документ неизменен; p95/PG отдельно К17/К18. Точные доказательства в начале checkpoint |
+| К03. Новая и существующая стоматология получает модуль без сброса CRM | M01/M02; D01/D02/D03,B22; E0/E1 | Profile registry/resolver/guards/create paths, BusinessCapability, role settings; release-ready v2 и additive CLI реализованы, PG domain/concurrency10 PASS +API2 PASS | Browser приёмка и публикация перехода; owner-clinician ждёт решения. Защита новых jobs/files/AI остаётся обязательной в К07/К15; B22 новые настройки в К14, существующие false сохраняются здесь | Повтор backfill ничего не сбрасывает, IDs/настройки/не-стоматология сохранены, нет owner/platform bypass, изолированные миграции и PG; пользователь видит правильные доступные инструменты |
 | К04. Ресепшн находит пациента и безопасно оформляет личность/представителя/исправление | M03/M04/M05; D04,D07,B01–04,B26; E1; К03 | ClientWorkspace, patient identity/crypto, representatives lifecycle, merge guard | Полный поиск/вкладки, перепривязка/исправление ИИН с медсогласованием, безопасный medical merge/correction, negatives представителей и подготовка recipient enforcement | Семейный телефон не объединяет пациентов; verified ИИН PG race, foreign/отзыв/возрастные сценарии, атомарный отказ merge; оформленный пациент доступен для приёма. Реальный протокол личности L04 остаётся отдельной приёмкой |
 | К05. Врач получает доступ по записи/передаче, команда и исправления имеют точные границы | M02/M06/M07; D03,B05–08,B28; E1/E2; К03/К04 | Appointment basis, invitations/transfer/notifications/head-end, role UI | Полнота комбинации оснований, командный ассистент, согласуемый24h correction, security revoke, support-инцидент≤4h readonly, филиальные проекции во всех потребителях | Нет доступа до принятия; запись сразу даёт основание; отзыв сильнее temporary; два основания независимы; запрещённые подпись/export/изменение отсутствуют и на API. Обычное завершение с полной проверкой обязательств закреплено за К11 |
 | К06. Врач ведёт карту, зубы, назначения и клинический план лечения | M08/M09/M10/M16; D05/D09; E2/E4; К04/К05 | Encounter draft/history, odontogram/surfaces, VisitPlan/Step, шаблоны | Клинический план/версии/шаги, назначения типов ТЗ/snippets, связи зубов/плана, остальные вкладки и доступ команды, явные неприменимые разделы | Врач сохраняет и перечитывает историю целого приёма/плана/назначений; клинический план не создаёт долг/бронь, stale/tenant/replay/PG. Снимки подключаются К07, финальное завершение К10; справочник L12 |
