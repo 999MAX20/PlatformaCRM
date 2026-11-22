@@ -1,10 +1,12 @@
 from django.db import transaction
 from django.db.models import F, OuterRef, Q, Subquery
 from rest_framework.exceptions import PermissionDenied, ValidationError
+from apps.core.domain_errors import InvalidTransition
 
 from .models import MedicalDocumentTemplateRevision
 from .role_access import assert_medical_role_permission
 from .template_reviews import _submit_template
+from .template_search import template_search_filters, search_template_page
 from .template_services import (
     _context, _identifier, _save_template_draft, _list_template_versions, assert_common_template_context,
     read_template_version_payload,
@@ -58,16 +60,19 @@ def read_common_template_version(*, actor, business_id, version_id):
 def read_approved_template_version(*, actor, business_id, version_id):
     _identifier(version_id)
     business, context = _context(actor, business_id, "view")
-    version = _visible_approved_versions(business, context).filter(pk=version_id).first()
+    version = _visible_approved_versions(business, context, include_inactive=True).filter(pk=version_id).first()
     if version is None:
         raise PermissionDenied()
+    if not version.template.is_active:
+        raise InvalidTransition("Template use is suspended. Select an available template.")
     return read_template_version_payload(actor=actor, business=business, version=version)
 
 
-def _visible_approved_versions(business, context):
-    return MedicalDocumentTemplateRevision.objects.select_related("template").filter(
+def _visible_approved_versions(business, context, *, include_inactive=False):
+    versions = MedicalDocumentTemplateRevision.objects.select_related("template").filter(
         template__business=business, review__state="approved").filter(
             Q(template__owner_member__isnull=True) | Q(template__owner_member_id=context.member_id))
+    return versions if include_inactive else versions.filter(template__is_active=True)
 
 
 def _page(*, actor, business, versions, before_id, limit):
@@ -88,19 +93,35 @@ def _page(*, actor, business, versions, before_id, limit):
 
 
 @transaction.atomic
-def list_common_template_drafts(*, actor, business_id, before_id=None, limit=20):
+def list_common_template_drafts(*, actor, business_id, before_id=None, limit=20,
+                                q="", language="", category="", specialty="", service_id=None):
     business, context = _context(actor, business_id, "view")
     assert_common_template_context(actor, business, context)
     versions = MedicalDocumentTemplateRevision.objects.select_related("template").filter(
         template__business=business, template__owner_member__isnull=True,
         revision=F("template__revision"))
+    filters = template_search_filters(q=q, language=language, category=category, specialty=specialty, service_id=service_id)
+    if any(filters.values()):
+        return search_template_page(actor=actor, business=business, versions=versions, filters=filters,
+                                    before_id=before_id, limit=limit)
     return _page(actor=actor, business=business, versions=versions, before_id=before_id, limit=limit)
 
 
 @transaction.atomic
-def list_approved_templates(*, actor, business_id, before_id=None, limit=20):
+def list_approved_templates(*, actor, business_id, before_id=None, limit=20,
+                            q="", language="", category="", specialty="", service_id=None, scope="all"):
     business, context = _context(actor, business_id, "view")
+    if scope not in ("all", "personal", "common"):
+        raise ValidationError({"scope": "Select personal, common or all available templates."})
     latest = MedicalDocumentTemplateRevision.objects.filter(template_id=OuterRef("template_id"),
         review__state="approved").order_by("-revision").values("pk")[:1]
     versions = _visible_approved_versions(business, context).filter(pk=Subquery(latest))
+    if scope == "personal":
+        versions = versions.filter(template__owner_member_id=context.member_id)
+    elif scope == "common":
+        versions = versions.filter(template__owner_member__isnull=True)
+    filters = template_search_filters(q=q, language=language, category=category, specialty=specialty, service_id=service_id)
+    if any(filters.values()):
+        return search_template_page(actor=actor, business=business, versions=versions, filters=filters,
+                                    before_id=before_id, limit=limit)
     return _page(actor=actor, business=business, versions=versions, before_id=before_id, limit=limit)

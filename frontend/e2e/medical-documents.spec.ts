@@ -6,11 +6,10 @@ import { en } from "../src/lib/i18n/en";
 import { requireIsolatedEnvironment } from "./isolated-environment.mjs";
 
 requireIsolatedEnvironment();
-let appointmentId = 0;
 for (const [language, t] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
   for (const width of [1440, 390]) test(`documents ${language} ${width}: drafts history recovery and clinical retention`, async ({ page, browser }, info) => {
     test.setTimeout(150_000);
-    const id = ++appointmentId;
+    const id = (["ru", "kk", "en"] as const).indexOf(language) * 2 + (width === 1440 ? 1 : 2);
     const base = process.env.E2E_API_BASE_URL;
     await page.setViewportSize({ width, height: 900 });
     await page.addInitScript(value => localStorage.setItem("ai_smb_language", value), language);
@@ -61,7 +60,26 @@ for (const [language, t] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
     await documents.getByRole("button", { name: t["medical.documents.create"], exact: true }).click();
     const editor = page.getByTestId("medical-document-editor");
     await expect(editor.getByRole("button", { name: new RegExp(title) })).toBeVisible();
+    const search = editor.getByRole("form", { name: t["medical.templates.search"], exact: true });
+    await search.getByRole("textbox", { name: t["medical.templates.searchText"], exact: true }).fill("No synthetic match");
+    await search.getByRole("button", { name: t["medical.templates.search"], exact: true }).click();
+    await expect(editor.getByText(t["medical.templates.noMatches"], { exact: true })).toBeVisible();
+    await editor.screenshot({ path: info.outputPath("document-search-empty.png") });
+    await search.getByRole("textbox", { name: t["medical.templates.searchText"], exact: true }).fill(title);
+    await search.getByRole("button", { name: t["medical.templates.search"], exact: true }).click();
+    await expect(editor.getByRole("button", { name: new RegExp(title) })).toBeVisible();
     await editor.screenshot({ path: info.outputPath("document-template-picker.png") });
+    await command(`${template.id}/availability/`, { business_id: 1, is_active: false,
+      expected_revision: 0, reason: "Synthetic pause during selection" }, headToken);
+    await editor.getByRole("button", { name: new RegExp(title) }).click();
+    await expect(editor.getByRole("alert")).toBeVisible();
+    const chooseAnother = editor.getByRole("button", { name: t["medical.documents.changeTemplate"], exact: true });
+    await expect(chooseAnother).toBeVisible();
+    await editor.screenshot({ path: info.outputPath("document-paused-template.png") });
+    await command(`${template.id}/availability/`, { business_id: 1, is_active: true,
+      expected_revision: 1, reason: "Synthetic resume before reselection" }, headToken);
+    await chooseAnother.click();
+    await expect(editor.getByRole("button", { name: new RegExp(title) })).toBeVisible();
     let failPreview = true;
     await page.route("**/api/medical/documents/preview/**", route => {
       if (failPreview) { failPreview = false; return route.fulfill({ status: 503, contentType: "application/json", body: '{"detail":"Synthetic preview unavailable"}' }); }

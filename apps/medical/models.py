@@ -286,6 +286,8 @@ class MedicalAuditEvent(models.Model):
         TEMPLATE_APPROVED = "template_approved", "Template approved"
         TEMPLATE_REJECTED = "template_rejected", "Template rejected"
         CREDENTIAL_CONFIRMED = "credential_confirmed", "Credential confirmed"
+        TEMPLATE_ACTIVATED = "template_activated", "Template activated"
+        TEMPLATE_DEACTIVATED = "template_deactivated", "Template deactivated"
         READ = "read", "Read"
         ACCESS_DENIED = "access_denied", "Access denied"
 
@@ -312,6 +314,8 @@ class MedicalAuditEvent(models.Model):
                                          null=True, blank=True, related_name="audit_events")
     credential_version = models.ForeignKey("MedicalCredentialRevision", on_delete=models.PROTECT,
                                            null=True, blank=True, related_name="audit_events")
+    template_availability = models.ForeignKey("MedicalTemplateAvailabilityRevision", on_delete=models.PROTECT,
+                                              null=True, blank=True, related_name="audit_events")
     action = models.CharField(max_length=32, choices=Actions.choices)
     result = models.CharField(max_length=16, choices=[("success", "Success"), ("denied", "Denied")])
     created_at = models.DateTimeField(auto_now_add=True)
@@ -333,7 +337,8 @@ class MedicalAuditEvent(models.Model):
                                                "tooth_observation_saved", "document_draft_created",
                                                "document_draft_saved", "template_draft_created",
                                                "template_draft_saved", "template_submitted", "template_approved",
-                                               "template_rejected", "credential_confirmed"], result="success")),
+                                               "template_rejected", "credential_confirmed", "template_activated",
+                                               "template_deactivated"], result="success")),
                 name="medical_audit_action_result"),
             models.CheckConstraint(condition=(
                 models.Q(representative__isnull=True, representative_revision__isnull=True) |
@@ -386,7 +391,8 @@ class MedicalAuditEvent(models.Model):
                          encounter_version__isnull=True, record__isnull=True, tooth_history__isnull=True,
                          document_version__isnull=True,
                          action__in=["read", "template_draft_created", "template_draft_saved",
-                                     "template_submitted", "template_approved", "template_rejected"])),
+                                     "template_submitted", "template_approved", "template_rejected",
+                                     "template_activated", "template_deactivated"])),
                 name="medical_audit_template_relation"),
             models.CheckConstraint(condition=(~models.Q(action__in=["template_draft_created", "template_draft_saved",
                                                                    "template_submitted", "template_approved", "template_rejected"]) |
@@ -398,6 +404,14 @@ class MedicalAuditEvent(models.Model):
                          action__in=["read", "credential_confirmed"])), name="medical_audit_credential_scope"),
             models.CheckConstraint(condition=(~models.Q(action="credential_confirmed") |
                 models.Q(credential_version__isnull=False)), name="medical_audit_credential_needed"),
+            models.CheckConstraint(condition=(models.Q(template_availability__isnull=True) |
+                models.Q(template_version__isnull=False, credential_version__isnull=True,
+                         patient__isnull=True, representative__isnull=True, participation__isnull=True,
+                         encounter_version__isnull=True, record__isnull=True, tooth_history__isnull=True,
+                         document_version__isnull=True, action__in=["read", "template_activated", "template_deactivated"])),
+                name="medical_audit_availability_scope"),
+            models.CheckConstraint(condition=(~models.Q(action__in=["template_activated", "template_deactivated"]) |
+                models.Q(template_availability__isnull=False)), name="medical_audit_availability_needed"),
         ]
 
 class DentalMedicalRecord(TimeStampedModel):
@@ -555,6 +569,8 @@ class MedicalDocumentTemplate(TimeStampedModel):
     owner_member = models.ForeignKey("businesses.BusinessMember", on_delete=models.PROTECT, null=True, blank=True,
                                      related_name="personal_document_templates")
     revision = models.PositiveIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+    availability_revision = models.PositiveIntegerField(default=0)
 
     class Meta:
         constraints = [
@@ -583,6 +599,25 @@ class MedicalDocumentTemplateRevision(models.Model):
             models.UniqueConstraint(fields=["template", "revision"], name="medical_template_version_unique"),
             models.CheckConstraint(condition=models.Q(revision__gte=1), name="medical_template_ver_positive"),
             models.CheckConstraint(condition=~models.Q(snapshot_encrypted=""), name="medical_template_ver_content"),
+        ]
+
+
+class MedicalTemplateAvailabilityRevision(models.Model):
+    template = models.ForeignKey(MedicalDocumentTemplate, on_delete=models.PROTECT, related_name="availability_versions")
+    template_version = models.ForeignKey(MedicalDocumentTemplateRevision, on_delete=models.PROTECT,
+                                        related_name="availability_changes")
+    revision = models.PositiveIntegerField()
+    is_active = models.BooleanField()
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT,
+                              related_name="medical_template_availability_changes")
+    created_at = models.DateTimeField(auto_now_add=True)
+    reason_encrypted = models.TextField(editable=False)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["template", "revision"], name="medical_template_avail_unique"),
+            models.CheckConstraint(condition=models.Q(revision__gte=1), name="medical_template_avail_positive"),
+            models.CheckConstraint(condition=~models.Q(reason_encrypted=""), name="medical_template_avail_reason"),
         ]
 
 

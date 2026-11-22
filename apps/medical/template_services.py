@@ -15,6 +15,7 @@ from .models import MedicalDocumentTemplate, MedicalDocumentTemplateRevision, Me
 from .role_access import assert_medical_role_permission
 from .template_audit import write_template_audit
 from .template_metadata import capture_template_metadata
+from .template_search import template_search_filters, search_template_page
 
 
 def _identifier(value):
@@ -161,16 +162,24 @@ def read_template_version_payload(*, actor, business, version):
             "decision_reason": read_review_decision(review, snapshot["template"])}
     return {"template_id": version.template_id, "version_id": version.pk, "revision": version.revision,
         "current_revision": version.template.revision, "author_id": version.author_id,
-        "created_at": version.created_at, "review": summary, **snapshot}
+        "created_at": version.created_at, "review": summary,
+        "availability": {"is_active": version.template.is_active, "revision": version.template.availability_revision}, **snapshot}
 
 
 @transaction.atomic
-def list_personal_template_drafts(*, actor, business_id, before_id=None, limit=20):
+def list_personal_template_drafts(*, actor, business_id, before_id=None, limit=20,
+                                  q="", language="", category="", specialty="", service_id=None):
     if before_id is not None:
         _identifier(before_id)
     if type(limit) is not int or not 1 <= limit <= 50:
         raise ValidationError({"limit": "Select a page size from 1 to 50."})
     business, context = _context(actor, business_id, "view")
+    filters = template_search_filters(q=q, language=language, category=category, specialty=specialty, service_id=service_id)
+    if any(filters.values()):
+        versions = MedicalDocumentTemplateRevision.objects.select_related("template").filter(
+            template__business=business, template__owner_member_id=context.member_id, revision=F("template__revision"))
+        return search_template_page(actor=actor, business=business, versions=versions, filters=filters,
+                                    before_id=before_id, limit=limit)
     templates = MedicalDocumentTemplate.objects.filter(business=business, owner_member_id=context.member_id,
         revision__gte=1).order_by("-pk")
     if before_id is not None:

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { medicalDocumentsApi as api, type DocumentAccess, type DocumentPreview, type DocumentScope, type DocumentVersion } from "../../../api/medicalDocuments";
-import { medicalTemplatesApi, type TemplateRow } from "../../../api/medicalTemplates";
+import { medicalTemplatesApi, type TemplateRow, type TemplateSearch as SearchFilters } from "../../../api/medicalTemplates";
 import { getApiErrorMessage } from "../../../api/client";
 import { Button } from "../../../components/ui/Button";
 import { Textarea } from "../../../components/ui/Textarea";
@@ -8,6 +8,7 @@ import { ErrorState, LoadingState } from "../../../components/ui/StateViews";
 import { useI18n } from "../../../lib/i18n";
 import { MedicalRoleCommand, type RoleFormControl } from "../roles/MedicalRoleCommand";
 import { medicalRoleDenied } from "../roles/useMedicalRolePage";
+import { TemplateSearch } from "../templates/TemplateSearch";
 
 export function DocumentEditor({ scope, version, control }: {
   scope: DocumentScope; version: DocumentVersion | null; control: RoleFormControl;
@@ -22,6 +23,7 @@ export function DocumentEditor({ scope, version, control }: {
   const [attempt, setAttempt] = useState(0);
   const [choice, setChoice] = useState<number | null>(version?.snapshot.template_source?.version_id ?? null);
   const [before, setBefore] = useState<number | undefined>();
+  const [filters, setFilters] = useState<SearchFilters>({});
   useEffect(() => {
     const controller = new AbortController(); setLoading(true); setError(null);
     void (async () => {
@@ -30,26 +32,32 @@ export function DocumentEditor({ scope, version, control }: {
         const source = await api.preview(scope, choice, version?.document_id, controller.signal);
         if (!controller.signal.aborted) { setPreview(source); setAccess(permissions); }
       } else {
-        const page = await medicalTemplatesApi.approved(scope.business_id, before, controller.signal);
+        const page = await medicalTemplatesApi.approved(scope.business_id, before, controller.signal, filters);
         if (!controller.signal.aborted) { setRows(previous => before ? [...previous, ...page.results] : page.results); setCursor(page.next_before_id); setAccess(permissions); }
       }
     })().catch(cause => { if (!controller.signal.aborted) { if (medicalRoleDenied(cause)) control.onDenied(cause); else setError(cause); } })
       .finally(() => { if (!controller.signal.aborted) setLoading(false); });
     return () => controller.abort();
-  }, [scope, choice, before, attempt, control.onDenied, version?.document_id]);
-  if (loading) return <LoadingState />;
-  if (error) return <ErrorState message={getApiErrorMessage(error)} action={<Button onClick={() => setAttempt(value => value + 1)}>{t("common.retry")}</Button>} />;
+  }, [scope, choice, before, attempt, control.onDenied, version?.document_id, filters]);
+  if (loading && (choice || !access)) return <LoadingState />;
+  if (error && (choice || !access)) return <div className="space-y-3">
+    <ErrorState message={getApiErrorMessage(error)} action={<Button onClick={() => setAttempt(value => value + 1)}>{t("common.retry")}</Button>} />
+    {choice && !version && access ? <Button variant="secondary" onClick={() => { setChoice(null); setPreview(null); setBefore(undefined); }}>{t("medical.documents.changeTemplate")}</Button> : null}
+  </div>;
   if (!access || !(version ? access.actions.update : access.actions.create)) return <p role="status">{t("medical.clinical.readOnly")}</p>;
   if (preview) return <DocumentForm scope={scope} version={version} preview={preview} control={control} />;
   return <div className="space-y-4">
     <h2 className="text-base font-semibold">{t("medical.documents.chooseTemplate")}</h2>
-    {!rows.length ? <p className="text-sm text-platforma-subtle">{t("medical.documents.noTemplates")}</p> : null}
+    <TemplateSearch approved disabled={loading} value={filters} onApply={value => { setLoading(true); setBefore(undefined); setRows([]); setCursor(null); setFilters(value); }} />
+    {loading ? <LoadingState /> : null}
+    {error ? <ErrorState message={getApiErrorMessage(error)} action={<Button onClick={() => setAttempt(value => value + 1)}>{t("common.retry")}</Button>} /> : null}
+    {!loading && !error && !rows.length ? <p className="text-sm text-platforma-subtle">{t(Object.entries(filters).some(([key, value]) => value && (key !== "scope" || value !== "all")) ? "medical.templates.noMatches" : "medical.documents.noTemplates")}</p> : null}
     <ul className="divide-y divide-platforma-border">{rows.map(row => <li key={row.template_id} className="py-2">
-      <Button size="lg" variant="secondary" className="h-auto w-full whitespace-normal text-left" onClick={() => setChoice(row.version_id)}>
+      <Button size="lg" variant="secondary" disabled={loading} className="h-auto w-full whitespace-normal text-left" onClick={() => setChoice(row.version_id)}>
         <span className="min-w-0 break-words">{row.title} · {t("medical.templates.version", { revision: row.revision })}</span>
       </Button>
     </li>)}</ul>
-    {cursor ? <Button variant="secondary" onClick={() => setBefore(cursor)}>{t("medical.templates.more")}</Button> : null}
+    {cursor && !error ? <Button variant="secondary" disabled={loading} onClick={() => setBefore(cursor)}>{t("medical.templates.more")}</Button> : null}
   </div>;
 }
 

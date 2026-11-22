@@ -14,6 +14,7 @@ from .template_reviews import (
     decide_template_review, list_pending_template_reviews, read_submitted_template,
     submit_personal_template,
 )
+from .template_availability import list_managed_templates, list_template_availability, set_template_availability
 from .template_services import (
     list_personal_template_drafts, list_personal_template_versions,
     personal_template_workspace_access,
@@ -49,6 +50,28 @@ class TemplateListSerializer(TemplateScopeSerializer):
     limit = serializers.IntegerField(min_value=1, max_value=50, required=False, default=20)
 
 
+class TemplateSearchSerializer(TemplateListSerializer):
+    q = serializers.CharField(max_length=255, allow_blank=True, required=False, default="")
+    language = serializers.ChoiceField(choices=["", "ru", "kk", "en"], required=False, default="")
+    category = serializers.CharField(max_length=255, allow_blank=True, required=False, default="")
+    specialty = serializers.CharField(max_length=255, allow_blank=True, required=False, default="")
+    service_id = serializers.IntegerField(min_value=1, required=False)
+
+
+class ApprovedTemplateSearchSerializer(TemplateSearchSerializer):
+    scope = serializers.ChoiceField(choices=["all", "personal", "common"], required=False, default="all")
+
+
+class ManagedTemplateSearchSerializer(TemplateSearchSerializer):
+    activity = serializers.ChoiceField(choices=["all", "active", "inactive"], required=False, default="all")
+
+
+class TemplateAvailabilitySerializer(TemplateScopeSerializer):
+    is_active = serializers.BooleanField()
+    expected_revision = serializers.IntegerField(min_value=0)
+    reason = serializers.CharField(max_length=2000, trim_whitespace=False)
+
+
 class TemplateHistorySerializer(TemplateScopeSerializer):
     before_revision = serializers.IntegerField(min_value=1, required=False)
     limit = serializers.IntegerField(min_value=1, max_value=50, required=False, default=20)
@@ -71,13 +94,15 @@ class MedicalDocumentTemplateViewSet(viewsets.GenericViewSet):
     http_method_names = ["get", "post", "head", "options"]
 
     def get_serializer_class(self):
+        if self.action == "availability":
+            return TemplateAvailabilitySerializer if self.request.method == "POST" else TemplateHistorySerializer
         if self.action == "common":
-            return TemplateDraftSerializer if self.request.method == "POST" else TemplateListSerializer
+            return TemplateDraftSerializer if self.request.method == "POST" else TemplateSearchSerializer
         return {"create": TemplateDraftSerializer, "draft": TemplateUpdateSerializer,
-                "service_options": TemplateServiceOptionsSerializer,
-                "common_draft": TemplateUpdateSerializer, "approved": TemplateListSerializer,
+                "service_options": TemplateServiceOptionsSerializer, "managed": ManagedTemplateSearchSerializer,
+                "common_draft": TemplateUpdateSerializer, "approved": ApprovedTemplateSearchSerializer,
                 "common_revisions": TemplateHistorySerializer,
-                "list": TemplateListSerializer, "pending_reviews": TemplateListSerializer,
+                "list": TemplateSearchSerializer, "pending_reviews": TemplateListSerializer,
                 "decide": TemplateDecisionSerializer, "revisions": TemplateHistorySerializer}.get(
                     self.action, TemplateScopeSerializer)
 
@@ -124,6 +149,23 @@ class MedicalDocumentTemplateViewSet(viewsets.GenericViewSet):
         serializer = self.get_serializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
         return Response(list_personal_template_drafts(actor=request.user, **serializer.validated_data))
+
+    @action(detail=False, methods=["get"])
+    def managed(self, request):
+        serializer = self.get_serializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+        return Response(list_managed_templates(actor=request.user, **serializer.validated_data))
+
+    @action(detail=True, methods=["get", "post"])
+    def availability(self, request, pk=None):
+        serializer = self.get_serializer(data=request.data if request.method == "POST" else request.query_params)
+        serializer.is_valid(raise_exception=True)
+        if request.method == "POST":
+            change, replayed = set_template_availability(actor=request.user, template_id=int(pk),
+                **serializer.validated_data, idempotency_key=request.headers.get("Idempotency-Key"))
+            return Response({"id": change.template_id, "revision": change.revision,
+                             "is_active": change.is_active, "replayed": replayed})
+        return Response(list_template_availability(actor=request.user, template_id=int(pk), **serializer.validated_data))
 
     @action(detail=True, methods=["post"])
     def draft(self, request, pk=None):

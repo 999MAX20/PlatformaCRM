@@ -3,10 +3,17 @@ import { apiClient } from "./client";
 export type TemplateAccess = { business_id: number; member_id: number; kind: "doctor" | "head";
   actions: { view: boolean; create: boolean; update: boolean; approve: boolean } };
 export type TemplateReviewSummary = { state: "pending" | "approved" | "rejected"; submitted_at: string; decided_at: string | null; decision_reason: string };
-export type TemplateRow = { template_id: number; version_id: number; revision: number; title: string; created_at: string };
+export type TemplateRow = { template_id: number; version_id: number; revision: number; title: string; created_at: string; availability?: TemplateAvailability };
 export type TemplateVersionRow = { version_id: number; revision: number; author_id: number; created_at: string };
 export type TemplateService = { id: number; name: string };
 export type TemplateMetadata = { language: "" | "ru" | "kk" | "en"; category: string; specialty: string; services: TemplateService[] };
+export type TemplateSearch = { q?: string; language?: TemplateMetadata["language"]; category?: string;
+  specialty?: string; service_id?: number; scope?: "all" | "personal" | "common" };
+export type TemplateAvailability = { is_active: boolean; revision: number };
+export type ManagedTemplateRow = TemplateRow & { availability: TemplateAvailability };
+export type TemplateAvailabilityChange = TemplateAvailability & { id: number; actor_id: number; created_at: string; reason: string };
+export type TemplateAvailabilityHistory = TemplateAvailability & { template_id: number;
+  results: TemplateAvailabilityChange[]; next_before_revision: number | null };
 export type TemplateVersion = TemplateVersionRow & { template_id: number; current_revision: number;
   template: { code: string; version: number; title: string; text: string }; reason: string; review: TemplateReviewSummary | null; metadata?: TemplateMetadata };
 export type TemplateReview = TemplateReviewSummary & Omit<TemplateVersion, "review" | "author_id" | "created_at">;
@@ -26,15 +33,22 @@ async function reviewCommand(path: string, payload: object, key: string) {
   return (await apiClient.post(root + path, payload, { headers: { "Idempotency-Key": key } })).data;
 }
 export const medicalTemplatesApi = {
+  managed: (business_id: number, before_id?: number, signal?: AbortSignal,
+    filters?: Omit<TemplateSearch, "scope"> & { activity?: "all" | "active" | "inactive" }) =>
+    read<{ results: ManagedTemplateRow[]; next_before_id: number | null }>("managed/", { ...filters, business_id, before_id }, signal),
+  availability: (business_id: number, template_id: number, before_revision?: number, signal?: AbortSignal) =>
+    read<TemplateAvailabilityHistory>(`${template_id}/availability/`, { business_id, before_revision }, signal),
+  setAvailability: (template_id: number, payload: { business_id: number; is_active: boolean; expected_revision: number; reason: string }, key: string) =>
+    reviewCommand(`${template_id}/availability/`, payload, key),
   services: (business_id: number, q: string, before_id?: number, signal?: AbortSignal) =>
     read<{ results: TemplateService[]; next_before_id: number | null }>("service-options/", { business_id, q, before_id }, signal),
   fields: (business_id: number, signal?: AbortSignal) => read<{ fields: string[] }>("field-options/", { business_id }, signal),
-  approved: (business_id: number, before_id?: number, signal?: AbortSignal) =>
-    read<{ results: TemplateRow[]; next_before_id: number | null }>("approved/", { business_id, before_id }, signal),
+  approved: (business_id: number, before_id?: number, signal?: AbortSignal, filters?: TemplateSearch) =>
+    read<{ results: TemplateRow[]; next_before_id: number | null }>("approved/", { ...filters, business_id, before_id }, signal),
   approvedVersion: (business_id: number, version_id: number, signal?: AbortSignal) => read<TemplateVersion>(`approved/versions/${version_id}/`, { business_id }, signal),
   access: (business_id: number, signal?: AbortSignal) => read<TemplateAccess>("workspace-access/", { business_id }, signal),
-  list: (business_id: number, before_id?: number, signal?: AbortSignal) =>
-    read<{ results: TemplateRow[]; next_before_id: number | null }>("", { business_id, before_id }, signal),
+  list: (business_id: number, before_id?: number, signal?: AbortSignal, filters?: Omit<TemplateSearch, "scope">) =>
+    read<{ results: TemplateRow[]; next_before_id: number | null }>("", { ...filters, business_id, before_id }, signal),
   history: (business_id: number, template_id: number, before_revision?: number, signal?: AbortSignal) =>
     read<{ results: TemplateVersionRow[]; current_revision: number; next_before_revision: number | null }>(`${template_id}/revisions/`, { business_id, before_revision }, signal),
   version: (business_id: number, version_id: number, signal?: AbortSignal) => read<TemplateVersion>(`versions/${version_id}/`, { business_id }, signal),
@@ -50,7 +64,7 @@ export const medicalTemplatesApi = {
 export const commonTemplatesApi: typeof medicalTemplatesApi = {
   ...medicalTemplatesApi,
   access: (business_id, signal) => read<TemplateAccess>("common/workspace-access/", { business_id }, signal),
-  list: (business_id, before_id, signal) => read("common/", { business_id, before_id }, signal),
+  list: (business_id, before_id, signal, filters) => read("common/", { ...filters, business_id, before_id }, signal),
   history: (business_id, template_id, before_revision, signal) => read(`common/${template_id}/revisions/`, { business_id, before_revision }, signal),
   version: (business_id, version_id, signal) => read(`common/versions/${version_id}/`, { business_id }, signal),
   submit: (version_id, payload, key) => reviewCommand(`common/versions/${version_id}/submit/`, payload, key),

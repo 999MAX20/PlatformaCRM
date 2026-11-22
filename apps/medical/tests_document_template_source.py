@@ -7,6 +7,7 @@ from rest_framework.exceptions import PermissionDenied, ValidationError
 
 from apps.businesses.models import Business, BusinessMember, BusinessRole, RolePermission
 from apps.core.idempotency import CRMCommandConflict
+from apps.core.domain_errors import InvalidTransition
 from . import tests_document_services as fixtures
 from . import tests_patient_services as crypto_fixtures
 from .audit import MedicalAuditUnavailable
@@ -17,6 +18,7 @@ from .identity_crypto import MedicalDataUnavailable, decrypt_medical_value, encr
 from .models import MedicalAuditEvent, MedicalDocumentRevision, MedicalDocumentTemplate, MedicalDocumentTemplateRevision, MedicalRoleAssignment, MedicalTemplateReview
 from .template_reviews import decide_template_review, submit_personal_template
 from .template_services import save_personal_template_draft
+from .template_availability import set_template_availability
 
 
 @override_settings(MEDICAL_DATA_KEYS={"test": crypto_fixtures.key(7)}, MEDICAL_DATA_ACTIVE_KEY_ID="test",
@@ -64,6 +66,24 @@ class DocumentTemplateSourceTests(TestCase):
         self.assertNotIn("Doctor edited", version.snapshot_encrypted)
         self.assertTrue(self.save()[1])
         self.assertEqual(MedicalDocumentRevision.objects.count(), 1)
+
+    def test_paused_template_blocks_new_use_but_preserves_saved_document(self):
+        self.approve()
+        document, _ = self.save()
+        before = read_document_revision(document)
+        set_template_availability(actor=self.head, business_id=self.business.pk,
+            template_id=self.template.template_id, is_active=False, expected_revision=0,
+            reason="Synthetic pause", idempotency_key="pause")
+        for key in ("new-document", "source-document"):
+            with self.subTest(key=key), self.assertRaises(InvalidTransition):
+                self.save(idempotency_key=key)
+        document.refresh_from_db()
+        self.assertEqual(read_document_revision(document), before)
+        self.assertEqual(MedicalDocumentRevision.objects.count(), 1)
+        set_template_availability(actor=self.head, business_id=self.business.pk,
+            template_id=self.template.template_id, is_active=True, expected_revision=1,
+            reason="Synthetic resume", idempotency_key="resume")
+        self.assertFalse(self.save(idempotency_key="after-resume")[1])
 
     def test_new_template_version_and_receipt_change_do_not_rewrite_document(self):
         self.approve()

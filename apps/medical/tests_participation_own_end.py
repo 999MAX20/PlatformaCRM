@@ -104,9 +104,10 @@ class OwnParticipationEndTests(TestCase):
         patient = PatientProfile.objects.create(business=foreign,
             client=Client.objects.create(business=foreign, full_name="Synthetic foreign"), created_by=self.owner)
         member = BusinessMember.objects.create(business=foreign, user=self.recipient)
+        accepted_at = timezone.now()
         item = TreatmentParticipation.objects.create(patient=patient, member=member,
             branch=Branch.objects.create(business=foreign, name="Foreign branch"), proposed_by=self.owner,
-            state="active", accepted_at=timezone.now())
+            state="active", proposed_at=accepted_at, accepted_at=accepted_at)
         with self.assertRaises(PermissionDenied):
             self.end(item, expected_revision=1)
         item.refresh_from_db()
