@@ -13,6 +13,7 @@ from scripts.browser_test_runtime import configure_browser_runtime
 participation_fixture = os.environ.get("E2E_PARTICIPATION") == "1"
 proposal_fixture = os.environ.get("E2E_PROPOSAL") == "1"
 roles_fixture = os.environ.get("E2E_MEDICAL_ROLES") == "1"
+templates_fixture = os.environ.get("E2E_MEDICAL_TEMPLATES") == "1"
 configure_browser_runtime()
 import django
 django.setup()
@@ -63,6 +64,15 @@ if not Business.objects.filter(slug="medical-role").exists():
             resource=fixture.staff, branch=fixture.first,
             start_at=fixture.appointment.start_at + timedelta(days=index),
             end_at=fixture.appointment.end_at + timedelta(days=index))
+if templates_fixture:
+    from apps.businesses.models import RolePermission
+    from apps.medical.models import MedicalRoleAssignment
+    assignment = MedicalRoleAssignment.objects.get(member__user__email="medical-role-doctor@example.test")
+    assignment.member.role = "specialist"
+    assignment.member.save(update_fields=["role"])
+    for action in ("view", "create", "update"):
+        RolePermission.objects.get_or_create(business_role=assignment.business_role,
+            resource="medical_documents", action=action, defaults={"scope": "own", "is_allowed": True})
 if participation_fixture:
     from django.contrib.auth import get_user_model
     from apps.branches.models import BranchAccess

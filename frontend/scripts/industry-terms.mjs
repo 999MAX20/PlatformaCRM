@@ -4,6 +4,7 @@ const explicitIndustryKeys = new Set(["businessType.dentistry", "businessType.me
 const medicalModuleKeys = new Set(["medical.fullName", "medical.create", "medical.clinical.verifyFirst", "medical.tooth.title", "medical.tooth.orientation", "medical.participation.invite", "medical.participation.doctor", "medical.participation.workDirectionHint"]);
 medicalModuleKeys.add("medical.roles.kind.doctor");
 medicalModuleKeys.add("medical.roles.resource.medical_patients");
+medicalModuleKeys.add("medical.templates.draftStatus");
 const industryEntity = /(?:^|[^\p{L}])(?:клиник[\p{L}]*|пациент[\p{L}]*|врач[\p{L}]*|кресл[\p{L}]*|стоматолог[\p{L}]*|емхана[\p{L}]*|дәрігер[\p{L}]*|орындық[\p{L}]*|clinics?|patients?|doctors?|dentists?|dentistry|dental|chairs?)(?=$|[^\p{L}])/iu;
 
 export function industryTermViolations(entries) {

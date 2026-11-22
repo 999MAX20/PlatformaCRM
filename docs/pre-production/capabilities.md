@@ -62,12 +62,15 @@ snapshot не объявляется утверждённой формой. Ни
 Добавлено внутреннее хранение MedicalDocumentTemplate/Revision для общих и личных
 шаблонов: scope Business/owner member, зашифрованные title/text/reason, отдельное
 авторство и история версий. Название не может состоять только из пробелов.
-Версия в registry не означает клиническое утверждение: authority утверждения
-уточняется у владельца; approval/выбор для реального документооборота пока
+Версия в registry не означает клиническое утверждение:22.11.2026 владелец согласовал
+утверждение личных шаблонов и управление общими медруководителем, без этого права
+у владельца Business без медицинской роли. Approval/выбор для реального документооборота пока
 не включены. Для личных черновиков реализованы domain/API create/update/list/
 history/read: текущая роль doctor/head, own scope, server-owned identifiers,
-точный version audit, no-store/private, replay/stale/rollback. UI S17 ещё
-не подключён. Добавлен workspace-access для получения текущих прав на личные
+точный version audit, no-store/private, replay/stale/rollback. UI S17 личных
+черновиков подключён: список, редактор, история;8 desktop/mobile browser сценариев
+на RU/KK/EN с пагинацией/read recovery и2 settings regressions PASS;22 снимка
+просмотрены, подробные проверки в checkpoint. Добавлен workspace-access для получения текущих прав на личные
 шаблоны без чтения их содержимого. Подстановка полей и PDF также остаются открытыми.
 
 Добавлены source-scoped филиалы и исходящие предложения врача:82 focused/dependent

@@ -1,4 +1,5 @@
 import { useSettingsTeam } from "./useSettingsTeam";
+import { useTemplateAccess } from "../medical/templates/useTemplateAccess";
 import { useSettingsMessages } from "./useSettingsMessages";
 import { useSettingsQuickReplies } from "./useSettingsQuickReplies";
 import { useSettingsCustomFields } from "./useSettingsCustomFields";
@@ -23,6 +24,8 @@ import {
 } from "./settingsConfig";
 
 export function useSettingsModel() {
+  const templateAccess = useTemplateAccess();
+  const [templateDraftState, setTemplateDraftState] = useState({ dirty: false, pending: false });
   const [profileDraftState, setProfileDraftState] = useState({ dirty: false, pending: false });
   const [medicalDraftState, setMedicalDraftState] = useState({ dirty: false, pending: false });
   const { t, language } = useI18n();
@@ -70,6 +73,7 @@ export function useSettingsModel() {
   const allowedSettingsSections = useMemo(
     () =>
       settingsSections.filter((section) => {
+        if (section.id === "medical-templates") return templateAccess.allowed;
         if (
           section.id === "business-profile" ||
           section.id === "appointment-messages" ||
@@ -102,6 +106,7 @@ export function useSettingsModel() {
       canViewAudit,
       canViewBilling,
       canViewTeam,
+      templateAccess.allowed,
       user,
     ],
   );
@@ -110,7 +115,7 @@ export function useSettingsModel() {
     activeSettingsSection,
     allowedSettingsSectionIds,
     setActiveSettingsSection,
-  } = useSettingsSectionNavigation(allowedSettingsSections);
+  } = useSettingsSectionNavigation(allowedSettingsSections, !templateAccess.checking);
 
   const {
     teamMembers,
@@ -274,7 +279,9 @@ export function useSettingsModel() {
     inviteForm,
     inviteMutation,
     inviteShareUrl,
-    isLoading,
+    isLoading: isLoading || templateAccess.checking,
+    templateDraftState,
+    setTemplateDraftState,
     lastCreatedInvite,
     locale,
     loginHistory,

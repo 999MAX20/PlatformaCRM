@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import type { SettingsSectionConfig } from "../settingsConfig";
 
-export function useSettingsSectionNavigation(allowedSettingsSections: SettingsSectionConfig[]) {
+export function useSettingsSectionNavigation(allowedSettingsSections: SettingsSectionConfig[], ready = true) {
   const [activeSettingsSection, setActiveSettingsSection] = useState(() => window.location.hash.replace("#", "") || "business-profile");
   const allowedSettingsSectionIds = useMemo(() => new Set(allowedSettingsSections.map(section => section.id)), [allowedSettingsSections]);
 
@@ -15,11 +15,11 @@ export function useSettingsSectionNavigation(allowedSettingsSections: SettingsSe
   }, []);
 
   useEffect(() => {
-    if (!allowedSettingsSections.length || allowedSettingsSectionIds.has(activeSettingsSection)) return;
+    if (!ready || !allowedSettingsSections.length || allowedSettingsSectionIds.has(activeSettingsSection)) return;
     const next = allowedSettingsSections[0].id;
     setActiveSettingsSection(next);
     window.history.replaceState(window.history.state, "", "#" + next);
-  }, [activeSettingsSection, allowedSettingsSectionIds, allowedSettingsSections]);
+  }, [activeSettingsSection, allowedSettingsSectionIds, allowedSettingsSections, ready]);
 
   return { activeSettingsSection, allowedSettingsSectionIds, setActiveSettingsSection };
 }

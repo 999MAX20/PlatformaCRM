@@ -14,6 +14,9 @@ import { useI18n } from "../lib/i18n";
 import { hasPermission, permissionForbiddenMessage } from "../lib/permissions";
 import { getUserStartPath } from "../lib/startPage";
 import { BusinessAccessRevoked } from "../features/auth/BusinessAccessRevoked";
+import { useTemplateAccess } from "../features/medical/templates/useTemplateAccess";
+import { ErrorState } from "../components/ui/StateViews";
+import { Button } from "../components/ui/Button";
 export function MerchantRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading, isMerchantUser, isPlatformUser, user } =
     useAuth();
@@ -106,9 +109,13 @@ export function UserStartRedirect() {
 export function SettingsAccessRoute({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const { business, isLoading } = useActiveBusiness();
+  const templates = useTemplateAccess();
+  const { t } = useI18n();
   if (isLoading) return <LoadingState scope="page" />;
-  return hasPermission(user, business?.id, "settings", "update") || hasPermission(user, business?.id, "integrations", "view")
-    ? children : <ForbiddenState />;
+  if (hasPermission(user, business?.id, "settings", "update") || hasPermission(user, business?.id, "integrations", "view") || templates.allowed) return children;
+  if (templates.checking) return <LoadingState scope="page" />;
+  if (templates.error) return <ErrorState error={templates.error} action={<Button onClick={() => void templates.refetch()}>{t("common.retry")}</Button>} />;
+  return <ForbiddenState />;
 }
 
 export function IntegrationsSettingsRedirect() {

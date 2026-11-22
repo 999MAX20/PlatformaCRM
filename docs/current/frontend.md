@@ -1,3 +1,20 @@
+## Личные медицинские шаблоны: S17
+
+Settings → medical-templates подключён к /medical/document-templates/ для
+doctor/head с текущим медицинским доступом. Sidebar и route guard проверяют
+workspace-access; эта проверка не предоставляет общие CRM settings permissions.
+Личный список, создание/редактирование черновика и чтение истории используют
+общие SettingsSection/Modal/Input/Textarea/Button. Текст выводится буквально;
+клиническое утверждение не подразумевается. Название/текст/комментарий версии
+хранятся только в component state, без localStorage и persistent query cache.
+Метаданные доступа разделены по user/Business. Команды сохраняют retry key для
+того же payload;503 сохраняет ввод,409 требует перечитывания с подтверждением,
+401/403/404 очищают содержимое и закрывают редактор. При сохранении открытие строки
+блокируется до обновления её version_id. Desktop/mobile RU/KK/EN проверены в
+8 browser scenarios, включая пагинацию и read recovery;2 settings boundary
+regressions PASS.22 снимка просмотрены; детали в DENTAL-MCS checkpoint.
+Утверждение/общие шаблоны, подстановки и PDF остаются отдельными открытыми критериями.
+
 ## Медицинские роли: S18/M21, локально проверенный сценарий
 
 В существующих настройках владелец стоматологического Business или Business с

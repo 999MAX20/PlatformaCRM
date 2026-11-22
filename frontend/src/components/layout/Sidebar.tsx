@@ -26,6 +26,7 @@ import { useI18n } from "../../lib/i18n";
 import { hasPermission } from "../../lib/permissions";
 import { prefetchRouteData } from "../../lib/prefetch";
 import { realtimeIntervals, realtimeQueryOptions } from "../../lib/realtime";
+import { useTemplateAccess } from "../../features/medical/templates/useTemplateAccess";
 
 type SidebarItem = {
   to?: string;
@@ -88,18 +89,18 @@ function isItemActive(pathname: string, to?: string) {
   return pathname === to || pathname.startsWith(`${to}/`);
 }
 
-function isSidebarItemVisible(item: SidebarItem, user: ReturnType<typeof useAuth>["user"], businessId?: number): boolean {
-  if (item.to === "/app/settings") return hasPermission(user, businessId, "settings", "update") || hasPermission(user, businessId, "integrations", "view");
+function isSidebarItemVisible(item: SidebarItem, user: ReturnType<typeof useAuth>["user"], businessId?: number, templateAccess = false): boolean {
+  if (item.to === "/app/settings") return templateAccess || hasPermission(user, businessId, "settings", "update") || hasPermission(user, businessId, "integrations", "view");
   if (item.to === "/app/ai-agents") return ["ai_automation", "ai_assistant", "ai_analyst"].some(resource => hasPermission(user, businessId, resource, "view"));
   if (item.resource && !hasPermission(user, businessId, item.resource, item.action)) return false;
   if (!item.children?.length) return true;
-  return item.children.some((child) => isSidebarItemVisible(child, user, businessId));
+  return item.children.some((child) => isSidebarItemVisible(child, user, businessId, templateAccess));
 }
 
-function filterSidebarItem(item: SidebarItem, user: ReturnType<typeof useAuth>["user"], businessId?: number): SidebarItem | null {
-  if (!isSidebarItemVisible(item, user, businessId)) return null;
+function filterSidebarItem(item: SidebarItem, user: ReturnType<typeof useAuth>["user"], businessId?: number, templateAccess = false): SidebarItem | null {
+  if (!isSidebarItemVisible(item, user, businessId, templateAccess)) return null;
   if (!item.children?.length) return item;
-  const children = item.children.map((child) => filterSidebarItem(child, user, businessId)).filter(Boolean) as SidebarItem[];
+  const children = item.children.map((child) => filterSidebarItem(child, user, businessId, templateAccess)).filter(Boolean) as SidebarItem[];
   return children.length ? { ...item, children } : null;
 }
 
@@ -123,6 +124,7 @@ export function Sidebar({
   const location = useLocation();
   const { user } = useAuth();
   const { business } = useActiveBusiness();
+  const templates = useTemplateAccess();
   const inboxSummary = useQuery({
     queryKey: ["inbox-summary", business?.id],
     queryFn: inboxApi.getSummary,
@@ -161,10 +163,10 @@ export function Sidebar({
       (mobileDrawer ? mobileDrawerSections : desktopSections)
         .map((group) => ({
           ...group,
-          items: group.items.map((item) => filterSidebarItem(item, user, business?.id)).filter(Boolean) as SidebarItem[],
+          items: group.items.map((item) => filterSidebarItem(item, user, business?.id, templates.allowed)).filter(Boolean) as SidebarItem[],
         }))
         .filter((group) => group.items.length),
-    [business?.id, mobileDrawer, user],
+    [business?.id, mobileDrawer, user, templates.allowed],
   );
   return (
     <aside

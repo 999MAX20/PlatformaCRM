@@ -38,6 +38,7 @@ test("allows patient labels only in the explicit medical module keys", () => {
     ["medical.participation.invite", "Пригласить врача"], ["medical.participation.doctor", "Дәрігер"],
     ["medical.participation.workDirectionHint", "Врач увидит это до принятия приглашения."],
     ["medical.roles.kind.doctor", "Врач"], ["medical.roles.resource.medical_patients", "Пациенты"],
+    ["medical.templates.draftStatus", "Клиникалық қолдану үшін бекітілмеген."],
     ["clients.create", "Создать пациента"], ["medical.unreviewed", "Doctor"],
   ]), ["clients.create", "medical.unreviewed"]);
 });

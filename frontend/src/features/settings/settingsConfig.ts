@@ -39,6 +39,7 @@ export const settingsSections: SettingsSectionConfig[] = [
   { id: "team-access", group: "business", resource: "team", action: "view" },
   { id: "roles", group: "business", resource: "team", action: "manage" },
   { id: "medical-access", group: "business", resource: "team", action: "manage" },
+  { id: "medical-templates", group: "business", resource: "medical_documents", action: "view" },
   { id: "security-center", group: "business", resource: "audit_logs", action: "view" },
   { id: "appointment-messages", resource: "settings", action: "update" },
   { id: "quick-replies", group: "communication", resource: "conversations", action: "view" },
