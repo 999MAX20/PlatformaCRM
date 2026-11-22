@@ -1,5 +1,18 @@
 ## Медицинская граница DENTAL-MCS — 22.11.2026
 
+К04: POST `/api/medical/patients/resolve/` ищет только разрешённых Client/Patient
+в текущем medical reception+CRM/branch scope. ИИН сравнивается tenant HMAC,
+verified совпадение отдельно от possible; архив включается явно. POST body не
+переносится в URL, audit/query logs или idempotency response. GET search-access/
+возвращает доступные филиалы и create action без PHI. Поиск и регистрация ограничены
+actor-wide `MEDICAL_PATIENT_LOOKUP_RATE` (default60/min), ответы и ошибки no-store.
+POST register/ атомарно создаёт Client+PatientProfile с обычными CRM audit/activity
+и medical audit. Verified ИИН не допускает второго пациента; разрешённые совпадения
+имени/контакта требуют confirmed_separate_person. Это не подтверждение личности.
+Отказ medical audit откатывает всё; повтор команды возвращает тот же профиль.
+Никаких новых provider/notification/AI вызовов. Точные проверки и открытая граница
+перепривязки находятся в [checkpoint](../testing/task-state/DENTAL-MCS-20261122.md).
+
 По §22.6 п.3 команды medical.record.open, medical.encounter.open и
 medical.encounter.primary_draft дополнительно требуют текущую проверенную личность
 пациента. Проверка выполняется до replay; непроверенная личность блокирует обычное
@@ -333,11 +346,21 @@ reception с update+approve исправить имя/дату рождения/
 повторной проверкой по протоколу и актуальными Client/Patient версиями. Старые
 encrypted identity/evidence сохраняются; Client name + Patient + audit/command
 атомарны. Общие CRM writers остаются закрыты для verified имени. Этот сервис не
-принимает изменение ИИН/привязки: отдельный workflow и head approval при medical
-history ещё нужны. UI представителей подключён и локально проверен; полная композиция
+принимает изменение ИИН/привязки. Для ИИН реализован отдельный workflow:
+обученный reception повторно проверяет личность и указывает причину; при наличии
+медицинской истории предложение ожидает действующего head с approve+view и CRM/branch
+доступом. Без истории исправление применяется атомарно. Head approve/reject сохраняет
+зашифрованные основания и прежнюю идентичность, не переносит клинические связи.
+При approve повторно проверяются права/обучение инициатора, текущий протокол,
+Client/Patient версии и отсутствие verified дубля. Stale409 не перезаписывает данные,
+audit failure откатывает команду; retry идемпотентен. Перепривязка и разбор смешанной
+истории остаются открытыми, обычный merge по-прежнему запрещён.
+GET identity-corrections/ доступен reception либо head в разрешённом scope;
+POST {patient_id}/iin-correction/ и identity-corrections/{id}/decision/ используют
+strict body, no-store и обязательный medical audit. UI представителей подключён и локально проверен; полная композиция
 clinical ACL и резервный read audit остаются незавершёнными;
 verify/correction не выдают clinical доступ. Административный API теперь доступен
-через `/api/medical/patients/` только reception с явными medical permissions;
+через `/api/medical/patients/` для reception с явными medical permissions;
 doctor/head получают отдельные clinical routes по текущей записи или участию;
 ассистентские сценарии и остальные ограничения полного ACL ещё требуют реализации.
 Действия над пациентом проверяют dentistry_v2 medical capability, текущий medical/CRM

@@ -9,6 +9,10 @@ const medicalModuleKeys = new Set(["medical.fullName", "medical.create", "medica
 medicalModuleKeys.add("medical.roles.kind.doctor");
 medicalModuleKeys.add("medical.roles.resource.medical_patients");
 medicalModuleKeys.add("medical.templates.draftStatus");
+medicalModuleKeys.add("medical.search.title");
+medicalModuleKeys.add("medical.search.empty");
+medicalModuleKeys.add("medical.registration.title");
+medicalModuleKeys.add("medical.registration.create");
 const industryEntity = /(?:^|[^\p{L}])(?:клиник[\p{L}]*|пациент[\p{L}]*|врач[\p{L}]*|кресл[\p{L}]*|стоматолог[\p{L}]*|емхана[\p{L}]*|дәрігер[\p{L}]*|орындық[\p{L}]*|clinics?|patients?|doctors?|dentists?|dentistry|dental|chairs?)(?=$|[^\p{L}])/iu;
 
 export function industryTermViolations(entries) {

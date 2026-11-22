@@ -300,6 +300,7 @@ REST_FRAMEWORK = {
         "public_widget": env("PUBLIC_WIDGET_RATE", default="120/min"),
         "integration_webhook": env("INTEGRATION_WEBHOOK_RATE", default="300/min"),
         "ai_assistant": env("AI_ASSISTANT_RATE", default="30/min"),
+        "medical_patient_lookup": env("MEDICAL_PATIENT_LOOKUP_RATE", default="60/min"),
     },
 }
 

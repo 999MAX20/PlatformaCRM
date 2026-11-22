@@ -367,10 +367,12 @@ test("representative boundaries mobile: protocol recovery, invalid authority and
   await expect(dialog.getByRole("textbox", { name: "Учебное основание", exact: true })).toBeVisible();
   const picker = dialog.getByRole("button", { name: new RegExp(`^${ru["medical.representative"]} `) });
   await picker.click();
+  await page.getByRole("listbox").getByRole("textbox", { name: ru["common.search"], exact: true }).fill("Representative boundary patient");
   await page.getByRole("option", { name: "Representative boundary patient", exact: true }).click();
   await expect(dialog.getByText(ru["medical.repSelectOther"], { exact: true })).toBeVisible();
   await expect(save).toBeDisabled();
   await picker.click();
+  await page.getByRole("listbox").getByRole("textbox", { name: ru["common.search"], exact: true }).fill("Synthetic long name");
   await page.getByRole("option", { name: /Synthetic long name/ }).click();
   await dialog.getByRole("textbox", { name: "Учебное основание", exact: true }).fill("Mobile retained authority proof");
   await dialog.getByRole("checkbox", { name: "Получение документов", exact: true }).check();

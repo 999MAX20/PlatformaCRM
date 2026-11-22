@@ -10,11 +10,29 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 from scripts.browser_test_runtime import configure_browser_runtime
 
+search_fixture = os.environ.get("E2E_PATIENT_SEARCH") == "1"
+correction_fixture = os.environ.get("E2E_IDENTITY_CORRECTION") == "1"
 configure_browser_runtime()
 import django
 django.setup()
 from django.conf import settings
 from django.core.management import call_command
+
+if correction_fixture:
+    from threading import Lock
+
+    class SerialMedicalBrowserMiddleware:
+        """Serialize SQLite audit writes while retaining independent browser sockets."""
+        lock = Lock()
+
+        def __init__(self, get_response):
+            self.get_response = get_response
+
+        def __call__(self, request):
+            with self.lock:
+                return self.get_response(request)
+
+    settings.MIDDLEWARE = ["__main__.SerialMedicalBrowserMiddleware", *settings.MIDDLEWARE]
 
 directory = Path(settings.DATABASES["default"]["NAME"]).parent
 key_file = directory / "medical-browser-keys.json"
@@ -53,10 +71,14 @@ if not Business.objects.filter(slug="patient-creation").exists():
     Client.objects.create(business=fixture.business, full_name="Representative boundary patient")
 
 business = Business.objects.get(slug="patient-creation")
-assignment = MedicalRoleAssignment.objects.get(member__business=business)
-if len(sys.argv) > 1 and sys.argv[1] == "revoke":
+if search_fixture and not Client.objects.filter(business=business, full_name="Search pagination 00").exists():
+    for index in range(28):
+        Client.objects.create(business=business, full_name=f"Search pagination {index:02d}",
+                              is_archived=index == 27)
+assignment = MedicalRoleAssignment.objects.get(member__business=business, kind="reception")
+if len(sys.argv) > 1 and sys.argv[1] in ("revoke", "restore-search"):
     from django.utils import timezone
-    assignment.revoked_at = timezone.now()
+    assignment.revoked_at = timezone.now() if sys.argv[1] == "revoke" else None
     assignment.save(update_fields=["revoked_at"])
     sys.exit(0)
 if len(sys.argv) > 1 and sys.argv[1] == "setup-boundaries":
@@ -83,4 +105,36 @@ settings.MEDICAL_REPRESENTATIVE_POLICIES = {str(business.pk): {
     "requires_expiry": True,
     "permission_labels": {"receive_documents": {"ru": "Получение документов", "kk": "Құжаттарды алу", "en": "Receive documents"}},
 }}
+if correction_fixture:
+    from django.contrib.auth import get_user_model
+    from apps.branches.models import BranchAccess
+    from apps.businesses.models import BusinessMember, BusinessRole
+    from apps.medical.models import DentalMedicalRecord, PatientProfile
+    from apps.medical.patient_services import create_patient_profile
+    from apps.medical.identity_verification import verify_patient_identity
+    head, created = get_user_model().objects.get_or_create(username="identity-review-head",
+        defaults={"email": "identity-review-head@example.test", "full_name": "Synthetic identity reviewer"})
+    if created:
+        head.set_password(os.environ["E2E_PASSWORD"]); head.save(update_fields=["password"])
+        member = BusinessMember.objects.create(business=business, user=head, role="admin")
+        BranchAccess.objects.create(member=member, all_branches=True)
+        role = BusinessRole.objects.create(business=business, name="Synthetic identity reviewer")
+        MedicalRoleAssignment.objects.create(member=member, business_role=role, kind="head",
+                                             all_branches=True, granted_by=business.owner)
+        for action in ("view", "approve"):
+            RolePermission.objects.create(business_role=role, resource="medical_patients", action=action, scope="business")
+    branch = assignment.branches.first()
+    for locale in ("ru", "kk", "en"):
+        for width in (1440, 390):
+            client, _ = Client.objects.get_or_create(business=business, full_name=f"Correction fixture {locale} {width}")
+            if PatientProfile.objects.filter(client=client).exists():
+                continue
+            patient, _ = create_patient_profile(actor=assignment.member.user, business_id=business.pk,
+                branch_id=branch.pk, client_id=client.pk, demographics={}, iin=None,
+                idempotency_key=f"correction-fixture-{client.pk}")
+            verify_patient_identity(actor=assignment.member.user, business_id=business.pk, branch_id=branch.pk,
+                patient_id=patient.pk, expected_revision=1, expected_client_updated_at=client.updated_at,
+                protocol_reference="synthetic-browser-v1", method="synthetic", fields={"basis": "Synthetic proof only"},
+                idempotency_key=f"correction-verify-{client.pk}")
+            DentalMedicalRecord.objects.create(business=business, patient=patient, number=f"SYNTHETIC-CORRECTION-{client.pk}", opened_by=head)
 call_command("runserver", f"127.0.0.1:{os.environ['E2E_DJANGO_PORT']}", use_reloader=False)

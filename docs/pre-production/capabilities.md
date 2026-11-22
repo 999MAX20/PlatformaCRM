@@ -229,7 +229,12 @@ idempotency store получает только keyed fingerprints, replay пр�
 шифрованными evidence/history и атомарным audit. Без внешне утверждённого настроенного
 протокола verify503; реальных approvals не получено. Controlled correction имени/
 даты/пола/адреса реализована с причиной/recheck/history/audit и update+approve;
-ИИН/перепривязка/head approval и резервный read audit ещё не реализованы.
+К04 добавляет исправление ИИН с повторной проверкой и head approval при медицинской
+истории, encrypted revisions/audit и UI request/approve/reject. Перепривязка историй
+и резервный read audit остаются открытыми. Поиск пациента и атомарное создание
+Client+PatientProfile доступны из ClientsPage; verified ИИН не создаёт дубль,
+контактные совпадения требуют отдельного подтверждения. Scoped backend/PG/browser
+и сборка проверены; точная граница и публикация в DENTAL-MCS checkpoint.
 Общие Client.save/import и conditional editor защищают имя
 verified пациента и Business привязанного Client; обычные контактные поля сохранены.
 Reception-only административный HTTP API соединяет create/read/preliminary/verify/
@@ -245,7 +250,8 @@ create/preliminary/verify/correct формы прошли6 локальных Ch
 Verification-form API отдаёт утверждённые конфигурацией labels RU/KK/EN и схему
 полей только обученному reception с approve; внутренние approvals/member IDs скрыты.
 Без полного описания формы503; реального протокола и внешнего утверждения пока нет.
-Read journal fallback/denial audit и medical v2 rollout ещё не готовы;
+Read journal fallback остаётся открытым; denial audit реализован для scoped API,
+medical v2 rollout реализован в К03, рабочая БД не переводилась;
 локальная граница клинического UI описана выше.
 Представители: добавлен слой хранения PatientRepresentative на существующем Client,
 период/проверивший/отзыв/revision и поля для зашифрованных оснований и полномочий.

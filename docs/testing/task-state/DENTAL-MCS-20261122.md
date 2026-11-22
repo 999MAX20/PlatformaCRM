@@ -1,6 +1,256 @@
 # DENTAL-MCS-20261122: полная реализация медицинского ТЗ
 
-## Активный этап К03: автоматическое подключение стоматологии
+## Активный этап К04: поиск и оформление пациента
+
+К03 rollout опубликован3de53af201511c75660b1304ec2a6a97e6aa324a в origin/main,
+обычный fast-forward и remote SHA проверены. Static на фактическом base096cd591
+PASS: TEMP/dental-medical-rollout-static-20261123.log. CI45070985178 in_progress,
+не green. Позднейший результат CI: frontend success, backend failure1/4619,
+101 skipped. Единственная ошибка tests_template_search foreign fixture:
+submitted_at auto_now_add вычисляется после заранее заданного decided_at,
+нарушая medical_template_review_state на более точных часах Linux.
+К02 scoped PASS → CI доказывает nondeterministic fixture → минимальная правка
+только подготовки foreign approved review: сначала pending insert, затем decision.
+Constraint и visibility assertions сохранены; focused template search8 PASS1.389s
+(TEMP/dental-template-ci-fix-20261123.log). Локальный original reproducer PASS
+из-за гранулярности Windows clock; CI traceback и auto_now_add доказывают причину.
+Новая CI проверяется отдельно после публикации, прежний failure не переименован. Прежняя UI/production реализация К02 не меняется.
+Весь К03 остаётся открытым по owner-clinician решению; вопрос уже задан.
+К04 продолжается независимо на существующих медицинских ролях. Owned processes
+К03 не осталось; К04 держит disposable runtime62302. Все прежние внешние условия L01–L19 и требования сохраняются.
+
+### Контракт К04 — перед реализацией
+
+Mode implementation; gaps code/evidence, внешние протоколы личности L04 отдельно.
+Observable result: ресепшн в выбранном Business/филиале находит существующего
+пациента, отличает подтверждённое совпадение от кандидатов, оформляет личность/
+представителя и контролируемое исправление без объединения чужих историй.
+Reuse Client/нормализация/CRM readable scope, PatientProfile/identity crypto/HMAC,
+patient/representative services/API, ClientWorkspace/Panel/Form, shared UI и i18n.
+Scope M03/M04/M05, D04/D07/B01–04/B26, E1. Base3de53af2; canonical root и branch
+прежние, foreign auth/integrations WIP не трогать.
+
+Готово: create/verify/preliminary/обычные административные correction, encrypted
+revisions, representative verify/revoke, merge/hard-delete guards, patient happy/
+recovery и representative happy UI. Не переписывать эти сценарии. Остаток:
+полный разрешённый поиск/medical list projections/вкладки; ИИН и перепривязка с
+медсогласованием; controlled medical correction без обычного merge; представитель
+negatives, будущий recipient enforcement contract; PG уникальность/гонки.
+
+Первый coherent slice: поиск в существующем patient API через POST, чтобы ИИН
+не попал в URL/общие логи. Только текущие medical reception +CRM Client/branch
+права; точное verified ИИН отдельно от возможных ФИО/телефон/email/дата рождения.
+Reuse нормализацию и scope, не общий plaintext search index; ограниченный ответ,
+пагинация, rate-limit без raw query, medical read audit/no-store, одинаковая
+пустая выдача для отсутствующего и скрытого пациента. Перед добавлением storage
+проверить существующие поля/index/helpers. Никаких provider calls/notifications,
+AI или изменения денег/записей/рабочей БД в этом slice.
+
+Риск высокий: PHI, tenant/branch/hidden existence, подмена личности, concurrent
+verify/correction, audit failure. После каждого domain/API slice focused tests
+(valid/invalid/denied/foreign/archive/revoked/pagination/audit rollback/rate-limit);
+далее reachable UI/desktop-mobile RU/KK/EN, ошибки/повтор/сохранение контекста,
+снимки и visual, affected build/type и system/drift. PG для согласованной identity
+уникальности. Приёмка всего К04 требует целого сценария и перечисленного остатка;
+отсутствие внешнего протокола не выдавать за клиническую готовность. Неясное
+правило исправления сначала сверить с D04/B04, не придумывать право на merge.
+
+Первый К04 domain delta: новый patient_search.resolve_patients переиспользует
+reception_context/readable_queryset/normalizers/tenant HMAC и MedicalAuditEvent.
+ИИН в SQL только digest; обычные контакты/непроверенные совпадения possible,
+verified ИИН exact_confirmed. Архив только явно. Ответ без ИИН/адреса/clinical text,
+с date_of_birth и административным identity_status. Shared demographics decoder
+выделен из прежнего read без смены его semantics. DOB остаётся encrypted и пока
+ищется batch50 scan с пагинацией совпадений, без скрытого лимита полноты;
+его p95/нагрузка требуют отдельного К17 доказательства. Новых schema/index нет.
+Business lock +повтор current access; scope-read audit и patient-read до выдачи,
+audit failure откатывает результат. HTTP/rate-limit/denial audit/UI ещё НЕ готовы.
+Первый gate:8 новых domain cases +существующий patient API для shared decoder;
+при провале сначала минимальный reproducer, не переписывать прежние services.
+
+Domain gate:26 PASS1.893s (8 новых +18 existing patient API) в owned isolated
+SQLite. Первая попытка runner не стартовала тесты из-за отсутствующего settings
+TEST dict; setdefault исправил только runner, лог R1 сохранён. PASS в
+TEMP/dental-patient-search-domain-r2-20261123.log. Runtime62302 сохраняет только
+одноразовую focused-test.sqlite3 (--keepdb) для focused повторов без миграций
+рабочей БД; Python REPL держит context до явной очистки. Прежние application
+servers не запущены. Schema не менялась.
+
+После domain PASS добавлен POST /api/medical/patients/resolve/, strict body,
+no query-string, current scope и no-store на ошибках. Новый actor-wide throttle
+medical_patient_lookup default60/min (MEDICAL_PATIENT_LOOKUP_RATE); смена Business
+не сбрасывает лимит. Отказ права/модуля пишет access_denied без patient/query только
+для собственного/действующего membership бизнеса; чужие tenant не получают такие
+записи. Сбой audit блокирует и успешный ответ, и обработку такого отказа (503).
+6 API checks +8 domain rerun идут в TEMP/dental-patient-search-api-20261123.log.
+UI/права конечного сценария/весь К04 ещё не приняты; не публиковать как готовый поиск.
+
+API/domain14 PASS0.501s. Для достижимого входа добавлен GET search-access: только
+medical reception+CRM clients.view, список пересечения действующих medical/CRM
+филиалов, без PHI. Это устраняет N запросов для подбора доступного филиала и
+не показывает поиск owner без роли. Отдельный API check подтверждает пересечение,
+неактивный филиал, пустой grant, owner denial/strict fields; rerun7 API checks.
+
+Перед UI применяются antislop during (прежнее решение), UI/human/layoutmobile/copy,
+zani-review-frontend и design-taste-frontend app guidance; app-screens прочитан
+целиком, main skill routing к app (page run N/A). Дизайн уже утверждён DESIGN_SPEC
+§3/§5.1/S14 и существующими Clients/Modal: случайный draw, смена shell/type/palette,
+графики/новые assets/иллюстрации не требуются и противоречат сохранению дизайна.
+Задача окна: найти правильного человека и открыть существующую карточку. Данные:
+реальные разрешённые Client/Patient, ФИО/контакты/DOB, факт проверки/архива,
+confirmed vs possible, scope Business/филиал. Простая форма +список результатов,
+одна основная кнопка поиска; i18n RU/KK/EN, shared controls44px/focus, mobile reflow,
+полные длинные имена и ясное открытие. Только memory draft/результаты, не URL/cache;
+abort/очистка при смене пользователя/бизнеса/филиала/отзыве, retry без потери ввода.
+
+К04 UI WIP: PatientSearchEntry в существующем ClientsPage только при medical
+capability, search-access проверяет reception и доступные филиалы. POST через
+medicalPatients adapter, memory-only query/results, explicit archive, possible/
+confirmed labels, существующая карточка /app/clients/:id. RU/KK/EN, shared Modal/
+Input/Select/Button; смена формы abort/очищает выдачу,403 очищает PHI,503 retry
+сохраняет ввод. API access7 PASS0.335s; TypeScript `npx tsc -b --pretty false`
+PASS (62799). Browser6 scenarios запущены в том же disposable runtime62302,
+отдельная gate.sqlite3 от focused-test.sqlite3; TEMP/dental-patient-search-browser-r1-20261123.log,
+output/playwright/patient-search-r1-20261123. Пока не заявлять browser/visual PASS.
+CI К03: frontend success, backend tests in_progress;45070985178 ещё не green.
+
+Поиск browser R1:6 PASS2.3m RU/KK/EN×1440/390, real POST/no-store/без query URL,
+possible/empty/open existing card,503 retained/retry, Escape/focus return,
+axe WCAG2A/AA scoped0. Boundaries:2 PASS34.1s в том же disposable runtime,
+27 active/28 including archive/25 page, семейный телефон→2 отдельные possible,
+реальный revoke→403 и очистка PHI, fixture role restored.10 снимков captured AND
+visually inspected:6 results+recovery+2 family+denied; geometry/reflow/labels PASS.
+Логи TEMP/dental-patient-search-{browser-r1,boundaries}-20261123.log; screenshots
+output/playwright/patient-search-{r1,boundaries}-20261123. Это8 distinct cases,
+не полная приёмка К04. I18n первый FAIL:2 новых medical labels не были в точном
+allowlist. Добавлены только medical.search.title/empty (capability+role-gated);
+общая нейтральность не ослаблена. Rerun parity7961 PASS +5 terminology tests PASS.
+Final build/system/drift/dependent suites/docs/publication ещё впереди.
+
+Следующий coherent slice того же К04: verified ИИН correction по B04, reuse
+identity verification/encryption/revision/idempotency и current head permissions.
+До изменений определить зависимые medical history/uniqueness/replay/audit права;
+никаких переносов signed documents/обычного merge. Владелец отдельно спрошен о
+разборе смешанных историй: заявка ресепшн с конкретными связями, подтверждение
+медруководителя, оригиналы signed остаются, исправление с историей. Ответ ещё
+не получен; зависимый сценарий не реализовать по умолчанию. Остальные К04 части
+продолжать. Прежний owner-clinician К03 вопрос также остаётся без ответа.
+
+ИИН correction domain WIP: PatientIdentityCorrection(pending/applied/rejected),
+encrypted proposal/recheck/reason/decision, exact patient/client revisions. Без
+clinical history применяется атомарно обученным reception; при dental record/
+encounter/tooth history ждёт head. Решение head перепроверяет текущие права обоих
+участников и актуальный protocol, stale требует новой заявки. History/clinical
+links не переносятся. Idempotency payload только HMAC, audit failure rollback.
+Миграция0028 с моделью/audit FK/actions/state constraints сгенерирована в owned
+runtime; рабочая БД не затрагивалась. Первый domain gate8 PASS0.660s, лог
+TEMP/dental-iin-domain-r1-20261123.log. После PASS review выявил SQL NULL в applied
+constraint: добавлено explicit isnull=False; permission prerequisite перенесён
+до lookup correction. Unpublished0028 уточнена, reverse0028→0027 выполняется
+ТОЛЬКО на disposable focused-test.sqlite3 (migration_env в62302), затем повторное
+применение/affected tests. TEMP/dental-iin-roundtrip-20261123.log. Текущие модель/
+services/audit после этих правок ещё требуют rerun, API/read/UI НЕ реализованы.
+До зависимого frontend выполнить focused domain расширение foreign/revoked head/
+changed policy/collision/replay/audit, shared audit regression. Обязательны итоговые
+PG race/system/drift и reachable UI, build/docs/publication всего К04.
+
+ИИН domain R2:39 PASS2.066s (12 новых+administrative correction+shared audit
+participation/encounter/tooth), после исправления NULL constraint и isolated
+0028→0027→0028. API R1:17 PASS2.357s; после добавления head view prerequisite/
+foreign tenant case R2:18 PASS1.407s. Логи TEMP/dental-iin-{domain-r2,api-r1,api-r2}-20261123.log.
+GET identity-corrections scope/client/pagination, POST :patient/iin-correction,
+POST identity-corrections/:id/decision: strict/no-store/idempotency/audit,
+reception request и head-only approve/reject, denied audit fail→503. PHI только
+в encrypted storage и авторизованном read; общая idempotency response без PHI.
+
+UI добавлен в существующий PatientAdministrationPanel: correctIin mode повторно
+использует verification form; pending/dirty guard, pending/applied/rejected list,
+head decision через прежний MedicalRoleCommand с reason/retry409/503. При known
+denial очищается весь медицинский panel. Parent/form исходные flows сохраняются,
+их affected representative negative browser ещё будет проверен. Types8862 PASS,
+i18n7972 PASS (первый ошибочный запуск из root дал ENOENT, повтор из frontend PASS).
+
+Browser IIN R1 FAIL1/5 not run: сохранение201, затем список503 medical_audit_unavailable
+(код подтверждён network trace), concurrent audited GET в SQLite. Product audit
+не ослаблялся. Fixture correction flag теперь использует serial middleware как
+прежний template fixture, сохраняя browser sockets. R2:6 PASS1.5m real request/
+head decision/reception reread RU/KK/EN×1440/390, dirty Escape/focus,request503
+retained/retry,axe0;12 screenshots captured AND inspected, geometry/reflow PASS.
+TEMP/dental-iin-browser-r{1,2}-20261123.log; output/playwright/identity-correction-r{1,2}-20261123.
+Recovery stale/reject503/same key/denial UI запущен отдельно62302:
+TEMP/dental-iin-browser-recovery-20261123.log, результаты пока ожидаются.
+
+К04 PostgreSQL gate52312 PASS: check, migration drift none,82 targeted tests19.637s,
+включая4 настоящие races: verified IIN unique, same approval replay once, two
+different approvals stale conflict, parallel patient/correction read audits.
+Новый PG17 initdb в disposable isolated_runtime, localhost random port,
+codex_dental/dental_gate; test_dental_gate удалена, PG остановлен и runtime очищен.
+Команда manage.py test tests_identity_concurrency/identity_iin_corrections/
+identity_correction_api/identity_corrections/patient_search/patient_search_api/
+patient_api/participation_audit/encounter_audit/tooth_audit --noinput -v2.
+Лог TEMP/dental-k04-postgres-20261123.log. Миграция0028 применена лишь к disposable
+SQLite и PG; не к рабочей БД. Это не весь К04, не production/concurrency-load PASS.
+
+Recovery IIN1 PASS20.3s: actual409 stale revision retains reason, explicit reload,
+reject503→retry same key→rejected, frontend injected403 clears panel (backend real
+role denial separately tested).3 captures visually inspected, PASS.
+Representative boundary первый FAIL: старый тест выбирал имя из первых20 options,
+но текущий fixture уже содержит49 клиентов; target отсутствовал на первой странице.
+ClientPicker remote search реализован ранее, product не переписан. Тест уточнён:
+вводит нужное имя в поиск. Повтор в новом disposable browser runtime с теми же
+large search/correction fixture flags (чтобы исходная patient creation была новой,
+а не replay), log TEMP/dental-representative-boundary-k04-r2-20261123.log,62302;
+context очищен после subprocess. Повтор PASS1.8m,3 captures visually inspected:
+protocol unavailable, retained invalid-period draft, real role denied/PHI cleared.
+Исходный focused-test runtime остаётся.
+
+Следующий установленный gap К04, источник S§3.2.6: прежнее create PatientProfile
+для уже существующего Client PASS → нет атомарного создания нового Client+Patient
+при отсутствии совпадений → добавить отдельную составную service/API команду,
+reuse Client serializer/normalization/current CRM permissions/audit/activity и
+patient create/idempotency, без нового реестра людей. Exact verified ИИН блокирует
+дубль без раскрытия; разрешённые контактные/ФИО candidates требуют явного выбора
+отдельного человека. Не показывать hidden candidates. Все записи/аудит атомарны,
+повтор не создаёт второго Client. UI в существующем patient search. Риски: tenant/
+duplicate/rollback/replay/role; focused domain/API до UI, затем reachable flow и
+affected completion. Schema0028 не меняется ради этой команды. S01 clinical tabs
+зависят от К05/К06: сохраняются в матрице, не имитировать готовые клинические вкладки.
+
+Атомарная регистрация реализована в patient_registration service, strict POST
+register/ и PatientRegistrationForm внутри поиска. Использует ClientSerializer/
+readable scope/normalizers, core audit/activity, PatientProfile/idempotency; PHI
+в payload hash только HMAC, idempotency response пустой. Verified ИИН блокирует
+дубль, visible name/contact/unverified IIN candidates требуют отдельного подтверждения.
+Current role/branch/CRMcreate+view и replay access проверяются сервером; весь
+Client+profile+audit/activity откатывается при medical audit failure.
+
+Registration domain R1:6 PASS/1 test-helper error (request_hash ошибочно назван
+payload_hash); исправлен только assertion поля, affected case R2 PASS0.146s.
+API4 +existing search API7 PASS0.530s. TEMP/dental-registration-domain-r{1,2}-
+20261123.log и dental-registration-api-20261123.log. Дополнительная PostgreSQL
+проверка регистрации/одновременного same-key:12 PASS3.595s, отдельный PG17 initdb,
+TEMP/dental-registration-postgres-20261123.log. PG остановлен/runtime очищен;
+предыдущие неизменённые82 PG результата не перезапускались.
+
+Registration browser R1:6 PASS1.0m, RU/KK/EN×1440/390. Поиск→создание→реальная
+карточка с unverified profile, уникальный Client; RU desktop dirty Escape,
+503 retry same key→real409 candidate→explicit confirmation→201. PHI отсутствует
+в URL/storage, scoped axe0, overflow0.6 screenshots captured AND visually inspected:
+labels/spacing/44px/focus/desktop two columns/mobile one column, actions reachable.
+TEMP/dental-registration-browser-r1-20261123.log; output/playwright/patient-registration-r1-20261123.
+Completion `npm run build` session52347 exit0; TEMP/dental-k04-build-20261123.log.
+Vite existing chunk-size warning, не ошибка. Этот build включает все текущие К04
+product UI изменения; последующие правки только tests/docs не требуют новой сборки.
+Rerun trigger: affected source/dependency/config changes or reproduced UI failure.
+
+Anti Slop scoped Delivery Gate: geometry/real purpose/state recovery/keyboard/focus/
+labels/translations PASS на указанных browser и inspected captures. Existing design
+tokens/components preserved; no invented marketing/assets/metrics. Decorative motion,
+media, themes/new navigation N/A: не добавлялись. Полная приёмка К04 остаётся открытой
+по controlled relink/mixed histories и medical projections; clinical tabs К05/К06,
+recipient consumer К12, реальный identity protocol L04 сохраняют свои требования.
+
+## К03: подключение профиля принято и опубликовано; owner-clinician открыт
 
 К02 завершён в принятой локальной границе и опубликован096cd591bbdb04d27741cfe31cf13fee00dfd9ca
 в origin/main обычным fast-forward; remote SHA совпал. Committed-range static
@@ -2445,8 +2695,8 @@ push и фактический CI учитываются отдельно. Mock 
 | К00. Автор задаёт классификацию шаблона, руководитель видит её при рассмотрении | M11/M24/M25; E3; D06 | Версии, утверждение, editor, Service, typed API | Остатка этого сценария нет; template search не входит в его закрытие |26 API +20 browser,102 снимка, final build/static PASS; опубликован be235444. Полный M11 открыт |
 | К01. Медруководитель подтверждает реквизиты клиники и врача; врач читает свои сведения | M11 §5.2–5.3, M02/M24/M25; E3; существующие medical role guards | CredentialProfile/Revision, encrypted history, Business/Member и shared forms; storage64 dependent PASS | В принятом сценарии остатка нет; подтверждение/API/UI/история/schema4 готовы; опубликован fff0555c |105 affected/dependent +1 migration roundtrip,8 credential browser +1 template regression,43 снимка,build/types/static PASS; собственная роль/head scope/tenant/stale/replay/audit rollback проверены. Госреестр и нормативная достаточность отдельно |
 | К02. Врач находит подходящий утверждённый шаблон; руководитель управляет его применимостью | M11/M16, D06/D09; E3/E4; К00 | Personal/common drafts/review/history, классификация и approved selector; поиск/фильтры, head pause/resume, encrypted история и UI реализованы | Код/пользовательский сценарий локально принят, остатка в этой границе нет; опубликован096cd591, CI45068261530 выполняется. CI fixture regression20 PASS/static PASS. Полные M11/M16 не закрываются этим этапом | Domain/API/migration/check/drift,12 distinct browser RU/KK/EN ×desktop/mobile +4 повтора, affected visual и final build PASS. Чужое/неутверждённое скрыто, paused create409, старый документ неизменен; p95/PG отдельно К17/К18. Точные доказательства в начале checkpoint |
-| К03. Новая и существующая стоматология получает модуль без сброса CRM | M01/M02; D01/D02/D03,B22; E0/E1 | Profile registry/resolver/guards/create paths, BusinessCapability, role settings; release-ready v2 и additive CLI реализованы, PG domain/concurrency10 PASS +API2 PASS | Browser приёмка и публикация перехода; owner-clinician ждёт решения. Защита новых jobs/files/AI остаётся обязательной в К07/К15; B22 новые настройки в К14, существующие false сохраняются здесь | Повтор backfill ничего не сбрасывает, IDs/настройки/не-стоматология сохранены, нет owner/platform bypass, изолированные миграции и PG; пользователь видит правильные доступные инструменты |
-| К04. Ресепшн находит пациента и безопасно оформляет личность/представителя/исправление | M03/M04/M05; D04,D07,B01–04,B26; E1; К03 | ClientWorkspace, patient identity/crypto, representatives lifecycle, merge guard | Полный поиск/вкладки, перепривязка/исправление ИИН с медсогласованием, безопасный medical merge/correction, negatives представителей и подготовка recipient enforcement | Семейный телефон не объединяет пациентов; verified ИИН PG race, foreign/отзыв/возрастные сценарии, атомарный отказ merge; оформленный пациент доступен для приёма. Реальный протокол личности L04 остаётся отдельной приёмкой |
+| К03. Новая и существующая стоматология получает модуль без сброса CRM | M01/M02; D01/D02/D03,B22; E0/E1 | Profile registry/resolver/guards/create paths, BusinessCapability, role settings; release-ready v2 и additive CLI реализованы, PG domain/concurrency10 PASS +API2 PASS | Переход опубликован3de53af2,6 browser/visual и static PASS; весь К03 открыт: owner-clinician ждёт решения. Защита новых jobs/files/AI остаётся обязательной в К07/К15; B22 новые настройки в К14, существующие false сохраняются здесь | Повтор backfill ничего не сбрасывает, IDs/настройки/не-стоматология сохранены, нет owner/platform bypass, изолированные миграции и PG; пользователь видит правильные доступные инструменты |
+| К04. Ресепшн находит пациента и безопасно оформляет личность/представителя/исправление | M03/M04/M05; D04,D07,B01–04,B26; E1; К03 | ClientWorkspace, identity/representatives/merge guard; К04 поиск, atomic registration и ИИН correction/head review: backend/PG/browser/build PASS | Medical list projections; перепривязка/разбор смешанных историй ждёт решения. Клинические вкладки К05/К06, recipient enforcement К12; L04 внешний протокол. Finished slices ещё не опубликованы | Семейный телефон не объединяет пациентов; verified ИИН PG race, foreign/отзыв/возрастные сценарии, атомарный отказ merge; оформленный пациент доступен для приёма. Реальный протокол личности L04 остаётся отдельной приёмкой |
 | К05. Врач получает доступ по записи/передаче, команда и исправления имеют точные границы | M02/M06/M07; D03,B05–08,B28; E1/E2; К03/К04 | Appointment basis, invitations/transfer/notifications/head-end, role UI | Полнота комбинации оснований, командный ассистент, согласуемый24h correction, security revoke, support-инцидент≤4h readonly, филиальные проекции во всех потребителях | Нет доступа до принятия; запись сразу даёт основание; отзыв сильнее temporary; два основания независимы; запрещённые подпись/export/изменение отсутствуют и на API. Обычное завершение с полной проверкой обязательств закреплено за К11 |
 | К06. Врач ведёт карту, зубы, назначения и клинический план лечения | M08/M09/M10/M16; D05/D09; E2/E4; К04/К05 | Encounter draft/history, odontogram/surfaces, VisitPlan/Step, шаблоны | Клинический план/версии/шаги, назначения типов ТЗ/snippets, связи зубов/плана, остальные вкладки и доступ команды, явные неприменимые разделы | Врач сохраняет и перечитывает историю целого приёма/плана/назначений; клинический план не создаёт долг/бронь, stale/tenant/replay/PG. Снимки подключаются К07, финальное завершение К10; справочник L12 |
 | К07. Врач безопасно прикрепляет и просматривает снимки/файлы | M09/M13; D07; E2/E3; К05/К06 | Private storage и crypto/audit, связи карты | Карантин/MIME/антивирус, preview/original ACL, связи с зубами/приёмом, история, отказ сканера, резервный защищённый read audit | Заражённое/непроверенное не открывается, URL не обходит ACL, отмена/повтор/tenant/прямое скачивание; разрешённый файл проходит загрузку→проверку→просмотр. Реальные форматы L12 и retention L08 остаются открытыми |
@@ -4797,9 +5047,9 @@ Git-среза находятся выше; runtime-доказательства
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | M01 §1–2,14; D01,D02; Q06–08,21 | Самостоятельная МЦС частных платных стоматологий; одно ядро, Client/Appointment/Service/Payment неизменны; Platforma Digital, Yandex Cloud KZ | Согласованные версии профиля CRM-D04, additive активация новых/старых dentistry без сброса; не создавать карты автоматически | Повтор backfill сохраняет настройки/ID; другие сферы и CRM работают; миграции в изоляции | Частично: schema/registry/guards/create paths и server plan gates проверены SQLite; D02 backfill/PG/UI ещё нужны | Профиль/registry/guards/create paths и plan gates | Существующие create paths; отдельная активация не завершена | Медицинская активация не завершена | D02 backfill; PostgreSQL; настройки UI | Инфраструктура KZ подтверждается отдельно |
 | M02 §2.1,12–13; D03 | BusinessCapability и существующие tenant/member/RolePermission дополняются медицинской проверкой | Fail-closed gate API/files/search/jobs/AI; никакого owner/platform bypass | Нет capability/роли/Business → отказ; актуальный отзыв действует после кеширования | Частично: capability, role/branch prerequisite, generic guards и owner grant/revoke/audit/replay PASS; owner-clinician confirmer pending; patient ACL/API/jobs ещё нужны | Capability, role/branch guards, grant/revoke/audit | Медицинские ACL применены к реализованным endpoints | S18/M21 role management опубликованc135008d,9 browser PASS | Owner-clinician confirmer; jobs/files/AI ACL | Нет внешнего блокера текущих ACL |
-| M03 §2.2–2.4,3,16.1; D04; B02–04; Q09–12 | PatientProfile OneToOne Client, отдельные дети/представители; контакты из Client | Шифрованный ИИН + tenant HMAC, проверенная идентичность отдельно от синтаксиса; основание/срок/отзыв представительства | Семейный телефон не merge; конкурентный verified ИИН уникален; административные действия до проверки, клинические запрещены | Частично: patient schema/crypto/services/audit/reception API/UI с lifecycle/recovery/boundary evidence. Представители: schema/guards/services/audit/authority prerequisite + list/form/verify/revoke API; medical200 SQLite + labels34 PASS; S14 UI6 happy flows/build/screens PASS. UI boundary acceptance и интеграция recipient enforcement, ИИН/перепривязка/head approval и PostgreSQL race ещё нужны; документы/возраст внешне не подтверждены | Patient/identity/crypto и представитель lifecycle | Patient administration; representatives list/form/verify/revoke | ClientWorkspace: профиль/идентичность/представители | Перепривязка ИИН/head approval; recipient enforcement; UI negatives/PG | Документы/возраст и протоколы требуют подтверждения |
-| M04 §2.3–2.4; D04,D07; B04,26–27 | Медицинские зависимости блокируют обычный merge до любого переноса; архив сохраняет историю | Hooks существующего merge/dry-run/delete, контролируемое исправление с причиной и медсогласованием | Отказ атомарен, Appointment/VisitPlan не перемещены частично; hard delete не уничтожает PHI | Частично: merge/preview409 до переноса, PROTECT Client и архив PASS; контролируемые исправления и клиническая история ещё нужны | Merge guard/PROTECT/archive | Существующий merge/preview отклоняет медицинские зависимости | Отдельное медицинское исправление не завершено | Контролируемое исправление и его UI/аудит | Нет внешнего блокера merge guard |
-| M05 §3–4,11; D03; B01–04 | Существующие ClientsPage/ClientWorkspace/ClientForm; медицинские статусы только разрешённым ролям; свободные услуги | Resolve пациента/поиск ИИН с безопасными ошибками, вкладки и сохранение контекста | Список/поиск без утечки PHI; повтор создания/смена Business; свои реальные данные | Частично: PatientAdministrationPanel и patient API уже существуют; patient lifecycle/recovery evidence сохранено выше. Полный поиск/вкладки не приняты. | Patient resolve/administration на Client | Patient administration API | PatientAdministrationPanel в ClientWorkspace | Полный поиск по ИИН/список/вкладки и проверка всех путей | Протокол идентификации отдельно |
+| M03 §2.2–2.4,3,16.1; D04; B02–04; Q09–12 | PatientProfile OneToOne Client, отдельные дети/представители; контакты из Client | Шифрованный ИИН + tenant HMAC, проверенная идентичность отдельно от синтаксиса; основание/срок/отзыв представительства | Семейный телефон не merge; конкурентный verified ИИН уникален; административные действия до проверки, клинические запрещены | Частично: patient schema/crypto/services/audit/reception API/UI с lifecycle/recovery/boundary evidence. Представители: schema/guards/services/audit/authority prerequisite + list/form/verify/revoke API; medical200 SQLite + labels34 PASS; S14 UI6 happy flows/build/screens PASS. К04: поиск8 browser, ИИН correction/head approval7 browser и PG82 (4 races) PASS; registration PG12 (same-key race), browser6, representative negative1 и final build PASS; перепривязка/разбор смешанных историй и recipient enforcement остаются; документы/возраст внешне не подтверждены | Patient/identity/crypto и представитель lifecycle | Patient administration; representatives list/form/verify/revoke | ClientWorkspace: профиль/идентичность/представители | Перепривязка/разбор смешанных историй; recipient enforcement К12; L04 | Документы/возраст и протоколы требуют подтверждения |
+| M04 §2.3–2.4; D04,D07; B04,26–27 | Медицинские зависимости блокируют обычный merge до любого переноса; архив сохраняет историю | Hooks существующего merge/dry-run/delete, контролируемое исправление с причиной и медсогласованием | Отказ атомарен, Appointment/VisitPlan не перемещены частично; hard delete не уничтожает PHI | Частично: merge/preview409 до переноса, PROTECT Client и архив PASS; административное исправление и ИИН с head review реализованы/проверены; перепривязка смешанных историй ещё нужна | Merge guard/PROTECT/archive | Существующий merge/preview отклоняет медицинские зависимости | ИИН request/approve/reject UI и audit проверены | Controlled relink/mixed-history policy и реализация | Нет внешнего блокера merge guard |
+| M05 §3–4,11; D03; B01–04 | Существующие ClientsPage/ClientWorkspace/ClientForm; медицинские статусы только разрешённым ролям; свободные услуги | Resolve пациента/поиск ИИН с безопасными ошибками, вкладки и сохранение контекста | Список/поиск без утечки PHI; повтор создания/смена Business; свои реальные данные | Частично: PatientAdministrationPanel и patient API уже существуют; patient lifecycle/recovery evidence сохранено выше. К04 поиск в ClientsPage: POST/роль/филиал/точные и возможные совпадения,8 browser PASS; atomic new Client+Patient domain/API/PG/browser6/build PASS; medical projections/клинические вкладки остаются. | Patient resolve/administration на Client | Patient administration API | PatientAdministrationPanel в ClientWorkspace | Medical list projections и клинические вкладки К05/К06; итоговая интеграция К18 | Протокол идентификации отдельно |
 | M06 §13; D03; B06–08; Q01–02,04 | Запись немедленно даёт основание; активное лечение независимо от следующей даты; передача требует принятия | Состояния приглашения/участия/причин доступа, филиальный scope, назначение медруководителя владельцем без саморасширения | Будущая запись >24ч доступна; отмена убирает только своё основание; до принятия нет карты; другой Business запрещён | Частично: прежние server/UI опубликованы9990bcbf/23a007a8, CI success. Новый source-scoped transfer:82 backend,14 node,types/build/i18n,6 locale/viewport +1 recovery +2 regression browser PASS;14 снимков просмотрены. Полный M06 открыт. | Appointment basis; propose/accept/decline/withdraw; head end | Commands; invitations/managed/mine; workspace-access; candidates; source-scoped proposal-branches/outgoing с текущим основанием и аудитом | Head invite/end, own accept/history; source-scoped филиал/получатель/предложение/исходящие/отзыв из записи или active-участия, проверены desktop/mobile RU/KK/EN | Transfer опубликован747e915d; источник предложения migration0015:67 backend/API/roundtrip PASS локально. Уведомления/context:201 PASS/6 PG skips; UI переход/ответ/окна подключены,8 browser сценариев,types/build/i18n/10 node PASS;16 снимков просмотрены, опубликованоe4dca5c7. Причина отказа B07:encrypted domain/API/private read и оба UI входа добавлены,67/30/30 backend runs PASS (наборы пересекаются),10 browser PASS;types/build/i18n/transport/static PASS. Организационные сведения B07 добавлены: направление/дата/инициатор,100 backend и24 distinct browser PASS;20 снимков просмотрены,types/build/i18n/static PASS. Управление medical role: owner-only read/write API и encrypted основание/история migration0019 добавлены,66 affected backend PASS/check/drift. S18/M21 settings UI подключён:9 browser PASS,26 снимков просмотрены;types/build/i18n/transport/terminology PASS. Полный ACL и остальные критерии M06 открыты | Нет внешнего блокера основного сценария |
 | M07 D03; Q01–05; B05,28 | Завершение участия отдельно от приёма; исправления 24ч; support один инцидент ≤4ч readonly; ассистент только команда/текущий приём | Проверки обязанностей/будущих записей, согласование не самим собой, досрочное закрытие/новое продление | Отзыв роли сильнее временного разрешения; точный scope; ассистент не подписывает/не выдаёт/не экспортирует историю | Частично: head end domain/API/responsible selector и форма локально проверены. Ordinary end/обязательства/security revoke/24h/support/team открыты. | Head end с причиной/ответственным; own-end domain с Appointment/Encounter obligations,44 affected PASS | end-by-head; own-end пока без HTTP, полнота документов pending | Head end с причиной/ответственным локально проверен; остальные временные/командные сценарии отсутствуют | Ordinary end/обязательства; security revoke; 24h correction; support/team | Правила уже согласованы; подтверждение заново не требуется |
 | M08 §4.2–4.4; D05; B09–11; Q13–15 | Один Encounter на реальный Appointment того же Client/Business; свои клинические данные | Черновик/revision/обязательные разделы/явная неприменимость; обычный/частичный исход; walk-in текущим днём, ранний через руководителя | Чужие связи/revision отклонены; финансовый переход через существующий сервис ровно один раз, unpaid не блокирует помощь, rollback | Частично: chart/open/draft/read/workspace services и API, encrypted versions/audit, migrations0009–0011; current role/basis/identity/replay checks. Срезы30–37 содержат доказательства и исправление B03. Срез43 добавил calendar→chart/open/draft UI; текущая проверка в начале checkpoint. Срез44 добавил history/revision reader, current display labels; проверки ниже/в начале checkpoint. Full UI/team/temporary ACL, signatures/obligations, walk-in и atomic calendar completion ещё нужны | Chart/open/draft/versions/audit; current ACL | Appointment context; workspace; draft; history/revision | Calendar → приём/черновик/история | Завершение+calendar/money; walk-in; team/temporary; остальные вкладки | Подписи/формы см. M11–M12 |

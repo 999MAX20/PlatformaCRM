@@ -27,6 +27,7 @@ import { ClientsTable } from "./components/ClientsTable";
 import { useCustomColumns } from "../../components/crm/CustomFieldColumns";
 import { useClientsPageHeader } from "./hooks/useClientsPageHeader";
 import { useClientsWorkspace } from "./hooks/useClientsWorkspace";
+import { PatientSearchEntry } from "../medical/PatientSearchEntry";
 export function ClientsPage() {
   const { t } = useI18n();
   const confirmAction = useActionConfirm();
@@ -281,6 +282,7 @@ export function ClientsPage() {
         {!isEmptyWorkspace && hasPermission(user, business.id, "payments") && <div className="flex justify-end lg:hidden">
           <Button variant="secondary" onClick={openPayments} data-focus-return-id="clients-payments">{t("payments.title")}</Button>
         </div>}
+        {user?.capabilities?.[String(business.id)]?.modules?.medical_records === true ? <PatientSearchEntry key={`${business.id}:${user.id}`} businessId={Number(business.id)} userId={Number(user.id)} /> : null}
         {!isEmptyWorkspace && <ClientsFilters key={`${business.id}:${user?.id}`}
             tagOptions={tagOptions} sourceOptions={sourceOptions}
           counts={filteredClients.isError || filteredClients.isPlaceholderData ? undefined : filteredClients.data?.summary}

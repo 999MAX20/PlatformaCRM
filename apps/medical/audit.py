@@ -4,7 +4,7 @@ from django.db.models import Q
 
 from apps.core.domain_errors import DomainAPIException
 from .models import DentalToothHistory, DentalMedicalRecord, MedicalAuditEvent, PatientProfile, PatientRepresentative, TreatmentParticipation, MedicalEncounterRevision
-from .models import MedicalDocumentRevision
+from .models import MedicalDocumentRevision, PatientIdentityCorrection
 
 
 class MedicalAuditUnavailable(DomainAPIException):
@@ -15,11 +15,21 @@ class MedicalAuditUnavailable(DomainAPIException):
     category = "temporary"
 
 
-def write_patient_audit(*, actor, business, patient, action, representative=None, participation=None, encounter_version=None, record=None, tooth_history=None, document_version=None):
+def write_patient_audit(*, actor, business, patient, action, representative=None, participation=None, encounter_version=None, record=None, tooth_history=None, document_version=None, identity_correction=None):
     if action not in MedicalAuditEvent.Actions.values or action == MedicalAuditEvent.Actions.ACCESS_DENIED:
         raise ValueError("Select a supported successful patient action.")
     if not patient.pk or not PatientProfile.objects.filter(pk=patient.pk, business_id=business.pk).exists():
         raise ValueError("Audit patient must belong to this business.")
+    if action.startswith("identity_correction_") and identity_correction is None:
+        raise ValueError("An identity correction action requires its correction.")
+    if identity_correction is not None:
+        expected_state = {"identity_correction_requested": "pending", "identity_correction_applied": "applied",
+                          "identity_correction_rejected": "rejected"}.get(action)
+        if any(item is not None for item in (representative, participation, encounter_version, record, tooth_history, document_version)):
+            raise ValueError("Identity correction audit cannot mix entity references.")
+        if not PatientIdentityCorrection.objects.filter(pk=identity_correction.pk, patient=patient,
+                branch__business=business).exists() or (action != "read" and identity_correction.state != expected_state):
+            raise ValueError("Audit identity correction must match the patient and action.")
     if representative is not None and not PatientRepresentative.objects.filter(
             pk=representative.pk, patient=patient, representative_client__business_id=business.pk).exists():
         raise ValueError("Audit representative must belong to this patient and business.")
@@ -109,7 +119,7 @@ def write_patient_audit(*, actor, business, patient, action, representative=None
             representative_revision=representative.revision if representative else None,
             participation=participation, participation_revision=participation.revision if participation else None,
             encounter_version=encounter_version, record=record, tooth_history=tooth_history,
-            document_version=document_version)
+            document_version=document_version, identity_correction=identity_correction)
         if event is None or event.pk is None:
             raise MedicalAuditUnavailable()
         return event

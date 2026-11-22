@@ -106,6 +106,49 @@ class PatientIdentityRevision(models.Model):
         ]
 
 
+class PatientIdentityCorrection(TimeStampedModel):
+    class States(models.TextChoices):
+        PENDING = "pending", "Pending medical review"
+        APPLIED = "applied", "Applied"
+        REJECTED = "rejected", "Rejected"
+
+    patient = models.ForeignKey(PatientProfile, on_delete=models.PROTECT, related_name="identity_corrections")
+    branch = models.ForeignKey("branches.Branch", on_delete=models.PROTECT, related_name="identity_corrections")
+    requested_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT,
+                                     related_name="requested_identity_corrections")
+    source_revision = models.PositiveIntegerField()
+    source_client_updated_at = models.DateTimeField()
+    proposal_encrypted = models.TextField(editable=False)
+    state = models.CharField(max_length=16, choices=States.choices, default=States.PENDING)
+    medical_review_required = models.BooleanField()
+    decided_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.PROTECT,
+                                   related_name="decided_identity_corrections")
+    decided_at = models.DateTimeField(null=True, blank=True)
+    decision_encrypted = models.TextField(blank=True, editable=False)
+    applied_revision = models.PositiveIntegerField(null=True, blank=True)
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(condition=models.Q(source_revision__gte=1), name="medical_correction_source_positive"),
+            models.CheckConstraint(condition=~models.Q(proposal_encrypted=""), name="medical_correction_proposal_present"),
+            models.CheckConstraint(condition=(
+                models.Q(state="pending", decided_by__isnull=True, decided_at__isnull=True,
+                         decision_encrypted="", applied_revision__isnull=True, medical_review_required=True) |
+                (models.Q(state="rejected", decided_by__isnull=False, decided_at__isnull=False,
+                          applied_revision__isnull=True, medical_review_required=True) & ~models.Q(decision_encrypted="")) |
+                (models.Q(state="applied", decided_by__isnull=False, decided_at__isnull=False,
+                          applied_revision__isnull=False, applied_revision__gt=models.F("source_revision")) & ~models.Q(decision_encrypted=""))
+            ), name="medical_correction_state_complete"),
+        ]
+
+    def clean(self):
+        super().clean()
+        from apps.branches.models import Branch
+        business_id = PatientProfile.objects.filter(pk=self.patient_id).values_list("business_id", flat=True).first()
+        if not business_id or not Branch.objects.filter(pk=self.branch_id, business_id=business_id).exists():
+            raise ValidationError({"branch": "Select a branch of the patient's business."})
+
+
 class MedicalRoleAssignment(TimeStampedModel):
     class Kinds(models.TextChoices):
         DOCTOR = "doctor", "Doctor"
@@ -267,6 +310,9 @@ class MedicalAuditEvent(models.Model):
         PATIENT_CREATED = "patient_created", "Patient created"
         PATIENT_UPDATED = "patient_updated", "Patient updated"
         IDENTITY_VERIFIED = "identity_verified", "Identity verified"
+        IDENTITY_CORRECTION_REQUESTED = "identity_correction_requested", "Identity correction requested"
+        IDENTITY_CORRECTION_APPLIED = "identity_correction_applied", "Identity correction applied"
+        IDENTITY_CORRECTION_REJECTED = "identity_correction_rejected", "Identity correction rejected"
         REPRESENTATIVE_VERIFIED = "representative_verified", "Representative verified"
         REPRESENTATIVE_REVOKED = "representative_revoked", "Representative revoked"
         PARTICIPATION_PROPOSED = "participation_proposed", "Participation proposed"
@@ -296,6 +342,8 @@ class MedicalAuditEvent(models.Model):
     actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="medical_audit_events")
     patient = models.ForeignKey(PatientProfile, on_delete=models.PROTECT, null=True, blank=True, related_name="audit_events")
     patient_revision = models.PositiveIntegerField(null=True, blank=True)
+    identity_correction = models.ForeignKey(PatientIdentityCorrection, on_delete=models.PROTECT,
+                                            null=True, blank=True, related_name="audit_events")
     representative = models.ForeignKey(PatientRepresentative, on_delete=models.PROTECT, null=True, blank=True,
                                        related_name="audit_events")
     representative_revision = models.PositiveIntegerField(null=True, blank=True)
@@ -338,7 +386,8 @@ class MedicalAuditEvent(models.Model):
                                                "document_draft_saved", "template_draft_created",
                                                "template_draft_saved", "template_submitted", "template_approved",
                                                "template_rejected", "credential_confirmed", "template_activated",
-                                               "template_deactivated"], result="success")),
+                                               "template_deactivated", "identity_correction_requested",
+                                               "identity_correction_applied", "identity_correction_rejected"], result="success")),
                 name="medical_audit_action_result"),
             models.CheckConstraint(condition=(
                 models.Q(representative__isnull=True, representative_revision__isnull=True) |

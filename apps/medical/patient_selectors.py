@@ -54,6 +54,17 @@ def patient_verification_form(*, actor, business_id, branch_id):
     return verification_form(business_id=business.pk, member_id=role.member_id)
 
 
+def patient_demographics(patient):
+    try:
+        values = json.loads(decrypt_medical_value(patient.demographics_encrypted, purpose="demographics",
+            business_id=patient.business_id, subject_id=patient.client_id))
+        if not isinstance(values, dict) or set(values) - {"date_of_birth", "sex", "address"}:
+            raise ValueError
+        return values
+    except (ValueError, TypeError):
+        raise MedicalDataUnavailable() from None
+
+
 @transaction.atomic
 def read_patient_administration(*, actor, business_id, branch_id, patient_id=None, client_id=None):
     if (patient_id is None) == (client_id is None):
@@ -72,12 +83,7 @@ def read_patient_administration(*, actor, business_id, branch_id, patient_id=Non
     if patient is None or (patient_id is not None and patient.pk != patient_id):
         raise NotFound()
     context = {"business_id": business.pk, "subject_id": client.pk}
-    try:
-        demographics = json.loads(decrypt_medical_value(patient.demographics_encrypted, purpose="demographics", **context))
-        if not isinstance(demographics, dict) or set(demographics) - {"date_of_birth", "sex", "address"}:
-            raise ValueError
-    except (ValueError, TypeError):
-        raise MedicalDataUnavailable() from None
+    demographics = patient_demographics(patient)
     identifier = decrypt_medical_value(patient.iin_encrypted, purpose="iin", **context) if patient.iin_encrypted else None
     data = {"id": patient.pk, "business_id": business.pk, "client_id": client.pk,
         "full_name": client.full_name, "phone": client.phone, "email": client.email,

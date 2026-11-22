@@ -1,4 +1,4 @@
-DENTAL-MCS К02 опубликован096cd591; CI45068261530 frontend success/backend in_progress. К03: additive подключение профиля локально проверено (PG10 +API2 +6 desktop/mobile browser/visual), готовится публикация; весь этап открыт по owner-clinician решению. Следующая независимая работа К04. M01–M30/E0–E7 и L01–L19 сохранены. [Checkpoint](docs/testing/task-state/DENTAL-MCS-20261122.md).
+DENTAL-MCS: К04 ACTIVE — поиск, atomic Client+Patient и исправление ИИН с head review реализованы; PG82+12, browser8+7+6 и representative negative PASS, build PASS. Публикация К04 pending; mixed-history/К03 owner-clinician ждут решений, L04 внешне открыт. План/матрица: docs/testing/task-state/DENTAL-MCS-20261122.md.
 
 QA-016-20261121 LOCAL VERIFIED: automatic tasks searchable by displayed RU/KK/EN title; editor preserves original copy on unrelated edits. 66 backend, 9 node, 6 desktop/mobile browser scenarios, build/types/i18n/check/drift PASS; Code 8a240ad3 pushed to main; CI44937543011 queued (not PASS). Working DB untouched. [Evidence](docs/testing/evidence/qa-016-task-search-20261121.md).
 

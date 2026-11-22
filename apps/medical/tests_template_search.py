@@ -62,8 +62,9 @@ class TemplateSearchTests(TestCase):
         foreign = MedicalDocumentTemplate.objects.create(business=other, code="foreign", revision=1)
         foreign_version = MedicalDocumentTemplateRevision.objects.create(template=foreign, revision=1, author=self.owner,
                                                         snapshot_encrypted="must-never-be-decrypted")
-        MedicalTemplateReview.objects.create(version=foreign_version, state="approved", submitted_by=self.owner,
-            submitted_at=timezone.now(), decided_by=self.owner, decided_at=timezone.now(), decision_encrypted="foreign-receipt")
+        review = MedicalTemplateReview.objects.create(version=foreign_version, submitted_by=self.owner)
+        MedicalTemplateReview.objects.filter(pk=review.pk).update(state="approved", decided_by=self.owner,
+            decided_at=timezone.now(), decision_encrypted="foreign-receipt")
         self.assertEqual({row["version_id"] for row in self.search(q="synthetic")["results"]}, {own.pk, shared.pk})
         self.assertEqual([row["version_id"] for row in self.search(q="synthetic", scope="personal")["results"]], [own.pk])
         self.assertEqual([row["version_id"] for row in self.search(q="synthetic", scope="common")["results"]], [shared.pk])

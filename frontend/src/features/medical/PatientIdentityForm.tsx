@@ -9,11 +9,12 @@ import { Textarea } from "../../components/ui/Textarea";
 import { ErrorState, LoadingState } from "../../components/ui/StateViews";
 import { useI18n } from "../../lib/i18n";
 
-export type PatientEditMode = "create" | "preliminary" | "verify" | "correct";
+export type PatientEditMode = "create" | "preliminary" | "verify" | "correct" | "correctIin";
 
-export function PatientIdentityForm({ mode, patient, clientId, clientName, scope, onSaved, onDenied, onCancel }: {
+export function PatientIdentityForm({ mode, patient, clientId, clientName, scope, onSaved, onDenied, onCancel, onDraft }: {
   mode: PatientEditMode; patient: PatientAdministration | null; clientId: number; clientName: string; scope: PatientScope;
   onSaved: () => void; onDenied: () => void; onCancel: () => void;
+  onDraft?: (state: { dirty: boolean; pending: boolean }) => void;
 }) {
   const { t, language } = useI18n();
   const [name, setName] = useState(patient?.full_name ?? "");
@@ -32,7 +33,8 @@ export function PatientIdentityForm({ mode, patient, clientId, clientName, scope
   const [attempt, setAttempt] = useState(0);
   const request = useRef<AbortController | null>(null);
   const lastCommand = useRef<{ payload: string; key: string } | null>(null);
-  const needsProtocol = mode === "verify" || mode === "correct";
+  const needsProtocol = mode === "verify" || mode === "correct" || mode === "correctIin";
+  useEffect(() => { onDraft?.({ dirty: iin !== (patient?.iin ?? "") || !!reason || Object.values(fields).some(Boolean), pending }); }, [iin, patient?.iin, reason, fields, pending, onDraft]);
   const selectedMethod = protocol?.methods.find(item => item.code === method);
 
   useEffect(() => () => request.current?.abort(), []);
@@ -58,7 +60,7 @@ export function PatientIdentityForm({ mode, patient, clientId, clientName, scope
       : mode === "preliminary" ? { ...scope, expected_revision: patient!.revision, demographics, iin: iin || null, reason }
       : { ...scope, expected_revision: patient!.revision, expected_client_updated_at: patient!.client_updated_at,
         protocol_reference: protocol!.reference, method, fields,
-        ...(mode === "correct" ? { full_name: name, demographics, reason } : {}) };
+        ...(mode === "correct" ? { full_name: name, demographics, reason } : mode === "correctIin" ? { iin: iin || null, reason } : {}) };
     const fingerprint = JSON.stringify(payload);
     if (lastCommand.current?.payload !== fingerprint) lastCommand.current = { payload: fingerprint, key: crypto.randomUUID() };
     const key = lastCommand.current.key;
@@ -70,6 +72,7 @@ export function PatientIdentityForm({ mode, patient, clientId, clientName, scope
       if (mode === "create") await medicalPatientsApi.create(payload as Parameters<typeof medicalPatientsApi.create>[0], key, controller.signal);
       else if (mode === "preliminary") await medicalPatientsApi.preliminary(patient!.id, payload as Parameters<typeof medicalPatientsApi.preliminary>[1], key, controller.signal);
       else if (mode === "verify") await medicalPatientsApi.verify(patient!.id, payload as Parameters<typeof medicalPatientsApi.verify>[1], key, controller.signal);
+      else if (mode === "correctIin") await medicalPatientsApi.correctIin(patient!.id, payload as Parameters<typeof medicalPatientsApi.correctIin>[1], key, controller.signal);
       else await medicalPatientsApi.correct(patient!.id, payload as Parameters<typeof medicalPatientsApi.correct>[1], key, controller.signal);
       if (!controller.signal.aborted) onSaved();
     } catch (cause) {
@@ -91,7 +94,7 @@ export function PatientIdentityForm({ mode, patient, clientId, clientName, scope
     </dl> : null}
     <fieldset disabled={pending || conflict} className="min-w-0 space-y-4">
       {mode === "correct" ? <Input label={t("medical.fullName")} value={name} onChange={event => setName(event.target.value)} required maxLength={255} className="min-h-11 text-base sm:text-sm" /> : null}
-      {mode !== "verify" ? <>
+      {mode !== "verify" && mode !== "correctIin" ? <>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Input label={t("medical.birth")} type="date" value={birth} onChange={event => setBirth(event.target.value)} className="min-h-11 text-base sm:text-sm" />
           <Input label={t("medical.sex")} value={sex} onChange={event => setSex(event.target.value)} maxLength={32} className="min-h-11 text-base sm:text-sm" />
@@ -99,7 +102,8 @@ export function PatientIdentityForm({ mode, patient, clientId, clientName, scope
         <Textarea label={t("medical.address")} value={address} onChange={event => setAddress(event.target.value)} maxLength={2000} className="text-base sm:text-sm" />
         {mode !== "correct" ? <Input label={t("medical.iin")} value={iin} onChange={event => setIin(event.target.value)} inputMode="numeric" pattern="[0-9]{12}" maxLength={12} className="min-h-11 text-base sm:text-sm" /> : null}
       </> : null}
-      {mode === "preliminary" || mode === "correct" ? <Textarea label={t("medical.reason")} required value={reason} onChange={event => setReason(event.target.value)} maxLength={2000} className="text-base sm:text-sm" /> : null}
+      {mode === "correctIin" ? <Input label={t("medical.correction.proposedIin")} value={iin} onChange={event => setIin(event.target.value)} inputMode="numeric" pattern="[0-9]{12}" maxLength={12} /> : null}
+      {mode === "preliminary" || mode === "correct" || mode === "correctIin" ? <Textarea label={t("medical.reason")} required value={reason} onChange={event => setReason(event.target.value)} maxLength={2000} className="text-base sm:text-sm" /> : null}
       {needsProtocol ? protocolError ? <ErrorState message={getApiErrorMessage(protocolError)} action={<Button type="button" variant="secondary" onClick={() => setAttempt(value => value + 1)}>{t("common.retry")}</Button>} /> : !protocol ? <LoadingState /> : <>
         <Select label={t("medical.method")} value={method} options={protocol.methods.map(item => ({ value: item.code, label: item.label[language] }))}
           onChange={event => { setMethod(event.target.value); setFields({}); }} />
