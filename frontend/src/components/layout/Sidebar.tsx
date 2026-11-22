@@ -27,6 +27,7 @@ import { hasPermission } from "../../lib/permissions";
 import { prefetchRouteData } from "../../lib/prefetch";
 import { realtimeIntervals, realtimeQueryOptions } from "../../lib/realtime";
 import { useTemplateAccess } from "../../features/medical/templates/useTemplateAccess";
+import { useCredentialAccess } from "../../features/medical/credentials/useCredentialAccess";
 
 type SidebarItem = {
   to?: string;
@@ -125,6 +126,7 @@ export function Sidebar({
   const { user } = useAuth();
   const { business } = useActiveBusiness();
   const templates = useTemplateAccess();
+  const credentials = useCredentialAccess();
   const inboxSummary = useQuery({
     queryKey: ["inbox-summary", business?.id],
     queryFn: inboxApi.getSummary,
@@ -163,10 +165,10 @@ export function Sidebar({
       (mobileDrawer ? mobileDrawerSections : desktopSections)
         .map((group) => ({
           ...group,
-          items: group.items.map((item) => filterSidebarItem(item, user, business?.id, templates.allowed)).filter(Boolean) as SidebarItem[],
+          items: group.items.map((item) => filterSidebarItem(item, user, business?.id, templates.allowed || credentials.allowed)).filter(Boolean) as SidebarItem[],
         }))
         .filter((group) => group.items.length),
-    [business?.id, mobileDrawer, user, templates.allowed],
+    [business?.id, mobileDrawer, user, templates.allowed, credentials.allowed],
   );
   return (
     <aside

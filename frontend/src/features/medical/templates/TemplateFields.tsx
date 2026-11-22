@@ -20,6 +20,8 @@ const labels = {
   "clinical.anamnesis": "medical.clinical.anamnesis", "clinical.examination": "medical.clinical.examination",
   "clinical.diagnosis": "medical.clinical.diagnosis", "clinical.procedures": "medical.clinical.procedures",
   "clinical.plan": "medical.clinical.plan", "clinical.epicrisis": "medical.clinical.epicrisis",
+  "clinic.license": "medical.credentials.license", "doctor.specialty": "medical.credentials.specialty",
+  "doctor.position": "medical.credentials.position", "doctor.qualification": "medical.credentials.qualification",
 } as const;
 
 export function TemplateFields({ businessId, onInsert, onDenied }: {

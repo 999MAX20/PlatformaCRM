@@ -285,6 +285,7 @@ class MedicalAuditEvent(models.Model):
         TEMPLATE_SUBMITTED = "template_submitted", "Template submitted"
         TEMPLATE_APPROVED = "template_approved", "Template approved"
         TEMPLATE_REJECTED = "template_rejected", "Template rejected"
+        CREDENTIAL_CONFIRMED = "credential_confirmed", "Credential confirmed"
         READ = "read", "Read"
         ACCESS_DENIED = "access_denied", "Access denied"
 
@@ -309,6 +310,8 @@ class MedicalAuditEvent(models.Model):
                                          related_name="audit_events")
     template_version = models.ForeignKey("MedicalDocumentTemplateRevision", on_delete=models.PROTECT,
                                          null=True, blank=True, related_name="audit_events")
+    credential_version = models.ForeignKey("MedicalCredentialRevision", on_delete=models.PROTECT,
+                                           null=True, blank=True, related_name="audit_events")
     action = models.CharField(max_length=32, choices=Actions.choices)
     result = models.CharField(max_length=16, choices=[("success", "Success"), ("denied", "Denied")])
     created_at = models.DateTimeField(auto_now_add=True)
@@ -330,7 +333,7 @@ class MedicalAuditEvent(models.Model):
                                                "tooth_observation_saved", "document_draft_created",
                                                "document_draft_saved", "template_draft_created",
                                                "template_draft_saved", "template_submitted", "template_approved",
-                                               "template_rejected"], result="success")),
+                                               "template_rejected", "credential_confirmed"], result="success")),
                 name="medical_audit_action_result"),
             models.CheckConstraint(condition=(
                 models.Q(representative__isnull=True, representative_revision__isnull=True) |
@@ -388,6 +391,13 @@ class MedicalAuditEvent(models.Model):
             models.CheckConstraint(condition=(~models.Q(action__in=["template_draft_created", "template_draft_saved",
                                                                    "template_submitted", "template_approved", "template_rejected"]) |
                 models.Q(template_version__isnull=False)), name="medical_audit_template_needed"),
+            models.CheckConstraint(condition=(models.Q(credential_version__isnull=True) |
+                models.Q(patient__isnull=True, representative__isnull=True, participation__isnull=True,
+                         encounter_version__isnull=True, record__isnull=True, tooth_history__isnull=True,
+                         document_version__isnull=True, template_version__isnull=True,
+                         action__in=["read", "credential_confirmed"])), name="medical_audit_credential_scope"),
+            models.CheckConstraint(condition=(~models.Q(action="credential_confirmed") |
+                models.Q(credential_version__isnull=False)), name="medical_audit_credential_needed"),
         ]
 
 class DentalMedicalRecord(TimeStampedModel):
@@ -522,12 +532,18 @@ class MedicalCredentialRevision(models.Model):
                               related_name="medical_credential_versions")
     content_encrypted = models.TextField(editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    confirmed_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT,
+        null=True, blank=True, related_name="confirmed_medical_credentials")
+    confirmed_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=["profile", "revision"], name="medical_credential_version_unique"),
             models.CheckConstraint(condition=models.Q(revision__gte=1), name="medical_credential_ver_positive"),
             models.CheckConstraint(condition=~models.Q(content_encrypted=""), name="medical_credential_ver_content"),
+            models.CheckConstraint(condition=(models.Q(confirmed_by__isnull=True, confirmed_at__isnull=True) |
+                models.Q(confirmed_by__isnull=False, confirmed_at__isnull=False)),
+                name="medical_credential_confirmation"),
         ]
 
 

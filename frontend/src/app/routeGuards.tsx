@@ -15,6 +15,7 @@ import { hasPermission, permissionForbiddenMessage } from "../lib/permissions";
 import { getUserStartPath } from "../lib/startPage";
 import { BusinessAccessRevoked } from "../features/auth/BusinessAccessRevoked";
 import { useTemplateAccess } from "../features/medical/templates/useTemplateAccess";
+import { useCredentialAccess } from "../features/medical/credentials/useCredentialAccess";
 import { ErrorState } from "../components/ui/StateViews";
 import { Button } from "../components/ui/Button";
 export function MerchantRoute({ children }: { children: React.ReactNode }) {
@@ -110,10 +111,12 @@ export function SettingsAccessRoute({ children }: { children: React.ReactNode })
   const { user } = useAuth();
   const { business, isLoading } = useActiveBusiness();
   const templates = useTemplateAccess();
+  const credentials = useCredentialAccess();
   const { t } = useI18n();
   if (isLoading) return <LoadingState scope="page" />;
-  if (hasPermission(user, business?.id, "settings", "update") || hasPermission(user, business?.id, "integrations", "view") || templates.allowed) return children;
-  if (templates.checking) return <LoadingState scope="page" />;
+  if (hasPermission(user, business?.id, "settings", "update") || hasPermission(user, business?.id, "integrations", "view") || templates.allowed || credentials.allowed) return children;
+  if (templates.checking || credentials.checking) return <LoadingState scope="page" />;
+  if (credentials.error) return <ErrorState error={credentials.error} action={<Button onClick={() => void credentials.refetch()}>{t("common.retry")}</Button>} />;
   if (templates.error) return <ErrorState error={templates.error} action={<Button onClick={() => void templates.refetch()}>{t("common.retry")}</Button>} />;
   return <ForbiddenState />;
 }

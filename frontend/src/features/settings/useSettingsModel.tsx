@@ -1,5 +1,6 @@
 import { useSettingsTeam } from "./useSettingsTeam";
 import { useTemplateAccess } from "../medical/templates/useTemplateAccess";
+import { useCredentialAccess } from "../medical/credentials/useCredentialAccess";
 import { useSettingsMessages } from "./useSettingsMessages";
 import { useSettingsQuickReplies } from "./useSettingsQuickReplies";
 import { useSettingsCustomFields } from "./useSettingsCustomFields";
@@ -25,6 +26,8 @@ import {
 
 export function useSettingsModel() {
   const templateAccess = useTemplateAccess();
+  const credentialAccess = useCredentialAccess();
+  const [credentialDraftState, setCredentialDraftState] = useState({ dirty: false, pending: false });
   const [templateDraftState, setTemplateDraftState] = useState({ dirty: false, pending: false });
   const [profileDraftState, setProfileDraftState] = useState({ dirty: false, pending: false });
   const [medicalDraftState, setMedicalDraftState] = useState({ dirty: false, pending: false });
@@ -74,6 +77,7 @@ export function useSettingsModel() {
     () =>
       settingsSections.filter((section) => {
         if (section.id === "medical-templates") return templateAccess.allowed;
+        if (section.id === "medical-credentials") return credentialAccess.allowed;
         if (
           section.id === "business-profile" ||
           section.id === "appointment-messages" ||
@@ -107,6 +111,7 @@ export function useSettingsModel() {
       canViewBilling,
       canViewTeam,
       templateAccess.allowed,
+      credentialAccess.allowed,
       user,
     ],
   );
@@ -115,7 +120,7 @@ export function useSettingsModel() {
     activeSettingsSection,
     allowedSettingsSectionIds,
     setActiveSettingsSection,
-  } = useSettingsSectionNavigation(allowedSettingsSections, !templateAccess.checking);
+  } = useSettingsSectionNavigation(allowedSettingsSections, !templateAccess.checking && !credentialAccess.checking);
 
   const {
     teamMembers,
@@ -279,8 +284,10 @@ export function useSettingsModel() {
     inviteForm,
     inviteMutation,
     inviteShareUrl,
-    isLoading: isLoading || templateAccess.checking,
+    isLoading: isLoading || templateAccess.checking || credentialAccess.checking,
     templateDraftState,
+    credentialDraftState,
+    setCredentialDraftState,
     setTemplateDraftState,
     lastCreatedInvite,
     locale,

@@ -123,8 +123,20 @@ Business либо BusinessMember того же Business. append/read helpers н�
 прав. Согласованная policy22.11: медруководитель вносит/подтверждает лицензию
 клиники, специальность/должность врача, врач видит свой профиль; владелец без
 медицинской роли не подтверждает. Это внутренняя проверка, не проверка госреестров.
-Сервисы подтверждения и HTTP/UI ещё не подключены. Снимки зашифрованы и
-привязаны к business/profile/member/version/author; старые версии не перезаписываются.
+Команда confirm_medical_credentials требует текущих medical_documents:view и
+approve в business scope у head; врач читает только свой профиль, head с business
+view — клинику/сотрудника. POST /medical/credentials/ атомарно создаёт encrypted
+revision, confirmed_by/at и audit; expected_revision предотвращает потерю изменений,
+Idempotency-Key повторяет результат только после повторной проверки доступа.
+Receipt хранит HMAC текста. GET current/exact version, revisions, members и
+workspace-access используют те же границы; ответы, включая отказы, no-store/private.
+Чтение версий аудируется, список членов возвращает только ID/имя своего Business.
+Снимки привязаны к business/profile/member/version/author; история неизменна.
+UI подключён в Settings medical-credentials; актуальная граница приёмки в
+DENTAL-MCS checkpoint. Migration0026 не подтверждает существующие сведения.
+Обратная миграция проверяется до появления новых confirmation audit events;
+после использования нового действия откат требует отдельного плана сохранения
+данных, старый код этого действия не поддерживает. Рабочая БД не изменяется.
 
 GET /medical/document-templates/field-options/ принимает только business_id,
 повторяет current template workspace view для врача/медруководителя и возвращает
@@ -142,13 +154,19 @@ UI документов подключён к primary draft API; assistant/team/
 Передача raw template внутреннему сервису не утверждает форму. При выборе
 template_version_id сервис дополнительно проверяет approved selector: доступен
 общий либо собственный утверждённый шаблон, receipt проверяется до сохранения,
-включая replay. Schema3 хранит исходный template, IDs шаблона/версии/решения,
+включая replay. Schema4 хранит исходный template, IDs шаблона/версии/решения,
 approved_by/approved_at и отдельный document_text. Пользователь не задаёт эти
-source metadata. Schema1/2 сохраняют прежнее чтение. Старый документ не зависит
+source metadata. Schema1/2/3 сохраняют прежнее чтение. Старый документ не зависит
 от дальнейших изменений шаблона или текущего review receipt; это снимок на момент
 сохранения, не ЭЦП и не нормативное подтверждение формы.
-Schema3 дополнительно шифрует проверенную личность пациента и источник приёма;
-повреждённый источник блокирует запись. Внутренний preview повторяет current
+Schema3 дополнительно шифрует проверенную личность пациента и источник приёма.
+Schema4 добавляет точные подтверждённые версии лицензии и реквизитов основного
+врача с идентификаторами, подтвердившим и временем. Отсутствующие/неподтверждённые
+данные остаются null, они не объявляются проверенными. Новый preview digest
+учитывает реквизиты; их изменение требует обновить preview. Старый документ
+читает сохранённый снимок, а не текущий профиль. Renderer разрешает clinic.license,
+doctor.specialty/position/qualification; подстановка буквальная, без исполнения.
+Повреждённый источник блокирует запись. Внутренний preview повторяет current
 workspace create/update, approved visibility и exact encounter read audit.
 Разрешённые поля подставляются буквально, без выполнения выражений. Необязательный
 expected_source_digest в domain save связывает preview с текущими данными и

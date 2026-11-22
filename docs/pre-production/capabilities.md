@@ -98,8 +98,14 @@ Preview и expected_source_digest подключены к HTTP/UI: новый т
 MedicalCredentialProfile/Revision для лицензии клиники и специальности/должности/
 квалификации BusinessMember. Тексты зашифрованы, имена и общие реквизиты не
 дублируются. Это не подтверждение действительности лицензии/квалификации.
-Проверки в DENTAL-MCS checkpoint; approval/audit service, API/UI и включение
-в снимок документа ещё не подключены. Рабочая БД не мигрировалась.
+Добавлены явное подтверждение медруководителем, атомарный аудит, HTTP current/
+history/member options и Settings UI. Врач читает только свой профиль. Документ
+schema4 сохраняет точную подтверждённую версию реквизитов, preview выявляет смену
+источника. К01 локально принят:105 affected/dependent tests и отдельный migration
+roundtrip PASS,8 credential browser scenarios +1 template regression PASS,
+43 снимка просмотрены, сборка/types/i18n/static PASS. Точный срез и публикация
+в DENTAL-MCS checkpoint. Рабочая БД не
+мигрировалась. Госреестры, нормативная достаточность и ЭЦП этим не подтверждаются.
 
 Добавлено внутреннее хранение MedicalDocumentTemplate/Revision для общих и личных
 шаблонов: scope Business/owner member, зашифрованные title/text/reason, отдельное

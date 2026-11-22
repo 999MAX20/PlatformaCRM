@@ -48,7 +48,7 @@ class DocumentIdentityTests(TestCase):
             version, _ = self.save()
         snapshot = read_document_revision(version)
         identity = snapshot["patient_identity"]
-        self.assertEqual(self.payload(version)["schema"], 3)
+        self.assertEqual(self.payload(version)["schema"], 4)
         self.assertEqual(identity["patient_id"], self.patient.pk)
         self.assertEqual(identity["client_id"], self.patient.client_id)
         self.assertEqual(identity["full_name"], self.patient.client.full_name)
@@ -135,8 +135,17 @@ class DocumentIdentityTests(TestCase):
         version, _ = self.save()
         legacy = self.payload(version)
         legacy["schema"] = 2
+        del legacy["snapshot"]["medical_credentials"]
         del legacy["snapshot"]["patient_identity"]
         del legacy["snapshot"]["encounter_source"]
+        self.replace_payload(version, legacy)
+        self.assertEqual(read_document_revision(version), legacy["snapshot"])
+
+    def test_schema3_history_remains_readable_without_credentials(self):
+        version, _ = self.save()
+        legacy = self.payload(version)
+        legacy["schema"] = 3
+        del legacy["snapshot"]["medical_credentials"]
         self.replace_payload(version, legacy)
         self.assertEqual(read_document_revision(version), legacy["snapshot"])
 
