@@ -461,6 +461,46 @@ class MedicalEncounterRevision(models.Model):
         ]
 
 
+class MedicalDocument(TimeStampedModel):
+    business = models.ForeignKey("businesses.Business", on_delete=models.PROTECT, related_name="medical_documents")
+    encounter = models.ForeignKey(MedicalEncounter, on_delete=models.PROTECT, related_name="documents")
+    template_code = models.CharField(max_length=64,
+        validators=[RegexValidator(r"^[a-z][a-z0-9_]*$", "Provide a template identifier.")])
+    revision = models.PositiveIntegerField(default=0)
+    state = models.CharField(max_length=24, default="draft", choices=[("draft", "Draft")])
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(condition=models.Q(state="draft"), name="medical_document_draft_only"),
+            models.CheckConstraint(condition=~models.Q(template_code=""), name="medical_document_template"),
+        ]
+
+    def clean(self):
+        super().clean()
+        if not MedicalEncounter.objects.filter(pk=self.encounter_id, business_id=self.business_id,
+                patient__business_id=self.business_id, patient__client__business_id=self.business_id,
+                record__business_id=self.business_id, branch__business_id=self.business_id).exists():
+            raise ValidationError({"encounter": "Select an encounter of this business."})
+
+
+class MedicalDocumentRevision(models.Model):
+    document = models.ForeignKey(MedicalDocument, on_delete=models.PROTECT, related_name="versions")
+    revision = models.PositiveIntegerField()
+    source_version = models.ForeignKey(MedicalEncounterRevision, on_delete=models.PROTECT,
+                                      related_name="document_versions")
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT,
+                              related_name="medical_document_versions")
+    snapshot_encrypted = models.TextField(editable=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["document", "revision"], name="medical_document_version_unique"),
+            models.CheckConstraint(condition=models.Q(revision__gte=1), name="medical_document_ver_positive"),
+            models.CheckConstraint(condition=~models.Q(snapshot_encrypted=""), name="medical_document_ver_content"),
+        ]
+
+
 FDI_TOOTH_NUMBERS = tuple(quadrant * 10 + position
     for quadrant in range(1, 9)
     for position in range(1, 9 if quadrant <= 4 else 6))
