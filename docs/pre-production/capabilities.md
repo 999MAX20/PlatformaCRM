@@ -43,7 +43,11 @@ UI приглашения/принятия/head end локально прове�
 Обычное завершение получает доменную основу: own-end с medical_participation:update,
 проверкой открытых назначенных Appointment и черновиков MedicalEncounter, audit/replay.
 44 affected tests/check/drift PASS. Полный набор обязательных MedicalDocument,
-HTTP/UI обычного завершения и24h исправления ещё не готовы.
+HTTP/UI обычного завершения ещё не готовы. К05 добавляет отдельный24h correction
+request/review/close и target-only workspace своего приёма/документа. Draft write
+версионирован; документ сохраняет captured source. SQLite/domain/API и PG race
+проверены по checkpoint; browser/visual/recovery acceptance фиксируется там отдельно.
+Это не full К05 и не подпись исправления: team assistant/support и К08/К09 остаются.
 Назначения, задачи и оплаты автоматически не меняются.
 
 M11 получил внутреннее хранение черновиков MedicalDocument/MedicalDocumentRevision:

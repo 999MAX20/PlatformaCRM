@@ -3,6 +3,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
 from django.db import models
 from django.utils import timezone
+from datetime import timedelta
 import uuid
 
 from apps.businesses.models import TimeStampedModel
@@ -313,6 +314,13 @@ class MedicalAuditEvent(models.Model):
         IDENTITY_CORRECTION_REQUESTED = "identity_correction_requested", "Identity correction requested"
         IDENTITY_CORRECTION_APPLIED = "identity_correction_applied", "Identity correction applied"
         IDENTITY_CORRECTION_REJECTED = "identity_correction_rejected", "Identity correction rejected"
+        CORRECTION_ACCESS_REQUESTED = "correction_access_requested", "Correction access requested"
+        CORRECTION_ACCESS_APPROVED = "correction_access_approved", "Correction access approved"
+        CORRECTION_ACCESS_REJECTED = "correction_access_rejected", "Correction access rejected"
+        CORRECTION_ACCESS_WITHDRAWN = "correction_access_withdrawn", "Correction access withdrawn"
+        CORRECTION_ACCESS_COMPLETED = "correction_access_completed", "Correction access completed"
+        CORRECTION_ACCESS_REVOKED = "correction_access_revoked", "Correction access revoked"
+        CORRECTION_ACCESS_EXPIRED = "correction_access_expired", "Correction access expired"
         REPRESENTATIVE_VERIFIED = "representative_verified", "Representative verified"
         REPRESENTATIVE_REVOKED = "representative_revoked", "Representative revoked"
         PARTICIPATION_PROPOSED = "participation_proposed", "Participation proposed"
@@ -344,6 +352,9 @@ class MedicalAuditEvent(models.Model):
     patient_revision = models.PositiveIntegerField(null=True, blank=True)
     identity_correction = models.ForeignKey(PatientIdentityCorrection, on_delete=models.PROTECT,
                                             null=True, blank=True, related_name="audit_events")
+    correction_access = models.ForeignKey("MedicalCorrectionAccess", on_delete=models.PROTECT,
+                                          null=True, blank=True, related_name="audit_events")
+    correction_access_revision = models.PositiveIntegerField(null=True, blank=True)
     representative = models.ForeignKey(PatientRepresentative, on_delete=models.PROTECT, null=True, blank=True,
                                        related_name="audit_events")
     representative_revision = models.PositiveIntegerField(null=True, blank=True)
@@ -387,8 +398,16 @@ class MedicalAuditEvent(models.Model):
                                                "template_draft_saved", "template_submitted", "template_approved",
                                                "template_rejected", "credential_confirmed", "template_activated",
                                                "template_deactivated", "identity_correction_requested",
-                                               "identity_correction_applied", "identity_correction_rejected"], result="success")),
+                                               "identity_correction_applied", "identity_correction_rejected",
+                                               "correction_access_requested", "correction_access_approved",
+                                               "correction_access_rejected", "correction_access_withdrawn",
+                                               "correction_access_completed", "correction_access_revoked",
+                                               "correction_access_expired"], result="success")),
                 name="medical_audit_action_result"),
+            models.CheckConstraint(condition=(
+                models.Q(correction_access__isnull=True, correction_access_revision__isnull=True) |
+                models.Q(correction_access__isnull=False, correction_access_revision__isnull=False,
+                         correction_access_revision__gte=1)), name="medical_audit_correction_revision"),
             models.CheckConstraint(condition=(
                 models.Q(representative__isnull=True, representative_revision__isnull=True) |
                 models.Q(representative__isnull=False, representative_revision__gte=1,
@@ -742,6 +761,75 @@ class MedicalDocumentRevision(models.Model):
             models.CheckConstraint(condition=models.Q(revision__gte=1), name="medical_document_ver_positive"),
             models.CheckConstraint(condition=~models.Q(snapshot_encrypted=""), name="medical_document_ver_content"),
         ]
+
+
+class MedicalCorrectionAccess(TimeStampedModel):
+    class States(models.TextChoices):
+        PENDING = "pending", "Pending review"
+        ACTIVE = "active", "Active"
+        REJECTED = "rejected", "Rejected"
+        WITHDRAWN = "withdrawn", "Withdrawn"
+        COMPLETED = "completed", "Completed"
+        REVOKED = "revoked", "Revoked"
+        EXPIRED = "expired", "Expired"
+
+    patient = models.ForeignKey(PatientProfile, on_delete=models.PROTECT, related_name="correction_accesses")
+    encounter = models.ForeignKey(MedicalEncounter, on_delete=models.PROTECT, related_name="correction_accesses")
+    document = models.ForeignKey(MedicalDocument, on_delete=models.PROTECT, null=True, blank=True, related_name="correction_accesses")
+    requester = models.ForeignKey("businesses.BusinessMember", on_delete=models.PROTECT, related_name="medical_correction_accesses")
+    state = models.CharField(max_length=16, choices=States.choices, default=States.PENDING)
+    revision = models.PositiveIntegerField(default=1)
+    patient_revision = models.PositiveIntegerField()
+    target_revision = models.PositiveIntegerField()
+    reason_encrypted = models.TextField(editable=False)
+    reviewed_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, null=True, blank=True,
+                                    related_name="reviewed_medical_correction_accesses")
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+    expires_at = models.DateTimeField(null=True, blank=True)
+    decision_encrypted = models.TextField(blank=True, editable=False)
+    closed_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, null=True, blank=True,
+                                  related_name="closed_medical_correction_accesses")
+    closed_at = models.DateTimeField(null=True, blank=True)
+    closure_encrypted = models.TextField(blank=True, editable=False)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["requester", "encounter"],
+                condition=models.Q(document__isnull=True, state__in=["pending", "active"]), name="medical_correction_live_encounter"),
+            models.UniqueConstraint(fields=["requester", "document"],
+                condition=models.Q(document__isnull=False, state__in=["pending", "active"]), name="medical_correction_live_document"),
+            models.CheckConstraint(condition=models.Q(revision__gte=1, patient_revision__gte=1, target_revision__gte=1)
+                & ~models.Q(reason_encrypted=""), name="medical_correction_access_source"),
+            models.CheckConstraint(condition=(
+                models.Q(state="pending", reviewed_by__isnull=True, reviewed_at__isnull=True, expires_at__isnull=True,
+                         decision_encrypted="", closed_by__isnull=True, closed_at__isnull=True, closure_encrypted="") |
+                (models.Q(state="withdrawn", reviewed_by__isnull=True, reviewed_at__isnull=True, expires_at__isnull=True,
+                          decision_encrypted="", closed_by__isnull=False, closed_at__isnull=False) & ~models.Q(closure_encrypted="")) |
+                (models.Q(state="rejected", reviewed_by__isnull=False, reviewed_at__isnull=False, expires_at__isnull=True,
+                          closed_by__isnull=True, closed_at__isnull=True, closure_encrypted="") & ~models.Q(decision_encrypted="")) |
+                (models.Q(state__in=["active", "completed", "revoked", "expired"], reviewed_by__isnull=False,
+                          reviewed_at__isnull=False, expires_at__isnull=False,
+                          expires_at=models.F("reviewed_at") + timedelta(hours=24)) &
+                 ~models.Q(decision_encrypted="") & (
+                    models.Q(state="active", closed_by__isnull=True, closed_at__isnull=True, closure_encrypted="") |
+                    (models.Q(state__in=["completed", "revoked"], closed_by__isnull=False, closed_at__isnull=False) & ~models.Q(closure_encrypted="")) |
+                    models.Q(state="expired", closed_by__isnull=True, closed_at__isnull=False,
+                             closed_at=models.F("expires_at"), closure_encrypted="")
+                 ))
+            ), name="medical_correction_access_state"),
+        ]
+
+    def clean(self):
+        super().clean()
+        target = MedicalEncounter.objects.filter(pk=self.encounter_id, patient_id=self.patient_id,
+            patient__business_id=models.F("business_id"), patient__client__business_id=models.F("business_id"),
+            branch__business_id=models.F("business_id"), primary_clinician_id=self.requester_id,
+            primary_clinician__business_id=models.F("business_id")).first()
+        if target is None or (self.document_id is not None and not MedicalDocument.objects.filter(
+                pk=self.document_id, encounter=target, business_id=target.business_id).exists()):
+            raise ValidationError({"encounter": "Select the requester's own target in this business."})
+        if self.reviewed_by_id is not None and self.reviewed_by_id == target.primary_clinician.user_id:
+            raise ValidationError({"reviewed_by": "Self approval is prohibited."})
 
 
 FDI_TOOTH_NUMBERS = tuple(quadrant * 10 + position

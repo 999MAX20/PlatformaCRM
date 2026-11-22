@@ -83,11 +83,15 @@ def open_primary_encounter(*, actor, business_id, patient_id, record_id, appoint
 @transaction.atomic
 def save_primary_encounter_draft(*, actor, business_id, patient_id, encounter_id,
                                  expected_revision, content, idempotency_key, reason="",
-                                 participation_id=None):
+                                 participation_id=None, correction_access_id=None):
     """Save only the primary clinician's draft, preserving prior versions and authorship."""
     identifiers = [business_id, patient_id, encounter_id, expected_revision]
     if participation_id is not None:
         identifiers.append(participation_id)
+    if correction_access_id is not None:
+        identifiers.append(correction_access_id)
+        if participation_id is not None:
+            raise ValidationError({"basis": "Select one access basis."})
     if any(type(value) is not int or value <= 0 for value in identifiers):
         raise ValidationError({"encounter": "Provide valid identifiers and revision."})
     if not isinstance(idempotency_key, str) or not idempotency_key.strip() or len(idempotency_key) > 128:
@@ -111,7 +115,12 @@ def save_primary_encounter_draft(*, actor, business_id, patient_id, encounter_id
         raise PermissionDenied()
     encounter.clean()
     assert_medical_branch_permission(actor, business, "medical_records", "update", branch=encounter.branch)
-    if participation_id is None:
+    correction_access = None
+    if correction_access_id is not None:
+        from .correction_access_context import assert_correction_access
+        correction_access = assert_correction_access(actor=actor, business=business,
+            request_id=correction_access_id, encounter_id=encounter_id, action="update")
+    elif participation_id is None:
         assert_appointment_medical_basis(actor=actor, business=business, patient_id=patient_id,
             appointment_id=encounter.appointment_id, action="update")
     else:
@@ -131,13 +140,14 @@ def save_primary_encounter_draft(*, actor, business_id, patient_id, encounter_id
         encounter.save(update_fields=["revision", "updated_at"])
         version = append_encounter_revision(encounter=encounter, author=actor, content=content, reason=reason)
         write_patient_audit(actor=actor, business=business, patient=patient,
-            action="encounter_draft_saved", encounter_version=version)
+            action="encounter_draft_saved", encounter_version=version, correction_access=correction_access)
         return CRMCommandResult(data={}, resource=version)
 
     result = run_idempotent_crm_command(business=business, actor=actor, action="medical.encounter.primary_draft",
         idempotency_key=medical_request_digest({"key": idempotency_key}, business_id=business_id),
         payload={"encounter": encounter_id, "patient": patient_id, "revision": expected_revision,
             "participation": participation_id,
+            **({"correction_access": correction_access_id} if correction_access_id is not None else {}),
             "content_digest": medical_request_digest({"content": content, "reason": reason}, business_id=business_id)},
         operation=operation)
     version = MedicalEncounterRevision.objects.get(encounter=encounter,

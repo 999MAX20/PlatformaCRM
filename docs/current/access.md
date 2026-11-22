@@ -1,5 +1,34 @@
 ## Медицинская граница DENTAL-MCS — 22.11.2026
 
+К05: `/api/medical/correction-access/` — отдельные requests, не TreatmentParticipation.
+GET list (business/branch/client, head=false по умолчанию, cursor/limit1–50) возвращает
+свои запросы; head=true требует текущий head +medical_records.manage/view в филиале.
+GET targets выдаёт metadata собственных primary Encounter и документов без clinical
+body; POST root принимает encounter/document, expected patient/target revisions,
+reason≤2000 и Idempotency-Key. Pending не предоставляет чтение. POST id/review/
+принимает approve/reject, expected_revision и причину; самосогласование запрещено,
+approve повторно проверяет текущие права инициатора и версии источника.
+
+Active действует ровно [reviewed_at, reviewed_at+24h); POST id/close/ допускает
+withdraw собственного pending, complete собственного active либо revoke текущим
+head. Terminal не переоткрывается; новое согласование — новый запрос с причиной.
+GET id/target/ и POST id/save-draft/ повторно проверяют account/member/medical role,
+Business/branch/CRM client и ровно указанную цель. Доступ по исправлению не открывает
+общий clinical workspace, новый приём, чужой документ, оплату или подпись за автора.
+Draft Encounter использует существующий versioned writer; Document text correction
+сохраняет captured clinical/identity/credentials/template source, без подмены на
+текущие данные. Подписанное исправление новой связанной версией — остаток К08/К09.
+
+Audit связан с correction_access_id и точной revision; request/review/read/write/
+withdraw/complete/revoke/expired атомарны с обязательным аудитом. Expiry проверяется
+по времени каждого запроса; состояние материализуется при авторизованном наблюдении,
+в том числе перед denied target response. Нет заявления о фоновом scheduler.
+Reasons зашифрованы; ledger содержит HMAC, не clinical text. Ответы/ошибки no-store;
+400 invalid contract,403 denied,409 stale/conflict,503 unavailable audit/data/key.
+Shared CRM permissions/BusinessEvent/AI/providers этим срезом не расширяются.
+Миграция0029 и PG races проверяются в disposable среде, не на рабочей БД.
+Точная граница реализации/проверок/публикации — DENTAL-MCS checkpoint; весь К05 OPEN.
+
 К04: POST `/api/medical/patients/resolve/` ищет только разрешённых Client/Patient
 в текущем medical reception+CRM/branch scope. ИИН сравнивается tenant HMAC,
 verified совпадение отдельно от possible; архив включается явно. POST body не
@@ -77,7 +106,8 @@ Replay заново проверяет права инициатора. end_part
 завершению руководителем. Календарь/задачи/оплаты не передаются и не отменяются.
 Событие participation_ended с точной revision атомарно с переходом и idempotency;
 повтор проверяет текущие права руководителя. Обычное завершение с проверками
-обязательств, security revoke,24h correction и notifications ещё нужны.
+обязательств, security revoke и notifications ещё нужны. Ограниченный24h correction
+реализуется отдельным основанием ниже; он не восстанавливает участие.
 Командный HTTP-контур /api/medical/participations/ вызывает эти же services:
 create/respond/withdraw/end-by-head. IsAuthenticated не заменяет текущие medical
 проверки команд; body не принимает actor/state/closed_by. Успех/ошибки no-store;
@@ -171,7 +201,9 @@ verified identity и revisions проверяются перед новой за
 проверяет доступ. Чтение точной версии требует medical_documents:view и текущего
 лечебного основания; владелец не получает его автоматически. Аудит связан с
 MedicalDocumentRevision; ошибка audit блокирует расшифровку/откатывает запись.
-UI документов подключён к primary draft API; assistant/team/24h и подпись остаются открытыми.
+UI документов подключён к primary draft API; assistant/team и подпись остаются открытыми.
+Для24h исправления используется отдельный target-only API, без расширения общего
+document_read_context до полной истории пациента.
 Передача raw template внутреннему сервису не утверждает форму. При выборе
 template_version_id сервис дополнительно проверяет approved selector: доступен
 общий либо собственный утверждённый шаблон, receipt проверяется до сохранения,
@@ -439,7 +471,9 @@ owner/platform bypass и самовыдачи. Ассистент не полу�
 CRM областью и читает актуальные owner/account flags.
 Это проверка роли, а не разрешение читать конкретную карту: текущее основание записи
 или участия и успешный read audit проверяют клинические сервисы. Границы текущего
-приёма ассистента,24h исправления,4h support и резервный аудит ещё нужны.
+приёма ассистента,4h support и резервный аудит ещё нужны.24h исправление собственного
+черновика реализуется отдельным согласованием; исправление подписанного оригинала
+новой связанной подписанной версией остаётся в К08/К09.
 Обычные permission POST/PATCH и bulk visibility не изменяют medical_*;
 сохранение PATCH повторно проверяет строку под lock. Удаление member/role,
 имеющего историю medical assignment, возвращает409; отключение member сохраняется.

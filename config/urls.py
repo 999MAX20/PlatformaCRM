@@ -8,6 +8,7 @@ from apps.integrations.ycloud.api import YCloudSetupView, YCloudWebhookView
 from apps.integrations.google_api import GoogleOAuthView, GoogleDisconnectView, GoogleSheetsView
 from rest_framework.routers import DefaultRouter
 from apps.medical.views import PatientAdministrationViewSet
+from apps.medical.correction_access_views import CorrectionAccessViewSet
 from apps.medical.encounter_views import MedicalEncounterViewSet
 from apps.medical.template_views import MedicalDocumentTemplateViewSet
 from apps.medical.credential_views import MedicalCredentialViewSet
@@ -150,6 +151,7 @@ from apps.tasks.views import TaskViewSet
 
 router = DefaultRouter()
 router.register("medical/patients", PatientAdministrationViewSet, basename="medical-patient")
+router.register("medical/correction-access", CorrectionAccessViewSet, basename="medical-correction-access")
 router.register("medical/encounters", MedicalEncounterViewSet, basename="medical-encounter")
 router.register("medical/document-templates", MedicalDocumentTemplateViewSet, basename="medical-document-template")
 router.register("medical/credentials", MedicalCredentialViewSet, basename="medical-credential")

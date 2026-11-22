@@ -4,7 +4,7 @@ from django.db.models import Q
 
 from apps.core.domain_errors import DomainAPIException
 from .models import DentalToothHistory, DentalMedicalRecord, MedicalAuditEvent, PatientProfile, PatientRepresentative, TreatmentParticipation, MedicalEncounterRevision
-from .models import MedicalDocumentRevision, PatientIdentityCorrection
+from .models import MedicalDocumentRevision, PatientIdentityCorrection, MedicalCorrectionAccess
 
 
 class MedicalAuditUnavailable(DomainAPIException):
@@ -15,11 +15,33 @@ class MedicalAuditUnavailable(DomainAPIException):
     category = "temporary"
 
 
-def write_patient_audit(*, actor, business, patient, action, representative=None, participation=None, encounter_version=None, record=None, tooth_history=None, document_version=None, identity_correction=None):
+def write_patient_audit(*, actor, business, patient, action, representative=None, participation=None, encounter_version=None, record=None, tooth_history=None, document_version=None, identity_correction=None, correction_access=None):
     if action not in MedicalAuditEvent.Actions.values or action == MedicalAuditEvent.Actions.ACCESS_DENIED:
         raise ValueError("Select a supported successful patient action.")
     if not patient.pk or not PatientProfile.objects.filter(pk=patient.pk, business_id=business.pk).exists():
         raise ValueError("Audit patient must belong to this business.")
+    if action.startswith("correction_access_") and correction_access is None:
+        raise ValueError("A correction access action requires its request.")
+    if correction_access is not None:
+        states = {"requested": "pending", "approved": "active", "rejected": "rejected", "withdrawn": "withdrawn",
+                  "completed": "completed", "revoked": "revoked", "expired": "expired"}
+        expected = states.get(action.removeprefix("correction_access_"))
+        if not MedicalCorrectionAccess.objects.filter(pk=correction_access.pk, patient=patient,
+                encounter__business=business, requester__business=business).exists():
+            raise ValueError("Correction access must belong to the audited patient and business.")
+        if expected is not None and correction_access.state != expected:
+            raise ValueError("Correction access state must match its audit action.")
+        if expected is None and action not in {"read", "encounter_draft_saved", "document_draft_saved"}:
+            raise ValueError("Select a correction access read or draft update action.")
+        if action in {"encounter_draft_saved", "document_draft_saved"} and correction_access.state != "active":
+            raise ValueError("A correction write requires active access.")
+        if any(item is not None for item in (representative, participation, record, tooth_history, identity_correction)):
+            raise ValueError("Correction access audit cannot mix unrelated entities.")
+        if encounter_version is not None and (correction_access.document_id is not None or
+                encounter_version.encounter_id != correction_access.encounter_id):
+            raise ValueError("Correction access does not authorize this encounter version.")
+        if document_version is not None and document_version.document_id != correction_access.document_id:
+            raise ValueError("Correction access does not authorize this document version.")
     if action.startswith("identity_correction_") and identity_correction is None:
         raise ValueError("An identity correction action requires its correction.")
     if identity_correction is not None:
@@ -119,7 +141,8 @@ def write_patient_audit(*, actor, business, patient, action, representative=None
             representative_revision=representative.revision if representative else None,
             participation=participation, participation_revision=participation.revision if participation else None,
             encounter_version=encounter_version, record=record, tooth_history=tooth_history,
-            document_version=document_version, identity_correction=identity_correction)
+            document_version=document_version, identity_correction=identity_correction, correction_access=correction_access,
+            correction_access_revision=correction_access.revision if correction_access else None)
         if event is None or event.pk is None:
             raise MedicalAuditUnavailable()
         return event

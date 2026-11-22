@@ -113,6 +113,42 @@ def append_document_revision(*, document, source_version, author, template, reas
     return version
 
 
+@transaction.atomic
+def append_document_text_correction(*, document, author, document_text, reason):
+    """Internal storage for a narrow correction: retain the captured clinical source."""
+    business = Business.objects.select_for_update().get(pk=document.business_id)
+    current = MedicalDocument.objects.select_for_update().get(pk=document.pk, business=business)
+    current.full_clean()
+    if current.revision != document.revision or current.state != "draft":
+        raise InvalidTransition("The document changed; reload its current draft.")
+    previous = MedicalDocumentRevision.objects.filter(document=current, revision=current.revision).first()
+    if previous is None:
+        raise MedicalDataUnavailable()
+    snapshot = read_document_revision(previous)
+    if "template_source" not in snapshot:
+        raise InvalidTransition("This document has no approved text source for correction.")
+    validate_document_source(snapshot["template_source"], snapshot["template"], document_text)
+    if not isinstance(reason, str) or not reason.strip() or len(reason) > 2000:
+        raise ValidationError({"reason": "Provide a reason of at most 2000 characters."})
+    member = BusinessMember.objects.select_related("user").filter(
+        business=business, user_id=author.pk, is_active=True, user__is_active=True).first()
+    if member is None:
+        raise ValidationError({"author": "Select an active member of this business."})
+    snapshot.update(document_text=document_text, reason=reason,
+        prepared_by={"member_id": member.pk, "user_id": member.user_id, "name": member.user.full_name})
+    schema = 4 if "medical_credentials" in snapshot else 3 if "patient_identity" in snapshot else 2
+    staging = encrypt_medical_value("{}", business_id=business.pk, subject_id=current.pk, purpose="document_staging")
+    version = MedicalDocumentRevision.objects.create(document=current, revision=current.revision + 1,
+        source_version=previous.source_version, author=member.user, snapshot_encrypted=staging)
+    payload = {**_binding(version, current, schema=schema), "snapshot": snapshot}
+    version.snapshot_encrypted = encrypt_medical_value(json.dumps(payload, ensure_ascii=False, sort_keys=True),
+        business_id=business.pk, subject_id=version.pk, purpose="document_snapshot")
+    version.save(update_fields=["snapshot_encrypted"])
+    current.revision = version.revision
+    current.save(update_fields=["revision", "updated_at"])
+    return version
+
+
 def read_document_revision(version):
     """Internal decryptor: caller must establish current access and durable read audit."""
     try:
