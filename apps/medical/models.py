@@ -163,6 +163,10 @@ class TreatmentParticipation(TimeStampedModel):
     proposed_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT,
                                     related_name="proposed_treatment_participations")
     proposed_at = models.DateTimeField(default=timezone.now)
+    source_appointment = models.ForeignKey("scheduling.Appointment", on_delete=models.PROTECT,
+        null=True, blank=True, editable=False, related_name="medical_participation_proposals")
+    source_participation = models.ForeignKey("self", on_delete=models.PROTECT,
+        null=True, blank=True, editable=False, related_name="derived_proposals")
     accepted_at = models.DateTimeField(null=True, blank=True)
     closed_at = models.DateTimeField(null=True, blank=True)
     closed_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, null=True, blank=True,
@@ -178,6 +182,10 @@ class TreatmentParticipation(TimeStampedModel):
             models.UniqueConstraint(fields=["patient", "member", "branch"],
                 condition=models.Q(state__in=["pending", "active"]), name="medical_participation_open"),
             models.CheckConstraint(condition=models.Q(revision__gte=1), name="medical_participation_revision"),
+            models.CheckConstraint(condition=(models.Q(source_appointment__isnull=True) |
+                models.Q(source_participation__isnull=True)), name="medical_participation_one_source"),
+            models.CheckConstraint(condition=~models.Q(source_participation=models.F("pk")),
+                name="medical_participation_not_self"),
             models.CheckConstraint(condition=(
                 models.Q(state="pending", accepted_at__isnull=True, closed_at__isnull=True, closed_by__isnull=True) |
                 models.Q(state="active", accepted_at__isnull=False, closed_at__isnull=True, closed_by__isnull=True) |
@@ -201,6 +209,22 @@ class TreatmentParticipation(TimeStampedModel):
         if patient is None or patient["business_id"] != patient["client__business_id"]:
             raise ValidationError({"patient": "Select a patient in this business."})
         business_id = patient["business_id"]
+        if not self._state.adding:
+            previous_source = TreatmentParticipation.objects.filter(pk=self.pk).values_list(
+                "source_appointment_id", "source_participation_id").first()
+            if previous_source != (self.source_appointment_id, self.source_participation_id):
+                raise ValidationError({"source_appointment": "The original proposal source cannot be changed."})
+        if self._state.adding and self.source_appointment_id is not None:
+            from apps.scheduling.models import Appointment
+            if not Appointment.objects.filter(pk=self.source_appointment_id, business_id=business_id,
+                    client__medical_profile__pk=self.patient_id,
+                    resource__business_id=business_id, resource__linked_user_id=self.proposed_by_id).exists():
+                raise ValidationError({"source_appointment": "Select the proposer's appointment for this patient."})
+        if self._state.adding and self.source_participation_id is not None and not TreatmentParticipation.objects.filter(
+                pk=self.source_participation_id, patient_id=self.patient_id,
+                member__business_id=business_id, member__user_id=self.proposed_by_id,
+                branch__business_id=business_id).exclude(pk=self.pk).exists():
+            raise ValidationError({"source_participation": "Select the proposer's participation for this patient."})
         if not BusinessMember.objects.filter(pk=self.member_id, business_id=business_id).exists():
             raise ValidationError({"member": "Select a member of the patient's business."})
         if not Branch.objects.filter(pk=self.branch_id, business_id=business_id).exists():

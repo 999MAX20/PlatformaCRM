@@ -112,6 +112,9 @@ def propose_treatment_participation(*, actor, business_id, patient_id, branch_id
                                                 state__in=["pending", "active"]).exists():
             raise InvalidTransition("An open participation already exists for this doctor and branch.")
         item = TreatmentParticipation(patient=patient, member=target, branch=branch, proposed_by=actor)
+        if role.kind == MedicalRoleAssignment.Kinds.DOCTOR:
+            item.source_appointment_id = source_appointment_id
+            item.source_participation_id = source_participation_id
         item.full_clean()
         item.save(force_insert=True)
         item.reason_encrypted = encrypt_medical_value(json.dumps({"reason": reason}, ensure_ascii=False),
