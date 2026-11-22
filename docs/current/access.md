@@ -107,7 +107,7 @@ verified identity и revisions проверяются перед новой за
 проверяет доступ. Чтение точной версии требует medical_documents:view и текущего
 лечебного основания; владелец не получает его автоматически. Аудит связан с
 MedicalDocumentRevision; ошибка audit блокирует расшифровку/откатывает запись.
-HTTP/UI документов пока нет; assistant/team/24h и подпись остаются открытыми.
+UI документов пока нет; assistant/team/24h и подпись остаются открытыми.
 Передача raw template внутреннему сервису не утверждает форму. При выборе
 template_version_id сервис дополнительно проверяет approved selector: доступен
 общий либо собственный утверждённый шаблон, receipt проверяется до сохранения,
@@ -116,6 +116,15 @@ approved_by/approved_at и отдельный document_text. Пользоват�
 source metadata. Schema1 сохраняет прежнее чтение. Старый документ не зависит
 от дальнейших изменений шаблона или текущего review receipt; это снимок на момент
 сохранения, не ЭЦП и не нормативное подтверждение формы.
+
+HTTP /medical/documents/: POST создаёт primary draft из template_version_id и
+document_text, POST {id}/draft/ добавляет версию с expected_document_revision.
+Strict serializers не принимают raw template, source metadata, author или state.
+GET список и {id}/revisions/, GET versions/{id}/ требуют business_id/patient_id
+и ровно одно действующее appointment_id/participation_id. Список допускает
+encounter_id только этого пациента. Cursor pages ограничены50, latest version
+списка и прочитанные строки истории аудируются; отсутствующая текущая версия
+вызывает отказ. Команды требуют Idempotency-Key, ответы/ошибки no-store/private.
 
 Личные черновики шаблонов доступны через /medical/document-templates/ только
 врачу/head с текущим medical_documents:create/update/view и собственным

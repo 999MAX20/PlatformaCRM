@@ -51,7 +51,7 @@ M11 получил внутреннее хранение черновиков Me
 Business/Branch и раздельного авторства prepared_by/performed_by. Изменение текущих
 реквизитов не переписывает снимок. Это не готовая форма или подписанный документ:
 нет PDF/файла логотипа, полного снимка личности/лицензии, утверждённой матрицы,
-подписи, выдачи, API/UI. Добавлены доменные create/update своего черновика основным
+подписи, выдачи, UI. Добавлены доменные create/update своего черновика основным
 врачом и read точной версии: current medical_documents role/branch/basis,
 verified identity для записи, audit exact version, HMAC replay и atomic rollback.
 Assistant/team/24h workflow ещё открыт; внутренний raw template
@@ -61,6 +61,9 @@ Schema2 хранит исходный template и source/approval metadata от�
 документа; schema1 остаётся читаемой. Новые версии шаблона не меняют старые
 документы. Проверки source path отмечены в checkpoint. Низкоуровневые storage helpers
 по-прежнему требуют авторизованного вызывающего сервиса и общей audit-транзакции.
+Добавлены /medical/documents/ create/update/list/history/version: строгий вход,
+no-store/private, current treatment basis и exact-version audit; ограниченная
+пагинация, фильтр приёма, audit failure rollback. UI ещё не подключён.
 Проверки и точная граница M11 — в DENTAL-MCS checkpoint.
 
 Добавлено внутреннее хранение MedicalDocumentTemplate/Revision для общих и личных
@@ -69,7 +72,7 @@ Schema2 хранит исходный template и source/approval metadata от�
 Версия в registry не означает клиническое утверждение:22.11.2026 владелец согласовал
 утверждение личных шаблонов и управление общими медруководителем, без этого права
 у владельца Business без медицинской роли. Выбор утверждённого шаблона при создании
-медицинского документа подключён на domain уровне; HTTP/UI этого сценария ещё нет.
+медицинского документа подключён на domain/HTTP уровне; UI этого сценария ещё нет.
 Добавлен domain submission/decision/read
 MedicalTemplateReview: конкретная версия, head-only approve с business scope,
 encrypted receipt, audit/replay/stale/rollback;141 affected backend tests/check/drift
@@ -97,7 +100,7 @@ history/read: текущая роль doctor/head, own scope, server-owned ident
 отдельный режим head, существующие редактор/история/отправка и очередь утверждения.
 6 common RU/KK/EN desktop/mobile сценариев и15 personal/review регрессий PASS;
 66 применимых снимков просмотрены, build/types/i18n PASS, подробности в checkpoint. Интеграция selector в создаваемый
-документ реализована на domain уровне, HTTP/UI ещё нет; PostgreSQL concurrency не проверена.
+документ реализована на domain/HTTP уровне, UI ещё нет; PostgreSQL concurrency не проверена.
 
 Добавлены source-scoped филиалы и исходящие предложения врача:82 focused/dependent
 backend tests/check/drift PASS в изолированном SQLite. UI из записи и active

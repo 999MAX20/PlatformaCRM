@@ -120,9 +120,23 @@ def save_primary_document_draft(*, actor, business_id, patient_id, encounter_id,
 @transaction.atomic
 def read_document_for_treating_clinician(*, actor, business_id, patient_id, version_id,
                                        appointment_id=None, participation_id=None):
+    if type(version_id) is not int or version_id <= 0:
+        raise ValidationError({"document": "Provide valid identifiers."})
+    business, patient = document_read_context(actor=actor, business_id=business_id, patient_id=patient_id,
+        appointment_id=appointment_id, participation_id=participation_id)
+    version = MedicalDocumentRevision.objects.select_related("document").filter(pk=version_id,
+        document__business=business, document__encounter__business=business,
+        document__encounter__patient=patient).first()
+    if version is None:
+        raise PermissionDenied()
+    return document_version_payload(actor=actor, business=business, patient=patient, version=version)
+
+
+def document_read_context(*, actor, business_id, patient_id, appointment_id=None, participation_id=None):
+    """Internal access check; callers hold an atomic read/audit transaction."""
     if (appointment_id is None) == (participation_id is None):
         raise ValidationError({"basis": "Select one current treatment access basis."})
-    ids = [business_id, patient_id, version_id, appointment_id if appointment_id is not None else participation_id]
+    ids = [business_id, patient_id, appointment_id if appointment_id is not None else participation_id]
     if any(type(value) is not int or value <= 0 for value in ids):
         raise ValidationError({"document": "Provide valid identifiers."})
     business = Business.objects.select_for_update().filter(pk=business_id).first()
@@ -139,11 +153,11 @@ def read_document_for_treating_clinician(*, actor, business_id, patient_id, vers
     else:
         assert_treatment_medical_basis(actor=actor, business=business, patient_id=patient_id,
             participation_id=participation_id, resource="medical_documents")
-    version = MedicalDocumentRevision.objects.select_related("document").filter(pk=version_id,
-        document__business=business, document__encounter__business=business,
-        document__encounter__patient=patient).first()
-    if version is None:
-        raise PermissionDenied()
+    return business, patient
+
+
+def document_version_payload(*, actor, business, patient, version):
+    """Internal audited read; callers authorize the version's patient and business."""
     write_patient_audit(actor=actor, business=business, patient=patient, action="read", document_version=version)
     snapshot = read_document_revision(version)
     return {"version_id": version.pk, "document_id": version.document_id, "revision": version.revision,
