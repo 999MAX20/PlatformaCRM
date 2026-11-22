@@ -1,3 +1,4 @@
+import { medical } from "./en/medical";
 import { timeline } from "./en/timeline";
 import { googleSheets } from "./en/googleSheets";
 import { importWorkspace } from "./en/importWorkspace";
@@ -29,6 +30,7 @@ import { deals } from "./en/deals";
 
 export const en: Record<string, string> = {
   ...ru,
+  ...medical,
   ...googleSheets,
   ...importWorkspace,
   ...voice,

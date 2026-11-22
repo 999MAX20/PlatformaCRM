@@ -1,0 +1,97 @@
+import { test, expect } from "@playwright/test";
+import { execFileSync } from "node:child_process";
+import { ru } from "../src/lib/i18n/ru";
+import { requireIsolatedEnvironment } from "./isolated-environment.mjs";
+
+requireIsolatedEnvironment();
+test("clinical recovery: retained draft, stable retry, real conflict and revocation", async ({ page }, info) => {
+  execFileSync(process.env.E2E_PYTHON!, ["e2e/clinical-runtime.py", "restore"], { env: process.env, windowsHide: true, stdio: "pipe" });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.addInitScript(() => localStorage.setItem("ai_smb_language", "ru"));
+  await page.goto("/login");
+  await page.locator('input[name="email"]').fill("medical-role-doctor@example.test");
+  await page.locator('input[name="password"]').fill(process.env.E2E_PASSWORD!);
+  const login = page.waitForResponse(r => r.url().endsWith("/api/auth/token/") && r.request().method() === "POST");
+  await page.locator('form button[type="submit"]').click();
+  const token = (await (await login).json()).access;
+  await expect(page).toHaveURL(/\/app\//);
+  const headers = { Authorization: `Bearer ${token}` };
+  const api = process.env.E2E_API_BASE_URL!;
+  const scope = { business_id: 1, patient_id: 7 };
+  const contextResponse = await page.request.get(`${api}/api/medical/encounters/appointment-context/?business_id=1&appointment_id=7`, { headers });
+  expect(contextResponse.status()).toBe(200);
+  const context = await contextResponse.json();
+  const record = await page.request.post(`${api}/api/medical/records/`, { headers: { ...headers, "Idempotency-Key": "recovery-record" },
+    data: { ...scope, appointment_id: 7, expected_patient_revision: 1, number: "RECOVERY" } });
+  expect(record.status()).toBe(201);
+  const encounter = await page.request.post(`${api}/api/medical/encounters/`, { headers: { ...headers, "Idempotency-Key": "recovery-open" },
+    data: { ...scope, appointment_id: 7, record_id: (await record.json()).id, expected_patient_revision: 1,
+      expected_appointment_updated_at: context.appointment.updated_at } });
+  expect(encounter.status()).toBe(201);
+  const encounterId = (await encounter.json()).id;
+  await page.goto(`/app/calendar?appointment=7&date=${context.appointment.start_at.slice(0, 10)}`);
+  await page.getByTestId("clinical-appointment-entry").getByRole("button", { name: ru["medical.clinical.open"], exact: true }).click();
+  const workspace = page.getByTestId("clinical-workspace");
+  const complaint = workspace.getByLabel(ru["medical.clinical.complaints"], { exact: true });
+  const save = workspace.getByRole("button", { name: ru["medical.clinical.save"], exact: true });
+  await complaint.fill("Retained synthetic clinical draft");
+  const keys: string[] = [];
+  let releaseSave!: () => void;
+  const heldSave = new Promise<void>(resolve => { releaseSave = resolve; });
+  await page.route("**/api/medical/encounters/*/draft/", async route => {
+    keys.push(route.request().headers()["idempotency-key"]);
+    if (keys.length === 1) {
+      await heldSave;
+      return route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ code: "service_unavailable" }) });
+    }
+    return route.continue();
+  });
+  let result = page.waitForResponse(r => r.url().endsWith("/draft/") && r.request().method() === "POST");
+  await page.keyboard.press("Escape");
+  const unsaved = page.getByTestId("clinical-unsaved");
+  await unsaved.getByRole("button", { name: ru["medical.clinical.saveClose"], exact: true }).click();
+  await expect(unsaved.getByRole("button", { name: ru["medical.clinical.continueEditing"], exact: true })).toBeDisabled();
+  await expect(unsaved.getByRole("button", { name: ru["medical.clinical.leaveUnsaved"], exact: true })).toBeDisabled();
+  await page.keyboard.press("Escape");
+  await unsaved.getByRole("button", { name: ru["common.close"], exact: true }).click();
+  await expect(unsaved).toBeVisible();
+  expect(keys).toHaveLength(1);
+  releaseSave();
+  expect((await result).status()).toBe(503);
+  await expect(unsaved.getByRole("alert")).toBeVisible();
+  await expect(workspace).toBeVisible();
+  await unsaved.screenshot({ path: info.outputPath("clinical-close-failed-mobile.png") });
+  await unsaved.getByRole("button", { name: ru["medical.clinical.continueEditing"], exact: true }).click();
+  await expect(complaint).toHaveValue("Retained synthetic clinical draft");
+  result = page.waitForResponse(r => r.url().endsWith("/draft/") && r.request().method() === "POST");
+  await save.click();
+  expect((await result).status()).toBe(200);
+  expect(keys[0]).toBe(keys[1]);
+  await expect(workspace.getByText(ru["common.saved"], { exact: true })).toBeVisible();
+  const competing = await page.request.post(`${api}/api/medical/encounters/${encounterId}/draft/`, {
+    headers: { ...headers, "Idempotency-Key": "competing-write" }, data: { ...scope, expected_revision: 2, content: { complaints: "Another saved version" } },
+  });
+  expect(competing.status()).toBe(200);
+  await complaint.fill("Local unsaved conflict draft");
+  result = page.waitForResponse(r => r.url().endsWith("/draft/") && r.request().method() === "POST");
+  await save.click();
+  expect((await result).status()).toBe(409);
+  await expect(complaint).toHaveValue("Local unsaved conflict draft");
+  await expect(save).toBeDisabled();
+  await workspace.screenshot({ path: info.outputPath("clinical-conflict-mobile.png") });
+  page.once("dialog", dialog => dialog.dismiss());
+  await workspace.getByRole("button", { name: ru["medical.clinical.reload"], exact: true }).click();
+  await expect(complaint).toHaveValue("Local unsaved conflict draft");
+  page.once("dialog", dialog => dialog.accept());
+  await workspace.getByRole("button", { name: ru["medical.clinical.reload"], exact: true }).click();
+  await expect(complaint).toHaveValue("Another saved version");
+  await complaint.fill("Draft removed on revocation");
+  execFileSync(process.env.E2E_PYTHON!, ["e2e/clinical-runtime.py", "revoke"], { env: process.env, windowsHide: true, stdio: "pipe" });
+  result = page.waitForResponse(r => r.url().endsWith("/draft/") && r.request().method() === "POST");
+  await save.click();
+  expect((await result).status()).toBe(403);
+  await expect(workspace.getByText(ru["medical.denied"], { exact: true })).toBeVisible();
+  await expect(complaint).toHaveCount(0);
+  expect(await page.evaluate(() => JSON.stringify({ ...localStorage, ...sessionStorage }))).not.toContain("Draft removed on revocation");
+  await workspace.screenshot({ path: info.outputPath("clinical-revoked-mobile.png") });
+});

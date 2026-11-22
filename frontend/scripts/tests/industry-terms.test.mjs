@@ -29,3 +29,13 @@ test("preserves medical and legal safety restrictions", () => {
     ["aiAgents.defaultEscalation", "Медицинский или юридический вопрос"],
   ]), []);
 });
+
+test("allows patient labels only in the explicit medical module keys", () => {
+  assert.deepEqual(industryTermViolations([
+    ["medical.fullName", "Patient full name"], ["medical.create", "Создать профиль пациента"],
+    ["medical.clinical.verifyFirst", "Verify the patient’s identity"],
+    ["medical.tooth.title", "Dental chart"], ["medical.tooth.orientation", "Sides relative to the patient"],
+    ["medical.participation.invite", "Пригласить врача"], ["medical.participation.doctor", "Дәрігер"],
+    ["clients.create", "Создать пациента"], ["medical.unreviewed", "Doctor"],
+  ]), ["clients.create", "medical.unreviewed"]);
+});

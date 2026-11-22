@@ -1,3 +1,4 @@
+import { medical } from "./kk/medical";
 import { timeline } from "./kk/timeline";
 import { googleSheets } from "./kk/googleSheets";
 import { importWorkspace } from "./kk/importWorkspace";
@@ -29,6 +30,7 @@ import { deals } from "./kk/deals";
 
 export const kk: Record<string, string> = {
   ...ru,
+  ...medical,
   ...googleSheets,
   ...importWorkspace,
   ...voice,

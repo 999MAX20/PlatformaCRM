@@ -1,0 +1,130 @@
+import { apiClient } from "./client";
+
+export type ClinicalScope = { business_id: number; patient_id: number };
+export type ClinicalBasis =
+  | { appointment_id: number; participation_id?: never }
+  | { participation_id: number; appointment_id?: never };
+export type ClinicalReadScope = ClinicalScope & ClinicalBasis;
+export type ClinicalField = "complaints" | "anamnesis" | "examination" | "diagnosis" | "procedures" | "plan" | "epicrisis";
+export type ClinicalContent = Partial<Record<ClinicalField, string>>;
+export type EncounterState = "draft" | "finalized";
+
+export type ClinicalRecord = { id: number; number: string; opened_at: string };
+export type AppointmentClinicalScope = { business_id: number; appointment_id: number };
+export type AppointmentClinicalContext = {
+  business_id: number;
+  patient: {
+    id: number;
+    client_id: number;
+    full_name: string;
+    revision: number;
+    identity_status: "unverified" | "verified";
+  };
+  appointment: {
+    id: number;
+    updated_at: string;
+    branch_id: number;
+    start_at: string;
+    end_at: string;
+  };
+  active_record: ClinicalRecord | null;
+  encounter: { id: number; revision: number; state: EncounterState; version_id: number } | null;
+  actions: { create_record: boolean; open_encounter: boolean; save_draft: boolean };
+};
+export type EncounterSummary = {
+  id: number;
+  record_id: number;
+  appointment_id: number;
+  branch_id: number;
+  primary_clinician_id: number;
+  primary_clinician_name: string;
+  branch_name: string;
+  author_name: string;
+  started_at: string;
+  ended_at: string | null;
+  state: EncounterState;
+  revision: number;
+  version_id: number;
+  author_id: number;
+};
+export type ClinicalWorkspace = {
+  patient_id: number;
+  patient_revision: number;
+  identity_status: "unverified" | "verified";
+  active_record: ClinicalRecord | null;
+  encounters: EncounterSummary[];
+  next_before_id: number | null;
+};
+export type EncounterVersionMetadata = {
+  version_id: number;
+  revision: number;
+  author_id: number;
+  author_name: string;
+  created_at: string;
+};
+export type EncounterHistory = {
+  encounter_id: number;
+  current_revision: number;
+  state: EncounterState;
+  versions: EncounterVersionMetadata[];
+  next_before_revision: number | null;
+};
+export type EncounterVersion = EncounterVersionMetadata & {
+  encounter_id: number;
+  content: ClinicalContent;
+  reason: string;
+};
+export type RecordOpenRequest = ClinicalReadScope & { number: string; expected_patient_revision: number };
+export type RecordCommandResult = { id: number; patient_id: number; replayed: boolean };
+export type EncounterOpenRequest = ClinicalScope & {
+  record_id: number;
+  appointment_id: number;
+  expected_patient_revision: number;
+  expected_appointment_updated_at: string;
+  content?: ClinicalContent;
+};
+export type EncounterDraftRequest = ClinicalScope & {
+  expected_revision: number;
+  content: ClinicalContent;
+  reason?: string;
+  participation_id?: number;
+};
+export type EncounterCommandResult = { id: number; version_id: number; revision: number; replayed: boolean };
+
+const root = "/api/medical/encounters/";
+
+async function command<T>(path: string, payload: object, idempotencyKey: string, signal?: AbortSignal): Promise<T> {
+  if (!idempotencyKey.trim() || idempotencyKey.length > 128) {
+    throw new Error("Medical command requires an idempotency key of at most 128 characters.");
+  }
+  const { data } = await apiClient.post<T>(path, payload, {
+    headers: { "Idempotency-Key": idempotencyKey },
+    signal,
+  });
+  return data;
+}
+
+export const medicalClinicalApi = {
+  appointmentContext: async (scope: AppointmentClinicalScope, signal?: AbortSignal) => {
+    const { data } = await apiClient.get<AppointmentClinicalContext>(`${root}appointment-context/`, { params: scope, signal });
+    return data;
+  },
+  workspace: async (scope: ClinicalReadScope & { before_id?: number; limit?: number }, signal?: AbortSignal) => {
+    const { data } = await apiClient.get<ClinicalWorkspace>(`${root}workspace/`, { params: scope, signal });
+    return data;
+  },
+  history: async (encounterId: number, scope: ClinicalReadScope & { before_revision?: number; limit?: number }, signal?: AbortSignal) => {
+    const { data } = await apiClient.get<EncounterHistory>(`${root}${encounterId}/revisions/`, { params: scope, signal });
+    return data;
+  },
+  version: async (versionId: number, scope: ClinicalReadScope, signal?: AbortSignal) => {
+    const { data } = await apiClient.get<EncounterVersion>(`${root}versions/${versionId}/`, { params: scope, signal });
+    return data;
+  },
+  openRecord: (payload: RecordOpenRequest, idempotencyKey: string, signal?: AbortSignal) =>
+    command<RecordCommandResult>("/api/medical/records/", payload, idempotencyKey, signal),
+  openEncounter: (payload: EncounterOpenRequest, idempotencyKey: string, signal?: AbortSignal) =>
+    command<EncounterCommandResult>(root, payload, idempotencyKey, signal),
+  saveDraft: (encounterId: number, payload: EncounterDraftRequest, idempotencyKey: string, signal?: AbortSignal) =>
+    command<EncounterCommandResult>(`${root}${encounterId}/draft/`, payload, idempotencyKey, signal),
+};

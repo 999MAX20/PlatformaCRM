@@ -38,6 +38,8 @@ import {
   shiftCalendarPeriod,
 } from "./calendarUtils";
 import { AppointmentDrawerPanel } from "./components/AppointmentDrawerPanel";
+import { ClinicalAppointmentEntry } from "../medical/ClinicalAppointmentEntry";
+import { ParticipationEntry } from "../medical/ParticipationEntry";
 import { CalendarBoard } from "./components/CalendarBoard";
 import { CalendarDayInspector } from "./components/CalendarDayInspector";
 import { CalendarToolbar } from "./components/CalendarToolbar";
@@ -528,6 +530,8 @@ export function CalendarPage() {
   return (
     <>
       {toolbar}
+      {business && user?.capabilities?.[String(business.id)]?.modules?.medical_records === true ?
+        <ParticipationEntry key={`${business.id}:${user.id}`} businessId={business.id} /> : null}
       <PageLoadPending pending={isCalendarDataLoading} />
       <section
         data-testid={
@@ -593,7 +597,7 @@ export function CalendarPage() {
         t={t}
       >
         {selectedAppointment ? (
-          <AppointmentDrawerPanel
+          <><AppointmentDrawerPanel
             appointment={selectedAppointment}
             clientById={clientById}
             serviceById={serviceById}
@@ -621,6 +625,9 @@ export function CalendarPage() {
             onArchive={setArchiveTarget}
             t={t}
           />
+          {business && user?.capabilities?.[String(business.id)]?.modules?.medical_records === true ?
+            <ClinicalAppointmentEntry key={`${business.id}:${user.id}:${selectedAppointment.id}`}
+              businessId={business.id} appointmentId={selectedAppointment.id} /> : null}</>
         ) : null}
       </CalendarDayInspector>
       <CrmEntityDrawer entity={cardAppointmentId ? { type: "appointment", id: cardAppointmentId } : null} onClose={() => setCardAppointmentId(null)} />

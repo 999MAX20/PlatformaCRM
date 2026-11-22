@@ -34,6 +34,7 @@ import { useI18n } from "../../lib/i18n";
 import { useClientWorkspaceActions } from "./hooks/useClientWorkspaceActions";
 import { useRestoreClient } from "./hooks/useRestoreClient";
 import { PaymentsButton } from "../payments/PaymentsButton";
+import { PatientAdministrationPanel } from "../medical/PatientAdministrationPanel";
 import {
   ActionPanel,
   AppointmentsList,
@@ -289,6 +290,8 @@ export function ClientWorkspacePage() {
           </EntityWorkspaceAside>
 
           <EntityWorkspaceMain>
+            {!client.is_archived && user?.capabilities?.[String(business?.id)]?.modules?.medical_records === true && business ?
+              <PatientAdministrationPanel key={`${business.id}:${client.id}:${user.id}`} businessId={Number(business.id)} clientId={Number(client.id)} clientName={client.full_name} userId={Number(user.id)} /> : null}
             {card?.custom_fields.length ? <div className="lg:col-span-2"><EntityCustomFieldsPanel data={card} entity={{ type: "client", id: client.id }} readOnly={!canEdit} /></div> : null}
             <ClientWorkspaceSection
               title={t("nav.tasks")}
