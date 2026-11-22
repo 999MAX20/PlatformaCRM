@@ -100,6 +100,8 @@ def merge_clients(*, target_client, duplicate_client, actor=None):
     # Same lock order as payment recording: a merge cannot race a ledger write.
     Business.objects.select_for_update().get(pk=business.pk)
     list(Client.objects.select_for_update().filter(pk__in=[target_client.pk, duplicate_client.pk]).order_by("pk"))
+    from apps.medical.client_guards import assert_client_merge_allowed
+    assert_client_merge_allowed(target_client.pk, duplicate_client.pk)
     duplicate_snapshot = client_snapshot(duplicate_client)
     transferred = {
         "visit_plans": VisitPlan.objects.filter(business=business, client=duplicate_client).update(client=target_client, revision=F("revision") + 1),
@@ -169,6 +171,8 @@ def merge_clients_dry_run(*, target_client, duplicate_client):
         raise ValueError("Cannot merge client into itself.")
 
     business = target_client.business
+    from apps.medical.client_guards import assert_client_merge_allowed
+    assert_client_merge_allowed(target_client.pk, duplicate_client.pk)
     return {
         "target_client_id": target_client.id,
         "duplicate": client_snapshot(duplicate_client),

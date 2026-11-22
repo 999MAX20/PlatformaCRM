@@ -17,6 +17,8 @@ def update_role_visibility(*, request, role, permission_ids, scope):
     permissions = list(role.permissions.select_for_update().filter(pk__in=permission_ids))
     if not permission_ids or len(set(permission_ids)) != len(permission_ids) or len(permissions) != len(permission_ids):
         raise ValidationError({"permission_ids": "Select distinct permissions belonging to this role."})
+    if any(permission.resource.startswith("medical_") for permission in permissions):
+        raise ValidationError({"permission_ids": "Use the medical role assignment process."})
     changed = [permission for permission in permissions if permission.scope != scope]
     if changed:
         before = [{"id": item.pk, "scope": item.scope, "is_allowed": item.is_allowed} for item in changed]

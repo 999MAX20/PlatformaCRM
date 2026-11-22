@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.db import models
+from django.db import models, transaction
 
 from apps.businesses.models import Business, TimeStampedModel
 from apps.clients.identity import normalize_client_identity
@@ -59,7 +59,24 @@ class Client(TimeStampedModel):
             if "email" in update_fields:
                 update_fields.add("normalized_email")
             kwargs["update_fields"] = update_fields
-        super().save(*args, **kwargs)
+        fields = kwargs.get("update_fields")
+        if self.pk and (fields is None or {"full_name", "business", "business_id"} & set(fields)):
+            from apps.medical.client_guards import assert_client_identity_write_allowed
+
+            with transaction.atomic(using=kwargs.get("using") or self._state.db):
+                current = type(self).objects.using(kwargs.get("using") or self._state.db).select_for_update().filter(pk=self.pk).first()
+                changes = {}
+                if fields is None or "full_name" in fields:
+                    changes["full_name"] = self.full_name
+                if fields is None or {"business", "business_id"} & set(fields):
+                    changes["business_id"] = self.business_id
+                if current is not None:
+                    assert_client_identity_write_allowed(current, changes)
+                    if fields is not None and changes.get("full_name", current.full_name) != current.full_name:
+                        kwargs["update_fields"] = {*fields, "updated_at"}
+                super().save(*args, **kwargs)
+        else:
+            super().save(*args, **kwargs)
 
     def __str__(self):
         return self.full_name

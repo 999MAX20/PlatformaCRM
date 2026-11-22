@@ -217,6 +217,8 @@ class TeamAccessMixin:
             instance = lock_member(instance)
             assert_member_deletable(instance)
         business = self.check_team_permission(Actions.MANAGE, instance=instance)
+        from apps.medical.role_guards import assert_medical_role_history_preserved
+        assert_medical_role_history_preserved(instance)
         write_audit_log(request, AuditLog.Actions.DELETE, instance, business=business, metadata={"repr": str(instance)})
         self.perform_destroy(instance)
         return Response(status=204)

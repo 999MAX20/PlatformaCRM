@@ -205,6 +205,20 @@ class TeamUserSerializer(serializers.ModelSerializer):
 
 
 class RolePermissionSerializer(serializers.ModelSerializer):
+    def validate(self, attrs):
+        resources = (attrs.get("resource", ""), getattr(self.instance, "resource", ""))
+        if any(resource.startswith("medical_") for resource in resources):
+            raise serializers.ValidationError({"resource": "Use the medical role assignment process."})
+        return attrs
+
+    @transaction.atomic
+    def update(self, instance, validated_data):
+        current = RolePermission.objects.select_for_update().get(pk=instance.pk)
+        if current.resource.startswith("medical_"):
+            raise serializers.ValidationError({"resource": "Use the medical role assignment process."})
+        self.validate(validated_data)
+        return super().update(current, validated_data)
+
     class Meta:
         model = RolePermission
         fields = ["id", "business_role", "resource", "action", "scope", "is_allowed", "created_at", "updated_at"]
@@ -213,6 +227,20 @@ class RolePermissionSerializer(serializers.ModelSerializer):
 
 class BusinessRoleSerializer(serializers.ModelSerializer):
     permissions = RolePermissionSerializer(many=True, read_only=True)
+
+    def validate(self, attrs):
+        presets = (attrs.get("preset_key", ""), getattr(self.instance, "preset_key", ""))
+        if any(preset.startswith("medical_") for preset in presets):
+            raise serializers.ValidationError({"preset_key": "Use the medical role assignment process."})
+        return attrs
+
+    @transaction.atomic
+    def update(self, instance, validated_data):
+        current = BusinessRole.objects.select_for_update().get(pk=instance.pk)
+        if current.preset_key.startswith("medical_"):
+            raise serializers.ValidationError({"preset_key": "Use the medical role assignment process."})
+        self.validate(validated_data)
+        return super().update(current, validated_data)
 
     class Meta:
         model = BusinessRole

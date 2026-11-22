@@ -1,0 +1,476 @@
+from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.core.validators import RegexValidator
+from django.db import models
+from django.utils import timezone
+import uuid
+
+from apps.businesses.models import TimeStampedModel
+
+
+class PatientProfile(TimeStampedModel):
+    class IdentityStatus(models.TextChoices):
+        UNVERIFIED = "unverified", "Unverified"
+        VERIFIED = "verified", "Verified"
+
+    business = models.ForeignKey("businesses.Business", on_delete=models.PROTECT, related_name="patient_profiles")
+    client = models.OneToOneField("clients.Client", on_delete=models.PROTECT, related_name="medical_profile")
+    demographics_encrypted = models.TextField(blank=True, editable=False)
+    iin_encrypted = models.TextField(blank=True, editable=False)
+    iin_digest = models.CharField(max_length=64, null=True, blank=True, editable=False,
+                                 validators=[RegexValidator(r"\A[a-f0-9]{64}\Z")])
+    identity_status = models.CharField(max_length=16, choices=IdentityStatus.choices, default=IdentityStatus.UNVERIFIED)
+    verification_evidence_encrypted = models.TextField(blank=True, editable=False)
+    verified_at = models.DateTimeField(null=True, blank=True)
+    verified_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.PROTECT,
+                                    related_name="verified_patient_profiles")
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="created_patient_profiles")
+    revision = models.PositiveIntegerField(default=1)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["business", "iin_digest"],
+                condition=models.Q(identity_status="verified", iin_digest__isnull=False),
+                name="medical_verified_iin_unique"),
+            models.CheckConstraint(condition=models.Q(revision__gte=1), name="medical_patient_revision_positive"),
+            models.CheckConstraint(
+                condition=(models.Q(iin_digest__isnull=True, iin_encrypted="") |
+                           (models.Q(iin_digest__isnull=False) & ~models.Q(iin_digest="") & ~models.Q(iin_encrypted=""))),
+                name="medical_patient_iin_pair"),
+            models.CheckConstraint(
+                condition=(models.Q(identity_status="unverified", verified_at__isnull=True, verified_by__isnull=True) |
+                           (models.Q(identity_status="verified", verified_at__isnull=False, verified_by__isnull=False) &
+                            ~models.Q(verification_evidence_encrypted=""))),
+                name="medical_patient_verification_complete"),
+        ]
+
+    def clean(self):
+        super().clean()
+        from apps.clients.models import Client
+        if self.client_id and not Client.objects.filter(pk=self.client_id, business_id=self.business_id).exists():
+            raise ValidationError({"client": "Select a client of this business."})
+
+
+class PatientRepresentative(TimeStampedModel):
+    patient = models.ForeignKey(PatientProfile, on_delete=models.PROTECT, related_name="representatives")
+    representative_client = models.ForeignKey("clients.Client", on_delete=models.PROTECT,
+                                             related_name="medical_representations")
+    authority_encrypted = models.TextField(editable=False)
+    verified_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT,
+                                   related_name="verified_medical_representations")
+    verified_at = models.DateTimeField()
+    valid_from = models.DateTimeField()
+    valid_until = models.DateTimeField(null=True, blank=True)
+    revoked_at = models.DateTimeField(null=True, blank=True)
+    revoked_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.PROTECT,
+                                  related_name="revoked_medical_representations")
+    revocation_encrypted = models.TextField(blank=True, editable=False)
+    revision = models.PositiveIntegerField(default=1)
+
+    class Meta:
+        indexes = [models.Index(fields=["patient", "representative_client"], name="medical_rep_patient_client")]
+        constraints = [
+            models.CheckConstraint(condition=~models.Q(authority_encrypted=""), name="medical_rep_authority_present"),
+            models.CheckConstraint(condition=models.Q(revision__gte=1), name="medical_rep_revision_positive"),
+            models.CheckConstraint(condition=models.Q(valid_until__isnull=True) | models.Q(valid_until__gt=models.F("valid_from")),
+                                   name="medical_rep_valid_period"),
+            models.CheckConstraint(condition=(
+                models.Q(revoked_at__isnull=True, revoked_by__isnull=True, revocation_encrypted="") |
+                (models.Q(revoked_at__isnull=False, revoked_by__isnull=False, revoked_at__gte=models.F("verified_at")) &
+                 ~models.Q(revocation_encrypted=""))), name="medical_rep_revocation_complete"),
+        ]
+
+    def clean(self):
+        super().clean()
+        from apps.clients.models import Client
+        patient = PatientProfile.objects.filter(pk=self.patient_id).values("business_id", "client_id").first()
+        if patient and self.representative_client_id == patient["client_id"]:
+            raise ValidationError({"representative_client": "Select a person other than the patient."})
+        if not patient or not Client.objects.filter(pk=self.representative_client_id, business_id=patient["business_id"]).exists():
+            raise ValidationError({"representative_client": "Select a client of the patient's business."})
+
+
+class PatientIdentityRevision(models.Model):
+    patient = models.ForeignKey(PatientProfile, on_delete=models.PROTECT, related_name="identity_revisions")
+    revision = models.PositiveIntegerField()
+    snapshot_encrypted = models.TextField(editable=False)
+    changed_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT,
+                                   related_name="patient_identity_revisions")
+    changed_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["patient", "revision"], name="medical_identity_revision_unique"),
+            models.CheckConstraint(condition=models.Q(revision__gte=1), name="medical_identity_revision_positive"),
+            models.CheckConstraint(condition=~models.Q(snapshot_encrypted=""), name="medical_identity_snapshot_present"),
+        ]
+
+
+class MedicalRoleAssignment(TimeStampedModel):
+    class Kinds(models.TextChoices):
+        DOCTOR = "doctor", "Doctor"
+        ASSISTANT = "assistant", "Assistant"
+        RECEPTION = "reception", "Reception"
+        HEAD = "head", "Medical head or deputy"
+
+    member = models.OneToOneField("businesses.BusinessMember", on_delete=models.PROTECT,
+                                  related_name="medical_role_assignment")
+    business_role = models.ForeignKey("businesses.BusinessRole", on_delete=models.PROTECT,
+                                      related_name="medical_assignments")
+    kind = models.CharField(max_length=16, choices=Kinds.choices)
+    all_branches = models.BooleanField(default=False)
+    branches = models.ManyToManyField("branches.Branch", blank=True, related_name="medical_assignments")
+    granted_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT,
+                                   related_name="granted_medical_roles")
+    granted_at = models.DateTimeField(default=timezone.now)
+    revoked_at = models.DateTimeField(null=True, blank=True)
+    revision = models.PositiveIntegerField(default=1)
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(condition=models.Q(kind__in=["doctor", "assistant", "reception", "head"]),
+                                   name="medical_role_kind_known"),
+            models.CheckConstraint(condition=models.Q(revision__gte=1), name="medical_role_revision_positive"),
+            models.CheckConstraint(condition=models.Q(revoked_at__isnull=True) | models.Q(revoked_at__gte=models.F("granted_at")),
+                                   name="medical_role_revocation_order"),
+        ]
+
+    def clean(self):
+        super().clean()
+        from apps.businesses.models import BusinessMember, BusinessRole
+        member = BusinessMember.objects.filter(pk=self.member_id).values("business_id", "user_id").first()
+        business_id = member["business_id"] if member else None
+        if not business_id or not BusinessRole.objects.filter(pk=self.business_role_id, business_id=business_id).exists():
+            raise ValidationError({"business_role": "Select a role of the member's business."})
+        if self.granted_by_id == member["user_id"]:
+            raise ValidationError({"granted_by": "Medical authority cannot be self-granted."})
+
+
+class TreatmentParticipation(TimeStampedModel):
+    class States(models.TextChoices):
+        PENDING = "pending", "Pending acceptance"
+        ACTIVE = "active", "Active"
+        DECLINED = "declined", "Declined"
+        WITHDRAWN = "withdrawn", "Withdrawn"
+        ENDED = "ended", "Ended"
+        REVOKED = "revoked", "Revoked"
+
+    patient = models.ForeignKey(PatientProfile, on_delete=models.PROTECT, related_name="participations")
+    member = models.ForeignKey("businesses.BusinessMember", on_delete=models.PROTECT,
+                               related_name="treatment_participations")
+    branch = models.ForeignKey("branches.Branch", on_delete=models.PROTECT, related_name="treatment_participations")
+    state = models.CharField(max_length=16, choices=States.choices, default=States.PENDING)
+    proposed_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT,
+                                    related_name="proposed_treatment_participations")
+    proposed_at = models.DateTimeField(default=timezone.now)
+    accepted_at = models.DateTimeField(null=True, blank=True)
+    closed_at = models.DateTimeField(null=True, blank=True)
+    closed_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, null=True, blank=True,
+                                  related_name="closed_treatment_participations")
+    reason_encrypted = models.TextField(blank=True, editable=False)
+    closure_reason_encrypted = models.TextField(blank=True, editable=False)
+    remaining_responsible = models.ForeignKey("businesses.BusinessMember", on_delete=models.PROTECT,
+        null=True, blank=True, related_name="closed_medical_participations")
+    revision = models.PositiveIntegerField(default=1)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["patient", "member", "branch"],
+                condition=models.Q(state__in=["pending", "active"]), name="medical_participation_open"),
+            models.CheckConstraint(condition=models.Q(revision__gte=1), name="medical_participation_revision"),
+            models.CheckConstraint(condition=(
+                models.Q(state="pending", accepted_at__isnull=True, closed_at__isnull=True, closed_by__isnull=True) |
+                models.Q(state="active", accepted_at__isnull=False, closed_at__isnull=True, closed_by__isnull=True) |
+                models.Q(state__in=["declined", "withdrawn"], accepted_at__isnull=True,
+                         closed_at__isnull=False, closed_by__isnull=False) |
+                models.Q(state__in=["ended", "revoked"], accepted_at__isnull=False,
+                         closed_at__isnull=False, closed_by__isnull=False)), name="medical_participation_state"),
+            models.CheckConstraint(condition=(models.Q(accepted_at__isnull=True) |
+                models.Q(accepted_at__gte=models.F("proposed_at"))), name="medical_participation_accept"),
+            models.CheckConstraint(condition=(models.Q(closed_at__isnull=True) |
+                (models.Q(closed_at__gte=models.F("proposed_at")) &
+                 (models.Q(accepted_at__isnull=True) | models.Q(closed_at__gte=models.F("accepted_at"))))),
+                name="medical_participation_close"),
+        ]
+
+    def clean(self):
+        super().clean()
+        from apps.branches.models import Branch
+        from apps.businesses.models import BusinessMember
+        patient = PatientProfile.objects.filter(pk=self.patient_id).values("business_id", "client__business_id").first()
+        if patient is None or patient["business_id"] != patient["client__business_id"]:
+            raise ValidationError({"patient": "Select a patient in this business."})
+        business_id = patient["business_id"]
+        if not BusinessMember.objects.filter(pk=self.member_id, business_id=business_id).exists():
+            raise ValidationError({"member": "Select a member of the patient's business."})
+        if not Branch.objects.filter(pk=self.branch_id, business_id=business_id).exists():
+            raise ValidationError({"branch": "Select a branch of the patient's business."})
+        if self.remaining_responsible_id is not None and not BusinessMember.objects.filter(
+                pk=self.remaining_responsible_id, business_id=business_id).exists():
+            raise ValidationError({"remaining_responsible": "Select a member of the patient's business."})
+
+
+class MedicalAuditEvent(models.Model):
+    class Actions(models.TextChoices):
+        PATIENT_CREATED = "patient_created", "Patient created"
+        PATIENT_UPDATED = "patient_updated", "Patient updated"
+        IDENTITY_VERIFIED = "identity_verified", "Identity verified"
+        REPRESENTATIVE_VERIFIED = "representative_verified", "Representative verified"
+        REPRESENTATIVE_REVOKED = "representative_revoked", "Representative revoked"
+        PARTICIPATION_PROPOSED = "participation_proposed", "Participation proposed"
+        PARTICIPATION_ACCEPTED = "participation_accepted", "Participation accepted"
+        PARTICIPATION_DECLINED = "participation_declined", "Participation declined"
+        PARTICIPATION_WITHDRAWN = "participation_withdrawn", "Participation withdrawn"
+        PARTICIPATION_ENDED = "participation_ended", "Participation ended"
+        RECORD_OPENED = "record_opened", "Medical record opened"
+        ENCOUNTER_OPENED = "encounter_opened", "Encounter opened"
+        ENCOUNTER_DRAFT_SAVED = "encounter_draft_saved", "Encounter draft saved"
+        TOOTH_OBSERVATION_SAVED = "tooth_observation_saved", "Tooth observation saved"
+        READ = "read", "Read"
+        ACCESS_DENIED = "access_denied", "Access denied"
+
+    event_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    business = models.ForeignKey("businesses.Business", on_delete=models.PROTECT, related_name="medical_audit_events")
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="medical_audit_events")
+    patient = models.ForeignKey(PatientProfile, on_delete=models.PROTECT, null=True, blank=True, related_name="audit_events")
+    patient_revision = models.PositiveIntegerField(null=True, blank=True)
+    representative = models.ForeignKey(PatientRepresentative, on_delete=models.PROTECT, null=True, blank=True,
+                                       related_name="audit_events")
+    representative_revision = models.PositiveIntegerField(null=True, blank=True)
+    participation = models.ForeignKey(TreatmentParticipation, on_delete=models.PROTECT, null=True, blank=True,
+                                      related_name="audit_events")
+    participation_revision = models.PositiveIntegerField(null=True, blank=True)
+    record = models.ForeignKey("DentalMedicalRecord", on_delete=models.PROTECT, null=True, blank=True,
+                               related_name="audit_events")
+    encounter_version = models.ForeignKey("MedicalEncounterRevision", on_delete=models.PROTECT, null=True, blank=True,
+                                          related_name="audit_events")
+    tooth_history = models.ForeignKey("DentalToothHistory", on_delete=models.PROTECT, null=True, blank=True,
+                                      related_name="audit_events")
+    action = models.CharField(max_length=32, choices=Actions.choices)
+    result = models.CharField(max_length=16, choices=[("success", "Success"), ("denied", "Denied")])
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        indexes = [models.Index(fields=["business", "patient", "created_at"], name="medical_audit_patient_time")]
+        constraints = [
+            models.CheckConstraint(
+                condition=(models.Q(patient__isnull=True, patient_revision__isnull=True) |
+                           models.Q(patient__isnull=False, patient_revision__isnull=False, patient_revision__gte=1)),
+                name="medical_audit_patient_version"),
+            models.CheckConstraint(
+                condition=(models.Q(action="access_denied", result="denied") |
+                           models.Q(action__in=["patient_created", "patient_updated", "identity_verified", "read",
+                                               "representative_verified", "representative_revoked",
+                                               "participation_proposed", "participation_accepted",
+                                               "participation_declined", "participation_withdrawn", "participation_ended",
+                                               "encounter_opened", "encounter_draft_saved", "record_opened",
+                                               "tooth_observation_saved"], result="success")),
+                name="medical_audit_action_result"),
+            models.CheckConstraint(condition=(
+                models.Q(representative__isnull=True, representative_revision__isnull=True) |
+                models.Q(representative__isnull=False, representative_revision__gte=1,
+                         representative_revision__isnull=False, patient__isnull=False)),
+                name="medical_audit_rep_version"),
+            models.CheckConstraint(condition=(
+                models.Q(action__in=["representative_verified", "representative_revoked"], representative__isnull=False) |
+                ~models.Q(action__in=["representative_verified", "representative_revoked"])),
+                name="medical_audit_rep_required"),
+            models.CheckConstraint(condition=(
+                models.Q(participation__isnull=True, participation_revision__isnull=True) |
+                models.Q(participation__isnull=False, participation_revision__gte=1,
+                         participation_revision__isnull=False, patient__isnull=False)),
+                name="medical_audit_part_version"),
+            models.CheckConstraint(condition=(
+                models.Q(action__in=["participation_proposed", "participation_accepted", "participation_declined",
+                                     "participation_withdrawn", "participation_ended"], participation__isnull=False) |
+                ~models.Q(action__in=["participation_proposed", "participation_accepted", "participation_declined",
+                                      "participation_withdrawn", "participation_ended"])), name="medical_audit_part_required"),
+            models.CheckConstraint(condition=models.Q(participation__isnull=True) | models.Q(representative__isnull=True),
+                                   name="medical_audit_single_relation"),
+            models.CheckConstraint(condition=(models.Q(encounter_version__isnull=True) |
+                models.Q(patient__isnull=False, representative__isnull=True, participation__isnull=True)),
+                name="medical_audit_encounter_patient"),
+            models.CheckConstraint(condition=(
+                models.Q(action__in=["encounter_opened", "encounter_draft_saved"], encounter_version__isnull=False) |
+                ~models.Q(action__in=["encounter_opened", "encounter_draft_saved"])),
+                name="medical_audit_encounter_needed"),
+            models.CheckConstraint(condition=(models.Q(record__isnull=True) |
+                models.Q(patient__isnull=False, representative__isnull=True, participation__isnull=True,
+                         encounter_version__isnull=True)), name="medical_audit_record_patient"),
+            models.CheckConstraint(condition=(models.Q(action="record_opened", record__isnull=False) |
+                ~models.Q(action="record_opened")), name="medical_audit_record_needed"),
+            models.CheckConstraint(condition=(models.Q(tooth_history__isnull=True) |
+                models.Q(patient__isnull=False, representative__isnull=True, participation__isnull=True,
+                         encounter_version__isnull=True, record__isnull=True,
+                         action__in=["read", "tooth_observation_saved"])), name="medical_audit_tooth_relation"),
+            models.CheckConstraint(condition=(~models.Q(action="tooth_observation_saved") |
+                models.Q(tooth_history__isnull=False)), name="medical_audit_tooth_needed"),
+        ]
+
+class DentalMedicalRecord(TimeStampedModel):
+    class States(models.TextChoices):
+        ACTIVE = "active", "Active"
+        ARCHIVED = "archived", "Archived"
+
+    business = models.ForeignKey("businesses.Business", on_delete=models.PROTECT, related_name="dental_records")
+    patient = models.ForeignKey(PatientProfile, on_delete=models.PROTECT, related_name="dental_records")
+    number = models.CharField(max_length=64)
+    state = models.CharField(max_length=16, choices=States.choices, default=States.ACTIVE)
+    opened_at = models.DateTimeField(default=timezone.now)
+    opened_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="opened_dental_records")
+    archived_at = models.DateTimeField(null=True, blank=True)
+    archived_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, null=True, blank=True,
+                                    related_name="archived_dental_records")
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["business", "number"], name="medical_record_number_unique"),
+            models.UniqueConstraint(fields=["business", "patient"], condition=models.Q(state="active"),
+                                    name="medical_record_active_unique"),
+            models.CheckConstraint(condition=~models.Q(number=""), name="medical_record_number_present"),
+            models.CheckConstraint(condition=(
+                models.Q(state="active", archived_at__isnull=True, archived_by__isnull=True) |
+                models.Q(state="archived", archived_at__isnull=False, archived_by__isnull=False,
+                         archived_at__gte=models.F("opened_at"))), name="medical_record_archive_state"),
+        ]
+
+    def clean(self):
+        super().clean()
+        if not PatientProfile.objects.filter(pk=self.patient_id, business_id=self.business_id,
+                                              client__business_id=self.business_id).exists():
+            raise ValidationError({"patient": "Select a patient of this business."})
+        if not self.number.strip():
+            raise ValidationError({"number": "Provide the medical record number."})
+
+
+class MedicalEncounter(TimeStampedModel):
+    class States(models.TextChoices):
+        DRAFT = "draft", "Draft"
+        FINALIZED = "finalized", "Finalized"
+
+    business = models.ForeignKey("businesses.Business", on_delete=models.PROTECT, related_name="medical_encounters")
+    patient = models.ForeignKey(PatientProfile, on_delete=models.PROTECT, related_name="encounters")
+    record = models.ForeignKey(DentalMedicalRecord, on_delete=models.PROTECT, related_name="encounters")
+    appointment = models.OneToOneField("scheduling.Appointment", on_delete=models.PROTECT, related_name="medical_encounter")
+    branch = models.ForeignKey("branches.Branch", on_delete=models.PROTECT, related_name="medical_encounters")
+    primary_clinician = models.ForeignKey("businesses.BusinessMember", on_delete=models.PROTECT,
+                                        related_name="primary_medical_encounters")
+    started_at = models.DateTimeField(default=timezone.now)
+    ended_at = models.DateTimeField(null=True, blank=True)
+    state = models.CharField(max_length=16, choices=States.choices, default=States.DRAFT)
+    finalized_at = models.DateTimeField(null=True, blank=True)
+    finalized_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, null=True, blank=True,
+                                     related_name="finalized_medical_encounters")
+    revision = models.PositiveIntegerField(default=1)
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(condition=models.Q(revision__gte=1), name="medical_encounter_revision"),
+            models.CheckConstraint(condition=(
+                models.Q(state="draft", ended_at__isnull=True, finalized_at__isnull=True, finalized_by__isnull=True) |
+                models.Q(state="finalized", ended_at__isnull=False, finalized_at__isnull=False,
+                         finalized_by__isnull=False, ended_at__gte=models.F("started_at"),
+                         finalized_at__gte=models.F("ended_at"))), name="medical_encounter_state"),
+        ]
+
+    def clean(self):
+        super().clean()
+        from apps.branches.models import Branch
+        from apps.businesses.models import BusinessMember
+        from apps.scheduling.models import Appointment
+        patient = PatientProfile.objects.filter(pk=self.patient_id, business_id=self.business_id,
+            client__business_id=self.business_id).values("client_id").first()
+        if patient is None:
+            raise ValidationError({"patient": "Select a patient of this business."})
+        if not DentalMedicalRecord.objects.filter(pk=self.record_id, business_id=self.business_id, patient_id=self.patient_id).exists():
+            raise ValidationError({"record": "Select this patient's medical record."})
+        if not Appointment.objects.filter(pk=self.appointment_id, business_id=self.business_id,
+                client_id=patient["client_id"], branch_id=self.branch_id, service__business_id=self.business_id).exists():
+            raise ValidationError({"appointment": "Select an appointment for this patient and branch."})
+        if not Branch.objects.filter(pk=self.branch_id, business_id=self.business_id).exists():
+            raise ValidationError({"branch": "Select a branch of this business."})
+        if not BusinessMember.objects.filter(pk=self.primary_clinician_id, business_id=self.business_id).exists():
+            raise ValidationError({"primary_clinician": "Select a clinician of this business."})
+
+
+class MedicalEncounterRevision(models.Model):
+    encounter = models.ForeignKey(MedicalEncounter, on_delete=models.PROTECT, related_name="clinical_revisions")
+    revision = models.PositiveIntegerField()
+    content_encrypted = models.TextField(editable=False)
+    reason_encrypted = models.TextField(blank=True, editable=False)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="medical_encounter_revisions")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["encounter", "revision"], name="medical_encounter_version_unique"),
+            models.CheckConstraint(condition=models.Q(revision__gte=1), name="medical_encounter_ver_positive"),
+            models.CheckConstraint(condition=~models.Q(content_encrypted=""), name="medical_encounter_ver_content"),
+        ]
+
+
+FDI_TOOTH_NUMBERS = tuple(quadrant * 10 + position
+    for quadrant in range(1, 9)
+    for position in range(1, 9 if quadrant <= 4 else 6))
+
+
+class DentalToothState(TimeStampedModel):
+    business = models.ForeignKey("businesses.Business", on_delete=models.PROTECT, related_name="dental_tooth_states")
+    patient = models.ForeignKey(PatientProfile, on_delete=models.PROTECT, related_name="tooth_states")
+    tooth = models.PositiveSmallIntegerField()
+    surface = models.CharField(max_length=32, blank=True, default="",
+        validators=[RegexValidator(r"^[a-z][a-z0-9_]*$", "Provide a surface identifier.")])
+    revision = models.PositiveIntegerField(default=1)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["business", "patient", "tooth", "surface"], name="medical_tooth_location_unique"),
+            models.CheckConstraint(condition=models.Q(tooth__in=FDI_TOOTH_NUMBERS), name="medical_tooth_fdi_number"),
+            models.CheckConstraint(condition=models.Q(revision__gte=1), name="medical_tooth_revision"),
+        ]
+
+    def clean(self):
+        super().clean()
+        if not PatientProfile.objects.filter(pk=self.patient_id, business_id=self.business_id,
+                client__business_id=self.business_id).exists():
+            raise ValidationError({"patient": "Select a patient of this business."})
+
+
+class DentalToothHistory(models.Model):
+    tooth_state = models.ForeignKey(DentalToothState, on_delete=models.PROTECT, related_name="history")
+    encounter = models.ForeignKey(MedicalEncounter, on_delete=models.PROTECT, related_name="tooth_history")
+    revision = models.PositiveIntegerField()
+    previous = models.OneToOneField("self", on_delete=models.PROTECT, null=True, blank=True, related_name="next_revision")
+    content_encrypted = models.TextField(editable=False)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="dental_tooth_history")
+    observed_at = models.DateTimeField(default=timezone.now)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["tooth_state", "revision"], name="medical_tooth_history_unique"),
+            models.CheckConstraint(condition=(models.Q(revision=1, previous__isnull=True) |
+                models.Q(revision__gt=1, previous__isnull=False)), name="medical_tooth_history_chain"),
+            models.CheckConstraint(condition=~models.Q(content_encrypted=""), name="medical_tooth_history_content"),
+        ]
+        indexes = [models.Index(fields=["tooth_state", "observed_at", "id"], name="medical_tooth_history_date")]
+
+    def clean(self):
+        super().clean()
+        state = DentalToothState.objects.filter(pk=self.tooth_state_id).first()
+        if state is None:
+            raise ValidationError({"tooth_state": "Select an existing tooth state."})
+        state.full_clean()
+        encounter = MedicalEncounter.objects.filter(pk=self.encounter_id,
+            business_id=state.business_id, patient_id=state.patient_id).first()
+        if encounter is None:
+            raise ValidationError({"encounter": "Select an encounter for this patient and business."})
+        encounter.clean()
+        if self.revision > state.revision:
+            raise ValidationError({"revision": "The tooth revision is not current."})
+        if self.previous_id and not DentalToothHistory.objects.filter(pk=self.previous_id,
+                tooth_state_id=state.pk, revision=self.revision - 1).exists():
+            raise ValidationError({"previous": "Select the preceding revision of this tooth state."})
+        from apps.businesses.models import BusinessMember
+        if not BusinessMember.objects.filter(business_id=state.business_id, user_id=self.author_id).exists():
+            raise ValidationError({"author": "Select an author belonging to this business."})

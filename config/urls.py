@@ -7,6 +7,11 @@ from django.urls import include, path
 from apps.integrations.ycloud.api import YCloudSetupView, YCloudWebhookView
 from apps.integrations.google_api import GoogleOAuthView, GoogleDisconnectView, GoogleSheetsView
 from rest_framework.routers import DefaultRouter
+from apps.medical.views import PatientAdministrationViewSet
+from apps.medical.encounter_views import MedicalEncounterViewSet
+from apps.medical.record_views import MedicalRecordViewSet
+from apps.medical.tooth_views import ToothObservationViewSet
+from apps.medical.participation_views import TreatmentParticipationViewSet
 
 from apps.accounts.auth_views import LogoutView, ThrottledTokenObtainPairView, ThrottledTokenRefreshView
 from apps.accounts.csrf import auth_csrf
@@ -140,6 +145,11 @@ from apps.tasks.views import TaskViewSet
 
 
 router = DefaultRouter()
+router.register("medical/patients", PatientAdministrationViewSet, basename="medical-patient")
+router.register("medical/encounters", MedicalEncounterViewSet, basename="medical-encounter")
+router.register("medical/records", MedicalRecordViewSet, basename="medical-record")
+router.register("medical/tooth-observations", ToothObservationViewSet, basename="medical-tooth-observation")
+router.register("medical/participations", TreatmentParticipationViewSet, basename="medical-participation")
 router.register("branches", BranchViewSet, basename="branch")
 router.register("management", ManagementViewSet, basename="management")
 router.register("businesses", BusinessViewSet, basename="business")

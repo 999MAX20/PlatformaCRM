@@ -1,28 +1,242 @@
 ## Медицинская граница DENTAL-MCS — 22.11.2026
 
+По §22.6 п.3 команды medical.record.open, medical.encounter.open и
+medical.encounter.primary_draft дополнительно требуют текущую проверенную личность
+пациента. Проверка выполняется до replay; непроверенная личность блокирует обычное
+медицинское оформление с409, не отменяя доступ к организационной записи. Неотложный
+обход не предоставляется. Клиническое чтение имеет отдельную проверку основания/аудит.
+
 Новое поручение владельца разрешает медицинский контур по D03; общий CRM-доступ
 не является доступом к PHI. Первый серверный срез сопоставляет medical_patients,
 medical_records, medical_documents, medical_prescriptions и medical_files одной
-capability medical_records. Resolver требует сохранённую включённую строку именно
-для dentistry Business и читает её заново при проверке, без разрешающего fallback
-и без использования старого capability cache. Это только необходимое условие,
+capability medical_records. Resolver требует известный профиль dentistry_v2,
+включённые medical_records/clients/appointments и читает их заново при проверке,
+без разрешающего fallback и старого capability cache. Лишняя строка у legacy,
+core_v1 или dentistry_v1 не включает медицинский модуль. Это необходимое условие,
 не медицинская роль и не разрешение владельцу/платформенной поддержке читать карты.
 Профильная активация и медицинский ACL ещё разрабатываются; общие grants не меняются.
+`assert_appointment_medical_basis` проверяет отдельное основание врача по конкретной
+действующей записи: свежие medical role/member/account/branch grants, тот же пациент
+и Business всех связей, основной staff Resource.linked_user. Срок до будущей записи
+не ограничен24ч. created/confirmed/rescheduled соответствуют текущему CRM-контракту;
+terminal/archive не дают это основание. responsible_user и reserved physical resources
+его не заменяют. Недоступность специалиста для новых записей не равна отзыву аккаунта.
+Результат содержит только IDs; сам helper не выдаёт PHI. Клинический API использует
+его или active participation в транзакционном reader с READ audit точной версии.
+Временные grants и остальные пути полного clinical ACL ещё не реализованы;
+создание в другом филиале требует отдельного права. Продолжающееся участие не должно
+исчезать из-за завершения записи. TreatmentParticipation теперь хранит отдельный цикл
+patient/member/branch: pending,active,declined,withdrawn,ended,revoked; принятие/закрытие
+имеют отдельные даты, закрытие — actor, история связей защищена PROTECT. DB ограничивает
+один pending/active цикл на эту тройку и непротиворечивые timestamps/revision.
+`assert_treatment_medical_basis` принимает только active с уже наступившим accepted_at,
+проверяет Business всех связей и свежие medical role/branch grants. Завершение Appointment
+не меняет этот цикл. Этот storage/prerequisite ещё не даёт публичного clinical access:
+propose/accept/decline теперь выполняются в participation_services под Business lock,
+с revision/idempotency и MedicalAuditEvent(participation,participation_revision).
+Предлагающий — действующий участник (appointment/treatment basis) либо scoped head;
+получатель — current doctor/head с явными approve/branch grants. Участвующий врач может
+предложить переход в другой филиал без расширения своих write grants: проверяется
+его исходное основание и полномочия получателя в целевом филиале. Только получатель
+принимает/отклоняет; pending не даёт карты, decline не открывается новым command key.
+Повтор проверяет текущие права; reason encrypted, ledger без plaintext причины/ключа,
+сбой аудита откатывает переход. Предыдущее участие не завершается автоматически.
+withdraw_treatment_participation закрывает только pending: собственное приглашение
+может отозвать исходный инициатор с текущими medical create правами; чужое — только
+medical head с create и manage в целевом филиале. Отзыв своего запроса не читает карту,
+не даёт clinical access и не требует восстановления роли получателя. Recipient decline
+остаётся отдельным действием. После accept отзыв приглашения возвращает конфликт,
+а после withdraw невозможно принять этот цикл; причина предложения и audit сохранены.
+Replay заново проверяет права инициатора. end_participation_by_head завершает active
+по текущим head/manage/branch полномочиям, с причиной и явно выбранным действующим
+ответственным того же Business. Причина закрытия зашифрована отдельно от предложения;
+ответственный не получает этим медицинский доступ. Даты/авторство/исходная причина
+сохраняются, прекращается только participation basis; назначение Appointment
+проверяется независимо. Даже отключённое членство прежнего врача не препятствует
+завершению руководителем. Календарь/задачи/оплаты не передаются и не отменяются.
+Событие participation_ended с точной revision атомарно с переходом и idempotency;
+повтор проверяет текущие права руководителя. Обычное завершение с проверками
+обязательств, security revoke,24h correction и notifications ещё нужны.
+Командный HTTP-контур /api/medical/participations/ вызывает эти же services:
+create/respond/withdraw/end-by-head. IsAuthenticated не заменяет текущие medical
+проверки команд; body не принимает actor/state/closed_by. Успех/ошибки no-store;
+ответ без причин и клинического содержания. Generic GET/PATCH не открывают доступ.
+Read selectors /invitations/ и /managed/ подключены (срез61): incoming только свой
+pending с уже наступившим proposed_at, текущей view ролью и пересечением медицинских
+и CRM-филиальных grants; managed только head в явно указанном доступном филиале.
+Список приглашений не создаёт clinical basis. Метаданные минимальны, без причин/ИИН/
+текста карты; чужие Business и повреждённые межтенантные связи не выдаются. Пустой
+список тоже аудируется, сбой аудита закрывает выдачу. Proposal candidates подключены:
+общие participation_context/proposal_branch применяются lookup и write. Врач с
+действующим исходным основанием может выбрать получателя другого филиала без
+расширения собственных write grants; head ограничен своим целевым филиалом.
+Получатель должен иметь текущие approve/medical+CRM branch полномочия; lookup
+не заменяет повторную проверку команды и не даёт клинического доступа. Responsible
+selector требует head/manage и текущий филиальный доступ к active-участию;
+показывает только действующих сотрудников этого Business, исключая платформенные
+аккаунты. Не выдаёт выбранному сотруднику медицинский доступ. Workspace-access
+выдаёт только метаданные своих прав/филиалов; mine показывает свои участия с текущим
+view/branch/tenant фильтром и обязательным аудитом. Принятие/завершение по-прежнему
+перепроверяет права на сервере. Patient-context для head дополнительно требует
+CRM Client VIEW, тот же Business и неархивного клиента, возвращает только IDs
+с READ audit. Ресепшен и владелец не получают этот head endpoint автоматически.
+UI head invite/own accept/history/head end проверен локально, в том числе реальный
+отзыв медицинской роли очищает содержимое окна; остальные ACL/UI пути открыты;
+model save сам по себе не является авторизованной командой.
+Миграции0007–0008 и0014 подготовлены, рабочая БД не изменялась. Композиция оснований ещё не завершена.
+
+Добавлена основа PatientProfile OneToOne Client с шифрованными полями и отдельным
+tenant-scoped индексом ИИН. Обычные merge и merge preview блокируются до переноса
+связей, если любая сторона имеет медицинский профиль, включая отключённый модуль.
+Связь PatientRepresentative хранится отдельно на PatientProfile и существующем
+Client представителя, без автоматического создания ему PatientProfile. Основание,
+проверка и полномочия предназначены для authority_encrypted; период/проверивший,
+отзыв и revision хранятся явно. Доменный verify_patient_representative требует
+актуальный reception/approve, medical/CRM филиал, view обоих Client и обучение по
+отдельному утверждённому протоколу. Сверяются Patient revision и версия Client
+представителя; основание/полномочия/снимок личности шифруются с привязкой к ID связи.
+Подтверждение и отзыв используют HMAC idempotency и MedicalAuditEvent в одной
+транзакции. Аудит содержит ID связи и revision без основания/клинического текста.
+Отзыв с причиной разрешён после архива Client и не требует старого протокола,
+но проверяет актуальную роль/филиал и revision. Повтор не восстанавливает полномочия.
+assert_representative_authority проверяет конкретные Business/Patient/Client/связь,
+начало включительно, окончание исключительно, отзыв и выбранное полномочие из
+аутентифицированного ciphertext. Это prerequisite, не идентификация получателя
+и не разрешение на документ. Administrative API представителей подключён ниже;
+пользовательская форма подключена и проходит browser acceptance; интеграция с выдачей
+ещё не подключена.
+Обычный merge также блокируется для Client представителя; Client.save/import и
+conditional editor не заменяют его проверенное имя/Business, включая отозванные
+связи. Контактные изменения и архив разрешены обычными правилами и не переносят
+полномочия на другого человека. Связи защищены PROTECT; документов/возрастных
+оснований по умолчанию нет. Объём проверки текущего среза указан в checkpoint.
+Архив Client сохраняет профиль, обычное удаление Client защищено PROTECT.
+Административный patient API описан ниже; clinical API карты, черновиков и истории
+подключён отдельно. Role-management UI ещё не предоставлен.
+Доменный create_patient_profile уже проверяет medical_patients.create, актуальные
+медицинские и CRM филиалы и обычный Client view, затем создаёт только unverified
+профиль в Business существующего Client. Owner без явного назначения не проходит.
+Контакты не копируются; административные сведения/ИИН шифруются. Совпадение
+подтверждённого ИИН того же Business требует разбора без раскрытия чужой карты;
+семейный телефон не объединяет профили. Повторная команда проверяет актуальные
+права до чтения результата и не перезаписывает профиль. MedicalAuditEvent с
+фиксированными ID/action/result/revision создаётся в той же транзакции; сбой записи
+откатывает профиль и команду. update_unverified_patient_profile заменяет только
+предварительные поля: требует свежую medical_patients.update, CRM/medical branch,
+Client view, expected_revision и причину. Предыдущая версия и причина сохраняются
+зашифрованно в PatientIdentityRevision; audit/history/profile/command атомарны.
+Повтор старой команды не возвращает старые значения в профиль. Подтверждённую
+личность этот writer не меняет. Обычный Client.save (включая импорт) и conditional
+update_client_snapshot блокируют изменение имени verified пациента и перенос
+Client с любым медицинским профилем в другой Business. Проверка читает текущее
+состояние под Client lock; отключение модуля не снимает защиту истории. Контакты,
+прочие CRM metadata и предварительное unverified имя доступны по обычным правам.
+Verification/correction writers берут тот же Client lock. Публичного
+bypass для controlled correction нет. Initial verify_patient_identity требует
+reception assignment + medical_patients.approve, текущие филиалы и Client view,
+current training/protocol configuration, expected_revision и expected_client_updated_at.
+Он дешифрует текущую идентичность, проверяет совпадение ИИН/HMAC и отсутствие
+verified дубликата в Business; сохраняет encrypted evidence/previous revision и
+audit атомарно. Повтор проверяет актуальные права/протокол/обучение. Отсутствие
+реально утверждённого настроенного протокола блокирует verify503; по умолчанию
+конфигурация пуста. Частичное изменение предварительного имени через Client.save
+обновляет updated_at, чтобы ранее открытая verification форма не подтверждала
+уже изменившееся имя. correct_patient_administrative_identity разрешает trained
+reception с update+approve исправить имя/дату рождения/пол/адрес только с причиной,
+повторной проверкой по протоколу и актуальными Client/Patient версиями. Старые
+encrypted identity/evidence сохраняются; Client name + Patient + audit/command
+атомарны. Общие CRM writers остаются закрыты для verified имени. Этот сервис не
+принимает изменение ИИН/привязки: отдельный workflow и head approval при medical
+history ещё нужны. UI представителей подключён и локально проверен; полная композиция
+clinical ACL и резервный read audit остаются незавершёнными;
+verify/correction не выдают clinical доступ. Административный API теперь доступен
+через `/api/medical/patients/` только reception с явными medical permissions;
+doctor/head получают отдельные clinical routes по текущей записи или участию;
+ассистентские сценарии и остальные ограничения полного ACL ещё требуют реализации.
+Действия над пациентом проверяют dentistry_v2 medical capability, текущий medical/CRM
+branch и Client view, не используют общий owner/support bypass. Административная
+панель подключена к ClientWorkspacePage; локальные lifecycle/recovery browser
+сценарии пройдены, общий medical rollout и clinical ACL остаются открытыми.
+
+Административный HTTP-контракт:
+
+- GET `access/`: query business_id/branch_id; reception view обязателен. Возвращает
+  только scope и текущие exact role actions view/create/update/approve, без PHI.
+  Это подсказка UI, а не разрешение обойти проверки команды: protocol/training,
+  Client scope, состояние и версии проверяются при выполнении. Нет owner bypass,
+  snapshot не переносит права после отзыва; ответ no-store. Endpoint не читает карту.
+- POST collection: business_id/branch_id/client_id/demographics/iin, создаёт unverified.
+- GET `verification-form/`: query business_id/branch_id; текущие reception/approve,
+  филиал и training authorization. Только reference и локализованные методы/поля,
+  без approval reference/trained member IDs/PHI. Без полного описания формы503.
+  Команда verify/correct заново проверяет протокол, обучение и версии данных.
+- GET `{id}/` или `by-client/{client_id}/`: query business_id/branch_id; возвращает
+  идентификационные/контактные поля, revision/client_updated_at/identity_status,
+  без clinical/evidence/history. Нет list/export. Каждый успешный read пишет
+  MedicalAuditEvent до возврата; сбой аудита503 без данных. Резервный read journal
+  и отдельный denial audit пока не реализованы; это не полное закрытие D07.
+- POST `{id}/preliminary/`: scope, expected_revision, demographics/iin/reason.
+- POST `{id}/verify/`: scope, expected_revision/expected_client_updated_at,
+  protocol_reference/method/fields. Отсутствующий реальный протокол503.
+- POST `{id}/correct/`: verify payload плюс full_name/demographics/reason.
+- POST пациента требуют `Idempotency-Key`; ответ только id/client_id/revision/identity_status/replayed.
+  Create201, повтор200; конфликт stale/payload409. Неизвестные поля400, generic
+  PUT/PATCH/DELETE405. Ответы и ошибки имеют `Cache-Control: no-store, private`.
+
+Представители используют тот же префикс `/api/medical/patients/`:
+
+- GET `representative-form/`: scope, reception/approve/обучение; whitelist reference,
+  localized methods/fields, permissions (code/label), requires_expiry. Неполный
+  протокол/переводы503; approval reference и trained member IDs не возвращаются.
+- GET `{patient_id}/representatives/`: scope, offset>=0, limit1–50 (default25);
+  reception/view и Client view пациента/возвращаемых представителей. Results содержат
+  id/representative_client_id/full_name/revision/permissions/permission_labels/status/valid_from/valid_until/
+  verified_at/revoked_at, next_offset либо null. Permission labels сохраняются в
+  encrypted snapshot при подтверждении и не заменяются новым протоколом. Для старых
+  unlabeled связей возвращается null; UI сообщает отсутствие описания без догадок.
+  Основания/доказательства/причины
+  отзыва/контакты исключены. Read audit по каждой связи, для пустой страницы по
+  пациенту; ошибка crypto/audit503 без частичного списка. Business lock предшествует
+  проверке текущих полномочий и чтению, совпадает с lock order command services.
+- POST `{patient_id}/representatives/`: scope, representative_client_id,
+  expected_patient_revision/expected_client_updated_at, protocol_reference/method/fields,
+  permissions, valid_from/valid_until (nullable только по протоколу). Ответ201 или200
+  при replay, только id/revision/replayed. Нет автоматического создания Client.
+- POST `{patient_id}/representatives/{id}/revoke/`: scope, representative_client_id,
+  expected_revision/reason; ответ200 id/revision/replayed. Обе команды требуют
+  Idempotency-Key; stale/payload409, неизвестные поля400, PUT/PATCH/DELETE405.
+  Все ответы, включая ошибки, no-store/private. Представительство не открывает
+  документы само по себе; интеграция с recipient/issuance gate ещё требуется.
+
+Рабочие профили/роли/протоколы этим API не активируются автоматически; rollout D02
+по-прежнему не выполнен. Маршруты проверены на синтетическом dentistry_v2 контексте.
+В apps/medical добавлен MedicalRoleAssignment: дополнительное медицинское
+назначение существующего BusinessMember с существующим BusinessRole/RolePermission,
+типом работы, явными филиалами, автором и отзывом. Наличие общего CRM business_role
+не создаёт это назначение. Role prerequisite проверяет свежие membership/account/
+assignment/role/exact rule и medical capability, без wildcard/manage fallback,
+owner/platform bypass и самовыдачи. Ассистент не получает подпись, выдачу, экспорт
+или управление участием даже при ошибочной строке правила; ресепшн не получает
+клинические тексты. Филиальная проверка пересекает медицинскую область с обычной
+CRM областью и читает актуальные owner/account flags.
+Это проверка роли, а не разрешение читать конкретную карту: текущее основание записи
+или участия и успешный read audit проверяют клинические сервисы. Границы текущего
+приёма ассистента,24h исправления,4h support и резервный аудит ещё нужны.
+Обычные permission POST/PATCH и bulk visibility не изменяют medical_*;
+сохранение PATCH повторно проверяет строку под lock. Удаление member/role,
+имеющего историю medical assignment, возвращает409; отключение member сохраняется.
+Добавлены доменные create/assign/revoke сервисы: текущий активный владелец Business
+явно создаёт medical definition и назначает её другому активному сотруднику.
+Definition хранит только точные разрешения, ассистентские/организационные пределы
+проверяются до записи. Определения не меняются через обычный редактор ролей.
+Business lock, текущая revision, общий CRMCommandIdempotency и audit объединены
+в транзакцию. Replay проходит актуальную авторизацию и не восстанавливает отозванное
+назначение. Сбой audit откатывает роль/правила/филиалы/назначение; в журнале только
+административные ID/scope/revision. Отзыв возможен при отключённом модуле/сотруднике.
+Назначение не меняет CRM role или BranchAccess, сетевой scope требует существующего
+CRM network grant. Owner→self запрещён; кто отдельно подтверждает права владельцу
+как врачу — открытое уточнение. Role-management API/UI и назначения реальным пользователям пока нет.
 [Матрица, проверки и остаток](../testing/task-state/DENTAL-MCS-20261122.md).
-
-## Профиль бизнеса: техническая спецификация CRM-D04, 21.11.2026
-
-[Хранение, legacy-совместимость и защита старых API](crm-modularity-plan.md)
-описаны наd4085a5e + WIP, пока без кода. Цель: nullable profile_key/version/assigned_at
-в Business; полный профиль фиксируется сервером при создании. Старые бизнесы без
-метки сохраняют текущие проверки/возможности без backfill. Новые ключи планов для
-них вычисляются из прежней доступности clients/appointments, денежные права прежние.
-Будущие guards проверяются после текущей авторизации и под блокировкой Business:
-служебные поля не принимаются от клиента; смена сферы/состава полного профиля
-отклоняется через Business/capability PATCH, onboarding и landing; admin без обхода.
-Platform details сохраняет свой allowlist. Неизвестная метка не становится legacy.
-Это планируемая защита: сейчас endpoints не изменены и новой runtime-проверки нет.
-Правила роли/tenant/branch/MFA и история денег не заменяются профильным доступом.
 
 ## QA-023/024: история задач и филиальные назначения — 21.11.2026
 
@@ -40,6 +254,31 @@ Business. Возвращает `can_edit`, `can_grant_all`, `branch_ids` (доп
 Это подсказка для формы; POST заново проверяет все права в существующем сервисе.
 Правила записи, audit/rollback и право на будущие филиалы не ослаблены.
 Миграций нет. [Проверки и границы](../testing/evidence/qa-critical-access-20261121.md).
+
+## Профиль бизнеса: техническая спецификация CRM-D04, 21.11.2026
+
+[Хранение, legacy-совместимость и защита старых API](crm-modularity-plan.md)
+описаны наd4085a5e; в DENTAL-MCS добавлены nullable profile_key/version/assigned_at
+в Business, DB check и чтение версионного профиля. Единый initializer подключён к созданию через регистрацию/API/landing/social/admin;
+межсценарные проверки в SQLite пройдены, PostgreSQL concurrency ещё не подтверждена. Старые бизнесы без
+метки сохраняют текущие проверки/возможности; будущий medical backfill следует D02.
+Новые ключи планов для
+них вычисляются из прежней доступности clients/appointments, денежные права прежние.
+Общие plan access/selectors проверяют visit_plans; денежные операции и автоматическое
+распределение при завершении записи проверяют plan_payments. Отказ распределения
+откатывает завершение и revision плана в существующей транзакции; план без денежных
+условий сохраняет прежнее завершение без распределения. Недоступная денежная проекция
+не раскрывает суммы, но не скрывает разрешённый план. UI-ограничения ещё в работе.
+Реализованные guards проверяются после текущей авторизации и под блокировкой Business:
+служебные поля не принимаются от клиента; смена сферы/состава полного профиля
+отклоняется через Business/capability PATCH, onboarding и landing; admin без обхода.
+Platform details сохраняет свой allowlist. Неизвестная метка не становится legacy.
+BusinessSerializer уже отклоняет служебные profile/modules/capabilities во входе
+(включая null); admin показывает метку readonly и проверяет сохранение.
+Capability update повторяет права, делает одинаковый bool no-op и атомарный audit;
+onboarding отклоняет повторный шаблон до записи. Инициализация в путях регистрации использует общий initializer без
+повторной настройки legacy. Неизвестная конфигурация профиля возвращает503, чтение не чинит её.
+Правила роли/tenant/branch/MFA и история денег не заменяются профильным доступом.
 
 ## Ошибки восстановления пароля — 19.11.2026
 

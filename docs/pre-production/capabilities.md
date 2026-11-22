@@ -1,10 +1,125 @@
 ## Медицинский модуль: начата реализация — 22.11.2026
 
+Срез59: серверная команда завершения active-участия медруководителем с причиной
+и явно выбранным ответственным, encrypted closure reason и participation_ended audit.
+445 medical tests/check/drift PASS в изолированной БД (migration0014). Это доменный
+переход; срез60 подключил команды HTTP (41 API/dependent tests/check/drift PASS).
+Срез61:incoming/managed read API проверен50 tests/check/drift PASS.
+Срез62:proposal candidate lookup с общими проверками команды —59 tests/check/drift PASS.
+Responsible selector/private API добавлен и проверен вместе с затронутыми командами
+в isolated DB; lookup не выдаёт медицинские права ответственному. Typed frontend
+transport реализован; workspace-access/mine и head patient-context подключены.
+UI приглашения/принятия/head end локально проверен на desktop/mobile RU/KK/EN,
+включая loading/empty/read+write recovery, optimistic conflict и role revocation.
+Снимки просмотрены; доказательства в DENTAL-MCS checkpoint. Это не полный M06/M07.
+Обычное завершение с обязательствами и24h исправления ещё не готовы.
+Назначения, задачи и оплаты автоматически не меняются.
+
+Одонтограмма: добавлена схема DentalToothState/DentalToothHistory с ключом
+пациент/зуб/поверхность, цепочкой редакций, автором и приёмом (migration0012).
+29 schema/dependent tests/check/drift PASS в изолированной БД. Добавлены внутренние
+encrypted append/read helpers с привязкой к метаданным и откатом ошибки шифрования;
+30 crypto/storage/dependent tests/check/drift PASS. Добавлен аудит конкретной редакции
+с PROTECT и проверками ссылок (migration0013);32 focused и380 apps.medical tests PASS,
+check/drift PASS. Добавлены авторизованная команда основного врача и чтение точной
+редакции с аудитом:50 focused/dependent tests/check/drift PASS. HTTP-контур
+/api/medical/tooth-observations/ проверен:40 focused/dependent tests и check/drift PASS (срез51). Добавлены snapshot на момент наблюдения и
+постраничная история каждой позиции:41 focused/dependent tests/check/drift PASS
+(срез52; дополнительные12 edge tests PASS). Typed frontend transport добавлен (срез53:10 tests/types/build PASS); Read UI подключён:формула/дата/точная история,6 RU/KK/EN desktop/mobile tests PASS (срез54); срез55 добавил редактор зуба целиком с защитой несохранённого текста (6 browser PASS). Срез56:API допустимых поверхностей/переводов и общий валидатор чтения/записи проверены41 tests/check/drift. Срез58:выбор поверхности в UI проверен6 localized+1 regression browser/types/build/screens (checkpoint); полная S04 ещё не завершена; медицинская легенда остаётся
+неподтверждённой, поверхности требуют явно настроенного одобренного словаря.
+
+
+Добавлен клинический HTTP-контур `/api/medical/encounters/`: открытие по существующей
+карте/записи, сохранение основным врачом, чтение точной версии по действующему основанию.
+Использует encrypted revisions, атомарный audit/idempotency и no-store на ответах/ошибках.
+Создание активной карты с локальным номером подключено через `/api/medical/records/`,
+с отдельным record_opened audit и запретом дубликатов. Workspace API выдаёт активную карту
+и ограниченную страницу приёмов без расшифровки текста, с READ audit и текущим ACL.
+API revisions перечисляет прежние редакции с автором/временем и пагинацией, без текста;
+выбранная версия читается отдельным audited endpoint. Appointment-context определяет
+профиль пациента и доступные действия из назначения врача в календаре; чтение
+аудируется и не возвращает клинический текст. Это серверная часть: командные
+вклады, полный ACL и завершение/подпись ещё не готовы. Начат клинический интерфейс:
+из календаря доступны открытие карты/приёма, форма черновика и история с просмотром
+редакций только для чтения. Переключение вкладок сохраняет несохранённый черновик;
+отказ доступа очищает медицинский контекст. При закрытии изменённого черновика
+доступны сохранение с выходом, продолжение редактирования и выход без сохранения.
+Ошибка сохранения оставляет текст и окно открытыми. Остальные клинические разделы остаются открытыми. Доказательства — основной DENTAL-MCS checkpoint.
+
 По новому поручению DENTAL-MCS создана единая матрица полного ТЗ. Первый срез кода
-добавляет строгую проверку medical_records в существующий capability resolver:
-без явного включения для dentistry медицинские ресурсы запрещены; отзыв читается
-без устаревшего кеша. Это не готовый медицинский ACL, не активация профилей и не
-доступный клинический UI. [Текущие проверки и весь остаток](../testing/task-state/DENTAL-MCS-20261122.md).
+добавляет строгую проверку medical_records в существующий capability resolver.
+Следующий срез содержит nullable схему профиля/DB check и реестр core_v1,
+dentistry_v1/v2: медицинские ресурсы требуют v2 и явных зависимых разрешений;
+отзыв читается без устаревшего кеша, лишние строки не расширяют профиль.
+Initializer создаёт core_v1/dentistry_v1 в существующих create paths; серверные
+планы и деньги проверяют профиль. Добавлен apps/medical: криптография с отдельными
+ключами и привязкой к Business/Client/полю, PatientProfile OneToOne Client,
+ограничения подтверждённой идентичности и защита ordinary merge/hard delete Client.
+Также реализована основа явного MedicalRoleAssignment с существующими role/rules,
+проверкой отзыва/филиалов и без owner/support обхода; общие редакторы прав не
+выдают medical_* и сохраняют историю назначений при попытке удаления.
+Owner define/assign/revoke services используют общие role/rules/idempotency,
+revision и атомарный audit; replay не восстанавливает отзыв. Общий CRM role/branch
+grant не меняется при медицинском назначении. Подтверждающий права владельцу-врачу
+пока не определён; самовыдача запрещена. Role-management API/UI ещё не подключены.
+Доменное создание unverified пациента проверяет medical role/branch и CRM Client
+view; шифрует административные поля и атомарно пишет MedicalAuditEvent. Общий
+idempotency store получает только keyed fingerprints, replay проверяет отзыв прав.
+Контакты не копируются; проверенный ИИН в том же Business требует разбора без утечки.
+Добавлен writer предварительных unverified данных: revision/reason, зашифрованная
+предыдущая версия, audit и повтор команды без повторной записи; verified-профиль
+требует отдельного процесса. Initial verify реализован как доменная команда с
+явной ролью/обучением, per-Business protocol config, Client/Patient version guards,
+шифрованными evidence/history и атомарным audit. Без внешне утверждённого настроенного
+протокола verify503; реальных approvals не получено. Controlled correction имени/
+даты/пола/адреса реализована с причиной/recheck/history/audit и update+approve;
+ИИН/перепривязка/head approval и резервный read audit ещё не реализованы.
+Общие Client.save/import и conditional editor защищают имя
+verified пациента и Business привязанного Client; обычные контактные поля сохранены.
+Reception-only административный HTTP API соединяет create/read/preliminary/verify/
+correct; read требует успешного medical audit, ответы no-store, обычные
+PUT/PATCH/DELETE/list/export отсутствуют. Clinical/evidence/history не возвращаются.
+GET access/ возвращает текущие reception role actions в выбранном филиале без PHI.
+Typed frontend API client и административная панель в ClientWorkspacePage подключены;
+create/preliminary/verify/correct формы прошли6 локальных Chromium lifecycle
+сценариев RU/KK/EN desktop/mobile viewport и1 recovery с реальными409/403.
+Отдельный boundary сценарий PASS: филиалы/задержанный ответ, protocol503/retry,
+длинные значения tablet/mobile и scoped axe WCAG2A/AA форм без violations.
+Снимки просмотрены, final build PASS; native mobile/full medical acceptance открыта.
+Verification-form API отдаёт утверждённые конфигурацией labels RU/KK/EN и схему
+полей только обученному reception с approve; внутренние approvals/member IDs скрыты.
+Без полного описания формы503; реального протокола и внешнего утверждения пока нет.
+Read journal fallback/denial audit и medical v2 rollout ещё не готовы;
+локальная граница клинического UI описана выше.
+Представители: добавлен слой хранения PatientRepresentative на существующем Client,
+период/проверивший/отзыв/revision и поля для зашифрованных оснований и полномочий.
+Merge/identity guards защищают представителя, контакты и архив остаются доступны.
+Добавлены доменные подтверждение/отзыв, отдельный протокол/обучение, шифрование,
+версии/idempotency и атомарный medical audit. Authority prerequisite проверяет
+конкретную связь/полномочие/период/отзыв. Administrative list/form/verify/revoke API
+подключён с reception guards, no-store и audit read; закрытые основания не выдаются.
+UI представителей подключён в медицинском профиле:6 RU/KK/EN desktop/mobile happy
+flows verify/list/revoke PASS, screenshots inspected; build/types/i18n PASS.
+Keyboard/axe,503 retained draft/same key, real stale revoke409 PASS на RU desktop;
+affected patient regression с representative recovery9/9 PASS. Mobile protocol retry,
+self-selection, invalid period400/retained draft, real role403/clearing и axe PASS.
+Подключение к выдаче документов и native mobile verification ещё требуются.
+Это пока не принятый законченный пользовательский сценарий; внешние документы/
+возрастные правила не утверждены. Текущий объём проверок указан в checkpoint.
+Основание врача по конкретной записи реализовано как отдельный server prerequisite:
+14 focused и216 medical tests/check/drift PASS (срез26). Сам helper не выдаёт карту:
+TreatmentParticipation storage/active-basis добавлены (migration0007,medical225/check/drift
+PASS); propose/recipient accept/decline с audit0008 и idempotency добавлены, итоговый
+medical242/check/drift PASS. Pending withdrawal добавлен (8 focused/34 affected PASS,
+check/drift); завершение медруководителем и audited reader/API/UI подключены позже
+и описаны выше. Обычное завершение с обязательствами, временные grants и notifications
+остаются открытыми.
+Medical record/Encounter/revision storage добавлены (migration0009,medical259/check/drift
+PASS). Encrypted revision append/read helpers добавлены (33 affected/check/drift PASS),
+после них подключены authorized draft commands/audit и clinical reader/API/UI.
+Atomic completion ещё не реализован. Эти проверки не подтверждают полный
+ACL/подпись/медицинскую приёмку.
+[Текущие проверки и весь остаток](../testing/task-state/DENTAL-MCS-20261122.md).
 
 ## Ядро и стоматологическая кастомизация — 22.11.2026
 

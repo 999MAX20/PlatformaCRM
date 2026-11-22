@@ -38,6 +38,12 @@ env = environ.Env(
 environ.Env.read_env(BASE_DIR / ".env")
 
 SECRET_KEY = env("SECRET_KEY", default="change-me-in-production")
+MEDICAL_DATA_KEYS = env("MEDICAL_DATA_KEYS", default="")
+MEDICAL_DATA_ACTIVE_KEY_ID = env("MEDICAL_DATA_ACTIVE_KEY_ID", default="")
+MEDICAL_IDENTITY_INDEX_KEY = env("MEDICAL_IDENTITY_INDEX_KEY", default="")
+MEDICAL_IDENTITY_VERIFICATION_POLICIES = env("MEDICAL_IDENTITY_VERIFICATION_POLICIES", default="")
+MEDICAL_REPRESENTATIVE_POLICIES = env("MEDICAL_REPRESENTATIVE_POLICIES", default="")
+MEDICAL_TOOTH_SURFACE_POLICIES = env("MEDICAL_TOOTH_SURFACE_POLICIES", default="")
 DEBUG = env("DEBUG")
 ENVIRONMENT = env("ENVIRONMENT", default="development")
 IS_PRODUCTION_LIKE_ENVIRONMENT = ENVIRONMENT in {"production", "staging"}
@@ -119,6 +125,7 @@ INSTALLED_APPS = [
     "apps.businesses",
     "apps.branches",
     "apps.clients",
+    "apps.medical",
     "apps.payments",
     "apps.crm",
     "apps.services",
