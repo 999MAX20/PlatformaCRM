@@ -15,7 +15,7 @@ from .models import MedicalRoleAssignment
 MEDICAL_PERMISSION_ACTIONS = {
     "medical_patients": frozenset({"view", "create", "update", "approve"}),
     "medical_records": frozenset({"view", "create", "update", "manage"}),
-    "medical_documents": frozenset({"view", "create", "update", "sign", "issue", "export"}),
+    "medical_documents": frozenset({"view", "create", "update", "approve", "sign", "issue", "export"}),
     "medical_prescriptions": frozenset({"view", "create", "update", "sign"}),
     "medical_files": frozenset({"view", "create", "export"}),
     "medical_participation": frozenset({"view", "create", "update", "approve", "manage"}),
@@ -37,6 +37,8 @@ _RECEPTION_ACTIONS = {
 def medical_action_allowed(kind, resource, action):
     if kind not in MedicalRoleAssignment.Kinds.values:
         return False
+    if resource == "medical_documents" and action == "approve":
+        return kind == MedicalRoleAssignment.Kinds.HEAD
     limits = {MedicalRoleAssignment.Kinds.ASSISTANT: _ASSISTANT_ACTIONS,
               MedicalRoleAssignment.Kinds.RECEPTION: _RECEPTION_ACTIONS}.get(kind, MEDICAL_PERMISSION_ACTIONS)
     return action in limits.get(resource, ())

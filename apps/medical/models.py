@@ -282,6 +282,9 @@ class MedicalAuditEvent(models.Model):
         DOCUMENT_DRAFT_SAVED = "document_draft_saved", "Document draft saved"
         TEMPLATE_DRAFT_CREATED = "template_draft_created", "Template draft created"
         TEMPLATE_DRAFT_SAVED = "template_draft_saved", "Template draft saved"
+        TEMPLATE_SUBMITTED = "template_submitted", "Template submitted"
+        TEMPLATE_APPROVED = "template_approved", "Template approved"
+        TEMPLATE_REJECTED = "template_rejected", "Template rejected"
         READ = "read", "Read"
         ACCESS_DENIED = "access_denied", "Access denied"
 
@@ -326,7 +329,8 @@ class MedicalAuditEvent(models.Model):
                                                "encounter_opened", "encounter_draft_saved", "record_opened",
                                                "tooth_observation_saved", "document_draft_created",
                                                "document_draft_saved", "template_draft_created",
-                                               "template_draft_saved"], result="success")),
+                                               "template_draft_saved", "template_submitted", "template_approved",
+                                               "template_rejected"], result="success")),
                 name="medical_audit_action_result"),
             models.CheckConstraint(condition=(
                 models.Q(representative__isnull=True, representative_revision__isnull=True) |
@@ -378,9 +382,11 @@ class MedicalAuditEvent(models.Model):
                 models.Q(patient__isnull=True, representative__isnull=True, participation__isnull=True,
                          encounter_version__isnull=True, record__isnull=True, tooth_history__isnull=True,
                          document_version__isnull=True,
-                         action__in=["read", "template_draft_created", "template_draft_saved"])),
+                         action__in=["read", "template_draft_created", "template_draft_saved",
+                                     "template_submitted", "template_approved", "template_rejected"])),
                 name="medical_audit_template_relation"),
-            models.CheckConstraint(condition=(~models.Q(action__in=["template_draft_created", "template_draft_saved"]) |
+            models.CheckConstraint(condition=(~models.Q(action__in=["template_draft_created", "template_draft_saved",
+                                                                   "template_submitted", "template_approved", "template_rejected"]) |
                 models.Q(template_version__isnull=False)), name="medical_audit_template_needed"),
         ]
 
@@ -523,6 +529,40 @@ class MedicalDocumentTemplateRevision(models.Model):
             models.CheckConstraint(condition=models.Q(revision__gte=1), name="medical_template_ver_positive"),
             models.CheckConstraint(condition=~models.Q(snapshot_encrypted=""), name="medical_template_ver_content"),
         ]
+
+
+class MedicalTemplateReview(models.Model):
+    class States(models.TextChoices):
+        PENDING = "pending", "Pending"
+        APPROVED = "approved", "Approved"
+        REJECTED = "rejected", "Rejected"
+
+    version = models.OneToOneField(MedicalDocumentTemplateRevision, on_delete=models.PROTECT,
+                                   related_name="review")
+    submitted_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT,
+                                     related_name="submitted_template_reviews")
+    submitted_at = models.DateTimeField(auto_now_add=True)
+    state = models.CharField(max_length=16, choices=States.choices, default=States.PENDING)
+    decided_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT,
+                                   null=True, blank=True, related_name="decided_template_reviews")
+    decided_at = models.DateTimeField(null=True, blank=True)
+    decision_encrypted = models.TextField(editable=False, blank=True, default="")
+
+    class Meta:
+        constraints = [models.CheckConstraint(condition=(
+            models.Q(state="pending", decided_by__isnull=True, decided_at__isnull=True, decision_encrypted="") |
+            (models.Q(state__in=["approved", "rejected"], decided_by__isnull=False,
+                      decided_at__isnull=False, decided_at__gte=models.F("submitted_at")) &
+             ~models.Q(decision_encrypted=""))), name="medical_template_review_state")]
+
+    def clean(self):
+        super().clean()
+        from apps.businesses.models import BusinessMember
+        if self.version_id:
+            business_id = self.version.template.business_id
+            for field, user_id in (("submitted_by", self.submitted_by_id), ("decided_by", self.decided_by_id)):
+                if user_id is not None and not BusinessMember.objects.filter(business_id=business_id, user_id=user_id).exists():
+                    raise ValidationError({field: "Select a member of this business."})
 
 
 class MedicalDocument(TimeStampedModel):

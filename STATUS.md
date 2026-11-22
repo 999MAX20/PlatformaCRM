@@ -1,4 +1,4 @@
-DENTAL-MCS S17: личные черновики UI локально проверены (8 browser +2 regressions,7 node,build/types/i18n/static PASS,22 снимка). Утверждение медруководителем согласовано, workflow следующий. [Checkpoint](docs/testing/task-state/DENTAL-MCS-20261122.md).
+DENTAL-MCS M11: version review domain добавлен (submit/approve/reject/read);141 backend tests/check/drift/isolated migration/static PASS. Review API/UI следующий, полный goal ACTIVE. [Checkpoint](docs/testing/task-state/DENTAL-MCS-20261122.md).
 
 QA-016-20261121 LOCAL VERIFIED: automatic tasks searchable by displayed RU/KK/EN title; editor preserves original copy on unrelated edits. 66 backend, 9 node, 6 desktop/mobile browser scenarios, build/types/i18n/check/drift PASS; Code 8a240ad3 pushed to main; CI44937543011 queued (not PASS). Working DB untouched. [Evidence](docs/testing/evidence/qa-016-task-search-20261121.md).
 

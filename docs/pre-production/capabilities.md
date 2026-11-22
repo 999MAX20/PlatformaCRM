@@ -65,7 +65,11 @@ snapshot не объявляется утверждённой формой. Ни
 Версия в registry не означает клиническое утверждение:22.11.2026 владелец согласовал
 утверждение личных шаблонов и управление общими медруководителем, без этого права
 у владельца Business без медицинской роли. Approval/выбор для реального документооборота пока
-не включены. Для личных черновиков реализованы domain/API create/update/list/
+не включены в пользовательский workflow. Добавлен domain submission/decision/read
+MedicalTemplateReview: конкретная версия, head-only approve с business scope,
+encrypted receipt, audit/replay/stale/rollback;141 affected backend tests/check/drift
+и isolated migration roundtrip PASS. Review API/UI ещё не подключены,
+PostgreSQL concurrency не подтверждена. Для личных черновиков реализованы domain/API create/update/list/
 history/read: текущая роль doctor/head, own scope, server-owned identifiers,
 точный version audit, no-store/private, replay/stale/rollback. UI S17 личных
 черновиков подключён: список, редактор, история;8 desktop/mobile browser сценариев
