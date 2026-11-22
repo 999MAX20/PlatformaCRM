@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from .serializers import StrictSerializer
 from .template_services import (
     list_personal_template_drafts, list_personal_template_versions,
+    personal_template_workspace_access,
     read_personal_template_version, save_personal_template_draft,
 )
 
@@ -63,6 +64,13 @@ class MedicalDocumentTemplateViewSet(viewsets.GenericViewSet):
 
     def create(self, request):
         return self._command(request)
+
+    @action(detail=False, methods=["get"], url_path="workspace-access")
+    def workspace_access(self, request):
+        serializer = self.get_serializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+        return Response(personal_template_workspace_access(actor=request.user,
+            **serializer.validated_data))
 
     def list(self, request):
         serializer = self.get_serializer(data=request.query_params)

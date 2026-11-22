@@ -1,4 +1,4 @@
-DENTAL-MCS-20261122 ACTIVE: M11 personal template draft domain/API + audit проверены:63 tests/check/drift/migration/static PASS; публикация готовится. UI S17 и approval ещё открыты; полный goal продолжается. [Checkpoint](docs/testing/task-state/DENTAL-MCS-20261122.md).
+DENTAL-MCS: S17 workspace-access добавлен; 33 backend tests/check/drift PASS, UI открыт. Детали: docs/testing/task-state/DENTAL-MCS-20261122.md.
 
 QA-016-20261121 LOCAL VERIFIED: automatic tasks searchable by displayed RU/KK/EN title; editor preserves original copy on unrelated edits. 66 backend, 9 node, 6 desktop/mobile browser scenarios, build/types/i18n/check/drift PASS; Code 8a240ad3 pushed to main; CI44937543011 queued (not PASS). Working DB untouched. [Evidence](docs/testing/evidence/qa-016-task-search-20261121.md).
 

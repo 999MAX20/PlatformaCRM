@@ -32,6 +32,21 @@ def _context(actor, business_id, action):
 
 
 @transaction.atomic
+def personal_template_workspace_access(*, actor, business_id):
+    business, context = _context(actor, business_id, "view")
+    actions = {"view": True}
+    for action in ("create", "update"):
+        try:
+            assert_medical_role_permission(actor, business, "medical_documents", action)
+        except PermissionDenied:
+            actions[action] = False
+        else:
+            actions[action] = True
+    return {"business_id": business.pk, "member_id": context.member_id,
+            "kind": context.kind, "actions": actions}
+
+
+@transaction.atomic
 def save_personal_template_draft(*, actor, business_id, title, text, idempotency_key,
                                  template_id=None, expected_revision=None, reason=""):
     if template_id is not None:

@@ -5,11 +5,11 @@ from django.test import TestCase, override_settings
 from django.utils import timezone
 from rest_framework.test import APIClient
 
-from apps.businesses.models import Business, BusinessMember
+from apps.businesses.models import Business, BusinessMember, BusinessCapability, RolePermission
 from . import tests_template_services as fixtures
 from . import tests_patient_services as crypto_fixtures
 from .document_templates import append_template_revision
-from .models import MedicalDocumentTemplate, MedicalDocumentTemplateRevision
+from .models import MedicalAuditEvent, MedicalDocumentTemplate, MedicalDocumentTemplateRevision
 
 
 @override_settings(MEDICAL_DATA_KEYS={"test": crypto_fixtures.key(7)}, MEDICAL_DATA_ACTIVE_KEY_ID="test",
@@ -35,6 +35,43 @@ class PersonalTemplateAPITests(TestCase):
     def private(self, response):
         self.assertEqual(response["Cache-Control"], "no-store, private")
         self.assertEqual(response["Pragma"], "no-cache")
+
+    def test_workspace_access_uses_current_actions_without_reading_templates(self):
+        self.create()
+        audit_count = MedicalAuditEvent.objects.count()
+        url = self.url + "workspace-access/"
+        with patch("apps.medical.template_services.read_template_revision", side_effect=AssertionError("No content read")):
+            response = self.api.get(url, self.scope)
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(response.data, {"business_id": self.business.pk, "member_id": self.member.pk,
+            "kind": "doctor", "actions": {"view": True, "create": True, "update": True}})
+        self.private(response)
+        self.assertEqual(MedicalAuditEvent.objects.count(), audit_count)
+        RolePermission.objects.filter(business_role=self.role, resource="medical_documents", action="update").delete()
+        self.assertFalse(self.api.get(url, self.scope).data["actions"]["update"])
+        self.assignment.kind = "head"
+        self.assignment.save(update_fields=["kind"])
+        self.assertEqual(self.api.get(url, self.scope).data["kind"], "head")
+        RolePermission.objects.filter(business_role=self.role, resource="medical_documents", action="view").delete()
+        self.assertEqual(self.api.get(url, self.scope).status_code, 403)
+
+    def test_workspace_denies_owner_foreign_business_revocation_and_disabled_module(self):
+        url = self.url + "workspace-access/"
+        self.api.force_authenticate(self.owner)
+        denied = self.api.get(url, self.scope)
+        self.assertEqual(denied.status_code, 403)
+        self.private(denied)
+        self.api.force_authenticate(self.doctor)
+        other = Business.objects.create(owner=self.owner, name="Other", slug="template-access-other")
+        self.assertEqual(self.api.get(url, {"business_id": other.pk}).status_code, 403)
+        self.assignment.revoked_at = timezone.now()
+        self.assignment.save(update_fields=["revoked_at"])
+        self.assertEqual(self.api.get(url, self.scope).status_code, 403)
+        self.assignment.revoked_at = None
+        self.assignment.save(update_fields=["revoked_at"])
+        BusinessCapability.objects.update_or_create(business=self.business,
+            module_key="medical_records", defaults={"is_enabled": False})
+        self.assertEqual(self.api.get(url, self.scope).status_code, 403)
 
     def test_create_update_list_history_and_exact_version_over_http(self):
         created = self.create()

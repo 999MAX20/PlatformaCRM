@@ -67,7 +67,8 @@ snapshot не объявляется утверждённой формой. Ни
 не включены. Для личных черновиков реализованы domain/API create/update/list/
 history/read: текущая роль doctor/head, own scope, server-owned identifiers,
 точный version audit, no-store/private, replay/stale/rollback. UI S17 ещё
-не подключён. Подстановка полей и PDF также остаются открытыми.
+не подключён. Добавлен workspace-access для получения текущих прав на личные
+шаблоны без чтения их содержимого. Подстановка полей и PDF также остаются открытыми.
 
 Добавлены source-scoped филиалы и исходящие предложения врача:82 focused/dependent
 backend tests/check/drift PASS в изолированном SQLite. UI из записи и active

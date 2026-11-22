@@ -1,6 +1,41 @@
 # DENTAL-MCS-20261122: полная реализация медицинского ТЗ
 
+## S17: текущая работа — достижимость личных шаблонов
+
+Workspace-access реализован. Runner80912 exit0:33 template API/service/storage
+tests PASS0.840s, Django check/drift PASS, disposable SQLite. Лог:
+TEMP/dental-template-access-20261122.log. Diff hygiene/static84828 exit0 PASS (TEMP/dental-template-access-static-20261122.log).
+UI ещё не менялся; browser/build N/A для серверного шага, S17 остаётся открытым.
+CI предыдущего5618f932 run45016811472 всё ещё in_progress при проверке.
+Своих живых процессов нет. Следом подключить frontend API и доступ к settings.
+
+Предыдущий turn повторно подтвердил уже записанный B07, нового результата не дал.
+5618f932 API проверен → SettingsAccessRoute/Sidebar допускают только CRM settings
+или integrations, medical-access section owner-only → нужен текущий server access
+для личных шаблонов, затем подключение S17 без выдачи общих прав настроек.
+Сначала добавляем read-only workspace-access к существующему template API:
+doctor/head с medical_documents:view, флаги create/update из текущей роли.
+Переиспользуем role_access; никаких текстов шаблонов, пациентов, новых ролей,
+уведомлений, BusinessEvent/AI, миграций или working DB изменений.
+Skills: zani-change-crm-domain, zani-run-verification; UI позже использует прежние
+shared controls/tokens, RU/KK/EN, dirty/retry/focus и desktop/mobile.
+Проверки backend: текущие права, отзыв, Business/module/owner denial, no-store,
+отсутствие чтения/аудита документов; affected template suites, check/drift.
+S17 UI и его browser/build acceptance остаются открытыми до фактической проверки.
+
 ## M11: личные черновики шаблонов, backend/API проверены
+
+Опубликовано5618f9323150fa22a77d06099e56a1929c0983f9 normal-push origin/main;
+remote SHA совпал. Ветка codex/ui-testing-toolkit/root прежние;12 files677+/5-,
+outgoing range только свой commit. Working/index/committed static/diff hygiene
+PASS, чужой WIP сохранён, STATUS/access staged частично. CI45016811472
+in_progress, не PASS. Собственных процессов нет. Goal ACTIVE.
+Следующий independent scope: UI S17 личных черновиков по существующим list/form
+паттернам Settings/medical section; проверить достижимость именно для doctor/head,
+а не только owner. Использовать новый API, history и current-role denial cleanup,
+RU/KK/EN desktop/mobile, dirty/retry/conflict/focus, browser screenshots+inspection.
+Authority шаблонов всё ещё ожидает async-ответа; не включать approval/clinical use
+и не повторять вопрос. Full M11/PDF/полный snapshot/signatures/выдача открыты.
 
 Affected76510 exit0:63 tests PASS3.200s, check/drift PASS, isolated SQLite; ожидаемый
 503 в API test подтверждает audit-failure recovery (не regression). Clean migration

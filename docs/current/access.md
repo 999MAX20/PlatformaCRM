@@ -117,6 +117,10 @@ owner_member из role context. Сервер создаёт технически
 own/Business scope и пишут exact template version audit без patient-связи/текста.
 Replay повторно проверяет роль/capability; audit failure блокирует read и
 откатывает write. Общие и чужие личные шаблоны этим API не выдаются.
+GET workspace-access/ проверяет текущий medical_documents:view для doctor/head
+и возвращает только business/member/kind и флаги view/create/update. Он не читает
+шаблоны и не создаёт аудит чтения медицинского содержимого; доступ к каждому
+документу и команда по-прежнему проверяются независимо при запросе.
 Это операции неутверждённых черновиков, без автоматической клинической authority;
 UI S17 и процедура утверждения ещё открыты.
 
