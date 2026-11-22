@@ -3,6 +3,7 @@ import re
 
 from django.core.exceptions import ValidationError as ModelValidationError
 from django.db import transaction
+from django.utils.dateparse import parse_datetime
 from rest_framework.exceptions import ValidationError
 
 from apps.businesses.models import Business, BusinessMember
@@ -28,8 +29,27 @@ def validate_document_template(value, code):
     return dict(value)
 
 
-def _binding(version, document):
-    return {"schema": 1, "business_id": document.business_id, "document_id": document.pk,
+def validate_document_source(source, template, text):
+    if not isinstance(source, dict) or set(source) != {
+            "template_id", "version_id", "revision", "review_id", "approved_by", "approved_at"}:
+        raise ValidationError({"template_source": "Provide an approved template source."})
+    if any(type(source[key]) is not int or source[key] <= 0 for key in source if key != "approved_at"):
+        raise ValidationError({"template_source": "Provide valid source identifiers."})
+    if source["revision"] != template["version"]:
+        raise ValidationError({"template_source": "The source revision must match the template."})
+    try:
+        timestamp = parse_datetime(source["approved_at"]) if isinstance(source["approved_at"], str) else None
+    except ValueError:
+        timestamp = None
+    if timestamp is None or timestamp.tzinfo is None:
+        raise ValidationError({"template_source": "Provide the approval timestamp."})
+    if not isinstance(text, str) or len(text) > 131072:
+        raise ValidationError({"document_text": "Provide document text of at most 131072 characters."})
+    return dict(source)
+
+
+def _binding(version, document, schema=1):
+    return {"schema": schema, "business_id": document.business_id, "document_id": document.pk,
         "encounter_id": document.encounter_id, "template_code": document.template_code,
         "version_id": version.pk, "revision": version.revision,
         "source_version_id": version.source_version_id, "author_id": version.author_id,
@@ -37,9 +57,14 @@ def _binding(version, document):
 
 
 @transaction.atomic
-def append_document_revision(*, document, source_version, author, template, reason=""):
+def append_document_revision(*, document, source_version, author, template, reason="",
+                             template_source=None, document_text=None):
     """Internal storage: caller must authorize and audit within its outer transaction."""
     template = validate_document_template(template, document.template_code)
+    if template_source is not None:
+        template_source = validate_document_source(template_source, template, document_text)
+    elif document_text is not None:
+        raise ValidationError({"document_text": "Select an approved template source."})
     if not isinstance(reason, str) or len(reason) > 2000:
         raise ValidationError({"reason": "Provide a reason of at most 2000 characters."})
     business = Business.objects.select_for_update().get(pk=document.business_id)
@@ -63,7 +88,7 @@ def append_document_revision(*, document, source_version, author, template, reas
         subject_id=current.pk, purpose="document_staging")
     version = MedicalDocumentRevision.objects.create(document=current, revision=current.revision + 1,
         source_version=source, author=member.user, snapshot_encrypted=staging)
-    payload = {**_binding(version, current), "snapshot": {
+    payload = {**_binding(version, current, schema=2 if template_source is not None else 1), "snapshot": {
         "template": template, "clinical": clinical, "reason": reason,
         "business": {field: getattr(business, field) for field in BUSINESS_FIELDS},
         "branch": {field: getattr(encounter.branch, field) for field in BRANCH_FIELDS},
@@ -73,6 +98,8 @@ def append_document_revision(*, document, source_version, author, template, reas
         "performed_by": {"member_id": encounter.primary_clinician_id,
             "user_id": encounter.primary_clinician.user_id, "name": encounter.primary_clinician.user.full_name},
     }}
+    if template_source is not None:
+        payload["snapshot"].update(template_source=template_source, document_text=document_text)
     version.snapshot_encrypted = encrypt_medical_value(json.dumps(payload, ensure_ascii=False, sort_keys=True),
         business_id=business.pk, subject_id=version.pk, purpose="document_snapshot")
     version.save(update_fields=["snapshot_encrypted"])
@@ -91,17 +118,24 @@ def read_document_revision(version):
             raise ValueError
         payload = json.loads(decrypt_medical_value(current.snapshot_encrypted,
             business_id=document.business_id, subject_id=current.pk, purpose="document_snapshot"))
-        expected = _binding(current, document)
+        if not isinstance(payload, dict) or type(payload.get("schema")) is not int or payload["schema"] not in (1, 2):
+            raise ValueError
+        expected = _binding(current, document, schema=payload["schema"])
         if not isinstance(payload, dict) or set(payload) != set(expected) | {"snapshot"}:
             raise ValueError
         if any(type(payload[key]) is not type(value) or payload[key] != value for key, value in expected.items()):
             raise ValueError
         snapshot = payload["snapshot"]
-        if not isinstance(snapshot, dict) or set(snapshot) != {
+        fields = {
                 "template", "clinical", "reason", "business", "branch", "patient_id", "record_id",
-                "branch_id", "appointment_id", "prepared_by", "performed_by"}:
+                "branch_id", "appointment_id", "prepared_by", "performed_by"}
+        if payload["schema"] == 2:
+            fields |= {"template_source", "document_text"}
+        if not isinstance(snapshot, dict) or set(snapshot) != fields:
             raise ValueError
         validate_document_template(snapshot["template"], document.template_code)
+        if payload["schema"] == 2:
+            validate_document_source(snapshot["template_source"], snapshot["template"], snapshot["document_text"])
         validate_clinical_draft(snapshot["clinical"])
         if not isinstance(snapshot["reason"], str) or len(snapshot["reason"]) > 2000:
             raise ValueError

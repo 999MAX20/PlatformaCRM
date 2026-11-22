@@ -54,8 +54,12 @@ Business/Branch и раздельного авторства prepared_by/perform
 подписи, выдачи, API/UI. Добавлены доменные create/update своего черновика основным
 врачом и read точной версии: current medical_documents role/branch/basis,
 verified identity для записи, audit exact version, HMAC replay и atomic rollback.
-Registry шаблонов и assistant/team/24h workflow ещё открыты; внутренний template
-snapshot не объявляется утверждённой формой. Низкоуровневые storage helpers
+Assistant/team/24h workflow ещё открыт; внутренний raw template
+snapshot не объявляется утверждённой формой. Добавлен approved source path:
+основной врач выбирает доступную утверждённую версию и передаёт document_text.
+Schema2 хранит исходный template и source/approval metadata отдельно от текста
+документа; schema1 остаётся читаемой. Новые версии шаблона не меняют старые
+документы. Проверки source path отмечены в checkpoint. Низкоуровневые storage helpers
 по-прежнему требуют авторизованного вызывающего сервиса и общей audit-транзакции.
 Проверки и точная граница M11 — в DENTAL-MCS checkpoint.
 
@@ -65,7 +69,8 @@ snapshot не объявляется утверждённой формой. Ни
 Версия в registry не означает клиническое утверждение:22.11.2026 владелец согласовал
 утверждение личных шаблонов и управление общими медруководителем, без этого права
 у владельца Business без медицинской роли. Выбор утверждённого шаблона при создании
-медицинского документа пока не подключён. Добавлен domain submission/decision/read
+медицинского документа подключён на domain уровне; HTTP/UI этого сценария ещё нет.
+Добавлен domain submission/decision/read
 MedicalTemplateReview: конкретная версия, head-only approve с business scope,
 encrypted receipt, audit/replay/stale/rollback;141 affected backend tests/check/drift
 и isolated migration roundtrip PASS. Добавлены review API submit/read/decision
@@ -92,7 +97,7 @@ history/read: текущая роль doctor/head, own scope, server-owned ident
 отдельный режим head, существующие редактор/история/отправка и очередь утверждения.
 6 common RU/KK/EN desktop/mobile сценариев и15 personal/review регрессий PASS;
 66 применимых снимков просмотрены, build/types/i18n PASS, подробности в checkpoint. Интеграция selector в создаваемый
-документ ещё не реализована; PostgreSQL concurrency не проверена.
+документ реализована на domain уровне, HTTP/UI ещё нет; PostgreSQL concurrency не проверена.
 
 Добавлены source-scoped филиалы и исходящие предложения врача:82 focused/dependent
 backend tests/check/drift PASS в изолированном SQLite. UI из записи и active

@@ -7,9 +7,10 @@ from apps.core.idempotency import CRMCommandResult, run_idempotent_crm_command
 from .appointment_access import assert_appointment_medical_basis
 from .audit import write_patient_audit
 from .clinical_identity import assert_verified_clinical_identity
+from .common_template_services import read_approved_template_version
 from .document_content import append_document_revision, read_document_revision, validate_document_template
 from .identity_crypto import MedicalDataUnavailable, medical_request_digest
-from .models import MedicalDocument, MedicalDocumentRevision, MedicalEncounter, MedicalEncounterRevision, PatientProfile
+from .models import MedicalDocument, MedicalDocumentRevision, MedicalEncounter, MedicalEncounterRevision, MedicalTemplateReview, PatientProfile
 from .participation_access import assert_treatment_medical_basis
 from .role_access import assert_medical_branch_permission, assert_medical_role_permission
 
@@ -17,8 +18,9 @@ from .role_access import assert_medical_branch_permission, assert_medical_role_p
 @transaction.atomic
 def save_primary_document_draft(*, actor, business_id, patient_id, encounter_id,
                                 expected_encounter_revision, expected_patient_revision,
-                                template, idempotency_key, document_id=None,
-                                expected_document_revision=None, participation_id=None, reason=""):
+                                idempotency_key, template=None, document_id=None,
+                                expected_document_revision=None, participation_id=None, reason="",
+                                template_version_id=None, document_text=None):
     """Save a primary clinician's draft; template input does not certify an official form."""
     identifiers = [business_id, patient_id, encounter_id, expected_encounter_revision, expected_patient_revision]
     if document_id is not None:
@@ -33,7 +35,14 @@ def save_primary_document_draft(*, actor, business_id, patient_id, encounter_id,
         raise ValidationError({"idempotency_key": "Provide an idempotency key of at most 128 characters."})
     if not isinstance(reason, str) or len(reason) > 2000:
         raise ValidationError({"reason": "Provide a reason of at most 2000 characters."})
-    template = validate_document_template(template, template.get("code") if isinstance(template, dict) else None)
+    if template_version_id is None:
+        if document_text is not None:
+            raise ValidationError({"document_text": "Select an approved template source."})
+        template = validate_document_template(template, template.get("code") if isinstance(template, dict) else None)
+    elif type(template_version_id) is not int or template_version_id <= 0 or template is not None:
+        raise ValidationError({"template": "Select one approved template version without a raw template."})
+    elif not isinstance(document_text, str) or len(document_text) > 131072:
+        raise ValidationError({"document_text": "Provide document text of at most 131072 characters."})
     business = Business.objects.select_for_update().filter(pk=business_id).first()
     if business is None:
         raise NotFound()
@@ -58,6 +67,14 @@ def save_primary_document_draft(*, actor, business_id, patient_id, encounter_id,
         if basis.branch_id != encounter.branch_id:
             raise PermissionDenied()
     assert_verified_clinical_identity(patient)
+    template_source = None
+    if template_version_id is not None:
+        approved = read_approved_template_version(actor=actor, business_id=business_id, version_id=template_version_id)
+        template = approved["template"]
+        review = MedicalTemplateReview.objects.get(version_id=template_version_id, state="approved")
+        template_source = {"template_id": approved["template_id"], "version_id": template_version_id,
+            "revision": approved["revision"], "review_id": review.pk,
+            "approved_by": review.decided_by_id, "approved_at": review.decided_at.isoformat()}
     document = None
     if document_id is not None:
         document = MedicalDocument.objects.select_for_update().filter(pk=document_id,
@@ -78,18 +95,22 @@ def save_primary_document_draft(*, actor, business_id, patient_id, encounter_id,
         draft = document or MedicalDocument.objects.create(business=business, encounter=encounter,
                                                             template_code=template["code"])
         version = append_document_revision(document=draft, source_version=source, author=actor,
-                                           template=template, reason=reason)
+                                           template=template, reason=reason,
+                                           template_source=template_source, document_text=document_text)
         write_patient_audit(actor=actor, business=business, patient=patient,
             action="document_draft_saved" if document is not None else "document_draft_created",
             document_version=version)
         return CRMCommandResult(data={}, status_code=200 if document is not None else 201, resource=version)
 
+    content = {"template": template, "reason": reason}
+    if template_source is not None:
+        content.update(template_source=template_source, document_text=document_text)
     result = run_idempotent_crm_command(business=business, actor=actor, action="medical.document." + action,
         idempotency_key=medical_request_digest({"key": idempotency_key}, business_id=business_id),
         payload={"patient": patient_id, "encounter": encounter_id, "document": document_id,
             "patient_revision": expected_patient_revision, "encounter_revision": expected_encounter_revision,
             "document_revision": expected_document_revision, "participation": participation_id,
-            "content_digest": medical_request_digest({"template": template, "reason": reason}, business_id=business_id)},
+            "content_digest": medical_request_digest(content, business_id=business_id)},
         operation=operation)
     version = MedicalDocumentRevision.objects.get(document__business=business, document__encounter=encounter,
         pk=result.resource_id if result.replayed else result.resource.pk)
