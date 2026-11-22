@@ -492,6 +492,45 @@ class MedicalEncounterRevision(models.Model):
         ]
 
 
+class MedicalCredentialProfile(TimeStampedModel):
+    business = models.ForeignKey("businesses.Business", on_delete=models.PROTECT,
+                                 related_name="medical_credential_profiles")
+    member = models.ForeignKey("businesses.BusinessMember", on_delete=models.PROTECT,
+                               null=True, blank=True, related_name="medical_credential_profiles")
+    revision = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["business"], condition=models.Q(member__isnull=True),
+                                    name="medical_clinic_credentials_unique"),
+            models.UniqueConstraint(fields=["business", "member"], condition=models.Q(member__isnull=False),
+                                    name="medical_member_credentials_unique"),
+        ]
+
+    def clean(self):
+        super().clean()
+        from apps.businesses.models import BusinessMember
+        if self.member_id is not None and not BusinessMember.objects.filter(
+                pk=self.member_id, business_id=self.business_id).exists():
+            raise ValidationError({"member": "Select a member of this business."})
+
+
+class MedicalCredentialRevision(models.Model):
+    profile = models.ForeignKey(MedicalCredentialProfile, on_delete=models.PROTECT, related_name="versions")
+    revision = models.PositiveIntegerField()
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT,
+                              related_name="medical_credential_versions")
+    content_encrypted = models.TextField(editable=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["profile", "revision"], name="medical_credential_version_unique"),
+            models.CheckConstraint(condition=models.Q(revision__gte=1), name="medical_credential_ver_positive"),
+            models.CheckConstraint(condition=~models.Q(content_encrypted=""), name="medical_credential_ver_content"),
+        ]
+
+
 class MedicalDocumentTemplate(TimeStampedModel):
     business = models.ForeignKey("businesses.Business", on_delete=models.PROTECT,
                                  related_name="medical_document_templates")

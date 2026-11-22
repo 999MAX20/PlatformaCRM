@@ -1,4 +1,4 @@
-DENTAL-MCS M11: выбор полей автоподстановки в личных/общих шаблонах проверен; вставка у курсора, замена выделения, возврат фокуса и сохранение черновика при ошибках. 15 API +12 RU/KK/EN desktop/mobile +1 boundary +5 node PASS;52 снимка просмотрены; build/types/i18n/static/check/drift PASS. Полный goal ACTIVE. [Checkpoint](docs/testing/task-state/DENTAL-MCS-20261122.md).
+DENTAL-MCS M11: внутреннее шифрованное хранение версий реквизитов клиники/врача проверено:10 focused/64 dependent теста, check/drift/static и migration0025 forward/back/forward PASS. Подтверждение, аудит, API/UI и включение в документы ещё нужны; вопрос владельцу о подтверждении ожидает ответа. Полный goal ACTIVE. [Checkpoint](docs/testing/task-state/DENTAL-MCS-20261122.md).
 
 QA-016-20261121 LOCAL VERIFIED: automatic tasks searchable by displayed RU/KK/EN title; editor preserves original copy on unrelated edits. 66 backend, 9 node, 6 desktop/mobile browser scenarios, build/types/i18n/check/drift PASS; Code 8a240ad3 pushed to main; CI44937543011 queued (not PASS). Working DB untouched. [Evidence](docs/testing/evidence/qa-016-task-search-20261121.md).
 
