@@ -13,6 +13,7 @@ from .identity_crypto import MedicalDataUnavailable, medical_request_digest
 from .models import MedicalDocumentTemplate, MedicalDocumentTemplateRevision, MedicalRoleAssignment
 from .role_access import assert_medical_role_permission
 from .template_audit import write_template_audit
+from .template_metadata import capture_template_metadata
 
 
 def _identifier(value):
@@ -52,9 +53,10 @@ def personal_template_workspace_access(*, actor, business_id):
 
 
 def save_personal_template_draft(*, actor, business_id, title, text, idempotency_key,
-                                 template_id=None, expected_revision=None, reason=""):
+                                 template_id=None, expected_revision=None, reason="", metadata=None):
     return _save_template_draft(actor=actor, business_id=business_id, title=title, text=text,
-        idempotency_key=idempotency_key, template_id=template_id, expected_revision=expected_revision, reason=reason)
+        idempotency_key=idempotency_key, template_id=template_id, expected_revision=expected_revision, reason=reason,
+        metadata=metadata)
 
 
 def assert_common_template_context(actor, business, context):
@@ -65,7 +67,7 @@ def assert_common_template_context(actor, business, context):
 
 @transaction.atomic
 def _save_template_draft(*, actor, business_id, title, text, idempotency_key,
-                         template_id=None, expected_revision=None, reason="", common=False):
+                         template_id=None, expected_revision=None, reason="", common=False, metadata=None):
     if template_id is not None:
         _identifier(template_id)
         _identifier(expected_revision)
@@ -91,9 +93,16 @@ def _save_template_draft(*, actor, business_id, title, text, idempotency_key,
     def operation():
         if template is not None and template.revision != expected_revision:
             raise InvalidTransition("The template changed; reload its current revision.")
+        classification = capture_template_metadata(metadata, business_id=business_id) if metadata is not None else None
+        if metadata is None and template is not None:
+            previous = MedicalDocumentTemplateRevision.objects.filter(template=template, revision=template.revision).first()
+            if previous is None:
+                raise MedicalDataUnavailable()
+            classification = read_template_revision(previous).get("metadata")
         draft = template or MedicalDocumentTemplate.objects.create(business=business,
             owner_member_id=owner_id, code=("common_" if common else "personal_") + uuid.uuid4().hex)
-        version = append_template_revision(template=draft, author=actor, title=title, text=text, reason=reason)
+        version = append_template_revision(template=draft, author=actor, title=title, text=text, reason=reason,
+                                           metadata=classification)
         write_template_audit(actor=actor, business=business, version=version,
             action="template_draft_created" if template is None else "template_draft_saved")
         return CRMCommandResult(data={}, status_code=201 if template is None else 200, resource=version)
@@ -102,7 +111,8 @@ def _save_template_draft(*, actor, business_id, title, text, idempotency_key,
         action=("medical.template.common." if common else "medical.template.") + action,
         idempotency_key=medical_request_digest({"key": idempotency_key}, business_id=business_id),
         payload={"template": template_id, "revision": expected_revision,
-            "content_digest": medical_request_digest({"title": title, "text": text, "reason": reason}, business_id=business_id)},
+            "content_digest": medical_request_digest({"title": title, "text": text, "reason": reason,
+                **({"metadata": metadata} if metadata is not None else {})}, business_id=business_id)},
         operation=operation)
     version = MedicalDocumentTemplateRevision.objects.get(template__business=business,
         template__owner_member_id=owner_id, pk=result.resource_id if result.replayed else result.resource.pk)

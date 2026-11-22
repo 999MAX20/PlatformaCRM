@@ -84,6 +84,12 @@ Preview и expected_source_digest подключены к HTTP/UI: новый т
 создании личного/общего шаблона подключён к renderer catalog;15 API +12 browser
 +1 boundary PASS,52 снимка просмотрены; build/types PASS. Лицензия/квалификация и полный M11 ещё открыты. Проверки и точная граница M11 — в DENTAL-MCS checkpoint.
 
+Классификация шаблонов: личный/общий draft API и version reader поддерживают
+зашифрованные language/category/specialty и снимки существующих Service (ID/имя).
+Метаданные принадлежат версии, сохраняются при text-only update и не меняют
+утверждённую версию задним числом. Проверки — DENTAL-MCS checkpoint; редактор
+классификации и поиск ещё не подключены, полный M11 остаётся открытым.
+
 Медицинские реквизиты: добавлен внутренний versioned storage
 MedicalCredentialProfile/Revision для лицензии клиники и специальности/должности/
 квалификации BusinessMember. Тексты зашифрованы, имена и общие реквизиты не

@@ -25,10 +25,18 @@ class TemplateScopeSerializer(StrictSerializer):
     business_id = serializers.IntegerField(min_value=1)
 
 
+class TemplateMetadataSerializer(StrictSerializer):
+    language = serializers.ChoiceField(choices=["", "ru", "kk", "en"])
+    category = serializers.CharField(max_length=255, allow_blank=True, trim_whitespace=False)
+    specialty = serializers.CharField(max_length=255, allow_blank=True, trim_whitespace=False)
+    service_ids = serializers.ListField(child=serializers.IntegerField(min_value=1), max_length=50)
+
+
 class TemplateDraftSerializer(TemplateScopeSerializer):
     title = serializers.CharField(max_length=255, trim_whitespace=False)
     text = serializers.CharField(max_length=131072, allow_blank=True, trim_whitespace=False)
     reason = serializers.CharField(max_length=2000, allow_blank=True, required=False, trim_whitespace=False)
+    metadata = TemplateMetadataSerializer(required=False)
 
 
 class TemplateUpdateSerializer(TemplateDraftSerializer):

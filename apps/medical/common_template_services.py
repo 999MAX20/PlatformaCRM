@@ -31,10 +31,10 @@ def list_common_template_versions(*, actor, business_id, template_id, before_rev
 
 
 def save_common_template_draft(*, actor, business_id, title, text, idempotency_key,
-                               template_id=None, expected_revision=None, reason=""):
+                               template_id=None, expected_revision=None, reason="", metadata=None):
     return _save_template_draft(actor=actor, business_id=business_id, title=title, text=text,
         idempotency_key=idempotency_key, template_id=template_id, expected_revision=expected_revision,
-        reason=reason, common=True)
+        reason=reason, common=True, metadata=metadata)
 
 
 def submit_common_template(*, actor, business_id, version_id, idempotency_key):

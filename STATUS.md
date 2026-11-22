@@ -1,4 +1,4 @@
-DENTAL-MCS M11: внутреннее шифрованное хранение версий реквизитов клиники/врача проверено:10 focused/64 dependent теста, check/drift/static и migration0025 forward/back/forward PASS. Подтверждение, аудит, API/UI и включение в документы ещё нужны; вопрос владельцу о подтверждении ожидает ответа. Полный goal ACTIVE. [Checkpoint](docs/testing/task-state/DENTAL-MCS-20261122.md).
+DENTAL-MCS M11: сервер/API сохраняют язык, категорию, специальность и снимки услуг в версии шаблона; прежняя история/утверждение защищены.111 тестов, check/drift/static PASS. Редактор классификации и поиск ещё нужны; подтверждение медицинских реквизитов ожидает решения. Полный goal ACTIVE. [Checkpoint](docs/testing/task-state/DENTAL-MCS-20261122.md).
 
 QA-016-20261121 LOCAL VERIFIED: automatic tasks searchable by displayed RU/KK/EN title; editor preserves original copy on unrelated edits. 66 backend, 9 node, 6 desktop/mobile browser scenarios, build/types/i18n/check/drift PASS; Code 8a240ad3 pushed to main; CI44937543011 queued (not PASS). Working DB untouched. [Evidence](docs/testing/evidence/qa-016-task-search-20261121.md).
 
