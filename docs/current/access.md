@@ -244,7 +244,23 @@ Business lock, текущая revision, общий CRMCommandIdempotency и audi
 административные ID/scope/revision. Отзыв возможен при отключённом модуле/сотруднике.
 Назначение не меняет CRM role или BranchAccess, сетевой scope требует существующего
 CRM network grant. Owner→self запрещён; кто отдельно подтверждает права владельцу
-как врачу — открытое уточнение. Role-management API/UI и назначения реальным пользователям пока нет.
+как врачу — открытое уточнение. Role-management API добавлен; UI и назначения
+реальным пользователям пока отсутствуют.
+
+B08: новые выдачи/отзывы требуют основания. MedicalRoleRevision (migration0019)
+сохраняет отдельное зашифрованное основание для каждой изменившейся revision;
+повтор/no-op не дублирует историю. Старые назначения не получают выдуманное основание,
+успешные исторические service receipts сохраняют replay. В общем audit только
+ID/scope/revision, в idempotency — digest; отказ шифрования/audit откатывает команду.
+`/api/medical/role-management/`: GET workspace/roles/members/member-context/branches/
+history; POST roles/assign/revoke. Все операции повторно проверяют текущего активного
+владельца Business, без platform bypass. Lists ограничены страницами до50;
+query/member/tenant проверяются до выдачи данных. GET не открывает медицинские карты.
+Состояние назначений и отзыв доступны при отключённом модуле/сотруднике; назначение
+по-прежнему требует включённый модуль, активного сотрудника и допустимые CRM филиалы.
+Ответы no-store/private; POST требует Idempotency-Key, assign/revoke — revision и
+основание. История основания доступна только текущему владельцу. Проверки и граница
+backend-only реализации — DENTAL-MCS checkpoint.
 [Матрица, проверки и остаток](../testing/task-state/DENTAL-MCS-20261122.md).
 
 ## QA-023/024: история задач и филиальные назначения — 21.11.2026

@@ -1,5 +1,54 @@
 # DENTAL-MCS-20261122: полная реализация медицинского ТЗ
 
+## M02/M06/B08: управление медицинскими ролями, работа
+
+Domain basis72598 exit0:59 tests PASS3.889s; check/drift PASS, migration0019
+roundtrip сохраняет прежние назначения без выдуманных оснований. Лог
+TEMP/dental-role-basis-20261122.log. Добавлены write API roles/assign/revoke и
+owner-only history;24534 exit0:66 tests PASS5.870s, check/drift PASS в isolated
+runtime. TEMP/dental-role-api-20261122.log. Backend/API boundary проверена;
+UI/build/browser неприменимы к этому срезу без frontend изменений. PostgreSQL
+конкурентность не запускалась/не доказана; Business lock/replay tests на SQLite
+не объявляются доказательством PostgreSQL. UI и полный M02/M06/B08 открыты.
+Следующий шаг: S18 в существующих настройках, owner-only entry, typed API, формы
+определения роли/сотрудника/филиалов/основания, история, no-store ephemeral state,
+503 retry/409 reload/403 clear; desktop/mobile RU/KK/EN и screenshot review.
+Дизайн источник DESIGN_SPEC S18/M21, существующие SettingsSection/Modal/controls.
+Backend код поверх6b7153fc; рабочие миграции/внешние сообщения не выполнялись.
+Reason не попадает в общий AuditLog/CRMCommandIdempotency/командный ответ;
+AESGCM связывает Business/assignment/purpose, JSON проверяет action/revision.
+Новые команды требуют основание, исторические успешные service receipts replay
+с прежним hash. No-op не создаёт ложную запись истории. UI ещё не подключён.
+
+Read foundation18139 exit0:52 tests PASS1.801s (role_reads/services/access),
+check/drift PASS; TEMP/dental-role-reads-20261122.log. Затем добавлен serializer
+mapping для introspection; будет включён в следующий affected run.
+Далее закрываем доказанный domain gap B08: обязательное основание grant/revoke,
+encrypted append-only revision рядом с существующим assignment. Общий audit
+остаётся без текста основания. Исторические назначения не backfill догадками;
+старые успешные receipts replay без новых полей, новые изменения требуют reason.
+Проверки: invalid/missing reason, replay/hash conflict, encryption/no plaintext,
+grant/revoke/regrant history, failure rollback, migration/check/drift и affected roles.
+
+Предыдущий goal turn — progress: дополнение B07 опубликовано6b7153fc, проверки
+пройдены. Новый code gap: role_services create/assign/revoke существуют и проверены,
+но отсутствуют management read/API/UI; B08 дополнительно требует основание выдачи/
+отзыва, которого пока нет в domain. Это необходимо добавить до write API/UI.
+Первый зависимый шаг: owner-only paginated read definitions/members/member context,
+повторно используя _owner_context/MedicalRoleAssignment/BusinessRole/BranchAccess.
+Чтение не выдаёт клинический доступ, не меняет CRM роли/филиалы; отключённый модуль
+и inactive member доступны для последующего отзыва. Чужой tenant/platform/inactive
+actor запрещены, актуальная авторизация каждый раз; no-store; строгие параметры.
+Skills access/domain/verification применяются: tenant first, thin views, свежие
+права, ограниченные страницы, изолированные tests до зависимого UI. UI пока не
+меняется. Нет migration/provider/Notification/BusinessEvent/AI effects этого read.
+Проверки: owner happy/read pagination/search/empty; member/admin/platform/foreign
+denial; owner transfer/deactivation; disabled module/revoked assignment; strict API
+и no-store. После domain дополнения — affected tests/check/drift/static; UI отдельно.
+Канонический root/current branch6b7153fc сохранены, foreign WIP исходного snapshot
+не трогаем (access.md смешанный, при профильной записи stage только свой hunk).
+Полное ТЗ остаётся ACTIVE; это подготовка связного сценария, не закрытый M06.
+
 ## M06/B07: сведения приглашения, локальная приёмка
 
 Текущая проверка: backend58 PASS до уточнения даты; финальные100 PASS38.772s
@@ -44,7 +93,14 @@ read/API/UI назначения ролей поверх существующи�
 владельца не разрешать без отсутствующего решения.
 Полный own diff/new files reviewed; foreign WIP исключён. README/testing не требуют
 изменения: запуск прежний. Внешний ТЗv1_2 обновлён локально отдельно от Git.
-Публикация этого среза следует после финального stage review.
+Опубликовано6b7153fcdb8b58c9039b04ea7aad5ed9bcd1bb2b normal-push origin/main;
+remote SHA совпал. Весь исходящий диапазон — один проверенный task-only commit.
+30 files425+/20-, STATUS staged только первая строка. Канонический root
+C:/Users/user/Desktop/PlatformaCRM, branch codex/ui-testing-toolkit сохранены.
+CI45007654514 in_progress, не PASS. Working/index/реальный committed-range diff
+hygiene PASS. Чужой WIP сохранён, index чист после commit. Deploy/working DB
+migrations/внешних сообщений не было. Полная цель ACTIVE; следующий шаг — API/UI
+назначений медицинских ролей (существующие domain services уже есть).
 
 Предыдущий turn progress: причина отказа опубликованаa46f624f, локальные проверки
 пройдены. Новый gap code: инициатор есть в DTO, но не показан; направление работы
@@ -3005,7 +3061,7 @@ Git-среза находятся выше; runtime-доказательства
 | M03 §2.2–2.4,3,16.1; D04; B02–04; Q09–12 | PatientProfile OneToOne Client, отдельные дети/представители; контакты из Client | Шифрованный ИИН + tenant HMAC, проверенная идентичность отдельно от синтаксиса; основание/срок/отзыв представительства | Семейный телефон не merge; конкурентный verified ИИН уникален; административные действия до проверки, клинические запрещены | Частично: patient schema/crypto/services/audit/reception API/UI с lifecycle/recovery/boundary evidence. Представители: schema/guards/services/audit/authority prerequisite + list/form/verify/revoke API; medical200 SQLite + labels34 PASS; S14 UI6 happy flows/build/screens PASS. UI boundary acceptance и интеграция recipient enforcement, ИИН/перепривязка/head approval и PostgreSQL race ещё нужны; документы/возраст внешне не подтверждены | Patient/identity/crypto и представитель lifecycle | Patient administration; representatives list/form/verify/revoke | ClientWorkspace: профиль/идентичность/представители | Перепривязка ИИН/head approval; recipient enforcement; UI negatives/PG | Документы/возраст и протоколы требуют подтверждения |
 | M04 §2.3–2.4; D04,D07; B04,26–27 | Медицинские зависимости блокируют обычный merge до любого переноса; архив сохраняет историю | Hooks существующего merge/dry-run/delete, контролируемое исправление с причиной и медсогласованием | Отказ атомарен, Appointment/VisitPlan не перемещены частично; hard delete не уничтожает PHI | Частично: merge/preview409 до переноса, PROTECT Client и архив PASS; контролируемые исправления и клиническая история ещё нужны | Merge guard/PROTECT/archive | Существующий merge/preview отклоняет медицинские зависимости | Отдельное медицинское исправление не завершено | Контролируемое исправление и его UI/аудит | Нет внешнего блокера merge guard |
 | M05 §3–4,11; D03; B01–04 | Существующие ClientsPage/ClientWorkspace/ClientForm; медицинские статусы только разрешённым ролям; свободные услуги | Resolve пациента/поиск ИИН с безопасными ошибками, вкладки и сохранение контекста | Список/поиск без утечки PHI; повтор создания/смена Business; свои реальные данные | Частично: PatientAdministrationPanel и patient API уже существуют; patient lifecycle/recovery evidence сохранено выше. Полный поиск/вкладки не приняты. | Patient resolve/administration на Client | Patient administration API | PatientAdministrationPanel в ClientWorkspace | Полный поиск по ИИН/список/вкладки и проверка всех путей | Протокол идентификации отдельно |
-| M06 §13; D03; B06–08; Q01–02,04 | Запись немедленно даёт основание; активное лечение независимо от следующей даты; передача требует принятия | Состояния приглашения/участия/причин доступа, филиальный scope, назначение медруководителя владельцем без саморасширения | Будущая запись >24ч доступна; отмена убирает только своё основание; до принятия нет карты; другой Business запрещён | Частично: прежние server/UI опубликованы9990bcbf/23a007a8, CI success. Новый source-scoped transfer:82 backend,14 node,types/build/i18n,6 locale/viewport +1 recovery +2 regression browser PASS;14 снимков просмотрены. Полный M06 открыт. | Appointment basis; propose/accept/decline/withdraw; head end | Commands; invitations/managed/mine; workspace-access; candidates; source-scoped proposal-branches/outgoing с текущим основанием и аудитом | Head invite/end, own accept/history; source-scoped филиал/получатель/предложение/исходящие/отзыв из записи или active-участия, проверены desktop/mobile RU/KK/EN | Transfer опубликован747e915d; источник предложения migration0015:67 backend/API/roundtrip PASS локально. Уведомления/context:201 PASS/6 PG skips; UI переход/ответ/окна подключены,8 browser сценариев,types/build/i18n/10 node PASS;16 снимков просмотрены, опубликованоe4dca5c7. Причина отказа B07:encrypted domain/API/private read и оба UI входа добавлены,67/30/30 backend runs PASS (наборы пересекаются),10 browser PASS;types/build/i18n/transport/static PASS. Организационные сведения B07 добавлены: направление/дата/инициатор,100 backend и24 distinct browser PASS;20 снимков просмотрены,types/build/i18n/static PASS. Полный ACL/назначение medical role и остальные критерии M06 открыты | Нет внешнего блокера основного сценария |
+| M06 §13; D03; B06–08; Q01–02,04 | Запись немедленно даёт основание; активное лечение независимо от следующей даты; передача требует принятия | Состояния приглашения/участия/причин доступа, филиальный scope, назначение медруководителя владельцем без саморасширения | Будущая запись >24ч доступна; отмена убирает только своё основание; до принятия нет карты; другой Business запрещён | Частично: прежние server/UI опубликованы9990bcbf/23a007a8, CI success. Новый source-scoped transfer:82 backend,14 node,types/build/i18n,6 locale/viewport +1 recovery +2 regression browser PASS;14 снимков просмотрены. Полный M06 открыт. | Appointment basis; propose/accept/decline/withdraw; head end | Commands; invitations/managed/mine; workspace-access; candidates; source-scoped proposal-branches/outgoing с текущим основанием и аудитом | Head invite/end, own accept/history; source-scoped филиал/получатель/предложение/исходящие/отзыв из записи или active-участия, проверены desktop/mobile RU/KK/EN | Transfer опубликован747e915d; источник предложения migration0015:67 backend/API/roundtrip PASS локально. Уведомления/context:201 PASS/6 PG skips; UI переход/ответ/окна подключены,8 browser сценариев,types/build/i18n/10 node PASS;16 снимков просмотрены, опубликованоe4dca5c7. Причина отказа B07:encrypted domain/API/private read и оба UI входа добавлены,67/30/30 backend runs PASS (наборы пересекаются),10 browser PASS;types/build/i18n/transport/static PASS. Организационные сведения B07 добавлены: направление/дата/инициатор,100 backend и24 distinct browser PASS;20 снимков просмотрены,types/build/i18n/static PASS. Управление medical role: owner-only read/write API и encrypted основание/история migration0019 добавлены,66 affected backend PASS/check/drift. UI/полный ACL и остальные критерии M06 открыты | Нет внешнего блокера основного сценария |
 | M07 D03; Q01–05; B05,28 | Завершение участия отдельно от приёма; исправления 24ч; support один инцидент ≤4ч readonly; ассистент только команда/текущий приём | Проверки обязанностей/будущих записей, согласование не самим собой, досрочное закрытие/новое продление | Отзыв роли сильнее временного разрешения; точный scope; ассистент не подписывает/не выдаёт/не экспортирует историю | Частично: head end domain/API/responsible selector и форма локально проверены. Ordinary end/обязательства/security revoke/24h/support/team открыты. | Head end с причиной/ответственным | end-by-head; остальные команды отсутствуют | Head end с причиной/ответственным локально проверен; остальные временные/командные сценарии отсутствуют | Ordinary end/обязательства; security revoke; 24h correction; support/team | Правила уже согласованы; подтверждение заново не требуется |
 | M08 §4.2–4.4; D05; B09–11; Q13–15 | Один Encounter на реальный Appointment того же Client/Business; свои клинические данные | Черновик/revision/обязательные разделы/явная неприменимость; обычный/частичный исход; walk-in текущим днём, ранний через руководителя | Чужие связи/revision отклонены; финансовый переход через существующий сервис ровно один раз, unpaid не блокирует помощь, rollback | Частично: chart/open/draft/read/workspace services и API, encrypted versions/audit, migrations0009–0011; current role/basis/identity/replay checks. Срезы30–37 содержат доказательства и исправление B03. Срез43 добавил calendar→chart/open/draft UI; текущая проверка в начале checkpoint. Срез44 добавил history/revision reader, current display labels; проверки ниже/в начале checkpoint. Full UI/team/temporary ACL, signatures/obligations, walk-in и atomic calendar completion ещё нужны | Chart/open/draft/versions/audit; current ACL | Appointment context; workspace; draft; history/revision | Calendar → приём/черновик/история | Завершение+calendar/money; walk-in; team/temporary; остальные вкладки | Подписи/формы см. M11–M12 |
 | M09 §2.2,4,16.2 | Одонтограмма постоянных/молочных/смешанных зубов, поверхности, наблюдения, авторство и история | Модели текущего состояния/append history, связи приём/план/снимки | Изменение сохраняет прежнее и новое, неверный зуб/поверхность отвергнуты, права/конкурентность | Частично: срез47 добавил state/history schema и migration0012;29 storage/dependent tests/check/drift PASS. Срез48 encrypted helpers:30 tests/check/drift PASS; Срез49 exact-version audit:380 medical tests PASS; срез50 primary command/exact reader:50 PASS; срез51 HTTP:40 PASS/check/drift. Срез52 snapshot/history API:41 tests PASS, дополнительные12 edge tests PASS. Срез53 typed frontend transport10 tests/types/build PASS; Срез54 read UI:6 localized+1 recovery browser PASS; Срез55 whole-tooth editor:6+1 browser PASS; Срез56 surface-options API/shared validator41 tests PASS; Срез58 surface UI:6 localized+1 Map regression browser PASS, types/build/i18n/screens PASS; team/linked plans/images/clinical legend/concurrency ещё открыты | Tooth state/encrypted append history; surface policy | Write/exact read/snapshot/history/surface options | Постоянные/молочные/смешанные зубы; история; редактор поверхностей | Планы/снимки/team; PG concurrency; клиническая легенда | Утверждённый справочник поверхностей не получен |

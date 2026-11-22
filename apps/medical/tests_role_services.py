@@ -1,7 +1,7 @@
 from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.utils import timezone
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
 
@@ -13,8 +13,11 @@ from apps.core.models import AuditLog, CRMCommandIdempotency
 from .models import MedicalRoleAssignment
 from .role_access import assert_medical_role_permission
 from .role_services import assign_medical_role, create_medical_role, revoke_medical_role
+from .tests_patient_services import key
 
 
+@override_settings(MEDICAL_DATA_KEYS={"test": key(7)}, MEDICAL_DATA_ACTIVE_KEY_ID="test",
+                   MEDICAL_IDENTITY_INDEX_KEY=key(8))
 class MedicalRoleServiceTests(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -41,12 +44,13 @@ class MedicalRoleServiceTests(TestCase):
     def assign(self, role, **overrides):
         return assign_medical_role(**{"actor": self.owner, "business_id": self.business.pk,
             "member_id": self.member.pk, "role_id": role.pk, "branch_ids": [self.branch.pk],
-            "all_branches": False, "expected_revision": 0, "idempotency_key": "assign", **overrides})
+            "all_branches": False, "expected_revision": 0, "idempotency_key": "assign",
+            "reason": "Synthetic appointment authority", **overrides})
 
     def revoke(self, assignment, **overrides):
         return revoke_medical_role(**{"actor": self.owner, "business_id": self.business.pk,
             "member_id": self.member.pk, "expected_revision": assignment.revision,
-            "idempotency_key": "revoke", **overrides})
+            "idempotency_key": "revoke", "reason": "Synthetic revocation basis", **overrides})
 
     def test_definition_assignment_replay_and_audit_do_not_change_crm_role(self):
         role, replayed = self.define()

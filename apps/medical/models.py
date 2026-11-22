@@ -146,6 +146,24 @@ class MedicalRoleAssignment(TimeStampedModel):
             raise ValidationError({"granted_by": "Medical authority cannot be self-granted."})
 
 
+class MedicalRoleRevision(models.Model):
+    assignment = models.ForeignKey(MedicalRoleAssignment, on_delete=models.PROTECT, related_name="decisions")
+    revision = models.PositiveIntegerField()
+    action = models.CharField(max_length=8, choices=[("grant", "Grant"), ("revoke", "Revoke")])
+    reason_encrypted = models.TextField(editable=False)
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT,
+                             related_name="medical_role_decisions")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["assignment", "revision"], name="medical_role_revision_unique"),
+            models.CheckConstraint(condition=models.Q(revision__gte=1), name="medical_role_decision_positive"),
+            models.CheckConstraint(condition=models.Q(action__in=["grant", "revoke"]), name="medical_role_revision_action"),
+            models.CheckConstraint(condition=~models.Q(reason_encrypted=""), name="medical_role_revision_reason"),
+        ]
+
+
 class TreatmentParticipation(TimeStampedModel):
     class States(models.TextChoices):
         PENDING = "pending", "Pending acceptance"

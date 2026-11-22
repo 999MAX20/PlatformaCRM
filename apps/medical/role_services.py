@@ -13,6 +13,8 @@ from apps.core.idempotency import CRMCommandResult, run_idempotent_crm_command
 from apps.core.models import AuditLog
 from .models import MedicalRoleAssignment
 from .role_access import medical_action_allowed
+from .role_basis import record_role_reason, validate_role_reason
+from .identity_crypto import medical_request_digest
 
 
 def _owner_context(actor, business_id, *, require_module=True):
@@ -110,8 +112,9 @@ def create_medical_role(*, actor, business_id, name, kind, permissions, idempote
 
 @transaction.atomic
 def assign_medical_role(*, actor, business_id, member_id, role_id, branch_ids, all_branches,
-                        expected_revision, idempotency_key):
+                        expected_revision, idempotency_key, reason=""):
     actor, business = _owner_context(actor, business_id)
+    validate_role_reason(reason)
     _identifier(member_id, "member")
     _identifier(role_id, "role")
     _key(idempotency_key)
@@ -142,6 +145,7 @@ def assign_medical_role(*, actor, business_id, member_id, role_id, branch_ids, a
 
     def operation():
         nonlocal assignment
+        validate_role_reason(reason, required=True)
         _revision(assignment, expected_revision)
         before = _snapshot(assignment)
         if (assignment is not None and assignment.revoked_at is None and assignment.business_role_id == role.pk and
@@ -159,19 +163,23 @@ def assign_medical_role(*, actor, business_id, member_id, role_id, branch_ids, a
         assignment.full_clean(exclude=["branches"])
         assignment.save()
         assignment.branches.set(branch_ids)
+        record_role_reason(business=business, assignment=assignment, actor=actor, action="grant", reason=reason)
         _audit(actor, business, assignment, "medical_role_assigned", before, _snapshot(assignment))
         return CRMCommandResult(data={}, resource=assignment)
 
     result = run_idempotent_crm_command(business=business, actor=actor, action="medical.role.assign",
         idempotency_key=idempotency_key, payload={"member": member_id, "role": role_id, "branches": sorted(branch_ids),
-            "all_branches": all_branches, "expected_revision": expected_revision}, operation=operation)
+            "all_branches": all_branches, "expected_revision": expected_revision,
+            **({"reason_digest": medical_request_digest({"reason": reason}, business_id=business_id)} if reason else {})},
+        operation=operation)
     current = MedicalRoleAssignment.objects.get(member=member, pk=result.resource_id if result.replayed else result.resource.pk)
     return current, result.replayed
 
 
 @transaction.atomic
-def revoke_medical_role(*, actor, business_id, member_id, expected_revision, idempotency_key):
+def revoke_medical_role(*, actor, business_id, member_id, expected_revision, idempotency_key, reason=""):
     actor, business = _owner_context(actor, business_id, require_module=False)
+    validate_role_reason(reason)
     _identifier(member_id, "member")
     _key(idempotency_key)
     member = BusinessMember.objects.select_for_update().filter(business=business, pk=member_id).first()
@@ -182,16 +190,20 @@ def revoke_medical_role(*, actor, business_id, member_id, expected_revision, ide
         raise NotFound()
 
     def operation():
+        validate_role_reason(reason, required=True)
         _revision(assignment, expected_revision)
         if assignment.revoked_at is None:
             before = _snapshot(assignment)
             assignment.revoked_at = timezone.now()
             assignment.revision += 1
             assignment.save(update_fields=["revoked_at", "revision", "updated_at"])
+            record_role_reason(business=business, assignment=assignment, actor=actor, action="revoke", reason=reason)
             _audit(actor, business, assignment, "medical_role_revoked", before, _snapshot(assignment))
         return CRMCommandResult(data={}, resource=assignment)
 
     result = run_idempotent_crm_command(business=business, actor=actor, action="medical.role.revoke",
-        idempotency_key=idempotency_key, payload={"member": member_id, "expected_revision": expected_revision}, operation=operation)
+        idempotency_key=idempotency_key, payload={"member": member_id, "expected_revision": expected_revision,
+            **({"reason_digest": medical_request_digest({"reason": reason}, business_id=business_id)} if reason else {})},
+        operation=operation)
     assignment.refresh_from_db()
     return assignment, result.replayed

@@ -12,6 +12,7 @@ from apps.medical.encounter_views import MedicalEncounterViewSet
 from apps.medical.record_views import MedicalRecordViewSet
 from apps.medical.tooth_views import ToothObservationViewSet
 from apps.medical.participation_views import TreatmentParticipationViewSet
+from apps.medical.role_views import MedicalRoleManagementViewSet
 
 from apps.accounts.auth_views import LogoutView, ThrottledTokenObtainPairView, ThrottledTokenRefreshView
 from apps.accounts.csrf import auth_csrf
@@ -150,6 +151,7 @@ router.register("medical/encounters", MedicalEncounterViewSet, basename="medical
 router.register("medical/records", MedicalRecordViewSet, basename="medical-record")
 router.register("medical/tooth-observations", ToothObservationViewSet, basename="medical-tooth-observation")
 router.register("medical/participations", TreatmentParticipationViewSet, basename="medical-participation")
+router.register("medical/role-management", MedicalRoleManagementViewSet, basename="medical-role-management")
 router.register("branches", BranchViewSet, basename="branch")
 router.register("management", ManagementViewSet, basename="management")
 router.register("businesses", BusinessViewSet, basename="business")
