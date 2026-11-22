@@ -33,6 +33,9 @@ class Business(TimeStampedModel):
     name = models.CharField(max_length=255)
     slug = models.SlugField(unique=True)
     business_type = models.CharField(max_length=32, choices=BusinessTypes.choices, default=BusinessTypes.OTHER)
+    profile_key = models.CharField(max_length=32, null=True, blank=True, default=None)
+    profile_version = models.PositiveIntegerField(null=True, blank=True, default=None)
+    profile_assigned_at = models.DateTimeField(null=True, blank=True, default=None)
     city = models.CharField(max_length=128, blank=True)
     address = models.CharField(max_length=255, blank=True)
     phone = models.CharField(max_length=32, blank=True)
@@ -63,6 +66,17 @@ class Business(TimeStampedModel):
     class Meta:
         ordering = ["name"]
         constraints = [
+            models.CheckConstraint(
+                condition=(
+                    Q(profile_key__isnull=True, profile_version__isnull=True, profile_assigned_at__isnull=True)
+                    | (
+                        Q(profile_key__isnull=False, profile_version__isnull=False,
+                          profile_assigned_at__isnull=False, profile_version__gte=1)
+                        & ~Q(profile_key="")
+                    )
+                ),
+                name="business_profile_complete_or_null",
+            ),
             models.UniqueConstraint(
                 fields=["landing_id"],
                 condition=~Q(landing_id=""),

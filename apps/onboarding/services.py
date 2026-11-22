@@ -9,6 +9,8 @@ from apps.bots.models import Bot, BotChannel, BotConversation, BotMessage
 from apps.businesses.access import ensure_default_roles
 from apps.businesses.capabilities import apply_business_type_defaults
 from apps.businesses.models import Business
+from apps.businesses.profiles import profile_spec
+from apps.core.domain_errors import InvalidTransition
 from apps.clients.models import Client
 from apps.conversations.models import QuickReplyTemplate
 from apps.crm.models import Deal, Pipeline, PipelineStage
@@ -37,6 +39,9 @@ def list_onboarding_templates():
 
 @transaction.atomic
 def apply_niche_template(business: Business, niche: str, actor=None):
+    business = Business.objects.select_for_update().get(pk=business.pk)
+    if profile_spec(business) is not None:
+        raise InvalidTransition()
     template = get_niche_template(niche)
     business.business_type = niche if niche in NICHES else Business.BusinessTypes.OTHER
     business.save(update_fields=["business_type", "updated_at"])

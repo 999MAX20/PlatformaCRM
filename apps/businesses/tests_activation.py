@@ -95,7 +95,7 @@ class LandingActivationFlowTests(TestCase):
         self.assertEqual(response.data["business"]["landing_id"], "landing-api-001")
         self.assertEqual(response.data["subscription"]["status"], Subscription.Statuses.TRIAL)
         self.assertEqual(response.data["lead_form"]["landing_id"], "landing-api-001")
-        audit = AuditLog.objects.get(entity_type="Business", entity_id=str(response.data["business"]["id"]))
+        audit = AuditLog.objects.get(entity_type="Business", entity_id=str(response.data["business"]["id"]), metadata__kind="platform_activation")
         self.assertEqual(audit.actor, self.platform_admin)
         self.assertEqual(audit.category, AuditLog.Categories.SECURITY)
         self.assertEqual(audit.risk_level, AuditLog.RiskLevels.CRITICAL)

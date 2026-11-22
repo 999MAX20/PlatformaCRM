@@ -4,10 +4,12 @@ from django.contrib.auth import get_user_model
 from django.db import transaction
 from django.utils import timezone
 from django.utils.text import slugify
+from rest_framework.exceptions import ValidationError
 
 from apps.billing.models import Subscription, SubscriptionPlan
 from apps.businesses.access import ensure_default_roles
 from apps.businesses.models import Business, BusinessMember, BusinessRole
+from apps.businesses.profiles import profile_spec, assert_business_type_change_allowed, create_profiled_business
 from apps.core.domain_errors import OwnershipConflict
 from apps.crm.models import Pipeline, PipelineStage
 from apps.leads.models import Lead, LeadForm, LeadFormField
@@ -42,12 +44,13 @@ def activate_landing_business(
     business_name: str,
     owner_password: str | None = None,
     owner_full_name: str = "",
-    business_type: str = Business.BusinessTypes.OTHER,
+    business_type: str | None = None,
     landing_domain: str = "",
     landing_preview_url: str = "",
     city: str = "",
     phone: str = "",
     timezone_name: str = "Asia/Almaty",
+    actor=None,
 ) -> ActivationResult:
     landing_id = str(landing_id or "").strip()
     owner_email = str(owner_email or "").strip().lower()
@@ -65,6 +68,13 @@ def activate_landing_business(
     if existing_business is not None and existing_business.owner.email.casefold() != owner_email.casefold():
         raise OwnershipConflict(errors={"landing_id": "This landing is already linked to another owner."})
 
+    if business_type is not None and business_type not in Business.BusinessTypes.values:
+        raise ValidationError({"business_type": "Select a supported business type."})
+    if existing_business is not None and profile_spec(existing_business) is not None:
+        business_type = business_type if business_type is not None else existing_business.business_type
+        assert_business_type_change_allowed(existing_business, business_type)
+    business_type = business_type if business_type is not None else Business.BusinessTypes.OTHER
+
     owner, created_owner = _get_or_create_owner(
         owner_email,
         owner_password=owner_password,
@@ -81,6 +91,7 @@ def activate_landing_business(
         city=city,
         phone=phone,
         timezone_name=timezone_name,
+        actor=actor,
     )
     owner_membership = _ensure_owner_membership(business, owner)
     pipeline = ensure_pilot_pipeline(business)
@@ -231,12 +242,14 @@ def _get_or_create_business(
     city,
     phone,
     timezone_name,
+    actor=None,
 ):
     business = existing_business
     created = False
     if business is None:
-        business = Business.objects.create(
+        business = create_profiled_business(
             owner=owner,
+            actor=actor,
             name=business_name,
             slug=_unique_business_slug(business_name),
             business_type=business_type if business_type in Business.BusinessTypes.values else Business.BusinessTypes.OTHER,

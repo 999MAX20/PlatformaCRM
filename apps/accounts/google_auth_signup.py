@@ -4,7 +4,7 @@ from django.utils.text import slugify
 from apps.accounts.models import User
 from apps.businesses.models import Business, BusinessMember, BusinessRole
 from apps.businesses.access import ensure_default_roles
-from apps.businesses.capabilities import apply_business_type_defaults
+from apps.businesses.profiles import create_profiled_business, reject_profile_input
 from apps.crm.services import ensure_default_pipeline
 
 
@@ -20,6 +20,7 @@ def unique_business_slug(name):
 
 @transaction.atomic
 def create_owner_account(data):
+    reject_profile_input(data)
     email = data["email"].strip().lower()
     user = User.objects.create_user(
         username=email,
@@ -30,7 +31,7 @@ def create_owner_account(data):
         role=User.Roles.BUSINESS_OWNER,
         is_active=True,
     )
-    business = Business.objects.create(
+    business = create_profiled_business(
         owner=user,
         name=data["business_name"].strip(),
         slug=unique_business_slug(data["business_name"]),
@@ -42,7 +43,6 @@ def create_owner_account(data):
         status=Business.Statuses.TRIAL,
     )
     ensure_default_roles(business)
-    apply_business_type_defaults(business, configured_by=user)
     from apps.branches.single_location import ensure_initial_location
     ensure_initial_location(business)
     ensure_default_pipeline(business)

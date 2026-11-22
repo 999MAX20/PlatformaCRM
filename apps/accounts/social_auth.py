@@ -132,7 +132,8 @@ def _ensure_first_business(user: User) -> None:
         return
 
     business_name = f"{user.full_name or user.email.split('@')[0]} Workspace"
-    business = Business.objects.create(
+    from apps.businesses.profiles import create_profiled_business
+    business = create_profiled_business(
         owner=user,
         name=business_name,
         slug=_unique_business_slug(user.email),

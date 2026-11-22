@@ -10,9 +10,9 @@ from rest_framework.test import APIClient
 
 from apps.accounts.models import User
 from apps.businesses.access import ensure_default_roles
-from apps.businesses.models import Business
+from apps.businesses.models import Business, BusinessCapability
 from apps.clients.models import Client
-from apps.core.domain_errors import InvalidTransition
+from apps.core.domain_errors import InvalidTransition, ModuleDisabled
 from apps.scheduling.models import Resource, WorkingHours
 from apps.scheduling.plan_services import change_plan, create_plan
 from apps.scheduling.services import apply_appointment_status
@@ -77,6 +77,32 @@ class PlanPaymentTests(TestCase):
             {1: Decimal("0.01"), 2: Decimal("0.01"), 3: Decimal(0)})
         with self.assertRaises(ValidationError):
             distribute({1: Decimal(0)}, Decimal(1))
+
+    def test_revoked_plan_money_rolls_back_completion_and_can_recover(self):
+        plan = self.terms(self.plan())
+        self.receipt(plan)
+        visit = self.schedule(plan, plan.steps.first())
+        previous_status = visit.status
+        plan.refresh_from_db()
+        previous_revision = plan.revision
+        Business.objects.filter(pk=self.business.pk).update(
+            business_type="dentistry", profile_key="dentistry", profile_version=1,
+            profile_assigned_at=timezone.now())
+        for key, enabled in (("visit_plans", True), ("plan_payments", False)):
+            BusinessCapability.objects.update_or_create(business=self.business,
+                module_key=key, defaults={"is_enabled": enabled})
+        with self.assertRaises(ModuleDisabled):
+            self.complete(visit)
+        visit.refresh_from_db()
+        plan.refresh_from_db()
+        self.assertEqual(visit.status, previous_status)
+        self.assertEqual(plan.revision, previous_revision)
+        self.assertFalse(PlanAllocation.objects.filter(terms__plan=plan).exists())
+        BusinessCapability.objects.filter(business=self.business, module_key="plan_payments").update(is_enabled=True)
+        self.complete(visit)
+        visit.refresh_from_db()
+        self.assertEqual(visit.status, "completed")
+        self.assertEqual(PlanAllocation.objects.filter(terms__plan=plan).count(), 1)
 
     def test_completion_once_and_refund_cannot_spend_allocation(self):
         plan = self.terms(self.plan())

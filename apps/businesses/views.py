@@ -349,14 +349,7 @@ class BusinessCapabilityViewSet(TenantModelViewSet):
 
     def perform_update(self, serializer):
         self._enforce_business_access(serializer)
-        instance = serializer.save(configured_by=self.request.user)
-        write_audit_log(
-            self.request,
-            AuditLog.Actions.UPDATE,
-            instance,
-            business=instance.business,
-            metadata={"kind": "business_capability", "module_key": instance.module_key, "is_enabled": instance.is_enabled},
-        )
+        serializer.save(configured_by=self.request.user)
 
 
 class BusinessInvitationViewSet(TeamAccessMixin, ModelViewSet):

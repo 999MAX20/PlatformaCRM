@@ -1,4 +1,9 @@
 from django.contrib import admin
+from django.db import transaction
+from django.core.exceptions import ValidationError
+from apps.businesses.profiles import (
+    PROFILE_FIELDS, profile_spec, assert_business_type_change_allowed, initialize_business_profile,
+)
 
 from apps.businesses.models import Business, BusinessInvitation, BusinessMember, BusinessRole, RolePermission, RolePreset, Team, TeamMember
 
@@ -9,6 +14,26 @@ class BusinessAdmin(admin.ModelAdmin):
     list_filter = ("business_type", "status", "city")
     search_fields = ("name", "slug", "owner__email", "phone", "whatsapp", "telegram", "instagram")
     prepopulated_fields = {"slug": ("name",)}
+    readonly_fields = ("profile_key", "profile_version", "profile_assigned_at")
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj is not None and profile_spec(obj) is not None:
+            return (*self.readonly_fields, "business_type")
+        return self.readonly_fields
+
+    @transaction.atomic
+    def save_model(self, request, obj, form, change):
+        if change:
+            current = Business.objects.select_for_update().get(pk=obj.pk)
+            if any(getattr(obj, key) != getattr(current, key) for key in PROFILE_FIELDS):
+                raise ValidationError("The assigned business profile cannot be changed.")
+            assert_business_type_change_allowed(current, obj.business_type)
+        elif any(getattr(obj, key) is not None for key in PROFILE_FIELDS):
+            raise ValidationError("The business profile is assigned by the server.")
+        if not change:
+            initialize_business_profile(obj, actor=request.user)
+            return
+        super().save_model(request, obj, form, change)
 
 
 @admin.register(BusinessMember)

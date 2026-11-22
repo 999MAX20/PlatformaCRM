@@ -5,6 +5,8 @@ from django.db.models import Q, Sum
 from rest_framework.exceptions import PermissionDenied
 
 from apps.businesses.access import Actions, Resources, assert_can, can_view_sensitive_field
+from apps.businesses.capabilities import assert_resource_enabled
+from apps.core.domain_errors import ModuleDisabled
 from apps.scheduling.plan_access import assert_plan_change
 from .models import Payment, PlanAllocation, PlanCreditTransfer
 from .selectors import payment_business, payment_queryset
@@ -63,6 +65,7 @@ def retained_balance(plan, receipt):
 
 
 def assert_plan_money(plan, actor, action=Actions.VIEW):
+    assert_resource_enabled(plan.business, "plan_payments")
     if action != Actions.VIEW:
         payment_business(actor, plan.business_id, Actions.VIEW)
     payment_business(actor, plan.business_id, action)
@@ -102,7 +105,7 @@ def refused_advance(plan, additional_steps=()):
 def plan_money_projection(plan, actor):
     try:
         assert_plan_money(plan, actor)
-    except PermissionDenied:
+    except (PermissionDenied, ModuleDisabled):
         return None
     terms = current_terms(plan)
     sources = list(plan_sources(plan))
@@ -121,7 +124,7 @@ def plan_money_projection(plan, actor):
             assert_plan_money(plan, actor, action)
             assert_plan_change(plan, actor)
             permissions[name] = True
-        except PermissionDenied:
+        except (PermissionDenied, ModuleDisabled):
             permissions[name] = False
     permissions["can_correct"] = permissions["can_manage"] and user_is_business_owner(actor, plan.business)
     return {"terms": None if terms is None else {"id": terms.pk, "mode": terms.mode,

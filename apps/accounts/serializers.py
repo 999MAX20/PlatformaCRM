@@ -194,6 +194,11 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
 
 
 class OwnerSignupSerializer(serializers.Serializer):
+    def to_internal_value(self, data):
+        from apps.businesses.profiles import reject_profile_input
+        reject_profile_input(data)
+        return super().to_internal_value(data)
+
     accepted_documents = serializers.ListField(child=serializers.ChoiceField(choices=REQUIRED_DOCUMENT_IDS), allow_empty=False)
     acceptance_method = serializers.ChoiceField(choices=("checkboxes", "signup_submit"), default="checkboxes")
 

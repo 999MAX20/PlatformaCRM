@@ -1,5 +1,38 @@
 # DENTAL-MCS-20261122: полная реализация медицинского ТЗ
 
+## Сохранение профильного механизма, 22.11.2026
+
+Предыдущий ответ владельцу о состоянии плана не менял реализацию. Следующее
+продолжение проверило текущий Git и сохранило связный профильный набор поверх
+05ed9ebb: nullable профиль/ограничение БД, реестр и resolver, общий initializer,
+все пять путей создания, запрет смены профиля обычными настройками, enforcement
+планов и их платежей. Это сохранение ранее реализованного, без переписывания.
+Медицинский домен и интерфейс остаются отдельным WIP; D02 rollout не выполнен.
+
+Состав проверен целиком; в смешанных serializers/views подготовлены только
+профильные hunks. Чужие password-правки и медицинские role guards не включены.
+AST синтаксис и наличие абсолютных локальных imports в Git index PASS;
+staged diff hygiene PASS. Секреты и реальные данные в набор не добавлены.
+
+Новая проверка текущего рабочего дерева (не отдельного checkout): isolated_runtime,
+check и makemigrations --check --dry-run PASS; 123 теста, 121 PASS/2 PostgreSQL-only
+SKIP, 39.751s, runner46188 exit0. Команда manage.py test --noinput -v1 с labels:
+apps.businesses.tests_profiles, tests_profile_initialization, tests_profile_writes,
+tests_profile_plan_access, tests_medical_capabilities, tests_activation (все с
+префиксом apps.businesses); apps.accounts.tests_google_auth,
+apps.accounts.tests_legal_documents; apps.payments.tests_plan_payments;
+apps.core.tests_b301_performance, apps.core.tests_b5_performance.
+Лог: C:/Users/user/AppData/Local/Temp/dental-profile-preservation-20261122.log.
+SQLite не доказывает PostgreSQL-конкурентность. Рабочая БД не изменялась.
+UI не менялся в этом сохранении; существующие UI evidence не расширены.
+
+Полный working diff hygiene вновь FAIL только на чужом
+docs/testing/evidence/google-button-design-20261119.md:41 (blank EOF).
+Публикация удержана; разрешение на единственную чужую строку пока не получено.
+Все запущенные здесь проверки завершены. Следующий шаг: сохранить связный
+медицинский сервер/UI набор, затем сценарий передачи от врача между филиалами.
+Вся M01–M30 матрица и исходная полная цель остаются открыты в прежнем объёме.
+
 ## Поручение и граница
 
 Владелец включил цель полной реализации 22.11.2026. Полный текст поручения прочитан

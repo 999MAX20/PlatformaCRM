@@ -1,10 +1,16 @@
 from django.utils import timezone
+from django.db import transaction
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 from rest_framework import serializers
 
 from apps.accounts.models import User
 from apps.accounts.passwords import enforce_password_policy
 from apps.businesses.access import Actions, PERMISSION_CATALOG, Resources, can
+from apps.businesses.profiles import (
+    PROFILE_FIELDS, reject_profile_input, assert_business_type_change_allowed,
+    update_business_capability,
+    create_profiled_business,
+)
 from apps.businesses.models import (
     Business,
     BusinessCapability,
@@ -27,8 +33,17 @@ class BusinessSerializer(serializers.ModelSerializer):
     class Meta:
         model = Business
         fields = "__all__"
-        read_only_fields = ["owner", "created_at", "updated_at"]
-    read_only_fields = ["owner", "created_at", "updated_at"]
+        read_only_fields = ["owner", "created_at", "updated_at", *PROFILE_FIELDS]
+    read_only_fields = ["owner", "created_at", "updated_at", *PROFILE_FIELDS]
+
+    def to_internal_value(self, data):
+        reject_profile_input(data)
+        return super().to_internal_value(data)
+
+    def create(self, validated_data):
+        owner = validated_data.pop("owner")
+        request = self.context.get("request")
+        return create_profiled_business(owner=owner, actor=getattr(request, "user", owner), **validated_data)
 
     def validate_timezone(self, value):
         try:
@@ -51,7 +66,10 @@ class BusinessSerializer(serializers.ModelSerializer):
             attrs["financial_connector"] = None
         return attrs
 
+    @transaction.atomic
     def update(self, instance, validated_data):
+        instance = Business.objects.select_for_update().get(pk=instance.pk)
+        assert_business_type_change_allowed(instance, validated_data.get("business_type", instance.business_type))
         if "ai_booking_responsible_user" in validated_data:
             from .booking_settings import validate_booking_responsible
             validated_data["ai_booking_responsible_user"] = validate_booking_responsible(instance, validated_data["ai_booking_responsible_user"])
@@ -63,6 +81,18 @@ class BusinessCapabilitySerializer(serializers.ModelSerializer):
         model = BusinessCapability
         fields = ["id", "business", "module_key", "is_enabled", "configured_by", "created_at", "updated_at"]
         read_only_fields = ["business", "module_key", "configured_by", "created_at", "updated_at"]
+
+    def to_internal_value(self, data):
+        protected = set(data).intersection({"business", "module_key"})
+        if protected:
+            raise serializers.ValidationError({key: "This field cannot be changed." for key in sorted(protected)})
+        return super().to_internal_value(data)
+
+    def update(self, instance, validated_data):
+        return update_business_capability(
+            capability=instance, actor=validated_data.get("configured_by"),
+            is_enabled=validated_data.get("is_enabled"),
+        )
 
 
 class RoutingPolicySerializer(serializers.ModelSerializer):
@@ -425,7 +455,7 @@ class ActivateLandingBusinessSerializer(serializers.Serializer):
     owner_password = serializers.CharField(required=False, allow_blank=True, write_only=True, min_length=8)
     owner_full_name = serializers.CharField(required=False, allow_blank=True, max_length=255)
     business_name = serializers.CharField(max_length=255)
-    business_type = serializers.ChoiceField(choices=Business.BusinessTypes.choices, required=False, default=Business.BusinessTypes.OTHER)
+    business_type = serializers.ChoiceField(choices=Business.BusinessTypes.choices, required=False)
     landing_domain = serializers.CharField(required=False, allow_blank=True, max_length=255)
     landing_preview_url = serializers.URLField(required=False, allow_blank=True)
     city = serializers.CharField(required=False, allow_blank=True, max_length=128)
@@ -433,3 +463,7 @@ class ActivateLandingBusinessSerializer(serializers.Serializer):
 
     def validate_owner_password(self, value):
         return enforce_password_policy(value) if value else value
+
+    def to_internal_value(self, data):
+        reject_profile_input(data)
+        return super().to_internal_value(data)

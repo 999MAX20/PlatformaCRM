@@ -8,6 +8,7 @@ from apps.scheduling.models import Appointment
 
 
 def assert_plan_context(plan, actor):
+    assert_resource_enabled(plan.business, "visit_plans")
     assert_resource_enabled(plan.business, Resources.APPOINTMENTS)
     assert_resource_enabled(plan.business, Resources.CLIENTS)
     assert_can(actor, plan.business, Resources.CLIENTS, Actions.VIEW, obj=plan.client)

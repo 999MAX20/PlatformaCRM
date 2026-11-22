@@ -9,6 +9,12 @@ from apps.scheduling.models import Appointment, VisitPlan, VisitPlanStep
 
 
 def readable_plan_steps(*, business, actor):
+    if not resource_is_enabled(business, "visit_plans"):
+        return VisitPlanStep.objects.none()
+    return _scoped_plan_steps(business=business, actor=actor)
+
+
+def _scoped_plan_steps(*, business, actor):
     steps = VisitPlanStep.objects.filter(plan__business=business)
     permission = can(actor, business, Resources.APPOINTMENTS, Actions.VIEW)
     if not permission.allowed or not resource_is_enabled(business, Resources.APPOINTMENTS):
@@ -27,10 +33,12 @@ def readable_plan_steps(*, business, actor):
 
 def readable_plans(*, business, actor):
     plans = VisitPlan.objects.filter(business=business)
+    if not resource_is_enabled(business, "visit_plans"):
+        return plans.none()
     if not resource_is_enabled(business, Resources.CLIENTS):
         return plans.none()
     clients = scope_queryset(Client.objects.filter(business=business), actor, business, Resources.CLIENTS)
-    steps = readable_plan_steps(business=business, actor=actor)
+    steps = _scoped_plan_steps(business=business, actor=actor)
     plans = plans.filter(client_id__in=clients.values("pk")).annotate(
         _visible_step=Exists(steps.filter(plan_id=OuterRef("pk"))),
         _any_step=Exists(VisitPlanStep.objects.filter(plan_id=OuterRef("pk"))))

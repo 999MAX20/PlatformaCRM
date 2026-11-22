@@ -5,6 +5,7 @@ from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 
 from apps.businesses.access import Actions
+from apps.businesses.capabilities import assert_resource_enabled
 from apps.core.domain_errors import InvalidTransition
 from apps.scheduling.plan_access import assert_plan_change
 from .models import Payment, PlanAllocation, PlanCreditTransfer, PlanRemainderDecision, PlanTerms
@@ -29,6 +30,7 @@ def accept_terms(plan, actor, data):
 
 
 def require_current_terms(plan):
+    assert_resource_enabled(plan.business, "plan_payments")
     terms = current_terms(plan)
     if not terms or terms.composition != composition(plan):
         raise InvalidTransition("Review and accept current plan payment terms first.")

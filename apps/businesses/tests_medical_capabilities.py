@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
+from django.utils import timezone
 
 from apps.businesses.capabilities import (
     MODULE_REGISTRY,
@@ -10,6 +11,7 @@ from apps.businesses.capabilities import (
     resource_is_enabled,
 )
 from apps.businesses.models import Business, BusinessCapability
+from apps.businesses.profiles import BusinessProfileInvalid
 from apps.core.domain_errors import ModuleDisabled
 
 
@@ -30,6 +32,14 @@ class MedicalCapabilityTests(TestCase):
         )
 
     def enable(self, business):
+        if business.business_type == Business.BusinessTypes.DENTISTRY:
+            Business.objects.filter(pk=business.pk).update(
+                profile_key="dentistry", profile_version=2, profile_assigned_at=timezone.now()
+            )
+            for key in ("clients", "appointments"):
+                BusinessCapability.objects.update_or_create(
+                    business=business, module_key=key, defaults={"is_enabled": True}
+                )
         return BusinessCapability.objects.create(
             business=business, module_key="medical_records", is_enabled=True
         )
@@ -58,7 +68,7 @@ class MedicalCapabilityTests(TestCase):
 
     def test_revocation_and_deletion_override_loaded_cache(self):
         row = self.enable(self.dental)
-        ensure_business_capabilities(self.dental)
+        self.dental._capability_map = {"medical_records": True}
         self.assertTrue(self.dental._capability_map["medical_records"])
         BusinessCapability.objects.filter(pk=row.pk).update(is_enabled=False)
         self.assertFalse(is_module_enabled(self.dental, "medical_records"))
@@ -69,7 +79,8 @@ class MedicalCapabilityTests(TestCase):
         self.enable(self.dental)
         Business.objects.filter(pk=self.dental.pk).update(business_type="other")
         self.assertEqual(self.dental.business_type, "dentistry")
-        self.assertFalse(is_module_enabled(self.dental, "medical_records"))
+        with self.assertRaises(BusinessProfileInvalid):
+            is_module_enabled(self.dental, "medical_records")
 
     def test_enable_after_negative_cache_is_observed(self):
         ensure_business_capabilities(self.dental)
