@@ -16,7 +16,7 @@ BUSINESS_FIELDS = ("name", "legal_name", "tax_id", "address", "phone", "brand_co
 BRANCH_FIELDS = ("name", "address", "city", "phone")
 
 
-def _template(value, code):
+def validate_document_template(value, code):
     # Template text is stored as data; this layer never evaluates or renders it.
     if not isinstance(value, dict) or set(value) != {"code", "version", "title", "text"}:
         raise ValidationError({"template": "Provide a versioned template snapshot."})
@@ -39,7 +39,7 @@ def _binding(version, document):
 @transaction.atomic
 def append_document_revision(*, document, source_version, author, template, reason=""):
     """Internal storage: caller must authorize and audit within its outer transaction."""
-    template = _template(template, document.template_code)
+    template = validate_document_template(template, document.template_code)
     if not isinstance(reason, str) or len(reason) > 2000:
         raise ValidationError({"reason": "Provide a reason of at most 2000 characters."})
     business = Business.objects.select_for_update().get(pk=document.business_id)
@@ -101,7 +101,7 @@ def read_document_revision(version):
                 "template", "clinical", "reason", "business", "branch", "patient_id", "record_id",
                 "branch_id", "appointment_id", "prepared_by", "performed_by"}:
             raise ValueError
-        _template(snapshot["template"], document.template_code)
+        validate_document_template(snapshot["template"], document.template_code)
         validate_clinical_draft(snapshot["clinical"])
         if not isinstance(snapshot["reason"], str) or len(snapshot["reason"]) > 2000:
             raise ValueError

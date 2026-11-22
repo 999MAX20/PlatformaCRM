@@ -278,6 +278,8 @@ class MedicalAuditEvent(models.Model):
         ENCOUNTER_OPENED = "encounter_opened", "Encounter opened"
         ENCOUNTER_DRAFT_SAVED = "encounter_draft_saved", "Encounter draft saved"
         TOOTH_OBSERVATION_SAVED = "tooth_observation_saved", "Tooth observation saved"
+        DOCUMENT_DRAFT_CREATED = "document_draft_created", "Document draft created"
+        DOCUMENT_DRAFT_SAVED = "document_draft_saved", "Document draft saved"
         READ = "read", "Read"
         ACCESS_DENIED = "access_denied", "Access denied"
 
@@ -298,6 +300,8 @@ class MedicalAuditEvent(models.Model):
                                           related_name="audit_events")
     tooth_history = models.ForeignKey("DentalToothHistory", on_delete=models.PROTECT, null=True, blank=True,
                                       related_name="audit_events")
+    document_version = models.ForeignKey("MedicalDocumentRevision", on_delete=models.PROTECT, null=True, blank=True,
+                                         related_name="audit_events")
     action = models.CharField(max_length=32, choices=Actions.choices)
     result = models.CharField(max_length=16, choices=[("success", "Success"), ("denied", "Denied")])
     created_at = models.DateTimeField(auto_now_add=True)
@@ -316,7 +320,8 @@ class MedicalAuditEvent(models.Model):
                                                "participation_proposed", "participation_accepted",
                                                "participation_declined", "participation_withdrawn", "participation_ended",
                                                "encounter_opened", "encounter_draft_saved", "record_opened",
-                                               "tooth_observation_saved"], result="success")),
+                                               "tooth_observation_saved", "document_draft_created",
+                                               "document_draft_saved"], result="success")),
                 name="medical_audit_action_result"),
             models.CheckConstraint(condition=(
                 models.Q(representative__isnull=True, representative_revision__isnull=True) |
@@ -357,6 +362,13 @@ class MedicalAuditEvent(models.Model):
                          action__in=["read", "tooth_observation_saved"])), name="medical_audit_tooth_relation"),
             models.CheckConstraint(condition=(~models.Q(action="tooth_observation_saved") |
                 models.Q(tooth_history__isnull=False)), name="medical_audit_tooth_needed"),
+            models.CheckConstraint(condition=(models.Q(document_version__isnull=True) |
+                models.Q(patient__isnull=False, representative__isnull=True, participation__isnull=True,
+                         encounter_version__isnull=True, record__isnull=True, tooth_history__isnull=True,
+                         action__in=["read", "document_draft_created", "document_draft_saved"])),
+                name="medical_audit_document_relation"),
+            models.CheckConstraint(condition=(~models.Q(action__in=["document_draft_created", "document_draft_saved"]) |
+                models.Q(document_version__isnull=False)), name="medical_audit_document_needed"),
         ]
 
 class DentalMedicalRecord(TimeStampedModel):

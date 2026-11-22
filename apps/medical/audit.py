@@ -4,6 +4,7 @@ from django.db.models import Q
 
 from apps.core.domain_errors import DomainAPIException
 from .models import DentalToothHistory, DentalMedicalRecord, MedicalAuditEvent, PatientProfile, PatientRepresentative, TreatmentParticipation, MedicalEncounterRevision
+from .models import MedicalDocumentRevision
 
 
 class MedicalAuditUnavailable(DomainAPIException):
@@ -14,7 +15,7 @@ class MedicalAuditUnavailable(DomainAPIException):
     category = "temporary"
 
 
-def write_patient_audit(*, actor, business, patient, action, representative=None, participation=None, encounter_version=None, record=None, tooth_history=None):
+def write_patient_audit(*, actor, business, patient, action, representative=None, participation=None, encounter_version=None, record=None, tooth_history=None, document_version=None):
     if action not in MedicalAuditEvent.Actions.values or action == MedicalAuditEvent.Actions.ACCESS_DENIED:
         raise ValueError("Select a supported successful patient action.")
     if not patient.pk or not PatientProfile.objects.filter(pk=patient.pk, business_id=business.pk).exists():
@@ -76,12 +77,39 @@ def write_patient_audit(*, actor, business, patient, action, representative=None
         if action == MedicalAuditEvent.Actions.TOOTH_OBSERVATION_SAVED and (
                 history.revision != history.tooth_state.revision or history.encounter.state != "draft"):
             raise ValueError("A tooth write event requires the current revision in a draft encounter.")
+    if action.startswith("document_") and document_version is None:
+        raise ValueError("A document action requires its document version.")
+    if document_version is not None:
+        if any(item is not None for item in (representative, participation, encounter_version, record, tooth_history)):
+            raise ValueError("Audit document history cannot be mixed with other entity references.")
+        if action not in {MedicalAuditEvent.Actions.READ, MedicalAuditEvent.Actions.DOCUMENT_DRAFT_CREATED,
+                          MedicalAuditEvent.Actions.DOCUMENT_DRAFT_SAVED}:
+            raise ValueError("Select a document read or draft action.")
+        version = MedicalDocumentRevision.objects.select_related("document", "source_version").filter(
+            pk=document_version.pk, document__business=business, document__encounter__business=business,
+            document__encounter__patient=patient).first()
+        if version is None or version.source_version.encounter_id != version.document.encounter_id:
+            raise ValueError("Audit document must belong to this patient and business.")
+        try:
+            version.document.clean()
+        except ModelValidationError:
+            raise ValueError("Audit document links must be consistent.") from None
+        if version.revision > version.document.revision:
+            raise ValueError("Audit document version exceeds the current revision.")
+        if action.startswith("document_") and (version.document.state != "draft" or
+                version.revision != version.document.revision or version.author_id != actor.pk):
+            raise ValueError("A document write event requires the actor's current draft version.")
+        if action == MedicalAuditEvent.Actions.DOCUMENT_DRAFT_CREATED and version.revision != 1:
+            raise ValueError("A document creation event requires its first version.")
+        if action == MedicalAuditEvent.Actions.DOCUMENT_DRAFT_SAVED and version.revision <= 1:
+            raise ValueError("A document update event requires a later version.")
     try:
         event = MedicalAuditEvent.objects.create(business=business, actor=actor, patient=patient,
             patient_revision=patient.revision, action=action, result="success", representative=representative,
             representative_revision=representative.revision if representative else None,
             participation=participation, participation_revision=participation.revision if participation else None,
-            encounter_version=encounter_version, record=record, tooth_history=tooth_history)
+            encounter_version=encounter_version, record=record, tooth_history=tooth_history,
+            document_version=document_version)
         if event is None or event.pk is None:
             raise MedicalAuditUnavailable()
         return event
