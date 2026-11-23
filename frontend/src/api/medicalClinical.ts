@@ -87,7 +87,11 @@ export type ClinicalWorkspace = {
   active_record: ClinicalRecord | null;
   encounters: EncounterSummary[];
   next_before_id: number | null;
+  filter_options: ClinicalHistoryOptions;
 };
+export type ClinicalHistoryFilters = { branch_id?: number; author_id?: number; state?: EncounterState;
+  date_from?: string; date_to?: string };
+export type ClinicalHistoryOptions = { branches: { id: number; name: string }[]; authors: { id: number; name: string }[] };
 export type EncounterVersionMetadata = {
   version_id: number;
   revision: number;
@@ -149,7 +153,7 @@ export const medicalClinicalApi = {
     const { data } = await apiClient.get<AppointmentClinicalContext>(`${root}appointment-context/`, { params: scope, signal });
     return data;
   },
-  workspace: async (scope: ClinicalReadScope & { before_id?: number; limit?: number }, signal?: AbortSignal) => {
+  workspace: async (scope: ClinicalReadScope & ClinicalHistoryFilters & { before_id?: number; limit?: number }, signal?: AbortSignal) => {
     const { data } = await apiClient.get<ClinicalWorkspace>(`${root}workspace/`, { params: scope, signal });
     return data;
   },

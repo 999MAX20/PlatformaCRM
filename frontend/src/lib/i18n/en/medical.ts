@@ -309,6 +309,7 @@ export const medical = {
   "medical.clinical.continueEditing": "Continue editing",
   "medical.clinical.leaveUnsaved": "Leave without saving",
   "medical.clinical.closeFailed": "Saving was not confirmed. Try again or return to editing to review the error.",
+  "medical.clinical.currentAuthor": "Current version author",
   "medical.clinical.history": "Encounter history",
   "medical.clinical.historyEmpty": "There are no encounters on this page.",
   "medical.clinical.authorUnknown": "Author name not recorded",

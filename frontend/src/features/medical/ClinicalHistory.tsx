@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { clinicalFields, medicalClinicalApi, type AppointmentClinicalContext, type ClinicalReadScope, type ClinicalWorkspace,
-  type EncounterHistory, type EncounterVersion } from "../../api/medicalClinical";
+  type EncounterHistory, type EncounterVersion, type ClinicalHistoryOptions } from "../../api/medicalClinical";
 import { getApiErrorMessage } from "../../api/client";
 import { Button } from "../../components/ui/Button";
 import { ErrorState, LoadingState } from "../../components/ui/StateViews";
@@ -12,53 +12,61 @@ import { ClinicalPlanStepsRead } from "./ClinicalPlanSteps";
 import { EncounterOrdersEntry } from "./orders/OrderWorkspace";
 import { EncounterDocumentsEntry } from "./documents/DocumentWorkspace";
 
+import { ClinicalHistoryFilters } from "./ClinicalHistoryFilters";
+import { historyScopeKey, useHistoryNavigation, type HistoryMemory, type HistoryNavigation } from "./clinicalHistoryNavigation";
+
 type Denied = (cause: unknown) => void;
 function isDenied(cause: unknown) {
   return axios.isAxiosError(cause) && [401, 403].includes(cause.response?.status ?? 0);
 }
 
-export function ClinicalHistory({ context, onDenied }: { context: AppointmentClinicalContext; onDenied: Denied }) {
-  const [cursor, setCursor] = useState<number | undefined>();
+export function ClinicalHistory({ context, onDenied, memory }: { context: AppointmentClinicalContext; onDenied: Denied; memory?: HistoryMemory }) {
   const scope = useMemo(() => ({ business_id: context.business_id, patient_id: context.patient.id,
     appointment_id: context.appointment.id }), [context]);
-  return <HistoryPage key={cursor ?? "first"} scope={scope} cursor={cursor} onPage={setCursor} onDenied={onDenied} />;
+  return <HistoryPage key={historyScopeKey(scope)} scope={scope} memory={memory} onDenied={onDenied} />;
 }
 
-export function ParticipationClinicalHistory({ businessId, patientId, participationId, onDenied }: {
-  businessId: number; patientId: number; participationId: number; onDenied: Denied;
+export function ParticipationClinicalHistory({ businessId, patientId, participationId, onDenied, memory }: {
+  businessId: number; patientId: number; participationId: number; onDenied: Denied; memory?: HistoryMemory;
 }) {
-  const [cursor, setCursor] = useState<number | undefined>();
   const scope = useMemo(() => ({ business_id: businessId, patient_id: patientId, participation_id: participationId }),
     [businessId, patientId, participationId]);
-  return <HistoryPage key={cursor ?? "first"} scope={scope} cursor={cursor} onPage={setCursor} onDenied={onDenied} />;
+  return <HistoryPage key={historyScopeKey(scope)} scope={scope} memory={memory} onDenied={onDenied} />;
 }
 
-function HistoryPage({ scope, cursor, onPage, onDenied }: {
-  scope: ClinicalReadScope; cursor?: number; onPage: (cursor: number | undefined) => void; onDenied: Denied;
+function HistoryPage({ scope, memory, onDenied }: {
+  scope: ClinicalReadScope; memory?: HistoryMemory; onDenied: Denied;
 }) {
   const { t, language } = useI18n();
   const [data, setData] = useState<ClinicalWorkspace | null>(null);
   const [error, setError] = useState<unknown>(null);
   const [attempt, setAttempt] = useState(0);
-  const [selected, setSelected] = useState<number | null>(null);
+  const [navigation, change] = useHistoryNavigation(scope, memory);
+  const { cursor, selected, filters } = navigation;
+  const [options, setOptions] = useState<ClinicalHistoryOptions>({ branches: [], authors: [] });
+  const onPage = (value: number | undefined) => change({ ...navigation, cursor: value, selected: undefined });
   useEffect(() => {
     const controller = new AbortController();
     setData(null); setError(null);
-    medicalClinicalApi.workspace({ ...scope, before_id: cursor }, controller.signal)
-      .then(value => { if (!controller.signal.aborted) setData(value); })
+    medicalClinicalApi.workspace({ ...scope, ...filters, before_id: cursor }, controller.signal)
+      .then(value => { if (!controller.signal.aborted) { setData(value); setOptions(value.filter_options ?? { branches: [], authors: [] }); } })
       .catch(cause => { if (!controller.signal.aborted) { if (isDenied(cause)) onDenied(cause); else setError(cause); } });
     return () => controller.abort();
-  }, [scope, cursor, attempt, onDenied]);
-  if (error) return <ErrorState message={getApiErrorMessage(error)} action={<Button size="lg" variant="secondary" onClick={() => setAttempt(value => value + 1)}>{t("common.retry")}</Button>} />;
-  if (!data) return <LoadingState />;
+  }, [scope, cursor, filters, attempt, onDenied]);
   return <section className="space-y-4" data-testid="clinical-history">
     <h2 className="text-base font-semibold">{t("medical.clinical.history")}</h2>
+    <ClinicalHistoryFilters value={navigation.input} options={options} loading={!data && !error}
+      onChange={input => change({ ...navigation, input })}
+      onApply={() => { change({ ...navigation, filters: { ...navigation.input }, cursor: undefined, selected: undefined }); }}
+      onReset={() => change({ filters: {}, input: {}, revisions: {} })} />
+    {error ? <ErrorState message={getApiErrorMessage(error)} action={<Button size="lg" variant="secondary" onClick={() => setAttempt(value => value + 1)}>{t("common.retry")}</Button>} /> : !data ? <LoadingState /> : <>
     {!data.encounters.length ? <p className="text-sm text-platforma-subtle">{t("medical.clinical.historyEmpty")}</p> : <ul className="divide-y divide-platforma-border">
       {data.encounters.map(item => <li key={item.id}>
-        <Button variant="ghost" size="lg" className="w-full justify-start text-left" aria-pressed={selected === item.id} onClick={() => setSelected(item.id)}>
+        <Button variant="ghost" size="lg" className="w-full justify-start text-left" aria-pressed={selected === item.id} onClick={() => change({ ...navigation, selected: item.id })}>
           <span className="min-w-0 space-y-1">
             <span className="block">{formatDateTime(item.started_at, undefined, true, localeByLanguage[language])}</span>
             <span className="block break-words text-sm font-normal">{item.branch_name} · {item.primary_clinician_name || t("medical.clinical.authorUnknown")}</span>
+            <span className="block break-words text-sm font-normal">{t("medical.clinical.currentAuthor")}: {item.author_name || t("medical.clinical.authorUnknown")}</span>
             <span className="block text-sm font-normal">{t(`medical.clinical.state.${item.state}`)}</span>
           </span>
         </Button>
@@ -68,34 +76,37 @@ function HistoryPage({ scope, cursor, onPage, onDenied }: {
       {cursor !== undefined ? <Button size="lg" variant="secondary" onClick={() => onPage(undefined)}>{t("medical.clinical.newest")}</Button> : null}
       {data.next_before_id !== null ? <Button size="lg" variant="secondary" onClick={() => onPage(data.next_before_id!)}>{t("medical.clinical.older")}</Button> : null}
     </div>
-    {selected !== null ? <>
+    {selected !== undefined && data.encounters.some(item => item.id === selected) ? <>
       {data.encounters.filter(item => item.id === selected).map(item => <div key={item.id} className="flex flex-wrap gap-2">
         <EncounterOrdersEntry scope={scope} encounter={item} />
         <EncounterDocumentsEntry scope={scope} encounter={item} />
       </div>)}
-      <RevisionList key={selected} encounterId={selected} scope={scope} onDenied={onDenied} />
+      <RevisionPage key={`${selected}:${navigation.revisions[selected]?.cursor ?? "first"}`} encounterId={selected} scope={scope} onDenied={onDenied} navigation={navigation} onNavigate={change} />
     </> : null}
+    </>}
   </section>;
 }
 
-function RevisionList({ encounterId, scope, onDenied }: { encounterId: number; scope: ClinicalReadScope; onDenied: Denied }) {
-  const [cursor, setCursor] = useState<number | undefined>();
-  return <RevisionPage key={cursor ?? "first"} encounterId={encounterId} scope={scope} cursor={cursor} onPage={setCursor} onDenied={onDenied} />;
-}
-
-function RevisionPage({ encounterId, scope, cursor, onPage, onDenied }: {
-  encounterId: number; scope: ClinicalReadScope; cursor?: number; onPage: (cursor: number | undefined) => void; onDenied: Denied;
+function RevisionPage({ encounterId, scope, onDenied, navigation, onNavigate }: {
+  encounterId: number; scope: ClinicalReadScope; onDenied: Denied;
+  navigation: HistoryNavigation; onNavigate: (next: HistoryNavigation) => void;
 }) {
+  const remembered = navigation.revisions[encounterId] ?? {};
+  const cursor = remembered.cursor;
+  const onPage = (value: number | undefined) => onNavigate({ ...navigation,
+    revisions: { ...navigation.revisions, [encounterId]: { cursor: value } } });
+  const setSelected = (value: number) => onNavigate({ ...navigation,
+    revisions: { ...navigation.revisions, [encounterId]: { ...remembered, selected: value } } });
   const { t, language } = useI18n();
   const [data, setData] = useState<EncounterHistory | null>(null);
   const [error, setError] = useState<unknown>(null);
   const [attempt, setAttempt] = useState(0);
-  const [selected, setSelected] = useState<number | null>(null);
+  const selected = data?.versions.some(item => item.version_id === remembered.selected) ? remembered.selected! : data?.versions[0]?.version_id ?? null;
   useEffect(() => {
     const controller = new AbortController();
     setData(null); setError(null);
     medicalClinicalApi.history(encounterId, { ...scope, before_revision: cursor }, controller.signal)
-      .then(value => { if (!controller.signal.aborted) { setData(value); setSelected(value.versions[0]?.version_id ?? null); } })
+      .then(value => { if (!controller.signal.aborted) { setData(value); } })
       .catch(cause => { if (!controller.signal.aborted) { if (isDenied(cause)) onDenied(cause); else setError(cause); } });
     return () => controller.abort();
   }, [encounterId, scope, cursor, attempt, onDenied]);

@@ -309,6 +309,7 @@ export const medical = {
   "medical.clinical.continueEditing": "Продолжить редактирование",
   "medical.clinical.leaveUnsaved": "Выйти без сохранения",
   "medical.clinical.closeFailed": "Сохранение не подтверждено. Повторите попытку или вернитесь к редактированию, чтобы проверить ошибку.",
+  "medical.clinical.currentAuthor": "Автор текущей версии",
   "medical.clinical.history": "История приёмов",
   "medical.clinical.historyEmpty": "Приёмы на этой странице отсутствуют.",
   "medical.clinical.authorUnknown": "Имя автора не указано",

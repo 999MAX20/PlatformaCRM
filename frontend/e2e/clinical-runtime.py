@@ -224,6 +224,32 @@ if roles_fixture and len(sys.argv) > 1 and sys.argv[1] in ("disable-role-module"
     BusinessCapability.objects.filter(business__slug="medical-role", module_key="medical_records").update(
         is_enabled=sys.argv[1] == "enable-role-module")
     sys.exit(0)
+if len(sys.argv) > 2 and sys.argv[1] == "history-filters-populate":
+    from datetime import datetime
+    from apps.branches.models import Branch
+    from apps.medical.models import MedicalEncounter
+    from apps.medical.encounter_content import append_encounter_revision
+    appointment = Appointment.objects.select_related("business", "resource__linked_user").get(
+        pk=int(sys.argv[2]), business__slug="medical-role")
+    encounter = MedicalEncounter.objects.get(appointment=appointment)
+    actor = appointment.resource.linked_user
+    MedicalEncounter.objects.filter(pk=encounter.pk).update(revision=2,
+        started_at=datetime.fromisoformat("2026-10-10T10:00:00+00:00"))
+    encounter.refresh_from_db()
+    append_encounter_revision(encounter=encounter, author=actor, content={"plan": "Synthetic selected history v2"})
+    branch, _ = Branch.objects.get_or_create(business=appointment.business, name="Synthetic history branch")
+    other_appointment = Appointment.objects.create(business=appointment.business, client=appointment.client,
+        resource=appointment.resource, service=appointment.service, branch=branch,
+        start_at=appointment.start_at, end_at=appointment.end_at)
+    other = MedicalEncounter.objects.create(business=appointment.business, patient=encounter.patient,
+        record=encounter.record, appointment=other_appointment, branch=branch,
+        primary_clinician=encounter.primary_clinician)
+    append_encounter_revision(encounter=other, author=appointment.business.owner,
+        content={"plan": "Synthetic other branch finalized"})
+    now = timezone.now()
+    MedicalEncounter.objects.filter(pk=other.pk).update(state="finalized", started_at=datetime.fromisoformat("2026-10-11T10:00:00+00:00"),
+        ended_at=now, finalized_at=now, finalized_by=actor)
+    sys.exit(0)
 if len(sys.argv) > 2 and sys.argv[1] == "clinical-visit-plans-populate":
     from apps.scheduling.models import VisitPlan, VisitPlanStep
     appointment = Appointment.objects.select_related("business", "resource__linked_user").get(

@@ -49,6 +49,14 @@ class ClinicalRepresentativesSerializer(EncounterReadSerializer):
     limit = serializers.IntegerField(min_value=1, max_value=50, required=False, default=25)
 
 
+class ClinicalHistoryWorkspaceSerializer(ClinicalWorkspaceSerializer):
+    branch_id = serializers.IntegerField(min_value=1, required=False)
+    author_id = serializers.IntegerField(min_value=1, required=False)
+    state = serializers.ChoiceField(choices=("draft", "finalized"), required=False)
+    date_from = serializers.DateField(required=False)
+    date_to = serializers.DateField(required=False)
+
+
 class ClientClinicalAppointmentsSerializer(StrictSerializer):
     business_id = serializers.IntegerField(min_value=1)
     branch_id = serializers.IntegerField(min_value=1)
@@ -100,7 +108,7 @@ class MedicalEncounterViewSet(viewsets.GenericViewSet):
 
     def get_serializer_class(self):
         return {"create": EncounterOpenSerializer, "draft": EncounterDraftSerializer,
-                "version": EncounterReadSerializer, "workspace": ClinicalWorkspaceSerializer,
+                "version": EncounterReadSerializer, "workspace": ClinicalHistoryWorkspaceSerializer,
                 "overview": EncounterReadSerializer,
                 "representatives": ClinicalRepresentativesSerializer,
                 "client_appointments": ClientClinicalAppointmentsSerializer,

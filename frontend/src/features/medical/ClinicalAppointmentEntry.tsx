@@ -17,12 +17,14 @@ import { DocumentWorkspace } from "./documents/DocumentWorkspace";
 import { OrderWorkspace } from "./orders/OrderWorkspace";
 import { ClinicalOverview } from "./ClinicalOverview";
 import { ClinicalVisitPlans } from "./ClinicalVisitPlans";
+import type { HistoryMemory } from "./clinicalHistoryNavigation";
 
 type ClinicalTab = "overview" | "encounter" | "history" | "teeth" | "plan" | "documents" | "orders";
 
 export function ClinicalAppointmentEntry({ businessId, appointmentId }: { businessId: number; appointmentId: number }) {
   const { t } = useI18n();
   const [tab, setTab] = useState<ClinicalTab>("encounter");
+  const historyMemory: HistoryMemory = useRef(new Map());
   const [context, setContext] = useState<AppointmentClinicalContext | null>(null);
   const [error, setError] = useState<unknown>(null);
   const [loading, setLoading] = useState(true);
@@ -79,7 +81,7 @@ export function ClinicalAppointmentEntry({ businessId, appointmentId }: { busine
     <Modal open={open} onClose={close} size="xl" title={t("medical.clinical.title")} testId="clinical-workspace" closeOnBackdrop={false} focusReturnId={focusId}>
       {loading ? <LoadingState /> : error ? <ErrorState message={status === 401 || status === 403 ? t("medical.denied") : getApiErrorMessage(error)}
         action={<Button size="lg" variant="secondary" onClick={reload}>{t("common.retry")}</Button>} /> : context ?
-        <ClinicalWorkspace tab={tab} onTabChange={setTab} draftControl={draftControl} context={context} onChanged={reload} onDirty={setDirty} onDenied={denied}
+        <ClinicalWorkspace historyMemory={historyMemory} tab={tab} onTabChange={setTab} draftControl={draftControl} context={context} onChanged={reload} onDirty={setDirty} onDenied={denied}
           onDocumentEditor={onDocumentEditor} canEditDocument={canEditDocument} /> : null}
     </Modal>
     <Modal open={confirmClose && open} onClose={() => { if (!closeInFlight.current) setConfirmClose(false); }}
@@ -96,7 +98,8 @@ export function ClinicalAppointmentEntry({ businessId, appointmentId }: { busine
   </div>;
 }
 
-function ClinicalWorkspace({ context, onChanged, onDirty, onDenied, draftControl, onDocumentEditor, canEditDocument, tab, onTabChange }: {
+function ClinicalWorkspace({ context, onChanged, onDirty, onDenied, draftControl, onDocumentEditor, canEditDocument, tab, onTabChange, historyMemory }: {
+  historyMemory: HistoryMemory;
   tab: ClinicalTab; onTabChange: (tab: ClinicalTab) => void;
   onDocumentEditor: (open: boolean) => void; canEditDocument: () => boolean;
   draftControl: Ref<ClinicalDraftControl>;
@@ -171,7 +174,7 @@ function ClinicalWorkspace({ context, onChanged, onDirty, onDenied, draftControl
         {tab === "teeth" ? <ToothChart context={context} onDenied={onDenied} /> : null}
       </div>
       <div role="tabpanel" id={`${tabPrefix}-panel-history`} aria-labelledby={`${tabPrefix}-tab-history`} hidden={tab !== "history"}>
-        {tab === "history" ? <ClinicalHistory context={context} onDenied={onDenied} /> : null}
+        {tab === "history" ? <ClinicalHistory context={context} onDenied={onDenied} memory={historyMemory} /> : null}
       </div>
       <div role="tabpanel" id={`${tabPrefix}-panel-documents`} aria-labelledby={`${tabPrefix}-tab-documents`} hidden={tab !== "documents"}>
         {context.encounter ? <DocumentWorkspace context={context} active={tab === "documents"} onEditor={onDocumentEditor} canEdit={canEditDocument} /> :

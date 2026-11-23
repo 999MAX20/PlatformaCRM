@@ -1,4 +1,5 @@
 from unittest.mock import patch
+from datetime import datetime
 
 from django.db import DatabaseError
 from django.test import TestCase, override_settings
@@ -70,6 +71,57 @@ class ClinicalWorkspaceAPITests(TestCase):
         self.assertEqual([row["id"] for row in second_page.data["encounters"]], [self.encounter_record.pk])
         self.assertIsNone(second_page.data["next_before_id"])
         self.assertNotEqual(newest.pk, second_page.data["encounters"][0]["id"])
+
+    def test_filters_combine_and_options_cover_patient_history_beyond_page(self):
+        second = self.extra_encounter()
+        branch = Branch.objects.create(business=self.business, name="Other history branch")
+        MedicalEncounter.objects.filter(pk=second.pk).update(branch=branch)
+        Appointment.objects.filter(pk=second.appointment_id).update(branch=branch)
+        self.advance()
+        self.append(author=self.owner)
+        response = self.read(branch_id=self.first.pk, author_id=self.owner.pk, state="draft", limit=1)
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual([row["id"] for row in response.data["encounters"]], [self.encounter_record.pk])
+        self.assertEqual({row["id"] for row in response.data["filter_options"]["branches"]}, {self.first.pk, branch.pk})
+        self.assertEqual({row["id"] for row in response.data["filter_options"]["authors"]}, {self.owner.pk, self.doctor.pk})
+        other_author = self.read(author_id=self.doctor.pk)
+        self.assertEqual(other_author.status_code, 200, other_author.data)
+        self.assertEqual(other_author.data["encounters"][0]["id"], second.pk)
+        self.assertEqual(self.read(branch_id=branch.pk, author_id=self.owner.pk).data["encounters"], [])
+
+    def test_date_filters_use_inclusive_business_days_and_preserve_cursor(self):
+        Business.objects.filter(pk=self.business.pk).update(timezone="Asia/Almaty")
+        second = self.extra_encounter()
+        third = self.extra_encounter()
+        MedicalEncounter.objects.filter(pk=self.encounter_record.pk).update(started_at=datetime.fromisoformat("2026-11-22T18:59:59+00:00"))
+        MedicalEncounter.objects.filter(pk=second.pk).update(started_at=datetime.fromisoformat("2026-11-22T19:00:00+00:00"))
+        MedicalEncounter.objects.filter(pk=third.pk).update(started_at=datetime.fromisoformat("2026-11-23T18:59:59+00:00"))
+        filters = dict(date_from="2026-11-23", date_to="2026-11-23", limit=1)
+        page = self.read(**filters)
+        self.assertEqual(page.status_code, 200, page.data)
+        self.assertEqual(page.data["encounters"][0]["id"], third.pk)
+        later = self.read(**filters, before_id=page.data["next_before_id"])
+        self.assertEqual([row["id"] for row in later.data["encounters"]], [second.pk])
+        self.assertIsNone(later.data["next_before_id"])
+        self.assertEqual(self.read(date_from="2026-11-24").data["encounters"], [])
+
+    def test_invalid_filters_do_not_return_options_or_commit_audit(self):
+        for values in ({"date_from": "2026-02-30"}, {"date_to": "9999-12-31"},
+                       {"date_from": "2026-11-24", "date_to": "2026-11-23"},
+                       {"branch_id": -1}, {"author_id": 0}, {"state": "signed"}):
+            with self.subTest(values=values):
+                response = self.read(**values)
+                self.assertEqual(response.status_code, 400, response.data)
+                self.assertNotIn("filter_options", response.data)
+                self.assertFalse(MedicalAuditEvent.objects.exists())
+
+    def test_filter_choices_never_discover_another_business(self):
+        foreign = Business.objects.create(owner=self.owner, name="Foreign filter", slug="foreign-filter")
+        branch = Branch.objects.create(business=foreign, name="Private foreign choice")
+        response = self.read(branch_id=branch.pk)
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(response.data["encounters"], [])
+        self.assertNotIn(branch.name, str(response.data))
 
     def test_foreign_branch_or_clinician_labels_are_not_exposed_on_corrupt_links(self):
         foreign = Business.objects.create(owner=self.owner, name="Foreign", slug="history-label-foreign")

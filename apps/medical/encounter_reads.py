@@ -55,7 +55,9 @@ def read_encounter_for_treating_clinician(*, actor, business_id, patient_id, ver
 
 @transaction.atomic
 def read_clinical_workspace(*, actor, business_id, patient_id, appointment_id=None,
-                            participation_id=None, before_id=None, limit=20):
+                            participation_id=None, before_id=None, limit=20,
+                            branch_id=None, author_id=None, state=None, date_from=None, date_to=None):
+    from .encounter_filters import encounter_filter_options, filter_encounters
     if type(limit) is not int or not 1 <= limit <= 50 or (
             before_id is not None and (type(before_id) is not int or before_id <= 0)):
         raise ValidationError({"pagination": "Select a limit from 1 to 50 and a valid cursor."})
@@ -65,6 +67,9 @@ def read_clinical_workspace(*, actor, business_id, patient_id, appointment_id=No
     write_patient_audit(actor=actor, business=business, patient=patient, action="read", record=record)
     encounters = MedicalEncounter.objects.select_related("branch", "primary_clinician__user").filter(
         business=business, patient=patient).order_by("-pk")
+    options = encounter_filter_options(encounters, business=business)
+    encounters = filter_encounters(encounters, branch_id=branch_id, author_id=author_id,
+        state=state, date_from=date_from, date_to=date_to)
     if before_id is not None:
         encounters = encounters.filter(pk__lt=before_id)
     page = list(encounters[:limit + 1])
@@ -72,7 +77,8 @@ def read_clinical_workspace(*, actor, business_id, patient_id, appointment_id=No
             for encounter in page[:limit]]
     return {"patient_id": patient.pk, "patient_revision": patient.revision, "identity_status": patient.identity_status,
         "active_record": {"id": record.pk, "number": record.number, "opened_at": record.opened_at} if record else None,
-        "encounters": rows, "next_before_id": rows[-1]["id"] if len(page) > limit else None}
+        "encounters": rows, "next_before_id": rows[-1]["id"] if len(page) > limit else None,
+        "filter_options": options}
 
 
 def _encounter_summary(*, actor, business, patient, encounter):

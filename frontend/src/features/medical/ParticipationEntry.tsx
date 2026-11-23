@@ -14,6 +14,7 @@ import { ParticipationToothChart } from "./ToothChart";
 import { SourceProposalWorkspace } from "./SourceProposalWorkspace";
 import { ParticipationDeclineForm } from "./ParticipationDeclineForm";
 import { ParticipationInvitationDetails } from "./ParticipationInvitationDetails";
+import type { HistoryMemory } from "./clinicalHistoryNavigation";
 
 export function PatientParticipationEntry({ businessId, clientId, branchId }: { businessId: number; clientId: number; branchId: number }) {
   const { t } = useI18n();
@@ -43,6 +44,7 @@ export function ParticipationEntry({ businessId, patientId, branchId, onClosed }
   const [admitted, setAdmitted] = useState(false);
   const [attempt, setAttempt] = useState(0);
   const guard = useRef({ dirty: false, pending: false });
+  const historyMemory: HistoryMemory = useRef(new Map());
   const denied = useCallback((cause: unknown) => { setAccess(null); setAdmitted(false); setError(cause); guard.current = { dirty: false, pending: false }; }, []);
   useEffect(() => {
     const controller = new AbortController();
@@ -68,12 +70,13 @@ export function ParticipationEntry({ businessId, patientId, branchId, onClosed }
     <Modal title={t("medical.participation.title")} open={open} size="xl" closeOnBackdrop={false} focusReturnId={focusId}
       onClose={() => { if (!guard.current.pending && (!guard.current.dirty || window.confirm(t("medical.clinical.discard")))) { guard.current.dirty = false; setOpen(false); onClosed?.(); } }}>
       {error ? <ErrorState message={forbidden ? t("medical.denied") : getApiErrorMessage(error)} action={<Button variant="secondary" onClick={() => setAttempt(x => x + 1)}>{t("common.retry")}</Button>} /> : access ?
-        <ParticipationWorkspace key={`${businessId}:${patientId ?? "mine"}:${branchId ?? "all"}`} access={access} patientId={patientId} branchId={branchId} guard={guard} onDenied={denied} /> : <LoadingState />}
+        <ParticipationWorkspace historyMemory={historyMemory} key={`${businessId}:${patientId ?? "mine"}:${branchId ?? "all"}`} access={access} patientId={patientId} branchId={branchId} guard={guard} onDenied={denied} /> : <LoadingState />}
     </Modal>
   </>;
 }
 
-function ParticipationWorkspace({ access, patientId, branchId, guard, onDenied }: {
+function ParticipationWorkspace({ access, patientId, branchId, guard, onDenied, historyMemory }: {
+  historyMemory: HistoryMemory;
   access: ParticipationWorkspaceAccess; patientId?: number; branchId?: number;
   guard: { current: { dirty: boolean; pending: boolean } }; onDenied: (cause: unknown) => void;
 }) {
@@ -204,7 +207,7 @@ function ParticipationWorkspace({ access, patientId, branchId, guard, onDenied }
       <ParticipationClinicalOverview key={overview.id} businessId={access.business_id} patientId={overview.patient_id} participationId={overview.id} onDenied={onDenied}
         onHistory={() => { setHistory(overview); setOverview(null); }} />
     </div> : null}
-    {history ? <ParticipationClinicalHistory key={history.id} businessId={access.business_id} patientId={history.patient_id} participationId={history.id} onDenied={onDenied} /> : null}
+    {history ? <ParticipationClinicalHistory key={history.id} businessId={access.business_id} patientId={history.patient_id} participationId={history.id} onDenied={onDenied} memory={historyMemory} /> : null}
     {teeth ? <div className="space-y-3" data-testid="participation-teeth">
       <p className="break-words font-semibold">{teeth.patient_name} · {teeth.branch_name}</p>
       <ParticipationToothChart key={teeth.id} businessId={access.business_id} patientId={teeth.patient_id} participationId={teeth.id} onDenied={onDenied} />

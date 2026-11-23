@@ -309,6 +309,7 @@ export const medical = {
   "medical.clinical.continueEditing": "Өңдеуді жалғастыру",
   "medical.clinical.leaveUnsaved": "Сақтамай шығу",
   "medical.clinical.closeFailed": "Сақтау расталмады. Қайталап көріңіз немесе қатені тексеру үшін өңдеуге оралыңыз.",
+  "medical.clinical.currentAuthor": "Ағымдағы нұсқа авторы",
   "medical.clinical.history": "Қабылдау тарихы",
   "medical.clinical.historyEmpty": "Бұл бетте қабылдаулар жоқ.",
   "medical.clinical.authorUnknown": "Автордың аты көрсетілмеген",

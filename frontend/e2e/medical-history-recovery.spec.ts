@@ -78,11 +78,9 @@ test("history recovery: unavailable list, retained draft and revoked read", asyn
   await expect(reader).toContainText("Synthetic revision 21");
   await workspace.getByRole("tab", { name: ru["medical.clinical.note"], exact: true }).click();
   await expect(complaint).toHaveValue("Unsaved draft retained through history error");
-  await workspace.getByRole("tab", { name: ru["medical.clinical.history"], exact: true }).click();
-  await expect(workspace.getByTestId("clinical-history")).toBeVisible();
   execFileSync(process.env.E2E_PYTHON!, ["e2e/clinical-runtime.py", "revoke"], { env: process.env, windowsHide: true, stdio: "pipe" });
-  const denied = page.waitForResponse(r => r.url().includes("/revisions/") && r.request().method() === "GET");
-  await workspace.getByTestId("clinical-history").locator("button[aria-pressed]").first().click();
+  const denied = page.waitForResponse(r => r.url().includes("/encounters/workspace/") && r.request().method() === "GET");
+  await workspace.getByRole("tab", { name: ru["medical.clinical.history"], exact: true }).click();
   expect((await denied).status()).toBe(403);
   await expect(workspace.getByText(ru["medical.denied"], { exact: true })).toBeVisible();
   await expect(workspace.locator("textarea")).toHaveCount(0);
