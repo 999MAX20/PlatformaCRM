@@ -106,6 +106,11 @@ class DocumentTemplateSourceTests(TestCase):
         type(self.appointment.service).objects.filter(pk=step.service_id).update(name="Later synthetic service")
         self.assertEqual(read_document_revision(document)["clinical"], content)
 
+        from .document_rendering import document_snapshot_context, render_document_text
+        rendered = render_document_text("{{clinical.plan_steps}}",
+            document_snapshot_context(read_document_revision(document)), started_at=self.appointment.start_at)
+        self.assertEqual(rendered["document_text"], "1. [FDI: 11, 51] Synthetic document plan")
+
     def test_paused_template_blocks_new_use_but_preserves_saved_document(self):
         self.approve()
         document, _ = self.save()

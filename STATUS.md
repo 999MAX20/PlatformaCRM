@@ -1,4 +1,4 @@
-DENTAL-MCS: К06 ACTIVE — связи зубов опубликованы7a4b58dc; явная запись из клинического плана локально принята:87 dependent/14 PG,6 browser locales/viewport,20 visual captures,build/check/drift/static PASS; публикация готовится. Остаток: template representation/snippets/вкладки; К03/К04/К05 ждут прежних решений. План/матрица: docs/testing/task-state/DENTAL-MCS-20261122.md.
+DENTAL-MCS: К06 ACTIVE — явная запись из клинического плана опубликована78e5d7b8, CI45096644787 in_progress. Шаблонное представление шагов принято локально:25 focused/29 dependent,4 browser/visual,build/static PASS; публикация готовится. Остаток: snippets/вкладки; К03/К04/К05 ждут прежних решений. План/матрица: docs/testing/task-state/DENTAL-MCS-20261122.md.
 
 QA-016-20261121 LOCAL VERIFIED: automatic tasks searchable by displayed RU/KK/EN title; editor preserves original copy on unrelated edits. 66 backend, 9 node, 6 desktop/mobile browser scenarios, build/types/i18n/check/drift PASS; Code 8a240ad3 pushed to main; CI44937543011 queued (not PASS). Working DB untouched. [Evidence](docs/testing/evidence/qa-016-task-search-20261121.md).
 

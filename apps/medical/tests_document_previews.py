@@ -60,6 +60,23 @@ class LiteralDocumentRenderingTests(SimpleTestCase):
         self.assertEqual(rendered["missing_fields"], ["clinical.procedures"])
         self.assertEqual(rendered["unknown_fields"], [])
 
+    def test_plan_steps_preserve_order_teeth_and_literal_content(self):
+        self.context["clinical"] = {"plan": "Separate free text", "plan_steps": [
+            {"description": "{{patient.iin}} <script>literal</script>", "teeth": [51, 11]},
+            {"description": "Second\nline"}]}
+        rendered = self.render("{{clinical.plan}}\n{{clinical.plan_steps}}")
+        self.assertEqual(rendered["document_text"],
+            "Separate free text\n1. [FDI: 51, 11] {{patient.iin}} <script>literal</script>\n2. Second\nline")
+        self.assertEqual(rendered["missing_fields"], [])
+        self.assertEqual(rendered["unknown_fields"], [])
+
+    def test_absent_plan_steps_are_missing_and_expansion_is_bounded(self):
+        self.assertEqual(self.render("{{clinical.plan_steps}}"), {
+            "document_text": "", "missing_fields": ["clinical.plan_steps"], "unknown_fields": []})
+        self.context["clinical"]["plan_steps"] = [{"description": "x" * 4000} for _ in range(40)]
+        with self.assertRaises(ValidationError):
+            self.render("{{clinical.plan_steps}}")
+
 
 @override_settings(MEDICAL_DATA_KEYS={"test": crypto_fixtures.key(7)}, MEDICAL_DATA_ACTIVE_KEY_ID="test",
                    MEDICAL_IDENTITY_INDEX_KEY=crypto_fixtures.key(8))

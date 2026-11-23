@@ -39,7 +39,7 @@ for (const [language, t] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
       expect(response.ok(), await response.text()).toBe(true); return response.json();
     };
     const template = await command("", { business_id: 1, title,
-      text: "Synthetic approved source {{record.number}} / {{doctor.full_name}} / {{patient.full_name}} / {{clinical.plan}} / {{unsupported}}", reason: "" });
+      text: "Synthetic approved source {{record.number}} / {{doctor.full_name}} / {{patient.full_name}} / {{clinical.plan}} / {{unsupported}}\n{{clinical.plan_steps}}", reason: "" });
     await command(`versions/${template.version_id}/submit/`, { business_id: 1 });
     await command(`versions/${template.version_id}/decision/`, { business_id: 1, decision: "approved", reason: "Synthetic review" }, headToken);
     const response = await page.request.get(`${base}/api/appointments/${id}/`, { headers: { Authorization: `Bearer ${token}` } });
@@ -51,6 +51,10 @@ for (const [language, t] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
     await workspace.getByLabel(t["medical.clinical.number"], { exact: true }).fill(`DOC-${id}`);
     await workspace.getByRole("button", { name: t["medical.clinical.createRecord"], exact: true }).click();
     await workspace.getByRole("button", { name: t["medical.clinical.start"], exact: true }).click();
+    await workspace.getByRole("button", { name: t["medical.plan.addStep"], exact: true }).click();
+    await workspace.getByLabel(t["medical.plan.step"].replace("{number}", "1"), { exact: true }).fill("Synthetic plan {{patient.iin}} <b>literal</b>");
+    await workspace.getByRole("button", { name: t["medical.clinical.save"], exact: true }).click();
+    await expect(workspace.getByRole("button", { name: t["medical.clinical.save"], exact: true })).toBeDisabled();
     const complaint = workspace.getByLabel(t["medical.clinical.complaints"], { exact: true });
     await complaint.fill("Unsaved clinical content survives document save");
     await workspace.getByRole("tab", { name: t["medical.documents.title"], exact: true }).click();
@@ -92,6 +96,7 @@ for (const [language, t] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
     const text = editor.getByRole("textbox", { name: t["medical.documents.text"], exact: true });
     await expect(text).toHaveValue(new RegExp(`Synthetic approved source DOC-${id} / Synthetic clinician / .+ /  / {{unsupported}}`));
     expect(await text.inputValue()).not.toContain("{{patient.full_name}}");
+    await expect(text).toHaveValue(/\n1\. Synthetic plan \{\{patient.iin\}\} <b>literal<\/b>$/);
     await expect(editor.getByText(t["medical.documents.missingFields"].replace("{count}", "1"), { exact: true })).toBeVisible();
     await expect(editor.getByText(t["medical.documents.unknownFields"].replace("{count}", "1"), { exact: true })).toBeVisible();
     await editor.screenshot({ path: info.outputPath("document-preview-filled.png") });

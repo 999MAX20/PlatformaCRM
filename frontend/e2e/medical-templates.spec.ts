@@ -29,6 +29,11 @@ for (const width of [1440, 390]) test(`template risk fields ${width}: insert and
   await page.getByRole("option", { name: ru["medical.clinical.notApplicableReason"].replace("{field}", ru["medical.clinical.procedures"]), exact: true }).click();
   await dialog.getByRole("button", { name: ru["medical.fields.insert"], exact: true }).click();
   await expect(text).toHaveValue("{{clinical.allergies}}{{clinical.contraindications}}{{clinical.procedures_not_applicable_reason}}");
+  await dialog.getByLabel(ru["medical.fields.choose"], { exact: true }).click();
+  await page.getByRole("option", { name: ru["medical.plan.steps"], exact: true }).click();
+  await dialog.getByRole("button", { name: ru["medical.fields.insert"], exact: true }).click();
+  await expect(text).toBeFocused();
+  await expect(text).toHaveValue("{{clinical.allergies}}{{clinical.contraindications}}{{clinical.procedures_not_applicable_reason}}{{clinical.plan_steps}}");
   await dialog.getByTestId("medical-template-fields").screenshot({ path: info.outputPath("risk-placeholder-selector.png") });
   await dialog.getByRole("button", { name: ru["common.save"], exact: true }).click();
   await expect(dialog).toHaveCount(0);

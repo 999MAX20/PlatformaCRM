@@ -21,6 +21,7 @@ const labels = {
   "clinical.allergies": "medical.clinical.allergies", "clinical.contraindications": "medical.clinical.contraindications",
   "clinical.diagnosis": "medical.clinical.diagnosis", "clinical.procedures": "medical.clinical.procedures",
   "clinical.plan": "medical.clinical.plan", "clinical.epicrisis": "medical.clinical.epicrisis",
+  "clinical.plan_steps": "medical.plan.steps",
   "clinic.license": "medical.credentials.license", "doctor.specialty": "medical.credentials.specialty",
   "doctor.position": "medical.credentials.position", "doctor.qualification": "medical.credentials.qualification",
 } as const;

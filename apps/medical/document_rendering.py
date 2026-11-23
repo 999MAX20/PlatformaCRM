@@ -17,6 +17,7 @@ DOCUMENT_FIELDS = (
     "record.number", "encounter.date", "encounter.time", *[f"clinical.{field}" for field in CLINICAL_FIELDS],
     *[f"clinical.{field}_not_applicable_reason" for field in CLINICAL_FIELDS],
     "clinic.license", "doctor.specialty", "doctor.position", "doctor.qualification",
+    "clinical.plan_steps",
 )
 _TOKEN = re.compile(r"\{\{([^{}]{1,128})\}\}")
 MAX_TEXT = 131072
@@ -64,6 +65,11 @@ def render_document_text(template_text, context, *, started_at):
         **{f"clinical.{field}": context["clinical"].get(field) for field in CLINICAL_FIELDS},
         **{f"clinical.{field}_not_applicable_reason": context["clinical"].get("not_applicable", {}).get(field)
            for field in CLINICAL_FIELDS}}
+    values["clinical.plan_steps"] = "\n".join(
+        f"{index}. " + (f"[FDI: {', '.join(str(tooth) for tooth in step['teeth'])}] " if step.get("teeth") else "")
+        + step["description"]
+        for index, step in enumerate(context["clinical"].get("plan_steps", []), start=1)
+    )
     parts, missing, unknown = [], set(), set()
     length, offset = 0, 0
 
