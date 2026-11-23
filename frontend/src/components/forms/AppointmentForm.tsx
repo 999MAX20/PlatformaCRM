@@ -94,6 +94,8 @@ export function AppointmentForm({
   recordFirst = false,
   fixedContext = false,
   fixedClient = false,
+  fixedBranch = false,
+  hideNotes = false,
   onDirtyChange,
   currency = "KZT",
   timeZone = "UTC",
@@ -107,6 +109,8 @@ export function AppointmentForm({
   recordFirst?: boolean;
   fixedContext?: boolean;
   fixedClient?: boolean;
+  fixedBranch?: boolean;
+  hideNotes?: boolean;
   onDirtyChange?: (dirty: boolean) => void;
   currency?: string;
   prefill?: {
@@ -234,7 +238,7 @@ export function AppointmentForm({
     if (matchingSlot) form.setValue("slot", matchingSlot.start_at, { shouldDirty: true, shouldValidate: true });
   }, [form, initial, prefill?.hour, slots.data, timeZone]);
 
-  const branchControl = branch.requiresSelection ? <Select label={t("branches.branch")} value={branch.branchId} disabled={!!initial}
+  const branchControl = branch.requiresSelection ? <Select label={t("branches.branch")} value={branch.branchId} disabled={!!initial || fixedBranch}
     onChange={event => branch.setBranchId(event.target.value)} options={[{ value: "", label: t("branches.choose") }, ...branch.branches.map(item => ({ value: item.id, label: [item.name, item.address].filter(Boolean).join(" · ") }))]} /> : null;
   const serviceControl = <Select disabled={fixedContext} label={t("appointment.service")} error={form.formState.errors.service?.message} options={[{ value: 0, label: t("appointment.selectService") }, ...selectableServices.map(service => ({ value: service.id, label: `${service.name} · ${service.duration_minutes} ${t("appointment.minutes")}${recordFirst ? ` · ${formatMoney(service.price_from, currency)}` : ""}` }))]} {...form.register("service")} value={form.watch("service")} />;
   const anyConfiguredStaff = businessStaff.some(resource =>
@@ -258,7 +262,7 @@ export function AppointmentForm({
   return (
     <form
       data-testid="appointment-form"
-      className="grid gap-4 rounded-card border border-platforma-border bg-surface-card p-4 shadow-card sm:p-5"
+      className="grid min-w-0 grid-cols-1 gap-4 rounded-card border border-platforma-border bg-surface-card p-4 shadow-card sm:p-5"
       onSubmit={form.handleSubmit(async (values) => {
         setSubmitError(null);
         if (!initial && !branch.ready) { setSubmitError(t("branches.choose")); return; }
@@ -321,7 +325,7 @@ export function AppointmentForm({
           </Link>
         </div>
       ) : null}
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
         {recordFirst ? prefill?.source_conversation || fixedContext || fixedClient ? (
           <Input label={t("appointment.client")} value={clients.find(client => client.id === Number(form.watch("client")))?.full_name || t("common.client")} readOnly />
         ) : (
@@ -331,7 +335,7 @@ export function AppointmentForm({
         ) : <Select label={t("appointment.client")} error={form.formState.errors.client?.message} options={[{ value: 0, label: t("appointment.selectClient") }, ...clients.map((client) => ({ value: client.id, label: client.full_name }))]} {...form.register("client")} value={form.watch("client")} />}
         {serviceControl}
       </div>
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
         <Select
           label={t("appointment.resource")}
           error={form.formState.errors.resource?.message}
@@ -349,7 +353,7 @@ export function AppointmentForm({
           {...form.register("responsible_user")} /> :
           <Select label={t("appointment.lead")} options={[{ value: "", label: t("appointment.noLead") }, ...leads.map((lead) => ({ value: lead.id, label: `${t("appointment.lead")} #${lead.id}` }))]} {...form.register("lead")} />}
       </div>
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2">
         <Input label={t("appointment.date")} type="date" error={form.formState.errors.date?.message} {...form.register("date")} disabled={Boolean(initial)} />
         {initial ? (
           <Input label={t("appointment.time")} value={new Date(initial.start_at).toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit", timeZone })} readOnly />
@@ -418,7 +422,7 @@ export function AppointmentForm({
         { value: "instagram", label: "Instagram" },
         { value: "bot", label: "Bot" },
       ]} {...form.register("source")} />}
-      <Textarea label={t("appointment.notes")} {...form.register("notes")} />
+      {!hideNotes ? <Textarea label={t("appointment.notes")} {...form.register("notes")} /> : null}
       <Button data-testid="appointment-submit" type="submit" isLoading={form.formState.isSubmitting} disabled={!initial && (!branch.ready || (!recordFirst && !hasClients) || !hasServices || !hasResources || slots.isLoading || slots.data?.length === 0)}>
         {initial ? t("appointment.save") : t("appointment.create")}
       </Button>

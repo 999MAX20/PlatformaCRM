@@ -48,6 +48,10 @@ test("allows patient labels only in the explicit medical module keys", () => {
     ["medical.assistants.saved", "Черновик сохранён для проверки врачом."],
     ["medical.assistants.waitingEncounter", "Дәрігер жазбаны әлі ашқан жоқ."],
     ["medical.assistants.noApprovedSource", "Обратитесь к врачу приёма."],
+    ["medical.reception.notBooking", "Reception will agree a time with the patient."],
+    ["medical.reception.onsite", "Пациент сейчас в клинике"],
+    ["medical.reception.state.booked", "Пациент жазылды"],
+    ["medical.reception.state.declined", "Patient declined"],
     ["clients.create", "Создать пациента"], ["medical.unreviewed", "Doctor"],
   ]), ["clients.create", "medical.unreviewed"]);
 });

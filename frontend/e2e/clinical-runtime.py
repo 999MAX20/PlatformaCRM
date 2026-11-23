@@ -408,6 +408,76 @@ if len(sys.argv) > 1 and sys.argv[1] == "overview-demographics":
             business_id=patient.business_id, subject_id=patient.client_id, purpose="demographics")
         patient.save(update_fields=["demographics_encrypted"])
     sys.exit(0)
+if files_fixture and len(sys.argv) > 1 and sys.argv[1] == "reception-new-appointment":
+    from uuid import uuid4
+    from django.db import transaction
+    from apps.branches.models import Branch, BranchAccess, BranchService, SpecialistBranch, ScheduleDay
+    from apps.medical.models import MedicalRoleAssignment
+    from apps.scheduling.models import Resource
+    from apps.services.models import Service
+    with transaction.atomic():
+        business = Business.objects.get(slug="medical-role")
+        source = Appointment.objects.filter(business=business).select_related("resource__linked_user").order_by("pk").first()
+        marker = uuid4().hex[:12]
+        branch = Branch.objects.create(business=business, name=f"Synthetic reception {marker}", uses_business_defaults=False)
+        services = [Service.objects.create(business=business, name=f"Reception {marker} service {index}",
+            duration_minutes=30, price_from=100) for index in (1, 2)]
+        for service in services:
+            BranchService.objects.create(business=business, branch=branch, service=service, duration_minutes=30, price_from=100)
+        resource = Resource.objects.create(business=business, name=f"Reception {marker} specialist",
+            resource_type="staff", linked_user=source.resource.linked_user)
+        staff_branch = SpecialistBranch.objects.create(business=business, branch=branch, resource=resource)
+        staff_branch.services.add(*services)
+        for weekday in range(7):
+            for target in (None, resource):
+                ScheduleDay.objects.create(business=business, branch=branch, resource=target, weekday=weekday,
+                    intervals=[{"start": "08:00", "end": "20:00"}])
+        from apps.scheduling.availability import get_available_slots
+        assert get_available_slots(business, services[1], timezone.localdate() + timedelta(days=24),
+            resource=resource, branch=branch), "Synthetic reception setup must provide bookable slots"
+        assignment = MedicalRoleAssignment.objects.get(member__business=business, member__user=source.resource.linked_user)
+        assignment.branches.add(branch)
+        grant, _ = BranchAccess.objects.get_or_create(member=assignment.member, defaults={"all_branches": False})
+        if not grant.all_branches:
+            grant.branches.add(branch)
+        client = Client.objects.create(business=business, full_name=f"Synthetic reception patient {marker}")
+        PatientProfile.objects.create(business=business, client=client, created_by=business.owner,
+            identity_status="verified", verified_at=timezone.now(), verified_by=business.owner,
+            verification_evidence_encrypted="synthetic-fixture-only")
+        start = (timezone.now() + timedelta(days=3)).replace(hour=9, minute=0, second=0, microsecond=0)
+        appointment = Appointment.objects.create(business=business, client=client, service=services[0],
+            resource=resource, branch=branch, start_at=start, end_at=start + timedelta(minutes=30))
+    print(json.dumps({"appointment_id": appointment.pk, "client_id": client.pk,
+        "service_search": f"Reception {marker}", "alternative_service": services[1].name}))
+    sys.exit(0)
+if files_fixture and len(sys.argv) > 1 and sys.argv[1] == "reception-new-member":
+    from uuid import uuid4
+    from django.contrib.auth import get_user_model
+    from apps.businesses.models import BusinessMember, BusinessRole, RolePermission
+    from apps.branches.models import BranchAccess
+    from apps.medical.models import MedicalRoleAssignment
+    appointment = Appointment.objects.get(pk=int(sys.argv[2]), business__slug="medical-role")
+    marker = uuid4().hex
+    receptionist = get_user_model().objects.create_user(username=f"reception-{marker}",
+        email=f"reception-{marker}@example.test", password=os.environ["E2E_PASSWORD"],
+        full_name=f"Synthetic reception {marker[:8]}")
+    role = BusinessRole.objects.create(business=appointment.business, name=f"Reception {marker}")
+    member = BusinessMember.objects.create(business=appointment.business, user=receptionist,
+        role="operator", business_role=role)
+    grant = BranchAccess.objects.create(member=member, all_branches=False)
+    grant.branches.add(appointment.branch)
+    assignment = MedicalRoleAssignment.objects.create(member=member, business_role=role, kind="reception",
+        granted_by=appointment.business.owner)
+    assignment.branches.add(appointment.branch)
+    for resource, actions in (("medical_patients", ("view", "update")), ("clients", ("view",)),
+                             ("appointments", ("view", "create", "update")), ("settings", ("view",)),
+                             ("dashboard", ("view",))):
+        for action in actions:
+            RolePermission.objects.create(business_role=role, resource=resource, action=action,
+                scope="business", is_allowed=True)
+    print(json.dumps({"email": receptionist.email, "name": receptionist.full_name,
+        "member_id": member.pk, "branch_id": appointment.branch_id}))
+    sys.exit(0)
 if files_fixture and len(sys.argv) > 1 and sys.argv[1] == "assistant-new-member":
     from uuid import uuid4
     from django.contrib.auth import get_user_model

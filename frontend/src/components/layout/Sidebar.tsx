@@ -30,6 +30,7 @@ import { realtimeIntervals, realtimeQueryOptions } from "../../lib/realtime";
 import { useTemplateAccess } from "../../features/medical/templates/useTemplateAccess";
 import { useCredentialAccess } from "../../features/medical/credentials/useCredentialAccess";
 import { useAssistantAccess } from "../../features/medical/useAssistantAccess";
+import { useReceptionAccess } from "../../features/medical/useReceptionAccess";
 
 type SidebarItem = {
   to?: string;
@@ -130,6 +131,7 @@ export function Sidebar({
   const templates = useTemplateAccess();
   const credentials = useCredentialAccess();
   const assistant = useAssistantAccess();
+  const reception = useReceptionAccess();
   const inboxSummary = useQuery({
     queryKey: ["inbox-summary", business?.id],
     queryFn: inboxApi.getSummary,
@@ -168,12 +170,13 @@ export function Sidebar({
       (mobileDrawer ? mobileDrawerSections : desktopSections)
         .map((group) => ({
           ...group,
-          items: group.items.flatMap((item): SidebarItem[] => item.to === "/app/appointments" && assistant.allowed
-            ? [item, { to: "/app/medical/assistants", label: "medical.assistants.mine", icon: UserCheck }]
+          items: group.items.flatMap((item): SidebarItem[] => item.to === "/app/appointments"
+            ? [item, ...(assistant.allowed ? [{ to: "/app/medical/assistants", label: "medical.assistants.mine", icon: UserCheck }] : []),
+              ...(reception.allowed ? [{ to: "/app/medical/reception", label: "medical.reception.queue", icon: UserCheck }] : [])]
             : [item]).map((item) => filterSidebarItem(item, user, business?.id, templates.allowed || credentials.allowed)).filter(Boolean) as SidebarItem[],
         }))
         .filter((group) => group.items.length),
-    [business?.id, mobileDrawer, user, templates.allowed, credentials.allowed, assistant.allowed],
+    [business?.id, mobileDrawer, user, templates.allowed, credentials.allowed, assistant.allowed, reception.allowed],
   );
   return (
     <aside

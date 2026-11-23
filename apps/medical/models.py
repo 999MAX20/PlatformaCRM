@@ -10,6 +10,7 @@ from apps.businesses.models import TimeStampedModel
 from .file_models import MedicalAttachment, MedicalAttachmentRevision
 from .document_artifact_models import MedicalDocumentArtifact
 from .assistant_models import AppointmentAssistant
+from .reception_models import ReceptionBookingRequest
 
 
 class PatientProfile(TimeStampedModel):
