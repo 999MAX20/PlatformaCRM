@@ -512,3 +512,29 @@ Google Console read-only24Nov: correct Platforma Digital account/project selecte
 verification center still says Testing, not production approval. Branding app name
 PlatformaCRM/domain platformacrm.kz present; home/privacy/terms URLs empty. No Google
 settings changed. Public policy and target acceptance still required before launch.
+
+Publication24Nov: code e2c7f8f0ed3a15a0246f426ea02ba32ae6feeb5b normal-pushed
+from codex/ui-testing-toolkit to origin/main; ls-remote matched. Static gate
+`scripts/codex_verify.py --mode static --base-ref 31530acd52cea009f602847845d562c893c75d97`
+PASS, output/google-retention-static.log. No CI (local-only). Exact29 task paths
+and Google-only shared-doc hunks reviewed/staged; unrelated dirty work retained.
+After final build the fixture additionally assigns its fail-closed Axios adapter
+to apiClient (test-only hardening; no product build inputs changed).
+
+Updated immutable candidate with exact e2c7f8f0 runtime patch applied to prior
+a2f47ce3: new tree717a798022bd4938bf4cba71eca74f1b038f806a,44 paths over deployed
+64d29158. Cached patch check PASS. Manifest/patch in output/google-production-20261123;
+no source checkout/worktree created. Not full-gate tested or deployed. Owner asked
+for one-off isolated immutable candidate-test directory exception to AGENTS.md,
+because canonical checkout contains unrelated WIP; no dependent creation yet.
+
+Server read-only24Nov reconfirmed same WorkingDirectory/services; DB/Redis localhost,
+S3 endpoint storage.yandexcloud.kz/region kz1, SMTP smtp.resend.com; Google integration
+settings still absent, retention disabled. No secrets emitted. Resend official
+privacy/GDPR docs identify Plus Five Five, Inc. and US storage; add this factual
+recipient before public policy. Sources https://resend.com/legal/privacy-policy and
+https://resend.com/security/gdpr/. Updated existing production-facts-and-retention-proposal.md.
+Owner decision pending: minimum Calendar IDs retained until Business account closure
+or explicit deletion request with duplicate warning; no policy change assumed before
+reply. These two pending decisions block dependent policy/candidate release work,
+not completed scoped retention implementation/verification/publication.

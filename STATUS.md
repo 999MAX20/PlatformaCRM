@@ -96,9 +96,11 @@ Calendar mirror IDs and account identity pseudonym retained against duplicates.
 Technical snapshot/attempt/audit/import-summary deadlines covered; enabled flag
 defaults off. Final18 SQLite/migration and19 PostgreSQL tests PASS; Django check/
 migration drift and frontend build/types PASS. Chrome Platforma Digital recovered;
-RU/KK/EN desktop/mobile expired-import/disconnect UI acceptance PASS. No cleanup activation, working
-migration, deployment or publication of this delta. Policy, Google verification
-and server acceptance remain open; details in the same evidence checkpoint below.
+RU/KK/EN desktop/mobile expired-import/disconnect UI acceptance PASS. Code e2c7f8f0
+normal-pushed to main; remote readback/static gate PASS. No cleanup activation,
+working migration or deployment. Candidate717a7980 prepared, not built/tested.
+Policy identifier term and isolated candidate-test exception await owner decisions;
+Google verification/server acceptance remain open. Details in the checkpoint below.
 
 23Nov owner expanded scope to production-ready Sheets + Calendar. Calendar local
 implementation: CRM-owned copies, external busy blocks, pause/retry and private
