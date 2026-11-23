@@ -50,6 +50,22 @@ class EncounterCompleteSerializer(EncounterCompletionReadSerializer):
     reason = serializers.CharField(required=False, allow_blank=True, max_length=500, trim_whitespace=False)
 
 
+class ActualVisitContextSerializer(StrictSerializer):
+    business_id = serializers.IntegerField(min_value=1)
+    client_id = serializers.IntegerField(min_value=1)
+    branch_id = serializers.IntegerField(min_value=1)
+
+
+class ActualVisitSerializer(ActualVisitContextSerializer):
+    service_id = serializers.IntegerField(min_value=1)
+    resource_id = serializers.IntegerField(min_value=1)
+    start_at = serializers.DateTimeField()
+    expected_patient_revision = serializers.IntegerField(min_value=1)
+    expected_price = serializers.DecimalField(max_digits=12, decimal_places=2, min_value=0, allow_null=True)
+    expected_duration_minutes = serializers.IntegerField(min_value=1)
+    reason = serializers.CharField(required=False, allow_blank=True, max_length=2000, trim_whitespace=False)
+
+
 class ClinicalWorkspaceSerializer(EncounterReadSerializer):
     before_id = serializers.IntegerField(min_value=1, required=False)
     limit = serializers.IntegerField(min_value=1, max_value=50, required=False, default=20)
@@ -120,6 +136,7 @@ class MedicalEncounterViewSet(viewsets.GenericViewSet):
     def get_serializer_class(self):
         return {"create": EncounterOpenSerializer, "draft": EncounterDraftSerializer,
                 "completion": EncounterCompletionReadSerializer, "complete": EncounterCompleteSerializer,
+                "actual_context": ActualVisitContextSerializer, "actual_visit": ActualVisitSerializer,
                 "version": EncounterReadSerializer, "workspace": ClinicalHistoryWorkspaceSerializer,
                 "overview": EncounterReadSerializer,
                 "representatives": ClinicalRepresentativesSerializer,
@@ -149,6 +166,32 @@ class MedicalEncounterViewSet(viewsets.GenericViewSet):
 
     def create(self, request):
         return self._command(request, open_primary_encounter, created=True)
+
+    @action(detail=False, methods=["get"], url_path="actual-context")
+    def actual_context(self, request):
+        from .actual_visit_services import actual_visit_context
+        serializer = self.get_serializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+        try:
+            return Response(actual_visit_context(actor=request.user, **serializer.validated_data))
+        except PermissionDenied:
+            from .file_audit import record_denied_file_access
+            record_denied_file_access(actor=request.user, business_id=serializer.validated_data["business_id"])
+            raise
+
+    @action(detail=False, methods=["post"], url_path="actual-visit")
+    def actual_visit(self, request):
+        from .actual_visit_services import create_actual_visit
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            result = create_actual_visit(actor=request.user, **serializer.validated_data,
+                idempotency_key=request.headers.get("Idempotency-Key"))
+            return Response(result, status=200 if result["replayed"] else 201)
+        except PermissionDenied:
+            from .file_audit import record_denied_file_access
+            record_denied_file_access(actor=request.user, business_id=serializer.validated_data["business_id"])
+            raise
 
     @action(detail=True, methods=["get"])
     def completion(self, request, pk=None):

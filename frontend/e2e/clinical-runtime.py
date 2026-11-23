@@ -63,9 +63,9 @@ settings.MEDICAL_TOOTH_SURFACE_POLICIES = {"1": {
 }}
 call_command("migrate", interactive=False, verbosity=0)
 
-if files_fixture and len(sys.argv) > 1 and sys.argv[1] == "completion-prepare":
+if files_fixture and len(sys.argv) > 1 and sys.argv[1] in ("completion-prepare", "actual-visit-prepare"):
     from completion_fixture import prepare_completion
-    print(json.dumps(prepare_completion()))
+    print(json.dumps(prepare_completion(actual=sys.argv[1] == "actual-visit-prepare")))
     sys.exit(0)
 
 from datetime import timedelta

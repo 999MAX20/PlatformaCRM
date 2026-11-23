@@ -12,6 +12,7 @@ from .document_artifact_models import MedicalDocumentArtifact
 from .document_finalization_models import MedicalDocumentFinalization
 from .signing_models import MedicalSigningSession, MedicalSigningEvent
 from .assistant_models import AppointmentAssistant
+from .actual_visit_models import MedicalActualVisit
 from .reception_models import ReceptionBookingRequest
 from .document_rule_models import MedicalDocumentKind, MedicalDocumentRuleRevision
 

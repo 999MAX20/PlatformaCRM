@@ -1,4 +1,12 @@
 export const medical = {
+  "medical.actual.title": "Record an actual visit",
+  "medical.actual.start": "Actual start time",
+  "medical.actual.zone": "Time zone: {zone}",
+  "medical.actual.reason": "Explanation (required for an earlier day)",
+  "medical.actual.confirm": "Create visit record",
+  "medical.actual.saved": "Visit registered. Open the appointment to continue the medical record.",
+  "medical.actual.invalidTime": "Enter a valid date and time.",
+  "medical.actual.conflict": "Check the time, schedule and current details. Resolve overlaps in the calendar; your entries have been retained.",
   "medical.completion.title": "Complete encounter",
   "medical.completion.ready": "Required sections and documents are ready. Confirm completion of this encounter.",
   "medical.completion.missing": "Fill in the sections or record why they do not apply, and complete the required documents.",

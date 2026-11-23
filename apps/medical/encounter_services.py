@@ -61,6 +61,12 @@ def open_primary_encounter(*, actor, business_id, patient_id, record_id, appoint
             raise InvalidTransition("A primary encounter already exists for this appointment.")
         encounter = MedicalEncounter(business=business, patient=patient, record=record,
             appointment=appointment, branch_id=appointment.branch_id, primary_clinician_id=context.member_id)
+        from .models import MedicalActualVisit
+        actual = MedicalActualVisit.objects.filter(appointment=appointment, patient=patient).first()
+        if actual:
+            from .actual_visit_services import actual_visit_evidence
+            actual_visit_evidence(actual)
+            encounter.started_at = actual.started_at
         encounter.full_clean()
         encounter.save(force_insert=True)
         version = append_encounter_revision(encounter=encounter, author=actor, content=content)

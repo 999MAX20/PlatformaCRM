@@ -1,5 +1,6 @@
+import { ActualVisitEntry } from "./ActualVisitEntry";
 import { useQuery } from "@tanstack/react-query";
-import { useImperativeHandle, useRef, useState, type Ref } from "react";
+import { useCallback, useImperativeHandle, useRef, useState, type Ref } from "react";
 import { branchesApi } from "../../api/branches";
 import { Button } from "../../components/ui/Button";
 import { Select } from "../../components/ui/Select";
@@ -15,7 +16,9 @@ export function DentalClientClinical({ businessId, clientId, userId, navigationR
   const { t } = useI18n();
   const [branch, setBranch] = useState("");
   const clinical = useRef<ClinicalEntryHandle>(null);
-  useImperativeHandle(navigationRef, () => ({ beforeLeave: () => clinical.current?.beforeLeave() ?? Promise.resolve(true) }));
+  const actualOpen = useRef(false);
+  const onActualOpen = useCallback((value: boolean) => { actualOpen.current = value; onDirtyChange(value); }, [onDirtyChange]);
+  useImperativeHandle(navigationRef, () => ({ beforeLeave: () => actualOpen.current ? Promise.resolve(false) : clinical.current?.beforeLeave() ?? Promise.resolve(true) }));
   const query = useQuery({ queryKey: ["medical-branch-options", businessId, userId], queryFn: () => branchesApi.listAll({ business: businessId }) });
   const available = (query.data ?? []).filter(item => item.is_active && !item.archived_at && item.can_work);
   const selected = branch || (available.length === 1 ? String(available[0].id) : "");
@@ -29,6 +32,8 @@ export function DentalClientClinical({ businessId, clientId, userId, navigationR
       if (await (clinical.current?.beforeLeave() ?? Promise.resolve(true))) setBranch(next);
     })(); }} />
     {valid ? <>
+      <ActualVisitEntry key={`actual:${selected}`} scope={{ business_id: businessId, client_id: clientId, branch_id: Number(selected) }}
+        beforeOpen={() => clinical.current?.beforeLeave() ?? Promise.resolve(true)} onOpenChange={onActualOpen} />
       <ClientClinicalEntry key={selected} businessId={businessId} clientId={clientId} branchId={Number(selected)} embedded navigationRef={clinical} onDirtyChange={onDirtyChange} />
       <div className="border-t border-platforma-border pt-4">
         <PatientParticipationEntry key={`team:${selected}`} businessId={businessId} clientId={clientId} branchId={Number(selected)} />

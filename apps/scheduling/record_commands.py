@@ -32,7 +32,8 @@ def validate_responsible(*, business, actor, user):
 @transaction.atomic
 def create_record(*, business, actor, client, service, resource, start_at, branch=None,
                   responsible_user=None, source_conversation=None, notes="",
-                  expected_price=UNSPECIFIED_PRICE, expected_duration_minutes=None, lead=None):
+                  expected_price=UNSPECIFIED_PRICE, expected_duration_minutes=None, lead=None,
+                  creation_mode="scheduled", creation_reason=""):
     from apps.branches.access import assert_branch_access
     from apps.branches.schedule import appointment_snapshot
     from apps.scheduling.services import handle_appointment_created, validate_appointment_availability
@@ -40,7 +41,7 @@ def create_record(*, business, actor, client, service, resource, start_at, branc
     business = Business.objects.select_for_update().get(pk=business.pk)
     assert_resource_enabled(business, Resources.APPOINTMENTS)
     assert_resource_enabled(business, Resources.CLIENTS)
-    if start_at <= timezone.now():
+    if creation_mode == "scheduled" and start_at <= timezone.now():
         raise ValidationError({"start_at": "Select a future appointment time."})
     # Reload all submitted references after obtaining the scheduling lock.
     client.refresh_from_db()
@@ -77,6 +78,10 @@ def create_record(*, business, actor, client, service, resource, start_at, branc
         from apps.conversations.booking import _appointment_source
         source = _appointment_source(source_conversation.channel)
     snapshot = appointment_snapshot(business, service, resource, branch)
+    if creation_mode != "scheduled":
+        from .lifecycle_extensions import validate_recording_mode
+        validate_recording_mode(mode=creation_mode, business=business, actor=actor, client=client,
+            resource=resource, branch=snapshot["branch"], start_at=start_at, reason=creation_reason)
     if snapshot["branch"]:
         assert_branch_access(actor, business, snapshot["branch"], active=True)
     candidate = Appointment(business=business, client=client, service=service, resource=resource, **snapshot)
@@ -97,6 +102,8 @@ def create_record(*, business, actor, client, service, resource, start_at, branc
     )
     metadata = {"conversation_id": source_conversation.pk if source_conversation else None,
                 "responsible_user_id": responsible_user.pk}
+    if creation_mode != "scheduled":
+        metadata["creation_mode"] = creation_mode
     write_actor_audit_log(actor=actor, action=AuditLog.Actions.CREATE, instance=appointment, metadata=metadata)
     create_activity_event(business=business, client=client, actor=actor, instance=appointment,
                           event_type=ActivityEvents.APPOINTMENT_CREATED, category="appointment",
