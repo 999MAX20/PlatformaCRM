@@ -107,6 +107,52 @@ No working migration or deployment is claimed. Public use
 also needs a separate production Google project, approved public home/privacy pages,
 proper HTTPS origins/callback and required Google scope/brand verification.
 
+### Google technical retention (local implementation, activation pending)
+
+`cleanup_google_data` is a read-only count/dry-run by default. `--apply` performs
+bounded cleanup, `--business-id` limits it to one Business, `--batch-size` accepts
+1..1000 (default100), and `--check` exits nonzero for disabled/stale cleanup or backlog.
+No command sends requests to Google or deletes clients, appointments or remote copies.
+Migration `integrations.0015_google_retention` adds disconnect timestamps, a durable
+storage retry queue, cleanup health state and age indexes. It initializes existing
+disconnected timestamps from updated_at, without deleting any data.
+
+Maximum ages: OAuth attempts24h; unfinished Sheets snapshots7d; imported/failed/
+cancelled snapshots30d from terminal time; GoogleConnection technical audit rows90d;
+sanitized Sheets import summaries90d (from import completion, otherwise creation);
+disconnected account display email/raw subject and Sheets export links30d. The
+five-minute Celery sweep selects data ten minutes before maximum age to allow its
+cadence and bounded runtime. Errors/backlog require operational attention; a command
+or schedule alone is not proof that retention deadlines are met in the target.
+Pause/disconnect removes external busy intervals immediately. A successful sync
+replaces the active snapshot. Cleanup does not purge general CRM/security audit logs.
+
+Import files use a durable retry record: clear source/preview/duplicate payloads in
+the locked job, retain numeric result counts until the90d summary deadline, then delete storage bytes. Failed
+storage deletion retries after5min; referenced files are protected and reported.
+In-flight imports are skipped under row locks and rechecked after completion. An
+expired preview becomes cancelled and the UI directs the user to select the source
+again. Request keys remain as tombstones; expired exports cannot be replayed into
+new files, and disappear from the active export list.
+At90d the sanitized import job is deleted; its transfer keeps the request key with
+an expired status and no job/file link, so replay cannot create another import.
+
+Calendar binding/mirror/event IDs and generations remain unchanged by cleanup.
+Account identity becomes a SHA256-tagged pseudonym, checked on reconnect; it is not
+anonymous data. Calendar IDs may themselves contain an account address. Their
+minimal retention term is still a separate owner decision; do not promise deletion
+of every identifier after30d. Calendar display names are removed and refreshed on
+the next successful authorized sync. Rollback to older OAuth code rejects hashed
+identity rather than accepting a different account. Do not drop retry/schema data
+or restore pre-cleanup backups without the operational deletion/rollback procedure.
+
+`GOOGLE_RETENTION_ENABLED` defaults false; the existing integrations beat/worker
+schedule is inert until enabled after a reviewed dry-run. Google status exposes
+`retention_enabled` so disconnect notices do not promise disabled cleanup. Health
+reports contain counts/timestamps only. Storage version deletion, backup retention,
+infrastructure logs, scheduler monitoring and first target run remain server
+acceptance; regular backups are not enabled by this implementation.
+
 ## Website widget recovery — 12.11.2026
 
 Widget сохраняет conversation ID, последние100 подтверждённых пользовательских

@@ -44,6 +44,8 @@ def export_clients(connection, actor, *, request_key, refresh=False):
             defaults={"kind": "export", "status": "creating"})
         if transfer.kind != "export":
             raise ValidationError("This request identifier was already used for an import.")
+        if transfer.status == "expired":
+            raise ValidationError("This export has expired. Start a new export.")
         if transfer.status == "succeeded" and not refresh:
             return transfer_status(transfer)
 

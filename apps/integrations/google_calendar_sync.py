@@ -144,11 +144,12 @@ def sync_binding(binding_id):
             GoogleCalendarBusy.objects.bulk_create([
                 GoogleCalendarBusy(binding=binding, start_at=left, end_at=right) for left, right in intervals])
             binding.timezone = info["timeZone"]
+            binding.calendar_name = info.get("summary", "")[:255]
             binding.last_sync_at = started
             binding.coverage_start, binding.coverage_end = start, end
             binding.error_code, binding.failures = "", 0
             binding.next_sync_at = timezone.now() + timedelta(seconds=60)
-            binding.save(update_fields=["timezone", "last_sync_at", "coverage_start", "coverage_end",
+            binding.save(update_fields=["timezone", "calendar_name", "last_sync_at", "coverage_start", "coverage_end",
                                        "error_code", "failures", "next_sync_at"])
             connection.last_sync_at = started
             connection.save(update_fields=["last_sync_at", "updated_at"])

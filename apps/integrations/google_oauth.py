@@ -13,6 +13,7 @@ from rest_framework.exceptions import NotFound, ValidationError
 
 from apps.businesses.access import Actions, Resources, assert_can
 from apps.businesses.capabilities import assert_resource_enabled
+from apps.businesses.models import Business
 from apps.core.audit import write_actor_audit_log
 from apps.core.models import AuditLog
 from apps.integrations.credential_encryption import encrypt_credential_value, decrypt_credential_value
@@ -50,7 +51,8 @@ def configuration():
 
 def status(connection):
     return {"id": connection.pk, "provider": connection.provider, "status": connection.status,
-            "email": connection.email, "last_sync_at": connection.last_sync_at}
+            "email": connection.email, "last_sync_at": connection.last_sync_at,
+            "retention_enabled": settings.GOOGLE_RETENTION_ENABLED}
 
 
 @transaction.atomic
@@ -116,9 +118,11 @@ def complete(*, actor, code, state):
         assert_access(actor, connection.business)
         if connection.revision != attempt.revision:
             raise ValidationError("Google connection changed. Connect again.")
-        if connection.subject and connection.subject != identity["sub"]:
+        digest = "sha256:" + hashlib.sha256(str(identity["sub"]).encode()).hexdigest()
+        if connection.subject and connection.subject not in (identity["sub"], digest):
             raise ValidationError("Reconnect the same Google account used for this connection.")
         connection.subject, connection.email = identity["sub"], identity["email"]
+        connection.disconnected_at = None
         connection.encrypted_refresh = encrypt_credential_value(refresh)
         connection.encrypted_access = encrypt_credential_value(access)
         connection.access_expires_at = timezone.now() + timedelta(seconds=min(int(tokens.get("expires_in", 3600)), 3600))
@@ -165,6 +169,7 @@ def access_token(connection, actor):
 
 @transaction.atomic
 def disconnect(connection, actor):
+    Business.objects.select_for_update().get(pk=connection.business_id)
     connection = GoogleConnection.objects.select_for_update().get(pk=connection.pk, actor=actor)
     assert_access(actor, connection.business)
     revoked = True
@@ -177,8 +182,12 @@ def disconnect(connection, actor):
             revoked = False
     connection.revision = uuid.uuid4()
     connection.status = "disconnected"
+    connection.disconnected_at = connection.disconnected_at or timezone.now()
     connection.encrypted_access = connection.encrypted_refresh = ""
     connection.access_expires_at = None
     connection.save()
+    from apps.integrations.google_calendar_models import GoogleCalendarBusy
+    GoogleCalendarBusy.objects.filter(binding__connection=connection).delete()
+    connection.calendar_bindings.update(last_sync_at=None, coverage_start=None, coverage_end=None)
     audit(connection, actor, "google_disconnected")
     return {**status(connection), "google_revoked": revoked}

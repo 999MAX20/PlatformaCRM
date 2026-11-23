@@ -61,7 +61,7 @@ export function GoogleCalendarCard({ businessId }: { businessId: Id }) {
       </div>
       {bindings.data?.bindings.length === 0 && <p className="text-sm text-platforma-muted">{t("googleCalendar.empty")}</p>}
       {bindings.data?.bindings.map(item => <div key={item.id} className="space-y-2 border-t border-platforma-border pt-3">
-        <p className="break-words text-sm font-medium">{item.resource_name}: {item.calendar_name}</p>
+        <p className="break-words text-sm font-medium">{item.resource_name}: {item.calendar_name || t("googleCalendar.calendar")}</p>
         <p className="text-sm" role="status">{t(!item.enabled ? "googleCalendar.paused" : item.error_code || (item.last_sync_at && item.stale) ? "googleCalendar.failed" : !item.last_sync_at || item.pending ? "googleCalendar.pending" : "googleCalendar.synced")}</p>
         {item.last_sync_at && <p className="text-sm text-platforma-muted">{t("googleCalendar.lastSync", { time: new Date(item.last_sync_at).toLocaleString(language) })}</p>}
         <div className="flex flex-wrap gap-2">
@@ -93,6 +93,7 @@ export function GoogleCalendarCard({ businessId }: { businessId: Id }) {
     </Modal>
     <Modal open={dialog === "disconnect"} title={t("googleSheets.disconnect")} focusReturnId={`${prefix}-${disconnect.isSuccess ? "connect" : "disconnect"}`} onClose={() => { if (!busy) setDialog(null); }}>
       <div className="space-y-4"><p>{t("googleCalendar.disconnectConfirm")}</p>{disconnect.error ? <ErrorState error={disconnect.error} /> : null}
+        {connection.data?.retention_enabled && <p>{t("googleCalendar.retentionNotice")}</p>}
         <Button variant="danger" disabled={busy} isLoading={disconnect.isPending} onClick={() => disconnect.mutate()}>{t("googleSheets.disconnect")}</Button></div>
     </Modal>
   </section>;

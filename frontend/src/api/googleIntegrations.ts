@@ -1,7 +1,7 @@
 import { apiClient } from "./client";
 import type { Id, ImportJob } from "../types";
 
-export type GoogleConnection = { id: number | null; status: string; email: string; last_sync_at?: string | null; enabled?: boolean };
+export type GoogleConnection = { id: number | null; status: string; email: string; last_sync_at?: string | null; enabled?: boolean; retention_enabled?: boolean };
 export type GoogleSheet = { sheetId: number; title: string };
 export type GoogleSpreadsheet = { id: string; title: string; sheets: GoogleSheet[] };
 export type GoogleExport = { id: string; request_key: string; status: string; spreadsheet_id: string; row_count: number; updated_at: string };

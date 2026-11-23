@@ -91,6 +91,15 @@ Evidence: docs/testing/evidence/invitations-24h-20261112.md.
 
 ## GOOGLE-SHEETS-20261119 — local verification / live acceptance pending
 
+24Nov retention acceptance: bounded cleanup/dry-run/retry/health implemented;
+Calendar mirror IDs and account identity pseudonym retained against duplicates.
+Technical snapshot/attempt/audit/import-summary deadlines covered; enabled flag
+defaults off. Final18 SQLite/migration and19 PostgreSQL tests PASS; Django check/
+migration drift and frontend build/types PASS. Chrome Platforma Digital recovered;
+RU/KK/EN desktop/mobile expired-import/disconnect UI acceptance PASS. No cleanup activation, working
+migration, deployment or publication of this delta. Policy, Google verification
+and server acceptance remain open; details in the same evidence checkpoint below.
+
 23Nov owner expanded scope to production-ready Sheets + Calendar. Calendar local
 implementation: CRM-owned copies, external busy blocks, pause/retry and private
 minimal event content. Backend201/PG4 PASS, build PASS; scoped RU/EN/KK browser

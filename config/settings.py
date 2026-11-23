@@ -449,7 +449,11 @@ GOOGLE_CALENDAR_ENABLED = env.bool("GOOGLE_CALENDAR_ENABLED", default=False)
 YCLOUD_API_KEY = env("YCLOUD_API_KEY", default="")
 YCLOUD_WEBHOOK_SECRET = env("YCLOUD_WEBHOOK_SECRET", default="")
 
+GOOGLE_RETENTION_ENABLED = env.bool("GOOGLE_RETENTION_ENABLED", default=False)
+
 CELERY_BEAT_SCHEDULE = {
+    "google-retention": {"task": "integrations.cleanup_google_data", "schedule": 300.0,
+                         "options": {"queue": "integrations"}},
     "google-calendars": {"task": "integrations.process_google_calendars", "schedule": 60.0,
                          "options": {"queue": "integrations"}},
     "ycloud-events": {"task": "integrations.process_ycloud_events", "schedule": 30.0},

@@ -99,7 +99,7 @@ class GoogleSheetsView(APIView):
             raise NotFound()
         assert_clients(connection, request.user, Actions.VIEW)
         response = Response([transfer_status(item) for item in GoogleSheetTransfer.objects.filter(
-            connection=connection, kind="export").order_by("-created_at")[:20]])
+            connection=connection, kind="export").exclude(status="expired").order_by("-created_at")[:20]])
         response["Cache-Control"] = "no-store"
         return response
 

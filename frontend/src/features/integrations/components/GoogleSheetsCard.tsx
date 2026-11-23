@@ -110,6 +110,7 @@ export function GoogleSheetsCard({ businessId }: { businessId: Id }) {
     </Modal>
     <Modal open={dialog === "disconnect"} title={t("googleSheets.disconnect")} focusReturnId={`google-connection-${businessId}`} onClose={() => { if (!disconnect.isPending) setDialog(null); }}>
       <div className="space-y-4"><p>{t("googleSheets.disconnectConfirm")}</p>
+        {connection.data?.retention_enabled && <p>{t("googleSheets.retentionNotice")}</p>}
         {disconnect.error && <ErrorState error={disconnect.error} />}
         <Button variant="danger" isLoading={disconnect.isPending} onClick={() => disconnect.mutate()}>{t("googleSheets.disconnect")}</Button>
       </div>

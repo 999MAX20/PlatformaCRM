@@ -28,6 +28,8 @@ export function ImportJobReview({ job, userId, canCreate, onChange, onImported }
   const rows = job.preview_json?.rows || [];
   const headers = job.preview_json?.headers || [];
   const mutationError = preview.error || confirm.error;
+  if (job.preview_json?.retention_expired) return <StatusNotice className="mt-4" tone="info"
+    title={t("googleSheets.snapshotExpired")} description={t("googleSheets.snapshotExpiredHelp")} />;
   return <div className="mt-4 space-y-4">
     {mutationError ? <ErrorState error={mutationError} /> : null}
     <fieldset disabled={busy || !editable} className="grid min-w-0 gap-3 sm:grid-cols-2">

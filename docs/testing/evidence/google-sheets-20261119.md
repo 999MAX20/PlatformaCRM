@@ -413,3 +413,102 @@ backup/rollback and target0014 migration/configuration; real-provider production
 Sheets and Calendar lifecycle/recovery checks with synthetic data. Existing local
 and dev-provider PASS cannot close these target-specific criteria. Import identity
 scope is closed locally and published; full production integration remains open.
+
+### Technical retention implementation23Nov
+Owner explicitly requests cleanup, then policy/Google verification/server acceptance.
+Base867981fa, canonical root/current branch; existing foreign WIP preserved. Gap is
+code/operations evidence, not a rewrite of verified import/sync. Reuse connection,
+import job locking, storage and Celery. Keep Calendar mirror/binding IDs and an
+account identity digest; clear disconnected email/raw subject after30d. Preserve
+transfer request-key tombstones against replay. No clients/appointments/Google-side
+deletion, backup re-enablement or working migration. Add dry-run/bounded cleanup,
+durable file retries and health evidence; scheduler disabled until reviewed activation.
+Checks: age boundaries, dry-run, isolation, replay, shared-file/storage failure,
+reconnect identity, pause/disconnect busy cleanup, PG import/sync races, migration
+and affected Google/import suites. No new permission/notification/AI/BusinessEvent
+policy; Google technical audit retention90d only. Public wording must match actual
+deployment, not command existence. First operational apply requires reviewed dry-run.
+
+Implementation iteration: focused10 then14 tests PASS. PostgreSQL16 tests PASS
+(14 retention plus2 locking races), disposable DB removed by runner finally.
+Completion118:116 PASS,1 SQLite concurrency skip,1 migration-fixture error
+(historical accounts model omitted current auth_epoch). Fixed the fixture to create
+user/business with current models before integration-only migration; focused rerun
+16 PASS. Added10min cleanup headroom and age-boundary test. Final delta below
+supersedes this intermediate result. Build/types/i18n8218 PASS;
+isolated frontend output, existing chunk-size warning only. No CI.
+UI uses existing StatusNotice/Modal and tokens, neutral RU/KK/EN copy, conditional
+retention notices only when enabled; expired import hides unusable controls. Applied
+Anti Slop during/copywriting and React Best Practices (hooks remain unconditional,
+no new fetch/effect/dependency). Browser5 gone; inventory Chrome6 available but local
+fixture attach twice reports debugger unattached. Requested extension recovery;
+visual acceptance pending, not PASS. Owned Vite18743 remains running for that check.
+Server read-only cloud-init metadata confirms availability_zone kz1-a and platform
+ec2; cloud_name unknown. This verifies the reported zone, not every data processor.
+
+Final retention delta23Nov: review found sanitized import summaries had no90d
+deadline. Added bounded deletion after90d (imported_at, otherwise created_at),
+preserving an expired request-key tombstone with SET_NULL job reference. No domain
+record deletion. Added regression for this lifecycle and corrupt cross-tenant
+transfer references. Snapshot selection now requires matching Business IDs.
+
+Final verification: isolated_runtime with `.venv/Scripts/python.exe` ran Django
+`check`, `makemigrations --check --dry-run`, and `test
+apps.integrations.tests_google_retention apps.integrations.tests_google_retention_migration -v 1`:
+18 PASS, exit0; output/google-retention-final-focused.log. The earlier migration
+fixture error is resolved, not waived. Final PostgreSQL run
+`.venv/Scripts/python.exe output/run_google_retention_postgres.py`:19 PASS, exit0,
+including both locking races; output/google-retention-postgres.log. Runner's finally
+dropped its uniquely generated test DB. Provider calls mocked, no working DB changed.
+Earlier affected/dependent116 PASS remains evidence for unchanged provider/import
+paths; the final focused run covers subsequent retention changes. Build/types/i18n
+inputs unchanged since PASS. Working diff hygiene PASS; no CI requested/run.
+
+Browser inventory still exposes Chrome6 and target fixture1634131116, but the
+target attach remains unavailable. No screenshot/interaction acceptance claimed.
+Pending owner recovery request covers opening the fixture and enabling extension
+access; Platforma Digital profile is also needed for Google Console. No bypass via
+native/CDP/another browser. Owned Vite18743 session43553 remains for resumption.
+
+Canonical source only. Starting867981fa advanced externally to31530acd via
+b4a911b2/31530acd medical/reception work; this task did not create those commits.
+Retention files and exact Google hunks in STATUS/integrations/evidence remain
+uncommitted, unstaged; foreign auth/medical/YCloud WIP preserved. Publication is
+blocked by required visual acceptance, not missing owner permission. No retention
+deployment or first apply. Desktop retention draft now describes local implementation
+and explicitly leaves target activation/publication unfulfilled.
+
+Next: restore target Chrome access, inspect expired-import and enabled disconnect
+notices in RU/KK/EN/representative widths with screenshots/actions; finish scoped
+publication, then update exact production candidate with retention. Policy factual
+publication, Google branding/scope verification, target backup/migrations0014+0015,
+configuration, reviewed dry-run/activation/monitoring and real-provider production
+acceptance remain open. Do not mark production ready from these local checks.
+
+### Retention UI acceptance —24Nov2026
+Prior backend18/PG19/build PASS and blocked UI → owner restored Platforma Digital
+Chrome7 → no product rewrite. Starting HEAD31530acd, same canonical root/branch,
+foreign WIP preserved. Actual target fixture opened/read/screenshotted, so recovery
+is verified beyond an empty/new tab. Existing Vite18743 serves canonical frontend.
+Added synthetic `google-retention` fixture using real Cards/AuthProvider/Modal with
+mocked adapters; no real grants/disconnects or remote writes. Existing import fixture
+checks expired preview. Anti Slop during/copywriting requirements retained: accurate
+retention copy, existing visual components, readable RU/KK/EN, keyboard/focus and
+conditional promises; no design changes. Backend gates reused for unchanged inputs.
+
+Visual PASS: expired source hides mapping/confirm and gives recovery instruction,
+RU/KK desktop and RU/KK/EN390x844; disconnect dialogs both providers RU desktop,
+KK/EN390x844, complete text/no horizontal overflow, clear actions; Escape closes and
+returns focus; Tab reaches confirmation with visible focus; synthetic disconnect
+changes each card to Connect. Empty Calendar name falls back to translated label.
+Disabled retention hides30d promise in both dialogs. Existing loading seen; no
+changed async/error path, prior provider recovery evidence retained. Screenshots
+captured and visually inspected under output/google-retention-ui-20261124; viewport
+reset. This is scoped UI evidence, not a new real-provider production PASS.
+Build/types/i18n8254 PASS (foreign dictionary additions included),
+output/google-retention-ui-final-build.log; existing chunk warning only.
+
+Google Console read-only24Nov: correct Platforma Digital account/project selected;
+verification center still says Testing, not production approval. Branding app name
+PlatformaCRM/domain platformacrm.kz present; home/privacy/terms URLs empty. No Google
+settings changed. Public policy and target acceptance still required before launch.

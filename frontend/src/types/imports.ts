@@ -12,6 +12,7 @@ export type ImportJob = {
   mapping_json: Record<string, string>;
   mapping_fields?: string[];
   preview_json: {
+    retention_expired?: boolean;
     headers?: string[];
     rows?: Array<Record<string, string>>;
     import_summary?: ImportSummary;

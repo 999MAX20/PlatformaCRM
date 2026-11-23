@@ -1,4 +1,8 @@
 export const googleSheets: Record<string, string> = {
+  "googleSheets.snapshotExpired": "The import source has expired",
+  "googleSheets.snapshotExpiredHelp": "Select the spreadsheet or upload the file again to start a new import. Saved clients remain in CRM.",
+  "googleSheets.retentionNotice": "Saved export links are removed from CRM 30 days after disconnection. The next export requires a new spreadsheet; previous spreadsheets remain in Google.",
+  "googleCalendar.retentionNotice": "External busy intervals are removed on disconnection. The account email and saved calendar names are removed after 30 days. Minimal identifiers are retained so reconnecting does not create duplicate events.",
   "googleSheets.identityField": "Phone and email",
   "googleSheets.identityConflict": "Phone or email matches multiple clients. Check the contacts in the sheet and CRM, then preview the import again.",
   "googleSheets.connect": "Connect Google",

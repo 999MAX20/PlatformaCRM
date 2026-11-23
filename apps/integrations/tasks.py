@@ -1,6 +1,15 @@
 from celery import shared_task
 
 
+@shared_task(name="integrations.cleanup_google_data", queue="integrations", soft_time_limit=240, time_limit=300)
+def cleanup_google_data():
+    from django.conf import settings
+    from apps.integrations.google_retention import cleanup_google
+    if not settings.GOOGLE_RETENTION_ENABLED:
+        return {"enabled": False}
+    return cleanup_google(apply=True)
+
+
 @shared_task(name="integrations.process_google_calendars", queue="integrations")
 def process_google_calendars():
     from apps.integrations.google_calendar_sync import process_due

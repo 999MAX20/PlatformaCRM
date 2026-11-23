@@ -68,6 +68,11 @@ def set_enabled(connection, actor, *, binding_id, enabled):
             specialist(connection, actor, binding.resource_id)
             binding.last_sync_at = None
             binding.next_sync_at = timezone.now()
-        binding.save(update_fields=["enabled", "last_sync_at", "next_sync_at"])
+        else:
+            binding.busy.all().delete()
+            binding.coverage_start = binding.coverage_end = None
+            binding.last_sync_at = None
+            binding.next_sync_at = None
+        binding.save(update_fields=["enabled", "last_sync_at", "next_sync_at", "coverage_start", "coverage_end"])
         google_oauth.audit(connection, actor, "google_calendar_enabled" if enabled else "google_calendar_disabled")
         return binding_status(binding)

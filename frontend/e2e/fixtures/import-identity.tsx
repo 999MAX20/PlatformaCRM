@@ -16,6 +16,11 @@ const initial = {
   errors_json: { rows: [{ row: 1, field: "identity", message }] }, updated_at: "2026-11-23T00:00:00Z",
 } as unknown as ImportJob;
 let current = initial;
+if (new URLSearchParams(window.location.search).has("expired")) {
+  initial.status = "cancelled";
+  initial.preview_json = { retention_expired: true };
+  initial.errors_json = {};
+}
 importExportApi.errors = async () => ({ count: current.errors_json?.rows?.length || 0, next: null, previous: null, results: current.errors_json?.rows || [] });
 importExportApi.preview = async (_id, mapping) => {
   const errors = mapping.email ? [{ row: 1, field: "identity", message }] : [];
