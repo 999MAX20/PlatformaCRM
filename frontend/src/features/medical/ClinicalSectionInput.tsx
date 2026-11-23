@@ -1,11 +1,12 @@
-import type { ClinicalContent, ClinicalField } from "../../api/medicalClinical";
+import type { ClinicalContent, ClinicalField, ClinicalPlanAccess } from "../../api/medicalClinical";
 import { Textarea } from "../../components/ui/Textarea";
 import { useI18n } from "../../lib/i18n";
 import { ClinicalPlanSteps } from "./ClinicalPlanSteps";
 
-export function ClinicalSectionInput({ field, content, onChange, disabled = false, readOnly = false }: {
+export function ClinicalSectionInput({ field, content, onChange, disabled = false, readOnly = false, planAccess }: {
   field: ClinicalField; content: ClinicalContent; onChange: (value: ClinicalContent) => void;
   disabled?: boolean; readOnly?: boolean;
+  planAccess?: ClinicalPlanAccess;
 }) {
   const { t } = useI18n();
   const label = t(`medical.clinical.${field}`);
@@ -41,6 +42,6 @@ export function ClinicalSectionInput({ field, content, onChange, disabled = fals
       {t("medical.clinical.notApplicable")}
     </label>
     {field === "plan" && !notApplicable ? <ClinicalPlanSteps content={content} onChange={onChange}
-      disabled={disabled} readOnly={readOnly} /> : null}
+      disabled={disabled} readOnly={readOnly} planAccess={planAccess} /> : null}
   </div>;
 }

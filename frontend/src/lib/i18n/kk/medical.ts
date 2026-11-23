@@ -1,4 +1,13 @@
 export const medical = {
+  "medical.plan.visitStep": "{service} · №{plan} жоспар, {position}-қадам",
+  "medical.plan.linkVisit": "Қабылдаумен байланыстыру",
+  "medical.plan.changeVisit": "Байланысты өзгерту",
+  "medical.plan.unlinkVisit": "Байланысты алып тастау",
+  "medical.plan.confirmUnlink": "Жоба нұсқасынан байланысты алып тастау керек пе? Қабылдау қадамы мен сақталған тарих қалады.",
+  "medical.plan.selectVisit": "Қабылдау қадамы",
+  "medical.plan.applyVisit": "Байланыстыру",
+  "medical.plan.noVisitSteps": "Қолжетімді қабылдау қадамдары жоқ",
+
   "medical.plan.remove": "Жою",
   "medical.plan.steps": "Клиникалық жоспар қадамдары",
   "medical.plan.step": "{number}-қадам",

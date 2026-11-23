@@ -10,6 +10,7 @@ from threading import Lock
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 from scripts.browser_test_runtime import configure_browser_runtime
+plan_links_fixture = os.environ.get("E2E_MEDICAL_PLAN_LINKS") == "1"
 configure_browser_runtime()
 import django
 django.setup()
@@ -67,4 +68,10 @@ if not Business.objects.filter(slug="medical-role").exists():
         expected_revision=2, decision="complete", reason="Synthetic history completion", idempotency_key="browser-history-close")
     fixture.appointment.status = "completed"
     fixture.appointment.save(update_fields=["status"])
+    if plan_links_fixture:
+        from apps.scheduling.models import VisitPlan, VisitPlanStep
+        plan = VisitPlan.objects.create(business=fixture.business, client=fixture.patient.client,
+                                       responsible_user=fixture.doctor, created_by=fixture.owner)
+        VisitPlanStep.objects.create(plan=plan, position=1, service=fixture.appointment.service,
+                                    resource=fixture.appointment.resource, branch=fixture.first)
 call_command("runserver", f"127.0.0.1:{os.environ['E2E_DJANGO_PORT']}", use_reloader=False)

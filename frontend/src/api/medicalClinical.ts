@@ -7,9 +7,15 @@ export type ClinicalBasis =
 export type ClinicalReadScope = ClinicalScope & ClinicalBasis;
 export const clinicalFields = ["complaints", "anamnesis", "allergies", "contraindications", "examination", "diagnosis", "procedures", "plan", "epicrisis"] as const;
 export type ClinicalField = typeof clinicalFields[number];
+export type ClinicalVisitStep = { id: number; plan_id: number; position: number; service_name: string };
+export type ClinicalPlanReadScope = ClinicalScope & { encounter_id: number } & (
+  | ClinicalBasis
+  | { correction_access_id: number; appointment_id?: never; participation_id?: never }
+);
+export type ClinicalPlanAccess = { scope: ClinicalPlanReadScope; onDenied: (cause: unknown) => void };
 export type ClinicalContent = Partial<Record<ClinicalField, string>> & {
   not_applicable?: Partial<Record<ClinicalField, string>>;
-  plan_steps?: { id: string; description: string }[];
+  plan_steps?: { id: string; description: string; visit_step?: ClinicalVisitStep }[];
 };
 export type EncounterState = "draft" | "finalized";
 
@@ -109,6 +115,9 @@ async function command<T>(path: string, payload: object, idempotencyKey: string,
 }
 
 export const medicalClinicalApi = {
+  visitSteps: async (scope: ClinicalPlanReadScope & { before_id?: number }, signal?: AbortSignal) =>
+    (await apiClient.get<{ results: ClinicalVisitStep[]; next_before_id: number | null }>(`${root}visit-steps/`,
+      { params: scope, signal })).data,
   appointmentContext: async (scope: AppointmentClinicalScope, signal?: AbortSignal) => {
     const { data } = await apiClient.get<AppointmentClinicalContext>(`${root}appointment-context/`, { params: scope, signal });
     return data;

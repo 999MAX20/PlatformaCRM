@@ -1,4 +1,13 @@
 export const medical = {
+  "medical.plan.visitStep": "{service} · plan #{plan}, step {position}",
+  "medical.plan.linkVisit": "Link to visit step",
+  "medical.plan.changeVisit": "Change link",
+  "medical.plan.unlinkVisit": "Remove link",
+  "medical.plan.confirmUnlink": "Remove the draft link? The visit step and saved history remain.",
+  "medical.plan.selectVisit": "Visit step",
+  "medical.plan.applyVisit": "Link step",
+  "medical.plan.noVisitSteps": "No available visit steps",
+
   "medical.plan.remove": "Remove",
   "medical.plan.steps": "Clinical plan steps",
   "medical.plan.step": "Step {number}",

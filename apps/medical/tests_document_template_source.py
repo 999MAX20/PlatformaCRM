@@ -85,6 +85,27 @@ class DocumentTemplateSourceTests(TestCase):
         self.assertEqual(document.snapshot_encrypted, before)
         self.assertEqual(read_document_revision(document)["clinical"], risks)
 
+    def test_visit_link_snapshot_stays_exact_after_unlink_and_service_rename(self):
+        from apps.businesses.models import BusinessCapability
+        from apps.scheduling.models import VisitPlan, VisitPlanStep
+        from .clinical_plan_links import visit_step_snapshot
+        from .encounter_services import save_primary_encounter_draft
+        BusinessCapability.objects.update_or_create(business=self.business, module_key="visit_plans", defaults={"is_enabled": True})
+        plan = VisitPlan.objects.create(business=self.business, client=self.patient.client,
+                                       responsible_user=self.doctor, created_by=self.owner)
+        step = VisitPlanStep.objects.create(plan=plan, position=1, service=self.appointment.service,
+                                           resource=self.appointment.resource, branch=self.first)
+        content = {"plan_steps": [{"id": "00000000-0000-4000-8000-000000000001",
+            "description": "Synthetic document plan", "visit_step": visit_step_snapshot(step)}]}
+        args = dict(actor=self.doctor, business_id=self.business.pk, patient_id=self.patient.pk,
+                    encounter_id=self.encounter_record.pk)
+        save_primary_encounter_draft(**args, expected_revision=1, content=content, idempotency_key="link-first")
+        self.approve()
+        document, _ = self.save(expected_encounter_revision=2)
+        save_primary_encounter_draft(**args, expected_revision=2, content={}, idempotency_key="link-remove")
+        type(self.appointment.service).objects.filter(pk=step.service_id).update(name="Later synthetic service")
+        self.assertEqual(read_document_revision(document)["clinical"], content)
+
     def test_paused_template_blocks_new_use_but_preserves_saved_document(self):
         self.approve()
         document, _ = self.save()

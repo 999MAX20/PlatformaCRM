@@ -1,4 +1,13 @@
 export const medical = {
+  "medical.plan.visitStep": "{service} · план №{plan}, шаг {position}",
+  "medical.plan.linkVisit": "Связать с посещением",
+  "medical.plan.changeVisit": "Изменить связь",
+  "medical.plan.unlinkVisit": "Убрать связь",
+  "medical.plan.confirmUnlink": "Убрать связь из черновика? Шаг посещения и сохранённая история останутся.",
+  "medical.plan.selectVisit": "Шаг посещения",
+  "medical.plan.applyVisit": "Связать",
+  "medical.plan.noVisitSteps": "Нет доступных шагов посещений",
+
   "medical.plan.remove": "Удалить",
   "medical.plan.steps": "Шаги клинического плана",
   "medical.plan.step": "Шаг {number}",

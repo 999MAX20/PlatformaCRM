@@ -147,6 +147,13 @@ for (const language of ["ru", "kk", "en"] as const) for (const width of [1440, 3
       await dialog.getByRole("textbox", { name: t["medical.clinical.contraindications"], exact: true }).fill("Synthetic corrected contraindication");
       await dialog.getByTestId("clinical-plan-steps").getByRole("button", { name: t["medical.plan.addStep"], exact: true }).click();
       await dialog.getByTestId("clinical-plan-steps").getByRole("textbox").last().fill("Synthetic corrected plan step");
+      if (process.env.E2E_MEDICAL_PLAN_LINKS === "1") {
+        const link = dialog.getByTestId("clinical-visit-link").last();
+        await link.getByRole("button", { name: t["medical.plan.linkVisit"], exact: true }).click();
+        await link.getByLabel(t["medical.plan.selectVisit"], { exact: true }).click();
+        await page.getByRole("option").filter({ hasText: "Synthetic service" }).first().click();
+        await link.getByRole("button", { name: t["medical.plan.applyVisit"], exact: true }).click();
+      }
       const procedureLabel = t["medical.clinical.procedures"];
       await dialog.getByRole("checkbox", { name: t["medical.clinical.notApplicableFor"].replace("{field}", procedureLabel), exact: true }).check();
       await dialog.getByRole("textbox", { name: t["medical.clinical.notApplicableReason"].replace("{field}", procedureLabel), exact: true }).fill("Synthetic correction consultation only");
@@ -163,6 +170,7 @@ for (const language of ["ru", "kk", "en"] as const) for (const width of [1440, 3
       await expect(dialog.getByRole("textbox", { name: t["medical.clinical.allergies"], exact: true })).toHaveValue(`Synthetic corrected allergy ${language}`);
       await expect(dialog.getByRole("textbox", { name: t["medical.clinical.contraindications"], exact: true })).toHaveValue("Synthetic corrected contraindication");
       await expect(dialog.getByTestId("clinical-plan-steps").getByRole("textbox").last()).toHaveValue("Synthetic corrected plan step");
+      if (process.env.E2E_MEDICAL_PLAN_LINKS === "1") await expect(dialog.getByTestId("clinical-visit-link").last()).toContainText("Synthetic service");
       await dialog.getByTestId("clinical-plan-steps").screenshot({ path: info.outputPath("corrected-plan-steps.png") });
       await expect(dialog.getByRole("textbox", { name: t["medical.clinical.notApplicableReason"].replace("{field}", t["medical.clinical.procedures"]), exact: true })).toHaveValue("Synthetic correction consultation only");
       await dialog.getByRole("textbox", { name: t["medical.clinical.notApplicableReason"].replace("{field}", t["medical.clinical.procedures"]), exact: true }).locator("../..").screenshot({ path: info.outputPath("corrected-not-applicable.png") });

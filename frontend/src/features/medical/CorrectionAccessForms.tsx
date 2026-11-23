@@ -94,6 +94,8 @@ export function CorrectionDraftForm({ item, businessId, control }: { item: Corre
       {!editable ? <p role="status" className="text-sm text-platforma-subtle">{t("medical.correctionAccess.immutable")}</p> : null}
       {item.document_id ? <Textarea label={t("medical.correctionAccess.document")} value={text} onChange={event => setText(event.target.value)} readOnly={!editable} rows={12} maxLength={131072} />
         : clinicalFields.map(field => <ClinicalSectionInput key={field} field={field} content={content}
+          planAccess={{ scope: { business_id: businessId, patient_id: item.patient_id,
+            encounter_id: item.encounter_id, correction_access_id: item.id }, onDenied: control.onDenied }}
           onChange={setContent} readOnly={!editable} />)}
       {editable ? <Textarea label={t("medical.reason")} value={reason} onChange={event => setReason(event.target.value)} maxLength={2000} required /> : null}
     </>}

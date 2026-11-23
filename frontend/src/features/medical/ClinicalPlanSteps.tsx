@@ -1,11 +1,13 @@
 import { useId, useLayoutEffect, useRef } from "react";
-import type { ClinicalContent } from "../../api/medicalClinical";
+import type { ClinicalContent, ClinicalPlanAccess } from "../../api/medicalClinical";
 import { Button } from "../../components/ui/Button";
 import { Textarea } from "../../components/ui/Textarea";
 import { useI18n } from "../../lib/i18n";
+import { ClinicalPlanVisitLink, ClinicalVisitStepLabel } from "./ClinicalPlanVisitLink";
 
-export function ClinicalPlanSteps({ content, onChange, disabled, readOnly }: {
+export function ClinicalPlanSteps({ content, onChange, disabled, readOnly, planAccess }: {
   content: ClinicalContent; onChange: (value: ClinicalContent) => void; disabled: boolean; readOnly: boolean;
+  planAccess?: ClinicalPlanAccess;
 }) {
   const { t } = useI18n();
   const prefix = useId();
@@ -30,6 +32,12 @@ export function ClinicalPlanSteps({ content, onChange, disabled, readOnly }: {
           value={step.description} maxLength={4000} disabled={disabled} readOnly={readOnly}
           onChange={event => onChange({ ...content, plan_steps: steps.map(item => item.id === step.id
             ? { ...item, description: event.target.value } : item) })} />
+        <ClinicalPlanVisitLink value={step.visit_step} access={planAccess} disabled={disabled} readOnly={readOnly}
+          onChange={value => onChange({ ...content, plan_steps: steps.map(item => {
+            if (item.id !== step.id) return item;
+            const next = { ...item }; if (value) next.visit_step = value; else delete next.visit_step;
+            return next;
+          }) })} />
         {!readOnly ? <div className="flex flex-wrap gap-2">
           <Button type="button" variant="secondary" size="lg" disabled={blocked || index === 0}
             aria-label={t("medical.plan.moveUpStep", { number: index + 1 })} onClick={() => move(index, -1)}>{t("medical.plan.moveUp")}</Button>
@@ -62,6 +70,7 @@ export function ClinicalPlanStepsRead({ content }: { content: ClinicalContent })
     <ol className="list-decimal space-y-2 pl-5">
       {content.plan_steps.map(step => <li key={step.id} className="whitespace-pre-wrap break-words text-sm">
         {step.description || t("medical.clinical.notRecorded")}
+        {step.visit_step ? <ClinicalVisitStepLabel step={step.visit_step} /> : null}
       </li>)}
     </ol>
   </div>;

@@ -15,6 +15,7 @@ proposal_fixture = os.environ.get("E2E_PROPOSAL") == "1"
 roles_fixture = os.environ.get("E2E_MEDICAL_ROLES") == "1"
 templates_fixture = os.environ.get("E2E_MEDICAL_TEMPLATES") == "1"
 orders_fixture = os.environ.get("E2E_MEDICAL_ORDERS") == "1"
+plan_links_fixture = os.environ.get("E2E_MEDICAL_PLAN_LINKS") == "1"
 rollout_fixture = os.environ.get("E2E_MEDICAL_ROLLOUT") == "1"
 configure_browser_runtime()
 import django
@@ -84,6 +85,16 @@ if not Business.objects.filter(slug="medical-role").exists():
             resource=fixture.staff, branch=fixture.first,
             start_at=fixture.appointment.start_at + timedelta(days=index),
             end_at=fixture.appointment.end_at + timedelta(days=index))
+if plan_links_fixture:
+    from apps.scheduling.models import VisitPlan, VisitPlanStep
+    business = Business.objects.get(slug="medical-role")
+    for appointment in Appointment.objects.filter(business=business).select_related("resource"):
+        plan, created = VisitPlan.objects.get_or_create(business=business, client_id=appointment.client_id,
+            defaults={"responsible_user_id": appointment.resource.linked_user_id, "created_by_id": business.owner_id})
+        if created:
+            for position in (1, 2):
+                VisitPlanStep.objects.create(plan=plan, position=position, service_id=appointment.service_id,
+                    resource_id=appointment.resource_id, branch_id=appointment.branch_id)
 if rollout_fixture:
     from apps.businesses.medical_rollout import activate_medical_profile
     from apps.core.models import AuditLog

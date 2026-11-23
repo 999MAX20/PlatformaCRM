@@ -598,6 +598,24 @@ class MedicalEncounterRevision(models.Model):
         ]
 
 
+class MedicalPlanStepLink(models.Model):
+    version = models.ForeignKey(MedicalEncounterRevision, on_delete=models.PROTECT, related_name="plan_step_links")
+    step_id = models.UUIDField()
+    visit_step = models.ForeignKey("scheduling.VisitPlanStep", on_delete=models.PROTECT,
+                                   related_name="medical_version_links")
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["version", "step_id"], name="medical_plan_version_step_unique")]
+
+    def clean(self):
+        super().clean()
+        from .clinical_plan_links import patient_visit_steps
+        version = MedicalEncounterRevision.objects.select_related("encounter__patient").filter(pk=self.version_id).first()
+        if version is None or not patient_visit_steps(business_id=version.encounter.business_id,
+                client_id=version.encounter.patient.client_id).filter(pk=self.visit_step_id).exists():
+            raise ValidationError({"visit_step": "Select a visit step of this patient and business."})
+
+
 class MedicalCredentialProfile(TimeStampedModel):
     business = models.ForeignKey("businesses.Business", on_delete=models.PROTECT,
                                  related_name="medical_credential_profiles")

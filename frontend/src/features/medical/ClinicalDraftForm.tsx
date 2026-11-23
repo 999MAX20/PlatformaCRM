@@ -75,6 +75,8 @@ export function ClinicalDraftForm({ context, onDirty, onDenied, onReload, draftC
     <h2 className="text-base font-semibold">{t("medical.clinical.note")}</h2>
     {!context.actions.save_draft ? <p role="status" className="text-sm text-platforma-subtle">{t("medical.clinical.readOnly")}</p> : null}
     {clinicalFields.map(field => <ClinicalSectionInput key={field} field={field} content={content}
+      planAccess={{ scope: { business_id: context.business_id, patient_id: context.patient.id,
+        encounter_id: context.encounter!.id, appointment_id: context.appointment.id }, onDenied }}
       disabled={pending} readOnly={!context.actions.save_draft || conflict}
       onChange={next => {
         dirtyNow.current = JSON.stringify(next) !== JSON.stringify(baseline);

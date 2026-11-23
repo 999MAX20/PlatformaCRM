@@ -35,7 +35,8 @@ def validate_clinical_draft(content):
             raise ValidationError({"content": "Provide at most 100 clinical plan steps."})
         seen = set()
         for step in steps:
-            if (not isinstance(step, dict) or set(step) != {"id", "description"}
+            if (not isinstance(step, dict) or not {"id", "description"} <= set(step)
+                    or set(step) - {"id", "description", "visit_step"}
                     or not isinstance(step["id"], str) or not isinstance(step["description"], str)
                     or len(step["description"]) > 4000):
                 raise ValidationError({"content": "Provide a step identifier and description of at most 4000 characters."})
@@ -46,6 +47,12 @@ def validate_clinical_draft(content):
             if canonical != step["id"] or canonical in seen:
                 raise ValidationError({"content": "Step identifiers must be canonical and unique."})
             seen.add(canonical)
+            if "visit_step" in step:
+                link = step["visit_step"]
+                if (not isinstance(link, dict) or set(link) != {"id", "plan_id", "position", "service_name"}
+                        or any(type(link[key]) is not int or link[key] <= 0 for key in ("id", "plan_id", "position"))
+                        or not isinstance(link["service_name"], str) or len(link["service_name"]) > 255):
+                    raise ValidationError({"content": "Provide a valid visit step snapshot."})
         if steps and "plan" in values.get("not_applicable", {}):
             raise ValidationError({"content": "A non-applicable plan cannot contain steps."})
         values["plan_steps"] = [dict(step) for step in steps]
@@ -72,6 +79,8 @@ def append_encounter_revision(*, encounter, author, content, reason=""):
     if current.revision != encounter.revision:
         raise InvalidTransition("The encounter changed; reload its current revision.")
     current.clean()
+    from .clinical_plan_links import validate_plan_links_for_write, store_plan_links
+    validate_plan_links_for_write(encounter=current, actor=author, content=content)
     staging = encrypt_medical_value("{}", business_id=current.business_id,
         subject_id=current.pk, purpose="encounter_staging")
     version = MedicalEncounterRevision.objects.create(encounter=current, revision=current.revision,
@@ -82,6 +91,7 @@ def append_encounter_revision(*, encounter, author, content, reason=""):
     version.reason_encrypted = encrypt_medical_value(reason, business_id=current.business_id,
         subject_id=version.pk, purpose="encounter_reason")
     version.save(update_fields=["content_encrypted", "reason_encrypted"])
+    store_plan_links(version=version, content=content)
     return version
 
 
@@ -101,6 +111,8 @@ def read_encounter_revision(version):
         if any(type(data[key]) is not type(value) or data[key] != value for key, value in expected.items()):
             raise ValueError
         content = validate_clinical_draft(data["content"])
+        from .clinical_plan_links import verify_plan_links
+        verify_plan_links(version=current, content=content)
         reason = decrypt_medical_value(current.reason_encrypted, business_id=encounter.business_id,
             subject_id=current.pk, purpose="encounter_reason")
         if len(reason) > 2000:
