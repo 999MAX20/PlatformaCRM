@@ -9,6 +9,7 @@ import uuid
 from apps.businesses.models import TimeStampedModel
 from .file_models import MedicalAttachment, MedicalAttachmentRevision
 from .document_artifact_models import MedicalDocumentArtifact
+from .signing_models import MedicalSigningSession, MedicalSigningEvent
 from .assistant_models import AppointmentAssistant
 from .reception_models import ReceptionBookingRequest
 from .document_rule_models import MedicalDocumentKind, MedicalDocumentRuleRevision
@@ -340,6 +341,8 @@ class MedicalAuditEvent(models.Model):
         DOCUMENT_DRAFT_CREATED = "document_draft_created", "Document draft created"
         DOCUMENT_DRAFT_SAVED = "document_draft_saved", "Document draft saved"
         DOCUMENT_REVIEW_SUBMITTED = "document_review_submitted", "Document submitted for review"
+        DOCUMENT_SIGNING_CHANGED = "document_signing_changed", "Document signing changed"
+        DOCUMENT_HEAD_CONFIRMED = "document_head_confirmed", "Document content confirmed by medical head"
         DOCUMENT_REVIEW_CONFIRMED = "document_review_confirmed", "Document content confirmed by clinician"
         DOCUMENT_REVIEW_WITHDRAWN = "document_review_withdrawn", "Document returned to draft"
         DOCUMENT_EXPORTED = "document_exported", "Document exported"
@@ -416,7 +419,7 @@ class MedicalAuditEvent(models.Model):
                                                "participation_declined", "participation_withdrawn", "participation_ended",
                                                "encounter_opened", "encounter_draft_saved", "record_opened",
                                                "tooth_observation_saved", "document_draft_created",
-                                               "document_draft_saved", "document_review_submitted", "document_review_withdrawn", "document_review_confirmed", "document_exported", "document_print_requested", "template_draft_created",
+                                               "document_draft_saved", "document_review_submitted", "document_review_withdrawn", "document_review_confirmed", "document_head_confirmed", "document_signing_changed", "document_exported", "document_print_requested", "template_draft_created",
                                                "template_draft_saved", "template_submitted", "template_approved",
                                                "template_rejected", "credential_confirmed", "template_activated",
                                                "template_deactivated", "document_rules_saved", "identity_correction_requested",
@@ -493,10 +496,10 @@ class MedicalAuditEvent(models.Model):
                 models.Q(patient__isnull=False, representative__isnull=True, participation__isnull=True,
                          encounter_version__isnull=True, record__isnull=True, tooth_history__isnull=True,
                          action__in=["read", "document_draft_created", "document_draft_saved",
-                                     "document_exported", "document_print_requested", "document_review_submitted", "document_review_withdrawn", "document_review_confirmed"])),
+                                     "document_exported", "document_print_requested", "document_review_submitted", "document_review_withdrawn", "document_review_confirmed", "document_head_confirmed", "document_signing_changed"])),
                 name="medical_audit_document_relation"),
             models.CheckConstraint(condition=(~models.Q(action__in=["document_draft_created", "document_draft_saved",
-                                                                  "document_exported", "document_print_requested", "document_review_submitted", "document_review_withdrawn", "document_review_confirmed"]) |
+                                                                  "document_exported", "document_print_requested", "document_review_submitted", "document_review_withdrawn", "document_review_confirmed", "document_head_confirmed", "document_signing_changed"]) |
                 models.Q(document_version__isnull=False)), name="medical_audit_document_needed"),
             models.CheckConstraint(condition=(models.Q(template_version__isnull=True) |
                 models.Q(patient__isnull=True, representative__isnull=True, participation__isnull=True,
@@ -897,6 +900,20 @@ class MedicalDocumentReviewTransition(models.Model):
             models.CheckConstraint(condition=models.Q(state__in=["draft", "ready_for_review", "reviewed"], state_revision__gte=2)
                 & ~models.Q(reason_encrypted=""), name="medical_document_review_transition_valid"),
         ]
+
+
+class MedicalDocumentHeadConfirmation(models.Model):
+    submission = models.OneToOneField(MedicalDocumentReviewTransition, on_delete=models.PROTECT,
+        related_name="head_confirmation")
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT,
+        related_name="medical_document_head_confirmations")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def clean(self):
+        super().clean()
+        if not MedicalDocumentReviewTransition.objects.filter(
+                pk=self.submission_id, state="ready_for_review").exists():
+            raise ValidationError({"submission": "Select a document review submission."})
 
 
 class MedicalCorrectionAccess(TimeStampedModel):

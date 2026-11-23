@@ -15,7 +15,9 @@ from .audit import write_patient_audit
 from .document_artifact_access import document_artifact_access
 from .document_artifact_content import register_document_artifact, read_document_artifact_manifest, verify_document_artifact_bytes
 from .document_content import read_document_revision
-from .document_pdf import DocumentRenderUnavailable, render_draft_pdf
+from .document_pdf import DocumentRenderUnavailable, render_draft_pdf, render_signing_pdf
+from .document_signing_prerequisites import assert_document_signing_prerequisites
+from .role_access import assert_medical_branch_permission
 from .document_docx import render_draft_docx
 from .document_logo import DocumentLogoUnavailable, capture_document_logo
 from .document_print_snapshot import draft_print_snapshot
@@ -84,7 +86,11 @@ def prepare_document_draft_docx(**scope):
     return _prepare_document_draft(format="docx", **scope)
 
 
-def _prepare_document_draft(*, actor, business_id, patient_id, version_id, language, format, **basis):
+def prepare_document_signing_pdf(**scope):
+    return _prepare_document_draft(format="pdf", rendition="signing", **scope)
+
+
+def _prepare_document_draft(*, actor, business_id, patient_id, version_id, language, format, rendition="draft", **basis):
     if not isinstance(language, str) or language not in {"ru", "kk", "en"}:
         raise ValidationError({"language": "Select a supported document language."})
     stored = []
@@ -94,9 +100,15 @@ def _prepare_document_draft(*, actor, business_id, patient_id, version_id, langu
                 version_id=version_id, action="export" if format == "docx" else "view", **basis)
             if format == "docx":
                 assert_editable_docx(context)
+            if rendition == "signing":
+                assert_medical_branch_permission(actor, context.business, "medical_documents", "sign",
+                    branch=context.version.document.encounter.branch)
+                if context.correction is not None or context.version.document.encounter.record.state != "active":
+                    raise PermissionDenied()
+                assert_document_signing_prerequisites(context.version)
             if context.version.document.state not in {"draft", "ready_for_review", "reviewed"}:
                 raise InvalidTransition("Select an unsigned document for this operation.")
-            item = MedicalDocumentArtifact.objects.filter(version=context.version, format=format, language=language).first()
+            item = MedicalDocumentArtifact.objects.filter(version=context.version, format=format, language=language, rendition=rendition).first()
             replayed = item is not None
             if item is not None:
                 read_document_artifact_manifest(item)
@@ -106,7 +118,8 @@ def _prepare_document_draft(*, actor, business_id, patient_id, version_id, langu
                     logo = _version_logo(context.version, snapshot)
                     data = draft_print_snapshot(snapshot=snapshot, revision=context.version.revision,
                         created_at=context.version.created_at, language=language, captured_logo=logo)
-                    body = render_draft_docx(data) if format == "docx" else render_draft_pdf(data)
+                    body = (render_signing_pdf(data) if rendition == "signing" else
+                        render_draft_docx(data) if format == "docx" else render_draft_pdf(data))
                 except (DocumentRenderUnavailable, DocumentLogoUnavailable):
                     raise DocumentPDFUnavailable() from None
                 limit = get_storage_limit_mb(context.business)
@@ -123,7 +136,8 @@ def _prepare_document_draft(*, actor, business_id, patient_id, version_id, langu
                 stored.append((blob.file.storage, blob.file.name))
                 blob.save(force_insert=True)
                 item = register_document_artifact(version=context.version, attachment=blob, format=format,
-                    language=language, sha256=hashlib.sha256(body).hexdigest(), renderer=f"draft-{format}-v1", captured_logo=logo)
+                    language=language, sha256=hashlib.sha256(body).hexdigest(), renderer=f"{rendition}-{format}-v1", captured_logo=logo,
+                    rendition=rendition)
             write_patient_audit(actor=actor, business=context.business, patient=context.patient, action="read",
                 document_version=context.version, correction_access=context.correction)
         return item, replayed
@@ -158,7 +172,7 @@ def _read_document_draft(*, actor, business_id, patient_id, version_id, language
             if format == "docx":
                 assert_editable_docx(context)
             item = MedicalDocumentArtifact.objects.select_related("attachment").filter(
-                version=context.version, format=format, language=language).first()
+                version=context.version, format=format, language=language, rendition="draft").first()
             if item is None:
                 raise NotFound()
             read_document_artifact_manifest(item)

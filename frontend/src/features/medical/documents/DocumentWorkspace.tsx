@@ -195,10 +195,12 @@ function DocumentDetail({ scope, row, canUpdate, onEdit, onDenied, reviewControl
       <p className="break-words text-sm text-platforma-subtle">{t("medical.templates.version", { revision: version.revision })} · {version.snapshot.prepared_by.name} · {formatDateTime(version.created_at, undefined, true, localeByLanguage[language])}</p>
       <p className="text-sm">{t(version.revision !== current ? "medical.documents.recorded" : version.state === "draft" ? "medical.clinical.state.draft" : version.state === "ready_for_review" ? "medical.documents.readyForReview" : version.state === "reviewed" ? "medical.documents.reviewed" : "medical.documents.recorded")}</p>
       <div className="whitespace-pre-wrap break-words text-sm" data-testid="medical-document-text">{version.snapshot.document_text ?? version.snapshot.template.text}</div>
-      <DocumentSavedRules key={version.version_id} rules={version.snapshot.document_rules} />
+      <DocumentSavedRules key={`rules-${version.version_id}`} rules={version.snapshot.document_rules} scope={readScope}
+        versionId={version.version_id} onDenied={onDenied} />
       {version.snapshot.document_text !== undefined ? <DocumentPdf key={`${version.version_id}-${language}`} scope={readScope}
         versionId={version.version_id} title={version.snapshot.template.title} onDenied={onDenied} /> : null}
-      <DocumentReview key={version.version_id} scope={readScope} versionId={version.version_id}
+      <DocumentReview key={`review-${version.version_id}`} scope={readScope} versionId={version.version_id}
+        headRequired={version.snapshot.document_rules?.rule.reviewers.includes("medical_head") ?? false}
         control={reviewControl} canEdit={canUpdate} onState={reviewState} />
       {version.snapshot.reason ? <p className="whitespace-pre-wrap break-words text-sm">{t("medical.templates.reason")}: {version.snapshot.reason}</p> : null}
       {canUpdate && !historyError && !historyLoading && version.state === "draft" && version.revision === current && version.snapshot.template_source ?

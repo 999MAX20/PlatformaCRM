@@ -13,6 +13,10 @@ from .document_artifact_services import (prepare_document_draft_pdf, read_docume
     prepare_document_draft_docx, read_document_draft_docx, document_artifact_can_docx, DOCX_CONTENT_TYPE)
 from .document_export_history import list_document_export_history
 from .document_review_services import read_document_review, transition_document_review
+from .document_requirements import read_document_requirements
+from .document_head_review import confirm_document_by_head, read_document_head_review
+from .signing_services import read_document_signing, read_signing_pdf, start_synthetic_signing, advance_synthetic_signing, signing_session_data
+from .document_artifact_services import prepare_document_signing_pdf
 from .file_audit import record_denied_file_access as record_denied_document_access
 
 
@@ -35,6 +39,10 @@ class DocumentArtifactSerializer(DocumentScopedReadSerializer):
     language = serializers.ChoiceField(choices=("ru", "kk", "en"))
 
 
+class DocumentRequirementsSerializer(DocumentScopedReadSerializer):
+    correction_access_id = serializers.IntegerField(min_value=1, required=False)
+
+
 class DocumentExportHistorySerializer(DocumentScopedReadSerializer):
     correction_access_id = serializers.IntegerField(min_value=1, required=False)
     before_id = serializers.IntegerField(min_value=1, required=False)
@@ -45,6 +53,21 @@ class DocumentReviewTransitionSerializer(DocumentReadSerializer):
     expected_state_revision = serializers.IntegerField(min_value=1)
     target = serializers.ChoiceField(choices=("draft", "ready_for_review", "reviewed"))
     reason = serializers.CharField(max_length=2000, allow_blank=True, trim_whitespace=False, default="")
+
+
+class DocumentHeadConfirmSerializer(DocumentScopeSerializer):
+    head_branch_id = serializers.IntegerField(min_value=1)
+    expected_state_revision = serializers.IntegerField(min_value=1)
+
+
+class DocumentSigningStartSerializer(DocumentRequirementsSerializer):
+    artifact_id = serializers.IntegerField(min_value=1)
+
+
+class DocumentSigningActionSerializer(DocumentRequirementsSerializer):
+    session_id = serializers.UUIDField()
+    expected_revision = serializers.IntegerField(min_value=1)
+    action = serializers.ChoiceField(choices=("sign", "cancel"))
 
 
 class DocumentListSerializer(DocumentScopedReadSerializer):
@@ -97,6 +120,12 @@ class MedicalDocumentViewSet(viewsets.GenericViewSet):
                 "prepare_docx": DocumentArtifactSerializer, "export_docx": DocumentArtifactSerializer,
                 "export_history": DocumentExportHistorySerializer,
                 "review_state": DocumentExportHistorySerializer,
+                "requirements": DocumentRequirementsSerializer,
+                "head_review": DocumentRequirementsSerializer,
+                "head_confirm": DocumentHeadConfirmSerializer,
+                "signing": DocumentArtifactSerializer, "prepare_signing": DocumentArtifactSerializer,
+                "start_signing": DocumentSigningStartSerializer, "advance_signing": DocumentSigningActionSerializer,
+                "signing_pdf": DocumentSigningStartSerializer,
                 "review_transition": DocumentReviewTransitionSerializer}.get(
                     self.action, DocumentScopedReadSerializer)
 
@@ -149,6 +178,73 @@ class MedicalDocumentViewSet(viewsets.GenericViewSet):
     def list(self, request):
         return self._read(request, list_patient_documents)
 
+    @action(detail=False, methods=["get"], url_path=r"versions/(?P<version_id>[0-9]+)/head-review")
+    def head_review(self, request, version_id=None):
+        serializer = self.get_serializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+        try:
+            return Response(read_document_head_review(actor=request.user, version_id=int(version_id),
+                **serializer.validated_data))
+        except (NotFound, PermissionDenied):
+            record_denied_document_access(actor=request.user, business_id=serializer.validated_data["business_id"])
+            raise
+
+    @action(detail=False, methods=["post"], url_path=r"versions/(?P<version_id>[0-9]+)/head-confirm")
+    def head_confirm(self, request, version_id=None):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            item, replayed = confirm_document_by_head(actor=request.user, version_id=int(version_id),
+                idempotency_key=request.headers.get("Idempotency-Key"), **serializer.validated_data)
+        except (NotFound, PermissionDenied):
+            record_denied_document_access(actor=request.user, business_id=serializer.validated_data["business_id"])
+            raise
+        return Response({"id": item.pk, "version_id": item.submission.version_id,
+            "submission_id": item.submission_id, "replayed": replayed})
+
+    def _signing(self, request, version_id, operation):
+        serializer = self.get_serializer(data=request.query_params if request.method == "GET" else request.data)
+        serializer.is_valid(raise_exception=True)
+        args = dict(actor=request.user, version_id=int(version_id), **serializer.validated_data)
+        try:
+            if operation == "read":
+                return Response(read_document_signing(**args))
+            if operation == "pdf":
+                response = HttpResponse(read_signing_pdf(**args), content_type="application/pdf")
+                response["Content-Disposition"] = 'inline; filename="document-signing.pdf"'
+                response["X-Content-Type-Options"] = "nosniff"
+                response["Content-Security-Policy"] = "default-src 'none'; sandbox"
+                return response
+            if operation == "prepare":
+                item, _ = prepare_document_signing_pdf(**args)
+                return Response({"artifact_id": item.pk, "scan_status": item.attachment.scan_status})
+            service = start_synthetic_signing if operation == "start" else advance_synthetic_signing
+            item, replayed = service(**args, idempotency_key=request.headers.get("Idempotency-Key"))
+            return Response(signing_session_data(item) | {"replayed": replayed})
+        except (NotFound, PermissionDenied):
+            record_denied_document_access(actor=request.user, business_id=serializer.validated_data["business_id"])
+            raise
+
+    @action(detail=False, methods=["get"], url_path=r"versions/(?P<version_id>[0-9]+)/signing")
+    def signing(self, request, version_id=None):
+        return self._signing(request, version_id, "read")
+
+    @action(detail=False, methods=["get"], url_path=r"versions/(?P<version_id>[0-9]+)/signing-pdf")
+    def signing_pdf(self, request, version_id=None):
+        return self._signing(request, version_id, "pdf")
+
+    @action(detail=False, methods=["post"], url_path=r"versions/(?P<version_id>[0-9]+)/prepare-signing")
+    def prepare_signing(self, request, version_id=None):
+        return self._signing(request, version_id, "prepare")
+
+    @action(detail=False, methods=["post"], url_path=r"versions/(?P<version_id>[0-9]+)/start-signing")
+    def start_signing(self, request, version_id=None):
+        return self._signing(request, version_id, "start")
+
+    @action(detail=False, methods=["post"], url_path=r"versions/(?P<version_id>[0-9]+)/advance-signing")
+    def advance_signing(self, request, version_id=None):
+        return self._signing(request, version_id, "advance")
+
     @action(detail=False, methods=["get"], url_path="workspace-access")
     def workspace_access(self, request):
         return self._read(request, document_workspace_access)
@@ -168,6 +264,17 @@ class MedicalDocumentViewSet(viewsets.GenericViewSet):
     @action(detail=False, methods=["get"], url_path=r"versions/(?P<version_id>[0-9]+)")
     def version(self, request, version_id=None):
         return self._read(request, read_document_for_treating_clinician, version_id=int(version_id))
+
+    @action(detail=False, methods=["get"], url_path=r"versions/(?P<version_id>[0-9]+)/requirements")
+    def requirements(self, request, version_id=None):
+        serializer = self.get_serializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+        try:
+            return Response(read_document_requirements(actor=request.user, version_id=int(version_id),
+                **serializer.validated_data))
+        except (NotFound, PermissionDenied):
+            record_denied_document_access(actor=request.user, business_id=serializer.validated_data["business_id"])
+            raise
 
     def _artifact(self, request, version_id, *, prepare, purpose="preview", format="pdf"):
         serializer = self.get_serializer(data=request.data if request.method == "POST" else request.query_params)

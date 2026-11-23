@@ -9,6 +9,9 @@ type DocumentBasis =
 export type DocumentArtifactScope = { business_id: number; patient_id: number } & DocumentBasis;
 export type DocumentArtifact = { artifact_id: number; version_id: number; language: string;
   scan_status: "pending" | "scanning" | "clean" | "infected" | "error"; replayed: boolean; can_export: boolean; can_docx: boolean };
+export type DocumentFieldRequirements = { version_id: number; revision: number; current: boolean;
+  document_state: string; state_revision: number; configured: boolean; fields_complete: boolean;
+  rule_version_id: number | null; fields: { field: string; present: boolean }[] };
 export type DocumentExportEvent = { id: number; action: "document_exported" | "document_print_requested";
   created_at: string; actor: { id: number; name: string }; version_id: number; revision: number };
 export type DocumentExportHistory = { results: DocumentExportEvent[]; next_before_id: number | null };
@@ -30,6 +33,8 @@ export async function blobResponse(request: Promise<{ data: Blob }>) {
   }
 }
 export const medicalDocumentArtifactsApi = {
+  requirements: async (scope: DocumentArtifactScope, versionId: number, signal?: AbortSignal) =>
+    (await apiClient.get<DocumentFieldRequirements>(`${root}${versionId}/requirements/`, { params: params(scope), signal })).data,
   prepareDocx: async (scope: DocumentArtifactScope, versionId: number, language: string, signal?: AbortSignal) =>
     (await apiClient.post<DocumentArtifact>(`${root}${versionId}/docx-prepare/`, params(scope, language), { signal })).data,
   downloadDocx: (scope: DocumentArtifactScope, versionId: number, language: string, signal?: AbortSignal) =>

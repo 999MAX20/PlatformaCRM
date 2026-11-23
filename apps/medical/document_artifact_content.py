@@ -15,14 +15,16 @@ from .models import MedicalDocumentArtifact, MedicalDocumentRevision
 
 
 def _binding(item):
-    return {"schema": 1, "artifact_id": item.pk, "version_id": item.version_id,
+    return {"schema": 2 if item.rendition == "signing" else 1,
+        **({"rendition": "signing"} if item.rendition == "signing" else {}),
+        "artifact_id": item.pk, "version_id": item.version_id,
         "business_id": item.version.document.business_id, "attachment_id": item.attachment_id,
         "storage_name": item.attachment.file.name, "format": item.format, "language": item.language,
         "sha256": item.sha256, "size": item.size}
 
 
 @transaction.atomic
-def register_document_artifact(*, version, attachment, format, language, sha256, renderer, captured_logo=None):
+def register_document_artifact(*, version, attachment, format, language, sha256, renderer, captured_logo=None, rendition="draft"):
     business = Business.objects.select_for_update().get(pk=version.document.business_id)
     version = MedicalDocumentRevision.objects.select_for_update().select_related("document").get(
         pk=version.pk, document__business=business)
@@ -39,7 +41,7 @@ def register_document_artifact(*, version, attachment, format, language, sha256,
     staging = encrypt_medical_value("{}", business_id=business.pk, subject_id=version.pk,
                                     purpose="document_artifact_staging")
     item = MedicalDocumentArtifact(version=version, attachment=attachment, format=format, language=language,
-        sha256=sha256, size=attachment.size, manifest_encrypted=staging)
+        sha256=sha256, size=attachment.size, manifest_encrypted=staging, rendition=rendition)
     item.full_clean()
     item.save(force_insert=True)
     manifest = {**_binding(item), "renderer": renderer,

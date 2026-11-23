@@ -39,7 +39,7 @@ test("DOCX permitted draft: quarantine retry exact download and review denial", 
     await command(`document-templates/versions/${template.version_id}/decision/`, { business_id: 1, decision: "approved", reason: "" });
     templateId = template.id;
     const kind = await command("document-kinds/", { business_id: 1, template_ids: [template.id], reason: "Synthetic DOCX permission",
-      content: { name: title, docx_allowed: true, services: [], default: { required_at: "before_completion", required_fields: ["patient.full_name"],
+      content: { name: title, docx_allowed: true, services: [], default: { required_at: "before_completion", required_fields: ["patient.full_name", "clinic.license"],
         reviewers: ["primary_clinician"], signers: [], issuable: false } } });
     kindId = kind.kind_id;
   } finally { await headContext.close(); }
@@ -84,14 +84,25 @@ test("DOCX permitted draft: quarantine retry exact download and review denial", 
   });
   expect(changedRules.ok(), await changedRules.text()).toBe(true);
   const savedRules = detail.getByTestId("document-saved-rules");
+  await page.route("**/requirements/**", route => route.fulfill({ status: 503, json: { detail: "Synthetic requirements outage" } }));
   await savedRules.locator("summary").click();
+  const presence = savedRules.getByTestId("document-field-presence");
+  await expect(presence.getByRole("button", { name: t["common.retry"], exact: true })).toBeVisible();
+  await expect(detail.getByTestId("medical-document-text")).toContainText(`Synthetic exported content ${entry.appointment_id}`);
+  await page.unroute("**/requirements/**");
+  await presence.getByRole("button", { name: t["common.retry"], exact: true }).click();
+  await expect(presence.getByRole("listitem").filter({ hasText: t["medical.fullName"] })).toContainText(t["medical.rules.fieldPresent"]);
+  await expect(presence.getByRole("listitem").filter({ hasText: t["medical.credentials.license"] })).toContainText(t["medical.rules.fieldMissing"]);
   await expect(savedRules).toContainText(title);
   await expect(savedRules).toContainText(t["medical.rules.moment.before_completion"]);
   await expect(savedRules).toContainText(t["medical.fullName"]);
   await expect(savedRules).not.toContainText("Synthetic changed rules");
   await savedRules.screenshot({ path: info.outputPath("saved-rules-desktop.png") });
+  await presence.screenshot({ path: info.outputPath("required-fields-desktop.png") });
   await page.setViewportSize({ width: 390, height: 844 });
   await savedRules.screenshot({ path: info.outputPath("saved-rules-mobile.png") });
+  await presence.evaluate(element => element.scrollIntoView({ block: "center", behavior: "instant" }));
+  await page.screenshot({ path: info.outputPath("required-fields-mobile.png") });
   await savedRules.locator("summary").click();
   await page.setViewportSize({ width: 1440, height: 1000 });
   const pdf = detail.getByTestId("medical-document-pdf");
@@ -137,4 +148,8 @@ test("DOCX permitted draft: quarantine retry exact download and review denial", 
   await expect(pdf.getByRole("button", { name: t["medical.documents.pdfPreview"], exact: true })).toBeEnabled();
   await expect(conflict).toHaveCount(0);
   await expect(pdf.getByRole("button", { name: t["medical.documents.downloadDocx"], exact: true })).toHaveCount(0);
+  await page.route("**/requirements/**", route => route.fulfill({ status: 403, json: { detail: "Synthetic revoked access" } }));
+  await savedRules.locator("summary").click();
+  await expect(detail).toHaveCount(0);
+  await expect(documents.getByText(title, { exact: true })).toHaveCount(0);
 });

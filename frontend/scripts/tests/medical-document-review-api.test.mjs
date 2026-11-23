@@ -15,6 +15,25 @@ function load(client) {
   return exports.medicalDocumentsApi;
 }
 
+test("head review reads exact scope and confirms with stable command key", async () => {
+  const calls = [];
+  const api = load({ get: async (...args) => { calls.push(args); return { data: { required: true } }; },
+    post: async (...args) => { calls.push(args); return { data: { id: 8 } }; } });
+  const scope = { business_id: 1, patient_id: 2, head_branch_id: 3 };
+  const signal = new AbortController().signal;
+  assert.equal((await api.headReview(scope, 4, signal)).required, true);
+  assert.equal(calls[0][0], "/api/medical/documents/versions/4/head-review/");
+  assert.equal(calls[0][1].params, scope);
+  assert.equal(calls[0][1].signal, signal);
+  const payload = { ...scope, expected_state_revision: 5 };
+  assert.equal((await api.headConfirm(4, payload, "head-key")).id, 8);
+  assert.equal(calls[1][0], "/api/medical/documents/versions/4/head-confirm/");
+  assert.equal(calls[1][1], payload);
+  assert.equal(calls[1][2].headers["Idempotency-Key"], "head-key");
+  await assert.rejects(api.headConfirm(4, payload, " "));
+  assert.equal(calls.length, 2);
+});
+
 test("review read keeps exact version, scope, history cursor and cancellation", async () => {
   const calls = [];
   const result = { document_state: "draft", state_revision: 3 };

@@ -10,6 +10,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 from scripts.browser_test_runtime import configure_browser_runtime
 
+signing_fixture = os.environ.get("E2E_MEDICAL_SIGNING") == "1"
 participation_fixture = os.environ.get("E2E_PARTICIPATION") == "1"
 proposal_fixture = os.environ.get("E2E_PROPOSAL") == "1"
 roles_fixture = os.environ.get("E2E_MEDICAL_ROLES") == "1"
@@ -25,6 +26,9 @@ import django
 django.setup()
 from django.conf import settings
 from django.core.management import call_command
+
+if signing_fixture:
+    settings.MEDICAL_SYNTHETIC_SIGNING_ENABLED = True
 
 if rollout_fixture:
     settings.DENTAL_MEDICAL_RELEASE_ENABLED = True
@@ -315,6 +319,64 @@ if len(sys.argv) > 2 and sys.argv[1] == "clinical-representatives-populate":
         if state == "revoked":
             relation.revoked_at, relation.revoked_by, relation.revocation_encrypted = now, appointment.business.owner, "synthetic"
         relation.save()
+    sys.exit(0)
+if len(sys.argv) > 2 and sys.argv[1] in {"head-review-prepare", "signing-prepare", "signing-doctor-prepare"}:
+    signing = sys.argv[1] != "head-review-prepare"
+    signing_doctor = sys.argv[1] == "signing-doctor-prepare"
+    from apps.medical.models import MedicalEncounter, MedicalRoleAssignment
+    from apps.medical.common_template_services import save_common_template_draft, submit_common_template
+    from apps.medical.template_reviews import decide_template_review
+    from apps.medical.document_rule_services import save_document_rules
+    from apps.medical.document_services import save_primary_document_draft
+    from apps.medical.document_review_services import transition_document_review
+    encounter = MedicalEncounter.objects.select_related("patient", "primary_clinician__user").get(
+        appointment_id=int(sys.argv[2]), business__slug="medical-role")
+    actor, patient = encounter.primary_clinician.user, encounter.patient
+    reviewer = get_user_model().objects.get(username="medical-template-head")
+    title = f"Synthetic head review {patient.pk}"
+    template, _ = save_common_template_draft(actor=reviewer, business_id=patient.business_id,
+        title=title, text="Synthetic review contents", idempotency_key=f"head-template-{patient.pk}")
+    submit_common_template(actor=reviewer, business_id=patient.business_id, version_id=template.pk,
+        idempotency_key=f"head-submit-{patient.pk}")
+    decide_template_review(actor=reviewer, business_id=patient.business_id, version_id=template.pk,
+        decision="approved", reason="", idempotency_key=f"head-template-review-{patient.pk}")
+    save_document_rules(actor=reviewer, business_id=patient.business_id, template_ids=[template.template_id],
+        reason="Synthetic review rules", idempotency_key=f"head-rules-{patient.pk}", content={
+            "name": title, "services": [], "default": {"required_at": "optional", "required_fields": [] if signing else ["patient.full_name", "clinic.license"],
+            "reviewers": ["primary_clinician", "medical_head"], "signers": ["primary_clinician", "patient_or_representative"] if signing_doctor else ["medical_head"] if signing else [], "issuable": False}})
+    version, _ = save_primary_document_draft(actor=actor, business_id=patient.business_id, patient_id=patient.pk,
+        encounter_id=encounter.pk, expected_encounter_revision=encounter.revision,
+        expected_patient_revision=patient.revision, template_version_id=template.pk,
+        document_text="Synthetic review contents", idempotency_key=f"head-document-{patient.pk}")
+    transition_document_review(actor=actor, business_id=patient.business_id, patient_id=patient.pk,
+        version_id=version.pk, appointment_id=encounter.appointment_id, expected_state_revision=1,
+        target="ready_for_review", reason="", idempotency_key=f"head-ready-{patient.pk}")
+    assignment = MedicalRoleAssignment.objects.get(member__user__email="medical-participation-head@example.test")
+    RolePermission.objects.update_or_create(business_role=assignment.business_role, resource="medical_documents",
+        action="approve", defaults={"scope": "business", "is_allowed": True})
+    if signing:
+        from django.test import override_settings
+        from apps.medical.document_head_review import confirm_document_by_head
+        from apps.medical.document_artifact_services import prepare_document_signing_pdf
+        from apps.medical.signing_services import start_synthetic_signing
+        from apps.core.models import FileAttachment
+        for signing_assignment in (assignment, MedicalRoleAssignment.objects.get(member=encounter.primary_clinician)):
+            RolePermission.objects.update_or_create(business_role=signing_assignment.business_role, resource="medical_documents",
+                action="sign", defaults={"scope": "business", "is_allowed": True})
+        confirm_document_by_head(actor=assignment.member.user, business_id=patient.business_id, patient_id=patient.pk,
+            version_id=version.pk, head_branch_id=encounter.branch_id, expected_state_revision=2,
+            idempotency_key=f"signing-head-{patient.pk}")
+        transition_document_review(actor=actor, business_id=patient.business_id, patient_id=patient.pk,
+            version_id=version.pk, appointment_id=encounter.appointment_id, expected_state_revision=2,
+            target="reviewed", reason="", idempotency_key=f"signing-review-{patient.pk}")
+        scope = dict(actor=actor, business_id=patient.business_id, patient_id=patient.pk,
+            version_id=version.pk, appointment_id=encounter.appointment_id)
+        if not signing_doctor:
+            artifact, _ = prepare_document_signing_pdf(**scope, language="ru")
+            FileAttachment.objects.filter(pk=artifact.attachment_id).update(scan_status="clean", scan_sha256=artifact.sha256)
+            with override_settings(MEDICAL_SYNTHETIC_SIGNING_ENABLED=True, ENVIRONMENT="test"):
+                start_synthetic_signing(**scope, artifact_id=artifact.pk, idempotency_key=f"signing-session-{patient.pk}")
+    print(json.dumps({"title": title, "version_id": version.pk}))
     sys.exit(0)
 if len(sys.argv) > 2 and sys.argv[1] == "historical-documents-populate":
     from apps.medical.models import MedicalEncounter

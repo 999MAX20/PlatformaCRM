@@ -95,12 +95,15 @@ def read_document_review(*, actor, business_id, patient_id, version_id, before_i
                 and document.encounter.record.state == "active")
         except (PermissionDenied, InvalidTransition):
             pass
-    history = MedicalDocumentReviewTransition.objects.filter(version=context.version).select_related("actor")
+    history = MedicalDocumentReviewTransition.objects.filter(version=context.version).select_related("actor", "head_confirmation__actor")
     if before_id is not None:
         history = history.filter(pk__lt=before_id)
     page = list(history.order_by("-pk")[:limit + 1])
     events = [{"id": event.pk, "state": event.state, "state_revision": event.state_revision,
         "actor": {"id": event.actor_id, "name": event.actor.full_name}, "created_at": event.created_at,
+        "head_confirmation": {"id": event.head_confirmation.pk,
+            "actor": {"id": event.head_confirmation.actor_id, "name": event.head_confirmation.actor.full_name},
+            "created_at": event.head_confirmation.created_at} if hasattr(event, "head_confirmation") else None,
         "reason": decrypt_medical_value(event.reason_encrypted, business_id=business_id,
             subject_id=event.pk, purpose="document_review_reason")} for event in page[:limit]]
     write_patient_audit(actor=actor, business=context.business, patient=context.patient, action="read",

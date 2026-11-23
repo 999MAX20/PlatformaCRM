@@ -95,12 +95,20 @@ def _logo(source):
 
 
 def render_draft_pdf(data: DraftPrintData) -> bytes:
+    return _render_pdf(data, draft=True)
+
+
+def render_signing_pdf(data: DraftPrintData) -> bytes:
+    return _render_pdf(data, draft=False)
+
+
+def _render_pdf(data: DraftPrintData, *, draft: bool) -> bytes:
     """Render captured data without fetching URLs, evaluating templates or reading the DB."""
     try:
         _validate(data)
         output = BytesIO()
         document = SimpleDocTemplate(output, pagesize=A4, leftMargin=20 * mm, rightMargin=20 * mm,
-            topMargin=22 * mm, bottomMargin=22 * mm, title="Medical document draft", author="Platforma CRM")
+            topMargin=22 * mm, bottomMargin=22 * mm, title="Medical document draft" if draft else "Medical document", author="Platforma CRM")
         body_style = ParagraphStyle("MedicalBody", fontName=REGULAR, fontSize=10.5, leading=15,
             spaceAfter=4 * mm, splitLongWords=True, allowWidows=0, allowOrphans=0)
         detail_style = ParagraphStyle("MedicalDetails", parent=body_style, fontSize=9, leading=12,
@@ -123,7 +131,8 @@ def render_draft_pdf(data: DraftPrintData) -> bytes:
             canvas.saveState()
             canvas.setFont(REGULAR, 8)
             canvas.setFillColor(colors.HexColor("#374151"))
-            canvas.drawRightString(A4[0] - 20 * mm, A4[1] - 13 * mm, DRAFT_LABELS[data.language])
+            if draft:
+                canvas.drawRightString(A4[0] - 20 * mm, A4[1] - 13 * mm, DRAFT_LABELS[data.language])
             canvas.setFont(REGULAR, 7.5)
             canvas.drawString(20 * mm, 12 * mm, FOOTER)
             canvas.drawRightString(A4[0] - 20 * mm, 12 * mm, str(doc.page))

@@ -14,9 +14,13 @@ export type DocumentPreview = { document_text: string; template: TemplateVersion
 export type DocumentRow = { document_id: number; version_id: number; revision: number;
   encounter_id: number; state: string; created_at: string; title: string };
 export type DocumentRevision = { version_id: number; revision: number; author_id: number; created_at: string };
+export type HeadConfirmation = { id: number; actor: { id: number; name: string }; created_at: string };
+export type DocumentHeadReview = { required: boolean; can_confirm: boolean; state_revision: number;
+  confirmation: HeadConfirmation | null };
 export type DocumentReview = { document_state: "draft" | "ready_for_review" | "reviewed"; state_revision: number;
   can_transition: boolean; next_before_id: number | null; results: { id: number; state: "draft" | "ready_for_review" | "reviewed";
-    state_revision: number; actor: { id: number; name: string }; created_at: string; reason: string }[] };
+    state_revision: number; actor: { id: number; name: string }; created_at: string; reason: string;
+    head_confirmation: HeadConfirmation | null }[] };
 export type DocumentReviewCommand = ClinicalReadScope & { expected_state_revision: number;
   target: "draft" | "ready_for_review" | "reviewed"; reason: string };
 export type DocumentVersion = Omit<DocumentRow, "encounter_id" | "title"> & { snapshot: {
@@ -39,6 +43,13 @@ async function save(path: string, payload: DocumentDraft & { expected_document_r
     { headers: { "Idempotency-Key": key } })).data;
 }
 export const medicalDocumentsApi = {
+  headReview: (scope: DocumentReadScope, id: number, signal?: AbortSignal) =>
+    read<DocumentHeadReview>(`versions/${id}/head-review/`, scope, signal),
+  headConfirm: async (id: number, payload: HeadDocumentScope & { expected_state_revision: number }, key: string) => {
+    if (!key.trim() || key.length > 128) throw new Error("Medical command requires an idempotency key of at most 128 characters.");
+    return (await apiClient.post<{ id: number; version_id: number; submission_id: number; replayed: boolean }>(
+      root + `versions/${id}/head-confirm/`, payload, { headers: { "Idempotency-Key": key } })).data;
+  },
   review: (scope: DocumentReadScope, id: number, before_id?: number, signal?: AbortSignal) =>
     read<DocumentReview>(`versions/${id}/review/`, { ...scope, before_id }, signal),
   transition: async (id: number, payload: DocumentReviewCommand, key: string) => {

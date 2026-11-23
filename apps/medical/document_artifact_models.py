@@ -9,6 +9,7 @@ class MedicalDocumentArtifact(models.Model):
                                      related_name="medical_document_artifact")
     format = models.CharField(max_length=8, choices=[("pdf", "PDF"), ("docx", "DOCX")])
     language = models.CharField(max_length=2, choices=[("ru", "RU"), ("kk", "KK"), ("en", "EN")])
+    rendition = models.CharField(max_length=8, default="draft", choices=[("draft", "Draft"), ("signing", "For signing")])
     sha256 = models.CharField(max_length=64, editable=False)
     size = models.PositiveBigIntegerField(editable=False)
     manifest_encrypted = models.TextField(editable=False)
@@ -16,7 +17,8 @@ class MedicalDocumentArtifact(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=["version", "format", "language"], name="medical_artifact_version_unique"),
+            models.UniqueConstraint(fields=["version", "format", "language", "rendition"], name="medical_artifact_version_unique"),
+            models.CheckConstraint(condition=models.Q(rendition="draft") | models.Q(rendition="signing", format="pdf"), name="medical_artifact_rendition"),
             models.CheckConstraint(condition=models.Q(format__in=["pdf", "docx"]), name="medical_artifact_format"),
             models.CheckConstraint(condition=models.Q(language__in=["ru", "kk", "en"]), name="medical_artifact_language"),
             models.CheckConstraint(condition=models.Q(size__gt=0, size__lte=10485760), name="medical_artifact_size"),

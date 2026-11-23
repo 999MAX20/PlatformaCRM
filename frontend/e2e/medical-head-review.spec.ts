@@ -1,0 +1,80 @@
+import { test, expect } from "@playwright/test";
+import { execFileSync } from "node:child_process";
+import { ru } from "../src/lib/i18n/ru";
+import { kk } from "../src/lib/i18n/kk";
+import { en } from "../src/lib/i18n/en";
+import { requireIsolatedEnvironment } from "./isolated-environment.mjs";
+
+requireIsolatedEnvironment();
+for (const language of ["ru", "kk", "en"] as const) test(`head confirms ${language}: retry, mobile and history`, async ({ page }, info) => {
+  test.setTimeout(120_000);
+  const t = { ru, kk, en }[language];
+  const fixture = (command: string, ...args: string[]) => execFileSync(process.env.E2E_PYTHON!,
+    ["e2e/clinical-runtime.py", command, ...args], { env: process.env, windowsHide: true, encoding: "utf8" });
+  const entry = JSON.parse(fixture("files-new-appointment").trim().split(/\r?\n/).at(-1)!);
+  fixture("historical-orders-context", String(entry.appointment_id));
+  const document = JSON.parse(fixture("head-review-prepare", String(entry.appointment_id)).trim().split(/\r?\n/).at(-1)!);
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.addInitScript(value => localStorage.setItem("ai_smb_language", value), language);
+  await page.goto("/login");
+  await page.locator('input[name="email"]').fill("medical-participation-head@example.test");
+  await page.locator('input[name="password"]').fill(process.env.E2E_PASSWORD!);
+  await page.locator('form button[type="submit"]').click();
+  await expect(page).toHaveURL(/\/app\//);
+  await page.goto(`/app/clients?client=${entry.client_id}&tab=timeline`);
+  const dialog = page.getByRole("dialog", { name: t["common.client"], exact: true });
+  await dialog.getByRole("tab", { name: t["medical.clinical.title"], exact: true }).click();
+  await dialog.getByLabel(t["medical.branch"], { exact: true }).click();
+  await page.getByRole("option", { name: "First", exact: true }).click();
+  const documents = dialog.getByTestId("medical-documents");
+  await documents.getByRole("button", { name: new RegExp(document.title) }).click();
+  const detail = documents.getByTestId("medical-document-detail");
+  const head = detail.getByTestId("document-head-review");
+  const confirm = head.getByRole("button", { name: t["medical.documents.headConfirm"], exact: true });
+  await expect(confirm).toBeEnabled();
+  await head.screenshot({ path: info.outputPath("head-ready-desktop.png") });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await head.evaluate(node => node.scrollIntoView({ block: "center", behavior: "instant" }));
+  await page.screenshot({ path: info.outputPath("head-ready-mobile.png") });
+  const rules = detail.getByTestId("document-saved-rules");
+  await rules.locator("summary").click();
+  const presence = rules.getByTestId("document-field-presence");
+  await expect(presence.getByText(t["medical.rules.fieldPresent"], { exact: true })).toBeVisible();
+  await expect(presence.getByText(t["medical.rules.fieldMissing"], { exact: true })).toBeVisible();
+  await presence.evaluate(node => node.scrollIntoView({ block: "center", behavior: "instant" }));
+  await page.screenshot({ path: info.outputPath("head-required-fields-mobile.png") });
+  await rules.locator("summary").click();
+  if (language === "kk") {
+    await page.route("**/head-confirm/", route => route.fulfill({ status: 409, json: { detail: "Synthetic changed review" } }));
+    await confirm.click();
+    await expect(confirm).toBeDisabled();
+    await expect(head).toContainText(t["medical.clinical.conflict"]);
+    await head.evaluate(node => node.scrollIntoView({ block: "center", behavior: "instant" }));
+    await page.screenshot({ path: info.outputPath("head-conflict-mobile.png") });
+    await page.unroute("**/head-confirm/");
+    page.once("dialog", dialog => dialog.accept());
+    await head.getByRole("button", { name: t["medical.clinical.reload"], exact: true }).click();
+    await expect(confirm).toBeEnabled();
+  }
+  await page.route("**/head-confirm/", route => route.fulfill({ status: 503, json: { detail: "Synthetic head review outage" } }));
+  await confirm.focus(); await page.keyboard.press("Enter");
+  await expect(head.getByRole("alert")).toBeVisible();
+  await expect(detail.getByTestId("medical-document-text")).toHaveText("Synthetic review contents");
+  await page.unroute("**/head-confirm/");
+  await confirm.click();
+  await expect(head.getByText(t["medical.documents.headConfirmed"], { exact: true })).toBeVisible();
+  await expect(confirm).toHaveCount(0);
+  await detail.getByRole("button", { name: t["medical.documents.reviewHistory"], exact: true }).click();
+  await expect(detail.getByTestId("document-review").locator("li").filter({ hasText: t["medical.documents.headConfirmed"] })).toHaveCount(1);
+  await head.evaluate(node => node.scrollIntoView({ block: "center", behavior: "instant" }));
+  await page.screenshot({ path: info.outputPath("head-confirmed-mobile.png") });
+  if (language === "kk") {
+    await documents.getByRole("button", { name: t["medical.documents.back"], exact: true }).click();
+    await page.route("**/head-review/**", route => route.fulfill({ status: 403, json: { detail: "Synthetic revoked access" } }));
+    await documents.getByRole("button", { name: new RegExp(document.title) }).click();
+    await expect(detail).toHaveCount(0);
+    await expect(dialog.getByRole("status")).toContainText(t["medical.denied"]);
+    await expect(documents).toHaveCount(0);
+    await expect(dialog.getByText("Synthetic review contents", { exact: true })).toHaveCount(0);
+  }
+});

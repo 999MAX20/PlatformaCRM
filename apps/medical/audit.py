@@ -125,7 +125,9 @@ def write_patient_audit(*, actor, business, patient, action, representative=None
                           MedicalAuditEvent.Actions.DOCUMENT_PRINT_REQUESTED,
                           MedicalAuditEvent.Actions.DOCUMENT_REVIEW_SUBMITTED,
                           MedicalAuditEvent.Actions.DOCUMENT_REVIEW_WITHDRAWN,
-                          MedicalAuditEvent.Actions.DOCUMENT_REVIEW_CONFIRMED}:
+                          MedicalAuditEvent.Actions.DOCUMENT_REVIEW_CONFIRMED,
+                          MedicalAuditEvent.Actions.DOCUMENT_HEAD_CONFIRMED,
+                          MedicalAuditEvent.Actions.DOCUMENT_SIGNING_CHANGED}:
             raise ValueError("Select a document read or draft action.")
         version = MedicalDocumentRevision.objects.select_related("document", "source_version").filter(
             pk=document_version.pk, document__business=business, document__encounter__business=business,
@@ -149,6 +151,19 @@ def write_patient_audit(*, actor, business, patient, action, representative=None
                     or not MedicalDocumentReviewTransition.objects.filter(version=version, actor=actor,
                         state=expected_state, state_revision=version.document.state_revision).exists()):
                 raise ValueError("A review event requires the current exact-version transition.")
+        if action == MedicalAuditEvent.Actions.DOCUMENT_SIGNING_CHANGED:
+            from django.db.models import F
+            from .models import MedicalSigningEvent
+            if not MedicalSigningEvent.objects.filter(session__artifact__version=version, actor=actor,
+                    revision=F("session__revision")).exists():
+                raise ValueError("Signing audit requires the actor's current exact-version event.")
+        if action == MedicalAuditEvent.Actions.DOCUMENT_HEAD_CONFIRMED:
+            from .document_head_review import current_review_submission
+            from .models import MedicalDocumentHeadConfirmation
+            submission = current_review_submission(version)
+            if submission is None or not MedicalDocumentHeadConfirmation.objects.filter(
+                    submission=submission, actor=actor).exists():
+                raise ValueError("A head confirmation audit requires the current exact review cycle.")
         if action == MedicalAuditEvent.Actions.DOCUMENT_DRAFT_CREATED and version.revision != 1:
             raise ValueError("A document creation event requires its first version.")
         if action == MedicalAuditEvent.Actions.DOCUMENT_DRAFT_SAVED and version.revision <= 1:

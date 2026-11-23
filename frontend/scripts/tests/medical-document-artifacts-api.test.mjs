@@ -16,6 +16,19 @@ function load(client) {
   return exports.medicalDocumentArtifactsApi;
 }
 
+test("requirements read retains the exact basis and omits document text and language", async () => {
+  for (const basis of ["appointment_id", "participation_id", "correction_access_id", "head_branch_id"]) {
+    const calls = [];
+    const result = { fields: [], configured: false, fields_complete: false };
+    const api = load({ get: async (...args) => { calls.push(args); return { data: result }; } });
+    const signal = new AbortController().signal;
+    assert.equal(await api.requirements({ business_id: 1, patient_id: 2, [basis]: 3, document_text: "omit", language: "en" }, 17, signal), result);
+    assert.equal(calls[0][0], "/api/medical/documents/versions/17/requirements/");
+    assert.deepEqual(JSON.parse(JSON.stringify(calls[0][1].params)), { business_id: 1, patient_id: 2, [basis]: 3 });
+    assert.equal(calls[0][1].signal, signal);
+  }
+});
+
 test("prepare and preview preserve each access basis, saved version, locale and cancellation", async () => {
   for (const basis of ["appointment_id", "participation_id", "correction_access_id", "head_branch_id"]) {
     const calls = [];
