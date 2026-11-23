@@ -16,6 +16,7 @@ import { useReceptionAccess } from "./useReceptionAccess";
 import { ReceptionBookingForm } from "./ReceptionBookingForm";
 import { ReceptionExistingAppointment } from "./ReceptionExistingAppointment";
 import { ReceptionHandover } from "./ReceptionHandover";
+import { ReceptionContactForm } from "./ReceptionContactForm";
 import { useUnsavedEntryWarning } from "../auth/useUnsavedEntryWarning";
 
 export function ReceptionQueuePage() {
@@ -41,7 +42,7 @@ function ReceptionQueue({ businessId, timeZone, branches }: {
   const [rows, setRows] = useState<ReceptionRequest[]>([]);
   const [next, setNext] = useState<number | null>(null);
   const [selected, setSelected] = useState<ReceptionRequest | null>(null);
-  const [mode, setMode] = useState<"book" | "link" | "handover">("book");
+  const [mode, setMode] = useState<"book" | "link" | "handover" | "contact">("book");
   const returnFocus = useRef<number | null>(null);
   const [error, setError] = useState<unknown>(null);
   const [loading, setLoading] = useState(false);
@@ -106,7 +107,7 @@ function ReceptionQueue({ businessId, timeZone, branches }: {
     ]} onChange={event => setBranch(event.target.value)} />
     {selected ? <>
       <Button size="lg" variant="secondary" disabled={busy} onClick={back}>{t("common.back")}</Button>
-      {mode === "handover" ? <ReceptionHandover key={selected.id} businessId={businessId} row={selected} timeZone={timeZone} onDirty={onDirty} onPending={onPending} onDenied={denied} onDone={finish} /> : mode === "book" ? <ReceptionBookingForm key={selected.id} businessId={businessId} row={selected} onDirty={onDirty} onPending={onPending} onDenied={denied} onDone={finish} /> :
+      {mode === "contact" ? <ReceptionContactForm key={selected.id} businessId={businessId} row={selected} timeZone={timeZone} onDirty={onDirty} onPending={onPending} onDenied={denied} onDone={finish} /> : mode === "handover" ? <ReceptionHandover key={selected.id} businessId={businessId} row={selected} timeZone={timeZone} onDirty={onDirty} onPending={onPending} onDenied={denied} onDone={finish} /> : mode === "book" ? <ReceptionBookingForm key={selected.id} businessId={businessId} row={selected} onDirty={onDirty} onPending={onPending} onDenied={denied} onDone={finish} /> :
         <ReceptionExistingAppointment key={selected.id} businessId={businessId} row={selected} timeZone={timeZone} onDirty={onDirty} onPending={onPending} onDenied={denied} onDone={finish} />}
     </> : <>
       {branch ? <Button size="lg" variant="secondary" disabled={loading || busy} onClick={() => void load()}>{t("medical.clinical.reload")}</Button> : null}
@@ -117,10 +118,13 @@ function ReceptionQueue({ businessId, timeZone, branches }: {
           <p>{row.service_name} · {row.preferred_resource_name}</p>
           <p>{row.recommended_from} — {row.recommended_until}</p>
           <p>{t(`medical.reception.state.${row.state}`)}{row.assignee_name ? ` · ${row.assignee_name}` : ""}</p>
+          {row.contact_attempts ? <p>{t("medical.reception.attemptCount", { count: row.contact_attempts })}</p> : null}
+          {row.closure_reason ? <p className="whitespace-pre-wrap">{row.closure_reason}</p> : null}
           {row.patient_in_clinic ? <p>{t("medical.reception.onsite")}</p> : null}
           {row.acceptance_due_at ? <p className={row.overdue ? "text-platforma-danger" : "text-platforma-subtle"}>{t("medical.reception.deadline")}: {formatDateTime(row.acceptance_due_at, timeZone, true, localeByLanguage[language])}{row.overdue ? ` · ${t("medical.reception.overdue")}` : ""}</p> : null}
         </div>
         <div className="flex flex-wrap gap-2">
+          {row.actions.contact || row.actions.reopen ? <Button size="lg" variant="secondary" disabled={busy || loading} onClick={() => { onDirty(false); setMode("contact"); setSelected(row); }}>{t(row.actions.reopen ? "medical.reception.contact.reopen" : "medical.reception.contactTitle")}</Button> : null}
           <Button size="lg" variant="secondary" disabled={busy || loading} onClick={() => { onDirty(false); setMode("handover"); setSelected(row); }}>{t("medical.reception.handover")}</Button>
           {row.actions.claim ? <Button size="lg" disabled={busy || loading} onClick={() => void claim(row)}>{t("medical.reception.claim")}</Button> : null}
           {row.actions.book ? <Button size="lg" disabled={busy || loading} onClick={() => { onDirty(false); setMode("book"); setSelected(row); }}>{t("medical.reception.book")}</Button> : null}

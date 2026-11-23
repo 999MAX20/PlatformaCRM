@@ -37,6 +37,7 @@ export function ReceptionHistory({ businessId, requestId, timeZone, onDenied }: 
       onClick={() => setAttempt(value => value + 1)}>{t("common.retry")}</Button>} /> : null}
     <ol className="divide-y divide-platforma-border">{rows.map(row => <li key={row.id} className="space-y-1 break-words py-3 text-sm">
       <p className="font-medium">{t(row.kind === "medical_follow_up_booked" ? "medical.reception.state.booked" : `medical.reception.event.${row.kind}`)}</p>
+      {row.outcome ? <p>{t(`medical.reception.contact.${row.outcome}`)}</p> : null}
       <p>{formatDateTime(row.created_at, timeZone, true, localeByLanguage[language])}{row.actor_name ? ` · ${row.actor_name}` : ""}</p>
       {row.kind === "medical_follow_up_transferred" ? <p>{row.from_name} → {row.to_name || t("medical.reception.release")}</p> : null}
       {row.reason ? <p className="whitespace-pre-wrap">{row.reason}</p> : null}

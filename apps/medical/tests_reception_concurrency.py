@@ -15,6 +15,7 @@ from . import tests_reception_link as link_fixtures
 from . import tests_reception_transfer as transfer_fixtures
 from . import tests_order_concurrency as concurrency
 from .tests_patient_services import key
+from .reception_contacts import update_reception_contact
 
 
 @skipUnless(connection.vendor == "postgresql", "Reception handover races require PostgreSQL row locks")
@@ -30,6 +31,22 @@ class ReceptionTransferConcurrencyTests(TransactionTestCase):
     book = booking_fixtures.ReceptionBookingTests.book
     transfer = transfer_fixtures.ReceptionTransferTests.transfer
     parallel = concurrency.OrderConcurrencyTests.parallel
+
+    def test_close_and_book_commit_only_one_outcome(self):
+        close = lambda: update_reception_contact(actor=self.reception, business_id=self.business.pk,
+            request_id=self.item.pk, expected_revision=2, action="declined", reason="Synthetic explicit refusal",
+            idempotency_key="close-race")[1]
+        self.assertCountEqual(self.parallel([close, lambda: self.book()[2]]), [False, "conflict"])
+        self.item.refresh_from_db()
+        self.assertEqual(self.item.revision, 3)
+        self.assertEqual(Appointment.objects.count(), 2 if self.item.state == "booked" else 1)
+
+    def test_duplicate_contact_records_one_attempt(self):
+        contact = lambda: update_reception_contact(actor=self.reception, business_id=self.business.pk,
+            request_id=self.item.pk, expected_revision=2, action="no_answer", reason="Synthetic contact",
+            idempotency_key="contact-race")[1]
+        self.assertCountEqual(self.parallel([contact, contact]), [False, True])
+        self.assertEqual(self.item.contact_attempts.count(), 1)
 
     def test_same_handover_replays_once(self):
         self.assertCountEqual(self.parallel([lambda: self.transfer()[1], lambda: self.transfer()[1]]), [False, True])

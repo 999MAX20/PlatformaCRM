@@ -42,7 +42,7 @@ def list_reception_history(*, actor, business_id, request_id, offset=0, limit=25
     actor, business, _, item = reception_request_context(actor=actor, business_id=business_id,
         request_id=request_id, action="view")
     kinds = ("medical_follow_up_requested", "medical_follow_up_claimed", "medical_follow_up_booked",
-             "medical_follow_up_linked", "medical_follow_up_transferred")
+             "medical_follow_up_linked", "medical_follow_up_transferred", "medical_follow_up_contact")
     events = list(AuditLog.objects.filter(business=business, entity_type="ReceptionBookingRequest",
         entity_id=str(item.pk), metadata__kind__in=kinds).select_related("actor").order_by("-created_at", "-pk")[offset:offset + limit + 1])
     member_ids = {event.metadata.get(field) for event in events[:limit] for field in ("from_member_id", "to_member_id")
@@ -53,7 +53,8 @@ def list_reception_history(*, actor, business_id, request_id, offset=0, limit=25
         "actor_name": (event.actor.full_name or event.actor.get_full_name() or event.actor.get_username()) if event.actor else None,
         "from_name": members.get(event.metadata.get("from_member_id")),
         "to_name": members.get(event.metadata.get("to_member_id")),
-        "reason": event.metadata.get("reason", "") if event.metadata["kind"] == "medical_follow_up_transferred" else ""}
+        "outcome": event.metadata.get("outcome"), "cycle": event.metadata.get("cycle"),
+        "reason": event.metadata.get("reason", "") if event.metadata["kind"] in ("medical_follow_up_transferred", "medical_follow_up_contact") else ""}
         for event in events[:limit]]
     write_patient_audit(actor=actor, business=business, patient=item.patient, action="read")
     return {"results": results, "next_offset": offset + limit if len(events) > limit else None}

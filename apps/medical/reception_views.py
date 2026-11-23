@@ -5,6 +5,8 @@ from rest_framework.response import Response
 
 from .reception_booking import book_reception_request
 from .reception_claims import claim_reception_request
+from .reception_contacts import update_reception_contact
+from .reception_serializers import ReceptionContactSerializer
 from .reception_link import link_reception_appointment
 from .reception_transfer import transfer_reception_request
 from .reception_handover_selectors import list_reception_history, list_reception_recipients
@@ -26,7 +28,7 @@ class ReceptionBookingRequestViewSet(viewsets.GenericViewSet):
             "primary": ReceptionPrimarySerializer, "catalog": ReceptionOptionsSerializer, "book": ReceptionBookSerializer,
             "link": ReceptionLinkSerializer, "candidates": ReceptionPageSerializer,
             "transfer": ReceptionTransferSerializer, "recipients": ReceptionRecipientsSerializer,
-            "history": ReceptionPageSerializer}.get(self.action, ReceptionCommandSerializer)
+            "history": ReceptionPageSerializer, "contact": ReceptionContactSerializer}.get(self.action, ReceptionCommandSerializer)
 
     def finalize_response(self, request, response, *args, **kwargs):
         response = super().finalize_response(request, response, *args, **kwargs)
@@ -85,6 +87,10 @@ class ReceptionBookingRequestViewSet(viewsets.GenericViewSet):
     @action(detail=True, methods=["post"])
     def claim(self, request, pk=None):
         return self._command(request, claim_reception_request, pk)
+
+    @action(detail=True, methods=["post"])
+    def contact(self, request, pk=None):
+        return self._command(request, update_reception_contact, pk)
 
     @action(detail=True, methods=["post"])
     def transfer(self, request, pk=None):

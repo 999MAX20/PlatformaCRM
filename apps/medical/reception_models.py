@@ -41,12 +41,16 @@ class ReceptionBookingRequest(models.Model):
         null=True, blank=True, related_name="reception_request")
     closed_at = models.DateTimeField(null=True, blank=True)
     closure_reason = models.CharField(max_length=1000, blank=True)
+    contact_cycle = models.PositiveIntegerField(default=1)
+    contact_started_at = models.DateTimeField(null=True, blank=True)
+    contact_due_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=["business", "patient", "source_appointment", "service"],
                 condition=models.Q(state__in=["new", "pending"]), name="medical_reception_open"),
             models.CheckConstraint(condition=models.Q(revision__gte=1), name="medical_reception_revision"),
+            models.CheckConstraint(condition=models.Q(contact_cycle__gte=1), name="medical_reception_cycle"),
             models.CheckConstraint(condition=models.Q(recommended_until__gte=models.F("recommended_from")),
                 name="medical_reception_period"),
             models.CheckConstraint(condition=models.Q(duration_minutes__isnull=True) | models.Q(duration_minutes__gt=0),
@@ -98,3 +102,15 @@ class ReceptionBookingRequest(models.Model):
             previous = type(self).objects.filter(pk=self.pk).values(*fields).first()
             if previous is None or any(previous[field] != getattr(self, field) for field in fields):
                 raise ValidationError({"source_appointment": "The original referral cannot be retargeted."})
+
+
+class ReceptionContactAttempt(models.Model):
+    request = models.ForeignKey(ReceptionBookingRequest, on_delete=models.PROTECT, related_name="contact_attempts")
+    cycle = models.PositiveIntegerField()
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
+    created_at = models.DateTimeField(default=timezone.now)
+    outcome = models.CharField(max_length=16, choices=[("no_answer", "No answer"), ("contacted", "Contacted")])
+    note = models.CharField(max_length=1000, blank=True)
+
+    class Meta:
+        constraints = [models.CheckConstraint(condition=models.Q(cycle__gte=1, outcome__in=["no_answer", "contacted"]), name="medical_contact_attempt_valid")]

@@ -1,0 +1,84 @@
+import { test, expect } from "@playwright/test";
+import { execFileSync } from "node:child_process";
+import { kk } from "../src/lib/i18n/kk";
+import { ru } from "../src/lib/i18n/ru";
+import { requireIsolatedEnvironment } from "./isolated-environment.mjs";
+
+requireIsolatedEnvironment();
+test("contact outcome, refusal and reopen preserve history", async ({ page }, info) => {
+  const entry = JSON.parse(execFileSync(process.env.E2E_PYTHON!, ["e2e/clinical-runtime.py", "reception-contact-prepare"],
+    { env: process.env, windowsHide: true, encoding: "utf8" }).trim().split(/\r?\n/).at(-1)!);
+  await page.addInitScript(() => localStorage.setItem("ai_smb_language", "ru"));
+  await page.goto("/login");
+  await page.locator('input[name="email"]').fill(entry.email);
+  await page.locator('input[name="password"]').fill(process.env.E2E_PASSWORD!);
+  await page.locator('form button[type="submit"]').click();
+  await expect(page).toHaveURL(/\/app\//);
+  await page.goto("/app/medical/reception");
+  const row = page.getByTestId(`reception-request-${entry.request_id}`);
+  await row.getByRole("button", { name: ru["medical.reception.contactTitle"], exact: true }).click();
+  const form = page.getByTestId("reception-contact");
+  await form.getByRole("textbox", { name: ru["medical.reception.contactReason"], exact: true }).fill("Synthetic first attempt: no response");
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.screenshot({ path: info.outputPath("contact-desktop.png") });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.screenshot({ path: info.outputPath("contact-mobile.png") });
+  await form.getByRole("button", { name: ru["medical.reception.saveOutcome"], exact: true }).click();
+  await expect(row).toContainText(ru["medical.reception.attemptCount"].replace("{count}", "1"));
+  await row.getByRole("button", { name: ru["medical.reception.contactTitle"], exact: true }).click();
+  await expect(form.getByTestId("reception-history")).toContainText("Synthetic first attempt: no response");
+  await form.getByRole("combobox", { name: new RegExp(`^${ru["medical.reception.contactOutcome"]}`) }).click();
+  await expect(page.getByRole("option", { name: ru["medical.reception.contact.expired"], exact: true })).toHaveCount(0);
+  await page.getByRole("option", { name: ru["medical.reception.contact.declined"], exact: true }).click();
+  await form.getByRole("textbox", { name: ru["medical.reception.contactReason"], exact: true }).fill("Synthetic recipient explicitly declined booking");
+  await form.getByRole("button", { name: ru["medical.reception.saveOutcome"], exact: true }).click();
+  await expect(row).toContainText(ru["medical.reception.state.declined"]);
+  await row.getByRole("button", { name: ru["medical.reception.contact.reopen"], exact: true }).click();
+  await form.getByRole("textbox", { name: ru["medical.reception.contactReason"], exact: true }).fill("Synthetic recipient requested a new contact");
+  await form.getByRole("button", { name: ru["medical.reception.saveOutcome"], exact: true }).click();
+  await expect(row.getByRole("button", { name: ru["medical.reception.claim"], exact: true })).toBeVisible();
+  await row.getByRole("button", { name: ru["medical.reception.handover"], exact: true }).click();
+  const history = page.getByTestId("reception-history");
+  await expect(history).toContainText("Synthetic first attempt: no response");
+  await expect(history).toContainText("Synthetic recipient explicitly declined booking");
+  await expect(history).toContainText("Synthetic recipient requested a new contact");
+});
+
+
+test("contact KK failure retains note, conflict reloads and denial clears", async ({ page }, info) => {
+  const entry = JSON.parse(execFileSync(process.env.E2E_PYTHON!, ["e2e/clinical-runtime.py", "reception-contact-prepare"],
+    { env: process.env, windowsHide: true, encoding: "utf8" }).trim().split(/\r?\n/).at(-1)!);
+  await page.addInitScript(() => localStorage.setItem("ai_smb_language", "kk"));
+  await page.goto("/login");
+  await page.locator('input[name="email"]').fill(entry.email);
+  await page.locator('input[name="password"]').fill(process.env.E2E_PASSWORD!);
+  await page.locator('form button[type="submit"]').click();
+  await expect(page).toHaveURL(/\/app\//);
+  await page.goto("/app/medical/reception");
+  const row = page.getByTestId(`reception-request-${entry.request_id}`);
+  const open = () => row.getByRole("button", { name: kk["medical.reception.contactTitle"], exact: true }).click();
+  await open();
+  const form = page.getByTestId("reception-contact");
+  const reason = form.getByRole("textbox", { name: kk["medical.reception.contactReason"], exact: true });
+  const save = form.getByRole("button", { name: kk["medical.reception.saveOutcome"], exact: true });
+  await reason.fill("Synthetic retained note");
+  const path = `**/api/reception/booking-requests/${entry.request_id}/contact/`;
+  await page.route(path, route => route.fulfill({ status: 503, json: { detail: "Synthetic unavailable" } }));
+  await save.click(); await expect(form.getByRole("alert")).toBeVisible();
+  await expect(reason).toHaveValue("Synthetic retained note");
+  await page.unroute(path);
+  await page.route(path, route => route.fulfill({ status: 409, json: { detail: "Synthetic conflict" } }));
+  await save.click(); await expect(reason).toBeDisabled();
+  await expect(reason).toHaveValue("Synthetic retained note");
+  page.once("dialog", dialog => dialog.accept());
+  await form.getByRole("button", { name: kk["medical.clinical.reload"], exact: true }).click();
+  await page.unroute(path); await open();
+  await reason.fill("Synthetic second contact");
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(save).toBeEnabled();
+  await page.screenshot({ path: info.outputPath("contact-kk-mobile.png") });
+  await page.route(path, route => route.fulfill({ status: 403, json: { detail: "Synthetic revoked" } }));
+  await save.click(); await expect(form).toHaveCount(0);
+  await expect(row).toHaveCount(0);
+  await expect(page.getByTestId("reception-queue").getByRole("alert")).toBeVisible();
+});

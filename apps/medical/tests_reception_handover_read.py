@@ -119,7 +119,7 @@ class ReceptionHandoverReadTests(TestCase):
         response = self.read("history", limit=1)
         self.assertEqual(response.status_code, 200, response.data)
         row = response.data["results"][0]
-        self.assertEqual(set(row), {"id", "created_at", "kind", "actor_name", "from_name", "to_name", "reason"})
+        self.assertEqual(set(row), {"id", "created_at", "kind", "actor_name", "from_name", "to_name", "reason", "outcome", "cycle"})
         self.assertEqual(row["reason"], "Synthetic shift handover")
         self.assertEqual((row["from_name"], row["to_name"]), ("Synthetic Sender", self.colleague.email))
         self.assertEqual(row["actor_name"], "Synthetic Sender")

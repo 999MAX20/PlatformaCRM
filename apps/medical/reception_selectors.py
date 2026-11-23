@@ -14,6 +14,7 @@ from .models import ReceptionBookingRequest
 from .patient_selectors import reception_context
 from .role_access import assert_medical_branch_permission
 from .reception_claims import reception_request_context
+from .reception_contacts import expiry_ready
 
 
 def _rows(items, actor, business, *, can_manage=False):
@@ -37,6 +38,10 @@ def _rows(items, actor, business, *, can_manage=False):
             "assignee_id": item.assignee_id, "assignee_name": item.assignee.user.full_name if item.assignee_id else None,
             "assigned_to_me": assigned_to_me,
             "actions": {"claim": can_manage and open_request and item.assignee_id is None,
+                "contact": can_manage and assigned_to_me and item.state == "pending",
+                "expire": can_manage and assigned_to_me and item.state == "pending" and expiry_ready(item, now),
+                "reopen": can_manage and (item.state in ("declined", "expired", "cancelled") or
+                    visible_appointment and item.state == "booked" and appointment.status == "cancelled"),
                 "transfer": can_manage and assigned_to_me and item.state == "pending",
                 "book": can_manage and assigned_to_me and item.state == "pending" and
                     can(actor, business, Resources.APPOINTMENTS, Actions.CREATE).allowed and
@@ -47,6 +52,9 @@ def _rows(items, actor, business, *, can_manage=False):
             "created_at": item.created_at, "recommended_from": item.recommended_from,
             "recommended_until": item.recommended_until, "duration_minutes": item.duration_minutes,
             "patient_in_clinic": item.patient_in_clinic, "acceptance_due_at": item.acceptance_due_at,
+            "contact_cycle": item.contact_cycle, "contact_due_at": item.contact_due_at,
+            "contact_attempts": item.contact_attempts.filter(cycle=item.contact_cycle).count(),
+            "closure_reason": item.closure_reason,
             "overdue": bool(item.assignee_id is None and item.state in ("new", "pending") and
                 item.acceptance_due_at is not None and item.acceptance_due_at < now),
             "state": item.state, "revision": item.revision,

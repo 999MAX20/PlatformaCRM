@@ -1,4 +1,4 @@
-DENTAL-MCS ACTIVE: K12 personal-code issuance locally accepted (exact pack/72h/revoke/reissue/private PDF), backend/dependencies/PG/migration/RU+KK desktop-mobile/build/schema PASS; publication pending. Full K12 remains PARTIAL for real forms/signatures/channel/recipient and provider outbox receipts. Next independent K13 follow-up lifecycle; K10 partial finance owner decision pending. All K00-K18 retained. No CI/working DB/deployment/messages. Checkpoint: docs/testing/task-state/DENTAL-MCS-20261122.md.
+К13 контакты/отказ/возобновление локально приняты (backend/API/PG/UI/build/schema); публикация в процессе, далее смены/эскалация. К12 опубликован006a8212. Полный остаток/доказательства: docs/testing/task-state/DENTAL-MCS-20261122.md. CI не запускался.
 
 QA-016-20261121 LOCAL VERIFIED: automatic tasks searchable by displayed RU/KK/EN title; editor preserves original copy on unrelated edits. 66 backend, 9 node, 6 desktop/mobile browser scenarios, build/types/i18n/check/drift PASS; Code 8a240ad3 pushed to main; CI44937543011 queued (not PASS). Working DB untouched. [Evidence](docs/testing/evidence/qa-016-task-search-20261121.md).
 

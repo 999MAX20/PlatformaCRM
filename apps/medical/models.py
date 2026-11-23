@@ -15,7 +15,7 @@ from .issuance_models import (MedicalDocumentGrant, MedicalDocumentGrantItem, Me
     MedicalDocumentPortalSession, MedicalDocumentPortalAttempt)
 from .assistant_models import AppointmentAssistant
 from .actual_visit_models import MedicalActualVisit
-from .reception_models import ReceptionBookingRequest
+from .reception_models import ReceptionBookingRequest, ReceptionContactAttempt
 from .document_rule_models import MedicalDocumentKind, MedicalDocumentRuleRevision
 
 

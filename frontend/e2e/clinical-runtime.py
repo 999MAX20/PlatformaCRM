@@ -335,6 +335,29 @@ if len(sys.argv) > 2 and sys.argv[1] == "clinical-representatives-populate":
             relation.revoked_at, relation.revoked_by, relation.revocation_encrypted = now, appointment.business.owner, "synthetic"
         relation.save()
     sys.exit(0)
+if len(sys.argv) > 1 and sys.argv[1] == "reception-contact-prepare":
+    from completion_fixture import prepare_completion
+    from apps.medical.models import MedicalEncounter
+    from apps.medical.tests_reception_claims import reception_member
+    from apps.medical.reception_requests import request_primary_follow_up
+    from apps.medical.reception_claims import claim_reception_request
+    from datetime import timedelta
+    entry = prepare_completion()
+    encounter = MedicalEncounter.objects.select_related("business__owner", "patient", "branch", "primary_clinician__user", "appointment").get(appointment_id=entry["appointment_id"])
+    receptionist, member, _ = reception_member(encounter.business, encounter.business.owner, encounter.branch, str(encounter.pk))
+    receptionist.set_password(os.environ["E2E_PASSWORD"])
+    receptionist.full_name = "Synthetic contact receptionist"
+    receptionist.save()
+    now = django.utils.timezone.now()
+    item, _ = request_primary_follow_up(actor=encounter.primary_clinician.user, business_id=encounter.business_id,
+        patient_id=encounter.patient_id, encounter_id=encounter.pk, expected_revision=encounter.revision,
+        service_id=encounter.appointment.service_id, preferred_resource_id=encounter.appointment.resource_id,
+        recommended_from=now.date(), recommended_until=now.date() + timedelta(days=30),
+        patient_in_clinic=False, idempotency_key="synthetic-contact-request")
+    claim_reception_request(actor=receptionist, business_id=encounter.business_id, request_id=item.pk,
+        expected_revision=1, idempotency_key="synthetic-contact-claim")
+    print(json.dumps(entry | {"email": receptionist.email, "request_id": item.pk, "business_id": encounter.business_id}))
+    sys.exit(0)
 if len(sys.argv) > 1 and sys.argv[1] == "issuance-prepare":
     from final_correction_fixture import prepare, finalize_fixture
     from apps.medical.models import MedicalEncounter, MedicalRoleAssignment

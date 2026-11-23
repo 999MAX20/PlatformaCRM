@@ -55,6 +55,11 @@ class ReceptionTransferSerializer(ReceptionCommandSerializer):
     reason = serializers.CharField(max_length=1000, allow_blank=False)
 
 
+class ReceptionContactSerializer(ReceptionCommandSerializer):
+    action = serializers.ChoiceField(choices=("no_answer", "contacted", "declined", "expired", "cancelled", "reopen"))
+    reason = serializers.CharField(max_length=1000, allow_blank=False)
+
+
 class ReceptionBookSerializer(ReceptionCommandSerializer):
     resource_id = serializers.IntegerField(min_value=1)
     start_at = serializers.DateTimeField()

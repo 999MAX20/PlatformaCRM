@@ -10,9 +10,10 @@ export type ReceptionRequest = {
   assignee_id: number | null; assignee_name: string | null; assigned_to_me: boolean;
   created_at: string; recommended_from: string; recommended_until: string; duration_minutes: number | null;
   patient_in_clinic: boolean; acceptance_due_at: string | null; overdue: boolean;
+  contact_cycle: number; contact_due_at: string | null; contact_attempts: number; closure_reason: string;
   state: ReceptionState; revision: number; booked_appointment_id: number | null;
   appointment_status: string | null; appointment_start_at: string | null;
-  actions: { claim: boolean; book: boolean; link: boolean; transfer: boolean };
+  actions: { claim: boolean; book: boolean; link: boolean; transfer: boolean; contact: boolean; expire: boolean; reopen: boolean };
 };
 export type ReceptionPage = { results: ReceptionRequest[]; next_offset: number | null };
 export type FollowUpOption = { id: number; name: string };
@@ -20,7 +21,7 @@ export type FollowUpOptions = { results: FollowUpOption[]; default: FollowUpOpti
 export type ReceptionCandidate = { id: number; start_at: string; end_at: string; updated_at: string; resource_name: string };
 export type ReceptionCandidates = { results: ReceptionCandidate[]; next_offset: number | null };
 export type ReceptionHistoryEntry = { id: number; created_at: string; kind: string; actor_name: string | null;
-  from_name: string | null; to_name: string | null; reason: string };
+  from_name: string | null; to_name: string | null; reason: string; outcome?: string; cycle?: number };
 export type ReceptionCommand = { business_id: number; expected_revision: number };
 export type ReceptionResult = { id: number; state: ReceptionState; revision: number; replayed: boolean; appointment_id?: number };
 export type FollowUpDraft = Omit<FollowUpScope, "offset" | "limit"> & {
@@ -44,6 +45,8 @@ async function command(path: string, payload: object, key: string, signal?: Abor
 }
 
 export const medicalReceptionApi = {
+  contact: (id: number, payload: ReceptionCommand & { action: string; reason: string }, key: string, signal?: AbortSignal) =>
+    command(`${id}/contact/`, payload, key, signal),
   recipients: async (id: number, scope: ReceptionPageScope & { search?: string }, signal?: AbortSignal) =>
     (await apiClient.get<{ results: FollowUpOption[]; next_offset: number | null }>(root + `${id}/recipients/`, { params: scope, signal })).data,
   history: async (id: number, scope: ReceptionPageScope, signal?: AbortSignal) =>
