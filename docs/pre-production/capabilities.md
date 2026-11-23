@@ -1,5 +1,7 @@
 ## Медицинский модуль: начата реализация — 22.11.2026
 
+К06 план текущего приёма: отдельная вкладка «Рекомендации и план» использует тот же черновик/сохранение, шаги, связи и явное бронирование. Переключение сохраняет остальные поля.8 distinct browser (6 localized draft+2 EN booking),дополнительные2 RU quick-action/capture,12 inspected captures,final build/types PASS. Публикация/checkpoint и оставшаяся patient-wide/participation часть S05 отдельно; весь К06 не закрыт.
+
 К06 представители из клинического обзора: readonly список имён, полномочий и сроков по appointment/participation с сохранёнными Clients ACL и аудитом. Подтверждение/отзыв остаются административными.46 dependent backend,6 clinical+2 administrative browser,9 inspected captures,build/check/drift PASS; публикация в DENTAL-MCS checkpoint. Реальный протокол L04/выдача К12 и весь К06 не закрыты.
 
 К06 исторические документы: список и точные версии выбранного приёма доступны через календарь/active participation в режиме чтения с отдельным medical_documents VIEW. Текущий редактор и несохранённый клинический текст сохранены.34 backend,8 browser,17 inspected captures,build/types PASS; публикация в DENTAL-MCS checkpoint. Это не закрывает подпись/PDF/выдачу или весь К06.

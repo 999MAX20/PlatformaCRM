@@ -1,4 +1,4 @@
-DENTAL-MCS: К06 ACTIVE — представители из clinical overview локально приняты:46 backend,6 clinical+2 admin browser,9 inspected captures,build/check/drift PASS; публикация готовится. Далее plan tab/вложенные фильтры; team зависит от К05, К03/К04/К05/L12 уточнения сохранены. План: docs/testing/task-state/DENTAL-MCS-20261122.md.
+DENTAL-MCS: К06 ACTIVE — вкладка плана текущего приёма локально принята:8 distinct browser+2 RU capture,12 inspected captures,final build/types PASS; публикация готовится. Далее patient-wide/participation S05 и вложенные фильтры; team/К03/К04/К05/L12 уточнения сохранены. План: docs/testing/task-state/DENTAL-MCS-20261122.md.
 
 QA-016-20261121 LOCAL VERIFIED: automatic tasks searchable by displayed RU/KK/EN title; editor preserves original copy on unrelated edits. 66 backend, 9 node, 6 desktop/mobile browser scenarios, build/types/i18n/check/drift PASS; Code 8a240ad3 pushed to main; CI44937543011 queued (not PASS). Working DB untouched. [Evidence](docs/testing/evidence/qa-016-task-search-20261121.md).
 

@@ -10,7 +10,8 @@ import { useUnsavedEntryWarning } from "../auth/useUnsavedEntryWarning";
 
 export type ClinicalDraftControl = { save: () => Promise<boolean>; isPending: () => boolean; isDirty: () => boolean };
 
-export function ClinicalDraftForm({ context, onDirty, onDenied, onReload, draftControl }: {
+export function ClinicalDraftForm({ context, onDirty, onDenied, onReload, draftControl, view = "encounter" }: {
+  view?: "encounter" | "plan";
   draftControl: Ref<ClinicalDraftControl>;
   context: AppointmentClinicalContext; onDirty: (value: boolean) => void; onDenied: (cause: unknown) => void; onReload: () => void;
 }) {
@@ -72,9 +73,9 @@ export function ClinicalDraftForm({ context, onDirty, onDenied, onReload, draftC
   if (loading) return <LoadingState />;
   if (!loaded) return <ErrorState message={getApiErrorMessage(error)} action={<Button size="lg" variant="secondary" onClick={() => setRefresh(value => value + 1)}>{t("common.retry")}</Button>} />;
   return <form ref={form} autoComplete="off" className="space-y-4" onSubmit={event => { event.preventDefault(); void save(); }}>
-    <h2 className="text-base font-semibold">{t("medical.clinical.note")}</h2>
+    <h2 className="text-base font-semibold">{t(view === "plan" ? "medical.clinical.plan" : "medical.clinical.note")}</h2>
     {!context.actions.save_draft ? <p role="status" className="text-sm text-platforma-subtle">{t("medical.clinical.readOnly")}</p> : null}
-    {clinicalFields.map(field => <ClinicalSectionInput key={field} field={field} content={content}
+    {clinicalFields.filter(field => view !== "plan" || field === "plan").map(field => <ClinicalSectionInput key={field} field={field} content={content}
       bookingAccess={{ context, revision, onReload, onDenied, unsaved: dirty }}
       planAccess={{ scope: { business_id: context.business_id, patient_id: context.patient.id,
         encounter_id: context.encounter!.id, appointment_id: context.appointment.id }, onDenied }}

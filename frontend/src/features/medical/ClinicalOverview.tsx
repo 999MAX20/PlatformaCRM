@@ -11,13 +11,14 @@ import { ClinicalRepresentatives } from "./ClinicalRepresentatives";
 
 export function ClinicalOverview({ context, onDenied, onNavigate }: {
   context: AppointmentClinicalContext; onDenied: (cause: unknown) => void;
-  onNavigate: (tab: "encounter" | "history" | "orders" | "documents") => void;
+  onNavigate: (tab: "encounter" | "history" | "plan" | "orders" | "documents") => void;
 }) {
   const { t } = useI18n();
   const scope = useMemo(() => ({ business_id: context.business_id, patient_id: context.patient.id,
     appointment_id: context.appointment.id }), [context]);
   return <ClinicalOverviewRead scope={scope} onDenied={onDenied} onHistory={() => onNavigate("history")} actions={<>
     <Button size="lg" onClick={() => onNavigate("encounter")}>{t("medical.clinical.note")}</Button>
+    <Button size="lg" variant="secondary" onClick={() => onNavigate("plan")}>{t("medical.clinical.plan")}</Button>
     {context.encounter ? <>
       <Button size="lg" variant="secondary" onClick={() => onNavigate("orders")}>{t("medical.orders.title")}</Button>
       <Button size="lg" variant="secondary" onClick={() => onNavigate("documents")}>{t("medical.documents.title")}</Button>

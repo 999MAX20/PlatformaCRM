@@ -59,7 +59,11 @@ for (const language of ["ru", "kk", "en"] as const) {
       await expect(sectionReason).toBeFocused();
       expect(await sectionReason.evaluate((element: HTMLTextAreaElement) => element.checkValidity())).toBe(false);
       await sectionReason.fill(`Synthetic consultation only ${id}`);
-      await workspace.getByLabel(t["medical.clinical.plan"], { exact: true }).fill("Synthetic follow-up plan");
+      const planTab = workspace.getByRole("tab", { name: t["medical.clinical.plan"], exact: true });
+      await planTab.click();
+      await expect(planTab).toHaveAttribute("aria-selected", "true");
+      await expect(complaint).toHaveCount(0);
+      await workspace.getByRole("textbox", { name: t["medical.clinical.plan"], exact: true }).fill("Synthetic follow-up plan");
       const plan = workspace.getByTestId("clinical-plan-steps");
       const stepLabel = (number: number) => t["medical.plan.step"].replace("{number}", String(number));
       await plan.getByRole("button", { name: t["medical.plan.addStep"], exact: true }).click();
@@ -96,6 +100,15 @@ for (const language of ["ru", "kk", "en"] as const) {
       await workspace.getByRole("button", { name: t["medical.clinical.save"], exact: true }).click();
       await expect(workspace.getByText(t["common.saved"], { exact: true })).toBeVisible();
       await expect(workspace.getByRole("button", { name: t["medical.clinical.save"], exact: true })).toBeDisabled();
+      await workspace.screenshot({ path: info.outputPath("clinical-plan-tab.png") });
+      expect((await new AxeBuilder({ page }).include('[data-testid="clinical-workspace"]').withTags(["wcag2a", "wcag2aa"]).analyze()).violations).toEqual([]);
+      await workspace.getByRole("tab", { name: t["medical.overview.title"], exact: true }).click();
+      await workspace.getByTestId("clinical-overview").getByRole("button", { name: t["medical.clinical.plan"], exact: true }).click();
+      await expect(planTab).toBeFocused();
+      await planTab.scrollIntoViewIfNeeded();
+      await workspace.screenshot({ path: info.outputPath("clinical-plan-tab-header.png") });
+      await workspace.getByRole("tab", { name: t["medical.clinical.note"], exact: true }).click();
+      await expect(complaint).toHaveValue(`Synthetic clinical complaint ${id}`);
       await workspace.screenshot({ path: info.outputPath("clinical-draft.png") });
       await plan.evaluate(element => element.scrollIntoView({ block: "center" }));
       await plan.screenshot({ path: info.outputPath("clinical-plan-steps.png") });
@@ -151,6 +164,7 @@ for (const language of ["ru", "kk", "en"] as const) {
       expect(await page.evaluate(() => JSON.stringify({ ...localStorage, ...sessionStorage }))).not.toContain("Synthetic clinical complaint");
       await workspace.getByRole("tab", { name: t["medical.clinical.note"], exact: true }).click();
       await complaint.fill(`Unsaved close ${id}`);
+      await planTab.click();
       await page.keyboard.press("Escape");
       const unsaved = page.getByTestId("clinical-unsaved");
       await expect(unsaved).toBeVisible();
@@ -158,6 +172,8 @@ for (const language of ["ru", "kk", "en"] as const) {
       expect((await new AxeBuilder({ page }).include('[data-testid="clinical-unsaved"]').withTags(["wcag2a", "wcag2aa"]).analyze()).violations).toEqual([]);
       await unsaved.getByRole("button", { name: t["medical.clinical.continueEditing"], exact: true }).click();
       await expect(unsaved).not.toBeVisible();
+      await expect(planTab).toHaveAttribute("aria-selected", "true");
+      await workspace.getByRole("tab", { name: t["medical.clinical.note"], exact: true }).click();
       await expect(complaint).toHaveValue(`Unsaved close ${id}`);
       await page.keyboard.press("Escape");
       await unsaved.getByRole("button", { name: t["medical.clinical.leaveUnsaved"], exact: true }).click();

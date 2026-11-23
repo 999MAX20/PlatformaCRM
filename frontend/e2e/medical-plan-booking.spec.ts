@@ -38,6 +38,7 @@ for (const language of ["ru", "kk", "en"] as const) for (const mobile of [false,
     await page.goto(`/app/calendar?appointment=${id}&date=${context.appointment.start_at.slice(0, 10)}`);
     await page.getByTestId("clinical-appointment-entry").getByRole("button", { name: t["medical.clinical.open"], exact: true }).click();
     const workspace = page.getByTestId("clinical-workspace");
+    await workspace.getByRole("tab", { name: t["medical.clinical.plan"], exact: true }).click();
     const openBooking = workspace.getByRole("button", { name: t["medical.plan.book"], exact: true });
     await openBooking.click();
     const dialog = page.getByTestId("clinical-plan-booking");

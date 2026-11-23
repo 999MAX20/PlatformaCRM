@@ -17,7 +17,7 @@ import { DocumentWorkspace } from "./documents/DocumentWorkspace";
 import { OrderWorkspace } from "./orders/OrderWorkspace";
 import { ClinicalOverview } from "./ClinicalOverview";
 
-type ClinicalTab = "overview" | "encounter" | "history" | "teeth" | "documents" | "orders";
+type ClinicalTab = "overview" | "encounter" | "history" | "teeth" | "plan" | "documents" | "orders";
 
 export function ClinicalAppointmentEntry({ businessId, appointmentId }: { businessId: number; appointmentId: number }) {
   const { t } = useI18n();
@@ -141,15 +141,16 @@ function ClinicalWorkspace({ context, onChanged, onDirty, onDenied, draftControl
       <Tabs value={tab} onChange={onTabChange} idPrefix={tabPrefix} ariaLabel={t("medical.clinical.title")}
         className="[&_[role=tab]]:min-h-11" appearance="underline"
         options={[{ value: "overview", label: t("medical.overview.title") }, { value: "encounter", label: t("medical.clinical.note") }, { value: "history", label: t("medical.clinical.history") }, { value: "teeth", label: t("medical.tooth.title") },
-          { value: "documents", label: t("medical.documents.title") }, { value: "orders", label: t("medical.orders.title") }]} />
+          { value: "plan", label: t("medical.clinical.plan") }, { value: "documents", label: t("medical.documents.title") }, { value: "orders", label: t("medical.orders.title") }]} />
       <div role="tabpanel" id={`${tabPrefix}-panel-overview`} aria-labelledby={`${tabPrefix}-tab-overview`} hidden={tab !== "overview"}>
         {tab === "overview" ? <ClinicalOverview context={context} onDenied={onDenied} onNavigate={next => {
           onTabChange(next);
           requestAnimationFrame(() => document.getElementById(`${tabPrefix}-tab-${next}`)?.focus());
         }} /> : null}
       </div>
-      <div role="tabpanel" id={`${tabPrefix}-panel-encounter`} aria-labelledby={`${tabPrefix}-tab-encounter`} hidden={tab !== "encounter"} className="space-y-4">
-      {context.encounter ? <ClinicalDraftForm draftControl={draftControl} context={context} onDirty={onDirty} onDenied={onDenied} onReload={onChanged} /> : <>
+      <div role="tabpanel" id={`${tabPrefix}-panel-${tab === "plan" ? "encounter" : "plan"}`} aria-labelledby={`${tabPrefix}-tab-${tab === "plan" ? "encounter" : "plan"}`} hidden />
+      <div role="tabpanel" id={`${tabPrefix}-panel-${tab === "plan" ? "plan" : "encounter"}`} aria-labelledby={`${tabPrefix}-tab-${tab === "plan" ? "plan" : "encounter"}`} hidden={tab !== "encounter" && tab !== "plan"} className="space-y-4">
+      {context.encounter ? <ClinicalDraftForm view={tab === "plan" ? "plan" : "encounter"} draftControl={draftControl} context={context} onDirty={onDirty} onDenied={onDenied} onReload={onChanged} /> : <>
         <p className="text-sm text-platforma-subtle">{t(context.active_record ? "medical.clinical.noEncounter" : "medical.clinical.noRecord")}</p>
         {context.actions.create_record ? <Input label={t("medical.clinical.number")} value={number} maxLength={64} disabled={pending}
           onChange={event => { setNumber(event.target.value); onDirty(Boolean(event.target.value)); }} /> : null}
