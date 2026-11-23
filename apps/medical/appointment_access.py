@@ -16,6 +16,18 @@ class AppointmentMedicalBasis:
     assignment_id: int
 
 
+def _assigned_appointments(*, business, user_id):
+    return Appointment.objects.select_related("branch", "client").filter(
+        business_id=business.pk,
+        client__business_id=business.pk, service__business_id=business.pk,
+        branch__business_id=business.pk, resource__business_id=business.pk,
+        resource__resource_type=Resource.ResourceTypes.STAFF,
+        resource__linked_user_id=user_id, is_archived=False,
+        status__in=(Appointment.Statuses.CREATED, Appointment.Statuses.CONFIRMED,
+                    Appointment.Statuses.RESCHEDULED), end_at__gt=F("start_at"),
+    )
+
+
 def assert_assigned_medical_appointment(*, actor, business, appointment_id,
                                         resource="medical_records", action="view"):
     """Validate the assigned clinician before resolving a medical patient from a booking."""
@@ -24,15 +36,7 @@ def assert_assigned_medical_appointment(*, actor, business, appointment_id,
         raise PermissionDenied()
     if type(appointment_id) is not int:
         raise PermissionDenied()
-    appointment = Appointment.objects.select_related("branch", "client").filter(
-        pk=appointment_id, business_id=business.pk,
-        client__business_id=business.pk, service__business_id=business.pk,
-        branch__business_id=business.pk, resource__business_id=business.pk,
-        resource__resource_type=Resource.ResourceTypes.STAFF,
-        resource__linked_user_id=context.user_id, is_archived=False,
-        status__in=(Appointment.Statuses.CREATED, Appointment.Statuses.CONFIRMED,
-                    Appointment.Statuses.RESCHEDULED), end_at__gt=F("start_at"),
-    ).first()
+    appointment = _assigned_appointments(business=business, user_id=context.user_id).filter(pk=appointment_id).first()
     if appointment is None:
         raise PermissionDenied()
     current = assert_medical_branch_permission(actor, business, resource, action, branch=appointment.branch)

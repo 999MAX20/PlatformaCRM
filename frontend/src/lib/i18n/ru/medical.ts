@@ -1,4 +1,7 @@
 export const medical = {
+  "medical.clientEntry.appointment": "Запись для открытия медицинской карты",
+  "medical.clientEntry.select": "Выберите запись",
+  "medical.clientEntry.empty": "Нет доступных вам записей в этом филиале",
   "medical.overview.title": "Обзор",
   "medical.overview.latest": "Последний приём",
   "medical.overview.clinician": "Врач последнего приёма",

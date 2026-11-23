@@ -44,6 +44,14 @@ class ClinicalWorkspaceSerializer(EncounterReadSerializer):
     limit = serializers.IntegerField(min_value=1, max_value=50, required=False, default=20)
 
 
+class ClientClinicalAppointmentsSerializer(StrictSerializer):
+    business_id = serializers.IntegerField(min_value=1)
+    branch_id = serializers.IntegerField(min_value=1)
+    client_id = serializers.IntegerField(min_value=1)
+    before_id = serializers.IntegerField(min_value=1, required=False)
+    limit = serializers.IntegerField(min_value=1, max_value=50, required=False, default=20)
+
+
 class EncounterHistorySerializer(EncounterReadSerializer):
     before_revision = serializers.IntegerField(min_value=1, required=False)
     limit = serializers.IntegerField(min_value=1, max_value=50, required=False, default=20)
@@ -85,6 +93,7 @@ class MedicalEncounterViewSet(viewsets.GenericViewSet):
         return {"create": EncounterOpenSerializer, "draft": EncounterDraftSerializer,
                 "version": EncounterReadSerializer, "workspace": ClinicalWorkspaceSerializer,
                 "overview": EncounterReadSerializer,
+                "client_appointments": ClientClinicalAppointmentsSerializer,
                 "revisions": EncounterHistorySerializer,
                 "visit_steps": ClinicalVisitStepsSerializer,
                 "tooth_plan": ToothPlanSerializer,
@@ -145,6 +154,13 @@ class MedicalEncounterViewSet(viewsets.GenericViewSet):
         serializer = self.get_serializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
         return Response(read_clinical_overview(actor=request.user, **serializer.validated_data))
+
+    @action(detail=False, methods=["get"], url_path="client-appointments")
+    def client_appointments(self, request):
+        from .client_clinical_appointments import list_client_clinical_appointments
+        serializer = self.get_serializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+        return Response(list_client_clinical_appointments(actor=request.user, **serializer.validated_data))
 
     @action(detail=False, methods=["get"])
     def workspace(self, request):

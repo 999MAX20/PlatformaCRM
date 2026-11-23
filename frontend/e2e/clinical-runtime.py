@@ -224,6 +224,19 @@ if roles_fixture and len(sys.argv) > 1 and sys.argv[1] in ("disable-role-module"
     BusinessCapability.objects.filter(business__slug="medical-role", module_key="medical_records").update(
         is_enabled=sys.argv[1] == "enable-role-module")
     sys.exit(0)
+if len(sys.argv) > 2 and sys.argv[1] in ("client-entry-pages", "client-entry-empty"):
+    from copy import copy
+    base = Appointment.objects.get(pk=int(sys.argv[2]), business__slug="medical-role")
+    if sys.argv[1] == "client-entry-empty":
+        Appointment.objects.filter(business=base.business, client=base.client).update(status="cancelled")
+    else:
+        for index in range(21):
+            item = copy(base)
+            item.pk = None
+            item.start_at = base.start_at + timedelta(days=index + 1)
+            item.end_at = base.end_at + timedelta(days=index + 1)
+            item.save()
+    sys.exit(0)
 if len(sys.argv) > 1 and sys.argv[1] == "overview-demographics":
     from apps.medical.identity_crypto import encrypt_medical_value
     for patient in PatientProfile.objects.filter(business__slug="medical-role"):

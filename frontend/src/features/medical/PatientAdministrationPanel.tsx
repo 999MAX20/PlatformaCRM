@@ -14,6 +14,7 @@ import { PatientRepresentatives } from "./PatientRepresentatives";
 import { PatientParticipationEntry } from "./ParticipationEntry";
 import { PatientIdentityCorrections } from "./PatientIdentityCorrections";
 import { CorrectionAccessPanel } from "./CorrectionAccessPanel";
+import { ClientClinicalEntry } from "./ClientClinicalEntry";
 
 export function PatientAdministrationPanel({ businessId, clientId, clientName, userId }: { businessId: number; clientId: number; clientName: string; userId: number }) {
   const { t } = useI18n();
@@ -33,6 +34,7 @@ export function PatientAdministrationPanel({ businessId, clientId, clientName, u
         { value: "", label: t("medical.selectBranch") }, ...available.map(item => ({ value: item.id, label: item.name })),
       ]} />
       {valid && revoked ? <ErrorState message={t("medical.denied")} action={<Button variant="secondary" onClick={() => { setRevoked(false); onIdentityChanged(); }}>{t("common.retry")}</Button>} /> : valid ? <>
+        <ClientClinicalEntry key={`clinical-entry:${businessId}:${clientId}:${userId}:${selected}`} businessId={businessId} clientId={clientId} branchId={Number(selected)} />
         <PatientParticipationEntry key={`participation:${businessId}:${clientId}:${userId}:${selected}`} businessId={businessId} clientId={clientId} branchId={Number(selected)} />
         <CorrectionAccessPanel key={`clinical-corrections:${businessId}:${clientId}:${userId}:${selected}`} scope={{ business_id: businessId, branch_id: Number(selected), client_id: clientId }} />
         <PatientInBranch key={`${businessId}:${clientId}:${userId}:${selected}`} clientId={clientId} clientName={clientName} scope={{ business_id: businessId, branch_id: Number(selected) }} onIdentityChanged={onIdentityChanged} onAccessDenied={onDenied} />

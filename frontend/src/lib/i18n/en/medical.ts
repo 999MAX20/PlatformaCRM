@@ -1,4 +1,7 @@
 export const medical = {
+  "medical.clientEntry.appointment": "Appointment for opening the medical record",
+  "medical.clientEntry.select": "Select an appointment",
+  "medical.clientEntry.empty": "No appointments available to you in this branch",
   "medical.overview.title": "Overview",
   "medical.overview.latest": "Latest encounter",
   "medical.overview.clinician": "Latest encounter clinician",

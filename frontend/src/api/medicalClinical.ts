@@ -1,6 +1,7 @@
 import { apiClient } from "./client";
 
 export type ClinicalScope = { business_id: number; patient_id: number };
+export type ClientClinicalAppointments = { results: { id: number; start_at: string; end_at: string }[]; next_before_id: number | null };
 export type ClinicalOverview = {
   patient_id: number; patient_revision: number; full_name: string;
   identity_status: "unverified" | "verified"; date_of_birth: string | null;
@@ -149,6 +150,8 @@ export const medicalClinicalApi = {
   },
   overview: async (scope: ClinicalReadScope, signal?: AbortSignal) =>
     (await apiClient.get<ClinicalOverview>(`${root}overview/`, { params: scope, signal })).data,
+  clientAppointments: async (scope: { business_id: number; branch_id: number; client_id: number; before_id?: number }, signal?: AbortSignal) =>
+    (await apiClient.get<ClientClinicalAppointments>(`${root}client-appointments/`, { params: scope, signal })).data,
   history: async (encounterId: number, scope: ClinicalReadScope & { before_revision?: number; limit?: number }, signal?: AbortSignal) => {
     const { data } = await apiClient.get<EncounterHistory>(`${root}${encounterId}/revisions/`, { params: scope, signal });
     return data;

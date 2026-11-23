@@ -1,4 +1,7 @@
 export const medical = {
+  "medical.clientEntry.appointment": "Медициналық картаны ашуға арналған жазылу",
+  "medical.clientEntry.select": "Жазылуды таңдаңыз",
+  "medical.clientEntry.empty": "Бұл филиалда сізге қолжетімді жазылулар жоқ",
   "medical.overview.title": "Шолу",
   "medical.overview.latest": "Соңғы қабылдау",
   "medical.overview.clinician": "Соңғы қабылдаудың дәрігері",
