@@ -1,3 +1,4 @@
+import { openClinicalWorkspace } from "./clinical-card-navigation";
 import { execFileSync } from "node:child_process";
 import { test, expect } from "@playwright/test";
 import { ru } from "../src/lib/i18n/ru";
@@ -41,7 +42,7 @@ for (const [language, dictionary] of Object.entries({ ru, kk, en })) {
         expect(saved.status()).toBe(201);
       }
       await page.goto(`/app/calendar?appointment=${id}&date=${context.appointment.start_at.slice(0, 10)}`);
-      await page.getByTestId("clinical-appointment-entry").getByRole("button", { name: t("medical.clinical.open"), exact: true }).click();
+      await openClinicalWorkspace(page);
       const workspace = page.getByTestId("clinical-workspace");
       const complaint = workspace.getByLabel(t("medical.clinical.complaints"), { exact: true });
       if (language === "en" && mobile) {
@@ -230,7 +231,7 @@ for (const [language, dictionary] of Object.entries({ ru, kk, en })) {
       await page.keyboard.press("Escape");
       await page.getByTestId("clinical-unsaved").getByRole("button", { name: t("medical.clinical.leaveUnsaved"), exact: true }).click();
       await expect(workspace).not.toBeVisible();
-      await page.getByTestId("clinical-appointment-entry").getByRole("button", { name: t("medical.clinical.open"), exact: true }).click();
+      await openClinicalWorkspace(page, true);
       await expect(chart.getByLabel(t("medical.tooth.asOf"), { exact: true })).toHaveValue("2000-01-01T12:00");
       await expect(focusTooth).toBeFocused();
       await expect(inspector).not.toBeVisible();

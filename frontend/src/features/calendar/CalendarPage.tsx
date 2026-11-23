@@ -38,7 +38,6 @@ import {
   shiftCalendarPeriod,
 } from "./calendarUtils";
 import { AppointmentDrawerPanel } from "./components/AppointmentDrawerPanel";
-import { ClinicalAppointmentEntry } from "../medical/ClinicalAppointmentEntry";
 import { ParticipationEntry } from "../medical/ParticipationEntry";
 import { CalendarBoard } from "./components/CalendarBoard";
 import { CalendarDayInspector } from "./components/CalendarDayInspector";
@@ -200,8 +199,10 @@ export function CalendarPage() {
       dateInTimeZone(appointment.start_at, business?.timezone || "Asia/Almaty"),
     );
     setSelectedAppointmentId(appointment.id);
-    setInspectorOpen(true);
-  }, [business?.id, business?.timezone, deepLinkedAppointment.data]);
+    if (user?.capabilities?.[String(appointment.business)]?.modules?.medical_records === true) {
+      setInspectorOpen(false); setCardAppointmentId(appointment.id);
+    } else setInspectorOpen(true);
+  }, [business?.id, business?.timezone, deepLinkedAppointment.data, user?.id]);
 
   function setNotice(
     message: string | null,
@@ -397,12 +398,21 @@ export function CalendarPage() {
 
   function selectAppointment(appointment: Appointment) {
     setSelectedAppointmentId(appointment.id);
-    setInspectorOpen(true);
+    if (user?.capabilities?.[String(appointment.business)]?.modules?.medical_records === true) {
+      setInspectorOpen(false); setCardAppointmentId(appointment.id);
+    } else setInspectorOpen(true);
     updateCalendar({ day: dateInTimeZone(appointment.start_at, businessTimeZone) });
   }
 
   function openAppointmentWorkspace(appointment: Appointment) {
+    setInspectorOpen(false);
     setCardAppointmentId(appointment.id);
+  }
+
+  function closeAppointmentWorkspace() {
+    setCardAppointmentId(null);
+    const day = selectedAppointment ? dateInTimeZone(selectedAppointment.start_at, businessTimeZone) : date;
+    requestAnimationFrame(() => document.querySelector<HTMLButtonElement>(`[data-calendar-day="${day}"]`)?.focus());
   }
 
   function selectMonthDay(nextDate: string) {
@@ -530,9 +540,11 @@ export function CalendarPage() {
   return (
     <>
       {toolbar}
-      {business && user?.capabilities?.[String(business.id)]?.modules?.medical_records === true ?
-        <ParticipationEntry key={`${business.id}:${user.id}`} businessId={business.id} /> : null}
       <PageLoadPending pending={isCalendarDataLoading} />
+      {business && user?.capabilities?.[String(business.id)]?.modules?.medical_records === true ?
+        <details className="mb-3 text-sm"><summary className="platforma-focus-ring flex min-h-11 cursor-pointer items-center text-platforma-subtle">{t("medical.participation.title")}</summary>
+          <ParticipationEntry key={`${business.id}:${user.id}`} businessId={business.id} />
+        </details> : null}
       <section
         data-testid={
           isCalendarDataLoading ? undefined : "calendar-workspace-ready"
@@ -625,12 +637,10 @@ export function CalendarPage() {
             onArchive={setArchiveTarget}
             t={t}
           />
-          {business && user?.capabilities?.[String(business.id)]?.modules?.medical_records === true ?
-            <ClinicalAppointmentEntry key={`${business.id}:${user.id}:${selectedAppointment.id}`}
-              businessId={business.id} appointmentId={selectedAppointment.id} /> : null}</>
+          </>
         ) : null}
       </CalendarDayInspector>
-      <CrmEntityDrawer entity={cardAppointmentId ? { type: "appointment", id: cardAppointmentId } : null} onClose={() => setCardAppointmentId(null)} />
+      <CrmEntityDrawer entity={cardAppointmentId ? { type: "appointment", id: cardAppointmentId } : null} onClose={closeAppointmentWorkspace} />
 
       <CalendarBookingDialog
         t={t}

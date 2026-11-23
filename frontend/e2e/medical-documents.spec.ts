@@ -1,3 +1,4 @@
+import { openClinicalWorkspace } from "./clinical-card-navigation";
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { ru } from "../src/lib/i18n/ru";
@@ -46,7 +47,7 @@ for (const [language, t] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
     expect(response.ok()).toBe(true);
     const appointment = await response.json();
     await page.goto(`/app/calendar?appointment=${id}&date=${appointment.start_at.slice(0, 10)}&view=day`);
-    await page.getByTestId("clinical-appointment-entry").getByRole("button", { name: t["medical.clinical.open"], exact: true }).click();
+    await openClinicalWorkspace(page);
     const workspace = page.getByTestId("clinical-workspace");
     await workspace.getByLabel(t["medical.clinical.number"], { exact: true }).fill(`DOC-${id}`);
     await workspace.getByRole("button", { name: t["medical.clinical.createRecord"], exact: true }).click();

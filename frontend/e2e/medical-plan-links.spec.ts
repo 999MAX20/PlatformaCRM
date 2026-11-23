@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { openClinicalWorkspace } from "./clinical-card-navigation";
 import AxeBuilder from "@axe-core/playwright";
 import { ru } from "../src/lib/i18n/ru";
 import { kk } from "../src/lib/i18n/kk";
@@ -35,8 +36,7 @@ for (const language of ["ru", "kk", "en"] as const) for (const mobile of [false,
         expected_patient_revision: context.patient.revision, expected_appointment_updated_at: context.appointment.updated_at } });
     expect(encounter.status()).toBe(201);
     await page.goto(`/app/calendar?appointment=${id}&date=${appointment.start_at.slice(0, 10)}`);
-    const open = page.getByTestId("clinical-appointment-entry").getByRole("button", { name: t["medical.clinical.open"], exact: true });
-    await open.click();
+    await openClinicalWorkspace(page);
     const workspace = page.getByTestId("clinical-workspace");
     const steps = workspace.getByTestId("clinical-plan-steps");
     await steps.getByRole("button", { name: t["medical.plan.addStep"], exact: true }).click();
@@ -84,7 +84,7 @@ for (const language of ["ru", "kk", "en"] as const) for (const mobile of [false,
     await steps.screenshot({ path: info.outputPath("linked-plan.png") });
     expect((await new AxeBuilder({ page }).include('[data-testid="clinical-workspace"]').withTags(["wcag2a", "wcag2aa"]).analyze()).violations).toEqual([]);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
-    await page.keyboard.press("Escape"); await expect(workspace).not.toBeVisible(); await open.click();
+    await page.keyboard.press("Escape"); await expect(workspace).not.toBeVisible(); await openClinicalWorkspace(page, true);
     await expect(link).toContainText(chosen);
     await workspace.getByRole("tab", { name: t["medical.tooth.title"], exact: true }).click();
     const chart = workspace.getByTestId("tooth-chart");

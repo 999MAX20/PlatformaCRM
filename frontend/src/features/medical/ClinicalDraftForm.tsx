@@ -73,7 +73,15 @@ export function ClinicalDraftForm({ context, onDirty, onDenied, onReload, draftC
   if (loading) return <LoadingState />;
   if (!loaded) return <ErrorState message={getApiErrorMessage(error)} action={<Button size="lg" variant="secondary" onClick={() => setRefresh(value => value + 1)}>{t("common.retry")}</Button>} />;
   return <form ref={form} autoComplete="off" className="space-y-4" onSubmit={event => { event.preventDefault(); void save(); }}>
-    <h2 className="text-base font-semibold">{t(view === "plan" ? "medical.clinical.plan" : "medical.clinical.note")}</h2>
+    <div className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-3 border-b border-platforma-border bg-surface-card py-3">
+      <h2 className="text-base font-semibold">{t(view === "plan" ? "medical.clinical.plan" : "medical.clinical.note")}</h2>
+      {context.actions.save_draft ? <Button type="submit" size="lg" isLoading={pending} disabled={!dirty || conflict}>{t("medical.clinical.save")}</Button> : null}
+      {saved ? <p role="status" className="w-full text-sm">{t("common.saved")}</p> : null}
+      {error ? <div className="w-full"><ErrorState message={conflict ? t("medical.clinical.conflict") : getApiErrorMessage(error)} /></div> : null}
+      {conflict ? <Button type="button" size="lg" variant="secondary" onClick={() => {
+        if (!dirty || window.confirm(t("medical.clinical.discard"))) onReload();
+      }}>{t("medical.clinical.reload")}</Button> : null}
+    </div>
     {!context.actions.save_draft ? <p role="status" className="text-sm text-platforma-subtle">{t("medical.clinical.readOnly")}</p> : null}
     {clinicalFields.filter(field => view !== "plan" || field === "plan").map(field => <ClinicalSectionInput key={field} field={field} content={content}
       bookingAccess={{ context, revision, onReload, onDenied, unsaved: dirty }}
@@ -84,11 +92,5 @@ export function ClinicalDraftForm({ context, onDirty, onDenied, onReload, draftC
         dirtyNow.current = JSON.stringify(next) !== JSON.stringify(baseline);
         setContent(next); setSaved(false);
       }} />)}
-    {error ? <ErrorState message={conflict ? t("medical.clinical.conflict") : getApiErrorMessage(error)} /> : null}
-    {conflict ? <Button type="button" size="lg" variant="secondary" onClick={() => {
-      if (!dirty || window.confirm(t("medical.clinical.discard"))) onReload();
-    }}>{t("medical.clinical.reload")}</Button> : null}
-    {saved ? <p role="status" className="text-sm">{t("common.saved")}</p> : null}
-    {context.actions.save_draft ? <Button type="submit" size="lg" isLoading={pending} disabled={!dirty || conflict}>{t("medical.clinical.save")}</Button> : null}
   </form>;
 }

@@ -1,3 +1,4 @@
+import { openClinicalWorkspace } from "./clinical-card-navigation";
 import { test, expect } from "@playwright/test";
 import { execFileSync } from "node:child_process";
 import AxeBuilder from "@axe-core/playwright";
@@ -27,7 +28,7 @@ for (const language of ["ru", "kk", "en"] as const) for (const width of [1440, 3
     await identity;
     const appointment = await (await page.request.get(`${process.env.E2E_API_BASE_URL}/api/appointments/${id}/`, { headers: { Authorization: `Bearer ${token}` } })).json();
     await page.goto(`/app/calendar?appointment=${id}&date=${appointment.start_at.slice(0, 10)}&view=day`);
-    await page.getByTestId("clinical-appointment-entry").getByRole("button", { name: t["medical.clinical.open"], exact: true }).click();
+    await openClinicalWorkspace(page);
     const workspace = page.getByTestId("clinical-workspace");
     await workspace.getByLabel(t["medical.clinical.number"], { exact: true }).fill(`ORDER-${id}`);
     await workspace.getByRole("button", { name: t["medical.clinical.createRecord"], exact: true }).click();
@@ -109,7 +110,7 @@ test("order recovery: retry, real conflict and revoked access", async ({ page },
   const base = process.env.E2E_API_BASE_URL;
   const appointment = await (await page.request.get(`${base}/api/appointments/7/`, { headers })).json();
   await page.goto(`/app/calendar?appointment=7&date=${appointment.start_at.slice(0, 10)}&view=day`);
-  await page.getByTestId("clinical-appointment-entry").getByRole("button", { name: t["medical.clinical.open"], exact: true }).click();
+  await openClinicalWorkspace(page);
   const workspace = page.getByTestId("clinical-workspace");
   await workspace.getByLabel(t["medical.clinical.number"], { exact: true }).fill("ORDER-RECOVERY");
   await workspace.getByRole("button", { name: t["medical.clinical.createRecord"], exact: true }).click();

@@ -165,7 +165,7 @@ export function useClientsWorkspace({
   }, []);
 
   const openClientCard = useCallback(
-    (clientId: number, initialTab: CrmCardTab = "overview") => {
+    (clientId: number, initialTab?: CrmCardTab) => {
       setSelectedClientId(clientId);
       setDrawerEntity({ type: "client", id: clientId, initialTab });
     },

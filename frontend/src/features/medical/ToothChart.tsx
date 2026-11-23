@@ -1,4 +1,5 @@
 import { useToothNavigation } from "./clinicalViewNavigation";
+import { ToothShape } from "./ToothShape";
 import { historyScopeKey } from "./clinicalHistoryNavigation";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import axios from "axios";
@@ -111,7 +112,7 @@ function ChartData({ scope, context, asOf, onDenied, navigation, onNavigation }:
   return <div ref={chartRef} className="space-y-4">
     <Select label={t("medical.tooth.title")} value={mode} onChange={event => { onNavigation({ ...navigation, mode: event.target.value, focusedTooth: undefined }); setSelected(null); }}
       options={["permanent", "primary", "mixed"].map(value => ({ value, label: t(`medical.tooth.${value}`) }))} />
-    <p className="text-sm text-platforma-subtle">{t("medical.tooth.orientation")}</p>
+    <p className="hidden text-sm text-platforma-subtle md:block">{t("medical.tooth.orientation")}</p>
     <div className="md:hidden"><Select label={t("medical.tooth.orientation")} value={quadrant} onChange={event => onNavigation({ ...navigation, quadrant: Number(event.target.value), focusedTooth: undefined })}
       options={quadrants.map(value => ({ value, label: t(`medical.tooth.q${value}`) }))} /></div>
     <div className="grid min-w-0 gap-4 md:grid-cols-2">
@@ -121,14 +122,15 @@ function ChartData({ scope, context, asOf, onDenied, navigation, onNavigation }:
           const numbers = Array.from({ length: primary ? 5 : 8 }, (_, index) => (q + (primary ? 4 : 0)) * 10 + index + 1);
           if (q === 1 || q === 4) numbers.reverse();
           return <div key={String(primary)} className="space-y-2">
-            <p className="text-xs text-platforma-subtle">{t(primary ? "medical.tooth.primary" : "medical.tooth.permanent")}</p>
-            <div className="flex flex-wrap gap-2">{numbers.map(tooth => {
+            {mode === "mixed" ? <p className="text-xs text-platforma-subtle">{t(primary ? "medical.tooth.primary" : "medical.tooth.permanent")}</p> : null}
+            <div className="flex overflow-x-auto pb-2">{numbers.map(tooth => {
               const observed = rows.some(row => row.tooth === tooth);
-              return <Button key={tooth} size="lg" variant="secondary" className="min-h-11 min-w-11 px-2"
+              return <button type="button" key={tooth} className={`platforma-focus-ring flex min-h-11 min-w-11 shrink-0 cursor-pointer flex-col items-center rounded-control px-0.5 py-2 transition-colors hover:bg-surface-hover ${observed ? "bg-brand-50 text-brand-700" : "text-platforma-subtle"}`}
                 aria-label={`${t("medical.tooth.tooth")} ${tooth}: ${t(observed ? "medical.tooth.observed" : "medical.tooth.empty")}`}
                 data-focus-return-id={`tooth-${tooth}`} onClick={() => { onNavigation({ ...navigation, focusedTooth: tooth }); setSelected(tooth); }}>
-                <span>{tooth}{observed ? " •" : ""}</span>
-              </Button>;
+                <ToothShape tooth={tooth} />
+                <span className="text-sm font-semibold tabular-nums">{tooth}{observed ? " •" : ""}</span>
+              </button>;
             })}</div>
           </div>;
         })}

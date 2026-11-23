@@ -28,10 +28,13 @@ import { EntityTimeline } from "../drawers/EntityTimeline";
 import type { CrmCardTab, CrmDrawerEntity } from "../drawers/types";
 import { ClientCardDetails } from "./ClientCardDetails";
 import { ClientCardOverview } from "./ClientCardOverview";
+import { DentalClientClinical } from "../../../features/medical/DentalClientClinical";
+import type { ClinicalEntryHandle } from "../../../features/medical/ClinicalAppointmentEntry";
 
-type ClientTab = Exclude<CrmCardTab, "deals"> | "details";
+type ClientTab = Exclude<CrmCardTab, "deals"> | "details" | "clinical";
 const allTabs = ["overview", "timeline", "appointments", "tasks", "messages", "notes", "files", "details"] as const;
 const labels: Record<ClientTab, string> = {
+  clinical: "medical.clinical.title",
   overview: "crmCard.overview", timeline: "crmCard.timeline", appointments: "nav.appointments",
   tasks: "crmCard.tasks", messages: "crmCard.messages", notes: "crmCard.notes",
   files: "crmCard.attachments", details: "clients.details",
@@ -44,11 +47,13 @@ export function ClientCardModal({ entity, onClose, actions, onOpenEntity, onBack
   const { t, language } = useI18n();
   const { business } = useActiveBusiness();
   const { user } = useAuth();
+  const dental = !!business && user?.capabilities?.[String(business.id)]?.modules?.medical_records === true;
+  const clinical = useRef<ClinicalEntryHandle>(null);
   const restoreClient = useRestoreClient();
   const navigate = useNavigate();
   const confirm = useActionConfirm();
   const id = useId();
-  const [tab, setTab] = useState<ClientTab>(entity.initialTab && entity.initialTab !== "deals" ? entity.initialTab : "overview");
+  const [tab, setTab] = useState<ClientTab>(entity.initialTab && entity.initialTab !== "deals" ? entity.initialTab : dental ? "clinical" : "overview");
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [dirty, setDirty] = useState(false);
   const [pending, setPending] = useState(false);
@@ -66,13 +71,14 @@ export function ClientCardModal({ entity, onClose, actions, onOpenEntity, onBack
   const client = data?.client;
   const canEdit = !client?.is_archived && data?.available_action_details?.some(action => action.id === "add_note" && action.allowed) === true;
   const canBook = !client?.is_archived && data?.available_action_details?.some(action => action.id === "create_appointment" && action.allowed) === true;
-  const visibleTabs = allTabs.filter(value => value !== "appointments" || hasPermission(user, business?.id, "appointments", "view"))
+  const visibleTabs: ClientTab[] = [...(dental ? ["clinical" as const] : []), ...allTabs.filter(value => value !== "appointments" || hasPermission(user, business?.id, "appointments", "view"))
     .filter(value => value !== "tasks" || hasPermission(user, business?.id, "tasks", "view"))
-    .filter(value => value !== "messages" || hasPermission(user, business?.id, "conversations", "view"));
+    .filter(value => value !== "messages" || hasPermission(user, business?.id, "conversations", "view"))];
 
   async function attempt(action: () => void) {
     if (pending || restoreClient.isPending || confirming.current) return;
-    if (dirty) {
+    if (clinical.current && !await clinical.current.beforeLeave()) return;
+    if (dirty && !clinical.current) {
       confirming.current = true;
       const result = await confirm({ title: t("taskWorkspace.discardTitle"), confirmLabel: t("taskWorkspace.discard"), cancelLabel: t("taskWorkspace.keepEditing"), tone: "warning" });
       confirming.current = false;
@@ -97,14 +103,15 @@ export function ClientCardModal({ entity, onClose, actions, onOpenEntity, onBack
   const counts = data?.meta?.related_counts;
   const limited = tab === "tasks" ? data?.meta?.has_more.tasks : tab === "appointments" ? data?.meta?.has_more.appointments : tab === "messages" ? data?.meta?.has_more.conversations : tab === "notes" ? data?.meta?.has_more.notes : false;
   const openAppointment = onOpenEntity ? (id: number) => void attempt(() => onOpenEntity({ type: "appointment", id })) : undefined;
-  const panel = data && client ? tab === "overview" ? <ClientCardOverview data={data} onHistory={() => changeTab("timeline")} onOpenAppointment={openAppointment} />
+  const panel = data && client ? tab === "clinical" && dental && user ? <DentalClientClinical businessId={client.business} clientId={client.id} userId={user.id} navigationRef={clinical} onDirtyChange={setDirty} />
+    : tab === "overview" ? <ClientCardOverview data={data} onHistory={() => changeTab("timeline")} onOpenAppointment={openAppointment} />
     : tab === "timeline" ? <EntityTimeline data={data} locale={language} timeZone={business?.timezone} />
     : tab === "appointments" ? <EntityAppointmentsPanel data={data} locale={language} timeZone={business?.timezone} onOpenAppointment={openAppointment} />
     : tab === "tasks" ? <EntityTasksPanel data={data} entity={entity} />
     : tab === "messages" ? <EntityConversationsPanel data={data} />
     : tab === "notes" ? <EntityNotesPanel data={data} entity={entity} readOnly={!canEdit} onDirtyChange={setDirty} onPendingChange={setPending} locale={language} timeZone={business?.timezone} />
     : tab === "files" ? <EntityAttachmentsPanel data={data} entity={entity} readOnly={!canEdit} onDirtyChange={setDirty} onPendingChange={setPending} />
-    : <ClientCardDetails data={data} entity={entity} canEdit={canEdit} onDirtyChange={setDirty} onPendingChange={setPending} /> : null;
+    : <ClientCardDetails data={data} entity={entity} canEdit={canEdit} hideCustomFields={dental} onDirtyChange={setDirty} onPendingChange={setPending} /> : null;
   return <>
     {(dirty || pending) ? <DraftGuard dirty={dirty} pending={pending} /> : null}
     <Dialog open title={t("common.client")} onClose={() => void attempt(onClose)} presentation="entity" size="xl"

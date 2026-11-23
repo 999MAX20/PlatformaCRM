@@ -1,3 +1,4 @@
+import { openClinicalWorkspace } from "./clinical-card-navigation";
 import { test, expect } from "@playwright/test";
 import { execFileSync } from "node:child_process";
 import AxeBuilder from "@axe-core/playwright";
@@ -30,8 +31,7 @@ for (const language of ["ru", "kk", "en"] as const) {
       expect(response.status()).toBe(200);
       const appointment = await response.json();
       await page.goto(`/app/calendar?appointment=${id}&date=${appointment.start_at.slice(0, 10)}&view=day`);
-      const entry = page.getByTestId("clinical-appointment-entry");
-      await entry.getByRole("button", { name: t["medical.clinical.open"], exact: true }).click();
+      await openClinicalWorkspace(page);
       const workspace = page.getByTestId("clinical-workspace");
       await workspace.getByLabel(t["medical.clinical.number"], { exact: true }).fill(`BROWSER-${id}`);
       await workspace.getByRole("button", { name: t["medical.clinical.createRecord"], exact: true }).click();
@@ -123,8 +123,8 @@ for (const language of ["ru", "kk", "en"] as const) {
       expect((await new AxeBuilder({ page }).include('[data-testid="clinical-workspace"]').withTags(["wcag2a", "wcag2aa"]).analyze()).violations).toEqual([]);
       await page.keyboard.press("Escape");
       await expect(workspace).not.toBeVisible();
-      await expect(entry.getByRole("button", { name: t["medical.clinical.open"], exact: true })).toBeFocused();
-      await entry.getByRole("button", { name: t["medical.clinical.open"], exact: true }).click();
+      await expect(page.locator("[data-calendar-day]:focus")).toHaveCount(1);
+      await openClinicalWorkspace(page, true);
       await expect(complaint).toHaveValue(`Synthetic clinical complaint ${id}`);
       await expect(allergies).toHaveValue(`Synthetic allergy ${id} — оқу`);
       await expect(contraindications).toHaveValue(`Synthetic contraindication ${id}`);
@@ -160,6 +160,8 @@ for (const language of ["ru", "kk", "en"] as const) {
       await expect(workspace.getByText(t["common.saved"], { exact: true })).toBeVisible();
       await workspace.getByRole("tab", { name: t["medical.clinical.history"], exact: true }).click();
       await history.locator("button[aria-pressed]").first().click();
+      await expect(reader).toContainText(`${t["medical.clinical.revision"]} 1`);
+      await revisions.getByRole("button").filter({ hasText: new RegExp(`^${t["medical.clinical.revision"]} 3`) }).click();
       await expect(reader).toContainText(`Unsaved while reading history ${id}`);
       expect(await page.evaluate(() => JSON.stringify({ ...localStorage, ...sessionStorage }))).not.toContain("Synthetic clinical complaint");
       await workspace.getByRole("tab", { name: t["medical.clinical.note"], exact: true }).click();
@@ -178,14 +180,14 @@ for (const language of ["ru", "kk", "en"] as const) {
       await page.keyboard.press("Escape");
       await unsaved.getByRole("button", { name: t["medical.clinical.leaveUnsaved"], exact: true }).click();
       await expect(workspace).not.toBeVisible();
-      await expect(entry.getByRole("button", { name: t["medical.clinical.open"], exact: true })).toBeFocused();
-      await entry.getByRole("button", { name: t["medical.clinical.open"], exact: true }).click();
+      await expect(page.locator("[data-calendar-day]:focus")).toHaveCount(1);
+      await openClinicalWorkspace(page, true);
       await expect(complaint).toHaveValue(`Unsaved while reading history ${id}`);
       await complaint.fill(`Saved on close ${id}`);
       await page.keyboard.press("Escape");
       await unsaved.getByRole("button", { name: t["medical.clinical.saveClose"], exact: true }).click();
       await expect(workspace).not.toBeVisible();
-      await entry.getByRole("button", { name: t["medical.clinical.open"], exact: true }).click();
+      await openClinicalWorkspace(page, true);
       await expect(complaint).toHaveValue(`Saved on close ${id}`);
 
     });

@@ -35,7 +35,7 @@ test("clinical recovery: retained draft, stable retry, real conflict and revocat
   expect(encounter.status()).toBe(201);
   const encounterId = (await encounter.json()).id;
   await page.goto(`/app/calendar?appointment=7&date=${context.appointment.start_at.slice(0, 10)}`);
-  await page.getByTestId("clinical-appointment-entry").getByRole("button", { name: ru["medical.clinical.open"], exact: true }).click();
+  await expect(page.getByTestId("clinical-workspace")).toBeVisible();
   const workspace = page.getByTestId("clinical-workspace");
   const complaint = workspace.getByLabel(ru["medical.clinical.complaints"], { exact: true });
   const save = workspace.getByRole("button", { name: ru["medical.clinical.save"], exact: true });

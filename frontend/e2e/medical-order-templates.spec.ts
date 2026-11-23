@@ -1,3 +1,4 @@
+import { openClinicalWorkspace } from "./clinical-card-navigation";
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { ru } from "../src/lib/i18n/ru";
@@ -50,7 +51,7 @@ for (const language of ["ru", "kk", "en"] as const) for (const width of [1440, 3
     await templateCommand(`${path}versions/${template.version_id}/submit/`, { business_id }, common ? head : token);
     await templateCommand(`versions/${template.version_id}/decision/`, { business_id, decision: "approved", reason: "Synthetic review" }, head);
     await page.goto(`/app/calendar?appointment=${id}&date=${appointment.start_at.slice(0, 10)}`);
-    await page.getByTestId("clinical-appointment-entry").getByRole("button", { name: t["medical.clinical.open"], exact: true }).click();
+    await openClinicalWorkspace(page);
     const workspace = page.getByTestId("clinical-workspace");
     await workspace.getByLabel(t["medical.clinical.number"], { exact: true }).fill(`OT-${id}`);
     await workspace.getByRole("button", { name: t["medical.clinical.createRecord"], exact: true }).click();

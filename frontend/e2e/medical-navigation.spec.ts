@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { openClinicalWorkspace } from "./clinical-card-navigation";
 import AxeBuilder from "@axe-core/playwright";
 import { ru } from "../src/lib/i18n/ru";
 import { requireIsolatedEnvironment } from "./isolated-environment.mjs";
@@ -24,9 +25,7 @@ for (const width of [1440, 390]) {
     expect(appointmentResponse.status()).toBe(200);
     const appointment = await appointmentResponse.json();
     await page.goto(`/app/calendar?appointment=${id}&date=${appointment.start_at.slice(0, 10)}`);
-    const entry = page.getByTestId("clinical-appointment-entry");
-    const open = entry.getByRole("button", { name: ru["medical.clinical.open"], exact: true });
-    await open.click();
+    await openClinicalWorkspace(page);
     const workspace = page.getByTestId("clinical-workspace");
     await workspace.getByLabel(ru["medical.clinical.number"], { exact: true }).fill(`NAV-${id}`);
     await workspace.getByRole("button", { name: ru["medical.clinical.createRecord"], exact: true }).click();
@@ -47,14 +46,12 @@ for (const width of [1440, 390]) {
     await expect(complaint).toHaveValue("Synthetic unsaved note");
     await history.click();
     await page.keyboard.press("Escape");
-    const closedContext = page.waitForResponse(r => r.url().includes("/encounters/appointment-context/") && r.status() === 200);
     await unsaved.getByRole("button", { name: ru["medical.clinical.leaveUnsaved"], exact: true }).click();
-    await closedContext;
     await expect(workspace).not.toBeVisible();
-    await expect(open).toBeFocused();
+    await expect(page.locator("[data-calendar-day]:focus")).toHaveCount(1);
     const contextRoute = "**/api/medical/encounters/appointment-context/**";
     await page.route(contextRoute, route => route.fulfill({ status: 503, json: { detail: "Synthetic unavailable context" } }));
-    await open.click();
+    await openClinicalWorkspace(page, true);
     await expect(workspace.getByText(ru["actions.errorTemporary"], { exact: true })).toBeVisible();
     await page.unroute(contextRoute);
     await workspace.getByRole("button", { name: ru["common.retry"], exact: true }).click();
@@ -66,11 +63,10 @@ for (const width of [1440, 390]) {
     await note.click();
     await expect(complaint).toHaveValue("");
     await history.click();
-    const closeAgain = page.waitForResponse(r => r.url().includes("/encounters/appointment-context/") && r.status() === 200);
     await page.keyboard.press("Escape");
-    await closeAgain;
+    await expect(workspace).not.toBeVisible();
     await page.route(contextRoute, route => route.fulfill({ status: 403, json: { detail: "Synthetic denied context" } }));
-    await open.click();
+    await openClinicalWorkspace(page, true);
     await expect(workspace.getByText(ru["medical.denied"], { exact: true })).toBeVisible();
     await expect(workspace.getByRole("tab")).toHaveCount(0);
     await workspace.screenshot({ path: info.outputPath("clinical-return-denied.png") });

@@ -1,5 +1,5 @@
 import { ClinicalViewNavigationProvider } from "./clinicalViewNavigation";
-import { useCallback, useEffect, useMemo, useRef, useState, type Ref } from "react";
+import { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState, type Ref } from "react";
 import axios from "axios";
 import { medicalClinicalApi, type AppointmentClinicalContext } from "../../api/medicalClinical";
 import { getApiErrorMessage } from "../../api/client";
@@ -19,17 +19,24 @@ import { OrderWorkspace } from "./orders/OrderWorkspace";
 import { ClinicalOverview } from "./ClinicalOverview";
 import { ClinicalVisitPlans } from "./ClinicalVisitPlans";
 import type { HistoryMemory } from "./clinicalHistoryNavigation";
+import { useAuth } from "../auth/AuthProvider";
+import { clinicalCardMemory, type ClinicalTab } from "./clinicalCardMemory";
 
-type ClinicalTab = "overview" | "encounter" | "history" | "teeth" | "plan" | "documents" | "orders";
+export type ClinicalEntryHandle = { beforeLeave: () => Promise<boolean> };
 
-export function ClinicalAppointmentEntry({ businessId, appointmentId }: { businessId: number; appointmentId: number }) {
+export function ClinicalAppointmentEntry({ businessId, appointmentId, embedded = false, navigationRef, onDirtyChange }: {
+  businessId: number; appointmentId: number; embedded?: boolean; navigationRef?: Ref<ClinicalEntryHandle>; onDirtyChange?: (dirty: boolean) => void;
+}) {
   const { t } = useI18n();
-  const [tab, setTab] = useState<ClinicalTab>("encounter");
-  const historyMemory: HistoryMemory = useRef(new Map());
+  const { user } = useAuth();
+  const memory = useMemo(() => clinicalCardMemory(`${businessId}:${user?.id}`, appointmentId), [businessId, user?.id, appointmentId]);
+  const [tab, setTabState] = useState<ClinicalTab>(memory.tab);
+  const setTab = (next: ClinicalTab) => { memory.tab = next; setTabState(next); };
+  const historyMemory: HistoryMemory = useRef(memory.history);
   const [context, setContext] = useState<AppointmentClinicalContext | null>(null);
   const [error, setError] = useState<unknown>(null);
   const [loading, setLoading] = useState(true);
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(embedded);
   const [refresh, setRefresh] = useState(0);
   const [dirty, setDirty] = useState(false);
   const [confirmClose, setConfirmClose] = useState(false);
@@ -37,11 +44,15 @@ export function ClinicalAppointmentEntry({ businessId, appointmentId }: { busine
   const [closeFailed, setCloseFailed] = useState(false);
   const draftControl = useRef<ClinicalDraftControl>(null);
   const closeInFlight = useRef(false);
+  const workspacePending = useRef(false);
+  const onWorkspacePending = useCallback((value: boolean) => { workspacePending.current = value; }, []);
+  const leaveRequest = useRef<((allowed: boolean) => void) | null>(null);
   const documentEditor = useRef(false);
   const onDocumentEditor = useCallback((value: boolean) => { documentEditor.current = value; }, []);
   const canEditDocument = useCallback(() => !draftControl.current?.isPending(), []);
   const [admitted, setAdmitted] = useState(false);
   useUnsavedEntryWarning(dirty);
+  useEffect(() => { onDirtyChange?.(dirty); }, [dirty, onDirtyChange]);
   const focusId = `clinical-open-${businessId}-${appointmentId}`;
   useEffect(() => {
     const controller = new AbortController();
@@ -53,9 +64,22 @@ export function ClinicalAppointmentEntry({ businessId, appointmentId }: { busine
     return () => controller.abort();
   }, [businessId, appointmentId, refresh, open]);
   const status = axios.isAxiosError(error) ? error.response?.status : undefined;
-  const finishClose = () => { setConfirmClose(false); setOpen(false); setDirty(false); };
+  function resolveLeave(allowed: boolean) {
+    leaveRequest.current?.(allowed); leaveRequest.current = null;
+  }
+  const finishClose = () => { setConfirmClose(false); if (!embedded) setOpen(false); setDirty(false); resolveLeave(true); };
+  const keepEditing = () => { setConfirmClose(false); resolveLeave(false); };
+  useImperativeHandle(navigationRef, () => ({ beforeLeave: async () => {
+    if (documentEditor.current || workspacePending.current || closeInFlight.current || draftControl.current?.isPending() || leaveRequest.current) return false;
+    if (draftControl.current?.isDirty() && context?.encounter) {
+      setCloseFailed(false); setConfirmClose(true);
+      return new Promise<boolean>(resolve => { leaveRequest.current = resolve; });
+    }
+    return !dirty || window.confirm(t("medical.clinical.discard"));
+  } }));
+  useEffect(() => () => resolveLeave(false), []);
   const close = () => {
-    if (documentEditor.current || closeInFlight.current || draftControl.current?.isPending()) return;
+    if (documentEditor.current || workspacePending.current || closeInFlight.current || draftControl.current?.isPending()) return;
     if (draftControl.current?.isDirty() && context?.encounter) { setCloseFailed(false); setConfirmClose(true); return; }
     if (dirty && !window.confirm(t("medical.clinical.discard"))) return;
     finishClose();
@@ -70,28 +94,29 @@ export function ClinicalAppointmentEntry({ businessId, appointmentId }: { busine
   }
   const denied = useCallback((cause: unknown) => { setContext(null); setError(cause); setDirty(false); setConfirmClose(false); }, []);
   const reload = () => { setLoading(true); setContext(null); setError(null); setRefresh(value => value + 1); };
+  const workspace = loading ? <LoadingState /> : error ? <ErrorState message={status === 401 || status === 403 ? t("medical.denied") : getApiErrorMessage(error)}
+    action={<Button size="lg" variant="secondary" onClick={reload}>{t("common.retry")}</Button>} /> : context ?
+    <ClinicalWorkspace compact={embedded} onPending={onWorkspacePending} historyMemory={historyMemory} tab={tab} onTabChange={setTab} draftControl={draftControl} context={context} onChanged={reload} onDirty={setDirty} onDenied={denied}
+      onDocumentEditor={onDocumentEditor} canEditDocument={canEditDocument} /> : null;
   if (!open && (status === 401 || status === 403)) return null;
   return <div className="mt-4" data-testid="clinical-appointment-entry">
     {loading && !open ? <LoadingState /> : !open && error ? <ErrorState
       message={status === 404 ? t("medical.clinical.noProfile") : getApiErrorMessage(error)}
       action={<Button size="lg" variant="secondary" onClick={reload}>{t("common.retry")}</Button>} /> : null}
-    <div className="flex flex-wrap gap-2">{admitted ? <Button size="lg" variant="secondary" data-focus-return-id={focusId} onClick={() => {
+    {!embedded ? <div className="flex flex-wrap gap-2">{admitted ? <Button size="lg" variant="secondary" data-focus-return-id={focusId} onClick={() => {
       setLoading(true); setContext(null); setError(null); setOpen(true);
     }}>{t("medical.clinical.open")}</Button> : null}
-    {context ? <SourceProposalEntry scope={{ business_id: businessId, patient_id: context.patient.id, source_appointment_id: appointmentId }} /> : null}</div>
-    <ClinicalViewNavigationProvider><Modal open={open} onClose={close} size="xl" title={t("medical.clinical.title")} testId="clinical-workspace" closeOnBackdrop={false} focusReturnId={focusId}>
-      {loading ? <LoadingState /> : error ? <ErrorState message={status === 401 || status === 403 ? t("medical.denied") : getApiErrorMessage(error)}
-        action={<Button size="lg" variant="secondary" onClick={reload}>{t("common.retry")}</Button>} /> : context ?
-        <ClinicalWorkspace historyMemory={historyMemory} tab={tab} onTabChange={setTab} draftControl={draftControl} context={context} onChanged={reload} onDirty={setDirty} onDenied={denied}
-          onDocumentEditor={onDocumentEditor} canEditDocument={canEditDocument} /> : null}
-    </Modal></ClinicalViewNavigationProvider>
-    <Modal open={confirmClose && open} onClose={() => { if (!closeInFlight.current) setConfirmClose(false); }}
+    {context ? <SourceProposalEntry scope={{ business_id: businessId, patient_id: context.patient.id, source_appointment_id: appointmentId }} /> : null}</div> : null}
+    <ClinicalViewNavigationProvider sharedMemory={memory.views}>{embedded ? <section data-testid="clinical-workspace">{workspace}</section> :
+      <Modal open={open} onClose={close} size="xl" title={t("medical.clinical.title")} testId="clinical-workspace" closeOnBackdrop={false} focusReturnId={focusId}>{workspace}</Modal>}
+    </ClinicalViewNavigationProvider>
+    <Modal open={confirmClose && open} onClose={() => { if (!closeInFlight.current) keepEditing(); }}
       title={t("medical.clinical.unsavedTitle")} size="sm" closeOnBackdrop={false} testId="clinical-unsaved">
       <div className="space-y-4">
         {closeFailed ? <p role="alert" className="text-sm text-platforma-text">{t("medical.clinical.closeFailed")}</p> : null}
         <div className="flex flex-wrap gap-3">
           <Button size="lg" isLoading={closing} onClick={() => void saveAndClose()}>{t("medical.clinical.saveClose")}</Button>
-          <Button size="lg" variant="secondary" disabled={closing} onClick={() => setConfirmClose(false)}>{t("medical.clinical.continueEditing")}</Button>
+          <Button size="lg" variant="secondary" disabled={closing} onClick={keepEditing}>{t("medical.clinical.continueEditing")}</Button>
           <Button size="lg" variant="secondary" disabled={closing} onClick={finishClose}>{t("medical.clinical.leaveUnsaved")}</Button>
         </div>
       </div>
@@ -99,7 +124,9 @@ export function ClinicalAppointmentEntry({ businessId, appointmentId }: { busine
   </div>;
 }
 
-function ClinicalWorkspace({ context, onChanged, onDirty, onDenied, draftControl, onDocumentEditor, canEditDocument, tab, onTabChange, historyMemory }: {
+function ClinicalWorkspace({ context, onChanged, onDirty, onDenied, draftControl, onDocumentEditor, canEditDocument, tab, onTabChange, historyMemory, compact = false, onPending }: {
+  compact?: boolean;
+  onPending: (pending: boolean) => void;
   historyMemory: HistoryMemory;
   tab: ClinicalTab; onTabChange: (tab: ClinicalTab) => void;
   onDocumentEditor: (open: boolean) => void; canEditDocument: () => boolean;
@@ -112,6 +139,7 @@ function ClinicalWorkspace({ context, onChanged, onDirty, onDenied, draftControl
   const planScope = useMemo(() => ({ business_id: context.business_id, patient_id: context.patient.id,
     appointment_id: context.appointment.id }), [context]);
   const [pending, setPending] = useState(false);
+  useEffect(() => { onPending(pending); return () => onPending(false); }, [pending, onPending]);
   const [error, setError] = useState<unknown>(null);
   const request = useRef<{ fingerprint: string; key: string } | null>(null);
   const controller = useRef(new AbortController());
@@ -137,12 +165,13 @@ function ClinicalWorkspace({ context, onChanged, onDirty, onDenied, draftControl
       }
     } finally { if (!signal.aborted) setPending(false); }
   }
-  return <div className={`grid min-w-0 gap-5 ${tab === "documents" ? "" : "lg:grid-cols-[minmax(0,2fr)_minmax(220px,1fr)]"}`}>
-    <aside className={`min-w-0 space-y-3 ${tab === "documents" ? "" : "lg:order-2"}`}>
-      <h2 className="break-words text-lg font-semibold text-platforma-text">{context.patient.full_name}</h2>
+  return <div className="min-w-0 space-y-4">
+    <aside className="flex min-w-0 flex-wrap items-center gap-x-5 gap-y-2 border-b border-platforma-border pb-3">
+      {!compact ? <h2 className="break-words text-lg font-semibold text-platforma-text">{context.patient.full_name}</h2> : null}
       <p className="text-sm text-platforma-subtle">{t(`medical.${context.patient.identity_status}`)}</p>
       {context.active_record ? <p className="break-words text-sm">{t("medical.clinical.number")}: {context.active_record.number}</p> : null}
       {context.patient.identity_status !== "verified" ? <p role="status" className="text-sm text-platforma-subtle">{t("medical.clinical.verifyFirst")}</p> : null}
+      {compact ? <SourceProposalEntry scope={{ business_id: context.business_id, patient_id: context.patient.id, source_appointment_id: context.appointment.id }} /> : null}
     </aside>
     <div className="min-w-0 space-y-4">
       <Tabs value={tab} onChange={onTabChange} idPrefix={tabPrefix} ariaLabel={t("medical.clinical.title")}

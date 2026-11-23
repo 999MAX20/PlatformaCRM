@@ -4,12 +4,12 @@ import { historyScopeKey } from "./clinicalHistoryNavigation";
 
 type ToothNavigation = { date: string; asOf?: string; mode: string; quadrant: number; focusedTooth?: number };
 type PlanNavigation = { archived: boolean; cursor?: number };
-type ViewMemory = { teeth: Map<string, ToothNavigation>; plans: Map<string, PlanNavigation> };
+export type ViewMemory = { teeth: Map<string, ToothNavigation>; plans: Map<string, PlanNavigation> };
 const ViewContext = createContext<ViewMemory | null>(null);
 
-export function ClinicalViewNavigationProvider({ children }: { children: ReactNode }) {
+export function ClinicalViewNavigationProvider({ children, sharedMemory }: { children: ReactNode; sharedMemory?: ViewMemory }) {
   const memory = useRef<ViewMemory>({ teeth: new Map(), plans: new Map() });
-  return <ViewContext.Provider value={memory.current}>{children}</ViewContext.Provider>;
+  return <ViewContext.Provider value={sharedMemory ?? memory.current}>{children}</ViewContext.Provider>;
 }
 
 function useNavigation<T>(scope: ClinicalReadScope, memory: Map<string, T> | undefined, initial: T) {

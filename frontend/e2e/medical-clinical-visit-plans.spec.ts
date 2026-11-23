@@ -1,3 +1,4 @@
+import { openClinicalWorkspace } from "./clinical-card-navigation";
 import { test, expect } from "@playwright/test";
 import { execFileSync } from "node:child_process";
 import AxeBuilder from "@axe-core/playwright";
@@ -88,7 +89,7 @@ for (const language of ["ru", "kk", "en"] as const) for (const width of [1440, 3
     expect(response.ok()).toBe(true);
     const appointment = await response.json();
     await page.goto(`/app/calendar?appointment=${id}&date=${appointment.start_at.slice(0, 10)}&view=day`);
-    await page.getByTestId("clinical-appointment-entry").getByRole("button", { name: t["medical.clinical.open"], exact: true }).click();
+    await openClinicalWorkspace(page);
     await page.getByTestId("clinical-workspace").getByRole("tab", { name: t["medical.overview.title"], exact: true }).click();
     await open.click();
     await expect(modal.getByTestId("clinical-visit-plan")).toHaveCount(recovery ? 20 : 3);
@@ -109,7 +110,7 @@ for (const language of ["ru", "kk", "en"] as const) for (const width of [1440, 3
     await expect(planOpen).toBeFocused();
     await page.keyboard.press("Escape");
     await expect(workspace).not.toBeVisible();
-    await page.getByTestId("clinical-appointment-entry").getByRole("button", { name: t["medical.clinical.open"], exact: true }).click();
+    await openClinicalWorkspace(page, true);
     await planOpen.click();
     await expect(modal.getByRole("combobox")).toContainText(t["plans.archived"]);
     await expect(modal.getByTestId("clinical-visit-plan")).toHaveCount(1);

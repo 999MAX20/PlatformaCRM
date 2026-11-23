@@ -25,22 +25,26 @@ import { EntityTimeline } from "../drawers/EntityTimeline";
 import type { CrmDrawerEntity } from "../drawers/types";
 import { AppointmentCardActions } from "./AppointmentCardActions";
 import { AppointmentCardOverview } from "./AppointmentCardOverview";
+import { ClinicalAppointmentEntry, type ClinicalEntryHandle } from "../../../features/medical/ClinicalAppointmentEntry";
 
-type Tab = "overview" | "timeline" | "tasks" | "files" | "notes" | "messages" | "details";
-const labels: Record<Tab, string> = { overview: "crmCard.overview", timeline: "crmCard.timeline", tasks: "crmCard.tasks", files: "crmCard.attachments", notes: "crmCard.notes", messages: "crmCard.messages", details: "crmCard.customFields" };
+type Tab = "clinical" | "overview" | "timeline" | "tasks" | "files" | "notes" | "messages" | "details";
+const labels: Record<Tab, string> = { clinical: "medical.clinical.title", overview: "crmCard.overview", timeline: "crmCard.timeline", tasks: "crmCard.tasks", files: "crmCard.attachments", notes: "crmCard.notes", messages: "crmCard.messages", details: "crmCard.customFields" };
 
 export function AppointmentCardModal({ entity, onClose, onOpenEntity, onBack }: {
   entity: CrmDrawerEntity; onClose: () => void; onOpenEntity: (entity: CrmDrawerEntity) => void; onBack?: () => void;
 }) {
   const { business } = useActiveBusiness();
   const { user } = useAuth();
+  const dental = !!business && user?.capabilities?.[String(business.id)]?.modules?.medical_records === true;
+  const clinical = useRef<ClinicalEntryHandle>(null);
   const { t, language } = useI18n();
   const zone = business?.timezone || "UTC";
   const confirm = useActionConfirm();
   const navigate = useNavigate();
   const id = useId();
-  const [tab, setTab] = useState<Tab>(entity.initialTab && entity.initialTab in labels ? entity.initialTab as Tab : "overview");
+  const [tab, setTab] = useState<Tab>(entity.initialTab && entity.initialTab in labels ? entity.initialTab as Tab : dental ? "clinical" : "overview");
   const [dirty, setDirty] = useState(false);
+  const [detailsOpen, setDetailsOpen] = useState(false);
   const [panelPending, setPanelPending] = useState(false);
   const [actionPending, setActionPending] = useState(false);
   const [revision, setRevision] = useState(0);
@@ -51,11 +55,12 @@ export function AppointmentCardModal({ entity, onClose, onOpenEntity, onBack }: 
   const data = concealed ? undefined : query.data;
   const appointment = data?.appointment;
   const canEdit = !!appointment && !appointment.is_archived && data?.available_action_details?.some(action => action.id === "add_note" && action.allowed) === true;
-  const primary = (["overview", "timeline", "tasks"] as const).filter(value => value !== "tasks" || hasPermission(user, business?.id, "tasks", "view"));
-  const secondary = (["files", "notes", "details", "messages"] as const).filter(value => value !== "messages" || hasPermission(user, business?.id, "conversations", "view"));
+  const primary: Tab[] = [...(dental ? ["clinical" as const] : []), ...(["overview", "timeline", "tasks"] as const).filter(value => value !== "tasks" || hasPermission(user, business?.id, "tasks", "view"))];
+  const secondary = (["files", "notes", "details", "messages"] as const).filter(value => !(dental && value === "details")).filter(value => value !== "messages" || hasPermission(user, business?.id, "conversations", "view"));
   async function attempt(action: () => void) {
     if (pending || confirming.current) return;
-    if (dirty) {
+    if (clinical.current && !await clinical.current.beforeLeave()) return;
+    if (dirty && !clinical.current) {
       confirming.current = true;
       const result = await confirm({ title: t("taskWorkspace.discardTitle"), confirmLabel: t("taskWorkspace.discard"), cancelLabel: t("taskWorkspace.keepEditing"), tone: "warning" });
       confirming.current = false;
@@ -65,7 +70,8 @@ export function AppointmentCardModal({ entity, onClose, onOpenEntity, onBack }: 
     setDirty(false); action();
   }
   const changeTab = (next: Tab) => { if (next !== tab) void attempt(() => setTab(next)); };
-  const panel = data && appointment ? tab === "overview" ? <AppointmentCardOverview data={data} timeZone={zone} canEdit={canEdit && !query.isError} onDirtyChange={setDirty} onPendingChange={setPanelPending} onHistory={() => changeTab("timeline")} />
+  const panel = data && appointment ? tab === "clinical" && dental ? <ClinicalAppointmentEntry businessId={appointment.business} appointmentId={appointment.id} embedded navigationRef={clinical} onDirtyChange={setDirty} />
+    : tab === "overview" ? <AppointmentCardOverview data={data} timeZone={zone} canEdit={canEdit && !query.isError} onDirtyChange={setDirty} onPendingChange={setPanelPending} onHistory={() => changeTab("timeline")} />
     : tab === "timeline" ? <EntityTimeline data={data} locale={language} timeZone={zone} />
     : tab === "tasks" ? <EntityTasksPanel data={data} entity={entity} />
     : tab === "files" ? <EntityAttachmentsPanel data={data} entity={entity} readOnly={!canEdit || query.isError} onDirtyChange={setDirty} onPendingChange={setPanelPending} />
@@ -85,7 +91,8 @@ export function AppointmentCardModal({ entity, onClose, onOpenEntity, onBack }: 
         <div className="grid shrink-0 gap-6 p-4 sm:p-6 md:min-h-0 md:flex-1 md:grid-cols-[240px_minmax(0,1fr)] md:grid-rows-[minmax(0,1fr)]">
           <aside className="min-w-0 border-b border-platforma-border pb-5 md:min-h-0 md:overflow-y-auto md:border-b-0 md:border-r md:pb-0 md:pr-6">
             <div className="mb-7"><h2 className="break-words text-2xl font-semibold">{data.client ? <button type="button" className="platforma-focus-ring rounded-control text-left" onClick={() => void attempt(() => onOpenEntity({ type: "client", id: data.client!.id }))}>{data.client.full_name}</button> : appointment.client_name || t("common.client")}</h2><p className="mt-2 text-base"><span className="block">{new Intl.DateTimeFormat(language === "kk" ? "kk-KZ" : language === "ru" ? "ru-RU" : "en-GB", { day: "2-digit", month: language === "kk" ? "2-digit" : "short", year: "numeric", timeZone: zone }).format(new Date(appointment.start_at))}</span><span className="block">{new Intl.DateTimeFormat(language === "kk" ? "kk-KZ" : language === "ru" ? "ru-RU" : "en-GB", { hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZone: zone }).format(new Date(appointment.start_at))} – {dateInTimeZone(appointment.start_at, zone) === dateInTimeZone(appointment.end_at, zone) ? new Intl.DateTimeFormat(language === "kk" ? "kk-KZ" : language === "ru" ? "ru-RU" : "en-GB", { hour: "2-digit", minute: "2-digit", hourCycle: "h23", timeZone: zone }).format(new Date(appointment.end_at)) : formatDateTime(appointment.end_at, zone, true, language)}</span></p></div>
-            <dl className="space-y-5 text-sm">
+            {dental ? <Button variant="secondary" className="mb-3 md:hidden" aria-expanded={detailsOpen} aria-controls={`${id}-appointment-facts`} onClick={() => setDetailsOpen(value => !value)}>{t("clients.details")}</Button> : null}
+            <dl id={`${id}-appointment-facts`} className={`${dental && !detailsOpen ? "hidden md:block" : ""} space-y-5 text-sm`}>
               {data.client && (data.client.phone || data.client.email) && <div><dt className="mb-1 text-platforma-subtle">{t("clients.contacts")}</dt><dd>
                 {data.client.phone && <a className="platforma-focus-ring block break-all rounded-control" href={`tel:${data.client.phone}`}>{data.client.phone}</a>}
                 {data.client.email && <a className="platforma-focus-ring mt-2 block break-all rounded-control" href={`mailto:${data.client.email}`}>{data.client.email}</a>}</dd></div>}

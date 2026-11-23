@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { openClinicalWorkspace } from "./clinical-card-navigation";
 import { execFileSync } from "node:child_process";
 import AxeBuilder from "@axe-core/playwright";
 import { ru } from "../src/lib/i18n/ru";
@@ -99,8 +100,7 @@ for (const language of ["ru", "kk", "en"] as const) for (const width of [1440, 3
     const appointmentResponse = await page.request.get(`${process.env.E2E_API_BASE_URL}/api/appointments/${id}/`, { headers: { Authorization: `Bearer ${token}` } });
     const appointment = await appointmentResponse.json();
     await page.goto(`/app/calendar?appointment=${id}&date=${appointment.start_at.slice(0, 10)}&view=day`);
-    const clinicalOpen = page.getByTestId("clinical-appointment-entry").getByRole("button", { name: t["medical.clinical.open"], exact: true });
-    await clinicalOpen.click();
+    await openClinicalWorkspace(page);
     const workspace = page.getByTestId("clinical-workspace");
     await workspace.getByRole("tab", { name: t["medical.clinical.history"], exact: true }).click();
     await select(t["appointment.status"], t["medical.clinical.state.draft"]);
@@ -112,7 +112,7 @@ for (const language of ["ru", "kk", "en"] as const) for (const width of [1440, 3
     await workspace.getByRole("tab", { name: t["medical.clinical.history"], exact: true }).click();
     await expect(versions.getByRole("button", { name: new RegExp(`${t["medical.clinical.revision"]} 1\\b`) })).toHaveAttribute("aria-pressed", "true");
     await page.keyboard.press("Escape");
-    await clinicalOpen.click();
+    await openClinicalWorkspace(page, true);
     await expect(versions.getByRole("button", { name: new RegExp(`${t["medical.clinical.revision"]} 1\\b`) })).toHaveAttribute("aria-pressed", "true");
   });
 }

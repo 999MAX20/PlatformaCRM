@@ -1,3 +1,4 @@
+import { openClinicalWorkspace } from "./clinical-card-navigation";
 import { test, expect } from "@playwright/test";
 import { execFileSync } from "node:child_process";
 import { ru } from "../src/lib/i18n/ru";
@@ -22,7 +23,7 @@ test("history recovery: unavailable list, retained draft and revoked read", asyn
   expect(contextResponse.status()).toBe(200);
   const context = await contextResponse.json();
   await page.goto(`/app/calendar?appointment=8&date=${context.appointment.start_at.slice(0, 10)}`);
-  await page.getByTestId("clinical-appointment-entry").getByRole("button", { name: ru["medical.clinical.open"], exact: true }).click();
+  await openClinicalWorkspace(page);
   const workspace = page.getByTestId("clinical-workspace");
   await workspace.getByRole("tab", { name: ru["medical.clinical.history"], exact: true }).click();
   await expect(workspace.getByText(ru["medical.clinical.historyEmpty"], { exact: true })).toBeVisible();
@@ -45,7 +46,7 @@ test("history recovery: unavailable list, retained draft and revoked read", asyn
     expect(saved.status()).toBe(200);
   }
   await page.goto(`/app/calendar?appointment=8&date=${context.appointment.start_at.slice(0, 10)}`);
-  await page.getByTestId("clinical-appointment-entry").getByRole("button", { name: ru["medical.clinical.open"], exact: true }).click();
+  await openClinicalWorkspace(page);
   const complaint = workspace.getByLabel(ru["medical.clinical.complaints"], { exact: true });
   await complaint.fill("Unsaved draft retained through history error");
   let unavailable = true;
