@@ -1,13 +1,14 @@
 from unittest.mock import patch
 
 from django.test import TestCase, override_settings
+from django.utils import timezone
 from rest_framework.test import APIClient
 
-from apps.businesses.models import Business
+from apps.businesses.models import Business, RolePermission
 from . import tests_document_template_source as fixtures
 from . import tests_patient_services as crypto_fixtures
 from .audit import MedicalAuditUnavailable
-from .models import MedicalDocumentRevision
+from .models import MedicalDocumentRevision, TreatmentParticipation
 
 
 @override_settings(MEDICAL_DATA_KEYS={"test": crypto_fixtures.key(7)}, MEDICAL_DATA_ACTIVE_KEY_ID="test",
@@ -59,6 +60,37 @@ class DocumentAPITests(TestCase):
         self.assertEqual(history.data["next_before_revision"], 2)
         self.assertEqual(self.read(f"{first['id']}/revisions/", before_revision=2).data["results"][0]["version_id"], first["version_id"])
         self.assertEqual(self.read(f"versions/{first['version_id']}/").data["snapshot"]["document_text"], self.payload["document_text"])
+
+    def test_participation_reads_finalized_encounter_documents_and_revocation_denies(self):
+        first = self.command().data
+        updated = self.command(f"{first['id']}/draft/", self.payload | dict(expected_document_revision=1,
+            document_text="Updated historical document"), "historical-update")
+        self.assertEqual(updated.status_code, 200, updated.data)
+        now = timezone.now()
+        type(self.appointment).objects.filter(pk=self.appointment.pk).update(status="completed")
+        type(self.encounter_record).objects.filter(pk=self.encounter_record.pk).update(state="finalized",
+            ended_at=now, finalized_at=now, finalized_by=self.doctor)
+        participation = TreatmentParticipation.objects.create(patient=self.patient, member=self.member,
+            branch=self.first, proposed_by=self.owner, state="active", proposed_at=now, accepted_at=now)
+        self.scope = dict(business_id=self.business.pk, patient_id=self.patient.pk, participation_id=participation.pk)
+        access = self.read("workspace-access/", encounter_id=self.encounter_record.pk)
+        self.assertEqual(access.status_code, 200, access.data)
+        self.assertEqual(access.data["actions"], dict(view=True, create=False, update=False))
+        self.assertEqual(self.read(encounter_id=self.encounter_record.pk).data["results"][0]["revision"], 2)
+        self.assertEqual(len(self.read(f"{first['id']}/revisions/").data["results"]), 2)
+        self.assertEqual(self.read(f"versions/{first['version_id']}/").data["snapshot"]["document_text"], self.payload["document_text"])
+        participation.state, participation.closed_at, participation.closed_by = "ended", now, self.owner
+        participation.save(update_fields=["state", "closed_at", "closed_by"])
+        for path, params in (("", {"encounter_id": self.encounter_record.pk}),
+                ("workspace-access/", {"encounter_id": self.encounter_record.pk}),
+                (f"{first['id']}/revisions/", {}), (f"versions/{first['version_id']}/", {})):
+            with self.subTest(path=path):
+                self.assertEqual(self.read(path, **params).status_code, 403)
+
+    def test_record_permission_does_not_replace_document_view(self):
+        RolePermission.objects.filter(business_role=self.role, resource="medical_documents", action="view").delete()
+        self.assertEqual(self.read(encounter_id=self.encounter_record.pk).status_code, 403)
+        self.assertEqual(self.private(self.api.get("/api/medical/encounters/workspace/", self.scope)).status_code, 200)
 
     def test_workspace_access_uses_current_document_permissions_and_strict_scope(self):
         response = self.read("workspace-access/", encounter_id=self.encounter_record.pk)

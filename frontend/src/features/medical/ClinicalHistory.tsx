@@ -10,6 +10,7 @@ import { formatDateTime } from "../../lib/format";
 import { localeByLanguage } from "../calendar/calendarConstants";
 import { ClinicalPlanStepsRead } from "./ClinicalPlanSteps";
 import { EncounterOrdersEntry } from "./orders/OrderWorkspace";
+import { EncounterDocumentsEntry } from "./documents/DocumentWorkspace";
 
 type Denied = (cause: unknown) => void;
 function isDenied(cause: unknown) {
@@ -68,7 +69,10 @@ function HistoryPage({ scope, cursor, onPage, onDenied }: {
       {data.next_before_id !== null ? <Button size="lg" variant="secondary" onClick={() => onPage(data.next_before_id!)}>{t("medical.clinical.older")}</Button> : null}
     </div>
     {selected !== null ? <>
-      {data.encounters.filter(item => item.id === selected).map(item => <EncounterOrdersEntry key={item.id} scope={scope} encounter={item} />)}
+      {data.encounters.filter(item => item.id === selected).map(item => <div key={item.id} className="flex flex-wrap gap-2">
+        <EncounterOrdersEntry scope={scope} encounter={item} />
+        <EncounterDocumentsEntry scope={scope} encounter={item} />
+      </div>)}
       <RevisionList key={selected} encounterId={selected} scope={scope} onDenied={onDenied} />
     </> : null}
   </section>;

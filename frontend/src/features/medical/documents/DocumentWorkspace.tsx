@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { medicalDocumentsApi as api, type DocumentAccess, type DocumentRow, type DocumentVersion, type DocumentScope, type DocumentRevision } from "../../../api/medicalDocuments";
-import type { AppointmentClinicalContext } from "../../../api/medicalClinical";
+import type { AppointmentClinicalContext, ClinicalReadScope, EncounterSummary } from "../../../api/medicalClinical";
 import { getApiErrorMessage } from "../../../api/client";
 import { Button } from "../../../components/ui/Button";
 import { Modal } from "../../../components/ui/Modal";
@@ -16,9 +16,34 @@ import { DocumentEditor } from "./DocumentEditor";
 export function DocumentWorkspace({ context, active, onEditor, canEdit }: {
   context: AppointmentClinicalContext; active: boolean; onEditor: (open: boolean) => void; canEdit: () => boolean;
 }) {
-  const { t } = useI18n();
   const scope = useMemo<DocumentScope>(() => ({ business_id: context.business_id, patient_id: context.patient.id,
     appointment_id: context.appointment.id, encounter_id: context.encounter!.id }), [context]);
+  return <DocumentWorkspaceContent scope={scope} active={active} onEditor={onEditor} canEdit={canEdit} patientName={context.patient.full_name} />;
+}
+
+export function EncounterDocumentsEntry({ scope, encounter }: { scope: ClinicalReadScope; encounter: EncounterSummary }) {
+  const { t, language } = useI18n();
+  const [open, setOpen] = useState(false);
+  const documentScope = useMemo(() => ({ ...scope, encounter_id: encounter.id }), [scope, encounter.id]);
+  const focusId = `historical-documents-${scope.business_id}-${encounter.id}`;
+  return <>
+    <Button size="lg" variant="secondary" data-focus-return-id={focusId} onClick={() => setOpen(true)}>{t("medical.documents.title")}</Button>
+    <Modal open={open} onClose={() => setOpen(false)} title={t("medical.documents.title")} size="xl"
+      closeOnBackdrop={false} focusReturnId={focusId} testId="historical-documents">
+      <div className="space-y-4">
+        <p className="break-words text-sm">{formatDateTime(encounter.started_at, undefined, true, localeByLanguage[language])} · {encounter.branch_name} · {encounter.primary_clinician_name || t("medical.clinical.authorUnknown")}</p>
+        <p className="text-sm text-platforma-subtle">{t("medical.clinical.readOnly")}</p>
+        {open ? <DocumentWorkspaceContent scope={documentScope} active readOnly /> : null}
+      </div>
+    </Modal>
+  </>;
+}
+
+function DocumentWorkspaceContent({ scope, active, onEditor, canEdit, patientName, readOnly = false }: {
+  scope: DocumentScope; active: boolean; readOnly?: boolean; patientName?: string;
+  onEditor?: (open: boolean) => void; canEdit?: () => boolean;
+}) {
+  const { t } = useI18n();
   const [rows, setRows] = useState<DocumentRow[]>([]);
   const [access, setAccess] = useState<DocumentAccess | null>(null);
   const [cursor, setCursor] = useState<number | null>(null);
@@ -37,7 +62,7 @@ export function DocumentWorkspace({ context, active, onEditor, canEdit }: {
   useUnsavedEntryWarning(draft.dirty || draft.pending);
   const denied = useCallback((cause: unknown) => {
     setRows([]); setSelected(null); setAccess(null); setEditor(null); setError(cause);
-    guard.current = { dirty: false, pending: false }; setDraft(guard.current); onEditor(false);
+    guard.current = { dirty: false, pending: false }; setDraft(guard.current); onEditor?.(false);
   }, [onEditor]);
   const load = useCallback(async (before?: number) => {
     request.current?.abort(); const controller = new AbortController(); request.current = controller;
@@ -50,18 +75,18 @@ export function DocumentWorkspace({ context, active, onEditor, canEdit }: {
     finally { if (!controller.signal.aborted) setLoading(false); }
   }, [scope, denied]);
   useEffect(() => { if (active) void load(); return () => request.current?.abort(); }, [active, load]);
-  useEffect(() => () => onEditor(false), [onEditor]);
+  useEffect(() => () => onEditor?.(false), [onEditor]);
   useEffect(() => { if (selected && window.matchMedia("(max-width: 1023px)").matches) backButton.current?.focus(); }, [selected]);
   function openEditor(value: "create" | DocumentVersion) {
-    if (!canEdit()) return;
+    if (readOnly || !canEdit?.()) return;
     editorFocus.current = value === "create" ? "medical-document-create" : "medical-document-edit";
-    setEditor(value); onEditor(true);
+    setEditor(value); onEditor?.(true);
   }
   function closeEditor() {
     if (guard.current.pending || (guard.current.dirty && !window.confirm(t("medical.clinical.discard")))) return;
-    setEditor(null); onEditor(false);
+    setEditor(null); onEditor?.(false);
   }
-  function saved() { editorFocus.current = "medical-document-create"; setEditor(null); onEditor(false); setSelected(null); void load(); }
+  function saved() { editorFocus.current = "medical-document-create"; setEditor(null); onEditor?.(false); setSelected(null); void load(); }
   function select(row: DocumentRow, button: HTMLButtonElement) {
     selectedButton.current = button;
     scrollPosition.current = [];
@@ -79,7 +104,7 @@ export function DocumentWorkspace({ context, active, onEditor, canEdit }: {
   }
   return <section className="min-w-0 space-y-4" data-testid="medical-documents">
     <div className="flex flex-wrap gap-2">
-      {access?.actions.create ? <Button id="medical-document-create" size="lg" disabled={loading} onClick={() => openEditor("create")}>{t("medical.documents.create")}</Button> : null}
+      {!readOnly && access?.actions.create ? <Button id="medical-document-create" size="lg" disabled={loading} onClick={() => openEditor("create")}>{t("medical.documents.create")}</Button> : null}
       <Button size="lg" variant="secondary" disabled={loading} onClick={() => { setSelected(null); void load(); }}>{t("medical.clinical.reload")}</Button>
     </div>
     {error ? <ErrorState message={medicalRoleDenied(error) ? t("medical.denied") : getApiErrorMessage(error)} action={<Button onClick={() => void load()}>{t("common.retry")}</Button>} /> : null}
@@ -96,14 +121,14 @@ export function DocumentWorkspace({ context, active, onEditor, canEdit }: {
       </div>
       {selected ? <div className="min-w-0 space-y-4">
         <Button ref={backButton} size="lg" variant="secondary" onClick={back}>{t("medical.documents.back")}</Button>
-        <DocumentDetail key={selected.version_id} scope={scope} row={selected} canUpdate={!!access?.actions.update} onEdit={openEditor} onDenied={denied} />
+        <DocumentDetail key={selected.version_id} scope={scope} row={selected} canUpdate={!readOnly && !!access?.actions.update} onEdit={openEditor} onDenied={denied} />
       </div> : null}
     </div>
     <Modal open={editor !== null} onClose={closeEditor} size="lg" closeOnBackdrop={false} testId="medical-document-editor"
       focusReturnId={editorFocus.current}
       title={t(editor === "create" ? "medical.documents.create" : "medical.documents.edit")}>
       {editor ? <div className="space-y-4">
-        <p className="break-words text-sm">{t("medical.fullName")}: {context.patient.full_name}</p>
+        <p className="break-words text-sm">{t("medical.fullName")}: {patientName}</p>
         <DocumentEditor scope={scope} version={editor === "create" ? null : editor}
           control={{ guard, onDraft: setDraft, onSaved: saved, onDenied: denied }} />
       </div> : null}

@@ -224,6 +224,36 @@ if roles_fixture and len(sys.argv) > 1 and sys.argv[1] in ("disable-role-module"
     BusinessCapability.objects.filter(business__slug="medical-role", module_key="medical_records").update(
         is_enabled=sys.argv[1] == "enable-role-module")
     sys.exit(0)
+if len(sys.argv) > 2 and sys.argv[1] == "historical-documents-populate":
+    from apps.medical.models import MedicalEncounter
+    from apps.medical.template_services import save_personal_template_draft
+    from apps.medical.template_reviews import submit_personal_template, decide_template_review
+    from apps.medical.document_services import save_primary_document_draft
+    encounter = MedicalEncounter.objects.select_related("patient", "primary_clinician__user").get(
+        appointment_id=int(sys.argv[2]), business__slug="medical-role")
+    actor, patient = encounter.primary_clinician.user, encounter.patient
+    head = get_user_model().objects.get(username="medical-template-head")
+    template, _ = save_personal_template_draft(actor=actor, business_id=patient.business_id,
+        title=f"Synthetic historical document {patient.pk}", text="Synthetic source",
+        idempotency_key=f"history-document-template-{patient.pk}")
+    submit_personal_template(actor=actor, business_id=patient.business_id, version_id=template.pk,
+        idempotency_key=f"history-document-submit-{patient.pk}")
+    decide_template_review(actor=head, business_id=patient.business_id, version_id=template.pk,
+        decision="approved", reason="Synthetic review", idempotency_key=f"history-document-approve-{patient.pk}")
+    for index in range(int(sys.argv[3])):
+        payload = dict(actor=actor, business_id=patient.business_id, patient_id=patient.pk,
+            encounter_id=encounter.pk, expected_encounter_revision=encounter.revision,
+            expected_patient_revision=patient.revision, template_version_id=template.pk)
+        first, _ = save_primary_document_draft(**payload, idempotency_key=f"history-document-{patient.pk}-{index}",
+            document_text=f"Synthetic historical document {index} v1")
+        if index == 0:
+            save_primary_document_draft(**payload, document_id=first.document_id, expected_document_revision=1,
+                idempotency_key=f"history-document-update-{patient.pk}", reason="Synthetic correction",
+                document_text="Synthetic historical document 0 v2")
+    now = timezone.now()
+    MedicalEncounter.objects.filter(pk=encounter.pk).update(state="finalized", ended_at=now, finalized_at=now, finalized_by=actor)
+    Appointment.objects.filter(pk=encounter.appointment_id).update(status="completed")
+    sys.exit(0)
 if len(sys.argv) > 2 and sys.argv[1] in ("historical-orders-context", "historical-orders-populate", "historical-orders-end"):
     from apps.medical.record_services import open_dental_record
     from apps.medical.encounter_services import open_primary_encounter

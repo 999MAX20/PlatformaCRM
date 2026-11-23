@@ -170,6 +170,18 @@ for (const [language, t] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
     await expect(detail).toHaveCount(0);
     await expect(documents.getByRole("button", { name: t["medical.documents.create"], exact: true })).toHaveCount(0);
     await page.unroute("**/api/medical/documents/*/draft/");
+    await workspace.getByRole("tab", { name: t["medical.clinical.history"], exact: true }).click();
+    const clinicalHistory = workspace.getByTestId("clinical-history");
+    await clinicalHistory.locator("ul > li > button").first().click();
+    await clinicalHistory.getByRole("button", { name: t["medical.documents.title"], exact: true }).click();
+    const historical = page.getByTestId("historical-documents");
+    await historical.getByRole("button", { name: new RegExp(title) }).click();
+    await expect(historical.getByTestId("medical-document-text")).toHaveText(`Synthetic document corrected ${id}`);
+    await expect(historical.getByRole("button", { name: t["medical.documents.edit"], exact: true })).toHaveCount(0);
+    await expect(historical.getByRole("button", { name: t["medical.documents.create"], exact: true })).toHaveCount(0);
+    await historical.screenshot({ path: info.outputPath("calendar-historical-document.png") });
+    await page.keyboard.press("Escape");
+    await expect(historical).not.toBeVisible();
     await workspace.getByRole("tab", { name: t["medical.clinical.note"], exact: true }).click();
     await expect(complaint).toHaveValue("Unsaved clinical content survives document save");
     await page.keyboard.press("Escape");
