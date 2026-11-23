@@ -530,6 +530,8 @@ export const medical = {
   "medical.documents.returnDraft": "Вернуть в черновик",
   "medical.documents.returnReason": "Причина возврата",
   "medical.signing.preview": "Просмотреть PDF для подписи",
+  "medical.signing.finalize": "Завершить тестовый документ",
+  "medical.signing.finalized": "Тестовый документ завершён",
   "medical.signing.title": "Подписание документа",
   "medical.signing.synthetic": "Тестовое подписание. Не является ЭЦП и не разрешает выдачу пациенту.",
   "medical.signing.unavailable": "Подписание недоступно для текущего доступа или окружения.",

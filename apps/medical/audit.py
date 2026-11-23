@@ -127,7 +127,8 @@ def write_patient_audit(*, actor, business, patient, action, representative=None
                           MedicalAuditEvent.Actions.DOCUMENT_REVIEW_WITHDRAWN,
                           MedicalAuditEvent.Actions.DOCUMENT_REVIEW_CONFIRMED,
                           MedicalAuditEvent.Actions.DOCUMENT_HEAD_CONFIRMED,
-                          MedicalAuditEvent.Actions.DOCUMENT_SIGNING_CHANGED}:
+                          MedicalAuditEvent.Actions.DOCUMENT_SIGNING_CHANGED,
+                          MedicalAuditEvent.Actions.DOCUMENT_FINALIZED}:
             raise ValueError("Select a document read or draft action.")
         version = MedicalDocumentRevision.objects.select_related("document", "source_version").filter(
             pk=document_version.pk, document__business=business, document__encounter__business=business,
@@ -151,6 +152,11 @@ def write_patient_audit(*, actor, business, patient, action, representative=None
                     or not MedicalDocumentReviewTransition.objects.filter(version=version, actor=actor,
                         state=expected_state, state_revision=version.document.state_revision).exists()):
                 raise ValueError("A review event requires the current exact-version transition.")
+        if action == MedicalAuditEvent.Actions.DOCUMENT_FINALIZED:
+            from .models import MedicalDocumentFinalization
+            if (version.document.state != "finalized" or version.revision != version.document.revision
+                    or not MedicalDocumentFinalization.objects.filter(version=version, actor=actor).exists()):
+                raise ValueError("Finalization audit requires the actor's exact finalized document.")
         if action == MedicalAuditEvent.Actions.DOCUMENT_SIGNING_CHANGED:
             from django.db.models import F
             from .models import MedicalSigningEvent

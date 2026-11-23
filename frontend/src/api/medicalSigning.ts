@@ -5,11 +5,17 @@ export type SigningSession = { id: string; revision: number; state: "pending" | 
   adapter: string; artifact_id: number; events: { revision: number; action: string; signer: string;
     position: number | null; created_at: string; actor: { id: number; name: string } }[] };
 export type SigningState = { synthetic_enabled: boolean; can_prepare: boolean; can_start: boolean;
+  can_finalize: boolean; state_revision: number; finalize_artifact_id: number | null;
+  finalization: { id: number; artifact_id: number; created_at: string; actor: { id: number; name: string } } | null;
   can_sign: boolean; can_cancel: boolean; next_signer: string | null;
   artifact: { id: number; scan_status: string; sha256: string } | null;
   prerequisites: { ready: boolean; blockers: string[]; signers: string[] }; current: SigningSession | null; history: SigningSession[] };
 const root = (id: number) => `/api/medical/documents/versions/${id}/`;
 export const medicalSigningApi = {
+  finalize: async (id: number, payload: DocumentReadScope & { artifact_id: number; expected_state_revision: number }, key: string) => {
+    if (!key.trim() || key.length > 128) throw new Error("Invalid idempotency key");
+    return (await apiClient.post(root(id) + "finalize/", payload, { headers: { "Idempotency-Key": key } })).data;
+  },
   pdf: async (scope: DocumentReadScope, id: number, artifact_id: number, signal?: AbortSignal) =>
     (await apiClient.get<Blob>(root(id) + "signing-pdf/", { params: { ...scope, artifact_id }, responseType: "blob", signal })).data,
   read: async (scope: DocumentReadScope, id: number, language: string, signal?: AbortSignal) =>

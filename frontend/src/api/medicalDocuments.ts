@@ -17,7 +17,7 @@ export type DocumentRevision = { version_id: number; revision: number; author_id
 export type HeadConfirmation = { id: number; actor: { id: number; name: string }; created_at: string };
 export type DocumentHeadReview = { required: boolean; can_confirm: boolean; state_revision: number;
   confirmation: HeadConfirmation | null };
-export type DocumentReview = { document_state: "draft" | "ready_for_review" | "reviewed"; state_revision: number;
+export type DocumentReview = { document_state: "draft" | "ready_for_review" | "reviewed" | "finalized"; state_revision: number;
   can_transition: boolean; next_before_id: number | null; results: { id: number; state: "draft" | "ready_for_review" | "reviewed";
     state_revision: number; actor: { id: number; name: string }; created_at: string; reason: string;
     head_confirmation: HeadConfirmation | null }[] };

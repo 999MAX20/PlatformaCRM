@@ -15,6 +15,7 @@ from .document_export_history import list_document_export_history
 from .document_review_services import read_document_review, transition_document_review
 from .document_requirements import read_document_requirements
 from .document_head_review import confirm_document_by_head, read_document_head_review
+from .document_finalization_services import finalize_document, finalization_data
 from .signing_services import read_document_signing, read_signing_pdf, start_synthetic_signing, advance_synthetic_signing, signing_session_data
 from .document_artifact_services import prepare_document_signing_pdf
 from .file_audit import record_denied_file_access as record_denied_document_access
@@ -62,6 +63,10 @@ class DocumentHeadConfirmSerializer(DocumentScopeSerializer):
 
 class DocumentSigningStartSerializer(DocumentRequirementsSerializer):
     artifact_id = serializers.IntegerField(min_value=1)
+
+
+class DocumentFinalizeSerializer(DocumentSigningStartSerializer):
+    expected_state_revision = serializers.IntegerField(min_value=1)
 
 
 class DocumentSigningActionSerializer(DocumentRequirementsSerializer):
@@ -125,7 +130,7 @@ class MedicalDocumentViewSet(viewsets.GenericViewSet):
                 "head_confirm": DocumentHeadConfirmSerializer,
                 "signing": DocumentArtifactSerializer, "prepare_signing": DocumentArtifactSerializer,
                 "start_signing": DocumentSigningStartSerializer, "advance_signing": DocumentSigningActionSerializer,
-                "signing_pdf": DocumentSigningStartSerializer,
+                "signing_pdf": DocumentSigningStartSerializer, "finalize_document": DocumentFinalizeSerializer,
                 "review_transition": DocumentReviewTransitionSerializer}.get(
                     self.action, DocumentScopedReadSerializer)
 
@@ -215,6 +220,9 @@ class MedicalDocumentViewSet(viewsets.GenericViewSet):
                 response["X-Content-Type-Options"] = "nosniff"
                 response["Content-Security-Policy"] = "default-src 'none'; sandbox"
                 return response
+            if operation == "finalize":
+                item, replayed = finalize_document(**args, idempotency_key=request.headers.get("Idempotency-Key"))
+                return Response(finalization_data(item) | {"replayed": replayed})
             if operation == "prepare":
                 item, _ = prepare_document_signing_pdf(**args)
                 return Response({"artifact_id": item.pk, "scan_status": item.attachment.scan_status})
@@ -232,6 +240,10 @@ class MedicalDocumentViewSet(viewsets.GenericViewSet):
     @action(detail=False, methods=["get"], url_path=r"versions/(?P<version_id>[0-9]+)/signing-pdf")
     def signing_pdf(self, request, version_id=None):
         return self._signing(request, version_id, "pdf")
+
+    @action(detail=False, methods=["post"], url_path=r"versions/(?P<version_id>[0-9]+)/finalize")
+    def finalize_document(self, request, version_id=None):
+        return self._signing(request, version_id, "finalize")
 
     @action(detail=False, methods=["post"], url_path=r"versions/(?P<version_id>[0-9]+)/prepare-signing")
     def prepare_signing(self, request, version_id=None):

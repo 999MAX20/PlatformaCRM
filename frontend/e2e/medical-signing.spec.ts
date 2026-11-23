@@ -69,13 +69,15 @@ for (const language of ["ru", "kk"] as const) test(`head signs ${language} exact
   }
 });
 
-test("doctor prepares PDF, waits for scan, starts and cancels signing", async ({ page }, info) => {
+for (const finish of ["cancel", "finalize", "finalize-kk"] as const) test(`doctor prepares PDF, scans and ${finish}`, async ({ page }, info) => {
+  const language = finish === "finalize-kk" ? "kk" : "ru";
+  const text = language === "kk" ? kk : t;
   const fixture = (command: string, ...args: string[]) => execFileSync(process.env.E2E_PYTHON!,
     ["e2e/clinical-runtime.py", command, ...args], { env: process.env, windowsHide: true, encoding: "utf8" });
   const entry = JSON.parse(fixture("files-new-appointment").trim().split(/\r?\n/).at(-1)!);
   fixture("historical-orders-context", String(entry.appointment_id));
   const document = JSON.parse(fixture("signing-doctor-prepare", String(entry.appointment_id)).trim().split(/\r?\n/).at(-1)!);
-  await page.addInitScript(() => localStorage.setItem("ai_smb_language", "ru"));
+  await page.addInitScript(value => localStorage.setItem("ai_smb_language", value), language);
   await page.goto("/login");
   await page.locator('input[name="email"]').fill("medical-role-doctor@example.test");
   await page.locator('input[name="password"]').fill(process.env.E2E_PASSWORD!);
@@ -88,19 +90,45 @@ test("doctor prepares PDF, waits for scan, starts and cancels signing", async ({
   await page.goto(`/app/calendar?appointment=${entry.appointment_id}&date=${appointment.start_at.slice(0, 10)}&view=day`);
   await openClinicalWorkspace(page);
   const workspace = page.getByTestId("clinical-workspace");
-  await workspace.getByRole("tab", { name: t["medical.documents.title"], exact: true }).click();
+  await workspace.getByRole("tab", { name: text["medical.documents.title"], exact: true }).click();
   await workspace.getByTestId("medical-documents").getByRole("button", { name: new RegExp(document.title) }).click();
   const signing = page.getByTestId("document-signing");
-  await signing.getByRole("button", { name: t["medical.signing.prepare"], exact: true }).click();
-  await expect(signing).toContainText(t["medical.signing.quarantine"]);
+  await signing.getByRole("button", { name: text["medical.signing.prepare"], exact: true }).click();
+  await expect(signing).toContainText(text["medical.signing.quarantine"]);
   fixture("document-artifacts-scan", String(entry.appointment_id));
-  await signing.getByRole("button", { name: t["medical.signing.refresh"], exact: true }).click();
-  await signing.getByRole("button", { name: t["medical.signing.start"], exact: true }).click();
-  await expect(signing.getByRole("button", { name: t["medical.signing.sign"], exact: true })).toBeEnabled();
+  await signing.getByRole("button", { name: text["medical.signing.refresh"], exact: true }).click();
+  await signing.getByRole("button", { name: text["medical.signing.start"], exact: true }).click();
+  await expect(signing.getByRole("button", { name: text["medical.signing.sign"], exact: true })).toBeEnabled();
   await page.setViewportSize({ width: 390, height: 844 });
   await signing.evaluate(node => node.scrollIntoView({ block: "center", behavior: "instant" }));
   await page.screenshot({ path: info.outputPath("doctor-signing-mobile.png") });
-  await signing.getByRole("button", { name: t["medical.signing.cancel"], exact: true }).click();
-  await expect(signing.getByRole("status")).toHaveText(t["medical.signing.cancelled"]);
-  await expect(signing.getByRole("button", { name: t["medical.signing.sign"], exact: true })).toHaveCount(0);
+  if (finish !== "cancel") {
+    const sign = signing.getByRole("button", { name: text["medical.signing.sign"], exact: true });
+    await sign.click();
+    await expect(signing).toContainText(text["medical.rules.role.patient_or_representative"]);
+    await sign.click();
+    const finalize = signing.getByRole("button", { name: text["medical.signing.finalize"], exact: true });
+    await expect(finalize).toBeEnabled();
+    await page.setViewportSize({ width: 1440, height: 1000 });
+    await signing.screenshot({ path: info.outputPath("document-finalize-desktop.png") });
+    if (language === "kk") {
+      await page.route("**/finalize/", route => route.fulfill({ status: 409, json: { detail: "Synthetic changed document" } }));
+      await finalize.click();
+      await expect(finalize).toBeDisabled();
+      await page.unroute("**/finalize/");
+      page.once("dialog", dialog => dialog.accept());
+      await signing.getByRole("button", { name: text["medical.clinical.reload"], exact: true }).click();
+      await expect(finalize).toBeEnabled();
+    }
+    await finalize.focus(); await page.keyboard.press("Enter");
+    await expect(signing.getByTestId("document-finalization")).toContainText(text["medical.signing.finalized"]);
+    await expect(page.getByRole("button", { name: text["medical.documents.returnDraft"], exact: true })).toHaveCount(0);
+    await page.setViewportSize({ width: 390, height: 844 });
+    await signing.evaluate(node => node.scrollIntoView({ block: "center", behavior: "instant" }));
+    await page.screenshot({ path: info.outputPath("document-finalized-mobile.png") });
+    return;
+  }
+  await signing.getByRole("button", { name: text["medical.signing.cancel"], exact: true }).click();
+  await expect(signing.getByRole("status")).toHaveText(text["medical.signing.cancelled"]);
+  await expect(signing.getByRole("button", { name: text["medical.signing.sign"], exact: true })).toHaveCount(0);
 });

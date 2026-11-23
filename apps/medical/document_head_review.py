@@ -36,10 +36,15 @@ def read_document_head_review(*, actor, business_id, patient_id, version_id, **b
     rules = read_document_revision(context.version).get("document_rules")
     required = rules is not None and "medical_head" in rules["rule"]["reviewers"]
     submission = current_review_submission(context.version)
+    if context.version.document.state == "finalized":
+        from .models import MedicalDocumentFinalization
+        finalization = MedicalDocumentFinalization.objects.filter(version=context.version).select_related("submission").first()
+        if finalization:
+            submission = finalization.submission
     confirmation = (MedicalDocumentHeadConfirmation.objects.select_related("actor").filter(
         submission=submission).first() if submission else None)
     can_confirm = False
-    if required and submission and confirmation is None and basis.get("head_branch_id") is not None:
+    if required and submission and confirmation is None and context.version.document.state != "finalized" and basis.get("head_branch_id") is not None:
         try:
             assert_medical_branch_permission(actor, context.business, "medical_documents", "approve",
                 branch=context.version.document.encounter.branch)

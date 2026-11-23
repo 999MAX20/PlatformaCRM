@@ -92,7 +92,7 @@ def read_document_review(*, actor, business_id, patient_id, version_id, before_i
         try:
             _assert_review_writer(context, actor, basis.get("appointment_id"), basis.get("participation_id"))
             can_transition = (document.revision == context.version.revision and document.encounter.state == "draft"
-                and document.encounter.record.state == "active")
+                and document.encounter.record.state == "active" and document.state in {"draft", "ready_for_review", "reviewed"})
         except (PermissionDenied, InvalidTransition):
             pass
     history = MedicalDocumentReviewTransition.objects.filter(version=context.version).select_related("actor", "head_confirmation__actor")

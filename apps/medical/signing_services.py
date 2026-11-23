@@ -83,9 +83,13 @@ def assert_signing_evidence(session):
 
 @transaction.atomic
 def read_document_signing(*, actor, business_id, patient_id, version_id, language, **basis):
+    from .models import MedicalDocumentFinalization
+    from .document_finalization_services import finalization_data
     context = document_artifact_access(actor=actor, business_id=business_id, patient_id=patient_id,
         version_id=version_id, **basis)
     prerequisites = document_signing_prerequisites(context.version)
+    finalized = MedicalDocumentFinalization.objects.filter(version=context.version).select_related(
+        "version__document", "submission", "actor", "artifact__version__document", "artifact__attachment", "signing_session__artifact__version__document").first()
     enabled, role = False, None
     try:
         _synthetic_enabled()
@@ -95,7 +99,8 @@ def read_document_signing(*, actor, business_id, patient_id, version_id, languag
         pass
     artifact = MedicalDocumentArtifact.objects.filter(version=context.version, rendition="signing", language=language).select_related("attachment").first()
     sessions = MedicalSigningSession.objects.filter(artifact__version=context.version).select_related("artifact").order_by("-created_at")
-    current = sessions.filter(submission_id=prerequisites["submission_id"]).first() if prerequisites["submission_id"] else None
+    submission_id = finalized.submission_id if finalized else prerequisites["submission_id"]
+    current = sessions.filter(submission_id=submission_id).first() if submission_id else None
     primary = role is not None and role.member_id == context.version.document.encounter.primary_clinician_id
     next_signer = None
     if current is not None and current.state == "pending" and prerequisites["ready"]:
@@ -103,11 +108,23 @@ def read_document_signing(*, actor, business_id, patient_id, version_id, languag
         if position < len(prerequisites["signers"]):
             next_signer = prerequisites["signers"][position]
     can_sign = enabled and next_signer is not None and (role.kind == "head" if next_signer == "medical_head" else primary)
+    final_artifact = finalized.artifact if finalized else current.artifact if current is not None else artifact
+    can_finalize = False
+    if enabled and primary and prerequisites["ready"] and final_artifact is not None and finalized is None:
+        try:
+            assert_medical_branch_permission(actor, context.business, "medical_documents", "update", branch=context.version.document.encounter.branch)
+            can_finalize = (final_artifact.attachment.scan_status == "clean"
+                and (not prerequisites["signers"] or current is not None and current.state == "completed"))
+        except PermissionDenied:
+            pass
     write_patient_audit(actor=actor, business=context.business, patient=context.patient, action="read", document_version=context.version)
-    return {"version_id": version_id, "synthetic_enabled": enabled, "prerequisites": prerequisites,
+    return {"version_id": version_id, "state_revision": context.version.document.state_revision,
+        "finalization": finalization_data(finalized) if finalized else None, "can_finalize": can_finalize,
+        "finalize_artifact_id": final_artifact.pk if final_artifact else None,
+        "synthetic_enabled": enabled, "prerequisites": prerequisites,
         "artifact": {"id": artifact.pk, "scan_status": artifact.attachment.scan_status, "sha256": artifact.sha256} if artifact else None,
         "can_prepare": enabled and primary and prerequisites["ready"],
-        "can_start": enabled and primary and prerequisites["ready"] and artifact is not None and artifact.attachment.scan_status == "clean" and (current is None or current.state == "cancelled"),
+        "can_start": enabled and primary and prerequisites["ready"] and bool(prerequisites["signers"]) and artifact is not None and artifact.attachment.scan_status == "clean" and (current is None or current.state == "cancelled"),
         "can_sign": can_sign, "can_cancel": enabled and primary and current is not None and current.state == "pending",
         "next_signer": next_signer, "current": signing_session_data(current) if current else None,
         "history": [signing_session_data(item) for item in sessions[:20]]}
@@ -133,7 +150,14 @@ def _material(artifact):
 
 @_signing_transaction
 def read_signing_pdf(*, actor, business_id, patient_id, version_id, artifact_id, **basis):
-    context, _ = _context(actor, business_id, patient_id, version_id, basis)
+    from .models import MedicalDocumentFinalization
+    from .document_finalization_services import finalization_evidence
+    context = document_artifact_access(actor=actor, business_id=business_id, patient_id=patient_id, version_id=version_id, **basis)
+    finalized = MedicalDocumentFinalization.objects.filter(version=context.version, artifact_id=artifact_id).first()
+    if finalized:
+        finalization_evidence(finalized)
+    else:
+        context, _ = _context(actor, business_id, patient_id, version_id, basis)
     artifact = MedicalDocumentArtifact.objects.select_related("attachment", "version__document").filter(
         pk=artifact_id, version=context.version, rendition="signing", format="pdf").first()
     if artifact is None:

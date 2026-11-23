@@ -47,7 +47,7 @@ export function DocumentReview({ scope, versionId, control, canEdit, onState, he
         control={{ ...control, onSaved: () => { control.onSaved(); setReview(null); void load(); } }} /> : null}
     {headRequired && review && !error ? <DocumentHeadReview key={`head-${review.state_revision}`} scope={scope} versionId={versionId}
       control={{ ...control, onSaved: () => { control.onSaved(); void load(); } }} /> : null}
-    {review?.document_state === "reviewed" && !error ? <DocumentSigning key={`signing-${review.state_revision}`} scope={scope} versionId={versionId} control={control} /> : null}
+    {review && ["reviewed", "finalized"].includes(review.document_state) && !error ? <DocumentSigning key={`signing-${review.state_revision}`} scope={scope} versionId={versionId} control={{ ...control, onSaved: () => { control.onSaved(); void load(); } }} /> : null}
     <Button type="button" size="lg" variant="secondary" aria-expanded={open} onClick={() => setOpen(value => !value)}>{t("medical.documents.reviewHistory")}</Button>
     {open && review ? <div className="space-y-3">
       {!review.results.length && !pending && !error ? <p className="text-sm text-platforma-subtle">{t("medical.documents.reviewEmpty")}</p> : null}

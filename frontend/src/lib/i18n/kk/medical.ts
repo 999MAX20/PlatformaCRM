@@ -530,6 +530,8 @@ export const medical = {
   "medical.documents.returnDraft": "Жобаға қайтару",
   "medical.documents.returnReason": "Қайтару себебі",
   "medical.signing.preview": "Қол қойылатын PDF көру",
+  "medical.signing.finalize": "Сынақ құжатын аяқтау",
+  "medical.signing.finalized": "Сынақ құжаты аяқталды",
   "medical.signing.title": "Құжатқа қол қою",
   "medical.signing.synthetic": "Сынақ қол қоюы. Бұл ЭЦҚ емес және пациентке беруге рұқсат етпейді.",
   "medical.signing.unavailable": "Ағымдағы қолжетімділік немесе орта үшін қол қою қолжетімсіз.",

@@ -193,11 +193,11 @@ function DocumentDetail({ scope, row, canUpdate, onEdit, onDenied, reviewControl
     {error ? <ErrorState message={getApiErrorMessage(error)} action={<Button onClick={() => setAttempt(value => value + 1)}>{t("common.retry")}</Button>} /> : !version ? <LoadingState /> : <>
       <h2 className="break-words text-lg font-semibold">{version.snapshot.template.title}</h2>
       <p className="break-words text-sm text-platforma-subtle">{t("medical.templates.version", { revision: version.revision })} · {version.snapshot.prepared_by.name} · {formatDateTime(version.created_at, undefined, true, localeByLanguage[language])}</p>
-      <p className="text-sm">{t(version.revision !== current ? "medical.documents.recorded" : version.state === "draft" ? "medical.clinical.state.draft" : version.state === "ready_for_review" ? "medical.documents.readyForReview" : version.state === "reviewed" ? "medical.documents.reviewed" : "medical.documents.recorded")}</p>
+      <p className="text-sm">{t(version.revision !== current ? "medical.documents.recorded" : version.state === "draft" ? "medical.clinical.state.draft" : version.state === "ready_for_review" ? "medical.documents.readyForReview" : version.state === "reviewed" ? "medical.documents.reviewed" : version.state === "finalized" ? "medical.signing.finalized" : "medical.documents.recorded")}</p>
       <div className="whitespace-pre-wrap break-words text-sm" data-testid="medical-document-text">{version.snapshot.document_text ?? version.snapshot.template.text}</div>
       <DocumentSavedRules key={`rules-${version.version_id}`} rules={version.snapshot.document_rules} scope={readScope}
         versionId={version.version_id} onDenied={onDenied} />
-      {version.snapshot.document_text !== undefined ? <DocumentPdf key={`${version.version_id}-${language}`} scope={readScope}
+      {version.snapshot.document_text !== undefined && version.state !== "finalized" ? <DocumentPdf key={`${version.version_id}-${language}`} scope={readScope}
         versionId={version.version_id} title={version.snapshot.template.title} onDenied={onDenied} /> : null}
       <DocumentReview key={`review-${version.version_id}`} scope={readScope} versionId={version.version_id}
         headRequired={version.snapshot.document_rules?.rule.reviewers.includes("medical_head") ?? false}

@@ -530,6 +530,8 @@ export const medical = {
   "medical.documents.returnDraft": "Return to draft",
   "medical.documents.returnReason": "Reason for return",
   "medical.signing.preview": "Review the PDF to sign",
+  "medical.signing.finalize": "Finalize test document",
+  "medical.signing.finalized": "Test document finalized",
   "medical.signing.title": "Document signing",
   "medical.signing.synthetic": "Test signing. This is not a legal digital signature and does not authorize patient delivery.",
   "medical.signing.unavailable": "Signing is unavailable for the current access or environment.",
