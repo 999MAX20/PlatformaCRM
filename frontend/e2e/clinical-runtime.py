@@ -224,6 +224,47 @@ if roles_fixture and len(sys.argv) > 1 and sys.argv[1] in ("disable-role-module"
     BusinessCapability.objects.filter(business__slug="medical-role", module_key="medical_records").update(
         is_enabled=sys.argv[1] == "enable-role-module")
     sys.exit(0)
+if len(sys.argv) > 2 and sys.argv[1] in ("historical-orders-context", "historical-orders-populate", "historical-orders-end"):
+    from apps.medical.record_services import open_dental_record
+    from apps.medical.encounter_services import open_primary_encounter
+    from apps.medical.order_services import save_order_draft
+    from apps.medical.models import MedicalEncounter, TreatmentParticipation
+    appointment = Appointment.objects.select_related("business", "resource__linked_user").get(
+        pk=int(sys.argv[2]), business__slug="medical-role")
+    patient = PatientProfile.objects.get(business=appointment.business, client=appointment.client)
+    actor = appointment.resource.linked_user
+    if sys.argv[1] == "historical-orders-context":
+        record, _ = open_dental_record(actor=actor, business_id=patient.business_id, patient_id=patient.pk,
+            appointment_id=appointment.pk, expected_patient_revision=patient.revision,
+            number=f"HISTORY-{patient.pk}", idempotency_key=f"history-record-{patient.pk}")
+        version, _ = open_primary_encounter(actor=actor, business_id=patient.business_id, patient_id=patient.pk,
+            record_id=record.pk, appointment_id=appointment.pk, expected_patient_revision=patient.revision,
+            expected_appointment_updated_at=appointment.updated_at, idempotency_key=f"history-encounter-{patient.pk}")
+        encounter = version.encounter
+        now = timezone.now()
+        TreatmentParticipation.objects.get_or_create(patient=patient, member=encounter.primary_clinician,
+            branch=encounter.branch, defaults={"state": "active", "proposed_by": appointment.business.owner,
+                "proposed_at": now, "accepted_at": now})
+    elif sys.argv[1] == "historical-orders-end":
+        TreatmentParticipation.objects.filter(patient=patient, state="active").update(
+            state="ended", closed_at=timezone.now(), closed_by=appointment.business.owner)
+    else:
+        encounter = MedicalEncounter.objects.get(appointment=appointment)
+        for index in range(int(sys.argv[3])):
+            payload = dict(actor=actor, business_id=patient.business_id, patient_id=patient.pk,
+                encounter_id=encounter.pk, expected_encounter_revision=encounter.revision,
+                expected_patient_revision=patient.revision)
+            first, _ = save_order_draft(**payload, idempotency_key=f"history-order-{patient.pk}-{index}",
+                content={"kind": "other", "text": f"Synthetic historical order {index} v1", "medication": {}})
+            if index == 0:
+                save_order_draft(**payload, order_id=first.order_id, expected_order_revision=1,
+                    idempotency_key=f"history-order-update-{patient.pk}", reason="Synthetic correction",
+                    content={"kind": "other", "text": "Synthetic historical order 0 v2", "medication": {}})
+        now = timezone.now()
+        MedicalEncounter.objects.filter(pk=encounter.pk).update(state="finalized", ended_at=now,
+            finalized_at=now, finalized_by=actor)
+        Appointment.objects.filter(pk=appointment.pk).update(status="completed")
+    sys.exit(0)
 if len(sys.argv) > 2 and sys.argv[1] in ("client-entry-pages", "client-entry-empty"):
     from copy import copy
     base = Appointment.objects.get(pk=int(sys.argv[2]), business__slug="medical-role")

@@ -72,6 +72,23 @@ for (const language of ["ru", "kk", "en"] as const) for (const width of [1440, 3
     }
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     await orders.screenshot({ path: info.outputPath("order-list.png") });
+    await workspace.getByRole("tab", { name: t["medical.clinical.history"], exact: true }).click();
+    const encounterHistory = workspace.getByTestId("clinical-history");
+    await encounterHistory.locator("ul > li > button").first().click();
+    await encounterHistory.getByRole("button", { name: t["medical.orders.title"], exact: true }).click();
+    const historical = page.getByTestId("historical-orders");
+    await expect(historical.getByRole("button", { name: t["common.edit"], exact: true })).toHaveCount(0);
+    await expect(historical.getByRole("button", { name: t["medical.orders.create"], exact: true })).toHaveCount(0);
+    await expect(historical.getByTestId("medical-orders").locator("li")).toHaveCount(1);
+    await historical.screenshot({ path: info.outputPath("calendar-historical-orders.png") });
+    const historicalVersions = historical.getByRole("button", { name: t["medical.orders.history"], exact: true });
+    await historicalVersions.click();
+    await expect(page.getByTestId("medical-order-history")).toContainText(`Synthetic corrected order ${id}`);
+    await page.keyboard.press("Escape");
+    await expect(page.getByTestId("medical-order-history")).not.toBeVisible();
+    await expect(historicalVersions).toBeFocused();
+    await page.keyboard.press("Escape");
+    await expect(historical).not.toBeVisible();
   });
 }
 

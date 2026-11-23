@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { medicalOrdersApi as api, medicationFields, type OrderAccess, type OrderScope, type OrderVersion } from "../../../api/medicalOrders";
-import type { AppointmentClinicalContext } from "../../../api/medicalClinical";
+import type { AppointmentClinicalContext, ClinicalReadScope, EncounterSummary } from "../../../api/medicalClinical";
 import { getApiErrorMessage } from "../../../api/client";
 import { Button } from "../../../components/ui/Button";
 import { Modal } from "../../../components/ui/Modal";
@@ -16,9 +16,34 @@ import { OrderEditor } from "./OrderEditor";
 export function OrderWorkspace({ context, active, onEditor, canEdit }: {
   context: AppointmentClinicalContext; active: boolean; onEditor: (open: boolean) => void; canEdit: () => boolean;
 }) {
-  const { t, language } = useI18n();
   const scope = useMemo<OrderScope>(() => ({ business_id: context.business_id, patient_id: context.patient.id,
     appointment_id: context.appointment.id, encounter_id: context.encounter!.id }), [context]);
+  return <OrderWorkspaceContent scope={scope} active={active} onEditor={onEditor} canEdit={canEdit} />;
+}
+
+export function EncounterOrdersEntry({ scope, encounter }: { scope: ClinicalReadScope; encounter: EncounterSummary }) {
+  const { t, language } = useI18n();
+  const [open, setOpen] = useState(false);
+  const orderScope = useMemo(() => ({ ...scope, encounter_id: encounter.id }), [scope, encounter.id]);
+  const focusId = `historical-orders-${scope.business_id}-${encounter.id}`;
+  return <>
+    <Button size="lg" variant="secondary" data-focus-return-id={focusId} onClick={() => setOpen(true)}>{t("medical.orders.title")}</Button>
+    <Modal open={open} onClose={() => setOpen(false)} title={t("medical.orders.title")} size="xl"
+      closeOnBackdrop={false} focusReturnId={focusId} testId="historical-orders">
+      <div className="space-y-4">
+        <p className="break-words text-sm">{formatDateTime(encounter.started_at, undefined, true, localeByLanguage[language])} · {encounter.branch_name} · {encounter.primary_clinician_name || t("medical.clinical.authorUnknown")}</p>
+        <p className="text-sm text-platforma-subtle">{t("medical.clinical.readOnly")}</p>
+        {open ? <OrderWorkspaceContent scope={orderScope} active readOnly /> : null}
+      </div>
+    </Modal>
+  </>;
+}
+
+function OrderWorkspaceContent({ scope, active, onEditor, canEdit, readOnly = false }: {
+  scope: OrderScope; active: boolean; readOnly?: boolean;
+  onEditor?: (open: boolean) => void; canEdit?: () => boolean;
+}) {
+  const { t, language } = useI18n();
   const [rows, setRows] = useState<OrderVersion[]>([]);
   const [access, setAccess] = useState<OrderAccess | null>(null);
   const [cursor, setCursor] = useState<number | null>(null);
@@ -31,10 +56,11 @@ export function OrderWorkspace({ context, active, onEditor, canEdit }: {
   const request = useRef<AbortController | null>(null);
   const focusId = useRef("medical-order-create");
   const historyFocusId = useRef("");
+  const historyPrefix = readOnly ? "historical-medical-order-history" : "medical-order-history";
   useUnsavedEntryWarning(draft.dirty || draft.pending);
   const denied = useCallback((cause: unknown) => {
     setRows([]); setAccess(null); setEditor(null); setHistory(null); setError(cause);
-    guard.current = { dirty: false, pending: false }; setDraft(guard.current); onEditor(false);
+    guard.current = { dirty: false, pending: false }; setDraft(guard.current); onEditor?.(false);
   }, [onEditor]);
   const load = useCallback(async (before?: number) => {
     request.current?.abort(); const controller = new AbortController(); request.current = controller;
@@ -49,20 +75,20 @@ export function OrderWorkspace({ context, active, onEditor, canEdit }: {
     finally { if (!controller.signal.aborted) setLoading(false); }
   }, [scope, denied]);
   useEffect(() => { if (active) void load(); return () => request.current?.abort(); }, [active, load]);
-  useEffect(() => () => onEditor(false), [onEditor]);
+  useEffect(() => () => onEditor?.(false), [onEditor]);
   function openEditor(value: "create" | OrderVersion) {
-    if (!canEdit()) return;
+    if (readOnly || !canEdit?.()) return;
     focusId.current = value === "create" ? "medical-order-create" : `medical-order-edit-${value.order_id}`;
-    setEditor(value); onEditor(true);
+    setEditor(value); onEditor?.(true);
   }
   function closeEditor() {
     if (guard.current.pending || (guard.current.dirty && !window.confirm(t("medical.clinical.discard")))) return;
-    setEditor(null); onEditor(false);
+    setEditor(null); onEditor?.(false);
   }
-  function saved() { setEditor(null); onEditor(false); void load(); }
+  function saved() { setEditor(null); onEditor?.(false); void load(); }
   return <section className="min-w-0 space-y-4" data-testid="medical-orders">
     <div className="flex flex-wrap gap-2">
-      {access?.actions.create ? <Button size="lg" data-focus-return-id="medical-order-create" disabled={loading} onClick={() => openEditor("create")}>{t("medical.orders.create")}</Button> : null}
+      {!readOnly && access?.actions.create ? <Button size="lg" data-focus-return-id="medical-order-create" disabled={loading} onClick={() => openEditor("create")}>{t("medical.orders.create")}</Button> : null}
       <Button size="lg" variant="secondary" disabled={loading} onClick={() => void load()}>{t("medical.clinical.reload")}</Button>
     </div>
     {loading ? <LoadingState /> : null}
@@ -74,10 +100,10 @@ export function OrderWorkspace({ context, active, onEditor, canEdit }: {
       <p className="break-words text-sm text-platforma-subtle">{t("medical.orders.draft")} · {row.author_name} · {formatDateTime(row.created_at, undefined, true, localeByLanguage[language])}</p>
       <OrderContentView version={row} />
       <div className="flex flex-wrap gap-2">
-        {access?.actions.update && access.actor_id === row.author_id ? <Button size="lg" variant="secondary"
+        {!readOnly && access?.actions.update && access.actor_id === row.author_id ? <Button size="lg" variant="secondary"
           data-focus-return-id={`medical-order-edit-${row.order_id}`} disabled={loading} onClick={() => openEditor(row)}>{t("common.edit")}</Button> : null}
-        <Button size="lg" variant="secondary" disabled={loading} data-focus-return-id={`medical-order-history-${row.order_id}`} onClick={() => {
-          historyFocusId.current = `medical-order-history-${row.order_id}`; setHistory(row.order_id); onEditor(true);
+        <Button size="lg" variant="secondary" disabled={loading} data-focus-return-id={`${historyPrefix}-${row.order_id}`} onClick={() => {
+          historyFocusId.current = `${historyPrefix}-${row.order_id}`; setHistory(row.order_id); onEditor?.(true);
         }}>{t("medical.orders.history")}</Button>
       </div>
     </li>)}</ul>
@@ -87,7 +113,7 @@ export function OrderWorkspace({ context, active, onEditor, canEdit }: {
       {editor !== null ? <OrderEditor key={typeof editor === "string" ? editor : editor.version_id} scope={scope}
         version={editor === "create" ? null : editor} control={{ guard, onDraft: setDraft, onSaved: saved, onDenied: denied }} /> : null}
     </Modal>
-    <Modal open={history !== null} onClose={() => { setHistory(null); onEditor(false); }} title={t("medical.orders.history")}
+    <Modal open={history !== null} onClose={() => { setHistory(null); onEditor?.(false); }} title={t("medical.orders.history")}
       size="lg" focusReturnId={historyFocusId.current} testId="medical-order-history">
       {history !== null ? <OrderHistory scope={scope} orderId={history} onDenied={denied} /> : null}
     </Modal>
