@@ -97,6 +97,10 @@ export function OrderWorkspace({ context, active, onEditor, canEdit }: {
 function OrderContentView({ version }: { version: OrderVersion }) {
   const { t } = useI18n();
   return <dl className="space-y-2 text-sm">
+    {version.template_source ? <div data-testid="order-template-source">
+      <dt className="font-semibold text-platforma-subtle">{t("medical.templates.title")}</dt>
+      <dd className="break-words">{version.template_source.template.title} · {t("medical.templates.version", { revision: version.template_source.approval.revision })}</dd>
+    </div> : null}
     {version.content.kind === "medication" ? medicationFields.map(field => <div key={field}>
       <dt className="font-semibold text-platforma-subtle">{t(`medical.orders.field.${field}`)}</dt>
       <dd className="whitespace-pre-wrap break-words">{version.content.medication[field] || t("medical.clinical.notRecorded")}</dd>

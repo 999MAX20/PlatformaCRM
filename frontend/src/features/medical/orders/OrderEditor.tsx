@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { medicalOrdersApi as api, orderKinds, medicationFields, type OrderAccess, type OrderContent, type OrderScope, type OrderVersion } from "../../../api/medicalOrders";
+import { medicalOrdersApi as api, orderKinds, medicationFields, type OrderAccess, type OrderContent, type OrderScope, type OrderVersion, type OrderPreview } from "../../../api/medicalOrders";
 import { getApiErrorMessage } from "../../../api/client";
 import { Button } from "../../../components/ui/Button";
 import { Input } from "../../../components/ui/Input";
@@ -9,6 +9,7 @@ import { ErrorState, LoadingState } from "../../../components/ui/StateViews";
 import { useI18n } from "../../../lib/i18n";
 import { MedicalRoleCommand, type RoleFormControl } from "../roles/MedicalRoleCommand";
 import { medicalRoleDenied } from "../roles/useMedicalRolePage";
+import { OrderTemplatePicker } from "./OrderTemplatePicker";
 
 export function OrderEditor({ scope, version, control }: { scope: OrderScope; version: OrderVersion | null; control: RoleFormControl }) {
   const { t } = useI18n();
@@ -31,13 +32,19 @@ function OrderForm({ scope, access, version, control }: { scope: OrderScope; acc
   const { t } = useI18n();
   const [content, setContent] = useState<OrderContent>(version?.content ?? { kind: "other", text: "", medication: {} });
   const [reason, setReason] = useState("");
-  const dirty = JSON.stringify(content) !== JSON.stringify(version?.content ?? { kind: "other", text: "", medication: {} }) || Boolean(reason);
+  const [picker, setPicker] = useState(false);
+  const [source, setSource] = useState<OrderPreview | null>(null);
+  const provenance = source?.template_source ?? version?.template_source;
+  const dirty = Boolean(source) || JSON.stringify(content) !== JSON.stringify(version?.content ?? { kind: "other", text: "", medication: {} }) || Boolean(reason);
   const payload = { business_id: scope.business_id, patient_id: scope.patient_id, encounter_id: scope.encounter_id,
-    expected_patient_revision: access.patient_revision, expected_encounter_revision: access.encounter_revision,
+    expected_patient_revision: source?.patient_revision ?? access.patient_revision, expected_encounter_revision: source?.encounter_revision ?? access.encounter_revision,
+    ...(source ? { template_version_id: source.template_source.approval.version_id, expected_source_digest: source.template_source.source_digest } : {}),
     participation_id: scope.participation_id, ...(version ? { expected_order_revision: version.revision } : {}), content, reason };
-  return <MedicalRoleCommand payload={payload} dirty={dirty} label={t("medical.clinical.save")}
+  return <><MedicalRoleCommand payload={picker ? null : payload} dirty={dirty} label={t("medical.clinical.save")}
     submit={(value, key) => api.save(version?.order_id ?? null, value, key)} control={control}>
     <p role="status" className="text-sm text-platforma-subtle">{t("medical.orders.draft")}</p>
+    <Button type="button" size="lg" variant="secondary" data-focus-return-id="order-template-open" onClick={() => setPicker(true)}>{t("medical.documents.chooseTemplate")}</Button>
+    {provenance ? <p className="break-words" data-testid="order-template-source">{provenance.template.title} · {t("medical.templates.version", { revision: provenance.approval.revision })}</p> : null}
     <Select label={t("medical.orders.kind")} value={content.kind}
       options={orderKinds.map(kind => ({ value: kind, label: t(`medical.orders.${kind}`) }))}
       onChange={event => {
@@ -52,5 +59,11 @@ function OrderForm({ scope, access, version, control }: { scope: OrderScope; acc
     <Textarea label={t("medical.orders.text")} value={content.text} maxLength={32768} rows={6}
       onChange={event => setContent({ ...content, text: event.target.value })} />
     {version ? <Textarea label={t("medical.reason")} value={reason} maxLength={2000} onChange={event => setReason(event.target.value)} /> : null}
-  </MedicalRoleCommand>;
+  </MedicalRoleCommand>
+    {picker ? <OrderTemplatePicker scope={scope} orderId={version?.order_id} onClose={() => setPicker(false)} onDenied={control.onDenied}
+      onApply={preview => {
+        if (content.text && !window.confirm(t("medical.orders.replaceText"))) return;
+        setContent({ ...content, text: preview.document_text }); setSource(preview); setPicker(false);
+      }} /> : null}
+  </>;
 }

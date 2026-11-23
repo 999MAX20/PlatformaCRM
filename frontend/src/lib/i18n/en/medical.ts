@@ -1,4 +1,6 @@
 export const medical = {
+  "medical.orders.applyTemplate": "Apply to order",
+  "medical.orders.replaceText": "Replace the order text with this template? Medication fields will be preserved.",
   "medical.plan.book": "Schedule visit",
   "medical.plan.saveBeforeBooking": "Save the plan changes first",
   "medical.plan.confirmBooking": "Create an appointment at the selected time under these terms? This action does not collect payment.",

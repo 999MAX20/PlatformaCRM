@@ -39,6 +39,13 @@ class OrderDraftSerializer(OrderScopeSerializer):
     content = serializers.JSONField()
     reason = serializers.CharField(max_length=2000, allow_blank=True, required=False, trim_whitespace=False)
     participation_id = serializers.IntegerField(min_value=1, required=False)
+    template_version_id = serializers.IntegerField(min_value=1, required=False)
+    expected_source_digest = serializers.RegexField(r"^[a-f0-9]{64}$", required=False)
+
+
+class OrderPreviewSerializer(OrderAccessSerializer):
+    template_version_id = serializers.IntegerField(min_value=1)
+    order_id = serializers.IntegerField(min_value=1, required=False)
 
 
 class OrderUpdateSerializer(OrderDraftSerializer):
@@ -54,7 +61,7 @@ class MedicalOrderViewSet(viewsets.GenericViewSet):
     def get_serializer_class(self):
         return {"create": OrderDraftSerializer, "draft": OrderUpdateSerializer,
                 "list": OrderListSerializer, "revisions": OrderHistorySerializer,
-                "workspace_access": OrderAccessSerializer}.get(self.action, OrderReadSerializer)
+                "workspace_access": OrderAccessSerializer, "preview": OrderPreviewSerializer}.get(self.action, OrderReadSerializer)
 
     def finalize_response(self, request, response, *args, **kwargs):
         response = super().finalize_response(request, response, *args, **kwargs)
@@ -85,6 +92,11 @@ class MedicalOrderViewSet(viewsets.GenericViewSet):
     @action(detail=False, methods=["get"], url_path="workspace-access")
     def workspace_access(self, request):
         return self._read(request, order_workspace_access)
+
+    @action(detail=False, methods=["get"])
+    def preview(self, request):
+        from .order_templates import preview_order_template
+        return self._read(request, preview_order_template)
 
     @action(detail=True, methods=["post"])
     def draft(self, request, pk=None):

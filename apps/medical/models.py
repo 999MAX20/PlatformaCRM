@@ -783,12 +783,18 @@ class MedicalOrderRevision(models.Model):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="medical_order_versions")
     content_encrypted = models.TextField(editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    template_version = models.ForeignKey(MedicalDocumentTemplateRevision, on_delete=models.PROTECT,
+        null=True, blank=True, related_name="order_versions")
+    source_version = models.ForeignKey(MedicalEncounterRevision, on_delete=models.PROTECT,
+        null=True, blank=True, related_name="order_template_versions")
 
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=["order", "revision"], name="medical_order_version_unique"),
             models.CheckConstraint(condition=models.Q(revision__gte=1), name="medical_order_ver_positive"),
             models.CheckConstraint(condition=~models.Q(content_encrypted=""), name="medical_order_ver_content"),
+            models.CheckConstraint(condition=(models.Q(template_version__isnull=True, source_version__isnull=True) |
+                models.Q(template_version__isnull=False, source_version__isnull=False)), name="medical_order_source_pair"),
         ]
 
 

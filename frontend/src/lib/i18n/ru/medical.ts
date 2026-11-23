@@ -1,4 +1,6 @@
 export const medical = {
+  "medical.orders.applyTemplate": "Применить к назначению",
+  "medical.orders.replaceText": "Заменить текст назначения выбранным шаблоном? Поля лекарства сохранятся.",
   "medical.plan.book": "Запланировать посещение",
   "medical.plan.saveBeforeBooking": "Сначала сохраните изменения плана",
   "medical.plan.confirmBooking": "Создать запись на выбранное время по указанным условиям? Оплата этим действием не принимается.",

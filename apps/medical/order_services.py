@@ -1,3 +1,6 @@
+import hmac
+import re
+
 from django.db import transaction
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
 
@@ -59,7 +62,8 @@ def assert_order_writer(*, actor, business, patient, encounter, action, particip
 @transaction.atomic
 def save_order_draft(*, actor, business_id, patient_id, encounter_id, expected_encounter_revision,
                      expected_patient_revision, content, idempotency_key, order_id=None,
-                     expected_order_revision=None, reason="", participation_id=None):
+                     expected_order_revision=None, reason="", participation_id=None,
+                     template_version_id=None, expected_source_digest=None):
     ids = [business_id, patient_id, encounter_id, expected_encounter_revision, expected_patient_revision]
     if order_id is not None:
         ids.extend([order_id, expected_order_revision])
@@ -74,6 +78,12 @@ def save_order_draft(*, actor, business_id, patient_id, encounter_id, expected_e
     if not isinstance(reason, str) or len(reason) > 2000:
         raise ValidationError({"reason": "Provide a reason of at most 2000 characters."})
     content = validate_order_content(content)
+    if template_version_id is not None:
+        if (type(template_version_id) is not int or template_version_id <= 0 or
+                not isinstance(expected_source_digest, str) or not re.fullmatch(r"[a-f0-9]{64}", expected_source_digest)):
+            raise ValidationError({"template": "Provide an approved template and its preview digest."})
+    elif expected_source_digest is not None:
+        raise ValidationError({"template": "A source digest requires a template version."})
     business = Business.objects.select_for_update().filter(pk=business_id).first()
     if business is None:
         raise NotFound()
@@ -95,6 +105,10 @@ def save_order_draft(*, actor, business_id, patient_id, encounter_id, expected_e
             business=business, encounter=encounter, author=actor).first()
         if order is None:
             raise PermissionDenied()
+    if template_version_id is not None:
+        from .order_templates import order_template_source
+        order_template_source(actor=actor, encounter=encounter, template_version_id=template_version_id,
+                              participation_id=participation_id)
 
     def operation():
         if (patient.revision != expected_patient_revision or encounter.revision != expected_encounter_revision
@@ -102,6 +116,18 @@ def save_order_draft(*, actor, business_id, patient_id, encounter_id, expected_e
             raise InvalidTransition("The patient or encounter changed; reload before saving.")
         if order is not None and (order.revision != expected_order_revision or order.state != "draft"):
             raise InvalidTransition("The order changed; reload before saving.")
+        source_version, provenance, retained_template_id = None, None, None
+        if template_version_id is not None:
+            source_version, provenance, _ = order_template_source(actor=actor, encounter=encounter,
+                template_version_id=template_version_id, participation_id=participation_id)
+            if not hmac.compare_digest(provenance["source_digest"], expected_source_digest):
+                raise InvalidTransition("The template source changed; preview it again before saving.")
+            retained_template_id = template_version_id
+        elif order is not None:
+            previous = MedicalOrderRevision.objects.select_related("order").get(order=order, revision=order.revision)
+            provenance = read_order_revision(previous).get("template_source")
+            source_version = previous.source_version
+            retained_template_id = previous.template_version_id
         draft = order or MedicalOrder(business=business, encounter=encounter, author=actor)
         draft.full_clean()
         draft.revision += 1
@@ -109,9 +135,14 @@ def save_order_draft(*, actor, business_id, patient_id, encounter_id, expected_e
         staging = encrypt_medical_value("{}", business_id=business.pk,
                                        subject_id=draft.pk, purpose="order_staging")
         version = MedicalOrderRevision.objects.create(order=draft, revision=draft.revision,
-                                                     author=actor, content_encrypted=staging)
-        version.content_encrypted = encrypt_order_revision(version, content=content, reason=reason)
+            author=actor, content_encrypted=staging, template_version_id=retained_template_id, source_version=source_version)
+        version.content_encrypted = encrypt_order_revision(version, content=content, reason=reason, template_source=provenance)
         version.save(update_fields=["content_encrypted"])
+        if template_version_id is not None:
+            _, final_source, _ = order_template_source(actor=actor, encounter=encounter,
+                template_version_id=template_version_id, participation_id=participation_id)
+            if not hmac.compare_digest(final_source["source_digest"], expected_source_digest):
+                raise InvalidTransition("The template source changed during saving; preview it again.")
         write_patient_audit(actor=actor, business=business, patient=patient, order_version=version,
                             action="order_draft_saved" if order is not None else "order_draft_created")
         return CRMCommandResult(data={}, resource=version, status_code=200 if order is not None else 201)
@@ -121,7 +152,9 @@ def save_order_draft(*, actor, business_id, patient_id, encounter_id, expected_e
         payload={"patient": patient_id, "encounter": encounter_id, "order": order_id,
             "patient_revision": expected_patient_revision, "encounter_revision": expected_encounter_revision,
             "order_revision": expected_order_revision, "participation": participation_id,
-            "content_digest": medical_request_digest({"content": content, "reason": reason}, business_id=business_id)},
+            "content_digest": medical_request_digest({"content": content, "reason": reason}, business_id=business_id),
+            **({"template_version": template_version_id, "source_digest": expected_source_digest}
+               if template_version_id is not None else {})},
         operation=operation)
     version = MedicalOrderRevision.objects.select_related("order").get(
         pk=result.resource_id if result.replayed else result.resource.pk,

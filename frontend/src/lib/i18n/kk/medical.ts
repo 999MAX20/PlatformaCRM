@@ -1,4 +1,6 @@
 export const medical = {
+  "medical.orders.applyTemplate": "Тағайындауға қолдану",
+  "medical.orders.replaceText": "Тағайындау мәтіні таңдалған үлгімен ауыстырылсын ба? Дәрі өрістері сақталады.",
   "medical.plan.book": "Қабылдауды жоспарлау",
   "medical.plan.saveBeforeBooking": "Алдымен жоспар өзгерістерін сақтаңыз",
   "medical.plan.confirmBooking": "Көрсетілген шарттармен таңдалған уақытқа жазылу жасалсын ба? Бұл әрекет төлем қабылдамайды.",
