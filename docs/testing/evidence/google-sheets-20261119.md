@@ -117,9 +117,18 @@ cover reservation/retry. Focused provider/sync/availability/API recheck37 PASS i
 isolated DB; system check and migration drift PASS, exit0. Log
 calendar-gone-regression.log; no frontend/runtime contract change. Prior201 dependent
 and PG4 evidence retained for unchanged boundaries; no CI run. Task diff hygiene
-PASS. Publication preparation: task-only staging and committed-range static gate
-against captured current publication base263f8793; no foreign WIP included.
-No task commit/push yet; receipt will be recorded after verification.
+PASS. Task-only implementation committed as
+fe23674e71d803bcf7832e2041f0f2cd775c8edb on codex/ui-testing-toolkit, canonical root.
+Committed-range static gate against263f8793b37c374b8f89b7312c473bd8f52a1973 PASS
+(system/drift, working/index/range hygiene), log committed-static.log. Normal push
+to origin/main succeeded; ls-remote SHA matched fe23674e71d803bcf7832e2041f0f2cd775c8edb.
+Foreign medical URL hunks and other WIP excluded. Runner73204 stopped through own
+stop file, exit0. CI intentionally not triggered/polled under local acceptance;
+no workflow changes, deployment or working-DB migration. Scoped implementation,
+local checks and controlled live-provider acceptance complete. Remaining environment/
+owner decision: approved public home/privacy URLs, separate production Google
+configuration/verification, authorized target migration/activation/deployment.
+Known limits remain in the current integration contract; full public launch is not closed.
 Reference: https://developers.google.com/workspace/calendar/api/guides/errors.
 Owned live session36861 and synthetic98940 stopped through their stop files; both
 exit0, own processes/temp DB cleaned. Real Google grants were not revoked because

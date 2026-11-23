@@ -98,7 +98,8 @@ checks PASS. Live Sheets OAuth/Picker/export/refresh/import PASS; Calendar grant
 copy/reschedule/cancel/repair and external-busy block-release PASS. Final error-state
 screenshot and Retry recovery PASS after extension update; GET410 regression37 PASS. Public launch blocked on
 approved home/privacy pages and production Google configuration/verification.
-No working migration or deployment. Task-only publication being verified. Active checkpoint:
+Code fe23674e normal-pushed to main; remote SHA and committed static PASS. Local-only
+acceptance; no CI/deployment/working migration. Active checkpoint:
 docs/testing/evidence/google-sheets-20261119.md#production-continuation--23nov2026.
 
 OAuth + Sheets import/export implemented; Cloud test project, OAuth client and restricted Picker key configured. Backend72 PASS, final build PASS, RU/KK/EN desktop/mobile synthetic flows verified; PostgreSQL3 race tests PASS; published918096ce to origin/main (remote SHA verified); CI44397837621 running, not PASS. Local PostgreSQL platformacrm: approved migrations0012/0013 applied, Django check and Google tables verified. Live Google grant/transfer and Calendar sync not claimed. Evidence: docs/testing/evidence/google-sheets-20261119.md.

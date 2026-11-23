@@ -335,7 +335,8 @@ acceptance PASS; live Sheets grant/Picker/import/export PASS. Calendar grant,
 copy/reschedule/cancel/repair and external-busy block-release PASS. Final error-state
 screenshot/Retry recovery PASS; GET410 regression37 PASS (system/drift PASS). Approved
 public home/privacy URLs and production configuration remain pending.
-No working migration/deployment. Current checkpoint: ../evidence/google-sheets-20261119.md#production-continuation--23nov2026.
+Code fe23674e normal-pushed to main; remote SHA/static PASS. Local-only acceptance,
+no CI/working migration/deployment. Current checkpoint: ../evidence/google-sheets-20261119.md#production-continuation--23nov2026.
 
 OAuth + Sheets import/export implemented; Cloud test project, OAuth client and restricted Picker key configured. Backend72 PASS, final build PASS, RU/KK/EN desktop/mobile synthetic flows verified; PostgreSQL3 race tests PASS; published918096ce to origin/main (remote SHA verified); CI44397837621 running, not PASS. Local PostgreSQL platformacrm: approved migrations0012/0013 applied, Django check and Google tables verified. Live Google grant/transfer and Calendar sync not claimed. Evidence: ../evidence/google-sheets-20261119.md.
 
