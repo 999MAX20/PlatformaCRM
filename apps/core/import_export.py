@@ -16,6 +16,8 @@ from rest_framework.exceptions import PermissionDenied, ValidationError
 
 from apps.core.xlsx_reader import read_xlsx_rows
 from apps.clients.models import Client
+from apps.clients.identity import normalize_phone, normalize_email
+from apps.businesses.models import Business
 from apps.clients.field_policy import validate_client_write_fields
 from apps.clients.services import duplicate_payload, find_duplicate_clients
 from apps.businesses.access import Actions, Resources, assert_can, can_view_sensitive_field, scope_queryset
@@ -190,6 +192,7 @@ def build_import_preview(job: ImportJob, mapping=None, request=None):
         else []
     )
     row_errors = validate_import_rows(job.entity_type, rows, mapping)
+    row_errors.extend(client_identity_errors(job, rows, mapping))
     if not mapping:
         row_errors.insert(0, {"row": 0, "field": "mapping", "message": "Select at least one column mapping."})
     job.mapping_json = mapping
@@ -219,12 +222,16 @@ def build_import_preview(job: ImportJob, mapping=None, request=None):
 @transaction.atomic
 def confirm_import(job: ImportJob, request):
     job = _locked_import_job(job, request)
+    if job.entity_type == ImportJob.EntityTypes.CLIENTS:
+        # Different import jobs must not both observe the same identity as absent.
+        Business.objects.select_for_update().get(pk=job.business_id)
     if job.status != ImportJob.Statuses.PREVIEWED:
         raise ValidationError("Only a previewed import can be confirmed.")
     mapping = job.mapping_json or {}
     rows = read_tabular_file(job.source_file)
     _validate_import_mapping(job.entity_type, mapping, list(rows[0].keys()) if rows else [])
     row_errors = validate_import_rows(job.entity_type, rows, mapping)
+    row_errors.extend(client_identity_errors(job, rows, mapping))
     if row_errors:
         raise ValidationError({"rows": row_errors, "detail": readable_import_error(row_errors)})
     connector = ensure_excel_csv_connector(job)
@@ -566,15 +573,37 @@ def import_catalog_row(job, payload, connector=None, request=None):
     return "skipped"
 
 
-def find_import_client(business, payload):
+def import_client_matches(business, payload):
     query = Q()
-    if payload.get("phone"):
-        query |= Q(phone=payload["phone"])
-    if payload.get("email"):
-        query |= Q(email__iexact=payload["email"])
+    phone = normalize_phone(payload.get("phone"))
+    email = normalize_email(payload.get("email"))
+    if phone:
+        query |= Q(normalized_phone=phone) | Q(phone=payload["phone"])
+    if email:
+        query |= Q(normalized_email=email) | Q(email__iexact=email)
     if not query:
-        return None
-    return Client.objects.filter(business=business).filter(query).first()
+        return Client.objects.none()
+    return Client.objects.filter(business=business).filter(query).order_by("pk")
+
+
+def find_import_client(business, payload):
+    matches = list(import_client_matches(business, payload)[:2])
+    if len(matches) > 1:
+        raise ValidationError({"identity": "Phone or email matches multiple clients. Resolve the conflicting contacts before importing."})
+    return matches[0] if matches else None
+
+
+def client_identity_errors(job, rows, mapping):
+    if job.entity_type != ImportJob.EntityTypes.CLIENTS:
+        return []
+    errors = []
+    for index, row in enumerate(rows, start=1):
+        try:
+            find_import_client(job.business, mapped_payload(row, mapping, job.entity_type))
+        except ValidationError:
+            errors.append({"row": index, "field": "identity", "message":
+                "Phone or email matches multiple clients. Resolve the conflicting contacts before importing."})
+    return errors
 
 
 def client_defaults(payload, fallback="Imported client"):

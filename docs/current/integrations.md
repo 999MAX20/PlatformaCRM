@@ -26,6 +26,16 @@ than silently truncated. Snapshot bytes use existing file validation and scannin
 Request UUID replay returns the same import job; completed jobs cannot be imported
 again through confirmation. The source Google spreadsheet is never modified.
 
+Client imports match normalized phone/email within the current Business, including
+archived clients. Phone formatting is ignored; an 11-digit domestic prefix8 is
+normalized to7. No country is inferred for incomplete numbers. Multiple candidates,
+including phone pointing to one client and email to another, block preview and
+confirmation instead of choosing the first client. Confirmation rechecks identity;
+conflicts introduced by earlier rows roll back the whole transaction. Different
+client import jobs serialize per Business. Existing fill-only updates and field
+permissions remain; names alone are not identity keys. This is not a global unique
+constraint against concurrent manual client creation.
+
 Export requires explicit confirmation, uses current scoped client export/field
 policy, and writes a dedicated spreadsheet with literal string cells. Limits:
 5000 clients, 100 columns, 1 MiB serialized row data. Manual refresh replaces values

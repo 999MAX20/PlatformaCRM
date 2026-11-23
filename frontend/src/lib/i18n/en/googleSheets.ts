@@ -1,4 +1,6 @@
 export const googleSheets: Record<string, string> = {
+  "googleSheets.identityField": "Phone and email",
+  "googleSheets.identityConflict": "Phone or email matches multiple clients. Check the contacts in the sheet and CRM, then preview the import again.",
   "googleSheets.connect": "Connect Google",
   "googleSheets.import": "Import clients",
   "googleSheets.export": "Export clients",

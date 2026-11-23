@@ -217,3 +217,164 @@ Local startup: first dev.ps1 attempt hit a transient backend reloader process-re
 Owner then explicitly authorized creating a separate test business and performing login/actions. Created only a new local fixture via activate_landing_business and apply_business_type_defaults: business17 (Google Sheets — тест 19.11.2026), owner22 (google-sheets-live-20261119@example.test). Random password stored only in ignored output/google-live-account.json; never printed. Existing accounts/businesses unchanged; local configured MFA policy unchanged. Browser replacement tab1634126914 in Platforma Digital can read AX login page, but Playwright fill times out at Runtime.evaluate; AX setValue times out at DOM.resolveNode; longer locator timeout still hits provider deadline. No successful login observed, no Google grant/transfer. Requested owner reload/re-enable extension only; agent will perform login after recovery. Test account creation is complete, browser evidence remains blocked on control.
 
 Owner requested autonomous reload while away from computer. Attempted tab.reload:30s timeout reset CUA runtime. Fresh inventory found Platforma Digital now browser4 (profile matched by name/extension), existing login tab1634126914. Rebinding this tab in the fresh session also timed out and reset runtime. No confirmed reload/login, no grant/transfer. Recovery through permitted extension channel exhausted for current unchanged state; no native Chrome control, process kill or alternate protocol used. Test business17 and local services preserved.
+
+## Public production acceptance continuation — 23Nov2026
+
+Owner requests completing both integrations and acceptance through production.
+Prior local/provider acceptance and published02bc229b retained -> open deployment,
+Google production configuration/verification and public-page gaps -> no rewrite.
+Canonical root/branch unchanged; starting HEAD02bc229ba9a49173233261de16b5ed6079be9934.
+Foreign dirty auth/medical/YCloud/docs changes remain excluded. Mode operation and
+verification; prepare reviewed candidate before target activation. No real customer
+transfer or unrelated release. Reuse published connector/provider/UI/tests.
+Checks: exact target configuration/migration plan, candidate affected/dependent
+checks, backup/rollback readiness, production OAuth/Picker plus synthetic Sheets
+import/export and Calendar lifecycle/busy/recovery after authorized activation.
+No CI. Credentials remain private; no new permissions/domain policy invented.
+Current Cloud readback: only platformacrm-integrations-dev visible, Testing;
+home/privacy/terms blank. Public legal article intentionally empty pending approved
+copy. Owner asked for approved URLs or permission to draft for review.
+SSH read-only succeeds at94.131.87.21; crm-web/worker/events/stand/beat all active,
+WorkingDirectory /opt/platforma/releases/20261119-google-final-64d29158.
+Do not confuse earlier guessed nonexistent platforma-* unit names with outage.
+Production configuration and target activation are not yet performed.
+Production Cloud project created and read back: platformacrm-integrations-prod,
+PlatformaCRM Integrations Prod, no billing/trial activation. OAuth branding form
+prepared with PlatformaCRM, External and existing business contact; stopped before
+Google API Services User Data Policy acceptance. Awaiting owner action-time consent;
+Chrome tab retained. Screenshot output/google-production-20261123/production-oauth-policy.png.
+Server read-only: all six Google integration settings absent/empty; Calendar source
+absent. SQL migration recorder confirms integrations0013 and scheduling0015 applied;
+required new migration is integrations0014, not yet executed. First SQL invocation
+failed due PowerShell quoting; corrected stdin query succeeded with no DB writes.
+No target source/config/services changed. Next: owner policy consent and approved
+public copy, then OAuth/API credentials and exact candidate/deployment acceptance.
+Official production requirements checked23Nov:
+https://developers.google.com/identity/protocols/oauth2/production-readiness/policy-compliance
+
+### Owner supplied legal documents and Google policy consent
+
+Owner explicitly accepted Google API Services User Data Policy and authorised review
+and necessary edits of Desktop documents. Located Platforma CRM RU/KK/EN legal set
+under Desktop/Platforma_—_юридические_документы_35_файлов. Sources are draft0.1 with
+unfilled hosting/recipient/retention/effective-date fields, not approved public copy.
+Created9 separate v0.2 copies (01 policy,07 browser notice,09 integration terms in
+three languages) in Platforma CRM/Редакция Google 2026-11-23; original hashes match.
+Added actual Sheets fields including notes, Calendar minimal payload/busy intervals,
+OAuth scopes/tokens, Google destination and restrictions, recovery/pause and accurate
+disconnect-versus-deletion behavior. Report documents remaining publication inputs.
+Code unchanged; no deployment or migration. Structural/version checks PASS.
+Chrome/document recovery23Nov: owner authorised installed LibreOffice. Chrome4
+extension access recovered; original OAuth creation completed in a fresh tab.
+Google policy accepted; overview confirms OAuth configuration created for
+platformacrm-integrations-prod. No OAuth clients configured yet. Screenshot saved
+and inspected: output/google-production-20261123/production-oauth-created.png.
+Nine DOCX rendered with bundled render_docx.py and owner-authorised LibreOffice;
+all23 final pages visually inspected PASS. Footer0.1 fixed to0.2 and rerendered.
+Source/output hashes and footer text verified; originals unchanged. Empty optional
+footer parts excluded from version assertion after initial overstrict check failed.
+Final renders/manifest: output/google-production-20261123/legal. Desktop report updated.
+No app edits, deployment, migration or CI. Public-policy recipient/hosting/retention
+facts, public pages, OAuth clients/scopes and exact target acceptance remain open.
+
+### Production activation preparation — owner continuation23Nov
+
+Owner authorised completing public policy/publication, production OAuth and server
+acceptance. Starting HEAD6347057f; newer unrelated dental commits and dirty auth,
+medical, YCloud changes excluded. Existing Google implementation/provider checks
+reused. Integration reliability skill applies: narrow credentials, tenant isolation,
+recovery and disabled-until-ready rollout; no new domain behavior intended.
+OAuth web client PlatformaCRM Production Integrations created after action-time
+owner confirmation in platformacrm-integrations-prod; origin https://platformacrm.kz,
+callback https://platformacrm.kz/app/integrations/google/callback. Creation and list
+readback PASS; screenshot output/google-production-20261123/oauth-client-created.png.
+Client secret saved outside repository under owner-only Windows ACL; not logged.
+Project remains Testing; API enablement, Picker key, scopes and verification pending.
+SSH read-only reconfirmed crm-web/worker/beat active in prior release; six Google
+integration settings absent. Object-storage endpoint storage.yandexcloud.kz, region
+kz1 confirmed from target configuration; this alone does not prove all processing,
+backup locations or retention. Timer inventory shows no dedicated CRM backup timer;
+cron/provider backup investigation still required before concluding backup absence.
+Public legal pages and retention facts remain open. No production mutation or DB
+migration performed. Required next checks: exact candidate versus deployed overlay,
+backup/rollback, affected gates, then synthetic real-provider target acceptance.
+
+Sheets/Drive/Calendar/Picker APIs enabled and dashboard readback PASS; screenshot
+output/google-production-20261123/apis-enabled.png. No billing/trial activated.
+Target RELEASE metadata identifies artifact tree64d29158, publicationcba360ca and
+source basea0dfb128. A first unfiltered manifest read was oversized; bounded metadata
+read corrected it. Candidate not assembled: scoped comparison includes unrelated
+YCloud delta which must be excluded. Existing Google-auth checkpoint confirms backup
+timers/archive disabled by prior owner decision; no re-enablement. Owner asked whether
+approved retention regulation exists. Facts and explicitly unapproved proposal saved
+in output/google-production-20261123/production-facts-and-retention-proposal.md.
+
+Prepared immutable runtime candidate 9a1556f22245d719b59b1cd68ef8a8815af9cd05 over deployed
+artifact64d29158 with30 Google task paths. Initial patch failed only on config/urls.py
+medical context; regenerated exact two Google additions against deployed file.
+Cached-index patch check PASS, no checkout/worktree/source overwrite. Candidate
+not built/tested/deployed; canonical dirty files preserved. Manifest and patch under
+output/google-production-20261123/. Picker credential action prepared; owner
+action-time confirmation pending. Retention-regulation question remains pending.
+
+Owner23Nov confirms no retention regulation and requests a proposal; separately
+approves restricted Picker key creation. Key PlatformaCRM Production Picker created
+with Websites restrictions exactly platformacrm.kz/* and docs.google.com/* (HTTPS),
+only Drive/Picker APIs. Saved outside repo in existing owner-only ACL directory;
+edit-page readback confirms both API and website restrictions. Screenshot:
+output/google-production-20261123/picker-key-restrictions.png. One post-close AX
+observation still contained restricted browser key; secret not repeated in evidence,
+OAuth client secret unaffected. Subsequent observations redact keys; transient detached
+close node resolved by fresh state (dialog already closed). No extra key created.
+Detailed unapproved retention proposal saved beside Desktop legal v0.2 documents:
+Регламент хранения Google — проект 2026-11-23.md. It separates Google technical
+retention from backup and tenant closure; requirements not yet implemented/approved.
+No source changes or target activation; exact candidate checks/public pages/scopes
+and provider verification remain unfinished. Existing local implementation PASS is
+not evidence for new retention promises or deployed readiness.
+
+### Sheets identity safety — owner request23Nov
+Prior real-provider PASS -> confirmed exact-phone/first-match defect in shared
+import confirmation -> minimal normalized identity matching and fail-closed ambiguity.
+Base6347057f, canonical branch unchanged; foreign WIP excluded. Reuse clients.identity,
+normalized indexed fields, existing preview/errors and transaction rollback. No new
+schema or automatic merge. Preserve fill-only behavior and archived matching;
+localize the existing error component without changing layout or controls.
+Risk: shared client lookup callers (clients/leads/deals), permissions, atomicity.
+Checks: normalized phone/email, split and multiple matches, archived/tenant boundaries,
+preview plus confirm revalidation, full-job rollback, repeat and concurrent imports;
+affected import/Google suites, Django check/drift. Production and retention remain
+open; update immutable release candidate after this fix passes.
+
+Implementation/acceptance23Nov: normalized indexed phone/email matching, ambiguous
+candidate rejection at preview and confirmation, per-Business client-import lock.
+No permission, notification, BusinessEvent or AI policy change; rollback preserves
+existing audit/event atomicity. No migrations or working-DB writes.
+Anti Slop during (owner preference), copywriting and existing component direction:
+explain conflicting contacts and next action, neutral RU/KK/EN wording, preserve
+tokens/layout, verify keyboard and error recovery. No new product screen or assets.
+Focused36 tests PASS; completion112 tests OK/1 SQLite concurrency skip, Django
+check0 and makemigrations --check --dry-run no changes. A separate isolated local
+PostgreSQL concurrency test PASS, two jobs return200 and create one client; its
+temporary database removed in runner finally. No CI run (owner local acceptance).
+Commands: isolated_runtime, Django test apps.core.tests_import_identity,
+tests_client_import_permissions, tests_import_export, tests_import_lifecycle,
+tests_import_job_boundaries, tests_import_mapping_ui; apps.integrations.tests_google_sheets,
+tests_google_sheets_export; apps.clients.tests. Full module paths use their stated
+package. Logs: output/google-import-identity-{tests,completion,postgres}.log;
+PostgreSQL runner output/run_import_identity_postgres.py.
+Frontend check-i18n (8201 keys), tsc -b and vite build with isolated output PASS;
+existing large-chunk warning only. Log output/google-import-identity-build.log.
+Browser: actual ImportJobReview/ImportErrors with explicitly synthetic API fixture
+at /e2e/fixtures/import-identity.html; real backend behavior covered by API tests.
+Conflict disables confirm; mapping edit retains block, repreview clears corrected
+conflict, Tab/Enter confirms and freezes imported mapping. RU/KK desktop and RU/EN
+390px mobile screenshots saved and visually inspected; no clipping, visible focus.
+UI gate scoped PASS: truthful actionable error, preserved appearance, localized
+copy, recovery/keyboard and mobile checks. New themes/dialogs/navigation/assets not
+applicable. Screenshots output/google-production-20261123/import-identity-*.png.
+Browser4 unavailable; current inventory Chrome3 served local fixture successfully.
+Limits: no name-only dedup or inferred country; no automatic merge or existing
+duplicate cleanup. Intra-file conflicts discovered during insertion are atomically
+rejected, not all predicted in preview. Manual concurrent creation does not share
+the import lock. No deployment yet; publication and production continuation next.

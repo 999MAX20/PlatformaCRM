@@ -2624,3 +2624,18 @@ types/bundle PASS. Legal-document work paused by owner; no legal product edits.
 Evidence: [checkpoint](docs/testing/task-state/PRIMARY-SESSION.md#auth-halves-20261119--shadow-free-forms).
 
 GOOGLE-STATIC-BUTTON-20261119: generic Google buttons and silent idle renewal deployed on login/signup; responsive redraw preserves attempts. Focused48/48 and immutable build/types PASS, real server desktop/mobile chooser checks PASS. Google-only overlay2e423f3b on deployedf43; backendac9 unchanged. Evidence: docs/testing/evidence/google-auth-20261119.md.
+
+Google public-production continuation23Nov: separate Cloud project
+platformacrm-integrations-prod created; OAuth profile created and policy accepted;
+public home/privacy copy and OAuth clients remain open. SSH/read-only checks PASS: five CRM services active,
+Google integration config absent, integrations0013/scheduling0015 applied;0014 not
+applied. No deployment. Prior local/live-provider PASS retained. Next: finish Cloud
+setup, prepare exact candidate and target acceptance. Evidence:
+docs/testing/evidence/google-sheets-20261119.md#public-production-acceptance-continuation--23nov2026.
+Google production legal follow-up23Nov: Chrome recovered, policy accepted, production OAuth profile created. Nine RU/KK/EN v0.2 copies rendered using owner-authorised LibreOffice; all23 pages visually inspected PASS, originals preserved. Public-policy fact fields, credentials and target acceptance remain open; no deployment. Details: docs/testing/evidence/google-sheets-20261119.md.
+
+Google production preparation23Nov: OAuth client created with owner confirmation; four Google APIs enabled/read back. Secret stored outside repo with owner-only ACL. Target unchanged; public policy/retention, Picker key/scopes/verification and exact server candidate/acceptance remain open. Evidence: docs/testing/evidence/google-sheets-20261119.md.
+
+Google production23Nov: restricted Picker key created/read back with owner approval; credentials stored outside repository. Owner approved technical retention proposal as implementation requirements; cleanup not implemented/activated. Production policy, scopes/verification, candidate checks and deployment remain open. Evidence: docs/testing/evidence/google-sheets-20261119.md.
+
+GOOGLE-SHEETS-IDENTITY-20261123: normalized contact matching and ambiguity rejection locally verified; repeated/concurrent client imports do not duplicate equivalent phones. Completion112 tests OK/1 SQLite skip, separate PostgreSQL concurrency PASS; build/types/i18n and RU/KK/EN error/recovery/mobile UI PASS. No migration/deployment/CI. Production continuation and approved retention implementation remain open. Evidence: docs/testing/evidence/google-sheets-20261119.md#sheets-identity-safety--owner-request23nov.

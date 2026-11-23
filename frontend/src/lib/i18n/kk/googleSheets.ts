@@ -1,4 +1,6 @@
 export const googleSheets: Record<string, string> = {
+  "googleSheets.identityField": "Телефон және email",
+  "googleSheets.identityConflict": "Телефон немесе email бірнеше клиентке сәйкес келеді. Кесте мен CRM ішіндегі байланыс деректерін тексеріп, импортты қайта тексеріңіз.",
   "googleSheets.connect": "Google қосу",
   "googleSheets.import": "Клиенттерді импорттау",
   "googleSheets.export": "Клиенттерді экспорттау",

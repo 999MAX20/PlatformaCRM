@@ -22,7 +22,7 @@ export function ImportErrors({ job, userId }: { job: ImportJob; userId: Id }) {
     <p className="text-sm font-semibold text-platforma-danger">{t("integrations.import.fixFileShort")}</p>
     <ul className="space-y-2 text-sm text-platforma-danger" data-testid="import-errors">
       {query.data.results.map((item, index) => <li key={`${item.row}-${item.field}-${index}`} className="break-words">
-        {t("integrations.import.rowError", { row: item.row, field: t(`integrations.import.fields.${item.field}`), message: errorMessage(item.message, t) })}
+        {t("integrations.import.rowError", { row: item.row, field: item.field === "identity" ? t("googleSheets.identityField") : t(`integrations.import.fields.${item.field}`), message: errorMessage(item.message, t) })}
       </li>)}
     </ul>
     <CrmPagination shown={query.data.results.length} total={query.data.count} page={page} pageSize={pageSize}
@@ -31,6 +31,9 @@ export function ImportErrors({ job, userId }: { job: ImportJob; userId: Id }) {
 }
 
 function errorMessage(message: string, t: ReturnType<typeof useI18n>["t"]) {
+  if (message === "Phone or email matches multiple clients. Resolve the conflicting contacts before importing.") {
+    return t("googleSheets.identityConflict");
+  }
   const keys: Record<string, string> = {
     "Amount must be a number.": "amount", "Quantity must be a number.": "quantity",
     "Price must be a number.": "price", "Stock quantity must be a number.": "stock",
