@@ -338,6 +338,7 @@ class MedicalAuditEvent(models.Model):
         RECORD_OPENED = "record_opened", "Medical record opened"
         ENCOUNTER_OPENED = "encounter_opened", "Encounter opened"
         ENCOUNTER_DRAFT_SAVED = "encounter_draft_saved", "Encounter draft saved"
+        ENCOUNTER_FINALIZED = "encounter_finalized", "Encounter finalized"
         TOOTH_OBSERVATION_SAVED = "tooth_observation_saved", "Tooth observation saved"
         DOCUMENT_DRAFT_CREATED = "document_draft_created", "Document draft created"
         DOCUMENT_DRAFT_SAVED = "document_draft_saved", "Document draft saved"
@@ -419,7 +420,7 @@ class MedicalAuditEvent(models.Model):
                                                "representative_verified", "representative_revoked",
                                                "participation_proposed", "participation_accepted",
                                                "participation_declined", "participation_withdrawn", "participation_ended",
-                                               "encounter_opened", "encounter_draft_saved", "record_opened",
+                                               "encounter_opened", "encounter_draft_saved", "encounter_finalized", "record_opened",
                                                "tooth_observation_saved", "document_draft_created",
                                                "document_draft_saved", "document_review_submitted", "document_review_withdrawn", "document_review_confirmed", "document_head_confirmed", "document_signing_changed", "document_finalized", "document_exported", "document_print_requested", "template_draft_created",
                                                "template_draft_saved", "template_submitted", "template_approved",
@@ -480,8 +481,8 @@ class MedicalAuditEvent(models.Model):
                 models.Q(patient__isnull=False, representative__isnull=True, participation__isnull=True)),
                 name="medical_audit_encounter_patient"),
             models.CheckConstraint(condition=(
-                models.Q(action__in=["encounter_opened", "encounter_draft_saved"], encounter_version__isnull=False) |
-                ~models.Q(action__in=["encounter_opened", "encounter_draft_saved"])),
+                models.Q(action__in=["encounter_opened", "encounter_draft_saved", "encounter_finalized"], encounter_version__isnull=False) |
+                ~models.Q(action__in=["encounter_opened", "encounter_draft_saved", "encounter_finalized"])),
                 name="medical_audit_encounter_needed"),
             models.CheckConstraint(condition=(models.Q(record__isnull=True) |
                 models.Q(patient__isnull=False, representative__isnull=True, participation__isnull=True,

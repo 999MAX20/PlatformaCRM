@@ -481,6 +481,8 @@ def apply_appointment_status(
         activity_metadata = {**(activity_metadata or {}), **completion_metadata}
         audit_metadata = {**(audit_metadata or {}), **completion_metadata}
 
+    from .lifecycle_extensions import validate_appointment_transition
+    validate_appointment_transition(appointment=appointment, actor=actor, target=status_value)
     appointment.status = status_value
     appointment.save(update_fields=["status", "updated_at"])
     if plan is not None and status_value == Appointment.Statuses.COMPLETED:

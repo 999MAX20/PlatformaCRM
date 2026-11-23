@@ -128,6 +128,11 @@ export type EncounterDraftRequest = ClinicalScope & {
   participation_id?: number;
 };
 export type EncounterCommandResult = { id: number; version_id: number; revision: number; replayed: boolean };
+export type EncounterCompletion = {
+  ready: boolean; missing_fields: ClinicalField[]; revision: number; appointment_updated_at: string;
+  early: boolean; state: EncounterState;
+  documents: { kind_id: number; name: string; version_id: number | null; ready: boolean; blocker: string | null }[];
+};
 
 const root = "/api/medical/encounters/";
 
@@ -143,6 +148,12 @@ async function command<T>(path: string, payload: object, idempotencyKey: string,
 }
 
 export const medicalClinicalApi = {
+  async completion(encounterId: number, scope: ClinicalScope, signal?: AbortSignal): Promise<EncounterCompletion> {
+    return (await apiClient.get(`${root}${encounterId}/completion/`, { params: scope, signal })).data;
+  },
+  complete(encounterId: number, payload: ClinicalScope & { expected_revision: number; expected_appointment_updated_at: string; reason: string }, key: string, signal?: AbortSignal) {
+    return command<EncounterCommandResult>(`${root}${encounterId}/complete/`, payload, key, signal);
+  },
   bookPlanStep: (encounterId: number, payload: ClinicalBookingRequest, key: string, signal?: AbortSignal) =>
     command<ClinicalBookingResult>(`${root}${encounterId}/book-plan-step/`, payload, key, signal),
   toothPlan: async (scope: ClinicalReadScope & { tooth: number; as_of?: string; before_id?: number }, signal?: AbortSignal) =>

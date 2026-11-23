@@ -4,6 +4,7 @@ import { clinicalFields, medicalClinicalApi, type AppointmentClinicalContext, ty
 import { getApiErrorMessage } from "../../api/client";
 import { Button } from "../../components/ui/Button";
 import { ClinicalSectionInput } from "./ClinicalSectionInput";
+import { EncounterCompletion } from "./EncounterCompletion";
 import { ClinicalFollowUp } from "./ClinicalFollowUp";
 import { ClinicalFollowUpResults } from "./ClinicalFollowUpResults";
 import { ErrorState, LoadingState } from "../../components/ui/StateViews";
@@ -12,8 +13,8 @@ import { useUnsavedEntryWarning } from "../auth/useUnsavedEntryWarning";
 
 export type ClinicalDraftControl = { save: () => Promise<boolean>; isPending: () => boolean; isDirty: () => boolean };
 
-export function ClinicalDraftForm({ context, onDirty, onDenied, onReload, draftControl, view = "encounter" }: {
-  view?: "encounter" | "plan";
+export function ClinicalDraftForm({ context, onDirty, onDenied, onReload, onCompleted, draftControl, view = "encounter" }: {
+  view?: "encounter" | "plan"; onCompleted: () => void;
   draftControl: Ref<ClinicalDraftControl>;
   context: AppointmentClinicalContext; onDirty: (value: boolean) => void; onDenied: (cause: unknown) => void; onReload: () => void;
 }) {
@@ -30,6 +31,8 @@ export function ClinicalDraftForm({ context, onDirty, onDenied, onReload, draftC
   const [saved, setSaved] = useState(false);
   const [conflict, setConflict] = useState(false);
   const [followUp, setFollowUp] = useState(false);
+  const [completion, setCompletion] = useState(false);
+  const completionButton = useRef<HTMLButtonElement>(null);
   const followUpButton = useRef<HTMLButtonElement>(null);
   const saving = useRef(false);
   const dirtyNow = useRef(false);
@@ -51,7 +54,7 @@ export function ClinicalDraftForm({ context, onDirty, onDenied, onReload, draftC
       .finally(() => { if (!active.signal.aborted) setLoading(false); });
     return () => active.abort();
   }, [context, refresh]); // Context changes remount the clinical scope through the parent.
-  useImperativeHandle(draftControl, () => ({ save, isPending: () => saving.current || followUp, isDirty: () => dirtyNow.current }));
+  useImperativeHandle(draftControl, () => ({ save, isPending: () => saving.current || followUp || completion, isDirty: () => dirtyNow.current }));
   async function save(): Promise<boolean> {
     if (saving.current || followUp || conflict || !loaded || !context.actions.save_draft) return false;
     if (form.current && !form.current.reportValidity()) return false;
@@ -76,6 +79,9 @@ export function ClinicalDraftForm({ context, onDirty, onDenied, onReload, draftC
   }
   if (loading) return <LoadingState />;
   if (!loaded) return <ErrorState message={getApiErrorMessage(error)} action={<Button size="lg" variant="secondary" onClick={() => setRefresh(value => value + 1)}>{t("common.retry")}</Button>} />;
+  if (completion) return <EncounterCompletion context={context} onCompleted={onCompleted} onDenied={onDenied} onBack={() => {
+    setCompletion(false); requestAnimationFrame(() => completionButton.current?.focus());
+  }} />;
   if (followUp) return <ClinicalFollowUp access={{ context, revision, onReload, onDenied, unsaved: dirty }} onClose={() => {
     setFollowUp(false); requestAnimationFrame(() => followUpButton.current?.focus());
   }} />;
@@ -86,6 +92,8 @@ export function ClinicalDraftForm({ context, onDirty, onDenied, onReload, draftC
       {context.actions.save_draft ? <Button ref={followUpButton} type="button" size="lg" variant="secondary"
         disabled={pending || dirty || conflict} title={dirty ? t("medical.plan.saveBeforeBooking") : undefined}
         onClick={() => setFollowUp(true)}>{t("medical.reception.request")}</Button> : null}
+      {context.actions.save_draft && view === "encounter" ? <Button ref={completionButton} type="button" size="lg" variant="secondary"
+        disabled={pending || dirty || conflict} onClick={() => setCompletion(true)}>{t("medical.completion.title")}</Button> : null}
       {saved ? <p role="status" className="w-full text-sm">{t("common.saved")}</p> : null}
       {error ? <div className="w-full"><ErrorState message={conflict ? t("medical.clinical.conflict") : getApiErrorMessage(error)} /></div> : null}
       {conflict ? <Button type="button" size="lg" variant="secondary" onClick={() => {

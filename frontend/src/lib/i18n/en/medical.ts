@@ -1,4 +1,13 @@
 export const medical = {
+  "medical.completion.title": "Complete encounter",
+  "medical.completion.ready": "Required sections and documents are ready. Confirm completion of this encounter.",
+  "medical.completion.missing": "Fill in the sections or record why they do not apply, and complete the required documents.",
+  "medical.completion.documentReady": "Ready",
+  "medical.completion.documentMissing": "Document must be finalized",
+  "medical.completion.earlyReason": "Reason for early completion",
+  "medical.completion.confirm": "Confirm completion",
+  "medical.completion.back": "Back to encounter",
+  "medical.completion.done": "Encounter completed. Medical data has been cleared; further access depends on active treatment participation.",
   "medical.rules.fieldPresence": "Required data in the saved version",
   "medical.rules.fieldPresent": "Filled in",
   "medical.rules.fieldMissing": "Missing",

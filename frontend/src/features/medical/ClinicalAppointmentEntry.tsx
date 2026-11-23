@@ -1,3 +1,5 @@
+import { useQueryClient } from "@tanstack/react-query";
+import { refreshAppointmentQueries } from "../../lib/appointmentCache";
 import { ClinicalViewNavigationProvider } from "./clinicalViewNavigation";
 import { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState, type Ref } from "react";
 import axios from "axios";
@@ -31,6 +33,8 @@ export function ClinicalAppointmentEntry({ businessId, appointmentId, embedded =
 }) {
   const { t } = useI18n();
   const { user } = useAuth();
+  const cache = useQueryClient();
+  const [completed, setCompleted] = useState(false);
   const memory = useMemo(() => clinicalCardMemory(`${businessId}:${user?.id}`, appointmentId), [businessId, user?.id, appointmentId]);
   const [tab, setTabState] = useState<ClinicalTab>(memory.tab);
   const setTab = (next: ClinicalTab) => { memory.tab = next; setTabState(next); };
@@ -101,9 +105,14 @@ export function ClinicalAppointmentEntry({ businessId, appointmentId, embedded =
   }
   const denied = useCallback((cause: unknown) => { setContext(null); setError(cause); setDirty(false); setConfirmClose(false); }, []);
   const reload = () => { setLoading(true); setContext(null); setError(null); setRefresh(value => value + 1); };
-  const workspace = loading ? <LoadingState /> : error ? <ErrorState message={status === 401 || status === 403 ? t("medical.denied") : getApiErrorMessage(error)}
+  const completedEncounter = () => {
+    setContext(null); setDirty(false); setCompleted(true); setError(null);
+    memory.tab = "overview";
+    void refreshAppointmentQueries(cache);
+  };
+  const workspace = completed ? <p role="status" className="py-4 text-sm" data-testid="encounter-completed">{t("medical.completion.done")}</p> : loading ? <LoadingState /> : error ? <ErrorState message={status === 401 || status === 403 ? t("medical.denied") : getApiErrorMessage(error)}
     action={<Button size="lg" variant="secondary" onClick={reload}>{t("common.retry")}</Button>} /> : context ?
-    <ClinicalWorkspace compact={embedded} onPending={onWorkspacePending} historyMemory={historyMemory} tab={tab} onTabChange={setTab} draftControl={draftControl} context={context} onChanged={reload} onDirty={setDirty} onDenied={denied}
+    <ClinicalWorkspace onCompleted={completedEncounter} compact={embedded} onPending={onWorkspacePending} historyMemory={historyMemory} tab={tab} onTabChange={setTab} draftControl={draftControl} context={context} onChanged={reload} onDirty={setDirty} onDenied={denied}
       onDocumentEditor={onDocumentEditor} canEditDocument={canEditDocument} onFilesState={onFilesState} /> : null;
   if (!open && (status === 401 || status === 403)) return null;
   return <div className="mt-4" data-testid="clinical-appointment-entry">
@@ -131,7 +140,8 @@ export function ClinicalAppointmentEntry({ businessId, appointmentId, embedded =
   </div>;
 }
 
-function ClinicalWorkspace({ context, onChanged, onDirty, onDenied, draftControl, onDocumentEditor, canEditDocument, tab, onTabChange, historyMemory, compact = false, onPending, onFilesState }: {
+function ClinicalWorkspace({ onCompleted, context, onChanged, onDirty, onDenied, draftControl, onDocumentEditor, canEditDocument, tab, onTabChange, historyMemory, compact = false, onPending, onFilesState }: {
+  onCompleted: () => void;
   onFilesState: (state: MedicalFilesState) => void;
   compact?: boolean;
   onPending: (pending: boolean) => void;
@@ -200,7 +210,7 @@ function ClinicalWorkspace({ context, onChanged, onDirty, onDenied, draftControl
       <div role="tabpanel" id={`${tabPrefix}-panel-${tab === "plan" ? "encounter" : "plan"}`} aria-labelledby={`${tabPrefix}-tab-${tab === "plan" ? "encounter" : "plan"}`} hidden />
       <div role="tabpanel" id={`${tabPrefix}-panel-${tab === "plan" ? "plan" : "encounter"}`} aria-labelledby={`${tabPrefix}-tab-${tab === "plan" ? "plan" : "encounter"}`} hidden={tab !== "encounter" && tab !== "plan"} className="space-y-4">
       {tab === "plan" ? <ClinicalVisitPlans scope={planScope} entry="plan" /> : null}
-      {context.encounter ? <ClinicalDraftForm view={tab === "plan" ? "plan" : "encounter"} draftControl={draftControl} context={context} onDirty={onDirty} onDenied={onDenied} onReload={onChanged} /> : <>
+      {context.encounter ? <ClinicalDraftForm onCompleted={onCompleted} view={tab === "plan" ? "plan" : "encounter"} draftControl={draftControl} context={context} onDirty={onDirty} onDenied={onDenied} onReload={onChanged} /> : <>
         <p className="text-sm text-platforma-subtle">{t(context.active_record ? "medical.clinical.noEncounter" : "medical.clinical.noRecord")}</p>
         {context.actions.create_record ? <Input label={t("medical.clinical.number")} value={number} maxLength={64} disabled={pending}
           onChange={event => { setNumber(event.target.value); onDirty(Boolean(event.target.value)); }} /> : null}

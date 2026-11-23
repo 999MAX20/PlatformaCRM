@@ -87,7 +87,10 @@ def write_patient_audit(*, actor, business, patient, action, representative=None
             raise ValueError("Audit encounter links must be consistent.") from None
         if version.revision > version.encounter.revision:
             raise ValueError("Audit clinical version exceeds the encounter revision.")
-        if action.startswith("encounter_") and (version.encounter.state != "draft" or version.revision != version.encounter.revision):
+        expected_state = "finalized" if action == "encounter_finalized" else "draft"
+        if action == "encounter_finalized" and version.encounter.finalized_by_id != actor.pk:
+            raise ValueError("Completion audit requires the finalizing clinician.")
+        if action.startswith("encounter_") and (version.encounter.state != expected_state or version.revision != version.encounter.revision):
             raise ValueError("A draft write event requires the current draft version.")
     if action == MedicalAuditEvent.Actions.RECORD_OPENED and record is None:
         raise ValueError("A record action requires its medical record.")

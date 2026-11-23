@@ -1,6 +1,7 @@
 from rest_framework import serializers, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
 from .appointment_context import read_appointment_clinical_context
@@ -37,6 +38,16 @@ class EncounterDraftSerializer(EncounterScopeSerializer):
 class EncounterReadSerializer(EncounterScopeSerializer):
     appointment_id = serializers.IntegerField(min_value=1, required=False)
     participation_id = serializers.IntegerField(min_value=1, required=False)
+
+
+class EncounterCompletionReadSerializer(EncounterScopeSerializer):
+    participation_id = serializers.IntegerField(min_value=1, required=False)
+
+
+class EncounterCompleteSerializer(EncounterCompletionReadSerializer):
+    expected_revision = serializers.IntegerField(min_value=1)
+    expected_appointment_updated_at = serializers.DateTimeField()
+    reason = serializers.CharField(required=False, allow_blank=True, max_length=500, trim_whitespace=False)
 
 
 class ClinicalWorkspaceSerializer(EncounterReadSerializer):
@@ -108,6 +119,7 @@ class MedicalEncounterViewSet(viewsets.GenericViewSet):
 
     def get_serializer_class(self):
         return {"create": EncounterOpenSerializer, "draft": EncounterDraftSerializer,
+                "completion": EncounterCompletionReadSerializer, "complete": EncounterCompleteSerializer,
                 "version": EncounterReadSerializer, "workspace": ClinicalHistoryWorkspaceSerializer,
                 "overview": EncounterReadSerializer,
                 "representatives": ClinicalRepresentativesSerializer,
@@ -137,6 +149,30 @@ class MedicalEncounterViewSet(viewsets.GenericViewSet):
 
     def create(self, request):
         return self._command(request, open_primary_encounter, created=True)
+
+    @action(detail=True, methods=["get"])
+    def completion(self, request, pk=None):
+        from .encounter_completion import read_encounter_completion
+        serializer = self.get_serializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+        try:
+            return Response(read_encounter_completion(actor=request.user, encounter_id=int(pk), **serializer.validated_data))
+        except PermissionDenied:
+            from .file_audit import record_denied_file_access
+            record_denied_file_access(actor=request.user, business_id=serializer.validated_data["business_id"])
+            raise
+
+    @action(detail=True, methods=["post"])
+    def complete(self, request, pk=None):
+        from .encounter_completion import complete_primary_encounter
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            return self._command(request, complete_primary_encounter, encounter_id=int(pk))
+        except PermissionDenied:
+            from .file_audit import record_denied_file_access
+            record_denied_file_access(actor=request.user, business_id=serializer.validated_data["business_id"])
+            raise
 
     @action(detail=True, methods=["post"], url_path="book-plan-step")
     def book_plan_step(self, request, pk=None):

@@ -1,4 +1,13 @@
 export const medical = {
+  "medical.completion.title": "Қабылдауды аяқтау",
+  "medical.completion.ready": "Міндетті бөлімдер мен құжаттар дайын. Қабылдауды аяқтауды растаңыз.",
+  "medical.completion.missing": "Аяқтау үшін бөлімдерді толтырыңыз немесе қолданылмайтын себебін көрсетіңіз және міндетті құжаттарды дайындаңыз.",
+  "medical.completion.documentReady": "Дайын",
+  "medical.completion.documentMissing": "Құжатты аяқтау қажет",
+  "medical.completion.earlyReason": "Мерзімінен бұрын аяқтау себебі",
+  "medical.completion.confirm": "Аяқтауды растау",
+  "medical.completion.back": "Қабылдауға оралу",
+  "medical.completion.done": "Қабылдау аяқталды. Медициналық деректер жабылды; одан әрі қолжетімділік емдеуге белсенді қатысуға байланысты.",
   "medical.rules.fieldPresence": "Сақталған нұсқадағы міндетті деректер",
   "medical.rules.fieldPresent": "Толтырылған",
   "medical.rules.fieldMissing": "Толтырылмаған",

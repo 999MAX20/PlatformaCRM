@@ -1,4 +1,13 @@
 export const medical = {
+  "medical.completion.title": "Завершить приём",
+  "medical.completion.ready": "Обязательные разделы и документы готовы. Подтвердите завершение приёма.",
+  "medical.completion.missing": "Для завершения заполните разделы или укажите причину неприменимости и подготовьте обязательные документы.",
+  "medical.completion.documentReady": "Готов",
+  "medical.completion.documentMissing": "Нужно завершить документ",
+  "medical.completion.earlyReason": "Причина досрочного завершения",
+  "medical.completion.confirm": "Подтвердить завершение",
+  "medical.completion.back": "Вернуться к приёму",
+  "medical.completion.done": "Приём завершён. Медицинские данные закрыты; дальнейший доступ зависит от действующего участия в лечении.",
   "medical.rules.fieldPresence": "Обязательные данные в сохранённой версии",
   "medical.rules.fieldPresent": "Заполнено",
   "medical.rules.fieldMissing": "Не заполнено",

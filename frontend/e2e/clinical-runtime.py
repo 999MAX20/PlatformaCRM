@@ -63,6 +63,11 @@ settings.MEDICAL_TOOTH_SURFACE_POLICIES = {"1": {
 }}
 call_command("migrate", interactive=False, verbosity=0)
 
+if files_fixture and len(sys.argv) > 1 and sys.argv[1] == "completion-prepare":
+    from completion_fixture import prepare_completion
+    print(json.dumps(prepare_completion()))
+    sys.exit(0)
+
 from datetime import timedelta
 from django.utils import timezone
 from datetime import datetime
