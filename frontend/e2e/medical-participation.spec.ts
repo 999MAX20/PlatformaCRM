@@ -95,6 +95,37 @@ for (const language of ["ru", "kk", "en"] as const) for (const mobile of [false,
       await overview.getByRole("button", { name: t["medical.clinical.history"], exact: true }).click();
       await expect(doctor.getByTestId("clinical-history")).toBeVisible();
       await expect(doctor.getByTestId("participation-clinical-content")).toBeFocused();
+      const toothRoute = "**/api/medical/tooth-observations/snapshot/**";
+      if (language === "en" && mobile) await doctor.route(toothRoute, route => route.fulfill({ status: 503, json: {} }));
+      await row.getByRole("button", { name: t["medical.tooth.title"], exact: true }).click();
+      const chart = doctor.getByTestId("tooth-chart");
+      if (language === "en" && mobile) {
+        await expect(chart.getByText(t["actions.errorTemporary"], { exact: true })).toBeVisible();
+        await doctor.unroute(toothRoute);
+        await chart.getByRole("button", { name: t["common.retry"], exact: true }).click();
+      }
+      const tooth = chart.getByRole("button", { name: `${t["medical.tooth.tooth"]} 11: ${t["medical.tooth.empty"]}`, exact: true });
+      await tooth.click();
+      const inspector = doctor.getByTestId("tooth-inspector");
+      await expect(inspector.getByText(t["medical.tooth.readOnly"], { exact: true })).toBeVisible();
+      await expect(inspector.getByRole("button", { name: t["medical.tooth.save"], exact: true })).toHaveCount(0);
+      await inspector.screenshot({ path: info.outputPath("participation-tooth-inspector.png") });
+      await doctor.keyboard.press("Escape");
+      await expect(inspector).not.toBeVisible();
+      await expect(tooth).toBeFocused();
+      await chart.getByRole("combobox", { name: t["medical.tooth.title"] }).click();
+      await doctor.getByRole("option", { name: t["medical.tooth.mixed"], exact: true }).click();
+      await expect(chart.getByRole("button", { name: `${t["medical.tooth.tooth"]} 51: ${t["medical.tooth.empty"]}`, exact: true })).toBeVisible();
+      await chart.getByLabel(t["medical.tooth.asOf"], { exact: true }).fill("2026-01-01T10:00");
+      await chart.getByRole("button", { name: t["medical.tooth.show"], exact: true }).click();
+      await expect(tooth).toBeVisible();
+      await chart.getByRole("button", { name: t["medical.tooth.current"], exact: true }).click();
+      await expect(tooth).toBeVisible();
+      await doctor.getByTestId("participation-teeth").screenshot({ path: info.outputPath("participation-tooth-chart.png") });
+      expect((await new AxeBuilder({ page: doctor }).include('[data-testid="participation-teeth"]').withTags(["wcag2a", "wcag2aa"]).analyze()).violations).toEqual([]);
+      expect(await doctor.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      await row.getByRole("button", { name: t["medical.clinical.history"], exact: true }).click();
+      await expect(doctor.getByTestId("clinical-history")).toBeVisible();
       expect((await doctor.request.get(clinicalUrl, { headers: { Authorization: `Bearer ${token}` } })).status()).toBe(200);
       await workspace.getByRole("button", { name: t["medical.clinical.reload"], exact: true }).click();
       await headRow.getByRole("button", { name: t["medical.participation.end"], exact: true }).click();
@@ -120,7 +151,8 @@ for (const language of ["ru", "kk", "en"] as const) for (const mobile of [false,
       expect(keys[0]).toBe(keys[1]);
       expect((await doctor.request.get(clinicalUrl, { headers: { Authorization: `Bearer ${token}` } })).status()).toBe(403);
       if (language === "en" && mobile) {
-        await row.getByRole("button", { name: t["medical.overview.title"], exact: true }).click();
+        await row.getByRole("button", { name: t["medical.tooth.title"], exact: true }).click();
+        await expect(doctor.getByTestId("tooth-chart")).toHaveCount(0);
         await expect(doctor.getByText(t["medical.denied"], { exact: true })).toBeVisible();
         await expect(doctor.getByTestId("clinical-overview")).toHaveCount(0);
         await expect(doctor.getByTestId("clinical-history")).toHaveCount(0);

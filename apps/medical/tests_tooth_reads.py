@@ -10,8 +10,8 @@ from . import tests_tooth_services as fixtures
 from .tests_patient_services import key
 from .audit import MedicalAuditUnavailable
 from .identity_crypto import MedicalDataUnavailable
-from .models import DentalToothHistory, MedicalAuditEvent
-from .tooth_reads import read_tooth_observation
+from .models import DentalToothHistory, MedicalAuditEvent, TreatmentParticipation
+from .tooth_reads import read_tooth_observation, read_tooth_snapshot, read_tooth_revision_history
 
 
 @override_settings(MEDICAL_DATA_KEYS={"test": key(7)}, MEDICAL_DATA_ACTIVE_KEY_ID="test",
@@ -44,6 +44,28 @@ class ToothObservationReadTests(TestCase):
         result = self.read()
         self.assertEqual(result["observation"], "Private synthetic tooth observation")
         self.assertEqual(result["revision"], 1)
+
+    def test_participation_reads_snapshot_and_history_without_active_booking_then_denies_after_end(self):
+        self.save(expected_tooth_revision=1, idempotency_key="later", observation="Later synthetic")
+        type(self.appointment).objects.filter(pk=self.appointment.pk).update(status="completed")
+        now = timezone.now()
+        participation = TreatmentParticipation.objects.create(patient=self.patient, member=self.member,
+            branch=self.first, proposed_by=self.owner, state="active", proposed_at=now, accepted_at=now)
+        scope = dict(actor=self.doctor, business_id=self.business.pk, patient_id=self.patient.pk,
+                     participation_id=participation.pk)
+        self.assertEqual(read_tooth_snapshot(**scope)["observations"][0]["observation"], "Later synthetic")
+        self.assertEqual(read_tooth_snapshot(**scope, as_of=self.history.observed_at)["observations"][0]["revision"], 1)
+        self.assertEqual(len(read_tooth_revision_history(**scope, tooth_state_id=self.history.tooth_state_id)["versions"]), 2)
+        self.assertEqual(read_tooth_observation(**scope, history_id=self.history.pk)["revision"], 1)
+        participation.state, participation.closed_at, participation.closed_by = "ended", now, self.owner
+        participation.save(update_fields=["state", "closed_at", "closed_by"])
+        count = MedicalAuditEvent.objects.count()
+        for reader, params in ((read_tooth_snapshot, {}),
+                (read_tooth_revision_history, {"tooth_state_id": self.history.tooth_state_id}),
+                (read_tooth_observation, {"history_id": self.history.pk})):
+            with self.subTest(reader=reader.__name__), self.assertRaises(PermissionDenied):
+                reader(**scope, **params)
+        self.assertEqual(MedicalAuditEvent.objects.count(), count)
 
     def test_audit_failure_never_decrypts(self):
         with patch("apps.medical.audit.MedicalAuditEvent.objects.create", side_effect=DatabaseError("synthetic")):

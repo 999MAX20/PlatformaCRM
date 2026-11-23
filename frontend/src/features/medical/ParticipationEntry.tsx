@@ -10,6 +10,7 @@ import { useI18n } from "../../lib/i18n";
 import { ParticipationCommandForm, type ParticipationFormScope } from "./ParticipationCommandForm";
 import { ParticipationClinicalHistory } from "./ClinicalHistory";
 import { ParticipationClinicalOverview } from "./ClinicalOverview";
+import { ParticipationToothChart } from "./ToothChart";
 import { SourceProposalWorkspace } from "./SourceProposalWorkspace";
 import { ParticipationDeclineForm } from "./ParticipationDeclineForm";
 import { ParticipationInvitationDetails } from "./ParticipationInvitationDetails";
@@ -86,6 +87,7 @@ function ParticipationWorkspace({ access, patientId, branchId, guard, onDenied }
   const [form, setForm] = useState<Participation | "invite" | null>(null);
   const [history, setHistory] = useState<Participation | null>(null);
   const [overview, setOverview] = useState<Participation | null>(null);
+  const [teeth, setTeeth] = useState<Participation | null>(null);
   const [proposal, setProposal] = useState<Participation | null>(null);
   const [declining, setDeclining] = useState<Participation | null>(null);
   const [pending, setPending] = useState<number | null>(null);
@@ -93,7 +95,7 @@ function ParticipationWorkspace({ access, patientId, branchId, guard, onDenied }
   const retry = useRef<{ fingerprint: string; key: string } | null>(null);
   const workspaceRef = useRef<HTMLElement>(null);
   const clinicalRef = useRef<HTMLDivElement>(null);
-  useLayoutEffect(() => { clinicalRef.current?.focus(); }, [overview, history]);
+  useLayoutEffect(() => { clinicalRef.current?.focus(); }, [overview, history, teeth]);
   const focusAfterRefresh = useRef<string | null>(null);
   const chosen = access.branches.find(row => String(row.id) === branch);
   const scope = useMemo<ParticipationFormScope>(() => ({ businessId: access.business_id,
@@ -101,7 +103,7 @@ function ParticipationWorkspace({ access, patientId, branchId, guard, onDenied }
   [access.business_id, branch, form, patientId]);
   useEffect(() => {
     const controller = new AbortController();
-    setPage(null); setError(null); setHistory(null); setOverview(null); setConflict(false);
+    setPage(null); setError(null); setHistory(null); setOverview(null); setTeeth(null); setConflict(false);
     const pagination = { business_id: access.business_id, before_id: cursor };
     if (mode === "managed" && !chosen) { setPage({ results: [], next_before_id: null }); return () => controller.abort(); }
     const read = mode === "managed" ? api.managed({ ...pagination, branch_id: Number(branch), patient_id: patientId }, controller.signal) : api.mine(pagination, controller.signal);
@@ -122,7 +124,7 @@ function ParticipationWorkspace({ access, patientId, branchId, guard, onDenied }
     if (declining) focusAfterRefresh.current = String(declining.id);
     setDeclining(null);
     if (form) focusAfterRefresh.current = form === "invite" ? "invite" : String(form.id);
-    setForm(null); setPage(null); setHistory(null); setOverview(null); guard.current.dirty = false; setAttempt(x => x + 1);
+    setForm(null); setPage(null); setHistory(null); setOverview(null); setTeeth(null); guard.current.dirty = false; setAttempt(x => x + 1);
   }
   async function respond(item: Participation, decision: "accept" | "decline" | "withdraw") {
     if (guard.current.pending || conflict) return;
@@ -183,8 +185,9 @@ function ParticipationWorkspace({ access, patientId, branchId, guard, onDenied }
             {item.state === "pending" && mode === "managed" && actions?.manage && actions.create ? <Button variant="secondary" disabled={pending !== null || conflict} onClick={() => void respond(item, "withdraw")}>{t("medical.participation.withdraw")}</Button> : null}
             {item.state === "active" && actions?.manage ? <Button size="lg" variant="secondary" disabled={pending !== null || conflict} onClick={() => setForm(item)}>{t("medical.participation.end")}</Button> : null}
             {item.state === "active" && item.member_id === access.member_id ? <>
-              <Button size="lg" variant="secondary" disabled={pending !== null || conflict} onClick={() => { setHistory(null); setOverview(item); }}>{t("medical.overview.title")}</Button>
-              <Button variant="secondary" disabled={pending !== null || conflict} onClick={() => { setOverview(null); setHistory(item); }}>{t("medical.clinical.history")}</Button>
+              <Button size="lg" variant="secondary" disabled={pending !== null || conflict} onClick={() => { setHistory(null); setTeeth(null); setOverview(item); }}>{t("medical.overview.title")}</Button>
+              <Button variant="secondary" disabled={pending !== null || conflict} onClick={() => { setOverview(null); setTeeth(null); setHistory(item); }}>{t("medical.clinical.history")}</Button>
+              <Button size="lg" variant="secondary" disabled={pending !== null || conflict} onClick={() => { setOverview(null); setHistory(null); setTeeth(item); }}>{t("medical.tooth.title")}</Button>
             </> : null}
             {item.state === "active" && item.member_id === access.member_id && actions?.create ? <Button size="lg" variant="secondary" disabled={pending !== null || conflict} onClick={() => setProposal(item)}>{t("medical.participation.proposals")}</Button> : null}
           </div>
@@ -195,13 +198,17 @@ function ParticipationWorkspace({ access, patientId, branchId, guard, onDenied }
       {cursor !== undefined ? <Button variant="secondary" disabled={pending !== null} onClick={() => setCursor(undefined)}>{t("medical.clinical.newest")}</Button> : null}
       {page?.next_before_id != null ? <Button variant="secondary" disabled={pending !== null} onClick={() => setCursor(page.next_before_id!)}>{t("medical.participation.more")}</Button> : null}
     </div>
-    {overview || history ? <div ref={clinicalRef} tabIndex={-1} className="platforma-focus-ring" data-testid="participation-clinical-content">
+    {overview || history || teeth ? <div ref={clinicalRef} tabIndex={-1} className="platforma-focus-ring" data-testid="participation-clinical-content">
     {overview ? <div className="space-y-3" data-testid="participation-overview">
       <p className="break-words font-semibold">{overview.patient_name} · {overview.branch_name}</p>
       <ParticipationClinicalOverview key={overview.id} businessId={access.business_id} patientId={overview.patient_id} participationId={overview.id} onDenied={onDenied}
         onHistory={() => { setHistory(overview); setOverview(null); }} />
     </div> : null}
     {history ? <ParticipationClinicalHistory key={history.id} businessId={access.business_id} patientId={history.patient_id} participationId={history.id} onDenied={onDenied} /> : null}
+    {teeth ? <div className="space-y-3" data-testid="participation-teeth">
+      <p className="break-words font-semibold">{teeth.patient_name} · {teeth.branch_name}</p>
+      <ParticipationToothChart key={teeth.id} businessId={access.business_id} patientId={teeth.patient_id} participationId={teeth.id} onDenied={onDenied} />
+    </div> : null}
     </div> : null}
   </section>;
 }

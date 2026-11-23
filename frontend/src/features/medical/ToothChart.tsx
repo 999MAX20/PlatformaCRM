@@ -20,11 +20,25 @@ type Denied = (cause: unknown) => void;
 function denied(cause: unknown) { return axios.isAxiosError(cause) && [401, 403].includes(cause.response?.status ?? 0); }
 
 export function ToothChart({ context, onDenied }: { context: AppointmentClinicalContext; onDenied: Denied }) {
+  const scope = useMemo(() => ({ business_id: context.business_id, patient_id: context.patient.id,
+    appointment_id: context.appointment.id }), [context]);
+  return <ToothChartRead scope={scope} context={context} onDenied={onDenied} />;
+}
+
+export function ParticipationToothChart({ businessId, patientId, participationId, onDenied }: {
+  businessId: number; patientId: number; participationId: number; onDenied: Denied;
+}) {
+  const scope = useMemo(() => ({ business_id: businessId, patient_id: patientId, participation_id: participationId }),
+    [businessId, patientId, participationId]);
+  return <ToothChartRead scope={scope} onDenied={onDenied} />;
+}
+
+function ToothChartRead({ scope, context, onDenied }: {
+  scope: ClinicalReadScope; context?: AppointmentClinicalContext; onDenied: Denied;
+}) {
   const { t } = useI18n();
   const [date, setDate] = useState("");
   const [asOf, setAsOf] = useState<string | undefined>();
-  const scope = useMemo(() => ({ business_id: context.business_id, patient_id: context.patient.id,
-    appointment_id: context.appointment.id }), [context]);
   return <section className="space-y-4" data-testid="tooth-chart">
     <form className="flex flex-wrap items-end gap-3" onSubmit={event => { event.preventDefault(); if (date) setAsOf(new Date(date).toISOString()); }}>
       <Input type="datetime-local" label={t("medical.tooth.asOf")} value={date} onChange={event => setDate(event.target.value)} />
@@ -35,7 +49,7 @@ export function ToothChart({ context, onDenied }: { context: AppointmentClinical
   </section>;
 }
 
-function ChartData({ scope, context, asOf, onDenied }: { scope: ClinicalReadScope; context: AppointmentClinicalContext; asOf?: string; onDenied: Denied }) {
+function ChartData({ scope, context, asOf, onDenied }: { scope: ClinicalReadScope; context?: AppointmentClinicalContext; asOf?: string; onDenied: Denied }) {
   const { t } = useI18n();
   const [rows, setRows] = useState<ToothSnapshot["observations"] | null>(null);
   const [error, setError] = useState<unknown>(null);
@@ -121,10 +135,10 @@ function ChartData({ scope, context, asOf, onDenied }: { scope: ClinicalReadScop
       focusReturnId={`tooth-${selected}`} testId="tooth-inspector">
       {selected !== null ? <div className="space-y-4">
         <ToothPlanSteps key={`${selected}-${asOf ?? "current"}`} scope={scope} tooth={selected} asOf={asOf} onDenied={onDenied} />
-        {asOf ? <p className="text-sm text-platforma-subtle">{t("medical.tooth.readOnly")}</p> : null}
+        {asOf || !context ? <p className="text-sm text-platforma-subtle">{t("medical.tooth.readOnly")}</p> : null}
         {!rows.some(row => row.tooth === selected) ? <p>{t("medical.tooth.empty")}</p> : rows.filter(row => row.tooth === selected).map(row =>
           <Observation key={row.history_id} row={row} scope={scope} onDenied={onDenied} />)}
-        {!asOf ? <ToothEditor key={selected} context={context} tooth={selected}
+        {!asOf && context ? <ToothEditor key={selected} context={context} tooth={selected}
           revisions={new Map(rows.filter(row => row.tooth === selected).map(row => [row.surface, row.current_revision]))}
           control={editor} onSaved={reload} onReload={reload} onDenied={onDenied} /> : null}
       </div> : null}

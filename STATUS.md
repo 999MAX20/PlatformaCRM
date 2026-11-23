@@ -1,4 +1,4 @@
-DENTAL-MCS: К06 ACTIVE — participation overview локально принят:6 locale/viewport +2 shared regression,12 inspected captures,build/types PASS; публикация готовится. Client entry опубликован99e07388. Далее остальные participation вкладки/представители/plan tab; К03/К04/К05/L12 уточнения сохранены. План: docs/testing/task-state/DENTAL-MCS-20261122.md.
+DENTAL-MCS: К06 ACTIVE — readonly tooth через participation локально принят:26 backend,8 browser,19 inspected captures,build/types PASS; публикация готовится. Далее остальные participation вкладки/представители/plan tab; К03/К04/К05/L12 уточнения сохранены. План: docs/testing/task-state/DENTAL-MCS-20261122.md.
 
 QA-016-20261121 LOCAL VERIFIED: automatic tasks searchable by displayed RU/KK/EN title; editor preserves original copy on unrelated edits. 66 backend, 9 node, 6 desktop/mobile browser scenarios, build/types/i18n/check/drift PASS; Code 8a240ad3 pushed to main; CI44937543011 queued (not PASS). Working DB untouched. [Evidence](docs/testing/evidence/qa-016-task-search-20261121.md).
 
