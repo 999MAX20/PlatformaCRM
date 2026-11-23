@@ -14,6 +14,7 @@ import { ClinicalHistory } from "./ClinicalHistory";
 import { ToothChart } from "./ToothChart";
 import { SourceProposalEntry } from "./SourceProposalWorkspace";
 import { DocumentWorkspace } from "./documents/DocumentWorkspace";
+import { OrderWorkspace } from "./orders/OrderWorkspace";
 
 export function ClinicalAppointmentEntry({ businessId, appointmentId }: { businessId: number; appointmentId: number }) {
   const { t } = useI18n();
@@ -97,7 +98,7 @@ function ClinicalWorkspace({ context, onChanged, onDirty, onDenied, draftControl
 }) {
   const { t } = useI18n();
   const [number, setNumber] = useState("");
-  const [tab, setTab] = useState<"encounter" | "history" | "teeth" | "documents">("encounter");
+  const [tab, setTab] = useState<"encounter" | "history" | "teeth" | "documents" | "orders">("encounter");
   const tabPrefix = `clinical-${context.appointment.id}`;
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<unknown>(null);
@@ -136,7 +137,7 @@ function ClinicalWorkspace({ context, onChanged, onDirty, onDenied, draftControl
       <Tabs value={tab} onChange={setTab} idPrefix={tabPrefix} ariaLabel={t("medical.clinical.title")}
         className="[&_[role=tab]]:min-h-11" appearance="underline"
         options={[{ value: "encounter", label: t("medical.clinical.note") }, { value: "history", label: t("medical.clinical.history") }, { value: "teeth", label: t("medical.tooth.title") },
-          { value: "documents", label: t("medical.documents.title") }]} />
+          { value: "documents", label: t("medical.documents.title") }, { value: "orders", label: t("medical.orders.title") }]} />
       <div role="tabpanel" id={`${tabPrefix}-panel-encounter`} aria-labelledby={`${tabPrefix}-tab-encounter`} hidden={tab !== "encounter"} className="space-y-4">
       {context.encounter ? <ClinicalDraftForm draftControl={draftControl} context={context} onDirty={onDirty} onDenied={onDenied} onReload={onChanged} /> : <>
         <p className="text-sm text-platforma-subtle">{t(context.active_record ? "medical.clinical.noEncounter" : "medical.clinical.noRecord")}</p>
@@ -159,6 +160,10 @@ function ClinicalWorkspace({ context, onChanged, onDirty, onDenied, draftControl
       </div>
       <div role="tabpanel" id={`${tabPrefix}-panel-documents`} aria-labelledby={`${tabPrefix}-tab-documents`} hidden={tab !== "documents"}>
         {context.encounter ? <DocumentWorkspace context={context} active={tab === "documents"} onEditor={onDocumentEditor} canEdit={canEditDocument} /> :
+          <p className="text-sm text-platforma-subtle">{t("medical.clinical.noEncounter")}</p>}
+      </div>
+      <div role="tabpanel" id={`${tabPrefix}-panel-orders`} aria-labelledby={`${tabPrefix}-tab-orders`} hidden={tab !== "orders"}>
+        {context.encounter ? <OrderWorkspace context={context} active={tab === "orders"} onEditor={onDocumentEditor} canEdit={canEditDocument} /> :
           <p className="text-sm text-platforma-subtle">{t("medical.clinical.noEncounter")}</p>}
       </div>
     </div>

@@ -1,0 +1,147 @@
+import { test, expect } from "@playwright/test";
+import { execFileSync } from "node:child_process";
+import AxeBuilder from "@axe-core/playwright";
+import { ru } from "../src/lib/i18n/ru";
+import { kk } from "../src/lib/i18n/kk";
+import { en } from "../src/lib/i18n/en";
+import { requireIsolatedEnvironment } from "./isolated-environment.mjs";
+
+requireIsolatedEnvironment();
+const dictionaries = { ru, kk, en };
+let appointmentId = 0;
+for (const language of ["ru", "kk", "en"] as const) for (const width of [1440, 390]) {
+  const id = ++appointmentId;
+  test(`orders ${language} ${width}: create, edit and retain versions`, async ({ page }, info) => {
+    execFileSync(process.env.E2E_PYTHON!, ["e2e/clinical-runtime.py", "restore"], { env: process.env, windowsHide: true, stdio: "pipe" });
+    const t = dictionaries[language];
+    await page.setViewportSize({ width, height: 1000 });
+    await page.addInitScript(value => localStorage.setItem("ai_smb_language", value), language);
+    await page.goto("/login");
+    await page.locator('input[name="email"]').fill("medical-role-doctor@example.test");
+    await page.locator('input[name="password"]').fill(process.env.E2E_PASSWORD!);
+    const login = page.waitForResponse(r => r.url().endsWith("/api/auth/token/") && r.request().method() === "POST");
+    const identity = page.waitForResponse(r => r.url().endsWith("/api/auth/me/") && r.status() === 200);
+    await page.locator('form button[type="submit"]').click();
+    const token = (await (await login).json()).access;
+    await expect(page).toHaveURL(/\/app\//);
+    await identity;
+    const appointment = await (await page.request.get(`${process.env.E2E_API_BASE_URL}/api/appointments/${id}/`, { headers: { Authorization: `Bearer ${token}` } })).json();
+    await page.goto(`/app/calendar?appointment=${id}&date=${appointment.start_at.slice(0, 10)}&view=day`);
+    await page.getByTestId("clinical-appointment-entry").getByRole("button", { name: t["medical.clinical.open"], exact: true }).click();
+    const workspace = page.getByTestId("clinical-workspace");
+    await workspace.getByLabel(t["medical.clinical.number"], { exact: true }).fill(`ORDER-${id}`);
+    await workspace.getByRole("button", { name: t["medical.clinical.createRecord"], exact: true }).click();
+    await workspace.getByRole("button", { name: t["medical.clinical.start"], exact: true }).click();
+    await workspace.getByRole("tab", { name: t["medical.orders.title"], exact: true }).click();
+    const orders = workspace.getByTestId("medical-orders");
+    await expect(orders.getByText(t["medical.orders.empty"], { exact: true })).toBeVisible();
+    await orders.getByRole("button", { name: t["medical.orders.create"], exact: true }).click();
+    let editor = page.getByTestId("medical-order-editor");
+    await editor.getByLabel(t["medical.orders.kind"], { exact: true }).click();
+    await page.getByRole("option", { name: t["medical.orders.medication"], exact: true }).click();
+    await editor.getByRole("textbox", { name: t["medical.orders.field.name"], exact: true }).fill(`Synthetic medication ${id}`);
+    await editor.getByRole("textbox", { name: t["medical.orders.field.dose"], exact: true }).fill("Synthetic dose — not medical advice");
+    await editor.getByRole("textbox", { name: t["medical.orders.text"], exact: true }).fill(`Synthetic order text ${id}`);
+    expect((await new AxeBuilder({ page }).include('[data-testid="medical-order-editor"]').withTags(["wcag2a", "wcag2aa"]).analyze()).violations).toEqual([]);
+    await editor.screenshot({ path: info.outputPath("order-draft.png") });
+    page.once("dialog", dialog => dialog.dismiss());
+    await page.keyboard.press("Escape");
+    await expect(editor).toBeVisible();
+    await editor.getByRole("button", { name: t["medical.clinical.save"], exact: true }).click();
+    await expect(editor).not.toBeVisible();
+    await expect(orders).toContainText(`Synthetic medication ${id}`);
+    await orders.getByRole("button", { name: t["common.edit"], exact: true }).click();
+    editor = page.getByTestId("medical-order-editor");
+    await expect(editor.getByRole("textbox", { name: t["medical.orders.field.name"], exact: true })).toHaveValue(`Synthetic medication ${id}`);
+    await editor.getByRole("textbox", { name: t["medical.orders.text"], exact: true }).fill(`Synthetic corrected order ${id}`);
+    await editor.getByRole("button", { name: t["medical.clinical.save"], exact: true }).click();
+    await expect(editor).not.toBeVisible();
+    await orders.getByRole("button", { name: t["medical.orders.history"], exact: true }).click();
+    const history = page.getByTestId("medical-order-history");
+    await expect(history).toContainText(`Synthetic corrected order ${id}`);
+    await expect(history).toContainText(`Synthetic order text ${id}`);
+    await expect(history.getByRole("textbox")).toHaveCount(0);
+    await history.screenshot({ path: info.outputPath("order-history.png") });
+    await page.keyboard.press("Escape");
+    await expect(history).not.toBeVisible();
+    try {
+      await expect(orders.getByRole("button", { name: t["medical.orders.history"], exact: true })).toBeFocused();
+    } catch (cause) {
+      await info.attach("focus-after-history", { body: await page.evaluate(() => document.activeElement?.outerHTML ?? "none"), contentType: "text/plain" });
+      throw cause;
+    }
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+    await orders.screenshot({ path: info.outputPath("order-list.png") });
+  });
+}
+
+test("order recovery: retry, real conflict and revoked access", async ({ page }, info) => {
+  const t = ru;
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.addInitScript(() => localStorage.setItem("ai_smb_language", "ru"));
+  await page.goto("/login");
+  await page.locator('input[name="email"]').fill("medical-role-doctor@example.test");
+  await page.locator('input[name="password"]').fill(process.env.E2E_PASSWORD!);
+  const login = page.waitForResponse(r => r.url().endsWith("/api/auth/token/") && r.request().method() === "POST");
+  const identity = page.waitForResponse(r => r.url().endsWith("/api/auth/me/") && r.status() === 200);
+  await page.locator('form button[type="submit"]').click();
+  const token = (await (await login).json()).access;
+  await expect(page).toHaveURL(/\/app\//);
+  await identity;
+  const headers = { Authorization: `Bearer ${token}` };
+  const base = process.env.E2E_API_BASE_URL;
+  const appointment = await (await page.request.get(`${base}/api/appointments/7/`, { headers })).json();
+  await page.goto(`/app/calendar?appointment=7&date=${appointment.start_at.slice(0, 10)}&view=day`);
+  await page.getByTestId("clinical-appointment-entry").getByRole("button", { name: t["medical.clinical.open"], exact: true }).click();
+  const workspace = page.getByTestId("clinical-workspace");
+  await workspace.getByLabel(t["medical.clinical.number"], { exact: true }).fill("ORDER-RECOVERY");
+  await workspace.getByRole("button", { name: t["medical.clinical.createRecord"], exact: true }).click();
+  await workspace.getByRole("button", { name: t["medical.clinical.start"], exact: true }).click();
+  await workspace.getByRole("tab", { name: t["medical.orders.title"], exact: true }).click();
+  const orders = workspace.getByTestId("medical-orders");
+  await orders.getByRole("button", { name: t["medical.orders.create"], exact: true }).click();
+  const editor = page.getByTestId("medical-order-editor");
+  const text = editor.getByRole("textbox", { name: t["medical.orders.text"], exact: true });
+  await text.fill("Synthetic retained after failure");
+  const keys: string[] = [];
+  let payload: Record<string, unknown> = {};
+  let attempts = 0;
+  await page.route("**/api/medical/orders/", async route => {
+    if (route.request().method() !== "POST") return route.continue();
+    keys.push(route.request().headers()["idempotency-key"]);
+    payload = route.request().postDataJSON();
+    if (++attempts === 1) return route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ detail: "Synthetic temporary failure" }) });
+    return route.continue();
+  });
+  await editor.getByRole("button", { name: t["medical.clinical.save"], exact: true }).click();
+  await expect(editor).toContainText(t["actions.errorTemporary"]);
+  await expect(text).toHaveValue("Synthetic retained after failure");
+  await editor.screenshot({ path: info.outputPath("order-retry.png") });
+  await editor.getByRole("button", { name: t["medical.clinical.save"], exact: true }).click();
+  await expect(editor).not.toBeVisible();
+  expect(keys).toHaveLength(2); expect(keys[1]).toBe(keys[0]);
+  const scope = { business_id: Number(payload.business_id), patient_id: Number(payload.patient_id), appointment_id: 7, encounter_id: Number(payload.encounter_id) };
+  const current = (await (await page.request.get(`${base}/api/medical/orders/`, { headers, params: scope })).json()).results[0];
+  await orders.getByRole("button", { name: t["common.edit"], exact: true }).click();
+  await expect(text).toHaveValue("Synthetic retained after failure");
+  const update = await page.request.post(`${base}/api/medical/orders/${current.order_id}/draft/`, {
+    headers: { ...headers, "Idempotency-Key": "synthetic-concurrent-order" },
+    data: { ...payload, expected_order_revision: 1, content: { kind: "other", text: "Synthetic concurrent version", medication: {} } },
+  });
+  expect(update.status()).toBe(200);
+  await text.fill("Synthetic local unsaved version");
+  await editor.getByRole("button", { name: t["medical.clinical.save"], exact: true }).click();
+  await expect(editor).toContainText(t["medical.clinical.conflict"]);
+  await expect(text).toHaveValue("Synthetic local unsaved version");
+  await editor.screenshot({ path: info.outputPath("order-conflict.png") });
+  page.once("dialog", dialog => dialog.accept());
+  await editor.getByRole("button", { name: t["medical.clinical.reload"], exact: true }).click();
+  await expect(editor).not.toBeVisible();
+  await expect(orders).toContainText("Synthetic concurrent version");
+  execFileSync(process.env.E2E_PYTHON!, ["e2e/clinical-runtime.py", "revoke"], { env: process.env, windowsHide: true, stdio: "pipe" });
+  await orders.getByRole("button", { name: t["medical.clinical.reload"], exact: true }).click();
+  await expect(orders).toContainText(t["medical.denied"]);
+  await expect(orders).not.toContainText("Synthetic concurrent version");
+  await orders.screenshot({ path: info.outputPath("order-denied.png") });
+  execFileSync(process.env.E2E_PYTHON!, ["e2e/clinical-runtime.py", "restore"], { env: process.env, windowsHide: true, stdio: "pipe" });
+});

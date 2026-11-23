@@ -1,4 +1,4 @@
-DENTAL-MCS: К06 ACTIVE — аллергии/противопоказания опубликованы59cbd85b; явная неприменимость с причиной locally accepted (backend/API/11 browser/visual/build/check/drift PASS), publication pending. Далее план/назначения. К05 assistant/support, К03 owner-clinician, К04 mixed-history/L04 OPEN. План/матрица: docs/testing/task-state/DENTAL-MCS-20261122.md.
+DENTAL-MCS: К06 ACTIVE — неприменимость4897b964 опубликована; отдельные черновики назначений locally accepted:57 SQLite/13 PG/7 browser/visual/build/check/drift PASS, publication pending. Далее клинический план/snippets. К05 assistant/support, К03 owner-clinician, К04 mixed-history/L04 OPEN. План/матрица: docs/testing/task-state/DENTAL-MCS-20261122.md.
 
 QA-016-20261121 LOCAL VERIFIED: automatic tasks searchable by displayed RU/KK/EN title; editor preserves original copy on unrelated edits. 66 backend, 9 node, 6 desktop/mobile browser scenarios, build/types/i18n/check/drift PASS; Code 8a240ad3 pushed to main; CI44937543011 queued (not PASS). Working DB untouched. [Evidence](docs/testing/evidence/qa-016-task-search-20261121.md).
 

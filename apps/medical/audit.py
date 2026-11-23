@@ -4,7 +4,7 @@ from django.db.models import Q
 
 from apps.core.domain_errors import DomainAPIException
 from .models import DentalToothHistory, DentalMedicalRecord, MedicalAuditEvent, PatientProfile, PatientRepresentative, TreatmentParticipation, MedicalEncounterRevision
-from .models import MedicalDocumentRevision, PatientIdentityCorrection, MedicalCorrectionAccess
+from .models import MedicalDocumentRevision, MedicalOrderRevision, PatientIdentityCorrection, MedicalCorrectionAccess
 
 
 class MedicalAuditUnavailable(DomainAPIException):
@@ -15,7 +15,7 @@ class MedicalAuditUnavailable(DomainAPIException):
     category = "temporary"
 
 
-def write_patient_audit(*, actor, business, patient, action, representative=None, participation=None, encounter_version=None, record=None, tooth_history=None, document_version=None, identity_correction=None, correction_access=None):
+def write_patient_audit(*, actor, business, patient, action, representative=None, participation=None, encounter_version=None, record=None, tooth_history=None, document_version=None, identity_correction=None, correction_access=None, order_version=None):
     if action not in MedicalAuditEvent.Actions.values or action == MedicalAuditEvent.Actions.ACCESS_DENIED:
         raise ValueError("Select a supported successful patient action.")
     if not patient.pk or not PatientProfile.objects.filter(pk=patient.pk, business_id=business.pk).exists():
@@ -135,13 +135,40 @@ def write_patient_audit(*, actor, business, patient, action, representative=None
             raise ValueError("A document creation event requires its first version.")
         if action == MedicalAuditEvent.Actions.DOCUMENT_DRAFT_SAVED and version.revision <= 1:
             raise ValueError("A document update event requires a later version.")
+    if action.startswith("order_") and order_version is None:
+        raise ValueError("An order action requires its version.")
+    if order_version is not None:
+        if any(item is not None for item in (representative, participation, encounter_version, record,
+                                             tooth_history, document_version, identity_correction, correction_access)):
+            raise ValueError("Order audit cannot mix entity references.")
+        if action not in {"read", "order_draft_created", "order_draft_saved"}:
+            raise ValueError("Select an order read or draft action.")
+        version = MedicalOrderRevision.objects.select_related("order").filter(pk=order_version.pk,
+            order__business=business, order__encounter__business=business,
+            order__encounter__patient=patient).first()
+        if version is None:
+            raise ValueError("Order audit must belong to this patient and business.")
+        try:
+            version.order.clean()
+        except ModelValidationError:
+            raise ValueError("Order audit links must be consistent.") from None
+        if version.revision > version.order.revision:
+            raise ValueError("Order version exceeds the current revision.")
+        if action.startswith("order_") and (version.order.state != "draft" or
+                version.revision != version.order.revision or version.author_id != actor.pk or
+                version.order.author_id != actor.pk):
+            raise ValueError("Order write audit requires the author's current draft.")
+        if (action == "order_draft_created" and version.revision != 1 or
+                action == "order_draft_saved" and version.revision <= 1):
+            raise ValueError("Order action does not match the version.")
     try:
         event = MedicalAuditEvent.objects.create(business=business, actor=actor, patient=patient,
             patient_revision=patient.revision, action=action, result="success", representative=representative,
             representative_revision=representative.revision if representative else None,
             participation=participation, participation_revision=participation.revision if participation else None,
             encounter_version=encounter_version, record=record, tooth_history=tooth_history,
-            document_version=document_version, identity_correction=identity_correction, correction_access=correction_access,
+            document_version=document_version, order_version=order_version,
+            identity_correction=identity_correction, correction_access=correction_access,
             correction_access_revision=correction_access.revision if correction_access else None)
         if event is None or event.pk is None:
             raise MedicalAuditUnavailable()

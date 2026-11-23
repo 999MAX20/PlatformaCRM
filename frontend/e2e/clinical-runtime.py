@@ -14,6 +14,7 @@ participation_fixture = os.environ.get("E2E_PARTICIPATION") == "1"
 proposal_fixture = os.environ.get("E2E_PROPOSAL") == "1"
 roles_fixture = os.environ.get("E2E_MEDICAL_ROLES") == "1"
 templates_fixture = os.environ.get("E2E_MEDICAL_TEMPLATES") == "1"
+orders_fixture = os.environ.get("E2E_MEDICAL_ORDERS") == "1"
 rollout_fixture = os.environ.get("E2E_MEDICAL_ROLLOUT") == "1"
 configure_browser_runtime()
 import django
@@ -95,6 +96,13 @@ if rollout_fixture:
         assert activate_medical_profile(business_id=business.pk)["status"] == "activated"
     business.refresh_from_db()
     assert business.profile_version == 2 and rollout_audit.count() == 1
+if orders_fixture:
+    from apps.businesses.models import RolePermission
+    from apps.medical.models import MedicalRoleAssignment
+    order_assignment = MedicalRoleAssignment.objects.get(member__user__email="medical-role-doctor@example.test")
+    for order_action in ("view", "create", "update"):
+        RolePermission.objects.get_or_create(business_role=order_assignment.business_role,
+            resource="medical_prescriptions", action=order_action, defaults={"scope": "own", "is_allowed": True})
 if templates_fixture:
     from django.contrib.auth import get_user_model
     from apps.services.models import Service

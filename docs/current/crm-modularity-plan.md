@@ -28,6 +28,7 @@ MedicalEncounter, medical forms/history/correction и шаблонные под�
 Общий Client/Appointment и финансовый VisitPlan этим не изменяются; нет новой
 таблицы или миграции. Проверки/визуальная приёмка и остаток плана/назначений
 сохраняются в единственном DENTAL-MCS checkpoint; весь этап не закрыт.
+MedicalOrder/Revision — отдельные клинические черновики с encrypted содержанием и собственным medical_prescriptions ACL; не Appointment/VisitPlan/Payment. Миграция0030 и приёмка остаются в DENTAL-MCS; рабочая БД не мигрирована.
 Неприменимость раздела хранится в той же encrypted encounter version как явная
 причина, а не новый статус календаря/услуги. API не принимает одновременный текст
 и отметку для одного раздела; старые версии и документные snapshot неизменны.

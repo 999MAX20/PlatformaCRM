@@ -13,6 +13,7 @@ from apps.medical.encounter_views import MedicalEncounterViewSet
 from apps.medical.template_views import MedicalDocumentTemplateViewSet
 from apps.medical.credential_views import MedicalCredentialViewSet
 from apps.medical.document_views import MedicalDocumentViewSet
+from apps.medical.order_views import MedicalOrderViewSet
 from apps.medical.record_views import MedicalRecordViewSet
 from apps.medical.tooth_views import ToothObservationViewSet
 from apps.medical.participation_views import TreatmentParticipationViewSet
@@ -156,6 +157,7 @@ router.register("medical/encounters", MedicalEncounterViewSet, basename="medical
 router.register("medical/document-templates", MedicalDocumentTemplateViewSet, basename="medical-document-template")
 router.register("medical/credentials", MedicalCredentialViewSet, basename="medical-credential")
 router.register("medical/documents", MedicalDocumentViewSet, basename="medical-document")
+router.register("medical/orders", MedicalOrderViewSet, basename="medical-order")
 router.register("medical/records", MedicalRecordViewSet, basename="medical-record")
 router.register("medical/tooth-observations", ToothObservationViewSet, basename="medical-tooth-observation")
 router.register("medical/participations", TreatmentParticipationViewSet, basename="medical-participation")

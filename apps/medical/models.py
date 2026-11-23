@@ -334,6 +334,8 @@ class MedicalAuditEvent(models.Model):
         TOOTH_OBSERVATION_SAVED = "tooth_observation_saved", "Tooth observation saved"
         DOCUMENT_DRAFT_CREATED = "document_draft_created", "Document draft created"
         DOCUMENT_DRAFT_SAVED = "document_draft_saved", "Document draft saved"
+        ORDER_DRAFT_CREATED = "order_draft_created", "Order draft created"
+        ORDER_DRAFT_SAVED = "order_draft_saved", "Order draft saved"
         TEMPLATE_DRAFT_CREATED = "template_draft_created", "Template draft created"
         TEMPLATE_DRAFT_SAVED = "template_draft_saved", "Template draft saved"
         TEMPLATE_SUBMITTED = "template_submitted", "Template submitted"
@@ -369,6 +371,8 @@ class MedicalAuditEvent(models.Model):
                                       related_name="audit_events")
     document_version = models.ForeignKey("MedicalDocumentRevision", on_delete=models.PROTECT, null=True, blank=True,
                                          related_name="audit_events")
+    order_version = models.ForeignKey("MedicalOrderRevision", on_delete=models.PROTECT, null=True, blank=True,
+                                      related_name="audit_events")
     template_version = models.ForeignKey("MedicalDocumentTemplateRevision", on_delete=models.PROTECT,
                                          null=True, blank=True, related_name="audit_events")
     credential_version = models.ForeignKey("MedicalCredentialRevision", on_delete=models.PROTECT,
@@ -402,8 +406,18 @@ class MedicalAuditEvent(models.Model):
                                                "correction_access_requested", "correction_access_approved",
                                                "correction_access_rejected", "correction_access_withdrawn",
                                                "correction_access_completed", "correction_access_revoked",
-                                               "correction_access_expired"], result="success")),
+                                               "correction_access_expired", "order_draft_created", "order_draft_saved"], result="success")),
                 name="medical_audit_action_result"),
+            models.CheckConstraint(condition=(models.Q(order_version__isnull=True) |
+                models.Q(patient__isnull=False, representative__isnull=True, participation__isnull=True,
+                         encounter_version__isnull=True, record__isnull=True, tooth_history__isnull=True,
+                         document_version__isnull=True, template_version__isnull=True,
+                         credential_version__isnull=True, template_availability__isnull=True,
+                         correction_access__isnull=True, identity_correction__isnull=True,
+                         action__in=["read", "order_draft_created", "order_draft_saved"])),
+                name="medical_audit_order_relation"),
+            models.CheckConstraint(condition=(~models.Q(action__in=["order_draft_created", "order_draft_saved"]) |
+                models.Q(order_version__isnull=False)), name="medical_audit_order_needed"),
             models.CheckConstraint(condition=(
                 models.Q(correction_access__isnull=True, correction_access_revision__isnull=True) |
                 models.Q(correction_access__isnull=False, correction_access_revision__isnull=False,
@@ -721,6 +735,43 @@ class MedicalTemplateReview(models.Model):
             for field, user_id in (("submitted_by", self.submitted_by_id), ("decided_by", self.decided_by_id)):
                 if user_id is not None and not BusinessMember.objects.filter(business_id=business_id, user_id=user_id).exists():
                     raise ValidationError({field: "Select a member of this business."})
+
+
+class MedicalOrder(TimeStampedModel):
+    business = models.ForeignKey("businesses.Business", on_delete=models.PROTECT, related_name="medical_orders")
+    encounter = models.ForeignKey(MedicalEncounter, on_delete=models.PROTECT, related_name="orders")
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="medical_orders")
+    revision = models.PositiveIntegerField(default=0)
+    state = models.CharField(max_length=24, default="draft", choices=[("draft", "Draft")])
+
+    class Meta:
+        constraints = [models.CheckConstraint(condition=models.Q(state="draft"), name="medical_order_draft_only")]
+
+    def clean(self):
+        from apps.businesses.models import BusinessMember
+
+        super().clean()
+        if not MedicalEncounter.objects.filter(pk=self.encounter_id, business_id=self.business_id,
+                patient__business_id=self.business_id, patient__client__business_id=self.business_id,
+                record__business_id=self.business_id, branch__business_id=self.business_id).exists():
+            raise ValidationError({"encounter": "Select an encounter of this business."})
+        if not BusinessMember.objects.filter(business_id=self.business_id, user_id=self.author_id).exists():
+            raise ValidationError({"author": "Select an author of this business."})
+
+
+class MedicalOrderRevision(models.Model):
+    order = models.ForeignKey(MedicalOrder, on_delete=models.PROTECT, related_name="versions")
+    revision = models.PositiveIntegerField()
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="medical_order_versions")
+    content_encrypted = models.TextField(editable=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["order", "revision"], name="medical_order_version_unique"),
+            models.CheckConstraint(condition=models.Q(revision__gte=1), name="medical_order_ver_positive"),
+            models.CheckConstraint(condition=~models.Q(content_encrypted=""), name="medical_order_ver_content"),
+        ]
 
 
 class MedicalDocument(TimeStampedModel):
