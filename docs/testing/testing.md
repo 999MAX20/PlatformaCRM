@@ -179,9 +179,46 @@ Commands must name the intended mode explicitly. The runner currently defaults t
 backend tests: select actual affected test labels. Inspect command composition before
 running it; frontend/browser modes currently also install dependencies and perform
 Django checks. Use the documented isolated focused path for narrow iterations.
-CI currently runs broad checks on every main/master push; report actual CI separately,
-without duplicating its full scope locally for an unrelated small change. This policy
-update does not change executable runner or CI behavior.
+
+### Local acceptance during dental implementation — owner decision 2026-11-23
+
+The dental goal uses local acceptance. `ci.yml` and `stand-access.yml` now have
+manual `workflow_dispatch` triggers; automatic push/PR verification is disabled.
+`release-validation.yml` remains manual. Do not trigger, poll or wait for CI for
+this goal. Report CI as not checked/not run, never as PASS. Existing known failures
+remain unresolved until fixed. This policy does not authorize changing deployment,
+backup or monitoring workflows, and does not waive publication diff/secret review.
+
+- Complete one reachable user scenario across domain, API and UI before moving to
+  the next independent scenario. Focused backend checks after coherent operations
+  remain required; a model, endpoint or passing test alone does not close a stage.
+- Inspect the complete affected screen and user path early, using approved design
+  and existing components. Do not defer usability to final cosmetic work.
+- Reuse task-owned isolated runtimes and validated dependencies when compatible.
+  Reset scenario data between runs; do not share mutable databases between parallel
+  checks. Recreate or migrate the isolated environment when schema/configuration or
+  dependencies require it. Keep clean migration/data-preservation checks where
+  applicable; `keepdb` does not replace them or prove isolation by itself.
+- Reuse established fixture, authentication, error-injection and locator helpers.
+  Confirm test selection/setup and one representative browser path before expanding
+  a new suite. A representative PASS does not replace the remaining required checks.
+- Test business rules primarily at service/API level. At UI completion cover the
+  changed desktop/mobile flow, applicable locales, recovery, retained input and
+  access denial; capture and inspect affected screenshots. Do not repeat every
+  backend negative across every locale/viewport unless behavior differs there.
+- Run the final frontend build/types after the coherent UI change. After a fix,
+  rerun affected checks; reuse unchanged evidence. Run full-project acceptance on
+  the final candidate or for demonstrated cross-cutting risk, not per small edit.
+- Use process completion waits and bounded diagnostics instead of repeated log
+  polling. Continue independent work within the same scenario while checks run,
+  without competing for database, port or host resources.
+
+The risk matrix above still applies: authorization, tenant isolation, revocation,
+invalid links, stale versions, rollback and idempotency remain mandatory where
+relevant; money/booking uniqueness requires appropriate concurrency proof.
+Real signatures/provider flows and final release acceptance cannot be replaced
+by mocks or scoped local PASS. Keep commands, inputs, results and rerun triggers
+in the existing checkpoint; do not introduce a second backlog or per-command ledger.
 
 ## Answered Inbox handoff recovery
 

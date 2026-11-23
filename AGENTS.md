@@ -172,6 +172,12 @@ Apply that policy even when personal Codex instructions are unavailable.
 Use cross-platform `scripts/codex_verify.py`; Bash is not required. Select gates
 before implementation; do not lower acceptance after a failure.
 
+Owner decision 2026-11-23: the dental implementation goal uses local acceptance.
+Do not trigger, poll or wait for CI for this goal; verification workflows remain
+manual. Follow the testing guide's local-acceptance section. This exception does
+not waive required local checks, real-provider acceptance or publication hygiene,
+and does not authorize deployment or changes to operational workflows.
+
 | Change | Required boundary |
 | --- | --- |
 | Docs only | Working/index/real committed-range diff hygiene; links, commands, consistency and new/untracked-file review. No unnecessary app build/install. |
@@ -221,10 +227,12 @@ and unresolved target/safety questions override it. This is not an automatic hoo
    reset, rewrite history or force-push. Concrete affected-path conflict or failed
    required gate stops publication; preserve work and report the blocker.
 4. Push promptly and read back the remote SHA: it must match the intended commit.
-   Inspect actual CI separately; queued/not run is not green. A failed push means
-   committed locally, not synchronized. Inspect push-triggered deployment effects
+   Inspect actual CI separately unless the owner selected local-only acceptance;
+   in that mode do not trigger, poll or wait for CI. Disabled/not run is not PASS.
+   A failed push means committed locally, not synchronized. Inspect push-triggered deployment effects
    before first publication to a new target; resolve unexpected effects.
-5. Report canonical root, branch/commit, exact checks/skips, push and actual CI.
+5. Report canonical root, branch/commit, exact checks/skips, push and actual CI
+   when checked, or explicitly state local-only acceptance without a CI claim.
    Do not claim full delivery while a required gate/publication is blocked.
 
 One task is one bounded change set in the canonical folder, not another worktree.
