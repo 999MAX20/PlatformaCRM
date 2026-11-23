@@ -1,3 +1,5 @@
+import { useToothNavigation } from "./clinicalViewNavigation";
+import { historyScopeKey } from "./clinicalHistoryNavigation";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import axios from "axios";
 import type { AppointmentClinicalContext, ClinicalReadScope } from "../../api/medicalClinical";
@@ -22,7 +24,7 @@ function denied(cause: unknown) { return axios.isAxiosError(cause) && [401, 403]
 export function ToothChart({ context, onDenied }: { context: AppointmentClinicalContext; onDenied: Denied }) {
   const scope = useMemo(() => ({ business_id: context.business_id, patient_id: context.patient.id,
     appointment_id: context.appointment.id }), [context]);
-  return <ToothChartRead scope={scope} context={context} onDenied={onDenied} />;
+  return <ToothChartRead key={historyScopeKey(scope)} scope={scope} context={context} onDenied={onDenied} />;
 }
 
 export function ParticipationToothChart({ businessId, patientId, participationId, onDenied }: {
@@ -30,36 +32,38 @@ export function ParticipationToothChart({ businessId, patientId, participationId
 }) {
   const scope = useMemo(() => ({ business_id: businessId, patient_id: patientId, participation_id: participationId }),
     [businessId, patientId, participationId]);
-  return <ToothChartRead scope={scope} onDenied={onDenied} />;
+  return <ToothChartRead key={historyScopeKey(scope)} scope={scope} onDenied={onDenied} />;
 }
 
 function ToothChartRead({ scope, context, onDenied }: {
   scope: ClinicalReadScope; context?: AppointmentClinicalContext; onDenied: Denied;
 }) {
   const { t } = useI18n();
-  const [date, setDate] = useState("");
-  const [asOf, setAsOf] = useState<string | undefined>();
+  const [navigation, setNavigation] = useToothNavigation(scope);
+  const { date, asOf } = navigation;
   return <section className="space-y-4" data-testid="tooth-chart">
-    <form className="flex flex-wrap items-end gap-3" onSubmit={event => { event.preventDefault(); if (date) setAsOf(new Date(date).toISOString()); }}>
-      <Input type="datetime-local" label={t("medical.tooth.asOf")} value={date} onChange={event => setDate(event.target.value)} />
+    <form className="flex flex-wrap items-end gap-3" onSubmit={event => { event.preventDefault(); if (date) setNavigation({ ...navigation, asOf: new Date(date).toISOString() }); }}>
+      <Input type="datetime-local" label={t("medical.tooth.asOf")} value={date} onChange={event => setNavigation({ ...navigation, date: event.target.value })} />
       <Button type="submit" size="lg" variant="secondary" disabled={!date}>{t("medical.tooth.show")}</Button>
-      {asOf ? <Button size="lg" variant="secondary" onClick={() => { setDate(""); setAsOf(undefined); }}>{t("medical.tooth.current")}</Button> : null}
+      {asOf ? <Button size="lg" variant="secondary" onClick={() => { setNavigation({ ...navigation, date: "", asOf: undefined }); }}>{t("medical.tooth.current")}</Button> : null}
     </form>
-    <ChartData key={asOf ?? "current"} scope={scope} context={context} asOf={asOf} onDenied={onDenied} />
+    <ChartData navigation={navigation} onNavigation={setNavigation} key={asOf ?? "current"} scope={scope} context={context} asOf={asOf} onDenied={onDenied} />
   </section>;
 }
 
-function ChartData({ scope, context, asOf, onDenied }: { scope: ClinicalReadScope; context?: AppointmentClinicalContext; asOf?: string; onDenied: Denied }) {
+function ChartData({ scope, context, asOf, onDenied, navigation, onNavigation }: {
+  scope: ClinicalReadScope; context?: AppointmentClinicalContext; asOf?: string; onDenied: Denied;
+  navigation: ReturnType<typeof useToothNavigation>[0]; onNavigation: ReturnType<typeof useToothNavigation>[1];
+}) {
   const { t } = useI18n();
   const [rows, setRows] = useState<ToothSnapshot["observations"] | null>(null);
   const [error, setError] = useState<unknown>(null);
   const [attempt, setAttempt] = useState(0);
-  const [mode, setMode] = useState("permanent");
-  const [quadrant, setQuadrant] = useState(1);
+  const { mode, quadrant } = navigation;
   const [selected, setSelected] = useState<number | null>(null);
   const editor = useRef<ClinicalDraftControl>(null);
   const chartRef = useRef<HTMLDivElement>(null);
-  const focusAfterReload = useRef<number | null>(null);
+  const focusAfterReload = useRef<number | null>(navigation.focusedTooth ?? null);
   const [confirmClose, setConfirmClose] = useState(false);
   const [closeFailed, setCloseFailed] = useState(false);
   const [closing, setClosing] = useState(false);
@@ -105,10 +109,10 @@ function ChartData({ scope, context, asOf, onDenied }: { scope: ClinicalReadScop
   if (!rows) return <LoadingState />;
   const quadrants = [1, 2, 4, 3];
   return <div ref={chartRef} className="space-y-4">
-    <Select label={t("medical.tooth.title")} value={mode} onChange={event => { setMode(event.target.value); setSelected(null); }}
+    <Select label={t("medical.tooth.title")} value={mode} onChange={event => { onNavigation({ ...navigation, mode: event.target.value, focusedTooth: undefined }); setSelected(null); }}
       options={["permanent", "primary", "mixed"].map(value => ({ value, label: t(`medical.tooth.${value}`) }))} />
     <p className="text-sm text-platforma-subtle">{t("medical.tooth.orientation")}</p>
-    <div className="md:hidden"><Select label={t("medical.tooth.orientation")} value={quadrant} onChange={event => setQuadrant(Number(event.target.value))}
+    <div className="md:hidden"><Select label={t("medical.tooth.orientation")} value={quadrant} onChange={event => onNavigation({ ...navigation, quadrant: Number(event.target.value), focusedTooth: undefined })}
       options={quadrants.map(value => ({ value, label: t(`medical.tooth.q${value}`) }))} /></div>
     <div className="grid min-w-0 gap-4 md:grid-cols-2">
       {quadrants.map(q => <section key={q} className={q === quadrant ? "min-w-0 space-y-2" : "hidden min-w-0 space-y-2 md:block"}>
@@ -122,7 +126,7 @@ function ChartData({ scope, context, asOf, onDenied }: { scope: ClinicalReadScop
               const observed = rows.some(row => row.tooth === tooth);
               return <Button key={tooth} size="lg" variant="secondary" className="min-h-11 min-w-11 px-2"
                 aria-label={`${t("medical.tooth.tooth")} ${tooth}: ${t(observed ? "medical.tooth.observed" : "medical.tooth.empty")}`}
-                data-focus-return-id={`tooth-${tooth}`} onClick={() => setSelected(tooth)}>
+                data-focus-return-id={`tooth-${tooth}`} onClick={() => { onNavigation({ ...navigation, focusedTooth: tooth }); setSelected(tooth); }}>
                 <span>{tooth}{observed ? " •" : ""}</span>
               </Button>;
             })}</div>

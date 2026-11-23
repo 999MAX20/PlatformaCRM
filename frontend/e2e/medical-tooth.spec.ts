@@ -213,9 +213,29 @@ for (const [language, dictionary] of Object.entries({ ru, kk, en })) {
         await page.getByRole("option", { name: t("medical.tooth.q2"), exact: true }).click();
         await expect(chart.getByRole("button", { name: `${t("medical.tooth.tooth")} 61: ${t("medical.tooth.empty")}`, exact: true })).toBeVisible();
       }
+      await chart.getByLabel(t("medical.tooth.asOf"), { exact: true }).fill("2000-01-01T12:00");
+      await chart.getByRole("button", { name: t("medical.tooth.show"), exact: true }).click();
+      const focusTooth = chart.getByRole("button", { name: `${t("medical.tooth.tooth")} ${mobile ? 61 : 51}: ${t("medical.tooth.empty")}`, exact: true });
+      await focusTooth.click();
+      await expect(inspector.getByText(t("medical.tooth.readOnly"), { exact: true })).toBeVisible();
+      await page.keyboard.press("Escape");
       await workspace.screenshot({ path: info.outputPath("chart-mixed.png") });
       await workspace.getByRole("tab", { name: t("medical.clinical.note"), exact: true }).click();
       await expect(complaint).toHaveValue("Retain draft while reading teeth");
+      await workspace.getByRole("tab", { name: t("medical.tooth.title"), exact: true }).click();
+      await expect(chart.getByLabel(t("medical.tooth.asOf"), { exact: true })).toHaveValue("2000-01-01T12:00");
+      await expect(chart.getByRole("combobox", { name: t("medical.tooth.title") })).toContainText(t("medical.tooth.mixed"));
+      await expect(focusTooth).toBeFocused();
+      await expect(inspector).not.toBeVisible();
+      await page.keyboard.press("Escape");
+      await page.getByTestId("clinical-unsaved").getByRole("button", { name: t("medical.clinical.leaveUnsaved"), exact: true }).click();
+      await expect(workspace).not.toBeVisible();
+      await page.getByTestId("clinical-appointment-entry").getByRole("button", { name: t("medical.clinical.open"), exact: true }).click();
+      await expect(chart.getByLabel(t("medical.tooth.asOf"), { exact: true })).toHaveValue("2000-01-01T12:00");
+      await expect(focusTooth).toBeFocused();
+      await expect(inspector).not.toBeVisible();
+      await workspace.screenshot({ path: info.outputPath("tooth-restored-view.png") });
+      await workspace.getByRole("tab", { name: t("medical.clinical.note"), exact: true }).click();
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       if (language === "ru" && mobile) {
         execFileSync(process.env.E2E_PYTHON!, ["e2e/clinical-runtime.py", "revoke"], { env: process.env, windowsHide: true, stdio: "pipe" });

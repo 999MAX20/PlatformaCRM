@@ -1,3 +1,5 @@
+import { usePlanNavigation } from "./clinicalViewNavigation";
+import { historyScopeKey } from "./clinicalHistoryNavigation";
 import { useEffect, useState } from "react";
 import { medicalClinicalApi, type ClinicalReadScope, type PatientVisitPlanPage } from "../../api/medicalClinical";
 import { getApiErrorMessage } from "../../api/client";
@@ -18,7 +20,7 @@ export function ClinicalVisitPlans({ scope, entry }: { scope: ClinicalReadScope;
     <Button size="lg" variant="secondary" data-focus-return-id={focusId} onClick={() => setOpen(true)}>{t("plans.title")}</Button>
     <Modal open={open} onClose={() => setOpen(false)} title={t("plans.title")} size="lg"
       focusReturnId={focusId} testId="clinical-visit-plans">
-      {open ? <PatientPlans scope={scope} /> : null}
+      {open ? <PatientPlans key={historyScopeKey(scope)} scope={scope} /> : null}
     </Modal>
   </>;
 }
@@ -26,8 +28,8 @@ export function ClinicalVisitPlans({ scope, entry }: { scope: ClinicalReadScope;
 function PatientPlans({ scope }: { scope: ClinicalReadScope }) {
   const { t, language } = useI18n();
   const [data, setData] = useState<PatientVisitPlanPage | null>(null);
-  const [cursor, setCursor] = useState<number>();
-  const [archived, setArchived] = useState(false);
+  const [navigation, setNavigation] = usePlanNavigation(scope);
+  const { cursor, archived } = navigation;
   const [attempt, setAttempt] = useState(0);
   const [error, setError] = useState<unknown>(null);
   const [loading, setLoading] = useState(true);
@@ -44,7 +46,7 @@ function PatientPlans({ scope }: { scope: ClinicalReadScope }) {
     <p className="text-sm text-platforma-subtle">{t("medical.clinical.readOnly")}</p>
     <Select label={t("plans.title")} value={archived ? "archived" : "active"} disabled={loading}
       options={[{ value: "active", label: t("plans.active") }, { value: "archived", label: t("plans.archived") }]}
-      onChange={event => { setCursor(undefined); setArchived(event.target.value === "archived"); }} />
+      onChange={event => { setNavigation({ archived: event.target.value === "archived" }); }} />
     <Button size="lg" variant="secondary" disabled={loading} onClick={() => setAttempt(value => value + 1)}>{t("medical.clinical.reload")}</Button>
     {loading ? <LoadingState /> : error ? <ErrorState message={medicalRoleDenied(error) ? t("medical.denied") : getApiErrorMessage(error)}
       action={<Button size="lg" variant="secondary" onClick={() => setAttempt(value => value + 1)}>{t("common.retry")}</Button>} /> : data ? <>
@@ -64,8 +66,8 @@ function PatientPlans({ scope }: { scope: ClinicalReadScope }) {
         </li>)}
       </ul>}
       <div className="flex flex-wrap gap-2">
-        {cursor !== undefined ? <Button size="lg" variant="secondary" onClick={() => setCursor(undefined)}>{t("medical.clinical.newest")}</Button> : null}
-        {data.next_before_id !== null ? <Button size="lg" variant="secondary" onClick={() => setCursor(data.next_before_id!)}>{t("medical.clinical.older")}</Button> : null}
+        {cursor !== undefined ? <Button size="lg" variant="secondary" onClick={() => setNavigation({ archived })}>{t("medical.clinical.newest")}</Button> : null}
+        {data.next_before_id !== null ? <Button size="lg" variant="secondary" onClick={() => setNavigation({ archived, cursor: data.next_before_id! })}>{t("medical.clinical.older")}</Button> : null}
       </div>
     </> : null}
   </div>;

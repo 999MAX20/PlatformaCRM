@@ -1,3 +1,4 @@
+import { ClinicalViewNavigationProvider } from "./clinicalViewNavigation";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import axios from "axios";
 import { medicalParticipationApi as api, type Participation, type ParticipationPage, type ParticipationWorkspaceAccess } from "../../api/medicalParticipation";
@@ -67,11 +68,11 @@ export function ParticipationEntry({ businessId, patientId, branchId, onClosed }
   return <>
     {admitted ? <Button id={focusId} size="lg" variant="secondary" onClick={() => setOpen(true)}>{t("medical.participation.title")}</Button> : null}
     {error && !forbidden && !open ? <ErrorState message={getApiErrorMessage(error)} action={<Button variant="secondary" onClick={() => setAttempt(x => x + 1)}>{t("common.retry")}</Button>} /> : null}
-    <Modal title={t("medical.participation.title")} open={open} size="xl" closeOnBackdrop={false} focusReturnId={focusId}
+    <ClinicalViewNavigationProvider><Modal title={t("medical.participation.title")} open={open} size="xl" closeOnBackdrop={false} focusReturnId={focusId}
       onClose={() => { if (!guard.current.pending && (!guard.current.dirty || window.confirm(t("medical.clinical.discard")))) { guard.current.dirty = false; setOpen(false); onClosed?.(); } }}>
       {error ? <ErrorState message={forbidden ? t("medical.denied") : getApiErrorMessage(error)} action={<Button variant="secondary" onClick={() => setAttempt(x => x + 1)}>{t("common.retry")}</Button>} /> : access ?
         <ParticipationWorkspace historyMemory={historyMemory} key={`${businessId}:${patientId ?? "mine"}:${branchId ?? "all"}`} access={access} patientId={patientId} branchId={branchId} guard={guard} onDenied={denied} /> : <LoadingState />}
-    </Modal>
+    </Modal></ClinicalViewNavigationProvider>
   </>;
 }
 

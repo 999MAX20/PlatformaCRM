@@ -119,9 +119,30 @@ for (const language of ["ru", "kk", "en"] as const) for (const mobile of [false,
       await chart.getByLabel(t["medical.tooth.asOf"], { exact: true }).fill("2026-01-01T10:00");
       await chart.getByRole("button", { name: t["medical.tooth.show"], exact: true }).click();
       await expect(tooth).toBeVisible();
-      await chart.getByRole("button", { name: t["medical.tooth.current"], exact: true }).click();
-      await expect(tooth).toBeVisible();
+      if (mobile) {
+        await chart.getByRole("combobox", { name: t["medical.tooth.orientation"] }).click();
+        await doctor.getByRole("option", { name: t["medical.tooth.q2"], exact: true }).click();
+      }
+      const focusTooth = chart.getByRole("button", { name: `${t["medical.tooth.tooth"]} ${mobile ? 61 : 51}: ${t["medical.tooth.empty"]}`, exact: true });
+      await focusTooth.click();
+      await doctor.keyboard.press("Escape");
+      await row.getByRole("button", { name: t["medical.overview.title"], exact: true }).click();
+      await row.getByRole("button", { name: t["medical.tooth.title"], exact: true }).click();
+      await expect(chart.getByLabel(t["medical.tooth.asOf"], { exact: true })).toHaveValue("2026-01-01T10:00");
+      await expect(chart.getByRole("combobox", { name: t["medical.tooth.title"] })).toContainText(t["medical.tooth.mixed"]);
+      await expect(focusTooth).toBeFocused();
+      await expect(inspector).not.toBeVisible();
+      await doctor.keyboard.press("Escape");
+      await expect(chart).toHaveCount(0);
+      await doctor.getByRole("button", { name: t["medical.participation.title"], exact: true }).click();
+      await row.getByRole("button", { name: t["medical.tooth.title"], exact: true }).click();
+      await expect(chart.getByLabel(t["medical.tooth.asOf"], { exact: true })).toHaveValue("2026-01-01T10:00");
+      await expect(focusTooth).toBeFocused();
+      await expect(inspector).not.toBeVisible();
       await doctor.getByTestId("participation-teeth").screenshot({ path: info.outputPath("participation-tooth-chart.png") });
+      await chart.getByRole("button", { name: t["medical.tooth.current"], exact: true }).click();
+      await expect(chart.getByLabel(t["medical.tooth.asOf"], { exact: true })).toHaveValue("");
+      await expect(focusTooth).toBeVisible();
       expect((await new AxeBuilder({ page: doctor }).include('[data-testid="participation-teeth"]').withTags(["wcag2a", "wcag2aa"]).analyze()).violations).toEqual([]);
       expect(await doctor.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       await row.getByRole("button", { name: t["medical.clinical.history"], exact: true }).click();

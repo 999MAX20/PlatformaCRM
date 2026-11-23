@@ -1,4 +1,4 @@
-DENTAL-MCS-20261122: К06 S03 history filters/context local PASS:36 backend,7 browser,16 inspected captures,build/check/drift; static/publication pending. Other nested state/team/L12 and full TS remain in docs/testing/task-state/DENTAL-MCS-20261122.md.
+DENTAL-MCS: К06 nested tooth/VisitPlan navigation locally accepted: 18 browser PASS, build/types PASS, 19 inspected captures; static/publication pending. Team/L12 and full TS remain open; docs/testing/task-state/DENTAL-MCS-20261122.md.
 
 QA-016-20261121 LOCAL VERIFIED: automatic tasks searchable by displayed RU/KK/EN title; editor preserves original copy on unrelated edits. 66 backend, 9 node, 6 desktop/mobile browser scenarios, build/types/i18n/check/drift PASS; Code 8a240ad3 pushed to main; CI44937543011 queued (not PASS). Working DB untouched. [Evidence](docs/testing/evidence/qa-016-task-search-20261121.md).
 

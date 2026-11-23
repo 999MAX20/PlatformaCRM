@@ -1,3 +1,4 @@
+import { ClinicalViewNavigationProvider } from "./clinicalViewNavigation";
 import { useCallback, useEffect, useMemo, useRef, useState, type Ref } from "react";
 import axios from "axios";
 import { medicalClinicalApi, type AppointmentClinicalContext } from "../../api/medicalClinical";
@@ -78,12 +79,12 @@ export function ClinicalAppointmentEntry({ businessId, appointmentId }: { busine
       setLoading(true); setContext(null); setError(null); setOpen(true);
     }}>{t("medical.clinical.open")}</Button> : null}
     {context ? <SourceProposalEntry scope={{ business_id: businessId, patient_id: context.patient.id, source_appointment_id: appointmentId }} /> : null}</div>
-    <Modal open={open} onClose={close} size="xl" title={t("medical.clinical.title")} testId="clinical-workspace" closeOnBackdrop={false} focusReturnId={focusId}>
+    <ClinicalViewNavigationProvider><Modal open={open} onClose={close} size="xl" title={t("medical.clinical.title")} testId="clinical-workspace" closeOnBackdrop={false} focusReturnId={focusId}>
       {loading ? <LoadingState /> : error ? <ErrorState message={status === 401 || status === 403 ? t("medical.denied") : getApiErrorMessage(error)}
         action={<Button size="lg" variant="secondary" onClick={reload}>{t("common.retry")}</Button>} /> : context ?
         <ClinicalWorkspace historyMemory={historyMemory} tab={tab} onTabChange={setTab} draftControl={draftControl} context={context} onChanged={reload} onDirty={setDirty} onDenied={denied}
           onDocumentEditor={onDocumentEditor} canEditDocument={canEditDocument} /> : null}
-    </Modal>
+    </Modal></ClinicalViewNavigationProvider>
     <Modal open={confirmClose && open} onClose={() => { if (!closeInFlight.current) setConfirmClose(false); }}
       title={t("medical.clinical.unsavedTitle")} size="sm" closeOnBackdrop={false} testId="clinical-unsaved">
       <div className="space-y-4">
