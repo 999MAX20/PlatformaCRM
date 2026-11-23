@@ -1,4 +1,4 @@
-DENTAL-MCS: К06 ACTIVE — связи VisitPlanStep опубликованы d6e05865; связи зубов локально приняты: backend/PG,6 main+2 correction browser,20 visual captures,final build/static/check/drift PASS, публикация готовится. Остаток: календарное преобразование/snippets/вкладки; К05/К03/К04 ожидают ранее заданных решений. План/матрица: docs/testing/task-state/DENTAL-MCS-20261122.md.
+DENTAL-MCS: К06 ACTIVE — связи зубов опубликованы7a4b58dc; явная запись из клинического плана локально принята:87 dependent/14 PG,6 browser locales/viewport,20 visual captures,build/check/drift/static PASS; публикация готовится. Остаток: template representation/snippets/вкладки; К03/К04/К05 ждут прежних решений. План/матрица: docs/testing/task-state/DENTAL-MCS-20261122.md.
 
 QA-016-20261121 LOCAL VERIFIED: automatic tasks searchable by displayed RU/KK/EN title; editor preserves original copy on unrelated edits. 66 backend, 9 node, 6 desktop/mobile browser scenarios, build/types/i18n/check/drift PASS; Code 8a240ad3 pushed to main; CI44937543011 queued (not PASS). Working DB untouched. [Evidence](docs/testing/evidence/qa-016-task-search-20261121.md).
 

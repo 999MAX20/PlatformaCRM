@@ -1,14 +1,16 @@
 import { useId, useLayoutEffect, useRef } from "react";
-import type { ClinicalContent, ClinicalPlanAccess } from "../../api/medicalClinical";
+import type { ClinicalContent, ClinicalPlanAccess, ClinicalPlanBookingAccess } from "../../api/medicalClinical";
 import { Button } from "../../components/ui/Button";
 import { Textarea } from "../../components/ui/Textarea";
 import { useI18n } from "../../lib/i18n";
 import { ClinicalPlanVisitLink, ClinicalVisitStepLabel } from "./ClinicalPlanVisitLink";
 import { ClinicalPlanTeeth } from "./ClinicalPlanTeeth";
+import { ClinicalPlanBooking } from "./ClinicalPlanBooking";
 
-export function ClinicalPlanSteps({ content, onChange, disabled, readOnly, planAccess }: {
+export function ClinicalPlanSteps({ content, onChange, disabled, readOnly, planAccess, bookingAccess }: {
   content: ClinicalContent; onChange: (value: ClinicalContent) => void; disabled: boolean; readOnly: boolean;
   planAccess?: ClinicalPlanAccess;
+  bookingAccess?: ClinicalPlanBookingAccess;
 }) {
   const { t } = useI18n();
   const prefix = useId();
@@ -41,6 +43,7 @@ export function ClinicalPlanSteps({ content, onChange, disabled, readOnly, planA
             const next = { ...item }; if (value) next.visit_step = value; else delete next.visit_step;
             return next;
           }) })} />
+        {bookingAccess && !readOnly ? <ClinicalPlanBooking step={step} access={bookingAccess} disabled={disabled} /> : null}
         {!readOnly ? <div className="flex flex-wrap gap-2">
           <Button type="button" variant="secondary" size="lg" disabled={blocked || index === 0}
             aria-label={t("medical.plan.moveUpStep", { number: index + 1 })} onClick={() => move(index, -1)}>{t("medical.plan.moveUp")}</Button>

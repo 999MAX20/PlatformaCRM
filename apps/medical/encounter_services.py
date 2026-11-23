@@ -99,6 +99,37 @@ def save_primary_encounter_draft(*, actor, business_id, patient_id, encounter_id
     content = validate_clinical_draft(content)
     if not isinstance(reason, str) or len(reason) > 2000:
         raise ValidationError({"reason": "Provide at most 2000 characters."})
+    business, patient, encounter, correction_access = primary_draft_context(actor=actor, business_id=business_id,
+        patient_id=patient_id, encounter_id=encounter_id, participation_id=participation_id,
+        correction_access_id=correction_access_id)
+
+    def operation():
+        if encounter.revision != expected_revision or encounter.state != MedicalEncounter.States.DRAFT:
+            raise InvalidTransition("The encounter changed; review its current draft.")
+        if encounter.record.state != "active":
+            raise InvalidTransition("The medical record is archived.")
+        encounter.revision += 1
+        encounter.save(update_fields=["revision", "updated_at"])
+        version = append_encounter_revision(encounter=encounter, author=actor, content=content, reason=reason)
+        write_patient_audit(actor=actor, business=business, patient=patient,
+            action="encounter_draft_saved", encounter_version=version, correction_access=correction_access)
+        return CRMCommandResult(data={}, resource=version)
+
+    result = run_idempotent_crm_command(business=business, actor=actor, action="medical.encounter.primary_draft",
+        idempotency_key=medical_request_digest({"key": idempotency_key}, business_id=business_id),
+        payload={"encounter": encounter_id, "patient": patient_id, "revision": expected_revision,
+            "participation": participation_id,
+            **({"correction_access": correction_access_id} if correction_access_id is not None else {}),
+            "content_digest": medical_request_digest({"content": content, "reason": reason}, business_id=business_id)},
+        operation=operation)
+    version = MedicalEncounterRevision.objects.get(encounter=encounter,
+        pk=result.resource_id if result.replayed else result.resource.pk)
+    return version, result.replayed
+
+
+def primary_draft_context(*, actor, business_id, patient_id, encounter_id,
+                          participation_id=None, correction_access_id=None):
+    """Authorize a primary draft command inside its caller's atomic transaction."""
     business = Business.objects.select_for_update().filter(pk=business_id).first()
     if business is None:
         raise NotFound()
@@ -130,26 +161,4 @@ def save_primary_encounter_draft(*, actor, business_id, patient_id, encounter_id
             raise PermissionDenied()
 
     assert_verified_clinical_identity(patient)
-
-    def operation():
-        if encounter.revision != expected_revision or encounter.state != MedicalEncounter.States.DRAFT:
-            raise InvalidTransition("The encounter changed; review its current draft.")
-        if encounter.record.state != "active":
-            raise InvalidTransition("The medical record is archived.")
-        encounter.revision += 1
-        encounter.save(update_fields=["revision", "updated_at"])
-        version = append_encounter_revision(encounter=encounter, author=actor, content=content, reason=reason)
-        write_patient_audit(actor=actor, business=business, patient=patient,
-            action="encounter_draft_saved", encounter_version=version, correction_access=correction_access)
-        return CRMCommandResult(data={}, resource=version)
-
-    result = run_idempotent_crm_command(business=business, actor=actor, action="medical.encounter.primary_draft",
-        idempotency_key=medical_request_digest({"key": idempotency_key}, business_id=business_id),
-        payload={"encounter": encounter_id, "patient": patient_id, "revision": expected_revision,
-            "participation": participation_id,
-            **({"correction_access": correction_access_id} if correction_access_id is not None else {}),
-            "content_digest": medical_request_digest({"content": content, "reason": reason}, business_id=business_id)},
-        operation=operation)
-    version = MedicalEncounterRevision.objects.get(encounter=encounter,
-        pk=result.resource_id if result.replayed else result.resource.pk)
-    return version, result.replayed
+    return business, patient, encounter, correction_access

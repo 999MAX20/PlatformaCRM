@@ -13,6 +13,14 @@ export type ClinicalPlanReadScope = ClinicalScope & { encounter_id: number } & (
   | { correction_access_id: number; appointment_id?: never; participation_id?: never }
 );
 export type ClinicalPlanAccess = { scope: ClinicalPlanReadScope; onDenied: (cause: unknown) => void };
+export type ClinicalPlanBookingAccess = { context: AppointmentClinicalContext; revision: number;
+  onReload: () => void; onDenied: (cause: unknown) => void; unsaved: boolean };
+export type ClinicalBookingRequest = ClinicalScope & { expected_revision: number; step_id: string;
+  service_id: number; resource_id: number; branch_id: number; responsible_user_id?: number;
+  expected_plan_revision?: number; start_at: string; expected_price: string | null;
+  expected_duration_minutes: number; confirmed: true; notes: string };
+export type ClinicalBookingResult = { version_id: number; revision: number; plan_id: number;
+  visit_step_id: number; appointment_id: number; replayed: boolean };
 export type ClinicalContent = Partial<Record<ClinicalField, string>> & {
   not_applicable?: Partial<Record<ClinicalField, string>>;
   plan_steps?: { id: string; description: string; visit_step?: ClinicalVisitStep; teeth?: number[] }[];
@@ -119,6 +127,8 @@ async function command<T>(path: string, payload: object, idempotencyKey: string,
 }
 
 export const medicalClinicalApi = {
+  bookPlanStep: (encounterId: number, payload: ClinicalBookingRequest, key: string, signal?: AbortSignal) =>
+    command<ClinicalBookingResult>(`${root}${encounterId}/book-plan-step/`, payload, key, signal),
   toothPlan: async (scope: ClinicalReadScope & { tooth: number; as_of?: string; before_id?: number }, signal?: AbortSignal) =>
     (await apiClient.get<ToothPlanPage>(`${root}tooth-plan/`, { params: scope, signal })).data,
   visitSteps: async (scope: ClinicalPlanReadScope & { before_id?: number }, signal?: AbortSignal) =>

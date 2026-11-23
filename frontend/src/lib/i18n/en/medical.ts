@@ -1,4 +1,10 @@
 export const medical = {
+  "medical.plan.book": "Schedule visit",
+  "medical.plan.saveBeforeBooking": "Save the plan changes first",
+  "medical.plan.confirmBooking": "Create an appointment at the selected time under these terms? This action does not collect payment.",
+  "medical.plan.reviewBooking": "Review the current plan and booking terms. The linked step must be available and not yet scheduled.",
+  "medical.plan.booked": "Visit scheduled",
+  "medical.plan.openBooking": "Open calendar appointment",
   "medical.plan.teeth": "Linked teeth",
   "medical.plan.addTooth": "Add tooth",
   "medical.plan.removeTooth": "Remove link to tooth {tooth}",

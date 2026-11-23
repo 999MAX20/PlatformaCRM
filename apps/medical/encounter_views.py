@@ -59,6 +59,22 @@ class ToothPlanSerializer(ClinicalWorkspaceSerializer):
     as_of = serializers.DateTimeField(required=False)
 
 
+class ClinicalPlanBookingSerializer(EncounterScopeSerializer):
+    expected_revision = serializers.IntegerField(min_value=1)
+    step_id = serializers.CharField(max_length=36)
+    service_id = serializers.IntegerField(min_value=1)
+    resource_id = serializers.IntegerField(min_value=1)
+    branch_id = serializers.IntegerField(min_value=1)
+    responsible_user_id = serializers.IntegerField(min_value=1, required=False)
+    expected_plan_revision = serializers.IntegerField(min_value=1, required=False)
+    participation_id = serializers.IntegerField(min_value=1, required=False)
+    start_at = serializers.DateTimeField()
+    expected_price = serializers.DecimalField(max_digits=12, decimal_places=2, min_value=0, allow_null=True)
+    expected_duration_minutes = serializers.IntegerField(min_value=1)
+    confirmed = serializers.BooleanField()
+    notes = serializers.CharField(max_length=10000, allow_blank=True, required=False, trim_whitespace=False)
+
+
 class MedicalEncounterViewSet(viewsets.GenericViewSet):
     permission_classes = [IsAuthenticated]
     lookup_value_regex = r"[0-9]+"
@@ -71,6 +87,7 @@ class MedicalEncounterViewSet(viewsets.GenericViewSet):
                 "revisions": EncounterHistorySerializer,
                 "visit_steps": ClinicalVisitStepsSerializer,
                 "tooth_plan": ToothPlanSerializer,
+                "book_plan_step": ClinicalPlanBookingSerializer,
                 "appointment_context": AppointmentClinicalContextSerializer}.get(self.action, EncounterScopeSerializer)
 
     def finalize_response(self, request, response, *args, **kwargs):
@@ -91,6 +108,15 @@ class MedicalEncounterViewSet(viewsets.GenericViewSet):
 
     def create(self, request):
         return self._command(request, open_primary_encounter, created=True)
+
+    @action(detail=True, methods=["post"], url_path="book-plan-step")
+    def book_plan_step(self, request, pk=None):
+        from .clinical_plan_booking import book_clinical_plan_step
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        result = book_clinical_plan_step(actor=request.user, encounter_id=int(pk), **serializer.validated_data,
+            idempotency_key=request.headers.get("Idempotency-Key"))
+        return Response(result, status=200 if result["replayed"] else 201)
 
     @action(detail=False, methods=["get"], url_path="visit-steps")
     def visit_steps(self, request):

@@ -93,6 +93,8 @@ export function AppointmentForm({
   onSubmit,
   recordFirst = false,
   fixedContext = false,
+  fixedClient = false,
+  onDirtyChange,
   currency = "KZT",
   timeZone = "UTC",
 }: {
@@ -104,6 +106,8 @@ export function AppointmentForm({
   initial?: Appointment;
   recordFirst?: boolean;
   fixedContext?: boolean;
+  fixedClient?: boolean;
+  onDirtyChange?: (dirty: boolean) => void;
   currency?: string;
   prefill?: {
     responsible_user?: Id;
@@ -150,6 +154,7 @@ export function AppointmentForm({
       notes: initial?.notes || "",
     },
   });
+  useEffect(() => { onDirtyChange?.(form.formState.isDirty); }, [form.formState.isDirty, onDirtyChange]);
 
   const serviceId = form.watch("service");
   const resourceId = form.watch("resource");
@@ -317,7 +322,7 @@ export function AppointmentForm({
         </div>
       ) : null}
       <div className="grid gap-4 sm:grid-cols-2">
-        {recordFirst ? prefill?.source_conversation || fixedContext ? (
+        {recordFirst ? prefill?.source_conversation || fixedContext || fixedClient ? (
           <Input label={t("appointment.client")} value={clients.find(client => client.id === Number(form.watch("client")))?.full_name || t("common.client")} readOnly />
         ) : (
           <ClientPicker businessId={businessId} value={String(form.watch("client") || "")}

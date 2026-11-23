@@ -16,6 +16,7 @@ roles_fixture = os.environ.get("E2E_MEDICAL_ROLES") == "1"
 templates_fixture = os.environ.get("E2E_MEDICAL_TEMPLATES") == "1"
 orders_fixture = os.environ.get("E2E_MEDICAL_ORDERS") == "1"
 plan_links_fixture = os.environ.get("E2E_MEDICAL_PLAN_LINKS") == "1"
+plan_booking_fixture = os.environ.get("E2E_MEDICAL_PLAN_BOOKING") == "1"
 rollout_fixture = os.environ.get("E2E_MEDICAL_ROLLOUT") == "1"
 configure_browser_runtime()
 import django
@@ -85,6 +86,19 @@ if not Business.objects.filter(slug="medical-role").exists():
             resource=fixture.staff, branch=fixture.first,
             start_at=fixture.appointment.start_at + timedelta(days=index),
             end_at=fixture.appointment.end_at + timedelta(days=index))
+if plan_booking_fixture:
+    from datetime import time
+    from apps.branches.models import Branch
+    from apps.scheduling.models import WorkingHours
+    from apps.services.models import Service
+    business = Business.objects.get(slug="medical-role")
+    business.timezone = "UTC"
+    business.save(update_fields=["timezone"])
+    Branch.objects.filter(business=business).update(uses_business_defaults=True)
+    Service.objects.filter(business=business).update(price_from=100, duration_minutes=30)
+    for weekday in range(7):
+        WorkingHours.objects.get_or_create(business=business, resource=None, weekday=weekday,
+                                          defaults={"start_time": time(8), "end_time": time(20)})
 if plan_links_fixture:
     from apps.scheduling.models import VisitPlan, VisitPlanStep
     business = Business.objects.get(slug="medical-role")

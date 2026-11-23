@@ -1,4 +1,10 @@
 export const medical = {
+  "medical.plan.book": "Қабылдауды жоспарлау",
+  "medical.plan.saveBeforeBooking": "Алдымен жоспар өзгерістерін сақтаңыз",
+  "medical.plan.confirmBooking": "Көрсетілген шарттармен таңдалған уақытқа жазылу жасалсын ба? Бұл әрекет төлем қабылдамайды.",
+  "medical.plan.reviewBooking": "Ағымдағы жоспар мен жазылу шарттарын тексеріңіз. Байланысты қадам қолжетімді және күнтізбеге әлі жазылмаған болуы керек.",
+  "medical.plan.booked": "Қабылдау жоспарланды",
+  "medical.plan.openBooking": "Күнтізбедегі жазылуды ашу",
   "medical.plan.teeth": "Байланысты тістер",
   "medical.plan.addTooth": "Тіс қосу",
   "medical.plan.removeTooth": "{tooth} тіспен байланысты алып тастау",
