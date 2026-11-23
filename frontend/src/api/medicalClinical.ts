@@ -7,7 +7,9 @@ export type ClinicalBasis =
 export type ClinicalReadScope = ClinicalScope & ClinicalBasis;
 export const clinicalFields = ["complaints", "anamnesis", "allergies", "contraindications", "examination", "diagnosis", "procedures", "plan", "epicrisis"] as const;
 export type ClinicalField = typeof clinicalFields[number];
-export type ClinicalContent = Partial<Record<ClinicalField, string>>;
+export type ClinicalContent = Partial<Record<ClinicalField, string>> & {
+  not_applicable?: Partial<Record<ClinicalField, string>>;
+};
 export type EncounterState = "draft" | "finalized";
 
 export type ClinicalRecord = { id: number; number: string; opened_at: string };

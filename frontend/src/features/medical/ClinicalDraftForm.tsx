@@ -3,7 +3,7 @@ import axios from "axios";
 import { clinicalFields, medicalClinicalApi, type AppointmentClinicalContext, type ClinicalContent } from "../../api/medicalClinical";
 import { getApiErrorMessage } from "../../api/client";
 import { Button } from "../../components/ui/Button";
-import { Textarea } from "../../components/ui/Textarea";
+import { ClinicalSectionInput } from "./ClinicalSectionInput";
 import { ErrorState, LoadingState } from "../../components/ui/StateViews";
 import { useI18n } from "../../lib/i18n";
 import { useUnsavedEntryWarning } from "../auth/useUnsavedEntryWarning";
@@ -15,6 +15,7 @@ export function ClinicalDraftForm({ context, onDirty, onDenied, onReload, draftC
   context: AppointmentClinicalContext; onDirty: (value: boolean) => void; onDenied: (cause: unknown) => void; onReload: () => void;
 }) {
   const { t } = useI18n();
+  const form = useRef<HTMLFormElement>(null);
   const [content, setContent] = useState<ClinicalContent>({});
   const [baseline, setBaseline] = useState<ClinicalContent>({});
   const [revision, setRevision] = useState(context.encounter!.revision);
@@ -48,6 +49,7 @@ export function ClinicalDraftForm({ context, onDirty, onDenied, onReload, draftC
   useImperativeHandle(draftControl, () => ({ save, isPending: () => saving.current, isDirty: () => dirtyNow.current }));
   async function save(): Promise<boolean> {
     if (saving.current || conflict || !loaded || !context.actions.save_draft) return false;
+    if (form.current && !form.current.reportValidity()) return false;
     if (!dirty) return true;
     saving.current = true;
     const payload = { business_id: context.business_id, patient_id: context.patient.id, expected_revision: revision, content };
@@ -69,13 +71,12 @@ export function ClinicalDraftForm({ context, onDirty, onDenied, onReload, draftC
   }
   if (loading) return <LoadingState />;
   if (!loaded) return <ErrorState message={getApiErrorMessage(error)} action={<Button size="lg" variant="secondary" onClick={() => setRefresh(value => value + 1)}>{t("common.retry")}</Button>} />;
-  return <form autoComplete="off" className="space-y-4" onSubmit={event => { event.preventDefault(); void save(); }}>
+  return <form ref={form} autoComplete="off" className="space-y-4" onSubmit={event => { event.preventDefault(); void save(); }}>
     <h2 className="text-base font-semibold">{t("medical.clinical.note")}</h2>
     {!context.actions.save_draft ? <p role="status" className="text-sm text-platforma-subtle">{t("medical.clinical.readOnly")}</p> : null}
-    {clinicalFields.map(field => <Textarea key={field} label={t(`medical.clinical.${field}`)} aria-label={t(`medical.clinical.${field}`)} value={content[field] ?? ""} maxLength={32768}
+    {clinicalFields.map(field => <ClinicalSectionInput key={field} field={field} content={content}
       disabled={pending} readOnly={!context.actions.save_draft || conflict}
-      onChange={event => {
-        const next = { ...content, [field]: event.target.value };
+      onChange={next => {
         dirtyNow.current = JSON.stringify(next) !== JSON.stringify(baseline);
         setContent(next); setSaved(false);
       }} />)}

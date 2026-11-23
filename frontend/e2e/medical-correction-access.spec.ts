@@ -145,6 +145,9 @@ for (const language of ["ru", "kk", "en"] as const) for (const width of [1440, 3
     if (!document) {
       await dialog.getByRole("textbox", { name: t["medical.clinical.allergies"], exact: true }).fill(`Synthetic corrected allergy ${language}`);
       await dialog.getByRole("textbox", { name: t["medical.clinical.contraindications"], exact: true }).fill("Synthetic corrected contraindication");
+      const procedureLabel = t["medical.clinical.procedures"];
+      await dialog.getByRole("checkbox", { name: t["medical.clinical.notApplicableFor"].replace("{field}", procedureLabel), exact: true }).check();
+      await dialog.getByRole("textbox", { name: t["medical.clinical.notApplicableReason"].replace("{field}", procedureLabel), exact: true }).fill("Synthetic correction consultation only");
     }
     await dialog.getByRole("textbox", { name: t["medical.reason"], exact: true }).fill("Synthetic draft correction");
     expect((await new AxeBuilder({ page }).include('[role="dialog"]').withTags(["wcag2a", "wcag2aa"]).analyze()).violations).toEqual([]);
@@ -157,6 +160,8 @@ for (const language of ["ru", "kk", "en"] as const) for (const width of [1440, 3
       dialog = page.getByRole("dialog");
       await expect(dialog.getByRole("textbox", { name: t["medical.clinical.allergies"], exact: true })).toHaveValue(`Synthetic corrected allergy ${language}`);
       await expect(dialog.getByRole("textbox", { name: t["medical.clinical.contraindications"], exact: true })).toHaveValue("Synthetic corrected contraindication");
+      await expect(dialog.getByRole("textbox", { name: t["medical.clinical.notApplicableReason"].replace("{field}", t["medical.clinical.procedures"]), exact: true })).toHaveValue("Synthetic correction consultation only");
+      await dialog.getByRole("textbox", { name: t["medical.clinical.notApplicableReason"].replace("{field}", t["medical.clinical.procedures"]), exact: true }).locator("../..").screenshot({ path: info.outputPath("corrected-not-applicable.png") });
       await dialog.getByRole("textbox", { name: t["medical.clinical.allergies"], exact: true }).locator("..").screenshot({ path: info.outputPath("corrected-allergies.png") });
       await page.keyboard.press("Escape");
       await expect(dialog).toHaveCount(0);

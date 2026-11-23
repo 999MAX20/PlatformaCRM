@@ -53,6 +53,13 @@ class LiteralDocumentRenderingTests(SimpleTestCase):
         self.assertEqual(rendered["document_text"], "Synthetic allergy / Synthetic restriction")
         self.assertEqual(rendered["missing_fields"], [])
 
+    def test_non_applicability_reason_requires_explicit_placeholder(self):
+        self.context["clinical"] = {"not_applicable": {"procedures": "Synthetic consultation only"}}
+        rendered = self.render("{{clinical.procedures}} / {{clinical.procedures_not_applicable_reason}}")
+        self.assertEqual(rendered["document_text"], " / Synthetic consultation only")
+        self.assertEqual(rendered["missing_fields"], ["clinical.procedures"])
+        self.assertEqual(rendered["unknown_fields"], [])
+
 
 @override_settings(MEDICAL_DATA_KEYS={"test": crypto_fixtures.key(7)}, MEDICAL_DATA_ACTIVE_KEY_ID="test",
                    MEDICAL_IDENTITY_INDEX_KEY=crypto_fixtures.key(8))

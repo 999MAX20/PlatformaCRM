@@ -53,6 +53,28 @@ class EncounterContentTests(TestCase):
         first.refresh_from_db()
         self.assertEqual(first.author_id, self.doctor.pk)
 
+    def test_explicit_non_applicability_preserves_reason_and_prior_text(self):
+        first = self.append(content={"procedures": "Synthetic earlier procedure"})
+        self.advance()
+        content = {"not_applicable": {"procedures": "Synthetic consultation only — оқу"}}
+        second = self.append(content=content)
+        self.assertEqual(read_encounter_revision(second)["content"], content)
+        self.assertEqual(read_encounter_revision(first)["content"], {"procedures": "Synthetic earlier procedure"})
+        self.assertNotIn("Synthetic consultation", second.content_encrypted)
+        content["not_applicable"]["procedures"] = "Changed caller object"
+        self.assertEqual(read_encounter_revision(second)["content"]["not_applicable"]["procedures"],
+                         "Synthetic consultation only — оқу")
+
+    def test_non_applicability_rejects_unknown_empty_conflicting_and_unbounded_reasons(self):
+        for content in ({"not_applicable": True}, {"not_applicable": {"unknown": "Reason"}},
+                        {"not_applicable": {"plan": " "}}, {"not_applicable": {"plan": False}},
+                        {"not_applicable": {"plan": "x" * 2001}},
+                        {"plan": "Actual plan", "not_applicable": {"plan": "Reason"}}):
+            with self.subTest(content=content), self.assertRaises(ValidationError):
+                validate_clinical_draft(content)
+        self.assertEqual(validate_clinical_draft({"plan": "", "not_applicable": {"plan": "Reason"}}),
+                         {"plan": "", "not_applicable": {"plan": "Reason"}})
+
     def test_duplicate_revision_cannot_replace_history(self):
         first = self.append()
         with self.assertRaises(IntegrityError):

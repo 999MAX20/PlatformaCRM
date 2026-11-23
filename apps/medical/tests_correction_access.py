@@ -149,7 +149,8 @@ class CorrectionAccessTests(TestCase):
         kwargs = dict(actor=self.doctor, business_id=self.business.pk, patient_id=self.patient.pk,
             encounter_id=self.encounter_record.pk, expected_revision=1,
             content={"plan": "Corrected synthetic plan", "allergies": "Corrected synthetic allergy",
-                     "contraindications": "Corrected synthetic contraindication"},
+                     "contraindications": "Corrected synthetic contraindication",
+                     "not_applicable": {"procedures": "Synthetic consultation only"}},
             reason="Synthetic correction", idempotency_key="save", correction_access_id=item.pk)
         version, _ = save_primary_encounter_draft(**kwargs)
         self.assertEqual(version.revision, 2)

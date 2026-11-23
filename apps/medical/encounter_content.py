@@ -16,11 +16,19 @@ CLINICAL_TEXT_LIMIT = 32768
 
 
 def validate_clinical_draft(content):
-    if not isinstance(content, dict) or set(content) - CLINICAL_TEXT_FIELDS:
+    if not isinstance(content, dict) or set(content) - (CLINICAL_TEXT_FIELDS | {"not_applicable"}):
         raise ValidationError({"content": "Provide supported clinical fields."})
-    if any(not isinstance(value, str) or len(value) > CLINICAL_TEXT_LIMIT for value in content.values()):
+    values = {key: value for key, value in content.items() if key != "not_applicable"}
+    if any(not isinstance(value, str) or len(value) > CLINICAL_TEXT_LIMIT for value in values.values()):
         raise ValidationError({"content": "Each clinical field must be text of at most 32768 characters."})
-    return dict(content)
+    if "not_applicable" in content:
+        reasons = content["not_applicable"]
+        if (not isinstance(reasons, dict) or set(reasons) - CLINICAL_TEXT_FIELDS or
+                any(not isinstance(reason, str) or not reason.strip() or len(reason) > 2000
+                    or bool(values.get(field, "").strip()) for field, reason in reasons.items())):
+            raise ValidationError({"content": "A non-applicable section needs a reason of at most 2000 characters and no clinical text."})
+        values["not_applicable"] = dict(reasons)
+    return values
 
 
 def _metadata(version, encounter):

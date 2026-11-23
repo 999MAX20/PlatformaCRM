@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { correctionAccessApi as api, type CorrectionAccess, type CorrectionScope, type CorrectionTargets, type CorrectionTargetContent } from "../../api/medicalCorrectionAccess";
 import { clinicalFields, type ClinicalContent } from "../../api/medicalClinical";
+import { ClinicalSectionInput } from "./ClinicalSectionInput";
 import { getApiErrorMessage } from "../../api/client";
 import { Button } from "../../components/ui/Button";
 import { Select } from "../../components/ui/Select";
@@ -92,8 +93,8 @@ export function CorrectionDraftForm({ item, businessId, control }: { item: Corre
     {error ? <ErrorState message={getApiErrorMessage(error)} action={<Button type="button" variant="secondary" onClick={() => setAttempt(value => value + 1)}>{t("common.retry")}</Button>} /> : !data ? <LoadingState /> : <>
       {!editable ? <p role="status" className="text-sm text-platforma-subtle">{t("medical.correctionAccess.immutable")}</p> : null}
       {item.document_id ? <Textarea label={t("medical.correctionAccess.document")} value={text} onChange={event => setText(event.target.value)} readOnly={!editable} rows={12} maxLength={131072} />
-        : clinicalFields.map(field => <Textarea key={field} label={t(`medical.clinical.${field}`)} value={content[field] ?? ""}
-          onChange={event => setContent(value => ({ ...value, [field]: event.target.value }))} readOnly={!editable} maxLength={32768} />)}
+        : clinicalFields.map(field => <ClinicalSectionInput key={field} field={field} content={content}
+          onChange={setContent} readOnly={!editable} />)}
       {editable ? <Textarea label={t("medical.reason")} value={reason} onChange={event => setReason(event.target.value)} maxLength={2000} required /> : null}
     </>}
   </MedicalRoleCommand>;

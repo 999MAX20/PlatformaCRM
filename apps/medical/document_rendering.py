@@ -15,6 +15,7 @@ DOCUMENT_FIELDS = (
     "clinic.name", "clinic.legal_name", "clinic.tax_id", "clinic.address", "clinic.phone",
     "branch.name", "branch.address", "branch.city", "branch.phone", "doctor.full_name",
     "record.number", "encounter.date", "encounter.time", *[f"clinical.{field}" for field in CLINICAL_FIELDS],
+    *[f"clinical.{field}_not_applicable_reason" for field in CLINICAL_FIELDS],
     "clinic.license", "doctor.specialty", "doctor.position", "doctor.qualification",
 )
 _TOKEN = re.compile(r"\{\{([^{}]{1,128})\}\}")
@@ -60,7 +61,9 @@ def render_document_text(template_text, context, *, started_at):
         "clinic.license": clinic.get("license"),
         **{f"doctor.{field}": clinician.get(field) for field in ("specialty", "position", "qualification")},
         "encounter.date": local.date().isoformat(), "encounter.time": local.timetz().isoformat(),
-        **{f"clinical.{field}": context["clinical"].get(field) for field in CLINICAL_FIELDS}}
+        **{f"clinical.{field}": context["clinical"].get(field) for field in CLINICAL_FIELDS},
+        **{f"clinical.{field}_not_applicable_reason": context["clinical"].get("not_applicable", {}).get(field)
+           for field in CLINICAL_FIELDS}}
     parts, missing, unknown = [], set(), set()
     length, offset = 0, 0
 

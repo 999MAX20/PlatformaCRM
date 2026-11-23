@@ -70,7 +70,8 @@ class DocumentTemplateSourceTests(TestCase):
     def test_risk_snapshot_does_not_follow_later_encounter_changes(self):
         from .encounter_services import save_primary_encounter_draft
         self.approve()
-        risks = {"allergies": "Synthetic original allergy", "contraindications": "Synthetic restriction"}
+        risks = {"allergies": "Synthetic original allergy", "contraindications": "Synthetic restriction",
+                 "not_applicable": {"procedures": "Synthetic consultation only"}}
         kwargs = dict(actor=self.doctor, business_id=self.business.pk, patient_id=self.patient.pk,
                       encounter_id=self.encounter_record.pk, content=risks)
         save_primary_encounter_draft(**kwargs, expected_revision=1, idempotency_key="risk-first")

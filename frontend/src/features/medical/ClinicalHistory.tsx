@@ -129,7 +129,9 @@ function VersionReader({ versionId, scope, onDenied }: { versionId: number; scop
     <dl className="space-y-4">
       {clinicalFields.map(field => <div key={field}>
         <dt className="text-sm font-semibold text-platforma-subtle">{t(`medical.clinical.${field}`)}</dt>
-        <dd className="mt-1 whitespace-pre-wrap break-words text-sm text-platforma-text">{data.content[field] || t("medical.clinical.notRecorded")}</dd>
+        <dd className="mt-1 whitespace-pre-wrap break-words text-sm text-platforma-text">{data.content.not_applicable?.[field] !== undefined
+          ? `${t("medical.clinical.notApplicable")}: ${data.content.not_applicable[field]}`
+          : data.content[field] || t("medical.clinical.notRecorded")}</dd>
       </div>)}
       {data.reason ? <div><dt className="text-sm font-semibold text-platforma-subtle">{t("medical.reason")}</dt><dd className="mt-1 whitespace-pre-wrap break-words text-sm">{data.reason}</dd></div> : null}
     </dl>

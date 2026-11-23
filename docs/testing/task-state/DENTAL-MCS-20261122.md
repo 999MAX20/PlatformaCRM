@@ -2,6 +2,26 @@
 
 ## Активный этап К06; К05 открыт и ожидает решений по assistant/support
 
+К06 неприменимость — локальная приёмка PASS. Focused22/0.700s и dependent78/7.938s (пересекаются): TEMP/dental-k06-not-applicable-focused-20261123.log и dental-k06-not-applicable-dependent-20261123.log. Дополнительный полный API module10/0.626s подтвердил replay и отказ replay после отзыва; dental-k06-not-applicable-api-module-20261123.log. Два отдельных method-only запуска Python завершились native Windows0xC0000005 (replay/replay-r2 logs; faulthandler указывает pathlib); причина не установлена, это не FAIL assertion. Проверяемые assertions прошли в модуле, код ради аварии не менялся.
+Build/types/i18n8018/widget и check/drift PASS: dental-k06-not-applicable-build-20261123.log, dental-k06-not-applicable-check-drift-20261123.log. Миграций нет; рабочая БД не затронута. Browser7PASS2.5m (6locale/viewport + recovery), template2PASS26.1s, correction2PASS48.7s; соответствующие TEMP/dental-k06-not-applicable-{browser,template-browser,correction-browser}-20261123.log. Просмотрены10 новых captures:6 clinical-not-applicable,2 template selector,2 corrected-not-applicable в output/playwright/{clinical,template,correction}-not-applicable-20261123. RU/KK/EN desktop/mobile geometry, labels, required reason/focus, отмена замены сохраняет текст, save/reopen/history, literal template insert, correction сохранение, axe/overflow и прежний recovery PASS. Mobile selector сокращает длинную выбранную подпись; полный текст доступен в option, соседняя кнопка помещается.
+Anti Slop scoped Delivery Gate PASS; это приёмка конкретного сценария, не всего К06/ТЗ. Frontend contract/паспорт/modularity согласованы; README/access/operations/integrations/внешнее ТЗ не меняются: прежние права/окружение и утверждённое B09. Остаток К06 — структурированные план/назначения; финализация К10 отдельно. Publication pending. CI59cbd85b run45085057479 in_progress, не PASS.
+
+К06 contract before code: B09/§22.6 +design§5.2 требуют явной
+неприменимости раздела с обоснованием. Gap code; reuse encrypted content/version/
+audit/writers/history/snapshot и existing checkbox/Textarea. Технический формат:
+optional content.not_applicable {clinical_field: reason}, только существующие
+clinicalFields, непустая причина≤2000, исключает одновременно непустой clinical
+text того же поля. Старые версии без map остаются без отметок; никакой миграции/
+автоматического «не применимо». Запись — только по прежним полномочиям врача;
+snapshot сохраняет map, template получает отдельную явную reason-подстановку,
+обычная clinical.field не превращается в выдуманный медицинский текст.
+UI checkbox44px +обоснование, подтверждение замены непустого текста; история
+показывает отметку и причину. Existing PHI memory/denial/dirty/retry guards сохраняются.
+Checks: validation/roundtrip/history/snapshot/render/API/denial/rollback, dependent
+writers/readers, reachable desktop/mobile RU/KK/EN, new marker in correction/
+template consumers, build/check/drift/static. Новых permissions/money/notifications/
+BusinessEvent/AI/env эффектов нет. Не закрывает финализацию К10 или весь К06.
+
 К05 regression tests опубликованы4a69f538e0c8cbbc6c93e0a54686033bdbc9be9b,
 normal FF origin/main и SHA readback PASS. CI текущего commit ещё не проверен.
 К05 не закрыт: два заданных вопроса о полномочиях блокируют оставшиеся assistant/
@@ -54,7 +74,11 @@ Anti Slop scoped gate PASS:19 final captures inspected, geometry/labels/states/
 keyboard/focus/locales/recovery; не весь модуль. Реальные PHI не использовались.
 README/access/operations/integrations/внешнее ТЗ не требуют изменения: права,
 провайдеры, окружение и уже описанное требование §4.2 прежние. Frontend contract/
-capabilities/modularity и матрица согласованы. Publication pending.
+capabilities/modularity и матрица согласованы. Опубликован59cbd85b57026d1da677fd48b528c2eb6b55d186,
+normal FF origin/main и SHA readback PASS. Final static basef745bab1 PASS
+(TEMP/dental-k06-risk-static-final-20261123.log), committed range hygiene PASS.
+CI текущего commit ещё не наблюдался; f745 CI45082898662 frontend success/backend
+in_progress на последнем чтении. Далее К06 explicit not-applicable sections.
 
 Срез К05: проверка совместного существования appointment/participation/
 24h correction и приоритета security revoke. Prior result: каждое основание уже

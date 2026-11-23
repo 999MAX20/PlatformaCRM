@@ -93,6 +93,24 @@ class MedicalEncounterAPITests(TestCase):
         self.assert_private(denied)
         self.assertNotIn(risks["allergies"], denied.content.decode())
 
+    def test_explicit_non_applicability_roundtrip_and_conflict_are_private(self):
+        content = {"not_applicable": {"procedures": "Synthetic no procedure at consultation"}}
+        opened = self.open(content=content)
+        self.assertEqual(opened.status_code, 201, opened.data)
+        self.assertEqual(self.read(opened.data["version_id"]).data["content"], content)
+        replay = self.open(content=content)
+        self.assertEqual(replay.status_code, 200, replay.data)
+        self.assertTrue(replay.data["replayed"])
+        invalid = self.api.post(f"{self.url}{opened.data['id']}/draft/", {**self.scope,
+            "expected_revision": 1, "content": {**content, "procedures": "Synthetic procedure"}},
+            format="json", HTTP_IDEMPOTENCY_KEY="contradiction")
+        self.assertEqual(invalid.status_code, 400, invalid.data)
+        self.assert_private(invalid)
+        self.assertEqual(MedicalEncounterRevision.objects.count(), 1)
+        self.assignment.branches.clear()
+        self.assertEqual(self.read(opened.data["version_id"]).status_code, 403)
+        self.assertEqual(self.open(content=content).status_code, 403)
+
     def test_stale_save_returns_409_without_advancing_revision(self):
         opened = self.open()
         response = self.api.post(f"{self.url}{opened.data['id']}/draft/", {**self.scope,
