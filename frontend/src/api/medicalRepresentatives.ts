@@ -1,5 +1,6 @@
 import { apiClient } from "./client";
 import type { PatientProtocolLabel, PatientScope, PatientVerificationForm } from "./medicalPatients";
+import type { ClinicalReadScope } from "./medicalClinical";
 
 export type Representative = {
   id: number; representative_client_id: number; full_name: string; revision: number;
@@ -23,6 +24,8 @@ async function command(path: string, payload: RepresentativeCreate | Representat
   return (await apiClient.post<Result>(root + path, payload, { headers: { "Idempotency-Key": key }, signal })).data;
 }
 export const medicalRepresentativesApi = {
+  clinicalList: async (scope: ClinicalReadScope, offset = 0, signal?: AbortSignal) =>
+    (await apiClient.get<{ results: Representative[]; next_offset: number | null }>("/api/medical/encounters/representatives/", { params: { ...scope, offset }, signal })).data,
   list: async (patientId: number, scope: PatientScope, offset = 0, signal?: AbortSignal) =>
     (await apiClient.get<{ results: Representative[]; next_offset: number | null }>(`${root}${patientId}/representatives/`, { params: { ...scope, offset }, signal })).data,
   form: async (scope: PatientScope, signal?: AbortSignal) =>

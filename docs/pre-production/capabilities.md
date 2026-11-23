@@ -1,5 +1,7 @@
 ## Медицинский модуль: начата реализация — 22.11.2026
 
+К06 представители из клинического обзора: readonly список имён, полномочий и сроков по appointment/participation с сохранёнными Clients ACL и аудитом. Подтверждение/отзыв остаются административными.46 dependent backend,6 clinical+2 administrative browser,9 inspected captures,build/check/drift PASS; публикация в DENTAL-MCS checkpoint. Реальный протокол L04/выдача К12 и весь К06 не закрыты.
+
 К06 исторические документы: список и точные версии выбранного приёма доступны через календарь/active participation в режиме чтения с отдельным medical_documents VIEW. Текущий редактор и несохранённый клинический текст сохранены.34 backend,8 browser,17 inspected captures,build/types PASS; публикация в DENTAL-MCS checkpoint. Это не закрывает подпись/PDF/выдачу или весь К06.
 
 К06 исторические назначения: из выбранного приёма в истории доступны read-only список и точные версии через календарное основание или active participation. Отдельные права назначений и отзыв участия проверяются сервером; текущий редактор сохранён.22 dependent backend,8 browser,17 inspected captures,final build/types PASS; публикация и ограничения — DENTAL-MCS checkpoint. Полный К06 и подпись/PDF/выдача остаются открытыми.

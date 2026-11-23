@@ -44,6 +44,11 @@ class ClinicalWorkspaceSerializer(EncounterReadSerializer):
     limit = serializers.IntegerField(min_value=1, max_value=50, required=False, default=20)
 
 
+class ClinicalRepresentativesSerializer(EncounterReadSerializer):
+    offset = serializers.IntegerField(min_value=0, required=False, default=0)
+    limit = serializers.IntegerField(min_value=1, max_value=50, required=False, default=25)
+
+
 class ClientClinicalAppointmentsSerializer(StrictSerializer):
     business_id = serializers.IntegerField(min_value=1)
     branch_id = serializers.IntegerField(min_value=1)
@@ -93,6 +98,7 @@ class MedicalEncounterViewSet(viewsets.GenericViewSet):
         return {"create": EncounterOpenSerializer, "draft": EncounterDraftSerializer,
                 "version": EncounterReadSerializer, "workspace": ClinicalWorkspaceSerializer,
                 "overview": EncounterReadSerializer,
+                "representatives": ClinicalRepresentativesSerializer,
                 "client_appointments": ClientClinicalAppointmentsSerializer,
                 "revisions": EncounterHistorySerializer,
                 "visit_steps": ClinicalVisitStepsSerializer,
@@ -127,6 +133,13 @@ class MedicalEncounterViewSet(viewsets.GenericViewSet):
         result = book_clinical_plan_step(actor=request.user, encounter_id=int(pk), **serializer.validated_data,
             idempotency_key=request.headers.get("Idempotency-Key"))
         return Response(result, status=200 if result["replayed"] else 201)
+
+    @action(detail=False, methods=["get"], url_path="representatives")
+    def representatives(self, request):
+        from .representative_selectors import list_clinical_representatives
+        serializer = self.get_serializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+        return Response(list_clinical_representatives(actor=request.user, **serializer.validated_data))
 
     @action(detail=False, methods=["get"], url_path="visit-steps")
     def visit_steps(self, request):

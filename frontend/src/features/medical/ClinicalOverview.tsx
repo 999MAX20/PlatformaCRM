@@ -7,6 +7,7 @@ import { ErrorState, LoadingState } from "../../components/ui/StateViews";
 import { useI18n } from "../../lib/i18n";
 import { formatDateTime } from "../../lib/format";
 import { localeByLanguage } from "../calendar/calendarConstants";
+import { ClinicalRepresentatives } from "./ClinicalRepresentatives";
 
 export function ClinicalOverview({ context, onDenied, onNavigate }: {
   context: AppointmentClinicalContext; onDenied: (cause: unknown) => void;
@@ -92,6 +93,6 @@ function ClinicalOverviewRead({ scope, onDenied, onHistory, actions }: {
       </details> : null}
       <Button size="lg" variant="secondary" onClick={onHistory}>{t("medical.clinical.history")}</Button>
     </div>
-    {actions ? <div className="flex flex-wrap gap-2">{actions}</div> : null}
+    <div className="flex flex-wrap gap-2"><ClinicalRepresentatives scope={scope} />{actions}</div>
   </section>;
 }

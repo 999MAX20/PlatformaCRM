@@ -31,6 +31,22 @@ def list_patient_representatives(*, actor, business_id, branch_id, patient_id, o
     if patient is None:
         raise NotFound()
     assert_can(actor, business, Resources.CLIENTS, Actions.VIEW, obj=patient.client)
+    return _representative_page(actor=actor, business=business, patient=patient, offset=offset, limit=limit)
+
+
+@transaction.atomic
+def list_clinical_representatives(*, actor, business_id, patient_id, appointment_id=None,
+                                  participation_id=None, offset=0, limit=25):
+    from .encounter_reads import _clinical_read_context
+    if type(offset) is not int or offset < 0 or type(limit) is not int or not 1 <= limit <= 50:
+        raise ValidationError({"page": "Select a valid page."})
+    business, patient = _clinical_read_context(actor=actor, business_id=business_id, patient_id=patient_id,
+        appointment_id=appointment_id, participation_id=participation_id)
+    assert_can(actor, business, Resources.CLIENTS, Actions.VIEW, obj=patient.client)
+    return _representative_page(actor=actor, business=business, patient=patient, offset=offset, limit=limit)
+
+
+def _representative_page(*, actor, business, patient, offset, limit):
     query = PatientRepresentative.objects.filter(patient=patient,
         representative_client__business=business).select_related("representative_client").order_by("-pk")
     rows = list(query[offset:offset + limit + 1])

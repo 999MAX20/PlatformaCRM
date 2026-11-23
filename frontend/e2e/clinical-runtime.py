@@ -224,6 +224,30 @@ if roles_fixture and len(sys.argv) > 1 and sys.argv[1] in ("disable-role-module"
     BusinessCapability.objects.filter(business__slug="medical-role", module_key="medical_records").update(
         is_enabled=sys.argv[1] == "enable-role-module")
     sys.exit(0)
+if len(sys.argv) > 2 and sys.argv[1] == "clinical-representatives-populate":
+    from datetime import timedelta
+    from apps.medical.models import PatientRepresentative
+    from apps.medical.identity_crypto import encrypt_medical_value
+    appointment = Appointment.objects.get(pk=int(sys.argv[2]), business__slug="medical-role")
+    patient = PatientProfile.objects.get(business=appointment.business, client=appointment.client)
+    now = timezone.now()
+    for index in range(int(sys.argv[3])):
+        state = ("active", "scheduled", "expired", "revoked")[index % 4]
+        start = now + timedelta(days=1) if state == "scheduled" else now - timedelta(days=2)
+        end = now - timedelta(days=1) if state == "expired" else now + timedelta(days=2)
+        client = Client.objects.create(business=appointment.business, full_name=f"Synthetic representative {index} {state}")
+        relation = PatientRepresentative.objects.create(patient=patient, representative_client=client,
+            authority_encrypted="pending", verified_by=appointment.business.owner, verified_at=now-timedelta(days=3),
+            valid_from=start, valid_until=end)
+        authority = {"patient_id": patient.pk, "representative_client_id": client.pk,
+            "valid_from": start.isoformat(), "valid_until": end.isoformat(), "permissions": ["give_consent"],
+            "permission_labels": {"give_consent": {"ru": "Согласие", "kk": "Келісім", "en": "Consent"}}}
+        relation.authority_encrypted = encrypt_medical_value(json.dumps(authority), business_id=patient.business_id,
+            subject_id=relation.pk, purpose="representative_authority")
+        if state == "revoked":
+            relation.revoked_at, relation.revoked_by, relation.revocation_encrypted = now, appointment.business.owner, "synthetic"
+        relation.save()
+    sys.exit(0)
 if len(sys.argv) > 2 and sys.argv[1] == "historical-documents-populate":
     from apps.medical.models import MedicalEncounter
     from apps.medical.template_services import save_personal_template_draft

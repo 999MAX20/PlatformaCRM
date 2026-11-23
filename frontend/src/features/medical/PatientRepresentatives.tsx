@@ -8,11 +8,12 @@ import { Modal } from "../../components/ui/Modal";
 import { ErrorState, LoadingState } from "../../components/ui/StateViews";
 import { useI18n } from "../../lib/i18n";
 import { RepresentativeForm } from "./RepresentativeForm";
+import { RepresentativeDetails } from "./RepresentativeDetails";
 
 export function PatientRepresentatives({ patient, scope, canApprove, onDenied }: {
   patient: PatientAdministration; scope: PatientScope; canApprove: boolean; onDenied: () => void;
 }) {
-  const { t, language } = useI18n();
+  const { t } = useI18n();
   const [rows, setRows] = useState<Representative[]>([]);
   const [next, setNext] = useState<number | null>(null);
   const [offset, setOffset] = useState(0);
@@ -32,7 +33,6 @@ export function PatientRepresentatives({ patient, scope, canApprove, onDenied }:
     }).finally(() => { if (!controller.signal.aborted) setLoading(false); });
     return () => controller.abort();
   }, [patient.id, scope.business_id, scope.branch_id, offset, refresh]);
-  const date = (value: string) => new Intl.DateTimeFormat(language, { dateStyle: "medium", timeStyle: "short" }).format(new Date(value));
   function close() { setEdit(null); setRefresh(value => value + 1); }
   return <section className="space-y-3 border-t border-platforma-border pt-4" aria-label={t("medical.representatives")} data-testid="patient-representatives">
     <div className="flex flex-wrap items-center justify-between gap-3">
@@ -42,13 +42,7 @@ export function PatientRepresentatives({ patient, scope, canApprove, onDenied }:
     {loading ? <LoadingState /> : error ? <ErrorState message={getApiErrorMessage(error)} action={<Button variant="secondary" onClick={() => setRefresh(value => value + 1)}>{t("common.retry")}</Button>} /> : <>
       {!rows.length ? <p className="text-sm text-platforma-subtle">{t("medical.repEmpty")}</p> : <ul className="divide-y divide-platforma-border">
         {rows.map(row => <li key={row.id} className="space-y-2 py-3 text-sm">
-          <div className="flex flex-wrap items-center justify-between gap-2"><span className="break-words font-semibold text-platforma-text">{row.full_name}</span>
-            <span className="text-platforma-subtle">{t(`medical.repStatus.${row.status}`)}</span></div>
-          <p className="break-words text-platforma-text">{row.permission_labels ? row.permissions.map(code => row.permission_labels![code][language]).join(", ") : t("medical.repLabelsUnavailable")}</p>
-          <dl className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-            <div><dt className="text-platforma-subtle">{t("medical.repFrom")}</dt><dd>{date(row.valid_from)}</dd></div>
-            <div><dt className="text-platforma-subtle">{t("medical.repUntil")}</dt><dd>{row.valid_until ? date(row.valid_until) : t("medical.repNoExpiry")}</dd></div>
-          </dl>
+          <RepresentativeDetails row={row} />
           {canApprove && row.status !== "revoked" ? <Button size="lg" variant="secondary" onClick={() => setEdit(row)}>{t("medical.repRevoke")}</Button> : null}
         </li>)}
       </ul>}
