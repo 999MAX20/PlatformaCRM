@@ -1,9 +1,11 @@
 from rest_framework import serializers, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.response import Response
 
-from .participation_closure import end_participation_by_head
+from .participation_closure import end_participation_by_head, end_own_participation
+from .participation_closure_reads import read_participation_closure
 from .participation_candidates import read_proposal_candidates, read_responsible_candidates
 from .participation_proposals import read_proposal_branches, read_outgoing_proposals
 from .participation_notice_reads import read_participation_notification
@@ -33,6 +35,12 @@ class ParticipationProposalSerializer(ParticipationScopeSerializer):
 
 class ParticipationCommandSerializer(ParticipationScopeSerializer):
     expected_revision = serializers.IntegerField(min_value=1)
+
+
+class ParticipationClosureSerializer(ParticipationScopeSerializer):
+    offset = serializers.IntegerField(min_value=0, default=0)
+    limit = serializers.IntegerField(min_value=1, max_value=50, default=20)
+    as_head = serializers.BooleanField(default=False)
 
 
 class ParticipationResponseSerializer(ParticipationCommandSerializer):
@@ -107,6 +115,8 @@ class TreatmentParticipationViewSet(viewsets.GenericViewSet):
     def get_serializer_class(self):
         return {"create": ParticipationProposalSerializer, "respond": ParticipationResponseSerializer,
                 "withdraw": ParticipationCommandSerializer, "end_by_head": ParticipationHeadEndSerializer,
+                "end_own": ParticipationCommandSerializer,
+                "closure": ParticipationClosureSerializer,
                 "invitations": ParticipationListSerializer, "managed": ParticipationManagedSerializer,
                 "mine": ParticipationListSerializer, "workspace_access": ParticipationAccessSerializer,
                 "patient_context": ParticipationPatientContextSerializer,
@@ -127,8 +137,14 @@ class TreatmentParticipationViewSet(viewsets.GenericViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         identity = {"participation_id": int(pk)} if pk is not None else {}
-        item, replayed = service(actor=request.user, **serializer.validated_data, **identity,
-            idempotency_key=request.headers.get("Idempotency-Key"))
+        try:
+            item, replayed = service(actor=request.user, **serializer.validated_data, **identity,
+                idempotency_key=request.headers.get("Idempotency-Key"))
+        except PermissionDenied:
+            if self.action == "end_own":
+                from .file_audit import record_denied_file_access
+                record_denied_file_access(actor=request.user, business_id=serializer.validated_data["business_id"])
+            raise
         return Response({"id": item.pk, "state": item.state, "revision": item.revision, "replayed": replayed},
             status=201 if created and not replayed else 200)
 
@@ -207,3 +223,18 @@ class TreatmentParticipationViewSet(viewsets.GenericViewSet):
     @action(detail=True, methods=["post"], url_path="end-by-head")
     def end_by_head(self, request, pk=None):
         return self._command(request, end_participation_by_head, pk=pk)
+
+    @action(detail=True, methods=["get"], url_path="closure")
+    def closure(self, request, pk=None):
+        serializer = self.get_serializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+        try:
+            return Response(read_participation_closure(actor=request.user, participation_id=int(pk), **serializer.validated_data))
+        except PermissionDenied:
+            from .file_audit import record_denied_file_access
+            record_denied_file_access(actor=request.user, business_id=serializer.validated_data["business_id"])
+            raise
+
+    @action(detail=True, methods=["post"], url_path="end-own")
+    def end_own(self, request, pk=None):
+        return self._command(request, end_own_participation, pk=pk)

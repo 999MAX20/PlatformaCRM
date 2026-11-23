@@ -8,6 +8,7 @@ from .models import MedicalEncounterRevision, MedicalDocumentFinalization
 from .identity_crypto import MedicalDataUnavailable
 from .tests_document_rules import default_rule
 from .tests_patient_services import key
+from .participation_obligations import participation_obligations
 
 
 @override_settings(MEDICAL_DATA_KEYS={"test": key(7)}, MEDICAL_DATA_ACTIVE_KEY_ID="test",
@@ -40,12 +41,17 @@ class CompletionDocumentTests(TestCase):
     def readiness(self):
         return encounter_completion_requirements(MedicalEncounterRevision.objects.get(pk=self.clinical.pk))
 
+    def participation_documents(self):
+        return participation_obligations(business=self.business, patient=self.patient,
+            member=self.encounter_record.primary_clinician)["documents"]
+
     def test_required_signed_document_blocks_until_exact_finalization(self):
         self.assertFalse(self.readiness()["ready"])
         self.sign_all()
         self.assertFalse(self.readiness()["ready"])
         self.finalize()
         self.assertTrue(self.readiness()["ready"])
+        self.assertEqual(self.participation_documents()["count"], 0)
 
     def test_corrupt_finalization_never_allows_completion(self):
         self.sign_all()
@@ -53,6 +59,8 @@ class CompletionDocumentTests(TestCase):
         MedicalDocumentFinalization.objects.filter(pk=item.pk).update(evidence_encrypted="invalid")
         with self.assertRaises(MedicalDataUnavailable):
             self.readiness()
+        with self.assertRaises(MedicalDataUnavailable):
+            self.participation_documents()
 
     def test_quarantined_final_pdf_is_not_a_ready_required_document(self):
         from apps.core.models import FileAttachment
@@ -60,3 +68,4 @@ class CompletionDocumentTests(TestCase):
         self.finalize()
         FileAttachment.objects.filter(pk=self.artifact.attachment_id).update(scan_status="infected")
         self.assertFalse(self.readiness()["ready"])
+        self.assertEqual(self.participation_documents()["count"], 1)

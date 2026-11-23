@@ -63,6 +63,12 @@ settings.MEDICAL_TOOTH_SURFACE_POLICIES = {"1": {
 }}
 call_command("migrate", interactive=False, verbosity=0)
 
+if files_fixture and len(sys.argv) > 1 and sys.argv[1].startswith("participation-closure-"):
+    from participation_closure_fixture import prepare, resolve
+    print(json.dumps(prepare(with_head=sys.argv[1].endswith("-head")) if sys.argv[1] in
+        ("participation-closure-prepare", "participation-closure-prepare-head") else resolve(int(sys.argv[2]))))
+    sys.exit(0)
+
 if files_fixture and len(sys.argv) > 1 and sys.argv[1] in ("completion-prepare", "actual-visit-prepare"):
     from completion_fixture import prepare_completion
     print(json.dumps(prepare_completion(actual=sys.argv[1] == "actual-visit-prepare")))

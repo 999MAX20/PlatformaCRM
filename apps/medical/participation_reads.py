@@ -70,7 +70,7 @@ def read_participation_workspace_access(*, actor, business_id):
     result = []
     for branch in branches.order_by("pk"):
         actions = {}
-        for action in ("create", "approve", "manage"):
+        for action in ("create", "approve", "manage", "update"):
             try:
                 assert_medical_branch_permission(actor, business, "medical_participation", action,
                     branch=branch, require_active=action != "manage")

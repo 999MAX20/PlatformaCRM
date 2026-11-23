@@ -19,6 +19,13 @@ def encounter_completion_requirements(version):
     content = read_encounter_revision(version)["content"]
     missing = [field for field in CLINICAL_FIELDS
         if not content.get(field, "").strip() and not content.get("not_applicable", {}).get(field, "").strip()]
+    documents = encounter_document_requirements(encounter)
+    return {"ready": not missing and all(item["ready"] for item in documents),
+        "missing_fields": missing, "documents": documents}
+
+
+def encounter_document_requirements(encounter, *, required_moments=COMPLETION_MOMENTS):
+    """Required versions under the caller's authorized patient scope and lock."""
     documents, captured_kinds = [], set()
     versions = MedicalDocumentRevision.objects.select_related("document__encounter").filter(
         document__business_id=encounter.business_id, document__encounter=encounter,
@@ -28,7 +35,7 @@ def encounter_completion_requirements(version):
         if rules is None:
             continue
         captured_kinds.add(rules["kind_id"])
-        if rules["rule"]["required_at"] not in COMPLETION_MOMENTS:
+        if rules["rule"]["required_at"] not in required_moments:
             continue
         finalization = MedicalDocumentFinalization.objects.select_related("artifact__attachment").filter(version=document_version).first()
         ready = (document_version.document.state == "finalized" and finalization is not None
@@ -48,8 +55,7 @@ def encounter_completion_requirements(version):
         matrix = read_rule_revision(rule_version)["content"]
         rule = next((item["rule"] for item in matrix["services"]
             if item["id"] == encounter.appointment.service_id), matrix["default"])
-        if rule["required_at"] in COMPLETION_MOMENTS:
+        if rule["required_at"] in required_moments:
             documents.append({"kind_id": rule_version.kind_id, "name": matrix["name"],
                 "version_id": None, "ready": False, "blocker": "document_missing"})
-    return {"ready": not missing and all(item["ready"] for item in documents),
-        "missing_fields": missing, "documents": documents}
+    return documents

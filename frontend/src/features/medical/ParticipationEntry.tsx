@@ -15,6 +15,7 @@ import { ParticipationToothChart } from "./ToothChart";
 import { SourceProposalWorkspace } from "./SourceProposalWorkspace";
 import { ParticipationDeclineForm } from "./ParticipationDeclineForm";
 import { ParticipationInvitationDetails } from "./ParticipationInvitationDetails";
+import { ParticipationClosurePanel } from "./ParticipationClosurePanel";
 import type { HistoryMemory } from "./clinicalHistoryNavigation";
 import { MedicalFilesWorkspace, type MedicalFilesState } from "./files/MedicalFilesWorkspace";
 import type { MedicalFileWorkspaceScope } from "../../api/medicalFiles";
@@ -98,6 +99,7 @@ function ParticipationWorkspace({ access, patientId, branchId, guard, onDenied, 
   const [files, setFiles] = useState<{ scope: MedicalFileWorkspaceScope; patientName?: string; branchName: string; returnId: string } | null>(null);
   const onFilesState = useCallback((state: MedicalFilesState) => { guard.current = state; }, [guard]);
   const [declining, setDeclining] = useState<Participation | null>(null);
+  const [ownEnd, setOwnEnd] = useState<Participation | null>(null);
   const [pending, setPending] = useState<number | null>(null);
   const [conflict, setConflict] = useState(false);
   const retry = useRef<{ fingerprint: string; key: string } | null>(null);
@@ -129,6 +131,8 @@ function ParticipationWorkspace({ access, patientId, branchId, guard, onDenied, 
     }
   }, [form, proposal, declining, files, page, pending]);
   function refresh() {
+    if (ownEnd) focusAfterRefresh.current = String(ownEnd.id);
+    setOwnEnd(null);
     if (declining) focusAfterRefresh.current = String(declining.id);
     setDeclining(null);
     if (form) focusAfterRefresh.current = form === "invite" ? "invite" : String(form.id);
@@ -150,6 +154,11 @@ function ParticipationWorkspace({ access, patientId, branchId, guard, onDenied, 
       else { setError(cause); if (axios.isAxiosError(cause) && cause.response?.status === 409) setConflict(true); }
     } finally { guard.current.pending = false; setPending(null); }
   }
+  if (ownEnd) return <div className="space-y-4">
+    <p className="break-words font-semibold">{ownEnd.patient_name} · {ownEnd.branch_name}</p>
+    <ParticipationClosurePanel businessId={access.business_id} item={ownEnd} own guard={guard} onSaved={refresh} onDenied={onDenied} />
+    <Button size="lg" variant="secondary" onClick={() => { if (!guard.current.pending) refresh(); }}>{t("common.back")}</Button>
+  </div>;
   if (files) return <div className="space-y-4">
     <Button autoFocus size="lg" variant="secondary" onClick={() => {
       if (guard.current.pending || (guard.current.dirty && !window.confirm(t("medical.clinical.discard")))) return;
@@ -172,6 +181,7 @@ function ParticipationWorkspace({ access, patientId, branchId, guard, onDenied, 
   if (form) return <div className="space-y-4">
     <h3 className="text-base font-semibold">{t(form === "invite" ? "medical.participation.invite" : "medical.participation.end")}</h3>
     {form !== "invite" ? <p className="break-words text-sm">{form.patient_name} · {form.member_name} · {form.branch_name}</p> : null}
+    {form !== "invite" ? <ParticipationClosurePanel businessId={access.business_id} item={form} own={false} guard={guard} onSaved={refresh} onDenied={onDenied} /> : null}
     <ParticipationCommandForm scope={scope} item={form === "invite" ? undefined : form} guard={guard} onSaved={refresh} onDenied={onDenied} />
     <Button variant="secondary" onClick={() => { if (!guard.current.pending && (!guard.current.dirty || window.confirm(t("medical.clinical.discard")))) refresh(); }}>{t("common.cancel")}</Button>
   </div>;
@@ -204,6 +214,7 @@ function ParticipationWorkspace({ access, patientId, branchId, guard, onDenied, 
             {item.state === "pending" && mode === "managed" && actions?.manage && actions.create ? <Button variant="secondary" disabled={pending !== null || conflict} onClick={() => void respond(item, "withdraw")}>{t("medical.participation.withdraw")}</Button> : null}
             {item.state === "active" && actions?.manage ? <Button size="lg" variant="secondary" disabled={pending !== null || conflict} onClick={() => setForm(item)}>{t("medical.participation.end")}</Button> : null}
             {item.state === "active" && item.member_id === access.member_id ? <>
+              {actions?.update ? <Button size="lg" variant="secondary" disabled={pending !== null || conflict} onClick={() => setOwnEnd(item)}>{t("medical.participation.endOwn")}</Button> : null}
               <Button size="lg" variant="secondary" disabled={pending !== null || conflict} onClick={() => { setHistory(null); setTeeth(null); setOverview(item); }}>{t("medical.overview.title")}</Button>
               <Button variant="secondary" disabled={pending !== null || conflict} onClick={() => { setOverview(null); setTeeth(null); setHistory(item); }}>{t("medical.clinical.history")}</Button>
               <Button size="lg" variant="secondary" disabled={pending !== null || conflict} onClick={() => { setOverview(null); setHistory(null); setTeeth(item); }}>{t("medical.tooth.title")}</Button>

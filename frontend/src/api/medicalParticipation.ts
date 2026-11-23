@@ -40,7 +40,7 @@ export type ParticipationWorkspaceAccess = {
   business_id: number;
   member_id: number;
   kind: "doctor" | "head";
-  branches: Array<{ id: number; name: string; actions: Record<"create" | "approve" | "manage", boolean> }>;
+  branches: Array<{ id: number; name: string; actions: Record<"create" | "approve" | "manage" | "update", boolean> }>;
 };
 export type ParticipationCandidatesScope = ParticipationScope & ParticipationSource & {
   branch_id: number;
@@ -71,6 +71,10 @@ export type ParticipationResult = { id: number; state: ParticipationState; revis
 
 const root = "/api/medical/participations/";
 
+export type ParticipationClosure = { id: number; revision: number; state: ParticipationState; own: boolean; can_end: boolean; next_offset: number | null;
+  obligations: { appointments: { count: number; ids: number[] }; encounters: { count: number; ids: number[] };
+    documents: { count: number; items: Array<{ kind_id: number; name: string; version_id: number | null; encounter_id: number; appointment_id: number; blocker: string }> } } };
+
 async function command(path: string, payload: object, idempotencyKey: string, signal?: AbortSignal) {
   if (!idempotencyKey.trim() || idempotencyKey.length > 128) {
     throw new Error("Medical command requires an idempotency key of at most 128 characters.");
@@ -82,6 +86,10 @@ async function command(path: string, payload: object, idempotencyKey: string, si
 }
 
 export const medicalParticipationApi = {
+  closure: async (id: number, scope: ParticipationScope & { offset?: number; as_head?: boolean }, signal?: AbortSignal) =>
+    (await apiClient.get<ParticipationClosure>(`${root}${id}/closure/`, { params: scope, signal })).data,
+  endOwn: (id: number, payload: ParticipationCommand, idempotencyKey: string, signal?: AbortSignal) =>
+    command(`${root}${id}/end-own/`, payload, idempotencyKey, signal),
   notificationContext: async (scope: { business_id: number; notification_id: number }, signal?: AbortSignal) => {
     const { data } = await apiClient.get<ParticipationNotificationContext>(`${root}notification-context/`, { params: scope, signal });
     return data;

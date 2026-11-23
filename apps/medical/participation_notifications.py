@@ -41,7 +41,7 @@ def notify_participation_event(event):
 
 @transaction.atomic
 def _notify_participation_event(event):
-    event = MedicalAuditEvent.objects.select_for_update().select_related(
+    event = MedicalAuditEvent.objects.select_for_update(of=("self",)).select_related(
         "business", "participation__member__user", "participation__proposed_by").get(pk=event.pk)
     if event.action not in INCOMING + REPLIES or event.result != "success" or event.participation_id is None:
         raise ValueError("A successful participation transition is required.")
