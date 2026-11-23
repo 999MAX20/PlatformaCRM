@@ -224,6 +224,20 @@ if roles_fixture and len(sys.argv) > 1 and sys.argv[1] in ("disable-role-module"
     BusinessCapability.objects.filter(business__slug="medical-role", module_key="medical_records").update(
         is_enabled=sys.argv[1] == "enable-role-module")
     sys.exit(0)
+if len(sys.argv) > 2 and sys.argv[1] == "clinical-visit-plans-populate":
+    from apps.scheduling.models import VisitPlan, VisitPlanStep
+    appointment = Appointment.objects.select_related("business", "resource__linked_user").get(
+        pk=int(sys.argv[2]), business__slug="medical-role")
+    BusinessCapability.objects.update_or_create(business=appointment.business, module_key="visit_plans",
+        defaults={"is_enabled": True})
+    for index in range(int(sys.argv[3]) + 1):
+        plan = VisitPlan.objects.create(business=appointment.business, client=appointment.client,
+            responsible_user=appointment.resource.linked_user, created_by=appointment.business.owner,
+            is_archived=index == int(sys.argv[3]))
+        VisitPlanStep.objects.create(plan=plan, position=1, service=appointment.service,
+            resource=appointment.resource, branch=appointment.branch,
+            appointment=appointment if index == 0 else None)
+    sys.exit(0)
 if len(sys.argv) > 2 and sys.argv[1] == "clinical-representatives-populate":
     from datetime import timedelta
     from apps.medical.models import PatientRepresentative

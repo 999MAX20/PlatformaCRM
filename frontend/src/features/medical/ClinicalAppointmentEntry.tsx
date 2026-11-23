@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState, type Ref } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type Ref } from "react";
 import axios from "axios";
 import { medicalClinicalApi, type AppointmentClinicalContext } from "../../api/medicalClinical";
 import { getApiErrorMessage } from "../../api/client";
@@ -16,6 +16,7 @@ import { SourceProposalEntry } from "./SourceProposalWorkspace";
 import { DocumentWorkspace } from "./documents/DocumentWorkspace";
 import { OrderWorkspace } from "./orders/OrderWorkspace";
 import { ClinicalOverview } from "./ClinicalOverview";
+import { ClinicalVisitPlans } from "./ClinicalVisitPlans";
 
 type ClinicalTab = "overview" | "encounter" | "history" | "teeth" | "plan" | "documents" | "orders";
 
@@ -104,6 +105,8 @@ function ClinicalWorkspace({ context, onChanged, onDirty, onDenied, draftControl
   const { t } = useI18n();
   const [number, setNumber] = useState("");
   const tabPrefix = `clinical-${context.appointment.id}`;
+  const planScope = useMemo(() => ({ business_id: context.business_id, patient_id: context.patient.id,
+    appointment_id: context.appointment.id }), [context]);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<unknown>(null);
   const request = useRef<{ fingerprint: string; key: string } | null>(null);
@@ -150,6 +153,7 @@ function ClinicalWorkspace({ context, onChanged, onDirty, onDenied, draftControl
       </div>
       <div role="tabpanel" id={`${tabPrefix}-panel-${tab === "plan" ? "encounter" : "plan"}`} aria-labelledby={`${tabPrefix}-tab-${tab === "plan" ? "encounter" : "plan"}`} hidden />
       <div role="tabpanel" id={`${tabPrefix}-panel-${tab === "plan" ? "plan" : "encounter"}`} aria-labelledby={`${tabPrefix}-tab-${tab === "plan" ? "plan" : "encounter"}`} hidden={tab !== "encounter" && tab !== "plan"} className="space-y-4">
+      {tab === "plan" ? <ClinicalVisitPlans scope={planScope} entry="plan" /> : null}
       {context.encounter ? <ClinicalDraftForm view={tab === "plan" ? "plan" : "encounter"} draftControl={draftControl} context={context} onDirty={onDirty} onDenied={onDenied} onReload={onChanged} /> : <>
         <p className="text-sm text-platforma-subtle">{t(context.active_record ? "medical.clinical.noEncounter" : "medical.clinical.noRecord")}</p>
         {context.actions.create_record ? <Input label={t("medical.clinical.number")} value={number} maxLength={64} disabled={pending}

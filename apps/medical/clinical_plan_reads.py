@@ -10,6 +10,37 @@ from .models import MedicalEncounter
 
 
 @transaction.atomic
+def list_patient_visit_plans(*, actor, business_id, patient_id, appointment_id=None,
+                             participation_id=None, before_id=None, limit=20, archived=False):
+    from apps.scheduling.plan_access import visible_steps
+    from apps.scheduling.plan_serializers import step_projection
+    from .identity_crypto import MedicalDataUnavailable
+
+    if type(limit) is not int or not 1 <= limit <= 50 or type(archived) is not bool or (
+            before_id is not None and (type(before_id) is not int or before_id <= 0)):
+        raise ValidationError({"pagination": "Provide a valid cursor, limit and archive filter."})
+    business, patient = _clinical_read_context(actor=actor, business_id=business_id, patient_id=patient_id,
+        appointment_id=appointment_id, participation_id=participation_id)
+    plans = readable_plans(business=business, actor=actor).filter(
+        client_id=patient.client_id, is_archived=archived).order_by("-pk")
+    if before_id is not None:
+        plans = plans.filter(pk__lt=before_id)
+    page = list(plans[:limit + 1])
+    result = []
+    for plan in page[:limit]:
+        steps = visible_steps(plan, actor)
+        valid = set(patient_visit_steps(business_id=business.pk, client_id=patient.client_id).filter(
+            pk__in=[step.pk for step in steps]).values_list("pk", flat=True))
+        if any(step.pk not in valid for step in steps):
+            raise MedicalDataUnavailable()
+        result.append({"id": plan.pk, "is_archived": plan.is_archived,
+            "terminated_at": plan.terminated_at, "created_at": plan.created_at,
+            "steps": [step_projection(step) for step in steps]})
+    write_patient_audit(actor=actor, business=business, patient=patient, action="read")
+    return {"results": result, "next_before_id": page[limit - 1].pk if len(page) > limit else None}
+
+
+@transaction.atomic
 def list_clinical_visit_steps(*, actor, business_id, patient_id, encounter_id,
                              appointment_id=None, participation_id=None, correction_access_id=None,
                              before_id=None, limit=20):

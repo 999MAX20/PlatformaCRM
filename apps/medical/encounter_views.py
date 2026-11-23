@@ -67,6 +67,10 @@ class ClinicalVisitStepsSerializer(ClinicalWorkspaceSerializer):
     correction_access_id = serializers.IntegerField(min_value=1, required=False)
 
 
+class ClinicalPatientPlansSerializer(ClinicalWorkspaceSerializer):
+    archived = serializers.BooleanField(required=False, default=False)
+
+
 class ToothPlanSerializer(ClinicalWorkspaceSerializer):
     tooth = serializers.IntegerField(min_value=1)
     as_of = serializers.DateTimeField(required=False)
@@ -102,6 +106,7 @@ class MedicalEncounterViewSet(viewsets.GenericViewSet):
                 "client_appointments": ClientClinicalAppointmentsSerializer,
                 "revisions": EncounterHistorySerializer,
                 "visit_steps": ClinicalVisitStepsSerializer,
+                "patient_plans": ClinicalPatientPlansSerializer,
                 "tooth_plan": ToothPlanSerializer,
                 "book_plan_step": ClinicalPlanBookingSerializer,
                 "appointment_context": AppointmentClinicalContextSerializer}.get(self.action, EncounterScopeSerializer)
@@ -147,6 +152,13 @@ class MedicalEncounterViewSet(viewsets.GenericViewSet):
         serializer = self.get_serializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
         return Response(list_clinical_visit_steps(actor=request.user, **serializer.validated_data))
+
+    @action(detail=False, methods=["get"], url_path="patient-plans")
+    def patient_plans(self, request):
+        from .clinical_plan_reads import list_patient_visit_plans
+        serializer = self.get_serializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+        return Response(list_patient_visit_plans(actor=request.user, **serializer.validated_data))
 
     @action(detail=False, methods=["get"], url_path="tooth-plan")
     def tooth_plan(self, request):

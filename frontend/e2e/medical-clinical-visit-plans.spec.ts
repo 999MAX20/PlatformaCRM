@@ -1,0 +1,92 @@
+import { test, expect } from "@playwright/test";
+import { execFileSync } from "node:child_process";
+import AxeBuilder from "@axe-core/playwright";
+import { ru } from "../src/lib/i18n/ru";
+import { kk } from "../src/lib/i18n/kk";
+import { en } from "../src/lib/i18n/en";
+import { requireIsolatedEnvironment } from "./isolated-environment.mjs";
+
+requireIsolatedEnvironment();
+let nextId = 7;
+for (const language of ["ru", "kk", "en"] as const) for (const width of [1440, 390]) {
+  const id = ++nextId;
+  test(`clinical visit plans ${language} ${width}: current scope and readonly authority`, async ({ page }, info) => {
+    test.setTimeout(90_000);
+    const t = { ru, kk, en }[language];
+    const fixture = (command: string, count = 4) => execFileSync(process.env.E2E_PYTHON!,
+      ["e2e/clinical-runtime.py", command, String(id), String(count)], { env: process.env, windowsHide: true, stdio: "pipe" });
+    fixture("historical-orders-context");
+    await page.setViewportSize({ width, height: 1000 });
+    await page.addInitScript(value => localStorage.setItem("ai_smb_language", value), language);
+    await page.goto("/login");
+    await page.locator('input[name="email"]').fill("medical-role-doctor@example.test");
+    await page.locator('input[name="password"]').fill(process.env.E2E_PASSWORD!);
+    const login = page.waitForResponse(r => r.url().endsWith("/api/auth/token/") && r.request().method() === "POST");
+    await page.locator('form button[type="submit"]').click();
+    const token = (await (await login).json()).access;
+    await expect(page).toHaveURL(/\/app\//);
+    await page.goto("/app/calendar");
+    await page.getByRole("button", { name: t["medical.participation.title"], exact: true }).click();
+    const row = page.getByTestId(/^participation-row-/).filter({ hasText: `Synthetic clinical patient ${id}` });
+    await row.getByRole("button", { name: t["medical.overview.title"], exact: true }).click();
+    const overview = page.getByTestId("clinical-overview");
+    const open = overview.getByRole("button", { name: t["plans.title"], exact: true });
+    const recovery = language === "en" && width === 390;
+    const route = "**/api/medical/encounters/patient-plans/**";
+    if (recovery) await page.route(route, request => request.fulfill({ status: 503, json: {} }));
+    await open.click();
+    const modal = page.getByTestId("clinical-visit-plans");
+    if (recovery) {
+      await expect(modal.getByText(t["actions.errorTemporary"], { exact: true })).toBeVisible();
+      await page.unroute(route);
+      await modal.getByRole("button", { name: t["common.retry"], exact: true }).click();
+    }
+    await expect(modal.getByText(t["plans.empty"], { exact: true })).toBeVisible();
+    fixture("clinical-visit-plans-populate", recovery ? 21 : 3);
+    await modal.getByRole("button", { name: t["medical.clinical.reload"], exact: true }).click();
+    await expect(modal.getByTestId("clinical-visit-plan")).toHaveCount(recovery ? 20 : 3);
+    await expect(modal.getByRole("button", { name: t["plans.create"], exact: true })).toHaveCount(0);
+    await expect(modal.getByRole("button", { name: t["plans.edit"], exact: true })).toHaveCount(0);
+    await modal.screenshot({ path: info.outputPath("clinical-visit-plans.png") });
+    expect((await new AxeBuilder({ page }).include('[data-testid="clinical-visit-plans"]').withTags(["wcag2a", "wcag2aa"]).analyze()).violations).toEqual([]);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await modal.getByRole("combobox").click();
+    await page.getByRole("option", { name: t["plans.archived"], exact: true }).click();
+    await expect(modal.getByTestId("clinical-visit-plan")).toHaveCount(1);
+    await modal.screenshot({ path: info.outputPath("clinical-visit-plans-archived.png") });
+    await modal.getByRole("combobox").click();
+    await page.getByRole("option", { name: t["plans.active"], exact: true }).click();
+    await expect(modal.getByTestId("clinical-visit-plan")).toHaveCount(recovery ? 20 : 3);
+    if (recovery) {
+      await modal.getByRole("button", { name: t["medical.clinical.older"], exact: true }).click();
+      await expect(modal.getByTestId("clinical-visit-plan")).toHaveCount(1);
+      await modal.getByRole("button", { name: t["medical.clinical.newest"], exact: true }).click();
+      await expect(modal.getByTestId("clinical-visit-plan")).toHaveCount(20);
+      fixture("historical-orders-end");
+      await modal.getByRole("button", { name: t["medical.clinical.reload"], exact: true }).click();
+      await expect(modal.getByText(t["medical.denied"], { exact: true })).toBeVisible();
+      await expect(modal.getByTestId("clinical-visit-plan")).toHaveCount(0);
+      await modal.screenshot({ path: info.outputPath("clinical-visit-plans-denied.png") });
+    }
+    await page.keyboard.press("Escape");
+    await expect(modal).not.toBeVisible();
+    await expect(open).toBeFocused();
+    const response = await page.request.get(`${process.env.E2E_API_BASE_URL}/api/appointments/${id}/`, { headers: { Authorization: `Bearer ${token}` } });
+    expect(response.ok()).toBe(true);
+    const appointment = await response.json();
+    await page.goto(`/app/calendar?appointment=${id}&date=${appointment.start_at.slice(0, 10)}&view=day`);
+    await page.getByTestId("clinical-appointment-entry").getByRole("button", { name: t["medical.clinical.open"], exact: true }).click();
+    await page.getByTestId("clinical-workspace").getByRole("tab", { name: t["medical.overview.title"], exact: true }).click();
+    await open.click();
+    await expect(modal.getByTestId("clinical-visit-plan")).toHaveCount(recovery ? 20 : 3);
+    await page.keyboard.press("Escape");
+    await expect(open).toBeFocused();
+    const workspace = page.getByTestId("clinical-workspace");
+    await workspace.getByRole("tab", { name: t["medical.clinical.plan"], exact: true }).click();
+    const planOpen = workspace.getByRole("button", { name: t["plans.title"], exact: true });
+    await planOpen.click();
+    await expect(modal.getByTestId("clinical-visit-plan")).toHaveCount(recovery ? 20 : 3);
+    await page.keyboard.press("Escape");
+    await expect(planOpen).toBeFocused();
+  });
+}
