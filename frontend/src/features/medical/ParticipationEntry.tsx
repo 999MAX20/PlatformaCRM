@@ -16,6 +16,8 @@ import { SourceProposalWorkspace } from "./SourceProposalWorkspace";
 import { ParticipationDeclineForm } from "./ParticipationDeclineForm";
 import { ParticipationInvitationDetails } from "./ParticipationInvitationDetails";
 import type { HistoryMemory } from "./clinicalHistoryNavigation";
+import { MedicalFilesWorkspace, type MedicalFilesState } from "./files/MedicalFilesWorkspace";
+import type { MedicalFileWorkspaceScope } from "../../api/medicalFiles";
 
 export function PatientParticipationEntry({ businessId, clientId, branchId }: { businessId: number; clientId: number; branchId: number }) {
   const { t } = useI18n();
@@ -93,6 +95,8 @@ function ParticipationWorkspace({ access, patientId, branchId, guard, onDenied, 
   const [overview, setOverview] = useState<Participation | null>(null);
   const [teeth, setTeeth] = useState<Participation | null>(null);
   const [proposal, setProposal] = useState<Participation | null>(null);
+  const [files, setFiles] = useState<{ scope: MedicalFileWorkspaceScope; patientName?: string; branchName: string; returnId: string } | null>(null);
+  const onFilesState = useCallback((state: MedicalFilesState) => { guard.current = state; }, [guard]);
   const [declining, setDeclining] = useState<Participation | null>(null);
   const [pending, setPending] = useState<number | null>(null);
   const [conflict, setConflict] = useState(false);
@@ -119,11 +123,11 @@ function ParticipationWorkspace({ access, patientId, branchId, guard, onDenied, 
     return () => controller.abort();
   }, [access.business_id, mode, branch, patientId, cursor, attempt, chosen, onDenied]);
   useLayoutEffect(() => {
-    if (!form && !proposal && !declining && page && pending === null && focusAfterRefresh.current) {
+    if (!form && !proposal && !declining && !files && page && pending === null && focusAfterRefresh.current) {
       const target = workspaceRef.current?.querySelector<HTMLElement>(`[data-participation-focus="${focusAfterRefresh.current}"]`);
       if (target) { target.focus(); focusAfterRefresh.current = null; }
     }
-  }, [form, proposal, declining, page, pending]);
+  }, [form, proposal, declining, files, page, pending]);
   function refresh() {
     if (declining) focusAfterRefresh.current = String(declining.id);
     setDeclining(null);
@@ -146,6 +150,14 @@ function ParticipationWorkspace({ access, patientId, branchId, guard, onDenied, 
       else { setError(cause); if (axios.isAxiosError(cause) && cause.response?.status === 409) setConflict(true); }
     } finally { guard.current.pending = false; setPending(null); }
   }
+  if (files) return <div className="space-y-4">
+    <Button autoFocus size="lg" variant="secondary" onClick={() => {
+      if (guard.current.pending || (guard.current.dirty && !window.confirm(t("medical.clinical.discard")))) return;
+      focusAfterRefresh.current = files.returnId; setFiles(null);
+    }}>{t("common.back")}</Button>
+    <p className="break-words font-semibold">{[files.patientName, files.branchName].filter(Boolean).join(" · ")}</p>
+    <MedicalFilesWorkspace scope={files.scope} active onState={onFilesState} onDenied={onDenied} />
+  </div>;
   if (declining) return <div className="space-y-4">
     <p className="break-words font-semibold">{declining.patient_name}</p>
     <ParticipationDeclineForm businessId={access.business_id} item={declining} guard={guard} onSaved={refresh} onDenied={onDenied}
@@ -169,6 +181,9 @@ function ParticipationWorkspace({ access, patientId, branchId, guard, onDenied, 
     {mode === "managed" ? <Select label={t("medical.branch")} value={branch} disabled={pending !== null} onChange={event => { setCursor(undefined); setBranch(event.target.value); }}
       options={access.branches.map(row => ({ value: row.id, label: row.name }))} /> : null}
     {mode === "managed" && patientId && chosen?.actions.create ? <Button data-participation-focus="invite" size="lg" disabled={pending !== null || conflict} onClick={() => setForm("invite")}>{t("medical.participation.invite")}</Button> : null}
+    {mode === "managed" && patientId && chosen ? <Button data-participation-focus="files" size="lg" variant="secondary" disabled={pending !== null || conflict}
+      onClick={() => setFiles({ scope: { business_id: access.business_id, patient_id: patientId, head_branch_id: chosen.id },
+        branchName: chosen.name, returnId: "files" })}>{t("medical.files.title")}</Button> : null}
     <Button variant="secondary" disabled={pending !== null} onClick={refresh}>{t("medical.clinical.reload")}</Button>
     {error ? <ErrorState message={conflict ? t("medical.clinical.conflict") : getApiErrorMessage(error)} action={!page ? <Button variant="secondary" onClick={refresh}>{t("common.retry")}</Button> : undefined} /> : null}
     {!page && !error ? <LoadingState /> : null}
@@ -194,6 +209,12 @@ function ParticipationWorkspace({ access, patientId, branchId, guard, onDenied, 
               <Button size="lg" variant="secondary" disabled={pending !== null || conflict} onClick={() => { setOverview(null); setHistory(null); setTeeth(item); }}>{t("medical.tooth.title")}</Button>
             </> : null}
             {item.state === "active" && item.member_id === access.member_id && actions?.create ? <Button size="lg" variant="secondary" disabled={pending !== null || conflict} onClick={() => setProposal(item)}>{t("medical.participation.proposals")}</Button> : null}
+            {item.state === "active" && (item.member_id === access.member_id || mode === "managed") ?
+              <Button size="lg" variant="secondary" disabled={pending !== null || conflict} onClick={() => setFiles({
+                scope: { business_id: access.business_id, patient_id: item.patient_id,
+                  ...(mode === "managed" ? { head_branch_id: item.branch_id } : { participation_id: item.id }) },
+                patientName: item.patient_name, branchName: item.branch_name, returnId: String(item.id),
+              })}>{t("medical.files.title")}</Button> : null}
           </div>
         </li>;
       })}

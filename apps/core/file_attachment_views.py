@@ -8,7 +8,7 @@ from rest_framework.viewsets import ModelViewSet
 from apps.businesses.access import Actions, assert_can, can, scope_queryset
 from apps.billing.storage import assert_storage_quota_allows
 from apps.core.audit import write_audit_log
-from apps.core.file_attachments import assert_attachment_access, resolve_attachment_entity
+from apps.core.file_attachments import ENTITY_CONFIG, assert_attachment_access, resolve_attachment_entity
 from apps.core.file_scanning import open_clean_attachment
 from apps.core.models import AuditLog, FileAttachment, safe_original_filename
 from apps.core.permissions import IsTenantMember, accessible_businesses, platform_admin_has_global_access, user_can_access_business
@@ -22,7 +22,7 @@ class FileAttachmentViewSet(ModelViewSet):
     http_method_names = ["get", "post", "head", "options"]
 
     def get_queryset(self):
-        queryset = FileAttachment.objects.select_related("business", "uploaded_by")
+        queryset = FileAttachment.objects.filter(entity_type__in=ENTITY_CONFIG).select_related("business", "uploaded_by")
         user = self.request.user
         if platform_admin_has_global_access(user):
             filtered = queryset

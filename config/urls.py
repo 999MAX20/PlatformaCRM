@@ -10,6 +10,7 @@ from rest_framework.routers import DefaultRouter
 from apps.medical.views import PatientAdministrationViewSet
 from apps.medical.correction_access_views import CorrectionAccessViewSet
 from apps.medical.encounter_views import MedicalEncounterViewSet
+from apps.medical.file_views import MedicalFileViewSet
 from apps.medical.template_views import MedicalDocumentTemplateViewSet
 from apps.medical.credential_views import MedicalCredentialViewSet
 from apps.medical.document_views import MedicalDocumentViewSet
@@ -154,6 +155,7 @@ router = DefaultRouter()
 router.register("medical/patients", PatientAdministrationViewSet, basename="medical-patient")
 router.register("medical/correction-access", CorrectionAccessViewSet, basename="medical-correction-access")
 router.register("medical/encounters", MedicalEncounterViewSet, basename="medical-encounter")
+router.register("medical/files", MedicalFileViewSet, basename="medical-file")
 router.register("medical/document-templates", MedicalDocumentTemplateViewSet, basename="medical-document-template")
 router.register("medical/credentials", MedicalCredentialViewSet, basename="medical-credential")
 router.register("medical/documents", MedicalDocumentViewSet, basename="medical-document")

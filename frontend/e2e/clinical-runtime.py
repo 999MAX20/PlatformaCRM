@@ -15,6 +15,7 @@ proposal_fixture = os.environ.get("E2E_PROPOSAL") == "1"
 roles_fixture = os.environ.get("E2E_MEDICAL_ROLES") == "1"
 templates_fixture = os.environ.get("E2E_MEDICAL_TEMPLATES") == "1"
 orders_fixture = os.environ.get("E2E_MEDICAL_ORDERS") == "1"
+files_fixture = os.environ.get("E2E_MEDICAL_FILES") == "1"
 plan_links_fixture = os.environ.get("E2E_MEDICAL_PLAN_LINKS") == "1"
 plan_booking_fixture = os.environ.get("E2E_MEDICAL_PLAN_BOOKING") == "1"
 rollout_fixture = os.environ.get("E2E_MEDICAL_ROLLOUT") == "1"
@@ -121,6 +122,13 @@ if rollout_fixture:
         assert activate_medical_profile(business_id=business.pk)["status"] == "activated"
     business.refresh_from_db()
     assert business.profile_version == 2 and rollout_audit.count() == 1
+if files_fixture:
+    from apps.businesses.models import RolePermission
+    from apps.medical.models import MedicalRoleAssignment
+    file_assignment = MedicalRoleAssignment.objects.get(member__user__email="medical-role-doctor@example.test")
+    for file_action in ("view", "create", "export"):
+        RolePermission.objects.get_or_create(business_role=file_assignment.business_role,
+            resource="medical_files", action=file_action, defaults={"scope": "own", "is_allowed": True})
 if orders_fixture:
     from apps.businesses.models import RolePermission
     from apps.medical.models import MedicalRoleAssignment
@@ -156,7 +164,7 @@ if templates_fixture:
         for action in ("view", "create", "update", "approve"):
             RolePermission.objects.create(business_role=role, resource="medical_documents",
                 action=action, scope="business", is_allowed=True)
-if participation_fixture:
+if participation_fixture or files_fixture:
     from django.contrib.auth import get_user_model
     from apps.branches.models import BranchAccess
     from apps.businesses.models import BusinessMember, RolePermission
@@ -178,6 +186,9 @@ if participation_fixture:
         assignment = MedicalRoleAssignment.objects.create(member=member, business_role=doctor_assignment.business_role,
             kind="head", granted_by=business.owner)
         assignment.branches.set(doctor_assignment.branches.all())
+    if files_fixture:
+        RolePermission.objects.get_or_create(business_role=doctor_assignment.business_role,
+            resource="medical_records", action="manage", defaults={"scope": "business", "is_allowed": True})
 if proposal_fixture:
     from django.contrib.auth import get_user_model
     from apps.branches.models import Branch, BranchAccess
@@ -378,6 +389,62 @@ if len(sys.argv) > 1 and sys.argv[1] == "overview-demographics":
         patient.demographics_encrypted = encrypt_medical_value(json.dumps({"date_of_birth": "2000-02-29"}),
             business_id=patient.business_id, subject_id=patient.client_id, purpose="demographics")
         patient.save(update_fields=["demographics_encrypted"])
+    sys.exit(0)
+if files_fixture and len(sys.argv) > 1 and sys.argv[1] == "files-new-appointment":
+    from django.db import transaction
+    with transaction.atomic():
+        business = Business.objects.get(slug="medical-role")
+        source = Appointment.objects.filter(business=business).order_by("pk").first()
+        index = Appointment.objects.filter(business=business).order_by("-pk").values_list("pk", flat=True).first() + 1
+        client = Client.objects.create(business=business, full_name=f"Synthetic file patient {index}")
+        PatientProfile.objects.create(business=business, client=client, created_by=business.owner,
+            identity_status="verified", verified_at=timezone.now(), verified_by=business.owner,
+            verification_evidence_encrypted="synthetic-fixture-only")
+        appointment = Appointment.objects.create(business=business, client=client, service_id=source.service_id,
+            resource_id=source.resource_id, branch_id=source.branch_id,
+            start_at=source.start_at + timedelta(days=index), end_at=source.end_at + timedelta(days=index))
+    print(json.dumps({"appointment_id": appointment.pk}))
+    sys.exit(0)
+if files_fixture and len(sys.argv) > 1 and sys.argv[1] == "files-access-prepare":
+    from apps.medical.record_services import open_dental_record
+    from apps.medical.encounter_services import open_primary_encounter
+    from apps.medical.correction_access_services import request_correction_access, review_correction_access
+    from apps.medical.models import TreatmentParticipation
+    appointment = Appointment.objects.get(pk=int(sys.argv[2]), business__slug="medical-role")
+    patient = PatientProfile.objects.get(business=appointment.business, client=appointment.client)
+    actor = appointment.resource.linked_user
+    record, _ = open_dental_record(actor=actor, business_id=patient.business_id, patient_id=patient.pk,
+        appointment_id=appointment.pk, expected_patient_revision=patient.revision,
+        number=f"FILES-ACCESS-{patient.pk}", idempotency_key=f"files-access-record-{patient.pk}")
+    version, _ = open_primary_encounter(actor=actor, business_id=patient.business_id, patient_id=patient.pk,
+        record_id=record.pk, appointment_id=appointment.pk, expected_patient_revision=patient.revision,
+        expected_appointment_updated_at=appointment.updated_at, idempotency_key=f"files-access-encounter-{patient.pk}")
+    now = timezone.now()
+    participation = TreatmentParticipation.objects.create(patient=patient, member=version.encounter.primary_clinician,
+        branch=appointment.branch, proposed_by=head, state="active", proposed_at=now, accepted_at=now)
+    correction, _ = request_correction_access(actor=actor, business_id=patient.business_id,
+        encounter_id=version.encounter_id, expected_patient_revision=patient.revision,
+        expected_target_revision=version.encounter.revision, reason="Synthetic file correction",
+        idempotency_key=f"files-access-request-{patient.pk}")
+    review_correction_access(actor=head, business_id=patient.business_id, request_id=correction.pk,
+        expected_revision=1, decision="approve", reason="Synthetic approval", idempotency_key=f"files-access-review-{patient.pk}")
+    Appointment.objects.filter(pk=appointment.pk).update(status="completed")
+    print(json.dumps({"client_id": patient.client_id, "patient_id": patient.pk,
+        "participation_id": participation.pk, "correction_id": correction.pk, "encounter_id": version.encounter_id}))
+    sys.exit(0)
+if files_fixture and len(sys.argv) > 1 and sys.argv[1] == "files-end-participation":
+    from apps.medical.models import TreatmentParticipation
+    TreatmentParticipation.objects.filter(pk=int(sys.argv[2]), patient__business__slug="medical-role").update(
+        state="ended", closed_at=timezone.now(), closed_by=head)
+    sys.exit(0)
+if files_fixture and len(sys.argv) > 1 and sys.argv[1] == "files-scan":
+    from unittest.mock import patch
+    from apps.core.file_scanning import scan_attachment
+    from apps.core.models import FileAttachment
+    from apps.core.tests_file_scanning import clean_result
+    for attachment in FileAttachment.objects.filter(business__slug="medical-role", entity_type="medical_attachment"):
+        with patch("apps.core.file_scanning.scan_stream", side_effect=clean_result):
+            scan_attachment(attachment.pk, attachment.business_id)
     sys.exit(0)
 if len(sys.argv) > 1 and sys.argv[1] in ("revoke", "restore"):
     from apps.medical.models import MedicalRoleAssignment

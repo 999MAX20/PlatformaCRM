@@ -3,7 +3,8 @@ import { Button } from "../../components/ui/Button";
 import { Select } from "../../components/ui/Select";
 import { useI18n } from "../../lib/i18n";
 
-const numbers = Array.from({ length: 8 }, (_, q) => Array.from({ length: q < 4 ? 8 : 5 }, (_, n) => (q + 1) * 10 + n + 1)).flat();
+export const clinicalToothNumbers = Array.from({ length: 8 }, (_, q) => Array.from({ length: q < 4 ? 8 : 5 }, (_, n) => (q + 1) * 10 + n + 1)).flat();
+const numbers = clinicalToothNumbers;
 
 export function ClinicalPlanTeeth({ value = [], onChange, disabled, readOnly }: {
   value?: number[]; onChange: (value: number[]) => void; disabled: boolean; readOnly: boolean;

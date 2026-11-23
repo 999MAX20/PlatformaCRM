@@ -7,6 +7,7 @@ from datetime import timedelta
 import uuid
 
 from apps.businesses.models import TimeStampedModel
+from .file_models import MedicalAttachment, MedicalAttachmentRevision
 
 
 class PatientProfile(TimeStampedModel):
@@ -336,6 +337,9 @@ class MedicalAuditEvent(models.Model):
         DOCUMENT_DRAFT_SAVED = "document_draft_saved", "Document draft saved"
         ORDER_DRAFT_CREATED = "order_draft_created", "Order draft created"
         ORDER_DRAFT_SAVED = "order_draft_saved", "Order draft saved"
+        FILE_UPLOADED = "file_uploaded", "File uploaded"
+        FILE_METADATA_UPDATED = "file_metadata_updated", "File metadata updated"
+        FILE_DOWNLOADED = "file_downloaded", "File downloaded"
         TEMPLATE_DRAFT_CREATED = "template_draft_created", "Template draft created"
         TEMPLATE_DRAFT_SAVED = "template_draft_saved", "Template draft saved"
         TEMPLATE_SUBMITTED = "template_submitted", "Template submitted"
@@ -352,6 +356,8 @@ class MedicalAuditEvent(models.Model):
     actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="medical_audit_events")
     patient = models.ForeignKey(PatientProfile, on_delete=models.PROTECT, null=True, blank=True, related_name="audit_events")
     patient_revision = models.PositiveIntegerField(null=True, blank=True)
+    file_version = models.ForeignKey("MedicalAttachmentRevision", on_delete=models.PROTECT,
+                                     null=True, blank=True, related_name="audit_events")
     identity_correction = models.ForeignKey(PatientIdentityCorrection, on_delete=models.PROTECT,
                                             null=True, blank=True, related_name="audit_events")
     correction_access = models.ForeignKey("MedicalCorrectionAccess", on_delete=models.PROTECT,
@@ -406,8 +412,18 @@ class MedicalAuditEvent(models.Model):
                                                "correction_access_requested", "correction_access_approved",
                                                "correction_access_rejected", "correction_access_withdrawn",
                                                "correction_access_completed", "correction_access_revoked",
-                                               "correction_access_expired", "order_draft_created", "order_draft_saved"], result="success")),
+                                               "correction_access_expired", "order_draft_created", "order_draft_saved",
+                                               "file_uploaded", "file_metadata_updated", "file_downloaded"], result="success")),
                 name="medical_audit_action_result"),
+            models.CheckConstraint(condition=(~models.Q(action__in=["file_uploaded", "file_metadata_updated", "file_downloaded"]) |
+                models.Q(file_version__isnull=False)), name="medical_audit_file_needed"),
+            models.CheckConstraint(condition=(models.Q(file_version__isnull=True) |
+                models.Q(patient__isnull=False, representative__isnull=True, participation__isnull=True,
+                         encounter_version__isnull=True, record__isnull=True, tooth_history__isnull=True,
+                         document_version__isnull=True, template_version__isnull=True, order_version__isnull=True,
+                         credential_version__isnull=True, template_availability__isnull=True,
+                         identity_correction__isnull=True, action__in=["read", "file_uploaded", "file_metadata_updated", "file_downloaded"])),
+                name="medical_audit_file_relation"),
             models.CheckConstraint(condition=(models.Q(order_version__isnull=True) |
                 models.Q(patient__isnull=False, representative__isnull=True, participation__isnull=True,
                          encounter_version__isnull=True, record__isnull=True, tooth_history__isnull=True,
@@ -984,3 +1000,14 @@ class DentalToothHistory(models.Model):
         from apps.businesses.models import BusinessMember
         if not BusinessMember.objects.filter(business_id=state.business_id, user_id=self.author_id).exists():
             raise ValidationError({"author": "Select an author belonging to this business."})
+
+
+class MedicalAttachmentTooth(models.Model):
+    version = models.ForeignKey(MedicalAttachmentRevision, on_delete=models.PROTECT, related_name="tooth_links")
+    tooth = models.PositiveSmallIntegerField()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["version", "tooth"], name="medical_file_tooth_unique"),
+            models.CheckConstraint(condition=models.Q(tooth__in=FDI_TOOTH_NUMBERS), name="medical_file_tooth_fdi"),
+        ]

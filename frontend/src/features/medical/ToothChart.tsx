@@ -22,22 +22,23 @@ import type { ClinicalDraftControl } from "./ClinicalDraftForm";
 type Denied = (cause: unknown) => void;
 function denied(cause: unknown) { return axios.isAxiosError(cause) && [401, 403].includes(cause.response?.status ?? 0); }
 
-export function ToothChart({ context, onDenied }: { context: AppointmentClinicalContext; onDenied: Denied }) {
+export function ToothChart({ context, onDenied, onFiles }: { context: AppointmentClinicalContext; onDenied: Denied; onFiles?: (tooth: number) => void }) {
   const scope = useMemo(() => ({ business_id: context.business_id, patient_id: context.patient.id,
     appointment_id: context.appointment.id }), [context]);
-  return <ToothChartRead key={historyScopeKey(scope)} scope={scope} context={context} onDenied={onDenied} />;
+  return <ToothChartRead key={historyScopeKey(scope)} scope={scope} context={context} onDenied={onDenied} onFiles={onFiles} />;
 }
 
-export function ParticipationToothChart({ businessId, patientId, participationId, onDenied }: {
-  businessId: number; patientId: number; participationId: number; onDenied: Denied;
+export function ParticipationToothChart({ businessId, patientId, participationId, onDenied, onFiles }: {
+  businessId: number; patientId: number; participationId: number; onDenied: Denied; onFiles?: (tooth: number) => void;
 }) {
   const scope = useMemo(() => ({ business_id: businessId, patient_id: patientId, participation_id: participationId }),
     [businessId, patientId, participationId]);
-  return <ToothChartRead key={historyScopeKey(scope)} scope={scope} onDenied={onDenied} />;
+  return <ToothChartRead key={historyScopeKey(scope)} scope={scope} onDenied={onDenied} onFiles={onFiles} />;
 }
 
-function ToothChartRead({ scope, context, onDenied }: {
+function ToothChartRead({ scope, context, onDenied, onFiles }: {
   scope: ClinicalReadScope; context?: AppointmentClinicalContext; onDenied: Denied;
+  onFiles?: (tooth: number) => void;
 }) {
   const { t } = useI18n();
   const [navigation, setNavigation] = useToothNavigation(scope);
@@ -48,13 +49,14 @@ function ToothChartRead({ scope, context, onDenied }: {
       <Button type="submit" size="lg" variant="secondary" disabled={!date}>{t("medical.tooth.show")}</Button>
       {asOf ? <Button size="lg" variant="secondary" onClick={() => { setNavigation({ ...navigation, date: "", asOf: undefined }); }}>{t("medical.tooth.current")}</Button> : null}
     </form>
-    <ChartData navigation={navigation} onNavigation={setNavigation} key={asOf ?? "current"} scope={scope} context={context} asOf={asOf} onDenied={onDenied} />
+    <ChartData navigation={navigation} onNavigation={setNavigation} key={asOf ?? "current"} scope={scope} context={context} asOf={asOf} onDenied={onDenied} onFiles={onFiles} />
   </section>;
 }
 
-function ChartData({ scope, context, asOf, onDenied, navigation, onNavigation }: {
+function ChartData({ scope, context, asOf, onDenied, navigation, onNavigation, onFiles }: {
   scope: ClinicalReadScope; context?: AppointmentClinicalContext; asOf?: string; onDenied: Denied;
   navigation: ReturnType<typeof useToothNavigation>[0]; onNavigation: ReturnType<typeof useToothNavigation>[1];
+  onFiles?: (tooth: number) => void;
 }) {
   const { t } = useI18n();
   const [rows, setRows] = useState<ToothSnapshot["observations"] | null>(null);
@@ -69,7 +71,12 @@ function ChartData({ scope, context, asOf, onDenied, navigation, onNavigation }:
   const [closeFailed, setCloseFailed] = useState(false);
   const [closing, setClosing] = useState(false);
   const closePending = useRef(false);
-  const finish = () => { setConfirmClose(false); setSelected(null); };
+  const filesDestination = useRef<number | null>(null);
+  const finish = () => {
+    const tooth = filesDestination.current; filesDestination.current = null;
+    setConfirmClose(false); setSelected(null);
+    if (tooth !== null) onFiles?.(tooth);
+  };
   const reload = () => { focusAfterReload.current = selected; finish(); setAttempt(x => x + 1); };
   const close = () => {
     if (closePending.current || editor.current?.isPending()) return;
@@ -140,6 +147,10 @@ function ChartData({ scope, context, asOf, onDenied, navigation, onNavigation }:
     <Modal open={selected !== null} onClose={close} closeOnBackdrop={false} size="lg" title={`${t("medical.tooth.tooth")} ${selected ?? ""}`}
       focusReturnId={`tooth-${selected}`} testId="tooth-inspector">
       {selected !== null ? <div className="space-y-4">
+        {onFiles && !asOf ? <Button size="lg" variant="secondary" onClick={() => {
+          if (closePending.current || editor.current?.isPending()) return;
+          filesDestination.current = selected; close();
+        }}>{t("medical.files.title")}</Button> : null}
         <ToothPlanSteps key={`${selected}-${asOf ?? "current"}`} scope={scope} tooth={selected} asOf={asOf} onDenied={onDenied} />
         {asOf || !context ? <p className="text-sm text-platforma-subtle">{t("medical.tooth.readOnly")}</p> : null}
         {!rows.some(row => row.tooth === selected) ? <p>{t("medical.tooth.empty")}</p> : rows.filter(row => row.tooth === selected).map(row =>
@@ -149,13 +160,13 @@ function ChartData({ scope, context, asOf, onDenied, navigation, onNavigation }:
           control={editor} onSaved={reload} onReload={reload} onDenied={onDenied} /> : null}
       </div> : null}
     </Modal>
-    <Modal open={confirmClose && selected !== null} onClose={() => { if (!closePending.current) setConfirmClose(false); }}
+    <Modal open={confirmClose && selected !== null} onClose={() => { if (!closePending.current) { filesDestination.current = null; setConfirmClose(false); } }}
       closeOnBackdrop={false} size="sm" title={t("medical.clinical.unsavedTitle")} testId="tooth-unsaved">
       <div className="space-y-4">
         {closeFailed ? <p role="alert">{t("medical.clinical.closeFailed")}</p> : null}
         <div className="flex flex-wrap gap-3">
           <Button size="lg" isLoading={closing} onClick={() => void saveAndClose()}>{t("medical.clinical.saveClose")}</Button>
-          <Button size="lg" variant="secondary" disabled={closing} onClick={() => setConfirmClose(false)}>{t("medical.clinical.continueEditing")}</Button>
+          <Button size="lg" variant="secondary" disabled={closing} onClick={() => { filesDestination.current = null; setConfirmClose(false); }}>{t("medical.clinical.continueEditing")}</Button>
           <Button size="lg" variant="secondary" disabled={closing} onClick={finish}>{t("medical.clinical.leaveUnsaved")}</Button>
         </div>
       </div>

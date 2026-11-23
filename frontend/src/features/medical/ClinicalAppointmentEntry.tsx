@@ -21,6 +21,7 @@ import { ClinicalVisitPlans } from "./ClinicalVisitPlans";
 import type { HistoryMemory } from "./clinicalHistoryNavigation";
 import { useAuth } from "../auth/AuthProvider";
 import { clinicalCardMemory, type ClinicalTab } from "./clinicalCardMemory";
+import { MedicalFilesWorkspace, type MedicalFilesState, type MedicalFilesNavigation } from "./files/MedicalFilesWorkspace";
 
 export type ClinicalEntryHandle = { beforeLeave: () => Promise<boolean> };
 
@@ -39,6 +40,9 @@ export function ClinicalAppointmentEntry({ businessId, appointmentId, embedded =
   const [open, setOpen] = useState(embedded);
   const [refresh, setRefresh] = useState(0);
   const [dirty, setDirty] = useState(false);
+  const [fileState, setFileState] = useState<MedicalFilesState>({ dirty: false, pending: false });
+  const fileGuard = useRef(fileState);
+  const onFilesState = useCallback((value: MedicalFilesState) => { fileGuard.current = value; setFileState(value); }, []);
   const [confirmClose, setConfirmClose] = useState(false);
   const [closing, setClosing] = useState(false);
   const [closeFailed, setCloseFailed] = useState(false);
@@ -51,8 +55,8 @@ export function ClinicalAppointmentEntry({ businessId, appointmentId, embedded =
   const onDocumentEditor = useCallback((value: boolean) => { documentEditor.current = value; }, []);
   const canEditDocument = useCallback(() => !draftControl.current?.isPending(), []);
   const [admitted, setAdmitted] = useState(false);
-  useUnsavedEntryWarning(dirty);
-  useEffect(() => { onDirtyChange?.(dirty); }, [dirty, onDirtyChange]);
+  useUnsavedEntryWarning(dirty || fileState.dirty);
+  useEffect(() => { onDirtyChange?.(dirty || fileState.dirty); }, [dirty, fileState.dirty, onDirtyChange]);
   const focusId = `clinical-open-${businessId}-${appointmentId}`;
   useEffect(() => {
     const controller = new AbortController();
@@ -70,6 +74,7 @@ export function ClinicalAppointmentEntry({ businessId, appointmentId, embedded =
   const finishClose = () => { setConfirmClose(false); if (!embedded) setOpen(false); setDirty(false); resolveLeave(true); };
   const keepEditing = () => { setConfirmClose(false); resolveLeave(false); };
   useImperativeHandle(navigationRef, () => ({ beforeLeave: async () => {
+    if (fileGuard.current.pending || (fileGuard.current.dirty && !window.confirm(t("medical.clinical.discard")))) return false;
     if (documentEditor.current || workspacePending.current || closeInFlight.current || draftControl.current?.isPending() || leaveRequest.current) return false;
     if (draftControl.current?.isDirty() && context?.encounter) {
       setCloseFailed(false); setConfirmClose(true);
@@ -79,6 +84,7 @@ export function ClinicalAppointmentEntry({ businessId, appointmentId, embedded =
   } }));
   useEffect(() => () => resolveLeave(false), []);
   const close = () => {
+    if (fileGuard.current.pending || (fileGuard.current.dirty && !window.confirm(t("medical.clinical.discard")))) return;
     if (documentEditor.current || workspacePending.current || closeInFlight.current || draftControl.current?.isPending()) return;
     if (draftControl.current?.isDirty() && context?.encounter) { setCloseFailed(false); setConfirmClose(true); return; }
     if (dirty && !window.confirm(t("medical.clinical.discard"))) return;
@@ -97,7 +103,7 @@ export function ClinicalAppointmentEntry({ businessId, appointmentId, embedded =
   const workspace = loading ? <LoadingState /> : error ? <ErrorState message={status === 401 || status === 403 ? t("medical.denied") : getApiErrorMessage(error)}
     action={<Button size="lg" variant="secondary" onClick={reload}>{t("common.retry")}</Button>} /> : context ?
     <ClinicalWorkspace compact={embedded} onPending={onWorkspacePending} historyMemory={historyMemory} tab={tab} onTabChange={setTab} draftControl={draftControl} context={context} onChanged={reload} onDirty={setDirty} onDenied={denied}
-      onDocumentEditor={onDocumentEditor} canEditDocument={canEditDocument} /> : null;
+      onDocumentEditor={onDocumentEditor} canEditDocument={canEditDocument} onFilesState={onFilesState} /> : null;
   if (!open && (status === 401 || status === 403)) return null;
   return <div className="mt-4" data-testid="clinical-appointment-entry">
     {loading && !open ? <LoadingState /> : !open && error ? <ErrorState
@@ -124,7 +130,8 @@ export function ClinicalAppointmentEntry({ businessId, appointmentId, embedded =
   </div>;
 }
 
-function ClinicalWorkspace({ context, onChanged, onDirty, onDenied, draftControl, onDocumentEditor, canEditDocument, tab, onTabChange, historyMemory, compact = false, onPending }: {
+function ClinicalWorkspace({ context, onChanged, onDirty, onDenied, draftControl, onDocumentEditor, canEditDocument, tab, onTabChange, historyMemory, compact = false, onPending, onFilesState }: {
+  onFilesState: (state: MedicalFilesState) => void;
   compact?: boolean;
   onPending: (pending: boolean) => void;
   historyMemory: HistoryMemory;
@@ -138,6 +145,9 @@ function ClinicalWorkspace({ context, onChanged, onDirty, onDenied, draftControl
   const tabPrefix = `clinical-${context.appointment.id}`;
   const planScope = useMemo(() => ({ business_id: context.business_id, patient_id: context.patient.id,
     appointment_id: context.appointment.id }), [context]);
+  const fileScope = useMemo(() => context.active_record ? { ...planScope, record_id: context.active_record.id,
+    encounter_id: context.encounter?.id } : null, [context, planScope]);
+  const filesNavigation = useRef<MedicalFilesNavigation>(null);
   const [pending, setPending] = useState(false);
   useEffect(() => { onPending(pending); return () => onPending(false); }, [pending, onPending]);
   const [error, setError] = useState<unknown>(null);
@@ -177,7 +187,7 @@ function ClinicalWorkspace({ context, onChanged, onDirty, onDenied, draftControl
       <Tabs value={tab} onChange={onTabChange} idPrefix={tabPrefix} ariaLabel={t("medical.clinical.title")}
         className="[&_[role=tab]]:min-h-11" appearance="underline"
         options={[{ value: "overview", label: t("medical.overview.title") }, { value: "encounter", label: t("medical.clinical.note") }, { value: "history", label: t("medical.clinical.history") }, { value: "teeth", label: t("medical.tooth.title") },
-          { value: "plan", label: t("medical.clinical.plan") }, { value: "documents", label: t("medical.documents.title") }, { value: "orders", label: t("medical.orders.title") }]} />
+          { value: "plan", label: t("medical.clinical.plan") }, { value: "files", label: t("medical.files.title") }, { value: "documents", label: t("medical.documents.title") }, { value: "orders", label: t("medical.orders.title") }]} />
       <div role="tabpanel" id={`${tabPrefix}-panel-overview`} aria-labelledby={`${tabPrefix}-tab-overview`} hidden={tab !== "overview"}>
         {tab === "overview" ? <ClinicalOverview context={context} onDenied={onDenied} onNavigate={next => {
           onTabChange(next);
@@ -201,7 +211,11 @@ function ClinicalWorkspace({ context, onChanged, onDirty, onDenied, draftControl
       </>}
       </div>
       <div role="tabpanel" id={`${tabPrefix}-panel-teeth`} aria-labelledby={`${tabPrefix}-tab-teeth`} hidden={tab !== "teeth"}>
-        {tab === "teeth" ? <ToothChart context={context} onDenied={onDenied} /> : null}
+        {tab === "teeth" ? <ToothChart context={context} onDenied={onDenied} onFiles={fileScope ? tooth => {
+          if (!filesNavigation.current?.openTooth(tooth)) return;
+          onTabChange("files");
+          requestAnimationFrame(() => document.getElementById(`${tabPrefix}-tab-files`)?.focus());
+        } : undefined} /> : null}
       </div>
       <div role="tabpanel" id={`${tabPrefix}-panel-history`} aria-labelledby={`${tabPrefix}-tab-history`} hidden={tab !== "history"}>
         {tab === "history" ? <ClinicalHistory context={context} onDenied={onDenied} memory={historyMemory} /> : null}
@@ -213,6 +227,10 @@ function ClinicalWorkspace({ context, onChanged, onDirty, onDenied, draftControl
       <div role="tabpanel" id={`${tabPrefix}-panel-orders`} aria-labelledby={`${tabPrefix}-tab-orders`} hidden={tab !== "orders"}>
         {context.encounter ? <OrderWorkspace context={context} active={tab === "orders"} onEditor={onDocumentEditor} canEdit={canEditDocument} /> :
           <p className="text-sm text-platforma-subtle">{t("medical.clinical.noEncounter")}</p>}
+      </div>
+      <div role="tabpanel" id={`${tabPrefix}-panel-files`} aria-labelledby={`${tabPrefix}-tab-files`} hidden={tab !== "files"}>
+        {fileScope ? <MedicalFilesWorkspace scope={fileScope} active={tab === "files"} onState={onFilesState} onDenied={onDenied} navigationRef={filesNavigation} /> :
+          <p className="text-sm text-platforma-subtle">{t("medical.clinical.noRecord")}</p>}
       </div>
     </div>
   </div>;

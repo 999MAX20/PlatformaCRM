@@ -119,6 +119,7 @@ SAFE_ENV = {
     "OZON_SELLER_API_BASE_URL": "",
     "USE_S3": "False",
     "AWS_ACCESS_KEY_ID": "",
+    "MEDICAL_READ_AUDIT_RESERVE": "",
     "AWS_SECRET_ACCESS_KEY": "",
     "AWS_SESSION_TOKEN": "",
     "AWS_STORAGE_BUCKET_NAME": "",

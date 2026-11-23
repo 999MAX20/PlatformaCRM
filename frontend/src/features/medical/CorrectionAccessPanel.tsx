@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import axios from "axios";
 import { correctionAccessApi as api, type CorrectionAccess, type CorrectionPage, type CorrectionScope } from "../../api/medicalCorrectionAccess";
 import { getApiErrorMessage } from "../../api/client";
@@ -9,8 +9,9 @@ import { ErrorState, LoadingState } from "../../components/ui/StateViews";
 import { useI18n } from "../../lib/i18n";
 import { CorrectionDecisionForm, CorrectionDraftForm, CorrectionRequestForm, type CorrectionAction } from "./CorrectionAccessForms";
 import type { RoleDraftState } from "./roles/MedicalRoleCommand";
+import { MedicalFilesWorkspace } from "./files/MedicalFilesWorkspace";
 
-type Editing = { kind: "request" } | { kind: "edit"; item: CorrectionAccess } | { kind: "decision"; item: CorrectionAccess; action: CorrectionAction };
+type Editing = { kind: "request" } | { kind: "edit" | "files"; item: CorrectionAccess } | { kind: "decision"; item: CorrectionAccess; action: CorrectionAction };
 
 export function CorrectionAccessPanel({ scope }: { scope: CorrectionScope }) {
   const { t, language } = useI18n();
@@ -22,12 +23,32 @@ export function CorrectionAccessPanel({ scope }: { scope: CorrectionScope }) {
   const [before, setBefore] = useState<number | undefined>();
   const [attempt, setAttempt] = useState(0);
   const [editing, setEditing] = useState<Editing | null>(null);
+  const fileScope = useMemo(() => editing?.kind === "files" ? {
+    business_id: scope.business_id, patient_id: editing.item.patient_id,
+    correction_access_id: editing.item.id, encounter_id: editing.item.encounter_id,
+  } : null, [editing, scope.business_id]);
   const admitted = useRef(false);
+  const filesReturnId = useRef<number | null>(null);
+  const panelRef = useRef<HTMLElement>(null);
   const guard = useRef<RoleDraftState>({ dirty: false, pending: false });
   const onDraft = useCallback((state: RoleDraftState) => { guard.current = state; }, []);
   const onDenied = useCallback((cause: unknown) => { setPage(null); setEditing(null); setError(cause); setCanReview(false); }, []);
   const reload = useCallback(() => { setBefore(undefined); setAttempt(value => value + 1); }, []);
   const saved = useCallback(() => { setEditing(null); reload(); }, [reload]);
+  useLayoutEffect(() => {
+    if (!editing && filesReturnId.current !== null) {
+      panelRef.current?.querySelector<HTMLButtonElement>(`[data-correction-files="${filesReturnId.current}"]`)?.focus();
+      filesReturnId.current = null;
+    }
+  }, [editing]);
+  useEffect(() => {
+    if (!fileScope) return;
+    const warn = (event: BeforeUnloadEvent) => {
+      if (guard.current.dirty || guard.current.pending) { event.preventDefault(); event.returnValue = ""; }
+    };
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [fileScope]);
   useEffect(() => {
     const controller = new AbortController();
     setPage(null); setError(null); setLoading(true);
@@ -50,7 +71,11 @@ export function CorrectionAccessPanel({ scope }: { scope: CorrectionScope }) {
   }
   if (!admitted.current && axios.isAxiosError(error) && [403, 404].includes(error.response?.status ?? 0)) return null;
   const control = { guard, onDraft, onSaved: saved, onDenied };
-  return <section className="space-y-4" aria-label={t("medical.correctionAccess.title")} data-testid="correction-access">
+  if (fileScope) return <section className="space-y-4" aria-label={t("medical.files.title")}>
+    <Button autoFocus size="lg" variant="secondary" onClick={close}>{t("common.back")}</Button>
+    <MedicalFilesWorkspace scope={fileScope} active onState={onDraft} onDenied={onDenied} />
+  </section>;
+  return <section ref={panelRef} className="space-y-4" aria-label={t("medical.correctionAccess.title")} data-testid="correction-access">
     <div className="flex flex-wrap items-center justify-between gap-2">
       <h3 className="text-base font-semibold">{t("medical.correctionAccess.title")}</h3>
       <Button variant="secondary" aria-disabled={loading} onClick={() => { if (!loading) reload(); }}>{t("medical.clinical.reload")}</Button>
@@ -76,6 +101,10 @@ export function CorrectionAccessPanel({ scope }: { scope: CorrectionScope }) {
           {item.expires_at ? <p>{t("medical.correctionAccess.until")} {new Date(item.expires_at).toLocaleString(language)}</p> : null}
           <div className="flex flex-wrap gap-2">
             {item.state === "active" && item.requester_id === page.member_id ? <Button size="lg" data-focus-return-id={`correction-edit-${item.id}`} onClick={() => setEditing({ kind: "edit", item })}>{t("medical.correctionAccess.edit")}</Button> : null}
+            {item.state === "active" && !item.document_id && item.requester_id === page.member_id ?
+              <Button size="lg" variant="secondary" data-correction-files={item.id} onClick={() => {
+                filesReturnId.current = item.id; setEditing({ kind: "files", item });
+              }}>{t("medical.files.title")}</Button> : null}
             {(item.state === "pending" ? (head && item.requester_id !== page.member_id ? ["approve", "reject"] : item.requester_id === page.member_id ? ["withdraw"] : [])
               : item.state === "active" ? (head ? ["revoke"] : item.requester_id === page.member_id ? ["complete"] : []) : []).map(value => {
               const action = value as CorrectionAction;

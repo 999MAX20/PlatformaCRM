@@ -1,5 +1,6 @@
 from django.contrib import admin
 
+from apps.core.file_attachments import ENTITY_CONFIG
 from apps.core.models import AuditLog, CustomFieldDefinition, CustomFieldValue, FileAttachment, ImportJob, LoginHistory, SupportAccessGrant
 
 
@@ -65,6 +66,9 @@ class FileAttachmentAdmin(admin.ModelAdmin):
     search_fields = ("original_name", "business__name", "entity_type", "entity_id", "uploaded_by__email")
     exclude = ("file",)
     readonly_fields = tuple(field.name for field in FileAttachment._meta.fields if field.name != "file")
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).filter(entity_type__in=ENTITY_CONFIG)
 
     def has_add_permission(self, request):
         return False

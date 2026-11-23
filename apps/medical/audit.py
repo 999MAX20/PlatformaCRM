@@ -1,10 +1,10 @@
 from django.core.exceptions import ValidationError as ModelValidationError
-from django.db import DatabaseError
+from django.db import DatabaseError, transaction
 from django.db.models import Q
 
 from apps.core.domain_errors import DomainAPIException
 from .models import DentalToothHistory, DentalMedicalRecord, MedicalAuditEvent, PatientProfile, PatientRepresentative, TreatmentParticipation, MedicalEncounterRevision
-from .models import MedicalDocumentRevision, MedicalOrderRevision, PatientIdentityCorrection, MedicalCorrectionAccess
+from .models import MedicalDocumentRevision, MedicalOrderRevision, PatientIdentityCorrection, MedicalCorrectionAccess, MedicalAttachmentRevision
 
 
 class MedicalAuditUnavailable(DomainAPIException):
@@ -15,7 +15,7 @@ class MedicalAuditUnavailable(DomainAPIException):
     category = "temporary"
 
 
-def write_patient_audit(*, actor, business, patient, action, representative=None, participation=None, encounter_version=None, record=None, tooth_history=None, document_version=None, identity_correction=None, correction_access=None, order_version=None):
+def write_patient_audit(*, actor, business, patient, action, representative=None, participation=None, encounter_version=None, record=None, tooth_history=None, document_version=None, identity_correction=None, correction_access=None, order_version=None, file_version=None):
     if action not in MedicalAuditEvent.Actions.values or action == MedicalAuditEvent.Actions.ACCESS_DENIED:
         raise ValueError("Select a supported successful patient action.")
     if not patient.pk or not PatientProfile.objects.filter(pk=patient.pk, business_id=business.pk).exists():
@@ -31,7 +31,8 @@ def write_patient_audit(*, actor, business, patient, action, representative=None
             raise ValueError("Correction access must belong to the audited patient and business.")
         if expected is not None and correction_access.state != expected:
             raise ValueError("Correction access state must match its audit action.")
-        if expected is None and action not in {"read", "encounter_draft_saved", "document_draft_saved"}:
+        if expected is None and action not in {"read", "encounter_draft_saved", "document_draft_saved",
+                                               "file_uploaded", "file_metadata_updated", "file_downloaded"}:
             raise ValueError("Select a correction access read or draft update action.")
         if action in {"encounter_draft_saved", "document_draft_saved"} and correction_access.state != "active":
             raise ValueError("A correction write requires active access.")
@@ -42,6 +43,9 @@ def write_patient_audit(*, actor, business, patient, action, representative=None
             raise ValueError("Correction access does not authorize this encounter version.")
         if document_version is not None and document_version.document_id != correction_access.document_id:
             raise ValueError("Correction access does not authorize this document version.")
+        if file_version is not None and (correction_access.document_id is not None or
+                file_version.medical_file.encounter_id != correction_access.encounter_id or correction_access.state != "active"):
+            raise ValueError("Correction access does not authorize this file version.")
     if action.startswith("identity_correction_") and identity_correction is None:
         raise ValueError("An identity correction action requires its correction.")
     if identity_correction is not None:
@@ -161,17 +165,47 @@ def write_patient_audit(*, actor, business, patient, action, representative=None
         if (action == "order_draft_created" and version.revision != 1 or
                 action == "order_draft_saved" and version.revision <= 1):
             raise ValueError("Order action does not match the version.")
-    try:
-        event = MedicalAuditEvent.objects.create(business=business, actor=actor, patient=patient,
+    if action.startswith("file_") and file_version is None:
+        raise ValueError("A medical file action requires its version.")
+    if file_version is not None:
+        if any(item is not None for item in (representative, participation, encounter_version, record,
+                                             tooth_history, document_version, identity_correction, order_version)):
+            raise ValueError("Medical file audit cannot mix entity references.")
+        if action not in {"read", "file_uploaded", "file_metadata_updated", "file_downloaded"}:
+            raise ValueError("Select a medical file action.")
+        version = MedicalAttachmentRevision.objects.select_related("medical_file").filter(
+            pk=file_version.pk, medical_file__business=business, medical_file__patient=patient).first()
+        if version is None:
+            raise ValueError("Medical file version must belong to the audited patient and business.")
+        try:
+            version.clean()
+        except ModelValidationError:
+            raise ValueError("Medical file links must be consistent.") from None
+        if action in {"file_uploaded", "file_metadata_updated"} and (
+                version.author_id != actor.pk or version.revision != version.medical_file.revision):
+            raise ValueError("A medical file write requires the author's current version.")
+        if (action == "file_uploaded" and version.revision != 1 or
+                action == "file_metadata_updated" and version.revision <= 1):
+            raise ValueError("Medical file action does not match its version.")
+    fields = dict(business=business, actor=actor, patient=patient,
             patient_revision=patient.revision, action=action, result="success", representative=representative,
             representative_revision=representative.revision if representative else None,
             participation=participation, participation_revision=participation.revision if participation else None,
             encounter_version=encounter_version, record=record, tooth_history=tooth_history,
-            document_version=document_version, order_version=order_version,
+            document_version=document_version, order_version=order_version, file_version=file_version,
             identity_correction=identity_correction, correction_access=correction_access,
             correction_access_revision=correction_access.revision if correction_access else None)
-        if event is None or event.pk is None:
-            raise MedicalAuditUnavailable()
+    try:
+        with transaction.atomic():
+            event = MedicalAuditEvent.objects.create(**fields)
+            if event is None or event.pk is None:
+                raise MedicalAuditUnavailable()
         return event
-    except DatabaseError:
+    except (DatabaseError, MedicalAuditUnavailable):
+        if action == MedicalAuditEvent.Actions.READ:
+            from .audit_reserve import ReserveUnavailable, write_reserved_read
+            try:
+                return write_reserved_read(fields)
+            except ReserveUnavailable:
+                pass
         raise MedicalAuditUnavailable() from None

@@ -1,6 +1,7 @@
 """Durable quarantine and scan leases; never release an unverified attachment."""
 from datetime import timedelta
 import hashlib
+from io import BytesIO
 from tempfile import SpooledTemporaryFile
 from uuid import uuid4
 
@@ -85,11 +86,11 @@ def scan_due_attachments(limit=10):
     return sum(scan_attachment(pk, business_id) is not None for pk, business_id in candidates)
 
 
-def open_clean_attachment(attachment):
+def open_clean_attachment(attachment, *, memory_only=False):
     """Serve an immutable checked snapshot, never bytes replaced after the scan."""
     if attachment.scan_status != "clean" or not attachment.scan_sha256:
         raise FileQuarantined()
-    snapshot = SpooledTemporaryFile(max_size=1024 * 1024, mode="w+b")
+    snapshot = BytesIO() if memory_only else SpooledTemporaryFile(max_size=1024 * 1024, mode="w+b")
     try:
         digest = hashlib.sha256()
         size = 0

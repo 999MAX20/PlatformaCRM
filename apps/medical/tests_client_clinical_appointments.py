@@ -1,4 +1,5 @@
 from unittest.mock import patch
+from datetime import timedelta
 
 from django.db import DatabaseError
 from django.test import TestCase
@@ -10,7 +11,7 @@ from apps.businesses.models import Business
 from apps.clients.models import Client
 from apps.scheduling.models import Appointment, Resource
 from . import tests_appointment_access as fixtures
-from .models import MedicalAuditEvent
+from .models import MedicalAuditEvent, TreatmentParticipation
 
 
 class ClientClinicalAppointmentsTests(TestCase):
@@ -45,6 +46,40 @@ class ClientClinicalAppointmentsTests(TestCase):
         self.patient.delete()
         self.assertEqual(self.read().data, response.data)
         self.assertEqual(response.data, {"results": [], "next_before_id": None})
+
+    def active_participation(self):
+        now = timezone.now()
+        return TreatmentParticipation.objects.create(patient=self.patient, member=self.member, branch=self.first,
+            proposed_by=self.owner, state="active", proposed_at=now, accepted_at=now)
+
+    def test_active_participation_keeps_direct_card_reachable_after_booking_completion(self):
+        item = self.active_participation()
+        Appointment.objects.filter(pk=self.appointment.pk).update(status="completed")
+        response = self.read()
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(response.data["results"], [])
+        self.assertEqual(response.data["participation"], {"id": item.pk, "patient_id": self.patient.pk})
+        event = MedicalAuditEvent.objects.get()
+        self.assertEqual((event.patient_id, event.participation_id), (self.patient.pk, item.pk))
+        TreatmentParticipation.objects.filter(pk=item.pk).update(state="ended", closed_at=timezone.now(), closed_by=self.owner)
+        self.assertNotIn("participation", self.read().data)
+
+    def test_future_or_other_branch_participation_is_not_a_direct_card_basis(self):
+        item = self.active_participation()
+        TreatmentParticipation.objects.filter(pk=item.pk).update(accepted_at=timezone.now() + timedelta(hours=1))
+        self.assertNotIn("participation", self.read().data)
+        TreatmentParticipation.objects.filter(pk=item.pk).update(accepted_at=timezone.now(), branch=self.second)
+        self.assertNotIn("participation", self.read().data)
+
+    def test_participation_discovery_does_not_bypass_revoked_role_or_audit_failure(self):
+        self.active_participation()
+        with patch("apps.medical.client_clinical_appointments.MedicalAuditEvent.objects.create", side_effect=DatabaseError("Synthetic")):
+            response = self.read()
+        self.assertEqual(response.status_code, 503)
+        self.assertNotIn("participation", response.data)
+        self.assignment.revoked_at = timezone.now()
+        self.assignment.save(update_fields=["revoked_at"])
+        self.assertEqual(self.read().status_code, 403)
 
     def test_valid_booking_without_profile_can_be_selected_for_existing_context_flow(self):
         self.patient.delete()

@@ -7,7 +7,8 @@ from apps.businesses.models import Business
 from apps.clients.models import Client
 from .appointment_access import _assigned_appointments
 from .audit import MedicalAuditUnavailable
-from .models import MedicalAuditEvent, MedicalRoleAssignment
+from .models import MedicalAuditEvent, MedicalRoleAssignment, TreatmentParticipation
+from .participation_access import assert_treatment_medical_basis
 from .role_access import assert_medical_branch_permission
 
 
@@ -33,12 +34,24 @@ def list_client_clinical_appointments(*, actor, business_id, branch_id, client_i
     if before_id is not None:
         appointments = appointments.filter(pk__lt=before_id)
     page = list(appointments.order_by("-pk")[:limit + 1])
+    participation = TreatmentParticipation.objects.select_related("patient").filter(
+        patient__business=business, patient__client=client, branch=branch,
+        member_id=role.member_id, state="active").first()
+    if participation is not None:
+        try:
+            assert_treatment_medical_basis(actor=actor, business=business, patient_id=participation.patient_id,
+                                          participation_id=participation.pk)
+        except PermissionDenied:
+            participation = None
     try:
-        event = MedicalAuditEvent.objects.create(business=business, actor=actor, action="read", result="success")
+        event = MedicalAuditEvent.objects.create(business=business, actor=actor, action="read", result="success",
+            **({"patient": participation.patient, "patient_revision": participation.patient.revision,
+                "participation": participation, "participation_revision": participation.revision} if participation else {}))
         if event is None or event.pk is None:
             raise MedicalAuditUnavailable()
     except DatabaseError:
         raise MedicalAuditUnavailable() from None
     return {"results": [{"id": item.pk, "start_at": item.start_at, "end_at": item.end_at}
                         for item in page[:limit]],
-            "next_before_id": page[limit - 1].pk if len(page) > limit else None}
+            "next_before_id": page[limit - 1].pk if len(page) > limit else None,
+            **({"participation": {"id": participation.pk, "patient_id": participation.patient_id}} if participation else {})}

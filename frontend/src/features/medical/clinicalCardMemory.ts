@@ -1,7 +1,7 @@
 import type { HistoryNavigation } from "./clinicalHistoryNavigation";
 import type { ViewMemory } from "./clinicalViewNavigation";
 
-export type ClinicalTab = "overview" | "encounter" | "history" | "teeth" | "plan" | "documents" | "orders";
+export type ClinicalTab = "overview" | "encounter" | "history" | "teeth" | "plan" | "documents" | "orders" | "files";
 type CardMemory = { tab: ClinicalTab; history: Map<string, HistoryNavigation>; views: ViewMemory };
 let activeOwner = "";
 const cards = new Map<number, CardMemory>();

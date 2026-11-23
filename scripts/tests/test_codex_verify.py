@@ -53,6 +53,7 @@ class SafeEnvironmentTests(unittest.TestCase):
                 "OPENROUTER_API_KEY": "live-openrouter-secret",
                 "KASPI_PRICE_WRITE_API_KEY": "live-kaspi-secret",
                 "AWS_SECRET_ACCESS_KEY": "live-aws-secret",
+                "MEDICAL_READ_AUDIT_RESERVE": '{"secret_key":"live-reserve-secret"}',
                 "EMAIL_HOST_PASSWORD": "live-smtp-secret",
                 "SENTRY_DSN": "https://live@sentry.example/1",
                 "VITE_APPLE_CLIENT_ID": "live-apple-client",
@@ -71,6 +72,7 @@ class SafeEnvironmentTests(unittest.TestCase):
             },
         )
 
+        self.assertEqual(environment["MEDICAL_READ_AUDIT_RESERVE"], "")
         self.assertEqual(
             environment["DATABASE_URL"],
             f"sqlite:///{database_path.resolve().as_posix()}",
