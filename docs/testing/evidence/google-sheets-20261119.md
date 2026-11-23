@@ -378,3 +378,38 @@ Limits: no name-only dedup or inferred country; no automatic merge or existing
 duplicate cleanup. Intra-file conflicts discovered during insertion are atomically
 rejected, not all predicted in preview. Manual concurrent creation does not share
 the import lock. No deployment yet; publication and production continuation next.
+
+Publication receipt: code/docs a03dc0e24dff4c876b76057e5ce1085bd850cb6a normal-pushed
+from codex/ui-testing-toolkit to origin/main, remote SHA read back equal. Starting
+origin/main equalled6347057f, so no foreign outgoing commits. Shared STATUS and
+integration contract staged by task-only content; foreign WIP preserved. Intended
+diff/new fixtures reviewed; working/index diff checks PASS. Owned UI fixture server
+18743 stopped after verification; other services unchanged. Fixture edit triggered
+a transient Vite createRoot/HMR warning before the explicit full reload; subsequent
+screen/action checks used that fresh page, not HMR as acceptance evidence.
+
+Production continuation: immutable candidate updated with the verified identity
+patch; tree a2f47ce3b108b8955d10aeb628ee05f5993a7dc0,33 selected paths over deployed
+64d29158. Cached-index patch check PASS; candidate itself is not built/tested/deployed.
+Manifest output/google-production-20261123/candidate.json and runtime patch updated.
+Owner approved technical retention requirements and then explicitly chose retaining
+minimal mirror identifiers to prevent reconnect duplicates; their retention term
+is to be decided separately. The Desktop regulation now reflects this exception
+and approved-requirements status; no automatic deletion or backup enabled.
+Owner reopened Platforma Digital; Chrome5 read the intended production Cloud project.
+Configured and saved exactly openid, userinfo.email, drive.file,
+calendar.calendarlist.readonly and calendar.events in OAuth Data Access, matching
+application scope requests. This declares requested scopes, not a user data grant.
+Save success read back; screenshot production-scopes.png saved/visually inspected.
+AX clicks twice timed out with partial state; fresh DOM inspection and supported
+Playwright controls completed the intended action without duplicate toggles.
+Verification Center says no verification required while Testing, not production
+approval. No audience publication, consent grants, server config or migrations.
+
+Remaining production acceptance: implement/verify technical retention and scheduler
+without deleting retained mirror IDs; finalize factual policy/public pages and
+domain/brand/sensitive-scope verification; build/test exact server candidate, one-off
+backup/rollback and target0014 migration/configuration; real-provider production
+Sheets and Calendar lifecycle/recovery checks with synthetic data. Existing local
+and dev-provider PASS cannot close these target-specific criteria. Import identity
+scope is closed locally and published; full production integration remains open.
