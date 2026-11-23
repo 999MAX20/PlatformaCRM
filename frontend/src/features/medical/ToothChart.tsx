@@ -13,6 +13,7 @@ import { formatDateTime } from "../../lib/format";
 import { localeByLanguage } from "../calendar/calendarConstants";
 
 import { ToothEditor } from "./ToothEditor";
+import { ToothPlanSteps } from "./ToothPlanSteps";
 import type { ClinicalDraftControl } from "./ClinicalDraftForm";
 
 type Denied = (cause: unknown) => void;
@@ -119,6 +120,7 @@ function ChartData({ scope, context, asOf, onDenied }: { scope: ClinicalReadScop
     <Modal open={selected !== null} onClose={close} closeOnBackdrop={false} size="lg" title={`${t("medical.tooth.tooth")} ${selected ?? ""}`}
       focusReturnId={`tooth-${selected}`} testId="tooth-inspector">
       {selected !== null ? <div className="space-y-4">
+        <ToothPlanSteps key={`${selected}-${asOf ?? "current"}`} scope={scope} tooth={selected} asOf={asOf} onDenied={onDenied} />
         {asOf ? <p className="text-sm text-platforma-subtle">{t("medical.tooth.readOnly")}</p> : null}
         {!rows.some(row => row.tooth === selected) ? <p>{t("medical.tooth.empty")}</p> : rows.filter(row => row.tooth === selected).map(row =>
           <Observation key={row.history_id} row={row} scope={scope} onDenied={onDenied} />)}

@@ -96,7 +96,7 @@ class DocumentTemplateSourceTests(TestCase):
         step = VisitPlanStep.objects.create(plan=plan, position=1, service=self.appointment.service,
                                            resource=self.appointment.resource, branch=self.first)
         content = {"plan_steps": [{"id": "00000000-0000-4000-8000-000000000001",
-            "description": "Synthetic document plan", "visit_step": visit_step_snapshot(step)}]}
+            "description": "Synthetic document plan", "visit_step": visit_step_snapshot(step), "teeth": [11, 51]}]}
         args = dict(actor=self.doctor, business_id=self.business.pk, patient_id=self.patient.pk,
                     encounter_id=self.encounter_record.pk)
         save_primary_encounter_draft(**args, expected_revision=1, content=content, idempotency_key="link-first")

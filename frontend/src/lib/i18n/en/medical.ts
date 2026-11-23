@@ -1,4 +1,9 @@
 export const medical = {
+  "medical.plan.teeth": "Linked teeth",
+  "medical.plan.addTooth": "Add tooth",
+  "medical.plan.removeTooth": "Remove link to tooth {tooth}",
+  "medical.plan.linkedToTooth": "Tooth treatment plan",
+  "medical.plan.noToothSteps": "No linked plan steps recorded",
   "medical.plan.visitStep": "{service} · plan #{plan}, step {position}",
   "medical.plan.linkVisit": "Link to visit step",
   "medical.plan.changeVisit": "Change link",

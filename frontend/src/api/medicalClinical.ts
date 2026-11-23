@@ -15,8 +15,12 @@ export type ClinicalPlanReadScope = ClinicalScope & { encounter_id: number } & (
 export type ClinicalPlanAccess = { scope: ClinicalPlanReadScope; onDenied: (cause: unknown) => void };
 export type ClinicalContent = Partial<Record<ClinicalField, string>> & {
   not_applicable?: Partial<Record<ClinicalField, string>>;
-  plan_steps?: { id: string; description: string; visit_step?: ClinicalVisitStep }[];
+  plan_steps?: { id: string; description: string; visit_step?: ClinicalVisitStep; teeth?: number[] }[];
 };
+export type ToothPlanPage = { as_of: string; next_before_id: number | null; results: {
+  id: number; step: NonNullable<ClinicalContent["plan_steps"]>[number]; version_id: number;
+  revision: number; encounter_id: number; author_id: number; author_name: string; created_at: string;
+}[] };
 export type EncounterState = "draft" | "finalized";
 
 export type ClinicalRecord = { id: number; number: string; opened_at: string };
@@ -115,6 +119,8 @@ async function command<T>(path: string, payload: object, idempotencyKey: string,
 }
 
 export const medicalClinicalApi = {
+  toothPlan: async (scope: ClinicalReadScope & { tooth: number; as_of?: string; before_id?: number }, signal?: AbortSignal) =>
+    (await apiClient.get<ToothPlanPage>(`${root}tooth-plan/`, { params: scope, signal })).data,
   visitSteps: async (scope: ClinicalPlanReadScope & { before_id?: number }, signal?: AbortSignal) =>
     (await apiClient.get<{ results: ClinicalVisitStep[]; next_before_id: number | null }>(`${root}visit-steps/`,
       { params: scope, signal })).data,

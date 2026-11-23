@@ -8,7 +8,7 @@ from rest_framework.exceptions import ValidationError
 from apps.businesses.models import Business
 from apps.core.domain_errors import InvalidTransition
 from .identity_crypto import MedicalDataUnavailable, decrypt_medical_value, encrypt_medical_value
-from .models import MedicalEncounter, MedicalEncounterRevision
+from .models import MedicalEncounter, MedicalEncounterRevision, FDI_TOOTH_NUMBERS
 
 
 CLINICAL_FIELDS = ("complaints", "anamnesis", "allergies", "contraindications", "examination", "diagnosis", "procedures", "plan", "epicrisis")
@@ -36,7 +36,7 @@ def validate_clinical_draft(content):
         seen = set()
         for step in steps:
             if (not isinstance(step, dict) or not {"id", "description"} <= set(step)
-                    or set(step) - {"id", "description", "visit_step"}
+                    or set(step) - {"id", "description", "visit_step", "teeth"}
                     or not isinstance(step["id"], str) or not isinstance(step["description"], str)
                     or len(step["description"]) > 4000):
                 raise ValidationError({"content": "Provide a step identifier and description of at most 4000 characters."})
@@ -47,6 +47,12 @@ def validate_clinical_draft(content):
             if canonical != step["id"] or canonical in seen:
                 raise ValidationError({"content": "Step identifiers must be canonical and unique."})
             seen.add(canonical)
+            if "teeth" in step:
+                teeth = step["teeth"]
+                if (not isinstance(teeth, list) or len(teeth) > len(FDI_TOOTH_NUMBERS)
+                        or any(type(tooth) is not int or tooth not in FDI_TOOTH_NUMBERS for tooth in teeth)
+                        or len(teeth) != len(set(teeth))):
+                    raise ValidationError({"content": "Select unique permanent or primary FDI tooth numbers."})
             if "visit_step" in step:
                 link = step["visit_step"]
                 if (not isinstance(link, dict) or set(link) != {"id", "plan_id", "position", "service_name"}
@@ -92,6 +98,8 @@ def append_encounter_revision(*, encounter, author, content, reason=""):
         subject_id=version.pk, purpose="encounter_reason")
     version.save(update_fields=["content_encrypted", "reason_encrypted"])
     store_plan_links(version=version, content=content)
+    from .clinical_plan_teeth import store_plan_teeth
+    store_plan_teeth(version=version, content=content)
     return version
 
 
@@ -113,6 +121,8 @@ def read_encounter_revision(version):
         content = validate_clinical_draft(data["content"])
         from .clinical_plan_links import verify_plan_links
         verify_plan_links(version=current, content=content)
+        from .clinical_plan_teeth import verify_plan_teeth
+        verify_plan_teeth(version=current, content=content)
         reason = decrypt_medical_value(current.reason_encrypted, business_id=encounter.business_id,
             subject_id=current.pk, purpose="encounter_reason")
         if len(reason) > 2000:

@@ -906,6 +906,18 @@ FDI_TOOTH_NUMBERS = tuple(quadrant * 10 + position
     for position in range(1, 9 if quadrant <= 4 else 6))
 
 
+class MedicalPlanToothLink(models.Model):
+    version = models.ForeignKey(MedicalEncounterRevision, on_delete=models.PROTECT, related_name="plan_tooth_links")
+    step_id = models.UUIDField()
+    tooth = models.PositiveSmallIntegerField(db_index=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["version", "step_id", "tooth"], name="medical_plan_tooth_unique"),
+            models.CheckConstraint(condition=models.Q(tooth__in=FDI_TOOTH_NUMBERS), name="medical_plan_tooth_fdi"),
+        ]
+
+
 class DentalToothState(TimeStampedModel):
     business = models.ForeignKey("businesses.Business", on_delete=models.PROTECT, related_name="dental_tooth_states")
     patient = models.ForeignKey(PatientProfile, on_delete=models.PROTECT, related_name="tooth_states")

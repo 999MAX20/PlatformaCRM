@@ -1,4 +1,9 @@
 export const medical = {
+  "medical.plan.teeth": "Связанные зубы",
+  "medical.plan.addTooth": "Добавить зуб",
+  "medical.plan.removeTooth": "Убрать связь с зубом {tooth}",
+  "medical.plan.linkedToTooth": "План лечения зуба",
+  "medical.plan.noToothSteps": "Связанные шаги плана не внесены",
   "medical.plan.visitStep": "{service} · план №{plan}, шаг {position}",
   "medical.plan.linkVisit": "Связать с посещением",
   "medical.plan.changeVisit": "Изменить связь",

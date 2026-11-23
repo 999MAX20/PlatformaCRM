@@ -38,7 +38,7 @@ class ClinicalPlanCorrectionTests(TestCase):
         snapshot = visit_step_snapshot(self.step)
         self.assertEqual(list_clinical_visit_steps(**scope)["results"], [snapshot])
         content = {"plan_steps": [{"id": "00000000-0000-4000-8000-000000000001",
-                                   "description": "Synthetic correction step", "visit_step": snapshot}]}
+                                   "description": "Synthetic correction step", "visit_step": snapshot, "teeth": [11, 51]}]}
         version, _ = save_correction_target(actor=self.doctor, business_id=self.business.pk, request_id=grant.pk,
             expected_revision=1, content=content, reason="Synthetic correction", idempotency_key="save-link")
         self.assertEqual(read_encounter_revision(version)["content"], content)

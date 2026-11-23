@@ -4,6 +4,7 @@ import { Button } from "../../components/ui/Button";
 import { Textarea } from "../../components/ui/Textarea";
 import { useI18n } from "../../lib/i18n";
 import { ClinicalPlanVisitLink, ClinicalVisitStepLabel } from "./ClinicalPlanVisitLink";
+import { ClinicalPlanTeeth } from "./ClinicalPlanTeeth";
 
 export function ClinicalPlanSteps({ content, onChange, disabled, readOnly, planAccess }: {
   content: ClinicalContent; onChange: (value: ClinicalContent) => void; disabled: boolean; readOnly: boolean;
@@ -32,6 +33,8 @@ export function ClinicalPlanSteps({ content, onChange, disabled, readOnly, planA
           value={step.description} maxLength={4000} disabled={disabled} readOnly={readOnly}
           onChange={event => onChange({ ...content, plan_steps: steps.map(item => item.id === step.id
             ? { ...item, description: event.target.value } : item) })} />
+        <ClinicalPlanTeeth value={step.teeth} disabled={disabled} readOnly={readOnly} onChange={teeth =>
+          onChange({ ...content, plan_steps: steps.map(item => item.id === step.id ? { ...item, teeth } : item) })} />
         <ClinicalPlanVisitLink value={step.visit_step} access={planAccess} disabled={disabled} readOnly={readOnly}
           onChange={value => onChange({ ...content, plan_steps: steps.map(item => {
             if (item.id !== step.id) return item;
@@ -70,6 +73,7 @@ export function ClinicalPlanStepsRead({ content }: { content: ClinicalContent })
     <ol className="list-decimal space-y-2 pl-5">
       {content.plan_steps.map(step => <li key={step.id} className="whitespace-pre-wrap break-words text-sm">
         {step.description || t("medical.clinical.notRecorded")}
+        <ClinicalPlanTeeth value={step.teeth} disabled={false} readOnly onChange={() => {}} />
         {step.visit_step ? <ClinicalVisitStepLabel step={step.visit_step} /> : null}
       </li>)}
     </ol>

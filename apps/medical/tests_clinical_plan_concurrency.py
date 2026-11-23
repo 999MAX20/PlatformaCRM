@@ -5,7 +5,7 @@ from django.test import TransactionTestCase, override_settings
 
 from . import tests_clinical_plan_links as fixtures
 from . import tests_patient_services as crypto_fixtures
-from .models import MedicalEncounterRevision, MedicalPlanStepLink
+from .models import MedicalEncounterRevision, MedicalPlanStepLink, MedicalPlanToothLink
 from . import tests_order_concurrency as concurrency_fixtures
 
 
@@ -16,6 +16,7 @@ class ClinicalPlanConcurrencyTests(TransactionTestCase):
     def setUp(self):
         fixtures.ClinicalPlanLinkTests.setUpTestData.__func__(self)
         fixtures.ClinicalPlanLinkTests.setUp(self)
+        self.content["plan_steps"][0]["teeth"] = [11, 51]
 
     save = fixtures.ClinicalPlanLinkTests.save
     parallel = concurrency_fixtures.OrderConcurrencyTests.parallel
@@ -23,6 +24,7 @@ class ClinicalPlanConcurrencyTests(TransactionTestCase):
     def test_duplicate_command_creates_one_link_version(self):
         self.assertCountEqual(self.parallel([lambda: self.save()[1], lambda: self.save()[1]]), [False, True])
         self.assertEqual(MedicalPlanStepLink.objects.count(), 1)
+        self.assertEqual(MedicalPlanToothLink.objects.count(), 2)
         self.assertEqual(MedicalEncounterRevision.objects.count(), 2)
 
     def test_competing_links_cannot_replace_one_encounter_revision(self):
@@ -30,4 +32,5 @@ class ClinicalPlanConcurrencyTests(TransactionTestCase):
             lambda: self.save(idempotency_key="first")[1], lambda: self.save(idempotency_key="second")[1],
         ]), [False, "conflict"])
         self.assertEqual(MedicalPlanStepLink.objects.count(), 1)
+        self.assertEqual(MedicalPlanToothLink.objects.count(), 2)
         self.assertEqual(MedicalEncounterRevision.objects.count(), 2)

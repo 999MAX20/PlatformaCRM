@@ -42,6 +42,15 @@ for (const language of ["ru", "kk", "en"] as const) for (const mobile of [false,
     await steps.getByRole("button", { name: t["medical.plan.addStep"], exact: true }).click();
     await steps.getByRole("textbox").fill(`Synthetic linked plan ${id}`);
     const link = steps.getByTestId("clinical-visit-link");
+    const teeth = steps.getByTestId("clinical-plan-teeth");
+    for (const tooth of [11, 51]) {
+      await teeth.getByRole("combobox").click();
+      await page.getByRole("option", { name: `${t["medical.tooth.tooth"]} ${tooth}`, exact: true }).click();
+    }
+    await teeth.getByRole("button", { name: t["medical.plan.removeTooth"].replace("{tooth}", "51"), exact: true }).click();
+    await expect(teeth.getByRole("combobox")).toBeFocused();
+    await teeth.getByRole("combobox").click();
+    await page.getByRole("option", { name: `${t["medical.tooth.tooth"]} 51`, exact: true }).click();
     let fail = true;
     let empty = language === "ru" && !mobile;
     await page.route("**/api/medical/encounters/visit-steps/**", route => {
@@ -77,6 +86,31 @@ for (const language of ["ru", "kk", "en"] as const) for (const mobile of [false,
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     await page.keyboard.press("Escape"); await expect(workspace).not.toBeVisible(); await open.click();
     await expect(link).toContainText(chosen);
+    await workspace.getByRole("tab", { name: t["medical.tooth.title"], exact: true }).click();
+    const chart = workspace.getByTestId("tooth-chart");
+    const toothButton = chart.getByRole("button", { name: `${t["medical.tooth.tooth"]} 11: ${t["medical.tooth.empty"]}`, exact: true });
+    let failToothRead = mobile;
+    if (mobile) {
+      await page.route("**/api/medical/encounters/tooth-plan/**", route => {
+        if (failToothRead) return route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ code: "service_unavailable" }) });
+        return route.continue();
+      });
+    }
+    await toothButton.click();
+    const inspector = page.getByTestId("tooth-inspector");
+    const toothPlan = inspector.getByTestId("tooth-plan-steps");
+    if (mobile) {
+      await expect(toothPlan.getByRole("alert")).toBeVisible();
+      failToothRead = false;
+      await toothPlan.getByRole("button", { name: t["common.retry"], exact: true }).click();
+    }
+    await expect(toothPlan).toContainText(`Synthetic linked plan ${id}`);
+    await expect(toothPlan).toContainText(chosen);
+    await inspector.screenshot({ path: info.outputPath("tooth-linked-plan.png") });
+    expect((await new AxeBuilder({ page }).include('[data-testid="tooth-inspector"]').withTags(["wcag2a", "wcag2aa"]).analyze()).violations).toEqual([]);
+    await page.keyboard.press("Escape");
+    await expect(toothButton).toBeFocused();
+    await workspace.getByRole("tab", { name: t["medical.clinical.note"], exact: true }).click();
     page.once("dialog", dialog => dialog.dismiss());
     await link.getByRole("button", { name: t["medical.plan.unlinkVisit"], exact: true }).click();
     await expect(link).toContainText(chosen);
