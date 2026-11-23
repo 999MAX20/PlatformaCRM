@@ -1,4 +1,4 @@
-DENTAL-MCS: К06 ACTIVE — plan renderer опубликован21e76257; approved order templates локально приняты:57 dependent/12 final PG,6 browser/25 captures,final build/check/drift/static PASS, публикация готовится. Далее tooth-state PG evidence и clinical projections/overview; К03/К04/К05/L12 внешние уточнения сохранены. План: docs/testing/task-state/DENTAL-MCS-20261122.md.
+DENTAL-MCS: К06 ACTIVE — approved order templates опубликованы85d2d867; tooth-state PG31PASS, publication preparing. Далее clinical patient projections/overview; К03/К04/К05/L12 внешние уточнения сохранены. План: docs/testing/task-state/DENTAL-MCS-20261122.md.
 
 QA-016-20261121 LOCAL VERIFIED: automatic tasks searchable by displayed RU/KK/EN title; editor preserves original copy on unrelated edits. 66 backend, 9 node, 6 desktop/mobile browser scenarios, build/types/i18n/check/drift PASS; Code 8a240ad3 pushed to main; CI44937543011 queued (not PASS). Working DB untouched. [Evidence](docs/testing/evidence/qa-016-task-search-20261121.md).
 
