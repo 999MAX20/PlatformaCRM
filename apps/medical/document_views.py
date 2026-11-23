@@ -51,6 +51,7 @@ class DocumentExportHistorySerializer(DocumentScopedReadSerializer):
 
 
 class DocumentReviewTransitionSerializer(DocumentReadSerializer):
+    correction_access_id = serializers.IntegerField(min_value=1, required=False)
     expected_state_revision = serializers.IntegerField(min_value=1)
     target = serializers.ChoiceField(choices=("draft", "ready_for_review", "reviewed"))
     reason = serializers.CharField(max_length=2000, allow_blank=True, trim_whitespace=False, default="")
@@ -110,6 +111,13 @@ class DocumentUpdateSerializer(DocumentDraftSerializer):
     expected_document_revision = serializers.IntegerField(min_value=1)
 
 
+class DocumentCorrectionSerializer(DocumentReadSerializer):
+    correction_access_id = serializers.IntegerField(min_value=1, required=False)
+    expected_state_revision = serializers.IntegerField(min_value=1)
+    document_text = serializers.CharField(max_length=131072, allow_blank=True, trim_whitespace=False)
+    reason = serializers.CharField(max_length=2000, trim_whitespace=False)
+
+
 class MedicalDocumentViewSet(viewsets.GenericViewSet):
     permission_classes = [IsAuthenticated]
     lookup_value_regex = r"[0-9]+"
@@ -117,7 +125,7 @@ class MedicalDocumentViewSet(viewsets.GenericViewSet):
     http_method_names = ["get", "post", "head", "options"]
 
     def get_serializer_class(self):
-        return {"create": DocumentDraftSerializer, "draft": DocumentUpdateSerializer,
+        return {"create": DocumentDraftSerializer, "draft": DocumentUpdateSerializer, "correct_document": DocumentCorrectionSerializer,
                 "list": DocumentListSerializer, "revisions": DocumentHistorySerializer,
                 "workspace_access": DocumentAccessSerializer, "preview": DocumentPreviewSerializer,
                 "prepare_pdf": DocumentArtifactSerializer, "pdf": DocumentArtifactSerializer,
@@ -156,6 +164,19 @@ class MedicalDocumentViewSet(viewsets.GenericViewSet):
 
     def create(self, request):
         return self._command(request)
+
+    @action(detail=False, methods=["post"], url_path=r"versions/(?P<version_id>[0-9]+)/correction")
+    def correct_document(self, request, version_id=None):
+        from .document_corrections import correct_final_document
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            version, replayed = correct_final_document(actor=request.user, version_id=int(version_id),
+                idempotency_key=request.headers.get("Idempotency-Key"), **serializer.validated_data)
+        except (NotFound, PermissionDenied):
+            record_denied_document_access(actor=request.user, business_id=serializer.validated_data["business_id"])
+            raise
+        return Response({"version_id": version.pk, "revision": version.revision, "replayed": replayed})
 
     @action(detail=False, methods=["get"], url_path=r"versions/(?P<version_id>[0-9]+)/review")
     def review_state(self, request, version_id=None):

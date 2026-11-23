@@ -32,9 +32,11 @@ def save_correction_target(*, actor, business_id, request_id, expected_revision,
     assert_verified_clinical_identity(item.patient)
 
     def operation():
-        if item.document.revision != expected_revision or item.document.state != "draft" or item.encounter.record.state != "active":
+        if item.document.revision != expected_revision or item.document.state not in {"draft", "finalized"} or item.encounter.record.state != "active":
             raise InvalidTransition("The document changed; review its current draft.")
-        version = append_document_text_correction(document=item.document, author=actor, document_text=document_text, reason=reason)
+        from .document_corrections import append_final_correction
+        append = append_final_correction if item.document.state == "finalized" else append_document_text_correction
+        version = append(document=item.document, author=actor, document_text=document_text, reason=reason)
         write_patient_audit(actor=actor, business=business, patient=item.patient,
             action="document_draft_saved", document_version=version, correction_access=item)
         return CRMCommandResult(data={}, resource=version)

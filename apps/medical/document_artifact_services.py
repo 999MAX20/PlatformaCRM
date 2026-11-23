@@ -57,11 +57,12 @@ DOCX_CONTENT_TYPE = "application/vnd.openxmlformats-officedocument.wordprocessin
 
 
 def assert_editable_docx(context):
+    from .document_corrections import correction_source
     document = context.version.document
     encounter = document.encounter
     if (document.state != "draft" or document.revision != context.version.revision
             or encounter.record.state != "active"
-            or encounter.state != "draft" and context.correction is None):
+            or encounter.state != "draft" and context.correction is None and correction_source(context.version) is None):
         raise InvalidTransition("Select a current editable draft for DOCX export.")
     snapshot = read_document_revision(context.version)
     rules = snapshot.get("document_rules")
@@ -103,7 +104,10 @@ def _prepare_document_draft(*, actor, business_id, patient_id, version_id, langu
             if rendition == "signing":
                 assert_medical_branch_permission(actor, context.business, "medical_documents", "sign",
                     branch=context.version.document.encounter.branch)
-                if context.correction is not None or context.version.document.encounter.record.state != "active":
+                from .document_corrections import correction_source
+                source = correction_source(context.version)
+                if ((context.correction is not None and source is None)
+                        or context.version.document.encounter.record.state != "active"):
                     raise PermissionDenied()
                 assert_document_signing_prerequisites(context.version)
             if context.version.document.state not in {"draft", "ready_for_review", "reviewed"}:

@@ -118,6 +118,11 @@ def save_primary_document_draft(*, actor, business_id, patient_id, encounter_id,
         if document is not None and (document.revision != expected_document_revision or
                 document.state != "draft" or document.template_code != template["code"]):
             raise InvalidTransition("The document changed; reload its current revision.")
+        if document is not None:
+            from .document_corrections import correction_source
+            current = MedicalDocumentRevision.objects.get(document=document, revision=document.revision)
+            if correction_source(current) is not None:
+                raise InvalidTransition("Use the corrective version editor to preserve the finalized source.")
         source = MedicalEncounterRevision.objects.filter(encounter=encounter, revision=encounter.revision).first()
         if source is None:
             raise MedicalDataUnavailable()
@@ -215,5 +220,8 @@ def document_version_payload(*, actor, business, patient, version):
     """Internal audited read; callers authorize the version's patient and business."""
     write_patient_audit(actor=actor, business=business, patient=patient, action="read", document_version=version)
     snapshot = read_document_revision(version)
+    from .document_corrections import correction_source, document_version_state
+    source = correction_source(version)
     return {"version_id": version.pk, "document_id": version.document_id, "revision": version.revision,
-        "state": version.document.state, "created_at": version.created_at, "snapshot": snapshot}
+        "state": document_version_state(version),
+        "corrects_version_id": source.version_id if source else None, "created_at": version.created_at, "snapshot": snapshot}

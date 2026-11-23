@@ -890,6 +890,18 @@ class MedicalDocumentRevision(models.Model):
         ]
 
 
+class MedicalDocumentCorrection(models.Model):
+    version = models.OneToOneField(MedicalDocumentRevision, on_delete=models.PROTECT,
+        related_name="correction_lineage")
+    source = models.ForeignKey("MedicalDocumentFinalization", on_delete=models.PROTECT,
+        related_name="corrections")
+    evidence_encrypted = models.TextField(editable=False)
+
+    class Meta:
+        constraints = [models.CheckConstraint(condition=~models.Q(evidence_encrypted=""),
+            name="medical_document_correction_proof")]
+
+
 class MedicalDocumentReviewTransition(models.Model):
     version = models.ForeignKey(MedicalDocumentRevision, on_delete=models.PROTECT, related_name="review_transitions")
     state_revision = models.PositiveIntegerField()

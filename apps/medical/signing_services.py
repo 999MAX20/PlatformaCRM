@@ -135,7 +135,10 @@ def _context(actor, business_id, patient_id, version_id, basis):
         version_id=version_id, **basis)
     role = assert_medical_branch_permission(actor, context.business, "medical_documents", "sign",
         branch=context.version.document.encounter.branch)
-    if context.correction is not None or context.version.document.encounter.record.state != "active":
+    from .document_corrections import correction_source
+    source = correction_source(context.version)
+    if ((context.correction is not None and source is None)
+            or context.version.document.encounter.record.state != "active"):
         raise PermissionDenied()
     assert_verified_clinical_identity(context.patient)
     return context, role

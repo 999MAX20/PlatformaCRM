@@ -5,7 +5,8 @@ import type { CapturedDocumentRules } from "./medicalDocumentRules";
 
 export type DocumentScope = ClinicalReadScope & { encounter_id: number };
 export type HeadDocumentScope = { business_id: number; patient_id: number; head_branch_id: number; encounter_id?: never };
-export type DocumentReadScope = ClinicalReadScope | HeadDocumentScope;
+export type CorrectionDocumentScope = { business_id: number; patient_id: number; correction_access_id: number; appointment_id?: never; participation_id?: never };
+export type DocumentReadScope = ClinicalReadScope | HeadDocumentScope | CorrectionDocumentScope;
 export type DocumentAccess = { patient_revision: number; encounter_revision: number;
   actions: { view: boolean; create: boolean; update: boolean } };
 export type DocumentPreview = { document_text: string; template: TemplateVersion;
@@ -18,12 +19,13 @@ export type HeadConfirmation = { id: number; actor: { id: number; name: string }
 export type DocumentHeadReview = { required: boolean; can_confirm: boolean; state_revision: number;
   confirmation: HeadConfirmation | null };
 export type DocumentReview = { document_state: "draft" | "ready_for_review" | "reviewed" | "finalized"; state_revision: number;
+  can_correct: boolean; corrects_version_id: number | null;
   can_transition: boolean; next_before_id: number | null; results: { id: number; state: "draft" | "ready_for_review" | "reviewed";
     state_revision: number; actor: { id: number; name: string }; created_at: string; reason: string;
     head_confirmation: HeadConfirmation | null }[] };
-export type DocumentReviewCommand = ClinicalReadScope & { expected_state_revision: number;
+export type DocumentReviewCommand = (ClinicalReadScope | CorrectionDocumentScope) & { expected_state_revision: number;
   target: "draft" | "ready_for_review" | "reviewed"; reason: string };
-export type DocumentVersion = Omit<DocumentRow, "encounter_id" | "title"> & { snapshot: {
+export type DocumentVersion = Omit<DocumentRow, "encounter_id" | "title"> & { corrects_version_id: number | null; snapshot: {
   document_rules?: CapturedDocumentRules | null;
   template: TemplateVersion["template"]; document_text?: string; clinical: ClinicalContent; reason: string;
   template_source?: { template_id: number; version_id: number; revision: number; approved_by: number; approved_at: string; review_id: number };
@@ -43,6 +45,12 @@ async function save(path: string, payload: DocumentDraft & { expected_document_r
     { headers: { "Idempotency-Key": key } })).data;
 }
 export const medicalDocumentsApi = {
+  correct: async (id: number, payload: (ClinicalReadScope | CorrectionDocumentScope) & {
+    expected_state_revision: number; document_text: string; reason: string }, key: string) => {
+    if (!key.trim() || key.length > 128) throw new Error("Invalid idempotency key");
+    return (await apiClient.post<{ version_id: number; revision: number; replayed: boolean }>(
+      root + `versions/${id}/correction/`, payload, { headers: { "Idempotency-Key": key } })).data;
+  },
   headReview: (scope: DocumentReadScope, id: number, signal?: AbortSignal) =>
     read<DocumentHeadReview>(`versions/${id}/head-review/`, scope, signal),
   headConfirm: async (id: number, payload: HeadDocumentScope & { expected_state_revision: number }, key: string) => {

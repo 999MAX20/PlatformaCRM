@@ -331,6 +331,12 @@ if len(sys.argv) > 2 and sys.argv[1] == "clinical-representatives-populate":
             relation.revoked_at, relation.revoked_by, relation.revocation_encrypted = now, appointment.business.owner, "synthetic"
         relation.save()
     sys.exit(0)
+if len(sys.argv) > 1 and sys.argv[1] == "final-correction-prepare":
+    from final_correction_fixture import prepare, finalize_fixture, timed_fixture
+    settings.MEDICAL_SYNTHETIC_SIGNING_ENABLED = True
+    entry = finalize_fixture(prepare())
+    print(json.dumps(timed_fixture(entry) if len(sys.argv) > 2 and sys.argv[2] == "timed" else entry))
+    sys.exit(0)
 if len(sys.argv) > 2 and sys.argv[1] in {"head-review-prepare", "signing-prepare", "signing-doctor-prepare"}:
     signing = sys.argv[1] != "head-review-prepare"
     signing_doctor = sys.argv[1] == "signing-doctor-prepare"
@@ -676,8 +682,9 @@ if files_fixture and len(sys.argv) > 1 and sys.argv[1] in ("files-scan", "docume
     attachments = FileAttachment.objects.filter(business__slug="medical-role", entity_type=entity_type)
     if entity_type == "medical_document_artifact":
         assert len(sys.argv) == 3, "Document scanning requires this scenario's appointment ID"
-        appointment = Appointment.objects.get(pk=int(sys.argv[2]), business__slug="medical-role")
-        attachments = attachments.filter(medical_document_artifact__version__document__encounter__appointment=appointment)
+        appointment = Appointment.objects.get(pk=int(sys.argv[2]))
+        attachments = FileAttachment.objects.filter(business=appointment.business, entity_type=entity_type,
+            medical_document_artifact__version__document__encounter__appointment=appointment)
         assert attachments.exists(), "Prepare this scenario's PDF before scanning"
     for attachment in attachments:
         with patch("apps.core.file_scanning.scan_stream", side_effect=clean_result):

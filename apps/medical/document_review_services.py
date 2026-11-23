@@ -12,6 +12,7 @@ from .identity_crypto import decrypt_medical_value, encrypt_medical_value, medic
 from .models import MedicalDocumentReviewTransition
 from .participation_access import assert_treatment_medical_basis
 from .role_access import assert_medical_branch_permission
+from .document_corrections import correction_source, reviewable_encounter
 
 
 def _assert_review_writer(context, actor, appointment_id, participation_id):
@@ -20,6 +21,12 @@ def _assert_review_writer(context, actor, appointment_id, participation_id):
     role = assert_medical_branch_permission(actor, context.business, "medical_documents", "update", branch=encounter.branch)
     if role.member_id != encounter.primary_clinician_id:
         raise PermissionDenied()
+    if context.correction is not None:
+        from .correction_access_context import assert_correction_access
+        assert_correction_access(actor=actor, business=context.business, request_id=context.correction.pk,
+            encounter_id=encounter.pk, document_id=document.pk, action="update")
+        assert_verified_clinical_identity(context.patient)
+        return
     if participation_id is None:
         basis = assert_appointment_medical_basis(actor=actor, business=context.business, patient_id=context.patient.pk,
             appointment_id=appointment_id, resource="medical_documents", action="update")
@@ -33,7 +40,7 @@ def _assert_review_writer(context, actor, appointment_id, participation_id):
 
 @transaction.atomic
 def transition_document_review(*, actor, business_id, patient_id, version_id, expected_state_revision,
-                               target, reason, idempotency_key, appointment_id=None, participation_id=None):
+                               target, reason, idempotency_key, appointment_id=None, participation_id=None, correction_access_id=None):
     if target not in {"draft", "ready_for_review", "reviewed"}:
         raise ValidationError({"target": "Select a review transition."})
     if type(expected_state_revision) is not int or expected_state_revision < 1:
@@ -43,8 +50,10 @@ def transition_document_review(*, actor, business_id, patient_id, version_id, ex
     if not isinstance(idempotency_key, str) or not idempotency_key.strip() or len(idempotency_key) > 128:
         raise ValidationError({"idempotency_key": "Provide an idempotency key of at most 128 characters."})
     context = document_artifact_access(actor=actor, business_id=business_id, patient_id=patient_id,
-        version_id=version_id, appointment_id=appointment_id, participation_id=participation_id)
+        version_id=version_id, appointment_id=appointment_id, participation_id=participation_id, correction_access_id=correction_access_id)
     _assert_review_writer(context, actor, appointment_id, participation_id)
+    if context.correction is not None and correction_source(context.version) is None:
+        raise PermissionDenied()
     document = context.version.document
     encounter = document.encounter
 
@@ -52,7 +61,7 @@ def transition_document_review(*, actor, business_id, patient_id, version_id, ex
         if (document.state_revision != expected_state_revision or document.revision != context.version.revision
                 or document.state not in {"ready_for_review": {"draft"}, "reviewed": {"ready_for_review"},
                     "draft": {"ready_for_review", "reviewed"}}[target]
-                or encounter.state != "draft" or encounter.record.state != "active"):
+                or not reviewable_encounter(context.version)):
             raise InvalidTransition("The document or encounter changed; reload before continuing.")
         read_document_revision(context.version)
         document.state = target
@@ -75,6 +84,7 @@ def transition_document_review(*, actor, business_id, patient_id, version_id, ex
         action="medical.document.review", idempotency_key=medical_request_digest({"key": idempotency_key}, business_id=business_id),
         payload={"patient": patient_id, "version": version_id, "state_revision": expected_state_revision,
             "target": target, "appointment": appointment_id, "participation": participation_id,
+            **({"correction_access": correction_access_id} if correction_access_id is not None else {}),
             "reason_digest": medical_request_digest({"reason": reason}, business_id=business_id)}, operation=operation)
     transition = MedicalDocumentReviewTransition.objects.get(
         pk=result.resource_id if result.replayed else result.resource.pk, version__document__business=context.business)
@@ -88,11 +98,16 @@ def read_document_review(*, actor, business_id, patient_id, version_id, before_i
     context = document_artifact_access(actor=actor, business_id=business_id, patient_id=patient_id, version_id=version_id, **basis)
     document = context.version.document
     can_transition = False
-    if basis.get("appointment_id") is not None or basis.get("participation_id") is not None:
+    can_correct = False
+    source = correction_source(context.version)
+    if any(basis.get(key) is not None for key in ("appointment_id", "participation_id", "correction_access_id")):
         try:
             _assert_review_writer(context, actor, basis.get("appointment_id"), basis.get("participation_id"))
-            can_transition = (document.revision == context.version.revision and document.encounter.state == "draft"
-                and document.encounter.record.state == "active" and document.state in {"draft", "ready_for_review", "reviewed"})
+            can_transition = (document.revision == context.version.revision and reviewable_encounter(context.version)
+                and (context.correction is None or source is not None)
+                and document.state in {"draft", "ready_for_review", "reviewed"})
+            can_correct = (document.revision == context.version.revision and document.encounter.record.state == "active"
+                and (document.state == "finalized" or document.state == "draft" and source is not None))
         except (PermissionDenied, InvalidTransition):
             pass
     history = MedicalDocumentReviewTransition.objects.filter(version=context.version).select_related("actor", "head_confirmation__actor")
@@ -108,6 +123,8 @@ def read_document_review(*, actor, business_id, patient_id, version_id, before_i
             subject_id=event.pk, purpose="document_review_reason")} for event in page[:limit]]
     write_patient_audit(actor=actor, business=context.business, patient=context.patient, action="read",
         document_version=context.version, correction_access=context.correction)
-    return {"document_state": document.state, "state_revision": document.state_revision,
+    from .document_corrections import document_version_state
+    return {"document_state": document_version_state(context.version), "state_revision": document.state_revision,
+        "can_correct": can_correct, "corrects_version_id": source.version_id if source else None,
         "can_transition": can_transition, "results": events,
         "next_before_id": page[limit - 1].pk if len(page) > limit else None}

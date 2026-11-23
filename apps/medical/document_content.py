@@ -123,7 +123,7 @@ def append_document_revision(*, document, source_version, author, template, reas
 
 
 @transaction.atomic
-def append_document_text_correction(*, document, author, document_text, reason):
+def append_document_text_correction(*, document, author, document_text, reason, correction_origin=None):
     """Internal storage for a narrow correction: retain the captured clinical source."""
     business = Business.objects.select_for_update().get(pk=document.business_id)
     current = MedicalDocument.objects.select_for_update().get(pk=document.pk, business=business)
@@ -134,6 +134,8 @@ def append_document_text_correction(*, document, author, document_text, reason):
     if previous is None:
         raise MedicalDataUnavailable()
     snapshot = read_document_revision(previous)
+    from .document_corrections import correction_source, link_correction
+    corrected_source = correction_origin or correction_source(previous)
     if "template_source" not in snapshot:
         raise InvalidTransition("This document has no approved text source for correction.")
     validate_document_source(snapshot["template_source"], snapshot["template"], document_text)
@@ -155,6 +157,8 @@ def append_document_text_correction(*, document, author, document_text, reason):
     version.save(update_fields=["snapshot_encrypted"])
     current.revision = version.revision
     current.save(update_fields=["revision", "updated_at"])
+    if corrected_source is not None:
+        link_correction(version, corrected_source)
     return version
 
 

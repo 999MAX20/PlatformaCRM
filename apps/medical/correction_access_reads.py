@@ -69,8 +69,9 @@ def read_correction_target(*, actor, business_id, request_id, version_id=None):
     audit_ref = {"document_version": version} if item.document_id is not None else {"encounter_version": version}
     write_patient_audit(actor=actor, business=business, patient=item.patient, action="read", correction_access=item, **audit_ref)
     content = read_document_revision(version) if item.document_id is not None else read_encounter_revision(version)
+    from .document_corrections import document_version_state
     return {"access": correction_access_payload(item), "version_id": version.pk, "revision": version.revision,
-            "state": target.state, "content": content}
+            "state": document_version_state(version) if item.document_id is not None else target.state, "content": content}
 
 
 @transaction.atomic
