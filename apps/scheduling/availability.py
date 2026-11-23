@@ -116,6 +116,8 @@ def get_available_slots(business, service, date, resource=None, after_time=None,
         from apps.branches.schedule import booking_terms
         from .resource_booking import filter_resource_slots
         _, minutes, _ = booking_terms(business, service, resource, branch, appointment=exclude_appointment)
+        from apps.integrations.google_calendar_availability import filter_slots
+        slots = filter_slots(business, resource, slots, minutes)
         return filter_resource_slots(business, service, branch, slots, minutes, exclude_appointment=exclude_appointment)
 
     weekday = date.weekday()
@@ -163,6 +165,8 @@ def get_available_slots(business, service, date, resource=None, after_time=None,
         current += step
 
     from .resource_booking import filter_resource_slots
+    from apps.integrations.google_calendar_availability import filter_slots
+    slots = filter_slots(business, resource, slots, minutes)
     return filter_resource_slots(business, service, branch, slots, minutes, exclude_appointment=exclude_appointment)
 
 
@@ -182,6 +186,8 @@ def validate_appointment_availability(business, service, start_at, resource=None
                                      exclude_appointment=exclude_appointment)
         from .resource_booking import validate_resource_availability
         validate_resource_availability(business, service, branch, start_at, end_at, exclude_appointment=exclude_appointment)
+        from apps.integrations.google_calendar_availability import validate_slot
+        validate_slot(business, resource, start_at, end_at)
         return end_at
 
     tz = business_zone(business)
@@ -229,4 +235,6 @@ def validate_appointment_availability(business, service, start_at, resource=None
 
     from .resource_booking import validate_resource_availability
     validate_resource_availability(business, service, branch, start_at, end_at, exclude_appointment=exclude_appointment)
+    from apps.integrations.google_calendar_availability import validate_slot
+    validate_slot(business, resource, start_at, end_at)
     return end_at

@@ -1,8 +1,8 @@
 ## Google Sheets — implementation 19.11.2026, acceptance in progress
 
 Owner-authorized slice: shared Google OAuth foundation and client import/export
-through Sheets. Calendar must connect existing specialist calendars; Calendar
-events, conflict handling and synchronization are not implemented by this slice.
+through Sheets. The owner extended scope on23Nov2026 to Google Calendar;
+its local implementation and remaining acceptance are described below.
 Google connections are separate actor/Business/provider records, never generic
 connector config or browser-stored refresh tokens. Integrations MANAGE is required
 for every operation, plus Clients CREATE for import and VIEW for export; ordinary
@@ -10,7 +10,9 @@ import confirmation still enforces current client field/update permissions.
 
 OAuth uses a fixed configured callback, ten-minute single-use actor/Business-bound
 state, PKCE and encrypted access/refresh credentials. Requested scopes are
-`openid email https://www.googleapis.com/auth/drive.file`; no Calendar scope.
+`openid email https://www.googleapis.com/auth/drive.file` for Sheets. Calendar uses
+separate connections and requests `openid email`, `calendar.calendarlist.readonly`
+and `calendar.events` scopes under `https://www.googleapis.com/auth/`.
 Google Picker receives a short-lived access token transiently to select files;
 it is not stored in browser storage or query cache. Disconnect clears local
 credentials and attempts Google revocation; failed revocation is shown with a
@@ -49,6 +51,51 @@ Testing-mode Google OAuth requires configured test users; it is not production
 verification. Migration `integrations.0013_google_connections` is intentional;
 working/deployed migration and live Google data transfer are separate acceptance.
 [Evidence and remaining work](../testing/evidence/google-sheets-20261119.md).
+
+### Google Calendar — local implementation23Nov2026, acceptance in progress
+
+CRM owns appointment state. Google-side edits/deletions never reschedule or cancel
+CRM appointments; synchronization restores the owned copy. Only appointment time,
+client name and service name are sent. No phone, notes, conversations or medical
+record data is included. Events are private, without guests or reminders. Added
+Google guests or changed ownership markers stop updates/deletion for review.
+
+An actor with Integrations MANAGE, Appointments/Clients VIEW and all-branch access
+selects an active specialist and an existing writable Google calendar, then confirms
+the transfer. Each specialist/calendar has one binding. Connections retain their
+original Google account on reconnect. Pausing or disconnecting stops export and
+external busy checks; previously created Google copies remain. Changing the bound
+calendar/account is not currently exposed. This is a remaining usability limitation.
+
+The integrations queue task `integrations.process_google_calendars` is scheduled
+every60seconds, with bounded pagination, failure backoff and durable event IDs.
+Duplicate workers/retries reuse the same mirror. Updates/deletes use Google etags.
+Snapshots retain only external busy intervals; transparent, declined and cancelled
+events do not block slots. All-day events use the calendar time zone and exclusive
+end date. CRM copies are excluded by stored ID and ownership marker. Booking checks
+external busy time through the existing scheduling domain, including branch flows.
+Missing/stale snapshots fail closed after5minutes; users must refresh/reconnect or
+explicitly pause. Outside the cached90-day horizon, the requested range is checked
+against Google directly. There is no atomic booking lock across CRM and Google;
+an external edit after a snapshot can race a CRM booking within the freshness window.
+
+`GOOGLE_CALENDAR_ENABLED` defaults false and gates OAuth and synchronization.
+Enable Calendar API, apply intentional migration `integrations.0014_google_calendar`
+in the authorized target and run an integrations worker plus beat before enabling.
+API: existing Google status/start accept `provider=google_calendar`;
+`connections/{id}/calendar/` supports GET `bindings`, `calendars`, POST `bind`
+(requires `confirm_data_export=true`), `enabled`, `sync` (queues, not immediate).
+UI exposes binding, last synchronization, pending/stale/failure state, retry and pause.
+
+Affected backend201 tests, PostgreSQL4 concurrency tests and build pass. RU/EN/KK
+synthetic browser binding/pause/error/recovery/disconnect inspected; final status
+queued-notice recovery passed. Live Sheets OAuth/Picker/export/refresh/import and
+Calendar copy/reschedule/cancel/external-edit repair/busy block-release passed using
+only synthetic fixtures. Final error-message screenshot and Retry recovery passed
+after the Chrome extension update. GET410 regression37, system/drift PASS.
+No working migration or deployment is claimed. Public use
+also needs a separate production Google project, approved public home/privacy pages,
+proper HTTPS origins/callback and required Google scope/brand verification.
 
 ## Website widget recovery — 12.11.2026
 

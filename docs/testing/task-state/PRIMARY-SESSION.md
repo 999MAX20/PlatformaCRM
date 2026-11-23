@@ -328,6 +328,15 @@ Evidence: docs/testing/evidence/invitations-24h-20261112.md.
 
 ## GOOGLE-SHEETS-20261119 — local verification / live acceptance pending
 
+23Nov continuation: owner requests production Sheets + Calendar. CRM authoritative;
+Google gets time/client name/service only; external busy blocks slots. Local Calendar
+code/API/UI behind default-off flag; backend201, PG4 and build PASS. Scoped browser/live
+acceptance PASS; live Sheets grant/Picker/import/export PASS. Calendar grant,
+copy/reschedule/cancel/repair and external-busy block-release PASS. Final error-state
+screenshot/Retry recovery PASS; GET410 regression37 PASS (system/drift PASS). Approved
+public home/privacy URLs and production configuration remain pending.
+No working migration/deployment. Current checkpoint: ../evidence/google-sheets-20261119.md#production-continuation--23nov2026.
+
 OAuth + Sheets import/export implemented; Cloud test project, OAuth client and restricted Picker key configured. Backend72 PASS, final build PASS, RU/KK/EN desktop/mobile synthetic flows verified; PostgreSQL3 race tests PASS; published918096ce to origin/main (remote SHA verified); CI44397837621 running, not PASS. Local PostgreSQL platformacrm: approved migrations0012/0013 applied, Django check and Google tables verified. Live Google grant/transfer and Calendar sync not claimed. Evidence: ../evidence/google-sheets-20261119.md.
 
 INVITATIONS-ACCESS-UX-20261118: terminal invite errors/expiry hidden; access toggle at top.

@@ -22,10 +22,12 @@ class NoRedirect(HTTPRedirectHandler):
         return None
 
 
-def google_request(url, *, method="GET", token=None, payload=None, form=False):
+def google_request(url, *, method="GET", token=None, payload=None, form=False, if_match=None):
     headers = {"Accept": "application/json"}
     if token:
         headers["Authorization"] = f"Bearer {token}"
+    if if_match:
+        headers["If-Match"] = if_match
     data = None
     if payload is not None:
         data = (urlencode(payload) if form else json.dumps(payload)).encode("utf-8")

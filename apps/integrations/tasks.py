@@ -1,6 +1,12 @@
 from celery import shared_task
 
 
+@shared_task(name="integrations.process_google_calendars", queue="integrations")
+def process_google_calendars():
+    from apps.integrations.google_calendar_sync import process_due
+    return process_due()
+
+
 @shared_task(name="integrations.process_ycloud_events")
 def process_ycloud_events():
     from apps.integrations.ycloud.events import process_due

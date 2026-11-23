@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.permissions import IsAuthenticated
@@ -12,7 +13,7 @@ from apps.integrations.google_models import GoogleConnection
 
 class StartInput(serializers.Serializer):
     business = serializers.IntegerField(min_value=1)
-    provider = serializers.ChoiceField(choices=["google_sheets"], default="google_sheets")
+    provider = serializers.ChoiceField(choices=["google_sheets", "google_calendar"], default="google_sheets")
 
 
 class CompleteInput(serializers.Serializer):
@@ -28,8 +29,12 @@ class GoogleOAuthView(APIView):
         data.is_valid(raise_exception=True)
         business = get_object_or_404(accessible_businesses(request.user), pk=data.validated_data["business"])
         google_oauth.assert_access(request.user, business)
-        connection = GoogleConnection.objects.filter(business=business, actor=request.user, provider="google_sheets").first()
-        response = Response(google_oauth.status(connection) if connection else {"status": "disconnected", "id": None, "email": ""})
+        connection = GoogleConnection.objects.filter(business=business, actor=request.user,
+            provider=data.validated_data["provider"]).first()
+        result = google_oauth.status(connection) if connection else {"status": "disconnected", "id": None, "email": ""}
+        if data.validated_data["provider"] == "google_calendar":
+            result["enabled"] = settings.GOOGLE_CALENDAR_ENABLED
+        response = Response(result)
         response["Cache-Control"] = "no-store"
         return response
 
@@ -50,9 +55,11 @@ class GoogleOAuthView(APIView):
         return response
 
 
-def owned_connection(request, pk):
+def owned_connection(request, pk, *, provider="google_sheets"):
     connection = get_object_or_404(GoogleConnection.objects.select_related("business"), pk=pk, actor=request.user,
-                                  business__in=accessible_businesses(request.user), provider="google_sheets")
+                                  business__in=accessible_businesses(request.user))
+    if provider is not None and connection.provider != provider:
+        raise NotFound()
     google_oauth.assert_access(request.user, connection.business)
     return connection
 
@@ -61,7 +68,7 @@ class GoogleDisconnectView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, pk):
-        return Response(google_oauth.disconnect(owned_connection(request, pk), request.user))
+        return Response(google_oauth.disconnect(owned_connection(request, pk, provider=None), request.user))
 
 
 class SheetInput(serializers.Serializer):

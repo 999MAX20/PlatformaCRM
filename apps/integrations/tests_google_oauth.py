@@ -58,6 +58,34 @@ class GoogleOAuthTests(TestCase):
         self.assertEqual(self.api.post("/api/integrations/google/start/", {"business": self.business.pk}).status_code, 404)
         self.assertFalse(self.remote.called)
 
+    @override_settings(GOOGLE_CALENDAR_ENABLED=True)
+    def test_calendar_requires_its_own_scopes_and_cannot_use_sheets_endpoints(self):
+        response = self.api.post("/api/integrations/google/start/", {
+            "business": self.business.pk, "provider": "google_calendar"}, format="json")
+        self.assertEqual(response.status_code, 200)
+        query = parse_qs(urlsplit(response.data["authorization_url"]).query)
+        self.assertNotIn(google_oauth.SHEETS_SCOPE, query["scope"][0])
+        self.assertEqual(self.complete(query["state"][0]).status_code, 400)
+        response = self.api.post("/api/integrations/google/start/", {
+            "business": self.business.pk, "provider": "google_calendar"}, format="json")
+        state = parse_qs(urlsplit(response.data["authorization_url"]).query)["state"][0]
+        self.remote.side_effect = lambda url, **kwargs: (
+            {"sub": "calendar-subject", "email": "test@example.com", "email_verified": True}
+            if url.endswith("userinfo") else
+            {"access_token": "private-access", "refresh_token": "private-refresh",
+             "scope": " ".join(google_oauth.CALENDAR_SCOPES), "expires_in": 3600})
+        self.assertEqual(self.complete(state).status_code, 200)
+        connection = GoogleConnection.objects.get(provider="google_calendar")
+        status = self.api.get("/api/integrations/google/", {
+            "business": self.business.pk, "provider": "google_calendar"})
+        self.assertEqual(status.data["id"], connection.pk)
+        self.assertEqual(self.api.get("/api/integrations/google/", {
+            "business": self.business.pk}).data["status"], "disconnected")
+        self.assertEqual(self.api.post(
+            f"/api/integrations/google/connections/{connection.pk}/sheets/picker/").status_code, 404)
+        self.assertEqual(self.api.post(
+            f"/api/integrations/google/connections/{connection.pk}/disconnect/").status_code, 200)
+
     def test_expired_and_superseded_state(self):
         old = self.start()["state"][0]
         new = self.start()["state"][0]

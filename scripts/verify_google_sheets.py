@@ -9,7 +9,7 @@ import time
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-OUTPUT = ROOT / "output/google-sheets-browser"
+OUTPUT = ROOT / ("output/google-calendar-browser" if "--calendar" in sys.argv else "output/google-sheets-browser")
 
 
 def serve():
@@ -59,6 +59,9 @@ def serve():
             "sheetId": 0, "sheetType": "GRID", "title": "Clients", "gridProperties": {"rowCount": 1000, "columnCount": 26}}}]}
 
     google_oauth.google_request = google_sheets.google_request = google_sheets_export.google_request = remote
+    if "--calendar" in sys.argv:
+        from scripts.google_calendar_browser_fixture import configure
+        configure(business, owner, OUTPUT)
     call_command("runserver", f"127.0.0.1:{os.environ['E2E_DJANGO_PORT']}", use_reloader=False)
 
 
@@ -78,7 +81,7 @@ def main():
         logs = [(OUTPUT / name).open("w", encoding="utf-8") for name in ("backend.log", "frontend.log")]
         processes = []
         try:
-            processes.append(subprocess.Popen([sys.executable, __file__, "--serve"], cwd=ROOT, env=env, stdout=logs[0], stderr=subprocess.STDOUT))
+            processes.append(subprocess.Popen([sys.executable, __file__, "--serve", *(["--calendar"] if "--calendar" in sys.argv else [])], cwd=ROOT, env=env, stdout=logs[0], stderr=subprocess.STDOUT))
             processes.append(subprocess.Popen([shutil.which("node"), "node_modules/vite/bin/vite.js", "--config", "vite.google-sheets.config.ts",
                 "--host", "127.0.0.1", "--port", str(runtime.frontend_port), "--strictPort"], cwd=ROOT / "frontend", env=env, stdout=logs[1], stderr=subprocess.STDOUT))
             print(f"Isolated UI: {env['E2E_BASE_URL']}", flush=True)

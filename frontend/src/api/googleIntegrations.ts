@@ -1,7 +1,7 @@
 import { apiClient } from "./client";
 import type { Id, ImportJob } from "../types";
 
-export type GoogleConnection = { id: number | null; status: string; email: string; last_sync_at?: string | null };
+export type GoogleConnection = { id: number | null; status: string; email: string; last_sync_at?: string | null; enabled?: boolean };
 export type GoogleSheet = { sheetId: number; title: string };
 export type GoogleSpreadsheet = { id: string; title: string; sheets: GoogleSheet[] };
 export type GoogleExport = { id: string; request_key: string; status: string; spreadsheet_id: string; row_count: number; updated_at: string };
@@ -9,8 +9,8 @@ const base = "/api/integrations/google/";
 const sheets = (id: Id, operation: string) => `${base}connections/${id}/sheets/${operation}/`;
 
 export const googleIntegrationsApi = {
-  status: async (business: Id) => (await apiClient.get<GoogleConnection>(base, { params: { business } })).data,
-  start: async (business: Id) => (await apiClient.post<{ authorization_url: string }>(`${base}start/`, { business })).data,
+  status: async (business: Id, provider = "google_sheets") => (await apiClient.get<GoogleConnection>(base, { params: { business, provider } })).data,
+  start: async (business: Id, provider = "google_sheets") => (await apiClient.post<{ authorization_url: string }>(`${base}start/`, { business, provider })).data,
   complete: async (code: string, state: string) => (await apiClient.post<GoogleConnection>(`${base}complete/`, { code, state })).data,
   disconnect: async (id: Id) => (await apiClient.post<GoogleConnection & { google_revoked: boolean }>(`${base}connections/${id}/disconnect/`)).data,
   metadata: async (id: Id, file_id: string) => (await apiClient.post<GoogleSpreadsheet>(sheets(id, "metadata"), { file_id })).data,

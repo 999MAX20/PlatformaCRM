@@ -445,10 +445,13 @@ KASPI_COMPETITOR_MONITOR_PROVIDER = env("KASPI_COMPETITOR_MONITOR_PROVIDER", def
 KASPI_COMPETITOR_MONITOR_API_URL = env("KASPI_COMPETITOR_MONITOR_API_URL", default="")
 KASPI_COMPETITOR_MONITOR_API_KEY = env("KASPI_COMPETITOR_MONITOR_API_KEY", default="")
 YCLOUD_ENABLED = env.bool("YCLOUD_ENABLED", default=False)
+GOOGLE_CALENDAR_ENABLED = env.bool("GOOGLE_CALENDAR_ENABLED", default=False)
 YCLOUD_API_KEY = env("YCLOUD_API_KEY", default="")
 YCLOUD_WEBHOOK_SECRET = env("YCLOUD_WEBHOOK_SECRET", default="")
 
 CELERY_BEAT_SCHEDULE = {
+    "google-calendars": {"task": "integrations.process_google_calendars", "schedule": 60.0,
+                         "options": {"queue": "integrations"}},
     "ycloud-events": {"task": "integrations.process_ycloud_events", "schedule": 30.0},
     "expired-auth-tokens": {
         "task": "accounts.flush_expired_tokens",

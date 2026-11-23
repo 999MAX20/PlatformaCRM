@@ -6,6 +6,7 @@ from django.contrib import admin
 from django.urls import include, path
 from apps.integrations.ycloud.api import YCloudSetupView, YCloudWebhookView
 from apps.integrations.google_api import GoogleOAuthView, GoogleDisconnectView, GoogleSheetsView
+from apps.integrations.google_calendar_api import GoogleCalendarView
 from rest_framework.routers import DefaultRouter
 from apps.medical.views import PatientAdministrationViewSet
 from apps.medical.correction_access_views import CorrectionAccessViewSet
@@ -360,6 +361,7 @@ urlpatterns = [
     path("api/integrations/google/<str:operation>/", GoogleOAuthView.as_view()),
     path("api/integrations/google/connections/<int:pk>/disconnect/", GoogleDisconnectView.as_view()),
     path("api/integrations/google/connections/<int:pk>/sheets/<str:operation>/", GoogleSheetsView.as_view()),
+    path("api/integrations/google/connections/<int:pk>/calendar/<str:operation>/", GoogleCalendarView.as_view()),
     path("api/integrations/telegram/webhook/", TelegramWebhookView.as_view(), name="telegram_webhook"),
     path("api/integrations/ycloud/channels/<int:pk>/", YCloudSetupView.as_view(), name="ycloud_setup"),
     path("api/integrations/ycloud/webhook/", YCloudWebhookView.as_view(), name="ycloud_webhook"),

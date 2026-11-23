@@ -21,7 +21,14 @@ from apps.integrations.google_models import GoogleConnection, GoogleOAuthAttempt
 
 
 SHEETS_SCOPE = "https://www.googleapis.com/auth/drive.file"
-SCOPES = {"google_sheets": ("openid", "email", SHEETS_SCOPE)}
+CALENDAR_SCOPES = (
+    "https://www.googleapis.com/auth/calendar.calendarlist.readonly",
+    "https://www.googleapis.com/auth/calendar.events",
+)
+SCOPES = {
+    "google_sheets": ("openid", "email", SHEETS_SCOPE),
+    "google_calendar": ("openid", "email", *CALENDAR_SCOPES),
+}
 SALT = "platforma.google.integration"
 
 
@@ -51,6 +58,8 @@ def start(*, actor, business, provider="google_sheets"):
     assert_access(actor, business)
     if provider not in SCOPES:
         raise ValidationError("This Google connector is not available yet.")
+    if provider == "google_calendar" and not settings.GOOGLE_CALENDAR_ENABLED:
+        raise ValidationError("Google Calendar synchronization is not enabled.")
     client, _, redirect = configuration()
     connection, _ = GoogleConnection.objects.get_or_create(business=business, actor=actor, provider=provider)
     connection = GoogleConnection.objects.select_for_update().get(pk=connection.pk)
@@ -81,6 +90,8 @@ def complete(*, actor, code, state):
             raise NotFound()
         connection = GoogleConnection.objects.select_for_update().get(pk=attempt.connection_id)
         assert_access(actor, connection.business)
+        if connection.provider == "google_calendar" and not settings.GOOGLE_CALENDAR_ENABLED:
+            raise ValidationError("Google Calendar synchronization is not enabled.")
         if attempt.consumed_at or attempt.revision != connection.revision or attempt.created_at < timezone.now() - timedelta(minutes=10):
             raise ValidationError("Start a new Google connection attempt.")
         attempt.consumed_at = timezone.now()
@@ -94,8 +105,9 @@ def complete(*, actor, code, state):
         "grant_type": "authorization_code", "code_verifier": decrypt_credential_value(attempt.encrypted_verifier)})
     access, refresh = tokens.get("access_token"), tokens.get("refresh_token")
     scopes = str(tokens.get("scope", "")).split()
-    if not access or not refresh or SHEETS_SCOPE not in scopes:
-        raise ValidationError("Google did not grant offline Sheets access. Connect again and allow access.")
+    required_scopes = set(SCOPES[connection.provider]) - {"openid", "email"}
+    if not access or not refresh or not required_scopes.issubset(scopes):
+        raise ValidationError("Google did not grant the required offline access. Connect again and allow access.")
     identity = google_request("https://openidconnect.googleapis.com/v1/userinfo", token=access)
     if not identity.get("sub") or not identity.get("email") or identity.get("email_verified") is not True:
         raise ValidationError("Google account identity could not be verified.")

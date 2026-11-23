@@ -20,11 +20,12 @@ export default function GoogleCallback() {
     if (params.has("error") || !code || !state) { setStatus("cancelled"); return; }
     void googleIntegrationsApi.complete(code, state).then(async () => {
       await cache.invalidateQueries({ queryKey: ["google-connection"] });
+      await cache.invalidateQueries({ queryKey: ["google-calendar"] });
       setStatus("success");
     }).catch(reason => { setError(reason); setStatus("failed"); });
   }, [cache]);
   return <div className="mx-auto w-full max-w-2xl space-y-4 p-4">
-    <h1 className="text-xl font-semibold">Google Sheets</h1>
+    <h1 className="text-xl font-semibold">Google</h1>
     {status === "loading" ? <LoadingState /> : <>
       {status === "failed" ? <ErrorState error={error} /> : <p role="status">{t(`googleSheets.callback.${status}`)}</p>}
       <Link to="/app/settings#integrations" className="text-brand-700 underline">{t("googleSheets.back")}</Link>
