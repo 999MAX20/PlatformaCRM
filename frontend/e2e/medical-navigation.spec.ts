@@ -1,0 +1,78 @@
+import { test, expect } from "@playwright/test";
+import AxeBuilder from "@axe-core/playwright";
+import { ru } from "../src/lib/i18n/ru";
+import { requireIsolatedEnvironment } from "./isolated-environment.mjs";
+
+requireIsolatedEnvironment();
+for (const width of [1440, 390]) {
+  test(`clinical navigation ${width}: return retry and dirty guard`, async ({ page }, info) => {
+    const id = width === 1440 ? 8 : 9;
+    await page.setViewportSize({ width, height: 1000 });
+    await page.addInitScript(() => localStorage.setItem("ai_smb_language", "ru"));
+    await page.goto("/login");
+    await page.locator('input[name="email"]').fill("medical-role-doctor@example.test");
+    await page.locator('input[name="password"]').fill(process.env.E2E_PASSWORD!);
+    const login = page.waitForResponse(r => r.url().endsWith("/api/auth/token/") && r.request().method() === "POST");
+    const me = page.waitForResponse(r => r.url().endsWith("/api/auth/me/") && r.status() === 200);
+    await page.locator('form button[type="submit"]').click();
+    const token = (await (await login).json()).access;
+    await me;
+    await expect(page).toHaveURL(/\/app\//);
+    const appointmentResponse = await page.request.get(`${process.env.E2E_API_BASE_URL}/api/appointments/${id}/`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    expect(appointmentResponse.status()).toBe(200);
+    const appointment = await appointmentResponse.json();
+    await page.goto(`/app/calendar?appointment=${id}&date=${appointment.start_at.slice(0, 10)}`);
+    const entry = page.getByTestId("clinical-appointment-entry");
+    const open = entry.getByRole("button", { name: ru["medical.clinical.open"], exact: true });
+    await open.click();
+    const workspace = page.getByTestId("clinical-workspace");
+    await workspace.getByLabel(ru["medical.clinical.number"], { exact: true }).fill(`NAV-${id}`);
+    await workspace.getByRole("button", { name: ru["medical.clinical.createRecord"], exact: true }).click();
+    await workspace.getByRole("button", { name: ru["medical.clinical.start"], exact: true }).click();
+    const complaint = workspace.getByRole("textbox", { name: ru["medical.clinical.complaints"], exact: true });
+    await complaint.fill("Synthetic unsaved note");
+    const note = workspace.getByRole("tab", { name: ru["medical.clinical.note"], exact: true });
+    const history = workspace.getByRole("tab", { name: ru["medical.clinical.history"], exact: true });
+    await note.focus();
+    await page.keyboard.press("ArrowRight");
+    await expect(history).toBeFocused();
+    await expect(history).toHaveAttribute("aria-selected", "true");
+    await page.keyboard.press("Escape");
+    const unsaved = page.getByTestId("clinical-unsaved");
+    await unsaved.getByRole("button", { name: ru["medical.clinical.continueEditing"], exact: true }).click();
+    await expect(history).toHaveAttribute("aria-selected", "true");
+    await note.click();
+    await expect(complaint).toHaveValue("Synthetic unsaved note");
+    await history.click();
+    await page.keyboard.press("Escape");
+    const closedContext = page.waitForResponse(r => r.url().includes("/encounters/appointment-context/") && r.status() === 200);
+    await unsaved.getByRole("button", { name: ru["medical.clinical.leaveUnsaved"], exact: true }).click();
+    await closedContext;
+    await expect(workspace).not.toBeVisible();
+    await expect(open).toBeFocused();
+    const contextRoute = "**/api/medical/encounters/appointment-context/**";
+    await page.route(contextRoute, route => route.fulfill({ status: 503, json: { detail: "Synthetic unavailable context" } }));
+    await open.click();
+    await expect(workspace.getByText(ru["actions.errorTemporary"], { exact: true })).toBeVisible();
+    await page.unroute(contextRoute);
+    await workspace.getByRole("button", { name: ru["common.retry"], exact: true }).click();
+    await expect(history).toHaveAttribute("aria-selected", "true");
+    await expect(workspace.getByTestId("clinical-history")).toBeVisible();
+    await workspace.screenshot({ path: info.outputPath("clinical-return-history.png") });
+    expect((await new AxeBuilder({ page }).include('[data-testid="clinical-workspace"]').withTags(["wcag2a", "wcag2aa"]).analyze()).violations).toEqual([]);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await note.click();
+    await expect(complaint).toHaveValue("");
+    await history.click();
+    const closeAgain = page.waitForResponse(r => r.url().includes("/encounters/appointment-context/") && r.status() === 200);
+    await page.keyboard.press("Escape");
+    await closeAgain;
+    await page.route(contextRoute, route => route.fulfill({ status: 403, json: { detail: "Synthetic denied context" } }));
+    await open.click();
+    await expect(workspace.getByText(ru["medical.denied"], { exact: true })).toBeVisible();
+    await expect(workspace.getByRole("tab")).toHaveCount(0);
+    await workspace.screenshot({ path: info.outputPath("clinical-return-denied.png") });
+  });
+}

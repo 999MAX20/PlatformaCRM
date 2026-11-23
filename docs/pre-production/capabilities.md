@@ -1,5 +1,7 @@
 ## Медицинский модуль: начата реализация — 22.11.2026
 
+К06 навигация: выбранная вкладка сохраняется при повторном открытии окна той же записи и повторе загрузки. Browser desktop/mobile2PASS,4 inspected captures,build/types PASS; dirty/denial guards сохранены. Фильтры вложенных списков и новые клинические вкладки остаются открытыми в checkpoint.
+
 К06 M09: PostgreSQL17 tooth-state races и affected service/options31PASS; история и идемпотентность проверены для целого зуба/synthetic поверхности. Production не менялся. Реальный справочник L12 остаётся внешним. Подробности — текущий DENTAL-MCS checkpoint.
 
 К06 M16: применение утверждённых общих/личных шаблонов к тексту назначения принято локально:57 dependent/12 final PG,6 browser,25 inspected captures,final build/check/drift/static PASS; опубликовано85d2d867. Manual medication fields сохраняются, exact template/approval/source привязаны к encrypted версии через migration0033; история источника и denial/recovery в UI. Рабочая БД не мигрирована, подпись/PDF/выдача отдельно. Доказательства и открытый остаток — DENTAL-MCS checkpoint.

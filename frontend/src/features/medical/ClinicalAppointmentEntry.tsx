@@ -16,8 +16,11 @@ import { SourceProposalEntry } from "./SourceProposalWorkspace";
 import { DocumentWorkspace } from "./documents/DocumentWorkspace";
 import { OrderWorkspace } from "./orders/OrderWorkspace";
 
+type ClinicalTab = "encounter" | "history" | "teeth" | "documents" | "orders";
+
 export function ClinicalAppointmentEntry({ businessId, appointmentId }: { businessId: number; appointmentId: number }) {
   const { t } = useI18n();
+  const [tab, setTab] = useState<ClinicalTab>("encounter");
   const [context, setContext] = useState<AppointmentClinicalContext | null>(null);
   const [error, setError] = useState<unknown>(null);
   const [loading, setLoading] = useState(true);
@@ -74,7 +77,7 @@ export function ClinicalAppointmentEntry({ businessId, appointmentId }: { busine
     <Modal open={open} onClose={close} size="xl" title={t("medical.clinical.title")} testId="clinical-workspace" closeOnBackdrop={false} focusReturnId={focusId}>
       {loading ? <LoadingState /> : error ? <ErrorState message={status === 401 || status === 403 ? t("medical.denied") : getApiErrorMessage(error)}
         action={<Button size="lg" variant="secondary" onClick={reload}>{t("common.retry")}</Button>} /> : context ?
-        <ClinicalWorkspace draftControl={draftControl} context={context} onChanged={reload} onDirty={setDirty} onDenied={denied}
+        <ClinicalWorkspace tab={tab} onTabChange={setTab} draftControl={draftControl} context={context} onChanged={reload} onDirty={setDirty} onDenied={denied}
           onDocumentEditor={onDocumentEditor} canEditDocument={canEditDocument} /> : null}
     </Modal>
     <Modal open={confirmClose && open} onClose={() => { if (!closeInFlight.current) setConfirmClose(false); }}
@@ -91,14 +94,14 @@ export function ClinicalAppointmentEntry({ businessId, appointmentId }: { busine
   </div>;
 }
 
-function ClinicalWorkspace({ context, onChanged, onDirty, onDenied, draftControl, onDocumentEditor, canEditDocument }: {
+function ClinicalWorkspace({ context, onChanged, onDirty, onDenied, draftControl, onDocumentEditor, canEditDocument, tab, onTabChange }: {
+  tab: ClinicalTab; onTabChange: (tab: ClinicalTab) => void;
   onDocumentEditor: (open: boolean) => void; canEditDocument: () => boolean;
   draftControl: Ref<ClinicalDraftControl>;
   context: AppointmentClinicalContext; onChanged: () => void; onDirty: (value: boolean) => void; onDenied: (cause: unknown) => void;
 }) {
   const { t } = useI18n();
   const [number, setNumber] = useState("");
-  const [tab, setTab] = useState<"encounter" | "history" | "teeth" | "documents" | "orders">("encounter");
   const tabPrefix = `clinical-${context.appointment.id}`;
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<unknown>(null);
@@ -134,7 +137,7 @@ function ClinicalWorkspace({ context, onChanged, onDirty, onDenied, draftControl
       {context.patient.identity_status !== "verified" ? <p role="status" className="text-sm text-platforma-subtle">{t("medical.clinical.verifyFirst")}</p> : null}
     </aside>
     <div className="min-w-0 space-y-4">
-      <Tabs value={tab} onChange={setTab} idPrefix={tabPrefix} ariaLabel={t("medical.clinical.title")}
+      <Tabs value={tab} onChange={onTabChange} idPrefix={tabPrefix} ariaLabel={t("medical.clinical.title")}
         className="[&_[role=tab]]:min-h-11" appearance="underline"
         options={[{ value: "encounter", label: t("medical.clinical.note") }, { value: "history", label: t("medical.clinical.history") }, { value: "teeth", label: t("medical.tooth.title") },
           { value: "documents", label: t("medical.documents.title") }, { value: "orders", label: t("medical.orders.title") }]} />
