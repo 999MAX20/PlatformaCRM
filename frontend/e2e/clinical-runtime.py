@@ -11,6 +11,7 @@ sys.path.insert(0, str(ROOT))
 from scripts.browser_test_runtime import configure_browser_runtime
 
 signing_fixture = os.environ.get("E2E_MEDICAL_SIGNING") == "1"
+issuance_fixture = os.environ.get("E2E_MEDICAL_ISSUANCE") == "1"
 participation_fixture = os.environ.get("E2E_PARTICIPATION") == "1"
 proposal_fixture = os.environ.get("E2E_PROPOSAL") == "1"
 roles_fixture = os.environ.get("E2E_MEDICAL_ROLES") == "1"
@@ -29,6 +30,9 @@ from django.core.management import call_command
 
 if signing_fixture:
     settings.MEDICAL_SYNTHETIC_SIGNING_ENABLED = True
+
+if issuance_fixture:
+    settings.MEDICAL_SYNTHETIC_ISSUANCE_ENABLED = True
 
 if rollout_fixture:
     settings.DENTAL_MEDICAL_RELEASE_ENABLED = True
@@ -330,6 +334,17 @@ if len(sys.argv) > 2 and sys.argv[1] == "clinical-representatives-populate":
         if state == "revoked":
             relation.revoked_at, relation.revoked_by, relation.revocation_encrypted = now, appointment.business.owner, "synthetic"
         relation.save()
+    sys.exit(0)
+if len(sys.argv) > 1 and sys.argv[1] == "issuance-prepare":
+    from final_correction_fixture import prepare, finalize_fixture
+    from apps.medical.models import MedicalEncounter, MedicalRoleAssignment
+    from apps.businesses.models import RolePermission
+    settings.MEDICAL_SYNTHETIC_SIGNING_ENABLED = True
+    entry = finalize_fixture(prepare(issuable=True))
+    encounter = MedicalEncounter.objects.select_related("business").get(appointment_id=entry["appointment_id"])
+    role = MedicalRoleAssignment.objects.get(member=encounter.primary_clinician).business_role
+    RolePermission.objects.create(business_role=role, resource="medical_documents", action="issue", scope="own")
+    print(json.dumps(entry | {"encounter_id": encounter.pk, "business_slug": encounter.business.slug}))
     sys.exit(0)
 if len(sys.argv) > 1 and sys.argv[1] == "final-correction-prepare":
     from final_correction_fixture import prepare, finalize_fixture, timed_fixture

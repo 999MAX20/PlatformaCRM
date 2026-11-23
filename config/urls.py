@@ -15,6 +15,7 @@ from apps.medical.file_views import MedicalFileViewSet
 from apps.medical.template_views import MedicalDocumentTemplateViewSet
 from apps.medical.credential_views import MedicalCredentialViewSet
 from apps.medical.document_views import MedicalDocumentViewSet
+from apps.medical.issuance_views import MedicalDocumentGrantViewSet, MedicalDocumentPortalView
 from apps.medical.assistant_views import AppointmentAssistantViewSet
 from apps.medical.reception_views import ReceptionBookingRequestViewSet
 from apps.medical.document_rule_views import MedicalDocumentKindViewSet
@@ -163,6 +164,7 @@ router.register("medical/files", MedicalFileViewSet, basename="medical-file")
 router.register("medical/document-templates", MedicalDocumentTemplateViewSet, basename="medical-document-template")
 router.register("medical/credentials", MedicalCredentialViewSet, basename="medical-credential")
 router.register("medical/documents", MedicalDocumentViewSet, basename="medical-document")
+router.register("medical/document-grants", MedicalDocumentGrantViewSet, basename="medical-document-grant")
 router.register("medical/appointment-assistants", AppointmentAssistantViewSet, basename="medical-appointment-assistant")
 router.register("reception/booking-requests", ReceptionBookingRequestViewSet, basename="reception-booking-request")
 router.register("medical/document-kinds", MedicalDocumentKindViewSet, basename="medical-document-kind")
@@ -262,6 +264,8 @@ router.register("pricing/kaspi/recommendations", KaspiPricingRecommendationViewS
 router.register("pricing/kaspi/change-logs", KaspiPriceChangeLogViewSet, basename="kaspi-price-change-log")
 
 urlpatterns = [
+    path("api/medical/portal/<slug:business_slug>/", MedicalDocumentPortalView.as_view(), name="medical-document-portal"),
+    path("api/medical/portal/<slug:business_slug>/files/<uuid:public_id>/", MedicalDocumentPortalView.as_view(), name="medical-document-portal-pdf"),
     path("api/billing/businesses/<int:business_id>/orders/", merchant_orders),
     path("api/billing/businesses/<int:business_id>/orders/<uuid:order_id>/<slug:action>/", merchant_card),
     path("api/billing/card-notifications/<slug:provider>/", card_notification),

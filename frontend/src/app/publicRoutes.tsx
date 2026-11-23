@@ -1,4 +1,6 @@
 import { Navigate } from "react-router";
+import { lazy } from "react";
+const DocumentPortalPage = lazy(() => import("../features/medical/DocumentPortalPage").then(module => ({ default: module.DocumentPortalPage })));
 
 import { RouteErrorBoundary } from "../components/ui/RouteErrorBoundary";
 
@@ -9,6 +11,7 @@ import { PublicRoute, PageLoader } from "./routeGuards";
 import { GoogleCompletePage } from "./routeLoaders";
 import { InviteAcceptPage, SignupPage, DocumentsPage, ForgotPasswordPage, ResetPasswordPage, AccountRecoveryPage, MfaPage } from "./routeLoaders";
 export const publicRoutes = [
+{ path: "/medical-documents/:businessSlug", element: <PageLoader><DocumentPortalPage /></PageLoader>, errorElement: <RouteErrorBoundary /> },
 { path: "/google/complete", errorElement: <RouteErrorBoundary />, element: <PageLoader><GoogleCompletePage /></PageLoader> },
 { path: "/documents", element: <PageLoader><DocumentsPage /></PageLoader> },
 { path: "/documents/:documentId", element: <PageLoader><DocumentsPage /></PageLoader> },

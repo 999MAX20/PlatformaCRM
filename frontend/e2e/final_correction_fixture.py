@@ -5,7 +5,7 @@ from django.db import transaction
 
 
 @transaction.atomic
-def prepare():
+def prepare(*, issuable=False):
     from completion_fixture import prepare_completion
     from apps.branches.models import BranchAccess
     from apps.businesses.models import BusinessMember, BusinessRole, RolePermission
@@ -40,7 +40,7 @@ def prepare():
         decision="approved", reason="", idempotency_key="approve")
     save_document_rules(actor=head, business_id=patient.business_id, template_ids=[template.template_id], reason="Synthetic",
         idempotency_key="rules", content={"name": title, "services": [], "default": {"required_at": "optional",
-            "required_fields": [], "reviewers": ["primary_clinician"], "signers": [], "issuable": False}})
+            "required_fields": [], "reviewers": ["primary_clinician"], "signers": [], "issuable": issuable}})
     version, _ = save_primary_document_draft(actor=actor, business_id=patient.business_id, patient_id=patient.pk,
         encounter_id=encounter.pk, expected_encounter_revision=encounter.revision, expected_patient_revision=patient.revision,
         template_version_id=template.pk, document_text="Synthetic original document", idempotency_key="document")

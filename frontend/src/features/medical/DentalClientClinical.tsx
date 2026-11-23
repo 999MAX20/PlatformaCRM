@@ -1,4 +1,5 @@
 import { ActualVisitEntry } from "./ActualVisitEntry";
+import { DocumentIssuanceEntry } from "./DocumentIssuanceEntry";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useImperativeHandle, useRef, useState, type Ref } from "react";
 import { branchesApi } from "../../api/branches";
@@ -32,6 +33,7 @@ export function DentalClientClinical({ businessId, clientId, userId, navigationR
       if (await (clinical.current?.beforeLeave() ?? Promise.resolve(true))) setBranch(next);
     })(); }} />
     {valid ? <>
+      <DocumentIssuanceEntry key={`issue:${selected}`} businessId={businessId} clientId={clientId} branchId={Number(selected)} beforeOpen={() => clinical.current?.beforeLeave() ?? Promise.resolve(true)} onOpenChange={onActualOpen} />
       <ActualVisitEntry key={`actual:${selected}`} scope={{ business_id: businessId, client_id: clientId, branch_id: Number(selected) }}
         beforeOpen={() => clinical.current?.beforeLeave() ?? Promise.resolve(true)} onOpenChange={onActualOpen} />
       <ClientClinicalEntry key={selected} businessId={businessId} clientId={clientId} branchId={Number(selected)} embedded navigationRef={clinical} onDirtyChange={onDirtyChange} />
