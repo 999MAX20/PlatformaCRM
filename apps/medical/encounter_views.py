@@ -84,6 +84,7 @@ class MedicalEncounterViewSet(viewsets.GenericViewSet):
     def get_serializer_class(self):
         return {"create": EncounterOpenSerializer, "draft": EncounterDraftSerializer,
                 "version": EncounterReadSerializer, "workspace": ClinicalWorkspaceSerializer,
+                "overview": EncounterReadSerializer,
                 "revisions": EncounterHistorySerializer,
                 "visit_steps": ClinicalVisitStepsSerializer,
                 "tooth_plan": ToothPlanSerializer,
@@ -137,6 +138,13 @@ class MedicalEncounterViewSet(viewsets.GenericViewSet):
         serializer = self.get_serializer(data=request.query_params)
         serializer.is_valid(raise_exception=True)
         return Response(read_appointment_clinical_context(actor=request.user, **serializer.validated_data))
+
+    @action(detail=False, methods=["get"])
+    def overview(self, request):
+        from .clinical_overview import read_clinical_overview
+        serializer = self.get_serializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+        return Response(read_clinical_overview(actor=request.user, **serializer.validated_data))
 
     @action(detail=False, methods=["get"])
     def workspace(self, request):

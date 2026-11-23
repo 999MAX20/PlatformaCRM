@@ -1,4 +1,4 @@
-DENTAL-MCS: К06 ACTIVE — tooth-state PG31PASS опубликованf49c5489; сохранение вкладки при возврате принято:2 browser/4 captures/build PASS, публикация готовится. Далее clinical patient entry/overview/plan tab; К03/К04/К05/L12 уточнения сохранены. План: docs/testing/task-state/DENTAL-MCS-20261122.md.
+DENTAL-MCS: К06 ACTIVE — overview локально принят:41 dependent,6 distinct browser,9 inspected captures,build/check/drift PASS; публикация готовится. Далее clinical client entry/представители/plan tab; К03/К04/К05/L12 уточнения сохранены. План: docs/testing/task-state/DENTAL-MCS-20261122.md.
 
 QA-016-20261121 LOCAL VERIFIED: automatic tasks searchable by displayed RU/KK/EN title; editor preserves original copy on unrelated edits. 66 backend, 9 node, 6 desktop/mobile browser scenarios, build/types/i18n/check/drift PASS; Code 8a240ad3 pushed to main; CI44937543011 queued (not PASS). Working DB untouched. [Evidence](docs/testing/evidence/qa-016-task-search-20261121.md).
 

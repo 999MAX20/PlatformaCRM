@@ -1,4 +1,9 @@
 export const medical = {
+  "medical.overview.title": "Overview",
+  "medical.overview.latest": "Latest encounter",
+  "medical.overview.clinician": "Latest encounter clinician",
+  "medical.overview.savedRisks": "Saved information from the latest encounter",
+  "medical.overview.source": "Source, version and author",
   "medical.orders.applyTemplate": "Apply to order",
   "medical.orders.replaceText": "Replace the order text with this template? Medication fields will be preserved.",
   "medical.plan.book": "Schedule visit",

@@ -1,5 +1,7 @@
 ## Медицинский модуль: начата реализация — 22.11.2026
 
+К06 обзор: private audited clinical projection и вкладка с датой рождения/последним приёмом/точной сохранённой версией сведений. Backend41 dependent PASS;6 localized browser PASS,build/check/drift PASS; visual/publication status в checkpoint. Несохранённая форма не подменяет источник, автоматической сводной оценки риска нет. Представители/команда и другие незакрытые критерии К06 сохранены.
+
 К06 навигация: выбранная вкладка сохраняется при повторном открытии окна той же записи и повторе загрузки. Browser desktop/mobile2PASS,4 inspected captures,build/types PASS; dirty/denial guards сохранены. Фильтры вложенных списков и новые клинические вкладки остаются открытыми в checkpoint.
 
 К06 M09: PostgreSQL17 tooth-state races и affected service/options31PASS; история и идемпотентность проверены для целого зуба/synthetic поверхности. Production не менялся. Реальный справочник L12 остаётся внешним. Подробности — текущий DENTAL-MCS checkpoint.

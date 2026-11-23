@@ -224,6 +224,13 @@ if roles_fixture and len(sys.argv) > 1 and sys.argv[1] in ("disable-role-module"
     BusinessCapability.objects.filter(business__slug="medical-role", module_key="medical_records").update(
         is_enabled=sys.argv[1] == "enable-role-module")
     sys.exit(0)
+if len(sys.argv) > 1 and sys.argv[1] == "overview-demographics":
+    from apps.medical.identity_crypto import encrypt_medical_value
+    for patient in PatientProfile.objects.filter(business__slug="medical-role"):
+        patient.demographics_encrypted = encrypt_medical_value(json.dumps({"date_of_birth": "2000-02-29"}),
+            business_id=patient.business_id, subject_id=patient.client_id, purpose="demographics")
+        patient.save(update_fields=["demographics_encrypted"])
+    sys.exit(0)
 if len(sys.argv) > 1 and sys.argv[1] in ("revoke", "restore"):
     from apps.medical.models import MedicalRoleAssignment
     MedicalRoleAssignment.objects.filter(member__business__slug="medical-role").update(revoked_at=timezone.now() if sys.argv[1] == "revoke" else None)

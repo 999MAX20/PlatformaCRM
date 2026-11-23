@@ -1,4 +1,9 @@
 export const medical = {
+  "medical.overview.title": "Шолу",
+  "medical.overview.latest": "Соңғы қабылдау",
+  "medical.overview.clinician": "Соңғы қабылдаудың дәрігері",
+  "medical.overview.savedRisks": "Соңғы қабылдауда сақталған мәліметтер",
+  "medical.overview.source": "Дереккөз, нұсқа және автор",
   "medical.orders.applyTemplate": "Тағайындауға қолдану",
   "medical.orders.replaceText": "Тағайындау мәтіні таңдалған үлгімен ауыстырылсын ба? Дәрі өрістері сақталады.",
   "medical.plan.book": "Қабылдауды жоспарлау",

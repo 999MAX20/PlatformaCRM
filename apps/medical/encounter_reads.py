@@ -68,26 +68,29 @@ def read_clinical_workspace(*, actor, business_id, patient_id, appointment_id=No
     if before_id is not None:
         encounters = encounters.filter(pk__lt=before_id)
     page = list(encounters[:limit + 1])
-    rows = []
-    for encounter in page[:limit]:
-        if (encounter.branch.business_id != business.pk or
-                encounter.primary_clinician.business_id != business.pk):
-            raise MedicalDataUnavailable()
-        version = MedicalEncounterRevision.objects.select_related("author").filter(
-            encounter=encounter, revision=encounter.revision).only(
-            "id", "encounter_id", "revision", "author_id", "author__full_name", "created_at").first()
-        if version is None:
-            raise MedicalDataUnavailable()
-        write_patient_audit(actor=actor, business=business, patient=patient, action="read", encounter_version=version)
-        rows.append({"id": encounter.pk, "record_id": encounter.record_id, "appointment_id": encounter.appointment_id,
-            "branch_id": encounter.branch_id, "primary_clinician_id": encounter.primary_clinician_id,
-            "branch_name": encounter.branch.name, "primary_clinician_name": encounter.primary_clinician.user.full_name,
-            "started_at": encounter.started_at, "ended_at": encounter.ended_at, "state": encounter.state,
-            "revision": encounter.revision, "version_id": version.pk, "author_id": version.author_id,
-            "author_name": version.author.full_name})
+    rows = [_encounter_summary(actor=actor, business=business, patient=patient, encounter=encounter)
+            for encounter in page[:limit]]
     return {"patient_id": patient.pk, "patient_revision": patient.revision, "identity_status": patient.identity_status,
         "active_record": {"id": record.pk, "number": record.number, "opened_at": record.opened_at} if record else None,
         "encounters": rows, "next_before_id": rows[-1]["id"] if len(page) > limit else None}
+
+
+def _encounter_summary(*, actor, business, patient, encounter):
+    if (encounter.branch.business_id != business.pk or
+            encounter.primary_clinician.business_id != business.pk):
+        raise MedicalDataUnavailable()
+    version = MedicalEncounterRevision.objects.select_related("author").filter(
+        encounter=encounter, revision=encounter.revision).only(
+        "id", "encounter_id", "revision", "author_id", "author__full_name", "created_at").first()
+    if version is None:
+        raise MedicalDataUnavailable()
+    write_patient_audit(actor=actor, business=business, patient=patient, action="read", encounter_version=version)
+    return {"id": encounter.pk, "record_id": encounter.record_id, "appointment_id": encounter.appointment_id,
+        "branch_id": encounter.branch_id, "primary_clinician_id": encounter.primary_clinician_id,
+        "branch_name": encounter.branch.name, "primary_clinician_name": encounter.primary_clinician.user.full_name,
+        "started_at": encounter.started_at, "ended_at": encounter.ended_at, "state": encounter.state,
+        "revision": encounter.revision, "version_id": version.pk, "author_id": version.author_id,
+        "author_name": version.author.full_name}
 
 
 @transaction.atomic

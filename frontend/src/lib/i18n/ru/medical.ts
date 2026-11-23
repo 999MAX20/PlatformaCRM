@@ -1,4 +1,9 @@
 export const medical = {
+  "medical.overview.title": "Обзор",
+  "medical.overview.latest": "Последний приём",
+  "medical.overview.clinician": "Врач последнего приёма",
+  "medical.overview.savedRisks": "Сохранённые сведения последнего приёма",
+  "medical.overview.source": "Источник, версия и автор",
   "medical.orders.applyTemplate": "Применить к назначению",
   "medical.orders.replaceText": "Заменить текст назначения выбранным шаблоном? Поля лекарства сохранятся.",
   "medical.plan.book": "Запланировать посещение",

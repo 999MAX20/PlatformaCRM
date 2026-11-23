@@ -10,6 +10,7 @@ medicalModuleKeys.add("medical.roles.kind.doctor");
 medicalModuleKeys.add("medical.roles.resource.medical_patients");
 medicalModuleKeys.add("medical.templates.draftStatus");
 medicalModuleKeys.add("medical.plan.steps");
+medicalModuleKeys.add("medical.overview.clinician");
 medicalModuleKeys.add("medical.search.title");
 medicalModuleKeys.add("medical.search.empty");
 medicalModuleKeys.add("medical.registration.title");
