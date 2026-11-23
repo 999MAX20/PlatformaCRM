@@ -1,6 +1,7 @@
 import { apiClient } from "./client";
 import type { ClinicalReadScope, ClinicalContent } from "./medicalClinical";
 import type { TemplateVersion } from "./medicalTemplates";
+import type { CapturedDocumentRules } from "./medicalDocumentRules";
 
 export type DocumentScope = ClinicalReadScope & { encounter_id: number };
 export type HeadDocumentScope = { business_id: number; patient_id: number; head_branch_id: number; encounter_id?: never };
@@ -19,6 +20,7 @@ export type DocumentReview = { document_state: "draft" | "ready_for_review" | "r
 export type DocumentReviewCommand = ClinicalReadScope & { expected_state_revision: number;
   target: "draft" | "ready_for_review" | "reviewed"; reason: string };
 export type DocumentVersion = Omit<DocumentRow, "encounter_id" | "title"> & { snapshot: {
+  document_rules?: CapturedDocumentRules | null;
   template: TemplateVersion["template"]; document_text?: string; clinical: ClinicalContent; reason: string;
   template_source?: { template_id: number; version_id: number; revision: number; approved_by: number; approved_at: string; review_id: number };
   prepared_by: { name: string; member_id: number; user_id: number };

@@ -26,6 +26,14 @@ const labels = {
   "doctor.position": "medical.credentials.position", "doctor.qualification": "medical.credentials.qualification",
 } as const;
 
+export function documentFieldLabel(field: string, t: ReturnType<typeof useI18n>["t"]): string | null {
+  if (Object.prototype.hasOwnProperty.call(labels, field)) return t(labels[field as keyof typeof labels]);
+  const suffix = "_not_applicable_reason";
+  const source = field.slice(0, -suffix.length);
+  return field.startsWith("clinical.") && field.endsWith(suffix) && Object.prototype.hasOwnProperty.call(labels, source)
+    ? t("medical.clinical.notApplicableReason", { field: t(labels[source as keyof typeof labels]) }) : null;
+}
+
 export function TemplateFields({ businessId, onInsert, onDenied }: {
   businessId: number; onInsert: (field: string) => void; onDenied: (cause: unknown) => void;
 }) {
@@ -48,13 +56,8 @@ export function TemplateFields({ businessId, onInsert, onDenied }: {
   if (error) return <ErrorState message={getApiErrorMessage(error)} action={
     <Button type="button" variant="secondary" onClick={() => setAttempt(value => value + 1)}>{t("common.retry")}</Button>} />;
   const options = fields.flatMap(field => {
-    if (Object.prototype.hasOwnProperty.call(labels, field)) return [{ value: field, label: t(labels[field as keyof typeof labels]) }];
-    const suffix = "_not_applicable_reason";
-    const source = field.slice(0, -suffix.length);
-    if (field.startsWith("clinical.") && field.endsWith(suffix) && Object.prototype.hasOwnProperty.call(labels, source)) {
-      return [{ value: field, label: t("medical.clinical.notApplicableReason", { field: t(labels[source as keyof typeof labels]) }) }];
-    }
-    return [];
+    const label = documentFieldLabel(field, t);
+    return label ? [{ value: field, label }] : [];
   });
   if (!options.length) return <p role="status" className="text-sm text-platforma-subtle">{t("medical.fields.empty")}</p>;
   const value = options.some(option => option.value === selected) ? selected : options[0].value;

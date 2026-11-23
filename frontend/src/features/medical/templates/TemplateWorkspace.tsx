@@ -13,6 +13,8 @@ import { TemplateClassificationSummary } from "./TemplateClassification";
 import { TemplateSearch } from "./TemplateSearch";
 import { TemplateAvailabilityDetail } from "./TemplateAvailability";
 import { TemplateReviewDetail, TemplateReviewStatus, TemplateSubmit } from "./TemplateReview";
+import { DocumentRuleWorkspace } from "./DocumentRuleWorkspace";
+import { TemplateDocx } from "./TemplateDocx";
 
 export function TemplateWorkspace({ businessId, active, onDraft }: {
   businessId: number; active: boolean; onDraft: (state: RoleDraftState) => void;
@@ -25,7 +27,7 @@ export function TemplateWorkspace({ businessId, active, onDraft }: {
   const [error, setError] = useState<unknown>(null);
   const [loading, setLoading] = useState(false);
   const [attempt, setAttempt] = useState(0);
-  const [mode, setMode] = useState<"personal" | "common" | "reviews" | "availability">("personal");
+  const [mode, setMode] = useState<"personal" | "common" | "reviews" | "availability" | "rules">("personal");
   const [activity, setActivity] = useState<"all" | "active" | "inactive">("all");
   const [filters, setFilters] = useState<SearchFilters>({});
   const appliedFilters = useRef<SearchFilters>({});
@@ -45,7 +47,7 @@ export function TemplateWorkspace({ businessId, active, onDraft }: {
     setLoading(true); setError(null);
     try {
       const permissions = await api.access(businessId, controller.signal);
-      if ((mode === "reviews" || mode === "availability") && (!permissions.actions.approve || permissions.kind !== "head")) { setMode("personal"); setRows([]); setCursor(null); setAccess(permissions); return; }
+      if ((mode === "reviews" || mode === "availability" || mode === "rules") && (!permissions.actions.approve || permissions.kind !== "head")) { setMode("personal"); setRows([]); setCursor(null); setAccess(permissions); return; }
       let shared: TemplateAccess | null = null;
       if (permissions.kind === "head") {
         try { shared = await commonTemplatesApi.access(businessId, controller.signal); }
@@ -53,6 +55,7 @@ export function TemplateWorkspace({ businessId, active, onDraft }: {
       }
       if (controller.signal.aborted) return;
       setCommonAccess(shared);
+      if (mode === "rules") { setAccess(permissions); setRows([]); setCursor(null); return; }
       if (mode === "common" && !shared) { setMode("personal"); setRows([]); setCursor(null); setAccess(permissions); return; }
       const page = mode === "availability" ? await api.managed(businessId, before, controller.signal, { ...searchFilters, activity }) : mode === "common" ? await commonTemplatesApi.list(businessId, before, controller.signal, searchFilters) : mode === "reviews" ? await api.pending(businessId, before, controller.signal) : await api.list(businessId, before, controller.signal, searchFilters);
       if (controller.signal.aborted) return;
@@ -83,12 +86,15 @@ export function TemplateWorkspace({ businessId, active, onDraft }: {
   const createLabel = mode === "common" ? "medical.templates.commonCreate" : "medical.templates.create";
   if (!active && !access) return null;
   return <div className="space-y-4" data-testid="medical-template-workspace">
-    <p className="text-sm text-platforma-subtle" role="status">{t("medical.templates.draftStatus")}</p>
+    {mode !== "rules" ? <p className="text-sm text-platforma-subtle" role="status">{t("medical.templates.draftStatus")}</p> : null}
     {access?.actions.approve || commonAccess ? <div className="flex flex-wrap gap-2">
-      {(["personal", ...(commonAccess ? ["common" as const] : []), ...(access?.actions.approve && access.kind === "head" ? ["reviews" as const, "availability" as const] : [])] as const).map(value => <Button key={value} variant={mode === value ? "primary" : "secondary"} aria-pressed={mode === value}
-        onClick={() => { if (mode === value) return; setRows([]); setCursor(null); setLoading(true); setMode(value); }} disabled={loading}>
-        {t(value === "personal" ? "medical.templates.personal" : value === "common" ? "medical.templates.common" : value === "availability" ? "medical.templates.availability" : "medical.templates.queue")}</Button>)}
+      {(["personal", ...(commonAccess ? ["common" as const] : []), ...(access?.actions.approve && access.kind === "head" ? ["reviews" as const, "availability" as const, "rules" as const] : [])] as const).map(value => <Button key={value} variant={mode === value ? "primary" : "secondary"} aria-pressed={mode === value}
+        onClick={() => { if (mode === value || guard.current.pending || (guard.current.dirty && !window.confirm(t("medical.clinical.discard")))) return;
+          guard.current = { dirty: false, pending: false }; onDraft(guard.current); setRows([]); setCursor(null); setLoading(true); setMode(value); }} disabled={loading}>
+        {t(value === "rules" ? "medical.rules.title" : value === "personal" ? "medical.templates.personal" : value === "common" ? "medical.templates.common" : value === "availability" ? "medical.templates.availability" : "medical.templates.queue")}</Button>)}
     </div> : null}
+    {mode === "rules" ? access ? <DocumentRuleWorkspace businessId={businessId} control={{ guard, onDraft, onSaved: saved, onDenied: denied }} /> :
+      error ? <ErrorState message={getApiErrorMessage(error)} /> : <LoadingState /> : <>
     {mode !== "reviews" && access ? <TemplateSearch value={filters} disabled={loading}
       onApply={value => { appliedFilters.current = value; setLoading(true); setRows([]); setCursor(null); setFilters(value); setAttempt(previous => previous + 1); }} /> : null}
     {mode === "availability" ? <Select label={t("medical.templates.availability")} value={activity} disabled={loading}
@@ -114,6 +120,7 @@ export function TemplateWorkspace({ businessId, active, onDraft }: {
         <TemplateDetail api={draftApi} businessId={businessId} row={dialog} canUpdate={!!draftAccess?.actions.update}
           control={{ guard, onDraft, onSaved: saved, onDenied: denied }} /> : null}
     </Modal>
+    </>}
   </div>;
 }
 
@@ -144,6 +151,7 @@ function TemplateDetail({ businessId, row, canUpdate, control, api }: {
     <div className="whitespace-pre-wrap break-words text-sm">{version.template.text}</div>
     <TemplateReviewStatus review={version.review} />
     <TemplateClassificationSummary value={version.metadata} />
+    <TemplateDocx key={version.version_id} businessId={businessId} versionId={version.version_id} onDenied={control.onDenied} />
     {version.reason ? <p className="whitespace-pre-wrap break-words text-sm">{t("medical.templates.reason")}: {version.reason}</p> : null}
     {!submitting && canUpdate && version.revision === version.current_revision ? <Button onClick={() => setEditing(true)}>{t(version.review ? "medical.templates.newVersion" : "medical.templates.edit")}</Button> : null}
     {canUpdate && version.revision === version.current_revision && !version.review ?

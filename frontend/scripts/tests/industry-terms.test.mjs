@@ -52,6 +52,8 @@ test("allows patient labels only in the explicit medical module keys", () => {
     ["medical.reception.onsite", "Пациент сейчас в клинике"],
     ["medical.reception.state.booked", "Пациент жазылды"],
     ["medical.reception.state.declined", "Patient declined"],
+    ["medical.rules.role.primary_clinician", "Основной врач"],
+    ["medical.rules.role.patient_or_representative", "Patient or representative"],
     ["clients.create", "Создать пациента"], ["medical.unreviewed", "Doctor"],
   ]), ["clients.create", "medical.unreviewed"]);
 });

@@ -1,9 +1,12 @@
+from django.http import HttpResponse
 from rest_framework import serializers, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .serializers import StrictSerializer
+from .document_artifact_services import DOCX_CONTENT_TYPE
+from .template_docx import download_template_docx, template_docx_access
 from .document_rendering import DOCUMENT_FIELDS
 from .common_template_services import (
     common_template_workspace_access, list_approved_templates, list_common_template_drafts,
@@ -25,6 +28,10 @@ from .template_services import (
 
 class TemplateScopeSerializer(StrictSerializer):
     business_id = serializers.IntegerField(min_value=1)
+
+
+class TemplateDocxSerializer(TemplateScopeSerializer):
+    language = serializers.ChoiceField(choices=["ru", "kk", "en"])
 
 
 class TemplateMetadataSerializer(StrictSerializer):
@@ -94,6 +101,8 @@ class MedicalDocumentTemplateViewSet(viewsets.GenericViewSet):
     http_method_names = ["get", "post", "head", "options"]
 
     def get_serializer_class(self):
+        if self.action == "docx_download":
+            return TemplateDocxSerializer
         if self.action == "availability":
             return TemplateAvailabilitySerializer if self.request.method == "POST" else TemplateHistorySerializer
         if self.action == "common":
@@ -124,6 +133,23 @@ class MedicalDocumentTemplateViewSet(viewsets.GenericViewSet):
 
     def create(self, request):
         return self._command(request)
+
+    @action(detail=False, methods=["get"], url_path=r"versions/(?P<version_id>[0-9]+)/docx-access")
+    def docx_access(self, request, version_id=None):
+        serializer = self.get_serializer(data=request.query_params)
+        serializer.is_valid(raise_exception=True)
+        return Response(template_docx_access(actor=request.user, version_id=int(version_id), **serializer.validated_data))
+
+    @action(detail=False, methods=["post"], url_path=r"versions/(?P<version_id>[0-9]+)/docx-download")
+    def docx_download(self, request, version_id=None):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        body = download_template_docx(actor=request.user, version_id=int(version_id), **serializer.validated_data)
+        response = HttpResponse(body, content_type=DOCX_CONTENT_TYPE)
+        response["Content-Disposition"] = 'attachment; filename="template-draft.docx"'
+        response["X-Content-Type-Options"] = "nosniff"
+        response["Content-Security-Policy"] = "sandbox"
+        return response
 
     @action(detail=False, methods=["get"], url_path="workspace-access")
     def workspace_access(self, request):

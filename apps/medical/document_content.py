@@ -90,7 +90,7 @@ def append_document_revision(*, document, source_version, author, template, reas
         subject_id=current.pk, purpose="document_staging")
     version = MedicalDocumentRevision.objects.create(document=current, revision=current.revision + 1,
         source_version=source, author=member.user, snapshot_encrypted=staging)
-    payload = {**_binding(version, current, schema=4 if template_source is not None else 1), "snapshot": {
+    payload = {**_binding(version, current, schema=5 if template_source is not None else 1), "snapshot": {
         "template": template, "clinical": clinical, "reason": reason,
         "business": {field: getattr(business, field) for field in BUSINESS_FIELDS},
         "branch": {field: getattr(encounter.branch, field) for field in BRANCH_FIELDS},
@@ -101,6 +101,15 @@ def append_document_revision(*, document, source_version, author, template, reas
             "user_id": encounter.primary_clinician.user_id, "name": encounter.primary_clinician.user.full_name},
     }}
     if template_source is not None:
+        from .document_rule_snapshot import capture_document_rules
+        if current.revision:
+            previous = MedicalDocumentRevision.objects.filter(document=current, revision=current.revision).first()
+            if previous is None:
+                raise MedicalDataUnavailable()
+            captured_rules = read_document_revision(previous).get("document_rules")
+        else:
+            captured_rules = capture_document_rules(document=current, template_source=template_source)
+        payload["snapshot"]["document_rules"] = captured_rules
         payload["snapshot"].update(template_source=template_source, document_text=document_text)
         payload["snapshot"].update(capture_document_identity(encounter=encounter, source=source, business=business))
         payload["snapshot"]["medical_credentials"] = capture_document_credentials(
@@ -136,7 +145,7 @@ def append_document_text_correction(*, document, author, document_text, reason):
         raise ValidationError({"author": "Select an active member of this business."})
     snapshot.update(document_text=document_text, reason=reason,
         prepared_by={"member_id": member.pk, "user_id": member.user_id, "name": member.user.full_name})
-    schema = 4 if "medical_credentials" in snapshot else 3 if "patient_identity" in snapshot else 2
+    schema = 5 if "document_rules" in snapshot else 4 if "medical_credentials" in snapshot else 3 if "patient_identity" in snapshot else 2
     staging = encrypt_medical_value("{}", business_id=business.pk, subject_id=current.pk, purpose="document_staging")
     version = MedicalDocumentRevision.objects.create(document=current, revision=current.revision + 1,
         source_version=previous.source_version, author=member.user, snapshot_encrypted=staging)
@@ -159,7 +168,7 @@ def read_document_revision(version):
             raise ValueError
         payload = json.loads(decrypt_medical_value(current.snapshot_encrypted,
             business_id=document.business_id, subject_id=current.pk, purpose="document_snapshot"))
-        if not isinstance(payload, dict) or type(payload.get("schema")) is not int or payload["schema"] not in (1, 2, 3, 4):
+        if not isinstance(payload, dict) or type(payload.get("schema")) is not int or payload["schema"] not in (1, 2, 3, 4, 5):
             raise ValueError
         expected = _binding(current, document, schema=payload["schema"])
         if not isinstance(payload, dict) or set(payload) != set(expected) | {"snapshot"}:
@@ -176,6 +185,8 @@ def read_document_revision(version):
             fields |= {"patient_identity", "encounter_source"}
         if payload["schema"] >= 4:
             fields.add("medical_credentials")
+        if payload["schema"] >= 5:
+            fields.add("document_rules")
         if not isinstance(snapshot, dict) or set(snapshot) != fields:
             raise ValueError
         validate_document_template(snapshot["template"], document.template_code)
@@ -210,6 +221,9 @@ def read_document_revision(version):
         if payload["schema"] >= 4:
             validate_document_credentials(snapshot["medical_credentials"], business_id=document.business_id,
                 member_id=snapshot["performed_by"]["member_id"])
+        if payload["schema"] >= 5:
+            from .document_rule_snapshot import validate_document_rules
+            validate_document_rules(snapshot["document_rules"], business_id=document.business_id)
         return snapshot
     except (MedicalDocumentRevision.DoesNotExist, ModelValidationError, ValidationError, ValueError, TypeError, KeyError):
         raise MedicalDataUnavailable() from None

@@ -9,7 +9,8 @@ from .document_reads import document_workspace_access, list_document_revisions, 
 from .document_previews import preview_document_template
 from .document_services import read_document_for_treating_clinician, save_primary_document_draft
 from .serializers import StrictSerializer
-from .document_artifact_services import prepare_document_draft_pdf, read_document_draft_pdf
+from .document_artifact_services import (prepare_document_draft_pdf, read_document_draft_pdf,
+    prepare_document_draft_docx, read_document_draft_docx, document_artifact_can_docx, DOCX_CONTENT_TYPE)
 from .document_export_history import list_document_export_history
 from .document_review_services import read_document_review, transition_document_review
 from .file_audit import record_denied_file_access as record_denied_document_access
@@ -93,6 +94,7 @@ class MedicalDocumentViewSet(viewsets.GenericViewSet):
                 "workspace_access": DocumentAccessSerializer, "preview": DocumentPreviewSerializer,
                 "prepare_pdf": DocumentArtifactSerializer, "pdf": DocumentArtifactSerializer,
                 "export_pdf": DocumentArtifactSerializer, "print_pdf": DocumentArtifactSerializer,
+                "prepare_docx": DocumentArtifactSerializer, "export_docx": DocumentArtifactSerializer,
                 "export_history": DocumentExportHistorySerializer,
                 "review_state": DocumentExportHistorySerializer,
                 "review_transition": DocumentReviewTransitionSerializer}.get(
@@ -167,26 +169,32 @@ class MedicalDocumentViewSet(viewsets.GenericViewSet):
     def version(self, request, version_id=None):
         return self._read(request, read_document_for_treating_clinician, version_id=int(version_id))
 
-    def _artifact(self, request, version_id, *, prepare, purpose="preview"):
+    def _artifact(self, request, version_id, *, prepare, purpose="preview", format="pdf"):
         serializer = self.get_serializer(data=request.data if request.method == "POST" else request.query_params)
         serializer.is_valid(raise_exception=True)
         scope = serializer.validated_data
         try:
             if prepare:
-                item, replayed = prepare_document_draft_pdf(actor=request.user, version_id=int(version_id), **scope)
+                prepare_file = prepare_document_draft_docx if format == "docx" else prepare_document_draft_pdf
+                item, replayed = prepare_file(actor=request.user, version_id=int(version_id), **scope)
                 from .document_artifact_access import document_artifact_can_export
                 can_export = document_artifact_can_export(actor=request.user, version_id=int(version_id),
                     **{key: value for key, value in scope.items() if key != "language"})
                 return Response({"artifact_id": item.pk, "version_id": item.version_id, "language": item.language,
                     "scan_status": item.attachment.scan_status, "replayed": replayed,
-                    "can_export": can_export}, status=200 if replayed else 201)
-            content = read_document_draft_pdf(actor=request.user, version_id=int(version_id), purpose=purpose, **scope)
+                    "can_export": can_export,
+                    "can_docx": document_artifact_can_docx(actor=request.user, version_id=int(version_id),
+                        **{key: value for key, value in scope.items() if key != "language"})}, status=200 if replayed else 201)
+            if format == "docx":
+                content = read_document_draft_docx(actor=request.user, version_id=int(version_id), **scope)
+            else:
+                content = read_document_draft_pdf(actor=request.user, version_id=int(version_id), purpose=purpose, **scope)
         except (NotFound, PermissionDenied):
             record_denied_document_access(actor=request.user, business_id=scope["business_id"])
             raise
-        response = HttpResponse(content, content_type="application/pdf")
+        response = HttpResponse(content, content_type=DOCX_CONTENT_TYPE if format == "docx" else "application/pdf")
         disposition = "attachment" if purpose == "download" else "inline"
-        response["Content-Disposition"] = f'{disposition}; filename="document.pdf"'
+        response["Content-Disposition"] = f'{disposition}; filename="document.{format}"'
         response["X-Content-Type-Options"] = "nosniff"
         response["Content-Security-Policy"] = "default-src 'none'; sandbox"
         return response
@@ -206,6 +214,14 @@ class MedicalDocumentViewSet(viewsets.GenericViewSet):
     @action(detail=False, methods=["post"], url_path=r"versions/(?P<version_id>[0-9]+)/pdf-print")
     def print_pdf(self, request, version_id=None):
         return self._artifact(request, version_id, prepare=False, purpose="print")
+
+    @action(detail=False, methods=["post"], url_path=r"versions/(?P<version_id>[0-9]+)/docx-prepare")
+    def prepare_docx(self, request, version_id=None):
+        return self._artifact(request, version_id, prepare=True, format="docx")
+
+    @action(detail=False, methods=["post"], url_path=r"versions/(?P<version_id>[0-9]+)/docx-download")
+    def export_docx(self, request, version_id=None):
+        return self._artifact(request, version_id, prepare=False, purpose="download", format="docx")
 
     @action(detail=False, methods=["get"], url_path=r"versions/(?P<version_id>[0-9]+)/export-history")
     def export_history(self, request, version_id=None):

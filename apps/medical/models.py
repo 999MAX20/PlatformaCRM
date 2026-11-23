@@ -11,6 +11,7 @@ from .file_models import MedicalAttachment, MedicalAttachmentRevision
 from .document_artifact_models import MedicalDocumentArtifact
 from .assistant_models import AppointmentAssistant
 from .reception_models import ReceptionBookingRequest
+from .document_rule_models import MedicalDocumentKind, MedicalDocumentRuleRevision
 
 
 class PatientProfile(TimeStampedModel):
@@ -356,6 +357,7 @@ class MedicalAuditEvent(models.Model):
         CREDENTIAL_CONFIRMED = "credential_confirmed", "Credential confirmed"
         TEMPLATE_ACTIVATED = "template_activated", "Template activated"
         TEMPLATE_DEACTIVATED = "template_deactivated", "Template deactivated"
+        DOCUMENT_RULES_SAVED = "document_rules_saved", "Document rules saved"
         READ = "read", "Read"
         ACCESS_DENIED = "access_denied", "Access denied"
 
@@ -393,6 +395,8 @@ class MedicalAuditEvent(models.Model):
                                            null=True, blank=True, related_name="audit_events")
     template_availability = models.ForeignKey("MedicalTemplateAvailabilityRevision", on_delete=models.PROTECT,
                                               null=True, blank=True, related_name="audit_events")
+    document_rule_version = models.ForeignKey("MedicalDocumentRuleRevision", on_delete=models.PROTECT,
+        null=True, blank=True, related_name="audit_events")
     action = models.CharField(max_length=32, choices=Actions.choices)
     result = models.CharField(max_length=16, choices=[("success", "Success"), ("denied", "Denied")])
     created_at = models.DateTimeField(auto_now_add=True)
@@ -415,7 +419,7 @@ class MedicalAuditEvent(models.Model):
                                                "document_draft_saved", "document_review_submitted", "document_review_withdrawn", "document_review_confirmed", "document_exported", "document_print_requested", "template_draft_created",
                                                "template_draft_saved", "template_submitted", "template_approved",
                                                "template_rejected", "credential_confirmed", "template_activated",
-                                               "template_deactivated", "identity_correction_requested",
+                                               "template_deactivated", "document_rules_saved", "identity_correction_requested",
                                                "identity_correction_applied", "identity_correction_rejected",
                                                "correction_access_requested", "correction_access_approved",
                                                "correction_access_rejected", "correction_access_withdrawn",
@@ -520,6 +524,15 @@ class MedicalAuditEvent(models.Model):
                 name="medical_audit_availability_scope"),
             models.CheckConstraint(condition=(~models.Q(action__in=["template_activated", "template_deactivated"]) |
                 models.Q(template_availability__isnull=False)), name="medical_audit_availability_needed"),
+            models.CheckConstraint(condition=(~models.Q(action="document_rules_saved") |
+                models.Q(document_rule_version__isnull=False)), name="medical_audit_doc_rule_needed"),
+            models.CheckConstraint(condition=(models.Q(document_rule_version__isnull=True) |
+                models.Q(patient__isnull=True, representative__isnull=True, participation__isnull=True,
+                    encounter_version__isnull=True, record__isnull=True, tooth_history__isnull=True,
+                    document_version__isnull=True, template_version__isnull=True, order_version__isnull=True,
+                    credential_version__isnull=True, template_availability__isnull=True, file_version__isnull=True,
+                    correction_access__isnull=True, identity_correction__isnull=True,
+                    action__in=["read", "document_rules_saved"])), name="medical_audit_doc_rule_scope"),
         ]
 
 class DentalMedicalRecord(TimeStampedModel):
@@ -697,6 +710,8 @@ class MedicalDocumentTemplate(TimeStampedModel):
     revision = models.PositiveIntegerField(default=0)
     is_active = models.BooleanField(default=True)
     availability_revision = models.PositiveIntegerField(default=0)
+    document_kind = models.ForeignKey("medical.MedicalDocumentKind", on_delete=models.PROTECT,
+        null=True, blank=True, related_name="templates")
 
     class Meta:
         constraints = [
@@ -710,6 +725,9 @@ class MedicalDocumentTemplate(TimeStampedModel):
         if self.owner_member_id is not None and not BusinessMember.objects.filter(
                 pk=self.owner_member_id, business_id=self.business_id).exists():
             raise ValidationError({"owner_member": "Select a member of this business."})
+        if self.document_kind_id is not None and not MedicalDocumentKind.objects.filter(
+                pk=self.document_kind_id, business_id=self.business_id).exists():
+            raise ValidationError({"document_kind": "Select a document kind of this business."})
 
 
 class MedicalDocumentTemplateRevision(models.Model):

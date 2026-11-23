@@ -1,4 +1,5 @@
 import { apiClient } from "./client";
+import { blobResponse } from "./medicalDocumentArtifacts";
 
 export type TemplateAccess = { business_id: number; member_id: number; kind: "doctor" | "head";
   actions: { view: boolean; create: boolean; update: boolean; approve: boolean } };
@@ -33,6 +34,11 @@ async function reviewCommand(path: string, payload: object, key: string) {
   return (await apiClient.post(root + path, payload, { headers: { "Idempotency-Key": key } })).data;
 }
 export const medicalTemplatesApi = {
+  docxAccess: (business_id: number, version_id: number, signal?: AbortSignal) =>
+    read<{ can_docx: boolean }>(`versions/${version_id}/docx-access/`, { business_id }, signal),
+  downloadDocx: (business_id: number, version_id: number, language: string, signal?: AbortSignal) =>
+    blobResponse(apiClient.post<Blob>(`${root}versions/${version_id}/docx-download/`,
+      { business_id, language }, { responseType: "blob", signal })),
   managed: (business_id: number, before_id?: number, signal?: AbortSignal,
     filters?: Omit<TemplateSearch, "scope"> & { activity?: "all" | "active" | "inactive" }) =>
     read<{ results: ManagedTemplateRow[]; next_before_id: number | null }>("managed/", { ...filters, business_id, before_id }, signal),

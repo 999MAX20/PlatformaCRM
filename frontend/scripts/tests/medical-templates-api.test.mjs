@@ -5,12 +5,42 @@ import vm from "node:vm";
 import ts from "typescript";
 
 function load(apiClient, common = false) {
-  const exports = {};
-  const source = fs.readFileSync(new URL("../../src/api/medicalTemplates.ts", import.meta.url), "utf8");
-  const { outputText } = ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS } });
-  vm.runInNewContext(outputText, { exports, require: name => { assert.equal(name, "./client"); return { apiClient }; } });
+  function evaluate(filename) {
+    const exports = {};
+    const source = fs.readFileSync(new URL(`../../src/api/${filename}.ts`, import.meta.url), "utf8");
+    const { outputText } = ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS } });
+    vm.runInNewContext(outputText, { exports, Blob, require: name => {
+      if (name === "./client") return { apiClient };
+      if (name === "axios") return { default: { isAxiosError: value => Boolean(value?.isAxiosError) } };
+      assert.equal(name, "./medicalDocumentArtifacts");
+      return evaluate("medicalDocumentArtifacts");
+    } });
+    return exports;
+  }
+  const exports = evaluate("medicalTemplates");
   return common ? exports.commonTemplatesApi : exports.medicalTemplatesApi;
 }
+
+test("template DOCX retains scope and decodes bounded JSON blob failures", async () => {
+  const calls = [];
+  const file = new Blob(["synthetic docx"]);
+  const api = load({ get: async (...args) => { calls.push(args); return { data: { can_docx: true } }; },
+    post: async (...args) => { calls.push(args); return { data: file }; } });
+  const signal = new AbortController().signal;
+  assert.equal((await api.docxAccess(8, 99, signal)).can_docx, true);
+  assert.equal(await api.downloadDocx(8, 99, "kk", signal), file);
+  assert.equal(calls[0][0], "/api/medical/document-templates/versions/99/docx-access/");
+  assert.equal(calls[0][1].params.business_id, 8);
+  assert.equal(calls[1][0], "/api/medical/document-templates/versions/99/docx-download/");
+  assert.equal(calls[1][1].language, "kk");
+  assert.equal(calls[1][1].business_id, 8);
+  assert.equal(calls[1][2].signal, signal);
+  assert.equal(calls[1][2].responseType, "blob");
+  const failure = { isAxiosError: true, response: { status: 403,
+    data: new Blob([JSON.stringify({ detail: "Access revoked" })], { type: "application/json" }) } };
+  await assert.rejects(load({ post: async () => { throw failure; } }).downloadDocx(8, 99, "ru"),
+    error => error === failure && error.response.data.detail === "Access revoked" && error.response.status === 403);
+});
 
 test("template reads preserve business, cursor, exact version and cancellation", async () => {
   const calls = [];

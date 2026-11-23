@@ -15,6 +15,7 @@ import { medicalRoleDenied } from "../roles/useMedicalRolePage";
 import type { RoleDraftState } from "../roles/MedicalRoleCommand";
 import { DocumentEditor } from "./DocumentEditor";
 import { DocumentPdf } from "./DocumentPdf";
+import { DocumentSavedRules } from "./DocumentSavedRules";
 
 export function DocumentWorkspace({ context, active, onEditor, canEdit }: {
   context: AppointmentClinicalContext; active: boolean; onEditor: (open: boolean) => void; canEdit: () => boolean;
@@ -194,6 +195,7 @@ function DocumentDetail({ scope, row, canUpdate, onEdit, onDenied, reviewControl
       <p className="break-words text-sm text-platforma-subtle">{t("medical.templates.version", { revision: version.revision })} · {version.snapshot.prepared_by.name} · {formatDateTime(version.created_at, undefined, true, localeByLanguage[language])}</p>
       <p className="text-sm">{t(version.revision !== current ? "medical.documents.recorded" : version.state === "draft" ? "medical.clinical.state.draft" : version.state === "ready_for_review" ? "medical.documents.readyForReview" : version.state === "reviewed" ? "medical.documents.reviewed" : "medical.documents.recorded")}</p>
       <div className="whitespace-pre-wrap break-words text-sm" data-testid="medical-document-text">{version.snapshot.document_text ?? version.snapshot.template.text}</div>
+      <DocumentSavedRules key={version.version_id} rules={version.snapshot.document_rules} />
       {version.snapshot.document_text !== undefined ? <DocumentPdf key={`${version.version_id}-${language}`} scope={readScope}
         versionId={version.version_id} title={version.snapshot.template.title} onDenied={onDenied} /> : null}
       <DocumentReview key={version.version_id} scope={readScope} versionId={version.version_id}

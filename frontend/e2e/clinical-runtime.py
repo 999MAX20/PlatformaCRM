@@ -14,6 +14,7 @@ participation_fixture = os.environ.get("E2E_PARTICIPATION") == "1"
 proposal_fixture = os.environ.get("E2E_PROPOSAL") == "1"
 roles_fixture = os.environ.get("E2E_MEDICAL_ROLES") == "1"
 templates_fixture = os.environ.get("E2E_MEDICAL_TEMPLATES") == "1"
+template_docx_fixture = os.environ.get("E2E_TEMPLATE_DOCX_SCAN") == "1"
 orders_fixture = os.environ.get("E2E_MEDICAL_ORDERS") == "1"
 files_fixture = os.environ.get("E2E_MEDICAL_FILES") == "1"
 plan_links_fixture = os.environ.get("E2E_MEDICAL_PLAN_LINKS") == "1"
@@ -503,6 +504,12 @@ if files_fixture and len(sys.argv) > 1 and sys.argv[1] == "assistant-new-member"
     print(json.dumps({"member_id": member.pk, "email": assistant.email, "name": assistant.full_name,
         "business_id": appointment.business_id, "patient_id": PatientProfile.objects.get(client=appointment.client).pk}))
     sys.exit(0)
+if templates_fixture and len(sys.argv) > 1 and sys.argv[1] == "template-new-service":
+    from apps.services.models import Service
+    service = Service.objects.create(business=Business.objects.get(slug="medical-role"),
+        name="Synthetic document service " + secrets.token_hex(12))
+    print(json.dumps({"id": service.pk, "name": service.name}))
+    sys.exit(0)
 if files_fixture and len(sys.argv) > 1 and sys.argv[1] == "files-new-appointment":
     from django.db import transaction
     with transaction.atomic():
@@ -607,5 +614,15 @@ if len(sys.argv) > 1 and sys.argv[1] in ("revoke", "restore"):
     from apps.medical.models import MedicalRoleAssignment
     MedicalRoleAssignment.objects.filter(member__business__slug="medical-role").update(revoked_at=timezone.now() if sys.argv[1] == "revoke" else None)
     sys.exit(0)
-call_command("runserver", f"127.0.0.1:{os.environ['E2E_DJANGO_PORT']}", use_reloader=False,
-             use_threading=templates_fixture)
+if template_docx_fixture:
+    from unittest.mock import patch
+    from apps.core.tests_file_scanning import clean_result
+    head_role = MedicalRoleAssignment.objects.get(member__user__email="medical-template-head@example.test").business_role
+    RolePermission.objects.get_or_create(business_role=head_role, resource="medical_documents",
+        action="export", defaults={"scope": "business", "is_allowed": True})
+    with patch("apps.medical.template_docx.scan_stream", side_effect=clean_result):
+        call_command("runserver", f"127.0.0.1:{os.environ['E2E_DJANGO_PORT']}", use_reloader=False,
+                     use_threading=templates_fixture)
+else:
+    call_command("runserver", f"127.0.0.1:{os.environ['E2E_DJANGO_PORT']}", use_reloader=False,
+                 use_threading=templates_fixture)

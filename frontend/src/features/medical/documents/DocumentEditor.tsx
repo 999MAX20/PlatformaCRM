@@ -9,6 +9,7 @@ import { useI18n } from "../../../lib/i18n";
 import { MedicalRoleCommand, type RoleFormControl } from "../roles/MedicalRoleCommand";
 import { medicalRoleDenied } from "../roles/useMedicalRolePage";
 import { TemplateSearch } from "../templates/TemplateSearch";
+import { TemplateDocx } from "../templates/TemplateDocx";
 
 export function DocumentEditor({ scope, version, control }: {
   scope: DocumentScope; version: DocumentVersion | null; control: RoleFormControl;
@@ -81,6 +82,7 @@ export function DocumentForm({ scope, version, preview, control, submitDocument 
     submit={(data, key) => submitDocument ? submitDocument(data, key) : version ? api.update(version.document_id, { ...data, expected_document_revision: version.revision }, key) : api.create(data, key)}>
     <h2 className="break-words text-base font-semibold">{template.template.title}</h2>
     <p className="text-sm text-platforma-subtle">{t("medical.documents.sourceVersion", { revision: template.revision })}</p>
+    <TemplateDocx key={template.version_id} businessId={scope.business_id} versionId={template.version_id} onDenied={control.onDenied} />
     {!version && preview.missing_fields.length ? <p role="status" className="text-sm text-platforma-subtle">
       {t("medical.documents.missingFields", { count: preview.missing_fields.length })}
     </p> : null}

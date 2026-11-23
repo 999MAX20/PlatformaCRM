@@ -8,7 +8,7 @@ type DocumentBasis =
   | { head_branch_id: number; appointment_id?: never; participation_id?: never; correction_access_id?: never };
 export type DocumentArtifactScope = { business_id: number; patient_id: number } & DocumentBasis;
 export type DocumentArtifact = { artifact_id: number; version_id: number; language: string;
-  scan_status: "pending" | "scanning" | "clean" | "infected" | "error"; replayed: boolean; can_export: boolean };
+  scan_status: "pending" | "scanning" | "clean" | "infected" | "error"; replayed: boolean; can_export: boolean; can_docx: boolean };
 export type DocumentExportEvent = { id: number; action: "document_exported" | "document_print_requested";
   created_at: string; actor: { id: number; name: string }; version_id: number; revision: number };
 export type DocumentExportHistory = { results: DocumentExportEvent[]; next_before_id: number | null };
@@ -19,7 +19,7 @@ function params(scope: DocumentArtifactScope, language?: string) {
     head_branch_id: scope.head_branch_id, language };
 }
 const root = "/api/medical/documents/versions/";
-async function blobResponse(request: Promise<{ data: Blob }>) {
+export async function blobResponse(request: Promise<{ data: Blob }>) {
   try { return (await request).data; }
   catch (error) {
     if (axios.isAxiosError(error) && error.response?.data instanceof Blob && error.response.data.size <= 65536 &&
@@ -30,6 +30,10 @@ async function blobResponse(request: Promise<{ data: Blob }>) {
   }
 }
 export const medicalDocumentArtifactsApi = {
+  prepareDocx: async (scope: DocumentArtifactScope, versionId: number, language: string, signal?: AbortSignal) =>
+    (await apiClient.post<DocumentArtifact>(`${root}${versionId}/docx-prepare/`, params(scope, language), { signal })).data,
+  downloadDocx: (scope: DocumentArtifactScope, versionId: number, language: string, signal?: AbortSignal) =>
+    blobResponse(apiClient.post<Blob>(`${root}${versionId}/docx-download/`, params(scope, language), { signal, responseType: "blob" })),
   history: async (scope: DocumentArtifactScope, versionId: number, beforeId?: number, signal?: AbortSignal) =>
     (await apiClient.get<DocumentExportHistory>(`${root}${versionId}/export-history/`, {
       params: { ...params(scope), before_id: beforeId }, signal,

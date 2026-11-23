@@ -24,6 +24,8 @@ medicalModuleKeys.add("medical.reception.notBooking");
 medicalModuleKeys.add("medical.reception.onsite");
 medicalModuleKeys.add("medical.reception.state.booked");
 medicalModuleKeys.add("medical.reception.state.declined");
+medicalModuleKeys.add("medical.rules.role.primary_clinician");
+medicalModuleKeys.add("medical.rules.role.patient_or_representative");
 const industryEntity = /(?:^|[^\p{L}])(?:клиник[\p{L}]*|пациент[\p{L}]*|врач[\p{L}]*|кресл[\p{L}]*|стоматолог[\p{L}]*|емхана[\p{L}]*|дәрігер[\p{L}]*|орындық[\p{L}]*|clinics?|patients?|doctors?|dentists?|dentistry|dental|chairs?)(?=$|[^\p{L}])/iu;
 
 export function industryTermViolations(entries) {

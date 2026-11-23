@@ -14,7 +14,7 @@ for (const width of [1440, 390]) test(`template risk fields ${width}: insert and
   const workspace = page.getByTestId("medical-template-workspace");
   await workspace.getByRole("button", { name: ru["medical.templates.create"], exact: true }).click();
   const dialog = page.getByRole("dialog");
-  const title = `Synthetic risk fields ${width}`;
+  const title = `Synthetic risk fields ${width} ${crypto.randomUUID()}`;
   await dialog.getByLabel(ru["medical.templates.title"], { exact: true }).fill(title);
   const text = dialog.getByLabel(ru["medical.templates.text"], { exact: true });
   for (const field of ["allergies", "contraindications"] as const) {
