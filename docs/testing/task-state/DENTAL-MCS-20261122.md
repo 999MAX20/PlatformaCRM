@@ -1,6 +1,18 @@
 # DENTAL-MCS-20261122: полная реализация медицинского ТЗ
 
-## К13: ограниченный сценарий принят локально; далее К08
+## Активный этап К08: матрица документов и разрешённый DOCX
+
+К13 ограниченный сценарий опубликован b4a911b27de8a79ad1e83dc4725ebb3b0ee391e3, normal push origin/main; remote SHA прочитан и совпал. Canonical root C:\Users\user\Desktop\PlatformaCRM, branch codex/ui-testing-toolkit сохранена. Outgoing range состоял только из своего коммита52paths; STATUS staged только первая строка, чужие WIP не включены. Working/index/real committed-range diff hygiene PASS. CI не запускался и не опрашивался. Полный К13 остаётся PARTIAL по таблице.
+
+### Контракт продолжения К08
+
+Mode implementation; gap code, не повторный аудит. §22.10 закрывает прежний policy blocker DOCX. Наблюдаемый результат: медруководитель задаёт версионные правила документа по виду/услуге, врач видит сохранённые правила своего документа и скачивает DOCX только разрешённого редактируемого черновика с маркировкой; прежние версии правил и документов сохраняются. Переиспользовать MedicalDocument/Revision, Template/Revision/Review, metadata классификации и услуг, document snapshots, готовый render_draft_docx и проверенный private artifact/export audit путь. Renderer/LibreOffice RU/KK/EN15page QA опубликован6347057f, повторять только при изменении значимых данных/рендера; разрешение владельца на установленный LibreOffice сохраняется.
+
+Осмотр текущего кода: Template metadata содержит свободные category/specialty и snapshots services; MedicalDocument связан template_code, отдельного стабильного вида/матрицы правил пока нет. Snapshot schemas1–4 сохраняют template/clinical/identity/credentials, но правил документа не содержат. Следующий шаг: точечно согласовать внутреннюю привязку вида к существующим шаблонам и версионирование правил, затем backend/API/UI единого сценария. Не подменять свободную category юридически утверждённым видом; реальные формы L05 остаются внешней приёмкой, локальные примеры явно synthetic.
+
+Риски/проверки до изменений: head-only management и текущая branch scope; врач/владелец без medical head не меняют правила; tenant/service isolation, snapshot immutability, stale revision/replay/audit rollback. DOCX default deny, approved template/current editable version only, revocation/direct access/no-store/audit, отсутствие изменения CRM после редактирования файла. Узкие новые backend tests до зависимого UI, representative PG race при mutation concurrency, schema/isolated migration roundtrip; scoped desktop/mobile early screenshot+inspect, error/retention/revoke и RU/KK/EN по затронутым labels, final build/types. Не запускать весь medical suite без доказанного влияния. При изменении общего document snapshot validator добавить его существующие зависимые tests. UI skills antislop during + UI/human/layoutmobile/copy/zani-frontend: reuse settings/templates workspace, no nested modal, labels/focus/44px и mobile reflow. Сначала перечитать точные применяемые инструкции перед UI-правками.
+
+Медицинские правила, моменты обязательности/проверяющие/подписанты/выдача и DOCX opt-in требуют версии и истории; ЭЦП, завершение приёма и выдача используют этот контракт далее К09–К12. Сейчас не добавлять настоящих подписей, внешних отправок, рабочей миграции или реальной нормативной матрицы. Внешние L05/L06/L09/L10 блокируют только соответствующую активацию/приёмку. Тестовые раннеры SQLite47965/PG64869/UI63189 сохранены idle; следующий UI79/PG17. На начало К08 значимых product edits ещё нет.
 
 ### Итог приёмки передачи/возврата/истории — 23.11.2026
 
