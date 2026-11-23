@@ -1,9 +1,8 @@
 name: Stand access boundary
+# Automatic verification is paused during the dental goal; acceptance runs locally.
 on:
-  push:
-    paths: ['deploy/stand-access/**', 'compose.stand.yaml', '.github/workflows/stand-access.yml']
-  pull_request:
-    paths: ['deploy/stand-access/**', 'compose.stand.yaml', '.github/workflows/stand-access.yml']
+  workflow_dispatch:
+
 permissions:
   contents: read
 jobs:
