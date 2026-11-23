@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import axios from "axios";
-import { medicalClinicalApi, type AppointmentClinicalContext, type ClinicalOverview as OverviewData, type EncounterVersion } from "../../api/medicalClinical";
+import { medicalClinicalApi, type AppointmentClinicalContext, type ClinicalReadScope, type ClinicalOverview as OverviewData, type EncounterVersion } from "../../api/medicalClinical";
 import { getApiErrorMessage } from "../../api/client";
 import { Button } from "../../components/ui/Button";
 import { ErrorState, LoadingState } from "../../components/ui/StateViews";
@@ -12,6 +12,30 @@ export function ClinicalOverview({ context, onDenied, onNavigate }: {
   context: AppointmentClinicalContext; onDenied: (cause: unknown) => void;
   onNavigate: (tab: "encounter" | "history" | "orders" | "documents") => void;
 }) {
+  const { t } = useI18n();
+  const scope = useMemo(() => ({ business_id: context.business_id, patient_id: context.patient.id,
+    appointment_id: context.appointment.id }), [context]);
+  return <ClinicalOverviewRead scope={scope} onDenied={onDenied} onHistory={() => onNavigate("history")} actions={<>
+    <Button size="lg" onClick={() => onNavigate("encounter")}>{t("medical.clinical.note")}</Button>
+    {context.encounter ? <>
+      <Button size="lg" variant="secondary" onClick={() => onNavigate("orders")}>{t("medical.orders.title")}</Button>
+      <Button size="lg" variant="secondary" onClick={() => onNavigate("documents")}>{t("medical.documents.title")}</Button>
+    </> : null}
+  </>} />;
+}
+
+export function ParticipationClinicalOverview({ businessId, patientId, participationId, onDenied, onHistory }: {
+  businessId: number; patientId: number; participationId: number;
+  onDenied: (cause: unknown) => void; onHistory: () => void;
+}) {
+  const scope = useMemo(() => ({ business_id: businessId, patient_id: patientId, participation_id: participationId }),
+    [businessId, patientId, participationId]);
+  return <ClinicalOverviewRead scope={scope} onDenied={onDenied} onHistory={onHistory} />;
+}
+
+function ClinicalOverviewRead({ scope, onDenied, onHistory, actions }: {
+  scope: ClinicalReadScope; onDenied: (cause: unknown) => void; onHistory: () => void; actions?: ReactNode;
+}) {
   const { t, language } = useI18n();
   const [data, setData] = useState<OverviewData | null>(null);
   const [source, setSource] = useState<EncounterVersion | null>(null);
@@ -20,7 +44,6 @@ export function ClinicalOverview({ context, onDenied, onNavigate }: {
   useEffect(() => {
     const controller = new AbortController();
     setData(null); setSource(null); setError(null);
-    const scope = { business_id: context.business_id, patient_id: context.patient.id, appointment_id: context.appointment.id };
     async function load() {
       try {
         const overview = await medicalClinicalApi.overview(scope, controller.signal);
@@ -36,7 +59,7 @@ export function ClinicalOverview({ context, onDenied, onNavigate }: {
     }
     void load();
     return () => controller.abort();
-  }, [context, attempt, onDenied]);
+  }, [scope, attempt, onDenied]);
   if (error) return <ErrorState message={getApiErrorMessage(error)} action={<Button size="lg" variant="secondary" onClick={() => setAttempt(value => value + 1)}>{t("common.retry")}</Button>} />;
   if (!data) return <LoadingState />;
   const latest = data.latest_encounter;
@@ -67,14 +90,8 @@ export function ClinicalOverview({ context, onDenied, onNavigate }: {
         <p className="break-words">{t("medical.clinical.revision")} {source.revision} · {t(`medical.clinical.state.${latest!.state}`)}</p>
         <p className="break-words text-platforma-subtle">{source.author_name || t("medical.clinical.authorUnknown")} · {formatDateTime(source.created_at, undefined, true, localeByLanguage[language])}</p>
       </details> : null}
-      <Button size="lg" variant="secondary" onClick={() => onNavigate("history")}>{t("medical.clinical.history")}</Button>
+      <Button size="lg" variant="secondary" onClick={onHistory}>{t("medical.clinical.history")}</Button>
     </div>
-    <div className="flex flex-wrap gap-2">
-      <Button size="lg" onClick={() => onNavigate("encounter")}>{t("medical.clinical.note")}</Button>
-      {context.encounter ? <>
-        <Button size="lg" variant="secondary" onClick={() => onNavigate("orders")}>{t("medical.orders.title")}</Button>
-        <Button size="lg" variant="secondary" onClick={() => onNavigate("documents")}>{t("medical.documents.title")}</Button>
-      </> : null}
-    </div>
+    {actions ? <div className="flex flex-wrap gap-2">{actions}</div> : null}
   </section>;
 }

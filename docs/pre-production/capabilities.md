@@ -1,5 +1,7 @@
 ## Медицинский модуль: начата реализация — 22.11.2026
 
+К06 обзор через участие: собственное активное участие открывает тот же read-only обзор и существующую историю без календарной записи. При завершении участия новое чтение запрещается и интерфейс очищает сведения.6 localized browser +2 shared appointment regression PASS,build/types PASS; финальная визуальная приёмка/публикация и остальные критерии К06 — DENTAL-MCS checkpoint.
+
 К06 вход из клиента: собственная календарная запись выбирается в медицинском блоке ClientWorkspace и открывает существующее клиническое окно. Backend55 dependent,6 distinct localized browser,14 inspected captures,build/check/drift PASS; подробности и публикация в DENTAL-MCS checkpoint. Выбор не раскрывает наличие PatientProfile, открытие повторно проверяет права; участие в лечении сохранено. Полный К06 остаётся открыт.
 
 К06 обзор: private audited clinical projection и вкладка с датой рождения/последним приёмом/точной сохранённой версией сведений. Backend41 dependent PASS;6 localized browser PASS,build/check/drift PASS; visual/publication status в checkpoint. Несохранённая форма не подменяет источник, автоматической сводной оценки риска нет. Представители/команда и другие незакрытые критерии К06 сохранены.

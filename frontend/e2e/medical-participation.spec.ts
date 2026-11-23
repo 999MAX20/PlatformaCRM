@@ -75,8 +75,26 @@ for (const language of ["ru", "kk", "en"] as const) for (const mobile of [false,
       await doctor.getByRole("dialog").screenshot({ path: info.outputPath("invitation.png") });
       await row.getByRole("button", { name: t["medical.participation.accept"], exact: true }).click();
       await expect(row).toContainText(t["medical.participation.state.active"]);
-      await row.getByRole("button", { name: t["medical.clinical.history"], exact: true }).click();
+      await row.screenshot({ path: info.outputPath("participation-overview-actions.png") });
+      const overviewRoute = "**/api/medical/encounters/overview/**";
+      if (language === "en" && mobile) await doctor.route(overviewRoute, route => route.fulfill({ status: 503, json: {} }));
+      await row.getByRole("button", { name: t["medical.overview.title"], exact: true }).click();
+      const overview = doctor.getByTestId("participation-overview");
+      await expect(doctor.getByTestId("participation-clinical-content")).toBeFocused();
+      if (language === "en" && mobile) {
+        await expect(overview.getByText(t["actions.errorTemporary"], { exact: true })).toBeVisible();
+        await doctor.unroute(overviewRoute);
+        await overview.getByRole("button", { name: t["common.retry"], exact: true }).click();
+      }
+      await expect(overview.getByText(t["medical.clinical.historyEmpty"], { exact: true })).toBeVisible();
+      await expect(overview.getByTestId("clinical-overview-risks").getByText(t["medical.clinical.notRecorded"], { exact: true })).toHaveCount(2);
+      await expect(overview.getByRole("button", { name: t["medical.clinical.note"], exact: true })).toHaveCount(0);
+      await overview.screenshot({ path: info.outputPath("participation-overview.png") });
+      expect((await new AxeBuilder({ page: doctor }).include('[data-testid="participation-overview"]').withTags(["wcag2a", "wcag2aa"]).analyze()).violations).toEqual([]);
+      expect(await doctor.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+      await overview.getByRole("button", { name: t["medical.clinical.history"], exact: true }).click();
       await expect(doctor.getByTestId("clinical-history")).toBeVisible();
+      await expect(doctor.getByTestId("participation-clinical-content")).toBeFocused();
       expect((await doctor.request.get(clinicalUrl, { headers: { Authorization: `Bearer ${token}` } })).status()).toBe(200);
       await workspace.getByRole("button", { name: t["medical.clinical.reload"], exact: true }).click();
       await headRow.getByRole("button", { name: t["medical.participation.end"], exact: true }).click();
@@ -101,6 +119,14 @@ for (const language of ["ru", "kk", "en"] as const) for (const mobile of [false,
       expect(keys.length).toBe(2);
       expect(keys[0]).toBe(keys[1]);
       expect((await doctor.request.get(clinicalUrl, { headers: { Authorization: `Bearer ${token}` } })).status()).toBe(403);
+      if (language === "en" && mobile) {
+        await row.getByRole("button", { name: t["medical.overview.title"], exact: true }).click();
+        await expect(doctor.getByText(t["medical.denied"], { exact: true })).toBeVisible();
+        await expect(doctor.getByTestId("clinical-overview")).toHaveCount(0);
+        await expect(doctor.getByTestId("clinical-history")).toHaveCount(0);
+        await doctor.getByRole("dialog").screenshot({ path: info.outputPath("participation-overview-denied.png") });
+        await doctor.getByRole("button", { name: t["common.retry"], exact: true }).click();
+      }
       await doctor.getByTestId("participation-workspace").getByRole("button", { name: t["medical.clinical.reload"], exact: true }).click();
       await expect(row).toContainText(t["medical.participation.state.ended"]);
       await expect(row.getByRole("button", { name: t["medical.clinical.history"], exact: true })).toHaveCount(0);
