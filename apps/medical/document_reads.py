@@ -59,16 +59,21 @@ def _page_arguments(cursor, limit):
 
 @transaction.atomic
 def list_patient_documents(*, actor, business_id, patient_id, appointment_id=None,
-                           participation_id=None, encounter_id=None, before_id=None, limit=20):
+                           participation_id=None, encounter_id=None, before_id=None, limit=20, head_branch_id=None):
     _page_arguments(before_id, limit)
     business, patient = document_read_context(actor=actor, business_id=business_id, patient_id=patient_id,
-        appointment_id=appointment_id, participation_id=participation_id)
+        appointment_id=appointment_id, participation_id=participation_id, head_branch_id=head_branch_id)
     documents = MedicalDocument.objects.filter(business=business,
         encounter__business=business, encounter__patient=patient, revision__gte=1)
+    if head_branch_id is not None:
+        documents = documents.filter(encounter__branch_id=head_branch_id)
     if encounter_id is not None:
         if type(encounter_id) is not int or encounter_id <= 0:
             raise ValidationError({"encounter": "Provide a valid encounter."})
-        if not MedicalEncounter.objects.filter(pk=encounter_id, business=business, patient=patient).exists():
+        encounters = MedicalEncounter.objects.filter(pk=encounter_id, business=business, patient=patient)
+        if head_branch_id is not None:
+            encounters = encounters.filter(branch_id=head_branch_id)
+        if not encounters.exists():
             raise PermissionDenied()
         documents = documents.filter(encounter_id=encounter_id)
     if before_id is not None:
@@ -90,15 +95,15 @@ def list_patient_documents(*, actor, business_id, patient_id, appointment_id=Non
 
 @transaction.atomic
 def list_document_revisions(*, actor, business_id, patient_id, document_id, appointment_id=None,
-                            participation_id=None, before_revision=None, limit=20):
+                            participation_id=None, before_revision=None, limit=20, head_branch_id=None):
     _page_arguments(before_revision, limit)
     if type(document_id) is not int or document_id <= 0:
         raise ValidationError({"document": "Provide a valid document."})
     business, patient = document_read_context(actor=actor, business_id=business_id, patient_id=patient_id,
-        appointment_id=appointment_id, participation_id=participation_id)
+        appointment_id=appointment_id, participation_id=participation_id, head_branch_id=head_branch_id)
     document = MedicalDocument.objects.filter(pk=document_id, business=business,
         encounter__business=business, encounter__patient=patient).first()
-    if document is None:
+    if document is None or (head_branch_id is not None and document.encounter.branch_id != head_branch_id):
         raise PermissionDenied()
     versions = MedicalDocumentRevision.objects.filter(document=document, revision__lte=document.revision)
     if not versions.filter(revision=document.revision).exists():

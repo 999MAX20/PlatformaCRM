@@ -60,6 +60,22 @@ call_command("migrate", interactive=False, verbosity=0)
 
 from datetime import timedelta
 from django.utils import timezone
+from datetime import datetime
+from types import SimpleNamespace
+
+correction_clock_file = directory / "correction-access-clock.json"
+if files_fixture:
+    from apps.medical import correction_access_context
+
+    if len(sys.argv) == 1:
+        correction_clock_file.unlink(missing_ok=True)
+
+    def correction_clock_now():
+        if correction_clock_file.exists():
+            return datetime.fromisoformat(json.loads(correction_clock_file.read_text(encoding="ascii")))
+        return timezone.now()
+
+    correction_access_context.timezone = SimpleNamespace(now=correction_clock_now)
 from apps.medical.tests_encounter_open import OpenPrimaryEncounterTests
 from apps.businesses.models import Business, BusinessCapability
 from apps.businesses.profiles import PROFILE_MODULES
@@ -149,7 +165,7 @@ if templates_fixture:
         name="Synthetic long service " + "Ә" * 220)
     assignment.member.role = "specialist"
     assignment.member.save(update_fields=["role"])
-    for action in ("view", "create", "update"):
+    for action in (("view", "create", "update", "export") if files_fixture else ("view", "create", "update")):
         RolePermission.objects.get_or_create(business_role=assignment.business_role,
             resource="medical_documents", action=action, defaults={"scope": "own", "is_allowed": True})
     head, created = get_user_model().objects.get_or_create(username="medical-template-head",
@@ -315,12 +331,14 @@ if len(sys.argv) > 2 and sys.argv[1] == "historical-documents-populate":
         idempotency_key=f"history-document-submit-{patient.pk}")
     decide_template_review(actor=head, business_id=patient.business_id, version_id=template.pk,
         decision="approved", reason="Synthetic review", idempotency_key=f"history-document-approve-{patient.pk}")
+    print_tail = ("\n" + "\n".join(f"Строка {line}: Қазақша мәтін және русский текст." for line in range(85))
+                  if len(sys.argv) > 4 and sys.argv[4] == "print-long" else "")
     for index in range(int(sys.argv[3])):
         payload = dict(actor=actor, business_id=patient.business_id, patient_id=patient.pk,
             encounter_id=encounter.pk, expected_encounter_revision=encounter.revision,
             expected_patient_revision=patient.revision, template_version_id=template.pk)
         first, _ = save_primary_document_draft(**payload, idempotency_key=f"history-document-{patient.pk}-{index}",
-            document_text=f"Synthetic historical document {index} v1")
+            document_text=f"Synthetic historical document {index} v1" + print_tail)
         if index == 0:
             save_primary_document_draft(**payload, document_id=first.document_id, expected_document_revision=1,
                 idempotency_key=f"history-document-update-{patient.pk}", reason="Synthetic correction",
@@ -403,7 +421,44 @@ if files_fixture and len(sys.argv) > 1 and sys.argv[1] == "files-new-appointment
         appointment = Appointment.objects.create(business=business, client=client, service_id=source.service_id,
             resource_id=source.resource_id, branch_id=source.branch_id,
             start_at=source.start_at + timedelta(days=index), end_at=source.end_at + timedelta(days=index))
-    print(json.dumps({"appointment_id": appointment.pk}))
+    print(json.dumps({"appointment_id": appointment.pk, "client_id": client.pk}))
+    sys.exit(0)
+if files_fixture and len(sys.argv) > 1 and sys.argv[1] in ("head-documents-revoke", "head-documents-restore"):
+    from apps.medical.models import MedicalRoleAssignment
+    assignment = MedicalRoleAssignment.objects.get(member__business__slug="medical-role",
+        member__user__email="medical-participation-head@example.test")
+    branch = assignment.member.business.branches.get(pk=int(sys.argv[2]))
+    if sys.argv[1] == "head-documents-revoke":
+        assignment.branches.remove(branch)
+    else:
+        assignment.branches.add(branch)
+    sys.exit(0)
+if files_fixture and len(sys.argv) > 1 and sys.argv[1] == "document-correction-prepare":
+    from apps.medical.models import MedicalDocument
+    from apps.medical.correction_access_services import request_correction_access, review_correction_access
+    document = MedicalDocument.objects.select_related("encounter__patient", "encounter__appointment__resource").get(
+        business__slug="medical-role", encounter__appointment_id=int(sys.argv[2]))
+    encounter = document.encounter
+    patient = encounter.patient
+    correction, _ = request_correction_access(actor=encounter.appointment.resource.linked_user,
+        business_id=patient.business_id, encounter_id=encounter.pk, document_id=document.pk,
+        expected_patient_revision=patient.revision, expected_target_revision=document.revision,
+        reason="Synthetic document correction", idempotency_key=f"pdf-correction-request-{document.pk}")
+    review_correction_access(actor=head, business_id=patient.business_id, request_id=correction.pk,
+        expected_revision=1, decision="approve", reason="Synthetic approval",
+        idempotency_key=f"pdf-correction-review-{document.pk}")
+    Appointment.objects.filter(pk=encounter.appointment_id).update(status="completed")
+    print(json.dumps({"client_id": patient.client_id, "correction_id": correction.pk}))
+    sys.exit(0)
+if files_fixture and len(sys.argv) > 1 and sys.argv[1] == "document-correction-expire":
+    from apps.medical.models import MedicalCorrectionAccess
+    grant = MedicalCorrectionAccess.objects.get(pk=int(sys.argv[2]), patient__business__slug="medical-role",
+        document__isnull=False, state="active")
+    assert grant.expires_at == grant.reviewed_at + timedelta(hours=24)
+    correction_clock_file.write_text(json.dumps(grant.expires_at.isoformat()), encoding="ascii")
+    sys.exit(0)
+if files_fixture and len(sys.argv) > 1 and sys.argv[1] == "document-correction-clock-reset":
+    correction_clock_file.unlink(missing_ok=True)
     sys.exit(0)
 if files_fixture and len(sys.argv) > 1 and sys.argv[1] == "files-access-prepare":
     from apps.medical.record_services import open_dental_record
@@ -437,12 +492,19 @@ if files_fixture and len(sys.argv) > 1 and sys.argv[1] == "files-end-participati
     TreatmentParticipation.objects.filter(pk=int(sys.argv[2]), patient__business__slug="medical-role").update(
         state="ended", closed_at=timezone.now(), closed_by=head)
     sys.exit(0)
-if files_fixture and len(sys.argv) > 1 and sys.argv[1] == "files-scan":
+if files_fixture and len(sys.argv) > 1 and sys.argv[1] in ("files-scan", "document-artifacts-scan"):
     from unittest.mock import patch
     from apps.core.file_scanning import scan_attachment
     from apps.core.models import FileAttachment
     from apps.core.tests_file_scanning import clean_result
-    for attachment in FileAttachment.objects.filter(business__slug="medical-role", entity_type="medical_attachment"):
+    entity_type = "medical_document_artifact" if sys.argv[1] == "document-artifacts-scan" else "medical_attachment"
+    attachments = FileAttachment.objects.filter(business__slug="medical-role", entity_type=entity_type)
+    if entity_type == "medical_document_artifact":
+        assert len(sys.argv) == 3, "Document scanning requires this scenario's appointment ID"
+        appointment = Appointment.objects.get(pk=int(sys.argv[2]), business__slug="medical-role")
+        attachments = attachments.filter(medical_document_artifact__version__document__encounter__appointment=appointment)
+        assert attachments.exists(), "Prepare this scenario's PDF before scanning"
+    for attachment in attachments:
         with patch("apps.core.file_scanning.scan_stream", side_effect=clean_result):
             scan_attachment(attachment.pk, attachment.business_id)
     sys.exit(0)

@@ -19,6 +19,11 @@ class LocalPdfAssets {
   }
 }
 
+export function loadMedicalPdf(data: Uint8Array) {
+  return getDocument({ data, BinaryDataFactory: LocalPdfAssets,
+    useWorkerFetch: false, enableXfa: false, stopAtErrors: true, verbosity: 0 });
+}
+
 export default function MedicalPdfPreview({ blob, name, onRetry }: { blob: Blob; name: string; onRetry: () => void }) {
   const { t } = useI18n();
   const [document, setDocument] = useState<PDFDocumentProxy | null>(null);
@@ -41,8 +46,7 @@ export default function MedicalPdfPreview({ blob, name, onRetry }: { blob: Blob;
     setDocument(null); setPage(1); setText(""); setError(false); setRendering(true);
     void blob.arrayBuffer().then(data => {
       if (!active) return;
-      task = getDocument({ data: new Uint8Array(data), BinaryDataFactory: LocalPdfAssets,
-        useWorkerFetch: false, enableXfa: false, stopAtErrors: true, verbosity: 0 });
+      task = loadMedicalPdf(new Uint8Array(data));
       return task.promise.then(value => { if (active) setDocument(value); });
     }).catch(() => { if (active) { setError(true); setRendering(false); } });
     return () => { active = false; void task?.destroy().catch(() => {}); };

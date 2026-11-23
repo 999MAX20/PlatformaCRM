@@ -8,6 +8,7 @@ import uuid
 
 from apps.businesses.models import TimeStampedModel
 from .file_models import MedicalAttachment, MedicalAttachmentRevision
+from .document_artifact_models import MedicalDocumentArtifact
 
 
 class PatientProfile(TimeStampedModel):
@@ -335,6 +336,11 @@ class MedicalAuditEvent(models.Model):
         TOOTH_OBSERVATION_SAVED = "tooth_observation_saved", "Tooth observation saved"
         DOCUMENT_DRAFT_CREATED = "document_draft_created", "Document draft created"
         DOCUMENT_DRAFT_SAVED = "document_draft_saved", "Document draft saved"
+        DOCUMENT_REVIEW_SUBMITTED = "document_review_submitted", "Document submitted for review"
+        DOCUMENT_REVIEW_CONFIRMED = "document_review_confirmed", "Document content confirmed by clinician"
+        DOCUMENT_REVIEW_WITHDRAWN = "document_review_withdrawn", "Document returned to draft"
+        DOCUMENT_EXPORTED = "document_exported", "Document exported"
+        DOCUMENT_PRINT_REQUESTED = "document_print_requested", "Document print requested"
         ORDER_DRAFT_CREATED = "order_draft_created", "Order draft created"
         ORDER_DRAFT_SAVED = "order_draft_saved", "Order draft saved"
         FILE_UPLOADED = "file_uploaded", "File uploaded"
@@ -404,7 +410,7 @@ class MedicalAuditEvent(models.Model):
                                                "participation_declined", "participation_withdrawn", "participation_ended",
                                                "encounter_opened", "encounter_draft_saved", "record_opened",
                                                "tooth_observation_saved", "document_draft_created",
-                                               "document_draft_saved", "template_draft_created",
+                                               "document_draft_saved", "document_review_submitted", "document_review_withdrawn", "document_review_confirmed", "document_exported", "document_print_requested", "template_draft_created",
                                                "template_draft_saved", "template_submitted", "template_approved",
                                                "template_rejected", "credential_confirmed", "template_activated",
                                                "template_deactivated", "identity_correction_requested",
@@ -480,9 +486,11 @@ class MedicalAuditEvent(models.Model):
             models.CheckConstraint(condition=(models.Q(document_version__isnull=True) |
                 models.Q(patient__isnull=False, representative__isnull=True, participation__isnull=True,
                          encounter_version__isnull=True, record__isnull=True, tooth_history__isnull=True,
-                         action__in=["read", "document_draft_created", "document_draft_saved"])),
+                         action__in=["read", "document_draft_created", "document_draft_saved",
+                                     "document_exported", "document_print_requested", "document_review_submitted", "document_review_withdrawn", "document_review_confirmed"])),
                 name="medical_audit_document_relation"),
-            models.CheckConstraint(condition=(~models.Q(action__in=["document_draft_created", "document_draft_saved"]) |
+            models.CheckConstraint(condition=(~models.Q(action__in=["document_draft_created", "document_draft_saved",
+                                                                  "document_exported", "document_print_requested", "document_review_submitted", "document_review_withdrawn", "document_review_confirmed"]) |
                 models.Q(document_version__isnull=False)), name="medical_audit_document_needed"),
             models.CheckConstraint(condition=(models.Q(template_version__isnull=True) |
                 models.Q(patient__isnull=True, representative__isnull=True, participation__isnull=True,
@@ -820,11 +828,12 @@ class MedicalDocument(TimeStampedModel):
     template_code = models.CharField(max_length=64,
         validators=[RegexValidator(r"^[a-z][a-z0-9_]*$", "Provide a template identifier.")])
     revision = models.PositiveIntegerField(default=0)
-    state = models.CharField(max_length=24, default="draft", choices=[("draft", "Draft")])
+    state = models.CharField(max_length=24, default="draft", choices=[("draft", "Draft"), ("ready_for_review", "Ready for review"), ("reviewed", "Reviewed by clinician")])
+    state_revision = models.PositiveIntegerField(default=1)
 
     class Meta:
         constraints = [
-            models.CheckConstraint(condition=models.Q(state="draft"), name="medical_document_draft_only"),
+            models.CheckConstraint(condition=models.Q(state__in=["draft", "ready_for_review", "reviewed"], state_revision__gte=1), name="medical_document_review_state"),
             models.CheckConstraint(condition=~models.Q(template_code=""), name="medical_document_template"),
         ]
 
@@ -851,6 +860,22 @@ class MedicalDocumentRevision(models.Model):
             models.UniqueConstraint(fields=["document", "revision"], name="medical_document_version_unique"),
             models.CheckConstraint(condition=models.Q(revision__gte=1), name="medical_document_ver_positive"),
             models.CheckConstraint(condition=~models.Q(snapshot_encrypted=""), name="medical_document_ver_content"),
+        ]
+
+
+class MedicalDocumentReviewTransition(models.Model):
+    version = models.ForeignKey(MedicalDocumentRevision, on_delete=models.PROTECT, related_name="review_transitions")
+    state_revision = models.PositiveIntegerField()
+    state = models.CharField(max_length=24, choices=[("draft", "Draft"), ("ready_for_review", "Ready for review"), ("reviewed", "Reviewed by clinician")])
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="document_review_transitions")
+    reason_encrypted = models.TextField(editable=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["version", "state_revision"], name="medical_document_review_transition_unique"),
+            models.CheckConstraint(condition=models.Q(state__in=["draft", "ready_for_review", "reviewed"], state_revision__gte=2)
+                & ~models.Q(reason_encrypted=""), name="medical_document_review_transition_valid"),
         ]
 
 

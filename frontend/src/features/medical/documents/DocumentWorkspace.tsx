@@ -1,5 +1,7 @@
+import { DocumentReview } from "./DocumentReview";
+import type { RoleFormControl } from "../roles/MedicalRoleCommand";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { medicalDocumentsApi as api, type DocumentAccess, type DocumentRow, type DocumentVersion, type DocumentScope, type DocumentRevision } from "../../../api/medicalDocuments";
+import { medicalDocumentsApi as api, type DocumentAccess, type DocumentRow, type DocumentVersion, type DocumentScope, type DocumentRevision, type HeadDocumentScope } from "../../../api/medicalDocuments";
 import type { AppointmentClinicalContext, ClinicalReadScope, EncounterSummary } from "../../../api/medicalClinical";
 import { getApiErrorMessage } from "../../../api/client";
 import { Button } from "../../../components/ui/Button";
@@ -12,6 +14,7 @@ import { useUnsavedEntryWarning } from "../../auth/useUnsavedEntryWarning";
 import { medicalRoleDenied } from "../roles/useMedicalRolePage";
 import type { RoleDraftState } from "../roles/MedicalRoleCommand";
 import { DocumentEditor } from "./DocumentEditor";
+import { DocumentPdf } from "./DocumentPdf";
 
 export function DocumentWorkspace({ context, active, onEditor, canEdit }: {
   context: AppointmentClinicalContext; active: boolean; onEditor: (open: boolean) => void; canEdit: () => boolean;
@@ -39,8 +42,17 @@ export function EncounterDocumentsEntry({ scope, encounter }: { scope: ClinicalR
   </>;
 }
 
-function DocumentWorkspaceContent({ scope, active, onEditor, canEdit, patientName, readOnly = false }: {
-  scope: DocumentScope; active: boolean; readOnly?: boolean; patientName?: string;
+export function HeadDocumentsWorkspace({ businessId, patientId, branchId, onDenied }: {
+  businessId: number; patientId: number; branchId: number; onDenied: (cause: unknown) => void;
+}) {
+  const scope = useMemo<HeadDocumentScope>(() => ({ business_id: businessId, patient_id: patientId, head_branch_id: branchId }),
+    [businessId, patientId, branchId]);
+  return <DocumentWorkspaceContent key={`${businessId}:${patientId}:${branchId}`} scope={scope} active readOnly onDenied={onDenied} />;
+}
+
+function DocumentWorkspaceContent({ scope, active, onEditor, canEdit, patientName, readOnly = false, onDenied }: {
+  scope: DocumentScope | HeadDocumentScope; active: boolean; readOnly?: boolean; patientName?: string;
+  onDenied?: (cause: unknown) => void;
   onEditor?: (open: boolean) => void; canEdit?: () => boolean;
 }) {
   const { t } = useI18n();
@@ -63,12 +75,13 @@ function DocumentWorkspaceContent({ scope, active, onEditor, canEdit, patientNam
   const denied = useCallback((cause: unknown) => {
     setRows([]); setSelected(null); setAccess(null); setEditor(null); setError(cause);
     guard.current = { dirty: false, pending: false }; setDraft(guard.current); onEditor?.(false);
-  }, [onEditor]);
+    onDenied?.(cause);
+  }, [onEditor, onDenied]);
   const load = useCallback(async (before?: number) => {
     request.current?.abort(); const controller = new AbortController(); request.current = controller;
     setLoading(true); setError(null);
     try {
-      const permissions = await api.access(scope, controller.signal);
+      const permissions = "head_branch_id" in scope ? null : await api.access(scope, controller.signal);
       const page = await api.list(scope, before, controller.signal);
       if (!controller.signal.aborted) { setAccess(permissions); setRows(previous => before ? [...previous, ...page.results] : page.results); setCursor(page.next_before_id); }
     } catch (cause) { if (!controller.signal.aborted) { if (medicalRoleDenied(cause)) denied(cause); else setError(cause); } }
@@ -78,7 +91,7 @@ function DocumentWorkspaceContent({ scope, active, onEditor, canEdit, patientNam
   useEffect(() => () => onEditor?.(false), [onEditor]);
   useEffect(() => { if (selected && window.matchMedia("(max-width: 1023px)").matches) backButton.current?.focus(); }, [selected]);
   function openEditor(value: "create" | DocumentVersion) {
-    if (readOnly || !canEdit?.()) return;
+    if ("head_branch_id" in scope || readOnly || !canLeaveReview() || !canEdit?.()) return;
     editorFocus.current = value === "create" ? "medical-document-create" : "medical-document-edit";
     setEditor(value); onEditor?.(true);
   }
@@ -95,7 +108,12 @@ function DocumentWorkspaceContent({ scope, active, onEditor, canEdit, patientNam
     }
     setSelected(row);
   }
+  function canLeaveReview() {
+    return !guard.current.pending && (!guard.current.dirty || window.confirm(t("medical.clinical.discard")));
+  }
+  const reviewDraft = useCallback((value: RoleDraftState) => { setDraft(value); onEditor?.(value.dirty || value.pending); }, [onEditor]);
   function back() {
+    if (!canLeaveReview()) return;
     setSelected(null);
     requestAnimationFrame(() => {
       for (const { element, top } of scrollPosition.current) element.scrollTop = top;
@@ -105,11 +123,11 @@ function DocumentWorkspaceContent({ scope, active, onEditor, canEdit, patientNam
   return <section className="min-w-0 space-y-4" data-testid="medical-documents">
     <div className="flex flex-wrap gap-2">
       {!readOnly && access?.actions.create ? <Button id="medical-document-create" size="lg" disabled={loading} onClick={() => openEditor("create")}>{t("medical.documents.create")}</Button> : null}
-      <Button size="lg" variant="secondary" disabled={loading} onClick={() => { setSelected(null); void load(); }}>{t("medical.clinical.reload")}</Button>
+      <Button size="lg" variant="secondary" disabled={loading} onClick={() => { if (canLeaveReview()) { setSelected(null); void load(); } }}>{t("medical.clinical.reload")}</Button>
     </div>
     {error ? <ErrorState message={medicalRoleDenied(error) ? t("medical.denied") : getApiErrorMessage(error)} action={<Button onClick={() => void load()}>{t("common.retry")}</Button>} /> : null}
-    <div className="grid min-w-0 gap-5 lg:grid-cols-[minmax(180px,1fr)_minmax(0,2fr)]">
-      <div ref={list} className={selected ? "hidden min-w-0 lg:block" : "min-w-0"}>
+    <div className="min-w-0 space-y-5">
+      <div ref={list} className={selected ? "hidden" : "min-w-0"}>
         <ul className="divide-y divide-platforma-border">{rows.map(row => <li key={row.document_id} className="py-3">
           <Button size="lg" variant="secondary" disabled={loading} className="h-auto w-full whitespace-normal text-left" aria-pressed={selected?.document_id === row.document_id}
             onClick={event => select(row, event.currentTarget)}>
@@ -121,13 +139,14 @@ function DocumentWorkspaceContent({ scope, active, onEditor, canEdit, patientNam
       </div>
       {selected ? <div className="min-w-0 space-y-4">
         <Button ref={backButton} size="lg" variant="secondary" onClick={back}>{t("medical.documents.back")}</Button>
-        <DocumentDetail key={selected.version_id} scope={scope} row={selected} canUpdate={!readOnly && !!access?.actions.update} onEdit={openEditor} onDenied={denied} />
+        <DocumentDetail key={selected.version_id} scope={scope} row={selected} canUpdate={!readOnly && !!access?.actions.update} onEdit={openEditor} onDenied={denied}
+          reviewControl={{ guard, onDraft: reviewDraft, onSaved: () => onEditor?.(false), onDenied: denied }} canLeave={canLeaveReview} />
       </div> : null}
     </div>
     <Modal open={editor !== null} onClose={closeEditor} size="lg" closeOnBackdrop={false} testId="medical-document-editor"
       focusReturnId={editorFocus.current}
       title={t(editor === "create" ? "medical.documents.create" : "medical.documents.edit")}>
-      {editor ? <div className="space-y-4">
+      {editor && !("head_branch_id" in scope) ? <div className="space-y-4">
         <p className="break-words text-sm">{t("medical.fullName")}: {patientName}</p>
         <DocumentEditor scope={scope} version={editor === "create" ? null : editor}
           control={{ guard, onDraft: setDraft, onSaved: saved, onDenied: denied }} />
@@ -136,8 +155,9 @@ function DocumentWorkspaceContent({ scope, active, onEditor, canEdit, patientNam
   </section>;
 }
 
-function DocumentDetail({ scope, row, canUpdate, onEdit, onDenied }: {
-  scope: DocumentScope; row: DocumentRow; canUpdate: boolean; onEdit: (version: DocumentVersion) => void; onDenied: (cause: unknown) => void;
+function DocumentDetail({ scope, row, canUpdate, onEdit, onDenied, reviewControl, canLeave }: {
+  reviewControl: RoleFormControl; canLeave: () => boolean;
+  scope: DocumentScope | HeadDocumentScope; row: DocumentRow; canUpdate: boolean; onEdit: (version: DocumentVersion) => void; onDenied: (cause: unknown) => void;
 }) {
   const { t, language } = useI18n();
   const [version, setVersion] = useState<DocumentVersion | null>(null);
@@ -150,6 +170,7 @@ function DocumentDetail({ scope, row, canUpdate, onEdit, onDenied }: {
   const [historyError, setHistoryError] = useState<unknown>(null);
   const [historyLoading, setHistoryLoading] = useState(false);
   const historyRequest = useRef<AbortController | null>(null);
+  const reviewState = useCallback((state: string) => setVersion(previous => previous && previous.state !== state ? { ...previous, state } : previous), []);
   const readScope = useMemo(() => { const { encounter_id: _, ...value } = scope; return value; }, [scope]);
   const history = useCallback(async (before?: number) => {
     historyRequest.current?.abort(); const controller = new AbortController(); historyRequest.current = controller;
@@ -171,8 +192,12 @@ function DocumentDetail({ scope, row, canUpdate, onEdit, onDenied }: {
     {error ? <ErrorState message={getApiErrorMessage(error)} action={<Button onClick={() => setAttempt(value => value + 1)}>{t("common.retry")}</Button>} /> : !version ? <LoadingState /> : <>
       <h2 className="break-words text-lg font-semibold">{version.snapshot.template.title}</h2>
       <p className="break-words text-sm text-platforma-subtle">{t("medical.templates.version", { revision: version.revision })} · {version.snapshot.prepared_by.name} · {formatDateTime(version.created_at, undefined, true, localeByLanguage[language])}</p>
-      <p className="text-sm">{t(version.state === "draft" ? "medical.clinical.state.draft" : "medical.documents.recorded")}</p>
+      <p className="text-sm">{t(version.revision !== current ? "medical.documents.recorded" : version.state === "draft" ? "medical.clinical.state.draft" : version.state === "ready_for_review" ? "medical.documents.readyForReview" : version.state === "reviewed" ? "medical.documents.reviewed" : "medical.documents.recorded")}</p>
       <div className="whitespace-pre-wrap break-words text-sm" data-testid="medical-document-text">{version.snapshot.document_text ?? version.snapshot.template.text}</div>
+      {version.snapshot.document_text !== undefined ? <DocumentPdf key={`${version.version_id}-${language}`} scope={readScope}
+        versionId={version.version_id} title={version.snapshot.template.title} onDenied={onDenied} /> : null}
+      <DocumentReview key={version.version_id} scope={readScope} versionId={version.version_id}
+        control={reviewControl} canEdit={canUpdate} onState={reviewState} />
       {version.snapshot.reason ? <p className="whitespace-pre-wrap break-words text-sm">{t("medical.templates.reason")}: {version.snapshot.reason}</p> : null}
       {canUpdate && !historyError && !historyLoading && version.state === "draft" && version.revision === current && version.snapshot.template_source ?
         <Button id="medical-document-edit" size="lg" onClick={() => onEdit(version)}>{t("medical.documents.edit")}</Button> : null}
@@ -180,7 +205,7 @@ function DocumentDetail({ scope, row, canUpdate, onEdit, onDenied }: {
     <section aria-label={t("medical.templates.history")} className="space-y-2">
       <h3 className="text-base font-semibold">{t("medical.templates.history")}</h3>
       <div className="flex flex-wrap gap-2">{versions.map(item => <Button key={item.version_id} size="lg" variant="secondary" aria-pressed={versionId === item.version_id}
-        onClick={() => setVersionId(item.version_id)}>{t("medical.templates.version", { revision: item.revision })}</Button>)}</div>
+        onClick={() => { if (canLeave()) setVersionId(item.version_id); }}>{t("medical.templates.version", { revision: item.revision })}</Button>)}</div>
       {historyLoading ? <LoadingState /> : null}
       {historyError ? <ErrorState message={getApiErrorMessage(historyError)} action={<Button onClick={() => void history()}>{t("common.retry")}</Button>} /> : null}
       {cursor && !historyError ? <Button size="lg" variant="secondary" disabled={historyLoading} onClick={() => void history(cursor)}>{t("medical.templates.more")}</Button> : null}

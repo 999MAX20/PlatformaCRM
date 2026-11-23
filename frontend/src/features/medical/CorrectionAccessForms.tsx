@@ -10,6 +10,7 @@ import { ErrorState, LoadingState } from "../../components/ui/StateViews";
 import { useI18n } from "../../lib/i18n";
 import { MedicalRoleCommand, type RoleFormControl } from "./roles/MedicalRoleCommand";
 import { medicalRoleDenied } from "./roles/useMedicalRolePage";
+import { DocumentPdf } from "./documents/DocumentPdf";
 
 export type CorrectionAction = "approve" | "reject" | "withdraw" | "complete" | "revoke";
 
@@ -89,7 +90,11 @@ export function CorrectionDraftForm({ item, businessId, control }: { item: Corre
   const dirty = Boolean(reason) || (data !== null && (item.document_id ? text !== data.content.document_text : JSON.stringify(content) !== JSON.stringify(data.content.content)));
   const payload = data && editable && reason.trim() ? { business_id: businessId, expected_revision: data.revision, reason,
     ...(item.document_id ? { document_text: text } : { content }) } : null;
-  return <MedicalRoleCommand payload={payload} dirty={dirty} submit={(value, key) => api.save(item.id, value, key)} control={control} label={t("medical.clinical.save")}>
+  return <>
+    {data && item.document_id && data.state === "draft" && data.content.document_text !== undefined && !dirty ?
+      <DocumentPdf scope={{ business_id: businessId, patient_id: item.patient_id, correction_access_id: item.id }}
+        versionId={data.version_id} title={t("medical.correctionAccess.document")} onDenied={control.onDenied} /> : null}
+    <MedicalRoleCommand payload={payload} dirty={dirty} submit={(value, key) => api.save(item.id, value, key)} control={control} label={t("medical.clinical.save")}>
     {error ? <ErrorState message={getApiErrorMessage(error)} action={<Button type="button" variant="secondary" onClick={() => setAttempt(value => value + 1)}>{t("common.retry")}</Button>} /> : !data ? <LoadingState /> : <>
       {!editable ? <p role="status" className="text-sm text-platforma-subtle">{t("medical.correctionAccess.immutable")}</p> : null}
       {item.document_id ? <Textarea label={t("medical.correctionAccess.document")} value={text} onChange={event => setText(event.target.value)} readOnly={!editable} rows={12} maxLength={131072} />
@@ -99,5 +104,6 @@ export function CorrectionDraftForm({ item, businessId, control }: { item: Corre
           onChange={setContent} readOnly={!editable} />)}
       {editable ? <Textarea label={t("medical.reason")} value={reason} onChange={event => setReason(event.target.value)} maxLength={2000} required /> : null}
     </>}
-  </MedicalRoleCommand>;
+    </MedicalRoleCommand>
+  </>;
 }

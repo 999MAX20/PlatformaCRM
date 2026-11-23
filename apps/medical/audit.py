@@ -32,7 +32,8 @@ def write_patient_audit(*, actor, business, patient, action, representative=None
         if expected is not None and correction_access.state != expected:
             raise ValueError("Correction access state must match its audit action.")
         if expected is None and action not in {"read", "encounter_draft_saved", "document_draft_saved",
-                                               "file_uploaded", "file_metadata_updated", "file_downloaded"}:
+                                               "file_uploaded", "file_metadata_updated", "file_downloaded",
+                                               "document_exported", "document_print_requested"}:
             raise ValueError("Select a correction access read or draft update action.")
         if action in {"encounter_draft_saved", "document_draft_saved"} and correction_access.state != "active":
             raise ValueError("A correction write requires active access.")
@@ -119,7 +120,12 @@ def write_patient_audit(*, actor, business, patient, action, representative=None
         if any(item is not None for item in (representative, participation, encounter_version, record, tooth_history)):
             raise ValueError("Audit document history cannot be mixed with other entity references.")
         if action not in {MedicalAuditEvent.Actions.READ, MedicalAuditEvent.Actions.DOCUMENT_DRAFT_CREATED,
-                          MedicalAuditEvent.Actions.DOCUMENT_DRAFT_SAVED}:
+                          MedicalAuditEvent.Actions.DOCUMENT_DRAFT_SAVED,
+                          MedicalAuditEvent.Actions.DOCUMENT_EXPORTED,
+                          MedicalAuditEvent.Actions.DOCUMENT_PRINT_REQUESTED,
+                          MedicalAuditEvent.Actions.DOCUMENT_REVIEW_SUBMITTED,
+                          MedicalAuditEvent.Actions.DOCUMENT_REVIEW_WITHDRAWN,
+                          MedicalAuditEvent.Actions.DOCUMENT_REVIEW_CONFIRMED}:
             raise ValueError("Select a document read or draft action.")
         version = MedicalDocumentRevision.objects.select_related("document", "source_version").filter(
             pk=document_version.pk, document__business=business, document__encounter__business=business,
@@ -132,9 +138,17 @@ def write_patient_audit(*, actor, business, patient, action, representative=None
             raise ValueError("Audit document links must be consistent.") from None
         if version.revision > version.document.revision:
             raise ValueError("Audit document version exceeds the current revision.")
-        if action.startswith("document_") and (version.document.state != "draft" or
+        if action in {"document_draft_created", "document_draft_saved"} and (version.document.state != "draft" or
                 version.revision != version.document.revision or version.author_id != actor.pk):
             raise ValueError("A document write event requires the actor's current draft version.")
+        if action in {"document_review_submitted", "document_review_withdrawn", "document_review_confirmed"}:
+            from .models import MedicalDocumentReviewTransition
+            expected_state = {"document_review_submitted": "ready_for_review",
+                "document_review_withdrawn": "draft", "document_review_confirmed": "reviewed"}[action]
+            if (version.document.state != expected_state or version.revision != version.document.revision
+                    or not MedicalDocumentReviewTransition.objects.filter(version=version, actor=actor,
+                        state=expected_state, state_revision=version.document.state_revision).exists()):
+                raise ValueError("A review event requires the current exact-version transition.")
         if action == MedicalAuditEvent.Actions.DOCUMENT_DRAFT_CREATED and version.revision != 1:
             raise ValueError("A document creation event requires its first version.")
         if action == MedicalAuditEvent.Actions.DOCUMENT_DRAFT_SAVED and version.revision <= 1:

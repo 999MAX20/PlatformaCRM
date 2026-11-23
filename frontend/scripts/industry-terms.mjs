@@ -15,6 +15,8 @@ medicalModuleKeys.add("medical.search.title");
 medicalModuleKeys.add("medical.search.empty");
 medicalModuleKeys.add("medical.registration.title");
 medicalModuleKeys.add("medical.registration.create");
+medicalModuleKeys.add("medical.documents.reviewed");
+medicalModuleKeys.add("medical.documents.reviewConfirmed");
 const industryEntity = /(?:^|[^\p{L}])(?:клиник[\p{L}]*|пациент[\p{L}]*|врач[\p{L}]*|кресл[\p{L}]*|стоматолог[\p{L}]*|емхана[\p{L}]*|дәрігер[\p{L}]*|орындық[\p{L}]*|clinics?|patients?|doctors?|dentists?|dentistry|dental|chairs?)(?=$|[^\p{L}])/iu;
 
 export function industryTermViolations(entries) {

@@ -5,6 +5,8 @@ from django.db import transaction
 from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
 
 from apps.businesses.models import Business
+from apps.branches.models import Branch
+from apps.businesses.access import Actions, Resources, assert_can
 from apps.core.domain_errors import InvalidTransition
 from apps.core.idempotency import CRMCommandResult, run_idempotent_crm_command
 from .appointment_access import assert_appointment_medical_basis
@@ -140,30 +142,31 @@ def save_primary_document_draft(*, actor, business_id, patient_id, encounter_id,
 
 @transaction.atomic
 def read_document_for_treating_clinician(*, actor, business_id, patient_id, version_id,
-                                       appointment_id=None, participation_id=None):
+                                       appointment_id=None, participation_id=None, head_branch_id=None):
     if type(version_id) is not int or version_id <= 0:
         raise ValidationError({"document": "Provide valid identifiers."})
     business, patient = document_read_context(actor=actor, business_id=business_id, patient_id=patient_id,
-        appointment_id=appointment_id, participation_id=participation_id)
+        appointment_id=appointment_id, participation_id=participation_id, head_branch_id=head_branch_id)
     version = MedicalDocumentRevision.objects.select_related("document").filter(pk=version_id,
         document__business=business, document__encounter__business=business,
         document__encounter__patient=patient).first()
-    if version is None:
+    if version is None or (head_branch_id is not None and version.document.encounter.branch_id != head_branch_id):
         raise PermissionDenied()
     return document_version_payload(actor=actor, business=business, patient=patient, version=version)
 
 
-def document_read_context(*, actor, business_id, patient_id, appointment_id=None, participation_id=None):
+def document_read_context(*, actor, business_id, patient_id, appointment_id=None, participation_id=None, head_branch_id=None):
     """Internal access check; callers hold an atomic read/audit transaction."""
-    if (appointment_id is None) == (participation_id is None):
+    bases = (appointment_id, participation_id, head_branch_id)
+    if sum(value is not None for value in bases) != 1:
         raise ValidationError({"basis": "Select one current treatment access basis."})
-    ids = [business_id, patient_id, appointment_id if appointment_id is not None else participation_id]
+    ids = [business_id, patient_id, *(value for value in bases if value is not None)]
     if any(type(value) is not int or value <= 0 for value in ids):
         raise ValidationError({"document": "Provide valid identifiers."})
     business = Business.objects.select_for_update().filter(pk=business_id).first()
     if business is None:
         raise NotFound()
-    assert_medical_role_permission(actor, business, "medical_documents", "view")
+    role = assert_medical_role_permission(actor, business, "medical_documents", "view")
     patient = PatientProfile.objects.select_for_update().filter(pk=patient_id,
         business=business, client__business_id=business_id).first()
     if patient is None:
@@ -171,9 +174,19 @@ def document_read_context(*, actor, business_id, patient_id, appointment_id=None
     if appointment_id is not None:
         assert_appointment_medical_basis(actor=actor, business=business, patient_id=patient_id,
             appointment_id=appointment_id, resource="medical_documents")
-    else:
+    elif participation_id is not None:
         assert_treatment_medical_basis(actor=actor, business=business, patient_id=patient_id,
             participation_id=participation_id, resource="medical_documents")
+    else:
+        if role.kind != "head":
+            raise PermissionDenied()
+        branch = Branch.objects.filter(pk=head_branch_id, business=business).first()
+        if branch is None:
+            raise PermissionDenied()
+        assert_can(actor, business, Resources.CLIENTS, Actions.VIEW, obj=patient.client)
+        assert_medical_branch_permission(actor, business, "medical_documents", "view", branch=branch)
+        assert_medical_branch_permission(actor, business, "medical_records", "view", branch=branch)
+        write_patient_audit(actor=actor, business=business, patient=patient, action="read")
     return business, patient
 
 

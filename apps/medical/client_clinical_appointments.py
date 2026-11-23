@@ -7,7 +7,7 @@ from apps.businesses.models import Business
 from apps.clients.models import Client
 from .appointment_access import _assigned_appointments
 from .audit import MedicalAuditUnavailable
-from .models import MedicalAuditEvent, MedicalRoleAssignment, TreatmentParticipation
+from .models import MedicalAuditEvent, MedicalRoleAssignment, PatientProfile, TreatmentParticipation
 from .participation_access import assert_treatment_medical_basis
 from .role_access import assert_medical_branch_permission
 
@@ -43,10 +43,18 @@ def list_client_clinical_appointments(*, actor, business_id, branch_id, client_i
                                           participation_id=participation.pk)
         except PermissionDenied:
             participation = None
+    head_patient = None
+    if role.kind == MedicalRoleAssignment.Kinds.HEAD:
+        try:
+            assert_medical_branch_permission(actor, business, "medical_documents", "view", branch=branch)
+            head_patient = PatientProfile.objects.filter(business=business, client=client).first()
+        except PermissionDenied:
+            pass
     try:
         event = MedicalAuditEvent.objects.create(business=business, actor=actor, action="read", result="success",
             **({"patient": participation.patient, "patient_revision": participation.patient.revision,
-                "participation": participation, "participation_revision": participation.revision} if participation else {}))
+                "participation": participation, "participation_revision": participation.revision} if participation else
+               {"patient": head_patient, "patient_revision": head_patient.revision} if head_patient else {}))
         if event is None or event.pk is None:
             raise MedicalAuditUnavailable()
     except DatabaseError:
@@ -54,4 +62,5 @@ def list_client_clinical_appointments(*, actor, business_id, branch_id, client_i
     return {"results": [{"id": item.pk, "start_at": item.start_at, "end_at": item.end_at}
                         for item in page[:limit]],
             "next_before_id": page[limit - 1].pk if len(page) > limit else None,
-            **({"participation": {"id": participation.pk, "patient_id": participation.patient_id}} if participation else {})}
+            **({"participation": {"id": participation.pk, "patient_id": participation.patient_id}} if participation else {}),
+            **({"head_documents": {"patient_id": head_patient.pk}} if head_patient else {})}

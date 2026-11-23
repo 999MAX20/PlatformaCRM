@@ -1,3 +1,4 @@
 -c requirements.txt
 pip-audit==2.10.1
 pip-tools==7.6.0
+pypdf==7.1.1

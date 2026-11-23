@@ -1,5 +1,7 @@
 import { openClinicalWorkspace } from "./clinical-card-navigation";
 import { test, expect } from "@playwright/test";
+import { execFileSync } from "node:child_process";
+import { readFileSync } from "node:fs";
 import AxeBuilder from "@axe-core/playwright";
 import { ru } from "../src/lib/i18n/ru";
 import { kk } from "../src/lib/i18n/kk";
@@ -7,10 +9,134 @@ import { en } from "../src/lib/i18n/en";
 import { requireIsolatedEnvironment } from "./isolated-environment.mjs";
 
 requireIsolatedEnvironment();
+
+for (const [language, width, t] of [["kk", 1440, kk], ["en", 390, en]] as const) {
+  test(`head documents ${language}: inline patient card and saved PDF`, async ({ page }, info) => {
+    test.skip(process.env.E2E_MEDICAL_FILES !== "1", "Requires the isolated PDF scanner fixture");
+    test.setTimeout(120000);
+    const fixture = (command: string, ...args: string[]) => execFileSync(process.env.E2E_PYTHON!,
+      ["e2e/clinical-runtime.py", command, ...args], { env: process.env, windowsHide: true, encoding: "utf8" });
+    const entry = JSON.parse(fixture("files-new-appointment").trim().split(/\r?\n/).at(-1)!);
+    fixture("historical-orders-context", String(entry.appointment_id));
+    fixture("historical-documents-populate", String(entry.appointment_id), "1", language === "kk" ? "print-long" : "short");
+    await page.setViewportSize({ width, height: 1000 });
+    await page.addInitScript(value => localStorage.setItem("ai_smb_language", value), language);
+    await page.goto("/login");
+    await page.locator('input[name="email"]').fill("medical-participation-head@example.test");
+    await page.locator('input[name="password"]').fill(process.env.E2E_PASSWORD!);
+    await page.locator('form button[type="submit"]').click();
+    await expect(page).toHaveURL(/\/app\//);
+    await page.goto(`/app/clients?client=${entry.client_id}&tab=timeline`);
+    const dialog = page.getByRole("dialog", { name: t["common.client"], exact: true });
+    await dialog.getByRole("tab", { name: t["medical.clinical.title"], exact: true }).click();
+    await dialog.getByLabel(t["medical.branch"], { exact: true }).click();
+    const basisResponse = page.waitForResponse(r => r.url().includes("/client-appointments/") && r.request().method() === "GET");
+    await page.getByRole("option", { name: "First", exact: true }).click();
+    const basis = await basisResponse;
+    expect(basis.status()).toBe(200);
+    const branchId = new URL(basis.url()).searchParams.get("branch_id")!;
+    expect((await basis.json()).head_documents).toBeTruthy();
+    const documents = dialog.getByTestId("medical-documents");
+    await expect(documents.getByRole("button", { name: t["medical.documents.create"], exact: true })).toHaveCount(0);
+    await documents.getByRole("button", { name: /^Synthetic historical document/ }).click();
+    const detail = documents.getByTestId("medical-document-detail");
+    await expect(detail.getByTestId("medical-document-text")).toHaveText("Synthetic historical document 0 v2");
+    await detail.getByRole("button", { name: t["medical.templates.version"].replace("{revision}", "1"), exact: true }).click();
+    const originalText = "Synthetic historical document 0 v1" + (language === "kk" ? "\n" + Array.from({ length: 85 }, (_, line) => `Строка ${line}: Қазақша мәтін және русский текст.`).join("\n") : "");
+    await expect(detail.getByTestId("medical-document-text")).toHaveText(originalText);
+    await expect(detail.getByRole("button", { name: t["medical.documents.edit"], exact: true })).toHaveCount(0);
+    const pdf = detail.getByTestId("medical-document-pdf");
+    const exportHistory = pdf.getByTestId("document-export-history");
+    if (language === "kk") {
+      await page.route("**/export-history/**", route => route.fulfill({ status: 503, contentType: "application/json", body: '{"detail":"Synthetic history unavailable"}' }), { times: 1 });
+    }
+    await exportHistory.getByRole("button", { name: t["medical.documents.exportHistory"], exact: true }).click();
+    if (language === "kk") {
+      await expect(exportHistory.getByRole("alert")).toBeVisible();
+      await exportHistory.getByRole("button", { name: t["common.retry"], exact: true }).click();
+    }
+    await expect(exportHistory.getByText(t["medical.documents.exportHistoryEmpty"], { exact: true })).toBeVisible();
+    await pdf.getByRole("button", { name: t["medical.documents.pdfPreview"], exact: true }).click();
+    await expect(pdf.getByRole("status")).toContainText(t["medical.files.pending"]);
+    fixture("document-artifacts-scan", String(entry.appointment_id));
+    const savedPdf = page.waitForResponse(r => /\/versions\/\d+\/pdf\//.test(r.url()) && r.request().method() === "GET");
+    await pdf.getByRole("button", { name: t["common.retry"], exact: true }).click();
+    const savedBytes = await (await savedPdf).body();
+    await expect(pdf.getByTestId("medical-pdf-text")).toContainText("Synthetic historical document 0 v1");
+    await expect(page.getByRole("dialog")).toHaveCount(1);
+    await pdf.scrollIntoViewIfNeeded();
+    await page.screenshot({ path: info.outputPath(`head-pdf-${language}.png`) });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+    if (language === "kk") {
+      await page.route("**/pdf-download/", route => route.fulfill({ status: 503, contentType: "application/json", body: '{"detail":"Synthetic export unavailable"}' }), { times: 1 });
+      await pdf.getByRole("button", { name: t["medical.documents.downloadPdf"], exact: true }).click();
+      await expect(pdf.getByRole("alert")).toBeVisible();
+      await expect(detail.getByTestId("medical-document-text")).toHaveText(originalText);
+    }
+    const downloading = page.waitForEvent("download");
+    await pdf.getByRole("button", { name: language === "kk" ? t["common.retry"] : t["medical.documents.downloadPdf"], exact: true }).click();
+    const download = await downloading;
+    const downloadedPath = (await download.path())!;
+    expect(readFileSync(downloadedPath)).toEqual(savedBytes);
+    await expect(exportHistory.getByText(t["medical.documents.document_exported"], { exact: true })).toBeVisible();
+    const pageCount = Number(execFileSync(process.env.E2E_PYTHON!, ["-c", "import sys; from pypdf import PdfReader; print(len(PdfReader(sys.argv[1]).pages))", downloadedPath], { windowsHide: true, encoding: "utf8" }).trim());
+    if (language === "kk") expect(pageCount).toBeGreaterThan(1);
+    if (language === "kk") {
+      await page.evaluate(() => { (window as unknown as { originalOpen: typeof window.open }).originalOpen = window.open; window.open = () => null; });
+      await pdf.getByRole("button", { name: t["medical.documents.print"], exact: true }).click();
+      await expect(pdf.getByRole("alert")).toContainText(t["medical.documents.popupBlocked"]);
+      await page.evaluate(() => { window.open = (window as unknown as { originalOpen: typeof window.open }).originalOpen; });
+    }
+    await page.evaluate(() => {
+      const original = window.open.bind(window);
+      window.open = (...args) => {
+        const target = original(...args);
+        if (target) target.print = () => { target.document.documentElement.dataset.printRequested = "true"; };
+        return target;
+      };
+    });
+    const printing = page.waitForEvent("popup");
+    const printAction = pdf.getByRole("button", { name: language === "kk" ? t["common.retry"] : t["medical.documents.print"], exact: true });
+    await printAction.focus();
+    await printAction.press("Enter");
+    const printPage = await printing;
+    await expect(printPage.locator("html")).toHaveAttribute("data-print-requested", "true");
+    await expect(printPage.locator("img")).toHaveCount(pageCount);
+    for (let index = 0; index < pageCount; index++) {
+      expect(await printPage.locator("img").nth(index).evaluate((element: HTMLImageElement) => element.complete && element.naturalWidth > 500)).toBe(true);
+      await printPage.locator("img").nth(index).screenshot({ path: info.outputPath(`print-page-${language}-${index + 1}.png`) });
+    }
+    await printPage.screenshot({ path: info.outputPath(`head-print-${language}.png`) });
+    const printedPath = info.outputPath(`printed-${language}.pdf`);
+    await printPage.pdf({ path: printedPath, preferCSSPageSize: true, printBackground: true });
+    const printedPages = Number(execFileSync(process.env.E2E_PYTHON!, ["-c", "import sys; from pypdf import PdfReader; print(len(PdfReader(sys.argv[1]).pages))", printedPath], { windowsHide: true, encoding: "utf8" }).trim());
+    expect(printedPages).toBe(pageCount);
+    await printPage.close();
+    await expect(exportHistory.getByText(t["medical.documents.document_print_requested"], { exact: true })).toBeVisible();
+    await expect(exportHistory.getByText(/Synthetic medical head/)).toHaveCount(2);
+    await exportHistory.scrollIntoViewIfNeeded();
+    await page.screenshot({ path: info.outputPath(`export-history-${language}.png`) });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+    if (language === "kk") {
+      await exportHistory.getByRole("button", { name: t["medical.documents.exportHistory"], exact: true }).click();
+      fixture("head-documents-revoke", branchId);
+      try {
+        await exportHistory.getByRole("button", { name: t["medical.documents.exportHistory"], exact: true }).click();
+        await expect(documents).toHaveCount(0);
+        await expect(dialog.getByText(t["medical.denied"], { exact: true })).toBeVisible();
+      } finally { fixture("head-documents-restore", branchId); }
+    }
+  });
+}
+
 for (const [language, t] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
   for (const width of [1440, 390]) test(`documents ${language} ${width}: drafts history recovery and clinical retention`, async ({ page, browser }, info) => {
-    test.setTimeout(150_000);
-    const id = (["ru", "kk", "en"] as const).indexOf(language) * 2 + (width === 1440 ? 1 : 2);
+    test.setTimeout(process.env.E2E_MEDICAL_FILES === "1" && language === "ru" && width === 1440 ? 210_000 : 150_000);
+    const id = process.env.E2E_MEDICAL_FILES === "1"
+      ? JSON.parse(execFileSync(process.env.E2E_PYTHON!, ["e2e/clinical-runtime.py", "files-new-appointment"], {
+        env: process.env, windowsHide: true, encoding: "utf8",
+      }).trim().split(/\r?\n/).at(-1)!).appointment_id as number
+      : (["ru", "kk", "en"] as const).indexOf(language) * 2 + (width === 1440 ? 1 : 2);
     const base = process.env.E2E_API_BASE_URL;
     await page.setViewportSize({ width, height: 900 });
     await page.addInitScript(value => localStorage.setItem("ai_smb_language", value), language);
@@ -33,7 +159,7 @@ for (const [language, t] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
       const response = await authentication;
       expect(response.ok()).toBe(true); headToken = (await response.json()).access;
     } finally { await headContext.close(); }
-    const title = `Synthetic document ${language} ${width}${language === "en" && width === 390 ? " " + "Long".repeat(35) : ""}`;
+    const title = `Synthetic document ${language} ${width} patient-${id}${language === "en" && width === 390 ? " " + "Long".repeat(35) : ""}`;
     const command = async (path: string, data: object, auth = token) => {
       const response = await page.request.post(`${base}/api/medical/document-templates/${path}`, {
         headers: { Authorization: `Bearer ${auth}`, "Idempotency-Key": crypto.randomUUID() }, data });
@@ -131,6 +257,80 @@ for (const [language, t] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
     const detail = documents.getByTestId("medical-document-detail");
     await expect(detail.getByTestId("medical-document-text")).toHaveText(`Synthetic document original ${id}`);
     await expect(detail).toContainText("Synthetic clinician");
+    const review = detail.getByTestId("document-review");
+    await review.getByRole("button", { name: t["medical.documents.submitReview"], exact: true }).click();
+    await review.getByRole("button", { name: t["medical.documents.returnDraft"], exact: true }).click();
+    await expect(review.getByRole("textbox", { name: t["medical.documents.returnReason"], exact: true })).toBeVisible();
+    await review.getByRole("button", { name: t["common.cancel"], exact: true }).click();
+    await expect(review.getByRole("textbox")).toHaveCount(0);
+    await review.getByRole("button", { name: t["medical.documents.confirmReview"], exact: true }).focus();
+    await page.keyboard.press("Enter");
+    await expect(detail.getByText(t["medical.documents.reviewed"], { exact: true })).toBeVisible();
+    const returnReason = review.getByRole("textbox", { name: t["medical.documents.returnReason"], exact: true });
+    await expect(returnReason).toBeVisible();
+    await expect(detail.getByRole("button", { name: t["medical.documents.edit"], exact: true })).toHaveCount(0);
+    await returnReason.fill(`Synthetic review return ${id}`);
+    page.once("dialog", dialog => dialog.dismiss());
+    await documents.getByRole("button", { name: t["medical.documents.back"], exact: true }).click();
+    await expect(returnReason).toHaveValue(`Synthetic review return ${id}`);
+    let failReview = true;
+    const reviewKeys: string[] = [];
+    await page.route("**/review-transition/", route => {
+      reviewKeys.push(route.request().headers()["idempotency-key"]);
+      if (failReview) { failReview = false; return route.fulfill({ status: 503, contentType: "application/json", body: '{"detail":"Synthetic review unavailable"}' }); }
+      return route.continue();
+    });
+    await review.getByRole("button", { name: t["medical.documents.returnDraft"], exact: true }).click();
+    await expect(review.getByRole("alert")).toBeVisible();
+    await expect(returnReason).toHaveValue(`Synthetic review return ${id}`);
+    await review.getByRole("button", { name: t["medical.documents.returnDraft"], exact: true }).click();
+    await expect(review.getByRole("button", { name: t["medical.documents.submitReview"], exact: true })).toBeVisible();
+    expect(reviewKeys).toHaveLength(2); expect(reviewKeys[0]).toBe(reviewKeys[1]);
+    await page.unroute("**/review-transition/");
+    await review.getByRole("button", { name: t["medical.documents.reviewHistory"], exact: true }).click();
+    await expect(review).toContainText(`Synthetic review return ${id}`);
+    await expect(review).toContainText(t["medical.documents.reviewSubmitted"]);
+    await expect(review).toContainText(t["medical.documents.reviewConfirmed"]);
+    await expect(detail.getByText(t["medical.documents.reviewed"], { exact: true })).toHaveCount(0);
+    await review.scrollIntoViewIfNeeded();
+    await page.screenshot({ path: info.outputPath("document-review-history.png") });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+    if (process.env.E2E_MEDICAL_FILES === "1") {
+      const pdf = detail.getByTestId("medical-document-pdf");
+      let failPrepare = true;
+      await page.route("**/api/medical/documents/versions/*/pdf-prepare/", route => {
+        if (failPrepare) {
+          failPrepare = false;
+          return route.fulfill({ status: 503, contentType: "application/json", body: '{"detail":"Synthetic artifact unavailable"}' });
+        }
+        return route.continue();
+      });
+      await pdf.getByRole("button", { name: t["medical.documents.pdfPreview"], exact: true }).click();
+      await expect(pdf.getByRole("alert")).toBeVisible();
+      await pdf.getByRole("button", { name: t["common.retry"], exact: true }).click();
+      await expect(pdf.getByRole("status")).toContainText(t["medical.files.pending"]);
+      await expect(pdf.getByTestId("medical-pdf-preview")).toHaveCount(0);
+      execFileSync(process.env.E2E_PYTHON!, ["e2e/clinical-runtime.py", "document-artifacts-scan", String(id)], {
+        env: process.env, windowsHide: true, stdio: "pipe",
+      });
+      await pdf.getByRole("button", { name: t["common.retry"], exact: true }).click();
+      await expect(pdf.getByTestId("medical-pdf-text")).toContainText(`Synthetic document original ${id}`);
+      await expect(pdf.locator("canvas")).toBeVisible();
+      await pdf.scrollIntoViewIfNeeded();
+      await page.screenshot({ path: info.outputPath("document-pdf-inline.png") });
+      if (width === 390) {
+        await pdf.getByLabel(t["medical.files.pdfZoom"], { exact: true }).click();
+        await page.getByRole("option", { name: "300%", exact: true }).click();
+        await expect(pdf.getByTestId("medical-pdf-text")).toContainText(`Synthetic document original ${id}`);
+        await pdf.scrollIntoViewIfNeeded();
+        await page.screenshot({ path: info.outputPath("document-pdf-mobile-zoom.png") });
+      }
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+      await pdf.getByRole("button", { name: t["common.close"], exact: true }).click();
+      await expect(pdf.getByTestId("medical-pdf-preview")).toHaveCount(0);
+      await expect(pdf.getByRole("button", { name: t["medical.documents.pdfPreview"], exact: true })).toBeFocused();
+      await page.unroute("**/api/medical/documents/versions/*/pdf-prepare/");
+    }
     await detail.getByRole("button", { name: t["medical.documents.edit"], exact: true }).click();
     await expect(text).toHaveValue(`Synthetic document original ${id}`);
     await text.fill(`Synthetic document corrected ${id}`);
@@ -141,6 +341,7 @@ for (const [language, t] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
     await workspace.screenshot({ path: info.outputPath("document-current.png") });
     await detail.getByRole("button", { name: t["medical.templates.version"].replace("{revision}", "1"), exact: true }).click();
     await expect(detail.getByTestId("medical-document-text")).toHaveText(`Synthetic document original ${id}`);
+    await expect(detail.getByText(t["medical.documents.recorded"], { exact: true })).toBeVisible();
     await expect(detail.getByRole("button", { name: t["medical.documents.edit"], exact: true })).toHaveCount(0);
     await workspace.screenshot({ path: info.outputPath("document-history.png") });
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
@@ -188,5 +389,46 @@ for (const [language, t] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
     await page.keyboard.press("Escape");
     await expect(page.getByTestId("clinical-unsaved")).toBeVisible();
     expect(await page.evaluate(() => JSON.stringify({ ...localStorage, ...sessionStorage }))).not.toContain("Synthetic document original");
+    if (process.env.E2E_MEDICAL_FILES === "1" && language === "ru" && width === 1440) {
+      const fixture = JSON.parse(execFileSync(process.env.E2E_PYTHON!, ["e2e/clinical-runtime.py", "document-correction-prepare", String(id)], {
+        env: process.env, windowsHide: true, encoding: "utf8",
+      }).trim().split(/\r?\n/).at(-1)!);
+      page.once("dialog", dialog => dialog.accept());
+      await page.goto(`/app/clients/${fixture.client_id}`);
+      await page.getByTestId("patient-administration").getByLabel(t["medical.branch"], { exact: true }).click();
+      await page.getByRole("option", { name: "First", exact: true }).click();
+      await page.getByTestId(`correction-access-${fixture.correction_id}`).getByRole("button", { name: t["medical.correctionAccess.edit"], exact: true }).click();
+      const correction = page.getByRole("dialog");
+      const pdf = correction.getByTestId("medical-document-pdf");
+      await pdf.getByRole("button", { name: t["medical.documents.pdfPreview"], exact: true }).click();
+      await expect(pdf.getByRole("status")).toContainText(t["medical.files.pending"]);
+      execFileSync(process.env.E2E_PYTHON!, ["e2e/clinical-runtime.py", "document-artifacts-scan", String(id)], {
+        env: process.env, windowsHide: true, stdio: "pipe",
+      });
+      await pdf.getByRole("button", { name: t["common.retry"], exact: true }).click();
+      await expect(pdf.getByTestId("medical-pdf-text")).toContainText(`Synthetic document corrected ${id}`);
+      await pdf.scrollIntoViewIfNeeded();
+      await page.screenshot({ path: info.outputPath("correction-pdf-desktop.png") });
+      await page.setViewportSize({ width: 390, height: 900 });
+      await pdf.scrollIntoViewIfNeeded();
+      await page.screenshot({ path: info.outputPath("correction-pdf-mobile.png") });
+      const correctedText = correction.getByRole("textbox", { name: t["medical.correctionAccess.document"], exact: true });
+      await correctedText.fill("Synthetic unsaved correction");
+      await expect(pdf).toHaveCount(0);
+      await expect(correctedText).toHaveValue("Synthetic unsaved correction");
+      await correctedText.fill(`Synthetic document corrected ${id}`);
+      execFileSync(process.env.E2E_PYTHON!, ["e2e/clinical-runtime.py", "document-correction-expire", String(fixture.correction_id)], {
+        env: process.env, windowsHide: true, stdio: "pipe",
+      });
+      try {
+        await pdf.getByRole("button", { name: t["medical.documents.pdfPreview"], exact: true }).click();
+        await expect(correction).toHaveCount(0);
+        await expect(page.getByTestId("patient-administration").getByRole("alert")).toBeVisible();
+      } finally {
+        execFileSync(process.env.E2E_PYTHON!, ["e2e/clinical-runtime.py", "document-correction-clock-reset"], {
+          env: process.env, windowsHide: true, stdio: "pipe",
+        });
+      }
+    }
   });
 }

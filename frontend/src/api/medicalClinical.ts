@@ -7,7 +7,7 @@ export type PatientVisitPlanPage = { results: {
 
 export type ClinicalScope = { business_id: number; patient_id: number };
 export type ClientClinicalAppointments = { results: { id: number; start_at: string; end_at: string }[]; next_before_id: number | null;
-  participation?: { id: number; patient_id: number } };
+  participation?: { id: number; patient_id: number }; head_documents?: { patient_id: number } };
 export type ClinicalOverview = {
   patient_id: number; patient_revision: number; full_name: string;
   identity_status: "unverified" | "verified"; date_of_birth: string | null;
