@@ -145,6 +145,8 @@ for (const language of ["ru", "kk", "en"] as const) for (const width of [1440, 3
     if (!document) {
       await dialog.getByRole("textbox", { name: t["medical.clinical.allergies"], exact: true }).fill(`Synthetic corrected allergy ${language}`);
       await dialog.getByRole("textbox", { name: t["medical.clinical.contraindications"], exact: true }).fill("Synthetic corrected contraindication");
+      await dialog.getByTestId("clinical-plan-steps").getByRole("button", { name: t["medical.plan.addStep"], exact: true }).click();
+      await dialog.getByTestId("clinical-plan-steps").getByRole("textbox").last().fill("Synthetic corrected plan step");
       const procedureLabel = t["medical.clinical.procedures"];
       await dialog.getByRole("checkbox", { name: t["medical.clinical.notApplicableFor"].replace("{field}", procedureLabel), exact: true }).check();
       await dialog.getByRole("textbox", { name: t["medical.clinical.notApplicableReason"].replace("{field}", procedureLabel), exact: true }).fill("Synthetic correction consultation only");
@@ -160,6 +162,8 @@ for (const language of ["ru", "kk", "en"] as const) for (const width of [1440, 3
       dialog = page.getByRole("dialog");
       await expect(dialog.getByRole("textbox", { name: t["medical.clinical.allergies"], exact: true })).toHaveValue(`Synthetic corrected allergy ${language}`);
       await expect(dialog.getByRole("textbox", { name: t["medical.clinical.contraindications"], exact: true })).toHaveValue("Synthetic corrected contraindication");
+      await expect(dialog.getByTestId("clinical-plan-steps").getByRole("textbox").last()).toHaveValue("Synthetic corrected plan step");
+      await dialog.getByTestId("clinical-plan-steps").screenshot({ path: info.outputPath("corrected-plan-steps.png") });
       await expect(dialog.getByRole("textbox", { name: t["medical.clinical.notApplicableReason"].replace("{field}", t["medical.clinical.procedures"]), exact: true })).toHaveValue("Synthetic correction consultation only");
       await dialog.getByRole("textbox", { name: t["medical.clinical.notApplicableReason"].replace("{field}", t["medical.clinical.procedures"]), exact: true }).locator("../..").screenshot({ path: info.outputPath("corrected-not-applicable.png") });
       await dialog.getByRole("textbox", { name: t["medical.clinical.allergies"], exact: true }).locator("..").screenshot({ path: info.outputPath("corrected-allergies.png") });

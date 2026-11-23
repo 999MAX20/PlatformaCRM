@@ -71,6 +71,30 @@ class MedicalEncounterAPITests(TestCase):
         self.assert_private(conflict)
         self.assertEqual(MedicalEncounter.objects.count(), 1)
 
+    def test_structured_plan_versions_replay_and_revocation_without_booking_effects(self):
+        from apps.scheduling.models import Appointment, VisitPlan, VisitPlanStep
+        from apps.payments.models import Payment
+        models = (Appointment, VisitPlan, VisitPlanStep, Payment)
+        counts = [model.objects.count() for model in models]
+        steps = [{"id": "00000000-0000-4000-8000-000000000001", "description": "Synthetic plan step"}]
+        opened = self.open(content={"plan_steps": steps})
+        self.assertEqual(opened.status_code, 201, opened.data)
+        self.assertEqual(self.read(opened.data["version_id"]).data["content"], {"plan_steps": steps})
+        replay = self.open(content={"plan_steps": steps})
+        self.assertTrue(replay.data["replayed"])
+        payload = {**self.scope, "expected_revision": 1, "content": {"plan_steps": []}}
+        url = f"{self.url}{opened.data['id']}/draft/"
+        saved = self.api.post(url, payload, format="json", HTTP_IDEMPOTENCY_KEY="plan-save")
+        self.assertEqual(saved.status_code, 200, saved.data)
+        self.assertEqual(self.read(saved.data["version_id"]).data["content"], {"plan_steps": []})
+        self.assertEqual(self.read(opened.data["version_id"]).data["content"], {"plan_steps": steps})
+        self.assertEqual([model.objects.count() for model in models], counts)
+        self.assignment.branches.clear()
+        denied = self.api.post(url, payload, format="json", HTTP_IDEMPOTENCY_KEY="plan-save")
+        self.assertEqual(denied.status_code, 403)
+        self.assert_private(denied)
+        self.assertEqual(self.read(opened.data["version_id"]).status_code, 403)
+
     def test_risk_fields_are_versioned_private_and_not_inferred_for_old_records(self):
         opened = self.open()
         risks = {"allergies": "Synthetic allergy — оқу", "contraindications": "Synthetic contraindication"}

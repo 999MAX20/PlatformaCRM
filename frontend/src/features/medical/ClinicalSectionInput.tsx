@@ -1,6 +1,7 @@
 import type { ClinicalContent, ClinicalField } from "../../api/medicalClinical";
 import { Textarea } from "../../components/ui/Textarea";
 import { useI18n } from "../../lib/i18n";
+import { ClinicalPlanSteps } from "./ClinicalPlanSteps";
 
 export function ClinicalSectionInput({ field, content, onChange, disabled = false, readOnly = false }: {
   field: ClinicalField; content: ClinicalContent; onChange: (value: ClinicalContent) => void;
@@ -12,10 +13,11 @@ export function ClinicalSectionInput({ field, content, onChange, disabled = fals
   const notApplicable = reason !== undefined;
   function toggle(checked: boolean) {
     const current = notApplicable ? reason : content[field];
-    if (current?.trim() && !window.confirm(t("medical.clinical.replaceSection"))) return;
+    if ((current?.trim() || (field === "plan" && content.plan_steps?.length)) && !window.confirm(t("medical.clinical.replaceSection"))) return;
     const reasons = { ...content.not_applicable };
     const next: ClinicalContent = { ...content, not_applicable: reasons };
     delete next[field];
+    if (field === "plan" && checked) delete next.plan_steps;
     if (checked) reasons[field] = "";
     else {
       delete reasons[field];
@@ -38,5 +40,7 @@ export function ClinicalSectionInput({ field, content, onChange, disabled = fals
         onChange={event => toggle(event.target.checked)} />
       {t("medical.clinical.notApplicable")}
     </label>
+    {field === "plan" && !notApplicable ? <ClinicalPlanSteps content={content} onChange={onChange}
+      disabled={disabled} readOnly={readOnly} /> : null}
   </div>;
 }

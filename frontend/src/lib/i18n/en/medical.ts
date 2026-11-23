@@ -1,4 +1,15 @@
 export const medical = {
+  "medical.plan.remove": "Remove",
+  "medical.plan.steps": "Clinical plan steps",
+  "medical.plan.step": "Step {number}",
+  "medical.plan.moveUp": "Move up",
+  "medical.plan.moveDown": "Move down",
+  "medical.plan.moveUpStep": "Move step {number} up",
+  "medical.plan.moveDownStep": "Move step {number} down",
+  "medical.plan.removeStep": "Remove step {number}",
+  "medical.plan.confirmRemove": "Remove this step from the current draft? Saved versions remain in history.",
+  "medical.plan.addStep": "Add step",
+
   "medical.orders.history": "Order history",
   "medical.orders.title": "Orders",
   "medical.orders.create": "Add order",

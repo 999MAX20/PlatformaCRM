@@ -1,4 +1,15 @@
 export const medical = {
+  "medical.plan.remove": "Удалить",
+  "medical.plan.steps": "Шаги клинического плана",
+  "medical.plan.step": "Шаг {number}",
+  "medical.plan.moveUp": "Выше",
+  "medical.plan.moveDown": "Ниже",
+  "medical.plan.moveUpStep": "Переместить шаг {number} выше",
+  "medical.plan.moveDownStep": "Переместить шаг {number} ниже",
+  "medical.plan.removeStep": "Удалить шаг {number}",
+  "medical.plan.confirmRemove": "Удалить шаг из текущего черновика? Сохранённые версии останутся в истории.",
+  "medical.plan.addStep": "Добавить шаг",
+
   "medical.orders.history": "История назначения",
   "medical.orders.title": "Назначения",
   "medical.orders.create": "Добавить назначение",

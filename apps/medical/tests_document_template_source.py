@@ -71,6 +71,7 @@ class DocumentTemplateSourceTests(TestCase):
         from .encounter_services import save_primary_encounter_draft
         self.approve()
         risks = {"allergies": "Synthetic original allergy", "contraindications": "Synthetic restriction",
+                 "plan_steps": [{"id": "00000000-0000-4000-8000-000000000001", "description": "Synthetic original step"}],
                  "not_applicable": {"procedures": "Synthetic consultation only"}}
         kwargs = dict(actor=self.doctor, business_id=self.business.pk, patient_id=self.patient.pk,
                       encounter_id=self.encounter_record.pk, content=risks)

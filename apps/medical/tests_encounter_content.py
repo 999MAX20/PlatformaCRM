@@ -82,6 +82,31 @@ class EncounterContentTests(TestCase):
         self.assertEqual(MedicalEncounterRevision.objects.count(), 1)
         self.assertNotIn("diagnosis", read_encounter_revision(first)["content"])
 
+    def test_plan_steps_preserve_order_and_exact_historical_content(self):
+        steps = [{"id": "00000000-0000-4000-8000-000000000001", "description": "Synthetic first — оқу"},
+                 {"id": "00000000-0000-4000-8000-000000000002", "description": "Synthetic second"}]
+        first = self.append(content={"plan": "Existing summary", "plan_steps": steps})
+        self.advance()
+        second = self.append(content={"plan_steps": list(reversed(steps))})
+        self.assertEqual(read_encounter_revision(first)["content"]["plan_steps"], steps)
+        self.assertEqual(read_encounter_revision(second)["content"]["plan_steps"], list(reversed(steps)))
+        self.assertNotIn("Synthetic", first.content_encrypted)
+        self.assertNotIn("plan_steps", validate_clinical_draft({"plan": "Existing summary"}))
+
+    def test_plan_steps_reject_invalid_duplicate_unbounded_and_conflicting_values(self):
+        step = {"id": "00000000-0000-4000-8000-000000000001", "description": "Synthetic"}
+        invalid = [True, {}, [step] * 101, [step, step], [{**step, "id": "secret-invalid"}],
+                   [{**step, "description": False}], [{**step, "description": "x" * 4001}],
+                   [{**step, "service": 1}], [{"id": step["id"]}]]
+        for steps in invalid:
+            with self.subTest(kind=type(steps).__name__), self.assertRaises(ValidationError) as failure:
+                validate_clinical_draft({"plan_steps": steps})
+            self.assertNotIn("Synthetic", str(failure.exception))
+            self.assertNotIn("secret-invalid", str(failure.exception))
+        with self.assertRaises(ValidationError):
+            validate_clinical_draft({"plan_steps": [step], "not_applicable": {"plan": "Reason"}})
+        self.assertEqual(validate_clinical_draft({"plan_steps": []}), {"plan_steps": []})
+
     def test_swapped_ciphertexts_are_rejected_even_with_same_encounter(self):
         first = self.append()
         self.advance()

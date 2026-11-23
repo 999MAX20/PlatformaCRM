@@ -1,4 +1,15 @@
 export const medical = {
+  "medical.plan.remove": "Жою",
+  "medical.plan.steps": "Клиникалық жоспар қадамдары",
+  "medical.plan.step": "{number}-қадам",
+  "medical.plan.moveUp": "Жоғары",
+  "medical.plan.moveDown": "Төмен",
+  "medical.plan.moveUpStep": "{number}-қадамды жоғары жылжыту",
+  "medical.plan.moveDownStep": "{number}-қадамды төмен жылжыту",
+  "medical.plan.removeStep": "{number}-қадамды жою",
+  "medical.plan.confirmRemove": "Қадамды ағымдағы жоба нұсқасынан жою керек пе? Сақталған нұсқалар тарихта қалады.",
+  "medical.plan.addStep": "Қадам қосу",
+
   "medical.orders.history": "Тағайындау тарихы",
   "medical.orders.title": "Тағайындаулар",
   "medical.orders.create": "Тағайындау қосу",

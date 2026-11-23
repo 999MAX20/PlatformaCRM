@@ -1,6 +1,8 @@
 ## Медицинский модуль: начата реализация — 22.11.2026
 
-К06 назначения: отдельные encrypted MedicalOrder/Revision и medical_prescriptions ACL, domain/API черновиков/версий и вкладка текущего приёма добавлены. Backend57 dependent и13 PostgreSQL (включая2 races) PASS; 7 browser сценариев,21 inspected captures,build/check/drift PASS; публикация готовится. Подпись/PDF/выдача и личные snippets не закрыты.
+К06 план: optional encrypted plan_steps, редактирование/keyboard reorder/подтверждённое удаление в основной и correction форме, точная история. Backend28 focused/84 dependent,7 main+2 correction browser,17 final inspected captures,build/static/check/drift PASS; публикация готовится. Это не закрывает M10: связи VisitPlanStep/зубов и явное преобразование в календарь остаются открытыми.
+
+К06 назначения: отдельные encrypted MedicalOrder/Revision и medical_prescriptions ACL, domain/API черновиков/версий и вкладка текущего приёма добавлены. Backend57 dependent и13 PostgreSQL (включая2 races) PASS; 7 browser сценариев,21 inspected captures,build/check/drift PASS; опубликовано9c2b9fae. Подпись/PDF/выдача и личные snippets не закрыты.
 
 К06 неприменимость: добавлен explicit not_applicable map с обязательным
 обоснованием, несовместимым с непустым текстом того же раздела. Версии/снимки

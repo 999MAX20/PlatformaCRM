@@ -149,6 +149,7 @@ class CorrectionAccessTests(TestCase):
         kwargs = dict(actor=self.doctor, business_id=self.business.pk, patient_id=self.patient.pk,
             encounter_id=self.encounter_record.pk, expected_revision=1,
             content={"plan": "Corrected synthetic plan", "allergies": "Corrected synthetic allergy",
+                     "plan_steps": [{"id": "00000000-0000-4000-8000-000000000001", "description": "Corrected synthetic step"}],
                      "contraindications": "Corrected synthetic contraindication",
                      "not_applicable": {"procedures": "Synthetic consultation only"}},
             reason="Synthetic correction", idempotency_key="save", correction_access_id=item.pk)

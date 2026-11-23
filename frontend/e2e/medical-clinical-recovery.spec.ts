@@ -12,15 +12,20 @@ test("clinical recovery: retained draft, stable retry, real conflict and revocat
   await page.locator('input[name="email"]').fill("medical-role-doctor@example.test");
   await page.locator('input[name="password"]').fill(process.env.E2E_PASSWORD!);
   const login = page.waitForResponse(r => r.url().endsWith("/api/auth/token/") && r.request().method() === "POST");
+  const me = page.waitForResponse(r => r.url().endsWith("/api/auth/me/") && r.status() === 200);
   await page.locator('form button[type="submit"]').click();
   const token = (await (await login).json()).access;
+  await me;
   await expect(page).toHaveURL(/\/app\//);
   const headers = { Authorization: `Bearer ${token}` };
   const api = process.env.E2E_API_BASE_URL!;
-  const scope = { business_id: 1, patient_id: 7 };
-  const contextResponse = await page.request.get(`${api}/api/medical/encounters/appointment-context/?business_id=1&appointment_id=7`, { headers });
+  const appointmentResponse = await page.request.get(`${api}/api/appointments/7/`, { headers });
+  expect(appointmentResponse.status()).toBe(200);
+  const businessId = (await appointmentResponse.json()).business;
+  const contextResponse = await page.request.get(`${api}/api/medical/encounters/appointment-context/?business_id=${businessId}&appointment_id=7`, { headers });
   expect(contextResponse.status()).toBe(200);
   const context = await contextResponse.json();
+  const scope = { business_id: context.business_id, patient_id: context.patient.id };
   const record = await page.request.post(`${api}/api/medical/records/`, { headers: { ...headers, "Idempotency-Key": "recovery-record" },
     data: { ...scope, appointment_id: 7, expected_patient_revision: 1, number: "RECOVERY" } });
   expect(record.status()).toBe(201);
@@ -37,6 +42,10 @@ test("clinical recovery: retained draft, stable retry, real conflict and revocat
   await complaint.fill("Retained synthetic clinical draft");
   const allergies = workspace.getByLabel(ru["medical.clinical.allergies"], { exact: true });
   await allergies.fill("Retained synthetic allergy");
+  const plan = workspace.getByTestId("clinical-plan-steps");
+  await plan.getByRole("button", { name: ru["medical.plan.addStep"], exact: true }).click();
+  const step = plan.getByRole("textbox", { name: ru["medical.plan.step"].replace("{number}", "1"), exact: true });
+  await step.fill("Retained synthetic plan step");
   const keys: string[] = [];
   let releaseSave!: () => void;
   const heldSave = new Promise<void>(resolve => { releaseSave = resolve; });
@@ -66,6 +75,7 @@ test("clinical recovery: retained draft, stable retry, real conflict and revocat
   await unsaved.getByRole("button", { name: ru["medical.clinical.continueEditing"], exact: true }).click();
   await expect(complaint).toHaveValue("Retained synthetic clinical draft");
   await expect(allergies).toHaveValue("Retained synthetic allergy");
+  await expect(step).toHaveValue("Retained synthetic plan step");
   result = page.waitForResponse(r => r.url().endsWith("/draft/") && r.request().method() === "POST");
   await save.click();
   expect((await result).status()).toBe(200);
@@ -80,6 +90,7 @@ test("clinical recovery: retained draft, stable retry, real conflict and revocat
   await save.click();
   expect((await result).status()).toBe(409);
   await expect(complaint).toHaveValue("Local unsaved conflict draft");
+  await expect(step).toHaveValue("Retained synthetic plan step");
   await expect(save).toBeDisabled();
   await workspace.screenshot({ path: info.outputPath("clinical-conflict-mobile.png") });
   page.once("dialog", dialog => dialog.dismiss());

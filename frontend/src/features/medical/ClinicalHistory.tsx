@@ -8,6 +8,7 @@ import { ErrorState, LoadingState } from "../../components/ui/StateViews";
 import { useI18n } from "../../lib/i18n";
 import { formatDateTime } from "../../lib/format";
 import { localeByLanguage } from "../calendar/calendarConstants";
+import { ClinicalPlanStepsRead } from "./ClinicalPlanSteps";
 
 type Denied = (cause: unknown) => void;
 function isDenied(cause: unknown) {
@@ -135,5 +136,6 @@ function VersionReader({ versionId, scope, onDenied }: { versionId: number; scop
       </div>)}
       {data.reason ? <div><dt className="text-sm font-semibold text-platforma-subtle">{t("medical.reason")}</dt><dd className="mt-1 whitespace-pre-wrap break-words text-sm">{data.reason}</dd></div> : null}
     </dl>
+    <ClinicalPlanStepsRead content={data.content} />
   </article>;
 }

@@ -9,6 +9,7 @@ export const clinicalFields = ["complaints", "anamnesis", "allergies", "contrain
 export type ClinicalField = typeof clinicalFields[number];
 export type ClinicalContent = Partial<Record<ClinicalField, string>> & {
   not_applicable?: Partial<Record<ClinicalField, string>>;
+  plan_steps?: { id: string; description: string }[];
 };
 export type EncounterState = "draft" | "finalized";
 

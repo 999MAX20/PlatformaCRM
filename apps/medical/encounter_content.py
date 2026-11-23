@@ -1,4 +1,5 @@
 import json
+from uuid import UUID
 
 from django.core.exceptions import ValidationError as ModelValidationError
 from django.db import transaction
@@ -16,9 +17,9 @@ CLINICAL_TEXT_LIMIT = 32768
 
 
 def validate_clinical_draft(content):
-    if not isinstance(content, dict) or set(content) - (CLINICAL_TEXT_FIELDS | {"not_applicable"}):
+    if not isinstance(content, dict) or set(content) - (CLINICAL_TEXT_FIELDS | {"not_applicable", "plan_steps"}):
         raise ValidationError({"content": "Provide supported clinical fields."})
-    values = {key: value for key, value in content.items() if key != "not_applicable"}
+    values = {key: value for key, value in content.items() if key in CLINICAL_TEXT_FIELDS}
     if any(not isinstance(value, str) or len(value) > CLINICAL_TEXT_LIMIT for value in values.values()):
         raise ValidationError({"content": "Each clinical field must be text of at most 32768 characters."})
     if "not_applicable" in content:
@@ -28,6 +29,26 @@ def validate_clinical_draft(content):
                     or bool(values.get(field, "").strip()) for field, reason in reasons.items())):
             raise ValidationError({"content": "A non-applicable section needs a reason of at most 2000 characters and no clinical text."})
         values["not_applicable"] = dict(reasons)
+    if "plan_steps" in content:
+        steps = content["plan_steps"]
+        if not isinstance(steps, list) or len(steps) > 100:
+            raise ValidationError({"content": "Provide at most 100 clinical plan steps."})
+        seen = set()
+        for step in steps:
+            if (not isinstance(step, dict) or set(step) != {"id", "description"}
+                    or not isinstance(step["id"], str) or not isinstance(step["description"], str)
+                    or len(step["description"]) > 4000):
+                raise ValidationError({"content": "Provide a step identifier and description of at most 4000 characters."})
+            try:
+                canonical = str(UUID(step["id"]))
+            except ValueError:
+                raise ValidationError({"content": "Provide a valid step identifier."}) from None
+            if canonical != step["id"] or canonical in seen:
+                raise ValidationError({"content": "Step identifiers must be canonical and unique."})
+            seen.add(canonical)
+        if steps and "plan" in values.get("not_applicable", {}):
+            raise ValidationError({"content": "A non-applicable plan cannot contain steps."})
+        values["plan_steps"] = [dict(step) for step in steps]
     return values
 
 
