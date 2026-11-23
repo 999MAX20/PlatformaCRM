@@ -10,6 +10,7 @@ from apps.businesses.access import Actions, Resources, assert_can
 from apps.core.domain_errors import InvalidTransition
 from apps.core.idempotency import CRMCommandResult, run_idempotent_crm_command
 from .appointment_access import assert_appointment_medical_basis
+from .assistant_access import assert_assistant_appointment_basis
 from .audit import write_patient_audit
 from .clinical_identity import assert_verified_clinical_identity
 from .common_template_services import read_approved_template_version
@@ -26,8 +27,9 @@ def save_primary_document_draft(*, actor, business_id, patient_id, encounter_id,
                                 expected_encounter_revision, expected_patient_revision,
                                 idempotency_key, template=None, document_id=None,
                                 expected_document_revision=None, participation_id=None, reason="",
-                                template_version_id=None, document_text=None, expected_source_digest=None):
-    """Save a primary clinician's draft; template input does not certify an official form."""
+                                template_version_id=None, document_text=None, expected_source_digest=None,
+                                assistant_invitation_id=None):
+    """Save a clinician's draft or an explicitly assigned assistant's preparation."""
     identifiers = [business_id, patient_id, encounter_id, expected_encounter_revision, expected_patient_revision]
     if document_id is not None:
         identifiers += [document_id, expected_document_revision]
@@ -35,6 +37,10 @@ def save_primary_document_draft(*, actor, business_id, patient_id, encounter_id,
         raise ValidationError({"document": "A new document has no expected document revision."})
     if participation_id is not None:
         identifiers.append(participation_id)
+    if assistant_invitation_id is not None:
+        identifiers.append(assistant_invitation_id)
+        if participation_id is not None:
+            raise ValidationError({"basis": "Select one appointment access basis."})
     if any(type(value) is not int or value <= 0 for value in identifiers):
         raise ValidationError({"document": "Provide valid identifiers and revisions."})
     if not isinstance(idempotency_key, str) or not idempotency_key.strip() or len(idempotency_key) > 128:
@@ -57,17 +63,27 @@ def save_primary_document_draft(*, actor, business_id, patient_id, encounter_id,
         raise NotFound()
     action = "update" if document_id is not None else "create"
     context = assert_medical_role_permission(actor, business, "medical_documents", action)
+    if (context.kind == "assistant") != (assistant_invitation_id is not None):
+        raise PermissionDenied()
     patient = PatientProfile.objects.select_for_update().filter(pk=patient_id,
         business=business, client__business_id=business_id).first()
     if patient is None:
         raise NotFound()
-    encounter = MedicalEncounter.objects.select_for_update().filter(pk=encounter_id,
-        business=business, patient=patient, primary_clinician_id=context.member_id).first()
+    encounters = MedicalEncounter.objects.select_for_update().filter(pk=encounter_id, business=business, patient=patient)
+    if assistant_invitation_id is None:
+        encounters = encounters.filter(primary_clinician_id=context.member_id)
+    encounter = encounters.first()
     if encounter is None:
         raise PermissionDenied()
     encounter.clean()
     assert_medical_branch_permission(actor, business, "medical_documents", action, branch=encounter.branch)
-    if participation_id is None:
+    if assistant_invitation_id is not None:
+        basis = assert_assistant_appointment_basis(actor=actor, business=business, patient_id=patient_id,
+            appointment_id=encounter.appointment_id, invitation_id=assistant_invitation_id,
+            resource="medical_documents", action=action)
+        if encounter.primary_clinician_id != basis.primary_clinician_id or encounter.branch_id != basis.branch_id:
+            raise PermissionDenied()
+    elif participation_id is None:
         assert_appointment_medical_basis(actor=actor, business=business, patient_id=patient_id,
             appointment_id=encounter.appointment_id, resource="medical_documents", action=action)
     else:
@@ -78,7 +94,11 @@ def save_primary_document_draft(*, actor, business_id, patient_id, encounter_id,
     assert_verified_clinical_identity(patient)
     template_source = None
     if template_version_id is not None:
-        approved = read_approved_template_version(actor=actor, business_id=business_id, version_id=template_version_id)
+        if assistant_invitation_id is not None:
+            from .assistant_templates import read_assistant_template_source
+            approved = read_assistant_template_source(actor=actor, business=business, version_id=template_version_id)
+        else:
+            approved = read_approved_template_version(actor=actor, business_id=business_id, version_id=template_version_id)
         template = approved["template"]
         review = MedicalTemplateReview.objects.get(version_id=template_version_id, state="approved")
         template_source = {"template_id": approved["template_id"], "version_id": template_version_id,
@@ -133,6 +153,7 @@ def save_primary_document_draft(*, actor, business_id, patient_id, encounter_id,
         payload={"patient": patient_id, "encounter": encounter_id, "document": document_id,
             "patient_revision": expected_patient_revision, "encounter_revision": expected_encounter_revision,
             "document_revision": expected_document_revision, "participation": participation_id,
+            **({"assistant_invitation": assistant_invitation_id} if assistant_invitation_id is not None else {}),
             "content_digest": medical_request_digest(content, business_id=business_id)},
         operation=operation)
     version = MedicalDocumentRevision.objects.get(document__business=business, document__encounter=encounter,

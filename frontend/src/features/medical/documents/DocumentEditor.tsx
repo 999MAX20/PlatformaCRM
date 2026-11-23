@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { medicalDocumentsApi as api, type DocumentAccess, type DocumentPreview, type DocumentScope, type DocumentVersion } from "../../../api/medicalDocuments";
+import { medicalDocumentsApi as api, type DocumentAccess, type DocumentDraft, type DocumentPreview, type DocumentScope, type DocumentVersion } from "../../../api/medicalDocuments";
 import { medicalTemplatesApi, type TemplateRow, type TemplateSearch as SearchFilters } from "../../../api/medicalTemplates";
 import { getApiErrorMessage } from "../../../api/client";
 import { Button } from "../../../components/ui/Button";
@@ -61,8 +61,10 @@ export function DocumentEditor({ scope, version, control }: {
   </div>;
 }
 
-function DocumentForm({ scope, version, preview, control }: {
-  scope: DocumentScope; version: DocumentVersion | null; preview: DocumentPreview; control: RoleFormControl;
+export function DocumentForm({ scope, version, preview, control, submitDocument }: {
+  scope: Pick<DocumentDraft, "business_id" | "patient_id" | "encounter_id" | "participation_id">;
+  version: DocumentVersion | null; preview: DocumentPreview; control: RoleFormControl;
+  submitDocument?: (payload: DocumentDraft, key: string) => Promise<unknown>;
 }) {
   const { t } = useI18n();
   const template = preview.template;
@@ -76,7 +78,7 @@ function DocumentForm({ scope, version, preview, control }: {
     template_version_id: template.version_id, document_text: text, reason,
     ...(scope.participation_id ? { participation_id: scope.participation_id } : {}) } : null;
   return <MedicalRoleCommand payload={payload} dirty={dirty} control={control} label={t("medical.clinical.save")}
-    submit={(data, key) => version ? api.update(version.document_id, { ...data, expected_document_revision: version.revision }, key) : api.create(data, key)}>
+    submit={(data, key) => submitDocument ? submitDocument(data, key) : version ? api.update(version.document_id, { ...data, expected_document_revision: version.revision }, key) : api.create(data, key)}>
     <h2 className="break-words text-base font-semibold">{template.template.title}</h2>
     <p className="text-sm text-platforma-subtle">{t("medical.documents.sourceVersion", { revision: template.revision })}</p>
     {!version && preview.missing_fields.length ? <p role="status" className="text-sm text-platforma-subtle">

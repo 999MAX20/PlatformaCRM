@@ -12,6 +12,7 @@ import {
   MessageSquareText,
   Settings,
   Users,
+  UserCheck,
 } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
@@ -28,6 +29,7 @@ import { prefetchRouteData } from "../../lib/prefetch";
 import { realtimeIntervals, realtimeQueryOptions } from "../../lib/realtime";
 import { useTemplateAccess } from "../../features/medical/templates/useTemplateAccess";
 import { useCredentialAccess } from "../../features/medical/credentials/useCredentialAccess";
+import { useAssistantAccess } from "../../features/medical/useAssistantAccess";
 
 type SidebarItem = {
   to?: string;
@@ -127,6 +129,7 @@ export function Sidebar({
   const { business } = useActiveBusiness();
   const templates = useTemplateAccess();
   const credentials = useCredentialAccess();
+  const assistant = useAssistantAccess();
   const inboxSummary = useQuery({
     queryKey: ["inbox-summary", business?.id],
     queryFn: inboxApi.getSummary,
@@ -165,10 +168,12 @@ export function Sidebar({
       (mobileDrawer ? mobileDrawerSections : desktopSections)
         .map((group) => ({
           ...group,
-          items: group.items.map((item) => filterSidebarItem(item, user, business?.id, templates.allowed || credentials.allowed)).filter(Boolean) as SidebarItem[],
+          items: group.items.flatMap((item): SidebarItem[] => item.to === "/app/appointments" && assistant.allowed
+            ? [item, { to: "/app/medical/assistants", label: "medical.assistants.mine", icon: UserCheck }]
+            : [item]).map((item) => filterSidebarItem(item, user, business?.id, templates.allowed || credentials.allowed)).filter(Boolean) as SidebarItem[],
         }))
         .filter((group) => group.items.length),
-    [business?.id, mobileDrawer, user, templates.allowed, credentials.allowed],
+    [business?.id, mobileDrawer, user, templates.allowed, credentials.allowed, assistant.allowed],
   );
   return (
     <aside

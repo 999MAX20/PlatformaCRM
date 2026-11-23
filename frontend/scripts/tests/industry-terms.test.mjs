@@ -45,6 +45,9 @@ test("allows patient labels only in the explicit medical module keys", () => {
     ["medical.fields.clinicPhone", "Клиника телефоны"], ["medical.fields.doctorName", "Doctor full name"],
     ["medical.documents.reviewed", "Проверено врачом"],
     ["medical.documents.reviewConfirmed", "Мазмұнды дәрігер растады"],
+    ["medical.assistants.saved", "Черновик сохранён для проверки врачом."],
+    ["medical.assistants.waitingEncounter", "Дәрігер жазбаны әлі ашқан жоқ."],
+    ["medical.assistants.noApprovedSource", "Обратитесь к врачу приёма."],
     ["clients.create", "Создать пациента"], ["medical.unreviewed", "Doctor"],
   ]), ["clients.create", "medical.unreviewed"]);
 });

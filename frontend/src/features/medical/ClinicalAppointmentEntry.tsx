@@ -14,6 +14,7 @@ import { Tabs } from "../../components/ui/Tabs";
 import { ClinicalHistory } from "./ClinicalHistory";
 import { ToothChart } from "./ToothChart";
 import { SourceProposalEntry } from "./SourceProposalWorkspace";
+import { AppointmentAssistants } from "./AppointmentAssistants";
 import { DocumentWorkspace } from "./documents/DocumentWorkspace";
 import { OrderWorkspace } from "./orders/OrderWorkspace";
 import { ClinicalOverview } from "./ClinicalOverview";
@@ -149,7 +150,8 @@ function ClinicalWorkspace({ context, onChanged, onDirty, onDenied, draftControl
     encounter_id: context.encounter?.id } : null, [context, planScope]);
   const filesNavigation = useRef<MedicalFilesNavigation>(null);
   const [pending, setPending] = useState(false);
-  useEffect(() => { onPending(pending); return () => onPending(false); }, [pending, onPending]);
+  const [assistantPending, setAssistantPending] = useState(false);
+  useEffect(() => { onPending(pending || assistantPending); return () => onPending(false); }, [pending, assistantPending, onPending]);
   const [error, setError] = useState<unknown>(null);
   const request = useRef<{ fingerprint: string; key: string } | null>(null);
   const controller = useRef(new AbortController());
@@ -183,6 +185,7 @@ function ClinicalWorkspace({ context, onChanged, onDirty, onDenied, draftControl
       {context.patient.identity_status !== "verified" ? <p role="status" className="text-sm text-platforma-subtle">{t("medical.clinical.verifyFirst")}</p> : null}
       {compact ? <SourceProposalEntry scope={{ business_id: context.business_id, patient_id: context.patient.id, source_appointment_id: context.appointment.id }} /> : null}
     </aside>
+    <AppointmentAssistants key={`${context.business_id}:${context.appointment.id}`} scope={planScope} onPending={setAssistantPending} />
     <div className="min-w-0 space-y-4">
       <Tabs value={tab} onChange={onTabChange} idPrefix={tabPrefix} ariaLabel={t("medical.clinical.title")}
         className="[&_[role=tab]]:min-h-11" appearance="underline"

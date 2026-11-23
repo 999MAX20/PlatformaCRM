@@ -13,10 +13,12 @@ import { NotFoundPage } from "../features/pilot/NotFoundPage";
 
 const NotificationsPage = lazy(() => import("../features/notifications/NotificationsPage").then(module => ({ default: module.NotificationsPage })));
 const ParticipationNotificationPage = lazy(() => import("../features/medical/ParticipationNotificationPage").then(module => ({ default: module.ParticipationNotificationPage })));
+const AssistantAppointmentsPage = lazy(() => import("../features/medical/AssistantAppointmentsPage").then(module => ({ default: module.AssistantAppointmentsPage })));
 
 const merchantChildren: Array<(typeof merchantFeatureRoutes)[number] & { permissionAction?: string }> = [
   { path: "notifications", element: <PageLoader><NotificationsPage /></PageLoader> },
   { path: "medical/participations", element: <PageLoader><ParticipationNotificationPage /></PageLoader> },
+  { path: "medical/assistants", element: <PageLoader><AssistantAppointmentsPage /></PageLoader> },
   ...merchantFeatureRoutes];
 
 const router = createBrowserRouter([

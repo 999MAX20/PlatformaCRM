@@ -10,6 +10,166 @@ import { requireIsolatedEnvironment } from "./isolated-environment.mjs";
 
 requireIsolatedEnvironment();
 
+test("assistant workspace: accept prepare and lose revoked access", async ({ page, browser }, info) => {
+  test.skip(process.env.E2E_MEDICAL_FILES !== "1", "Requires isolated clinical fixtures");
+  test.setTimeout(120000);
+  const fixture = (command: string, ...args: string[]) => execFileSync(process.env.E2E_PYTHON!,
+    ["e2e/clinical-runtime.py", command, ...args], { env: process.env, windowsHide: true, encoding: "utf8" });
+  const entry = JSON.parse(fixture("files-new-appointment").trim().split(/\r?\n/).at(-1)!);
+  const assistant = JSON.parse(fixture("assistant-new-member", String(entry.appointment_id)).trim().split(/\r?\n/).at(-1)!);
+  fixture("historical-orders-context", String(entry.appointment_id));
+  const base = process.env.E2E_API_BASE_URL!;
+  const authContext = await browser.newContext();
+  async function login(target: typeof page, email: string) {
+    await target.goto(`${process.env.E2E_BASE_URL}/login`);
+    await target.locator('input[name="email"]').fill(email);
+    await target.locator('input[name="password"]').fill(process.env.E2E_PASSWORD!);
+    const authentication = target.waitForResponse(r => r.url().endsWith("/api/auth/token/") && r.request().method() === "POST");
+    await target.locator('form button[type="submit"]').click();
+    const response = await authentication; expect(response.ok()).toBe(true);
+    const token = (await response.json()).access;
+    await expect(target).toHaveURL(/\/app\//); return token;
+  }
+  let doctorToken: string, headToken: string;
+  try {
+    doctorToken = await login(await authContext.newPage(), "medical-role-doctor@example.test");
+    const headContext = await browser.newContext();
+    try { headToken = await login(await headContext.newPage(), "medical-template-head@example.test"); }
+    finally { await headContext.close(); }
+  } finally { await authContext.close(); }
+  const command = async (path: string, data: object, token = doctorToken) => {
+    const response = await page.request.post(base + path, { headers: { Authorization: `Bearer ${token}`, "Idempotency-Key": crypto.randomUUID() }, data });
+    expect(response.ok(), await response.text()).toBe(true); return response.json();
+  };
+  const title = `Synthetic assistant document ${entry.appointment_id}`;
+  const template = await command("/api/medical/document-templates/common/", { business_id: assistant.business_id, title, text: "Synthetic source {{patient.full_name}}", reason: "" }, headToken);
+  await command(`/api/medical/document-templates/common/versions/${template.version_id}/submit/`, { business_id: assistant.business_id }, headToken);
+  await command(`/api/medical/document-templates/versions/${template.version_id}/decision/`, { business_id: assistant.business_id, decision: "approved", reason: "Synthetic approval" }, headToken);
+  const appointment = await (await page.request.get(`${base}/api/appointments/${entry.appointment_id}/`, { headers: { Authorization: `Bearer ${doctorToken}` } })).json();
+  const invitation = await command("/api/medical/appointment-assistants/", { business_id: assistant.business_id, patient_id: assistant.patient_id,
+    appointment_id: entry.appointment_id, target_member_id: assistant.member_id, expected_updated_at: appointment.updated_at });
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.addInitScript(() => localStorage.setItem("ai_smb_language", "ru"));
+  await login(page, assistant.email);
+  await page.getByRole("button", { name: ru["header.notifications"], exact: true }).click();
+  const notification = page.getByTestId("notification-menu");
+  await expect(notification.getByText(ru["medical.notifications.assistant_invited"], { exact: true })).toBeVisible();
+  await expect(notification).not.toContainText("Synthetic file patient");
+  await page.screenshot({ path: info.outputPath("assistant-notification-desktop.png") });
+  await notification.getByText(ru["medical.notifications.assistant_invited"], { exact: true }).click();
+  await expect(page).toHaveURL(/\/app\/medical\/assistants/);
+  const assistantLink = page.getByTestId("desktop-sidebar").getByRole("link", { name: ru["medical.assistants.mine"], exact: true });
+  await expect(assistantLink).toBeVisible();
+  await assistantLink.click();
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.getByRole("button", { name: ru["sidebar.expand"], exact: true }).click();
+  const mobileAssistantLink = page.getByTestId("mobile-sidebar").getByRole("link", { name: ru["medical.assistants.mine"], exact: true });
+  await expect(mobileAssistantLink).toBeVisible();
+  await page.screenshot({ path: info.outputPath("assistant-navigation-mobile.png") });
+  await mobileAssistantLink.click();
+  await expect(page.getByTestId("mobile-sidebar")).not.toBeVisible();
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  const inbox = page.getByTestId("assistant-inbox");
+  await expect(inbox).not.toContainText(`Synthetic file patient ${entry.appointment_id}`);
+  await inbox.getByRole("button", { name: ru["medical.assistants.accept"], exact: true }).click();
+  await inbox.getByRole("button", { name: ru["medical.assistants.open"], exact: true }).click();
+  const workspace = page.getByTestId("assistant-drafts");
+  await workspace.getByRole("button", { name: ru["medical.documents.create"], exact: true }).click();
+  await workspace.getByRole("button", { name: new RegExp(title) }).click();
+  const text = workspace.getByRole("textbox", { name: ru["medical.documents.text"], exact: true });
+  await expect(text).toBeVisible();
+  await text.fill(`Synthetic assistant draft ${entry.appointment_id}`);
+  page.once("dialog", dialog => dialog.dismiss());
+  await inbox.getByRole("button", { name: ru["medical.assistants.back"], exact: true }).click();
+  await expect(text).toHaveValue(`Synthetic assistant draft ${entry.appointment_id}`);
+  page.once("dialog", dialog => dialog.dismiss());
+  await page.getByTestId("desktop-sidebar").getByRole("link", { name: ru["nav.dashboard"], exact: true }).click();
+  await expect(page).toHaveURL(/\/app\/medical\/assistants/);
+  await expect(text).toHaveValue(`Synthetic assistant draft ${entry.appointment_id}`);
+  await page.screenshot({ path: info.outputPath("assistant-editor-desktop.png") });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.screenshot({ path: info.outputPath("assistant-editor-mobile.png") });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  const commandKeys: string[] = [];
+  await page.route("**/api/medical/appointment-assistants/*/save-document/", async route => {
+    commandKeys.push(route.request().headers()["idempotency-key"]);
+    if (commandKeys.length === 1) await route.fulfill({ status: 503, contentType: "application/json", body: JSON.stringify({ detail: "Synthetic temporary save failure" }) });
+    else await route.continue();
+  });
+  await workspace.getByRole("button", { name: ru["medical.clinical.save"], exact: true }).click();
+  await expect(workspace.getByRole("alert")).toBeVisible();
+  await expect(text).toHaveValue(`Synthetic assistant draft ${entry.appointment_id}`);
+  await page.screenshot({ path: info.outputPath("assistant-save-error-mobile.png") });
+  const saveButton = workspace.getByRole("button", { name: ru["medical.clinical.save"], exact: true });
+  await saveButton.focus();
+  await expect(saveButton).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(workspace.getByText(ru["medical.assistants.saved"], { exact: true })).toBeVisible();
+  expect(commandKeys).toHaveLength(2);
+  expect(commandKeys[0]).toBeTruthy();
+  expect(commandKeys[1]).toBe(commandKeys[0]);
+  await page.unroute("**/api/medical/appointment-assistants/*/save-document/");
+  await workspace.getByRole("button", { name: new RegExp(title) }).click();
+  await expect(text).toHaveValue(`Synthetic assistant draft ${entry.appointment_id}`);
+  await text.fill(`Synthetic corrected draft ${entry.appointment_id}`);
+  await workspace.getByRole("textbox", { name: ru["medical.templates.reason"], exact: true }).fill("Synthetic correction");
+  await workspace.getByRole("button", { name: ru["medical.clinical.save"], exact: true }).click();
+  await expect(workspace.getByText(ru["medical.assistants.saved"], { exact: true })).toBeVisible();
+  await expect(workspace.getByRole("button", { name: new RegExp(title) })).toBeEnabled();
+  await workspace.getByRole("button", { name: new RegExp(title) }).click();
+  await expect(text).toHaveValue(`Synthetic corrected draft ${entry.appointment_id}`);
+  await workspace.getByRole("button", { name: ru["medical.documents.back"], exact: true }).click();
+  await expect(workspace.getByRole("button", { name: new RegExp(title) })).toBeFocused();
+  await inbox.getByRole("button", { name: ru["medical.assistants.back"], exact: true }).click();
+  const reopen = inbox.getByRole("button", { name: ru["medical.assistants.open"], exact: true });
+  await expect(reopen).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(workspace.getByRole("button", { name: new RegExp(title) })).toBeEnabled();
+  await command(`/api/medical/appointment-assistants/${invitation.id}/revoke/`, { business_id: assistant.business_id, expected_revision: 2 });
+  await workspace.getByRole("button", { name: new RegExp(title) }).click();
+  await expect(inbox.getByRole("alert")).toContainText(ru["medical.denied"]);
+  await expect(workspace).toHaveCount(0);
+  await expect(inbox).not.toContainText(title);
+});
+
+test("appointment assistant management: invite and revoke inline", async ({ page }, info) => {
+  test.skip(process.env.E2E_MEDICAL_FILES !== "1", "Requires isolated clinical fixtures");
+  const fixture = (command: string, ...args: string[]) => JSON.parse(execFileSync(process.env.E2E_PYTHON!,
+    ["e2e/clinical-runtime.py", command, ...args], { env: process.env, windowsHide: true, encoding: "utf8" }).trim().split(/\r?\n/).at(-1)!);
+  const entry = fixture("files-new-appointment");
+  const assistant = fixture("assistant-new-member", String(entry.appointment_id));
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.addInitScript(() => localStorage.setItem("ai_smb_language", "ru"));
+  await page.goto("/login");
+  await page.locator('input[name="email"]').fill("medical-role-doctor@example.test");
+  await page.locator('input[name="password"]').fill(process.env.E2E_PASSWORD!);
+  const authentication = page.waitForResponse(r => r.url().endsWith("/api/auth/token/") && r.request().method() === "POST");
+  await page.locator('form button[type="submit"]').click();
+  const token = (await (await authentication).json()).access;
+  await expect(page).toHaveURL(/\/app\//);
+  const response = await page.request.get(`${process.env.E2E_API_BASE_URL}/api/appointments/${entry.appointment_id}/`, { headers: { Authorization: `Bearer ${token}` } });
+  expect(response.ok()).toBe(true);
+  const appointment = await response.json();
+  await page.goto(`/app/calendar?appointment=${entry.appointment_id}&date=${appointment.start_at.slice(0, 10)}&view=day`);
+  await openClinicalWorkspace(page);
+  const panel = page.getByTestId("appointment-assistants");
+  await panel.getByRole("button", { name: ru["medical.assistants.title"], exact: true }).click();
+  await panel.getByRole("button", { name: ru["medical.assistants.invite"], exact: true }).click();
+  await panel.getByLabel(ru["medical.assistants.search"], { exact: true }).fill(assistant.name);
+  await panel.getByRole("button", { name: ru["medical.assistants.find"], exact: true }).click();
+  await panel.getByRole("button", { name: ru["medical.assistants.inviteNamed"].replace("{name}", assistant.name), exact: true }).click();
+  await expect(panel.getByText(ru["medical.assistants.state.pending"], { exact: true })).toBeVisible();
+  await panel.scrollIntoViewIfNeeded();
+  await page.screenshot({ path: info.outputPath("assistant-management-desktop.png") });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await panel.scrollIntoViewIfNeeded();
+  await page.screenshot({ path: info.outputPath("assistant-management-mobile.png") });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  page.once("dialog", dialog => dialog.accept());
+  await panel.getByRole("button", { name: ru["medical.assistants.revokeNamed"].replace("{name}", assistant.name), exact: true }).click();
+  await expect(panel.getByText(ru["medical.assistants.state.revoked"], { exact: true })).toBeVisible();
+});
+
 for (const [language, width, t] of [["kk", 1440, kk], ["en", 390, en]] as const) {
   test(`head documents ${language}: inline patient card and saved PDF`, async ({ page }, info) => {
     test.skip(process.env.E2E_MEDICAL_FILES !== "1", "Requires the isolated PDF scanner fixture");

@@ -408,6 +408,31 @@ if len(sys.argv) > 1 and sys.argv[1] == "overview-demographics":
             business_id=patient.business_id, subject_id=patient.client_id, purpose="demographics")
         patient.save(update_fields=["demographics_encrypted"])
     sys.exit(0)
+if files_fixture and len(sys.argv) > 1 and sys.argv[1] == "assistant-new-member":
+    from uuid import uuid4
+    from django.contrib.auth import get_user_model
+    from apps.businesses.models import BusinessMember, BusinessRole, RolePermission
+    from apps.branches.models import BranchAccess
+    from apps.medical.models import MedicalRoleAssignment
+    appointment = Appointment.objects.get(pk=int(sys.argv[2]), business__slug="medical-role")
+    marker = uuid4().hex
+    assistant = get_user_model().objects.create_user(username=f"assistant-{marker}",
+        email=f"assistant-{marker}@example.test", password=os.environ["E2E_PASSWORD"],
+        full_name=f"Synthetic assistant {marker[:8]}")
+    member = BusinessMember.objects.create(business=appointment.business, user=assistant, role="specialist")
+    role = BusinessRole.objects.create(business=appointment.business, name=f"Assistant {marker}")
+    grant = BranchAccess.objects.create(member=member, all_branches=False)
+    grant.branches.add(appointment.branch)
+    assignment = MedicalRoleAssignment.objects.create(member=member, business_role=role, kind="assistant",
+        granted_by=appointment.business.owner)
+    assignment.branches.add(appointment.branch)
+    for resource, actions in (("medical_records", ("view",)), ("medical_documents", ("create", "update"))):
+        for action in actions:
+            RolePermission.objects.create(business_role=role, resource=resource, action=action,
+                scope="own", is_allowed=True)
+    print(json.dumps({"member_id": member.pk, "email": assistant.email, "name": assistant.full_name,
+        "business_id": appointment.business_id, "patient_id": PatientProfile.objects.get(client=appointment.client).pk}))
+    sys.exit(0)
 if files_fixture and len(sys.argv) > 1 and sys.argv[1] == "files-new-appointment":
     from django.db import transaction
     with transaction.atomic():

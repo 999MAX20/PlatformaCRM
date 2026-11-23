@@ -15,6 +15,7 @@ from apps.medical.file_views import MedicalFileViewSet
 from apps.medical.template_views import MedicalDocumentTemplateViewSet
 from apps.medical.credential_views import MedicalCredentialViewSet
 from apps.medical.document_views import MedicalDocumentViewSet
+from apps.medical.assistant_views import AppointmentAssistantViewSet
 from apps.medical.order_views import MedicalOrderViewSet
 from apps.medical.record_views import MedicalRecordViewSet
 from apps.medical.tooth_views import ToothObservationViewSet
@@ -160,6 +161,7 @@ router.register("medical/files", MedicalFileViewSet, basename="medical-file")
 router.register("medical/document-templates", MedicalDocumentTemplateViewSet, basename="medical-document-template")
 router.register("medical/credentials", MedicalCredentialViewSet, basename="medical-credential")
 router.register("medical/documents", MedicalDocumentViewSet, basename="medical-document")
+router.register("medical/appointment-assistants", AppointmentAssistantViewSet, basename="medical-appointment-assistant")
 router.register("medical/orders", MedicalOrderViewSet, basename="medical-order")
 router.register("medical/records", MedicalRecordViewSet, basename="medical-record")
 router.register("medical/tooth-observations", ToothObservationViewSet, basename="medical-tooth-observation")
