@@ -5,7 +5,7 @@ import {useI18n} from "../../lib/i18n";
 import {medicalRoleDenied} from "./roles/useMedicalRolePage";
 import {useVoiceRecorder} from "../voice/useVoiceRecorder";
 
-export function ClinicalFieldAssistance({scope,text,disabled,onAccept,onDenied}:{scope:AssistanceScope;text:string;disabled:boolean;onAccept:(text:string)=>void;onDenied:(cause:unknown)=>void}){
+export function ClinicalFieldAssistance({scope,text,disabled,onAccept,onDenied,onBusy}:{scope:AssistanceScope;text:string;disabled:boolean;onAccept:(text:string)=>void;onDenied:(cause:unknown)=>void;onBusy?:(busy:boolean)=>void}){
  const {t,language}=useI18n();const [suggestion,setSuggestion]=useState<AssistanceSuggestion|null>(null);
  const recorder=useVoiceRecorder();const recording=recorder.state!=="idle";
  const [pending,setPending]=useState(false);const [failed,setFailed]=useState(false);
@@ -13,6 +13,8 @@ export function ClinicalFieldAssistance({scope,text,disabled,onAccept,onDenied}:
  const active=useRef<AbortController|null>(null);const input=useRef("");
  const preview=useRef<HTMLDivElement>(null);const requestButton=useRef<HTMLButtonElement>(null);
  const scopeKey=JSON.stringify(scope);
+ useEffect(()=>{onBusy?.(pending||recording);},[pending,recording,onBusy]);
+ useEffect(()=>()=>onBusy?.(false),[onBusy]);
  useEffect(()=>{active.current?.abort();recorder.cancel();setSuggestion(null);setFailed(false);setPending(false);return()=>active.current?.abort();},[scopeKey,text,disabled,recorder.cancel]);
  useEffect(()=>{const cancelOther=(event:Event)=>{if((event as CustomEvent<string>).detail!==scopeKey)recorder.cancel();};window.addEventListener("platforma:clinical-dictation",cancelOther);return()=>window.removeEventListener("platforma:clinical-dictation",cancelOther);},[scopeKey,recorder.cancel]);
  function dismiss(){active.current?.abort();setSuggestion(null);setFailed(false);setPending(false);requestButton.current?.focus();}

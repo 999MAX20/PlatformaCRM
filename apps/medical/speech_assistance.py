@@ -35,11 +35,12 @@ def transcribe_medical_audio(content,language):
         raise MedicalAssistanceUnavailable() from None
 
 
-def suggest_dictation(*,actor,business_id,patient_id,encounter_id,field,expected_revision,text,audio,language,participation_id=None):
+def suggest_dictation(*,actor,business_id,patient_id,encounter_id,field,expected_revision,text,audio,language,participation_id=None,appointment_id=None,order_id=None,expected_order_revision=None,expected_patient_revision=None):
     from rest_framework.exceptions import ValidationError
     if not isinstance(text,str) or len(text)>8000 or language not in ("ru","kk","auto"):
         raise ValidationError({"text":"Select the current field and language."})
     scope=dict(business_id=business_id,patient_id=patient_id,encounter_id=encounter_id,participation_id=participation_id)
+    scope.update({key:value for key,value in dict(appointment_id=appointment_id,order_id=order_id,expected_order_revision=expected_order_revision,expected_patient_revision=expected_patient_revision).items() if value is not None})
     binding=_access(actor,scope,field,expected_revision)
     policy=medical_speech_policy(business_id)
     validate_audio(audio)

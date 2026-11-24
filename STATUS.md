@@ -1,4 +1,4 @@
-К14 авторская заявка/предложение опубликованы 8f782a2e; К15 field format/dictation опубликованы dc7a65eb. Продолжение назначения из утверждённого шаблона локально проверено, публикация готовится. Полные К14/К15 и следующие этапы открыты. Evidence: docs/testing/task-state/DENTAL-MCS-20261122.md. Без CI/рабочих миграций.
+К15: field format/dictation опубликованы dc7a65eb, approved-template continuation e5050fce; помощь в тексте назначения локально принята, публикация готовится. К14 обработка закупок, полный К15/К16–К18 остаются открыты. Evidence: docs/testing/task-state/DENTAL-MCS-20261122.md. Без CI/рабочих миграций.
 
 QA-016-20261121 LOCAL VERIFIED: automatic tasks searchable by displayed RU/KK/EN title; editor preserves original copy on unrelated edits. 66 backend, 9 node, 6 desktop/mobile browser scenarios, build/types/i18n/check/drift PASS; Code 8a240ad3 pushed to main; CI44937543011 queued (not PASS). Working DB untouched. [Evidence](docs/testing/evidence/qa-016-task-search-20261121.md).
 

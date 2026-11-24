@@ -17,6 +17,10 @@ class SuggestionSerializer(StrictSerializer):
     field=serializers.CharField(max_length=40)
     text=serializers.CharField(max_length=8000,trim_whitespace=False)
     participation_id=serializers.IntegerField(min_value=1,required=False,allow_null=True)
+    appointment_id=serializers.IntegerField(min_value=1,required=False,allow_null=True)
+    order_id=serializers.IntegerField(min_value=1,required=False,allow_null=True)
+    expected_order_revision=serializers.IntegerField(min_value=1,required=False,allow_null=True)
+    expected_patient_revision=serializers.IntegerField(min_value=1,required=False,allow_null=True)
 
 
 class AcceptSerializer(SuggestionSerializer):

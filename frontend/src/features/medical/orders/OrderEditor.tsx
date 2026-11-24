@@ -10,6 +10,7 @@ import { useI18n } from "../../../lib/i18n";
 import { MedicalRoleCommand, type RoleFormControl } from "../roles/MedicalRoleCommand";
 import { medicalRoleDenied } from "../roles/useMedicalRolePage";
 import { OrderTemplatePicker } from "./OrderTemplatePicker";
+import { ClinicalFieldAssistance } from "../ClinicalFieldAssistance";
 import { OrderTemplateCompletion } from "./OrderTemplateCompletion";
 
 export function OrderEditor({ scope, version, control }: { scope: OrderScope; version: OrderVersion | null; control: RoleFormControl }) {
@@ -36,13 +37,14 @@ function OrderForm({ scope, access, version, control }: { scope: OrderScope; acc
   const [picker, setPicker] = useState(false);
   const [source, setSource] = useState<OrderPreview | null>(null);
   const [hint, setHint] = useState<OrderPreview | null>(null);
+  const [assistanceBusy, setAssistanceBusy] = useState(false);
   const provenance = source?.template_source ?? version?.template_source;
   const dirty = Boolean(source) || JSON.stringify(content) !== JSON.stringify(version?.content ?? { kind: "other", text: "", medication: {} }) || Boolean(reason);
   const payload = { business_id: scope.business_id, patient_id: scope.patient_id, encounter_id: scope.encounter_id,
     expected_patient_revision: source?.patient_revision ?? access.patient_revision, expected_encounter_revision: source?.encounter_revision ?? access.encounter_revision,
     ...(source ? { template_version_id: source.template_source.approval.version_id, expected_source_digest: source.template_source.source_digest } : {}),
     participation_id: scope.participation_id, ...(version ? { expected_order_revision: version.revision } : {}), content, reason };
-  return <><MedicalRoleCommand payload={picker ? null : payload} dirty={dirty} label={t("medical.clinical.save")}
+  return <><MedicalRoleCommand payload={picker || assistanceBusy ? null : payload} dirty={dirty} label={t("medical.clinical.save")}
     submit={(value, key) => api.save(version?.order_id ?? null, value, key)} control={control}>
     <p role="status" className="text-sm text-platforma-subtle">{t("medical.orders.draft")}</p>
     <Button type="button" size="lg" variant="secondary" data-focus-return-id="order-template-open" onClick={() => setPicker(true)}>{t("medical.documents.chooseTemplate")}</Button>
@@ -60,8 +62,12 @@ function OrderForm({ scope, access, version, control }: { scope: OrderScope; acc
     </div> : null}
     <OrderTemplateCompletion scope={scope} orderId={version?.order_id} hint={hint} text={content.text}
       onChange={text => setContent({ ...content, text })} onDismiss={() => setHint(null)} onDenied={control.onDenied}
-      isSaving={() => control.guard.current.pending}
+      isSaving={() => control.guard.current.pending || assistanceBusy}
       onAccept={preview => { setContent({ ...content, text: preview.document_text }); setSource(preview); setHint(null); }} />
+    <ClinicalFieldAssistance scope={{...scope,field:"order_text",expected_revision:payload.expected_encounter_revision,
+      expected_patient_revision:payload.expected_patient_revision,order_id:version?.order_id,expected_order_revision:version?.revision}}
+      text={content.text} disabled={picker} onBusy={setAssistanceBusy} onDenied={control.onDenied}
+      onAccept={text=>setContent({...content,text})}/>
     {version ? <Textarea label={t("medical.reason")} value={reason} maxLength={2000} onChange={event => setReason(event.target.value)} /> : null}
   </MedicalRoleCommand>
     {picker ? <OrderTemplatePicker scope={scope} orderId={version?.order_id} onClose={() => setPicker(false)} onDenied={control.onDenied}
