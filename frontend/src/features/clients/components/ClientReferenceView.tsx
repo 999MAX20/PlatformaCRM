@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowRight, CalendarDays, Mail, Pencil, Phone, UserRound } from "lucide-react";
+import { ArrowLeft, ArrowRight, CalendarDays, Pencil, UserRound } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link, useBlocker, useLocation } from "react-router";
 import { Button } from "../../../components/ui/Button";
@@ -11,25 +11,28 @@ import type { Appointment, Client, CrmCardPayload } from "../../../types";
 import { ClientPaymentsPanel } from "./ClientPaymentsPanel";
 import { useAuth } from "../../auth/AuthProvider";
 import { hasPermission } from "../../../lib/permissions";
-import { ClientMedicalSummary } from "./ClientMedicalSummary";
+import { ClientPatientOverview } from "./ClientPatientOverview";
+import { useClientMedicalSummary } from "../hooks/useClientMedicalSummary";
 import { DentalClientClinical } from "../../medical/DentalClientClinical";
 import type { ClinicalEntryHandle } from "../../medical/ClinicalAppointmentEntry";
 import { PatientAdministrationPanel } from "../../medical/PatientAdministrationPanel";
 import { PaymentsButton } from "../../payments/PaymentsButton";
 import { TasksList, TimelineList, ConversationsList } from "./ClientWorkspaceSections";
 import "../../medical/entityPages.css";
+import "../clientReference.css";
 
 type Props = {
-  client: Client; card: CrmCardPayload; appointments: Appointment[]; upcoming?: Appointment;
+  client: Client; card: CrmCardPayload; appointments: Appointment[]; recentAppointments: Appointment[]; upcoming?: Appointment;
   editState: { dirty: boolean; pending: boolean }; medical: boolean; userId: number; timeZone: string; canEdit: boolean; canBook: boolean;
   onEdit: () => void; onTag: () => void; extraActions: React.ReactNode;
 };
 
-export function ClientReferenceView({ client, card, appointments, upcoming, editState, medical, userId, timeZone, canEdit, canBook, onEdit, onTag, extraActions }: Props) {
+export function ClientReferenceView({ client, card, appointments, recentAppointments, upcoming, editState, medical, userId, timeZone, canEdit, canBook, onEdit, onTag, extraActions }: Props) {
   const { t, language } = useI18n();
   const location = useLocation();
   const { user } = useAuth();
   const canPay = hasPermission(user, client.business, "payments") && hasPermission(user, client.business, "clients");
+  const summary = useClientMedicalSummary(client.business, client.id, userId, medical);
   const [tab, setTab] = useState(() => ({ timeline: "history", appointments: "visits", files: "files", tasks: "tasks", clinical: "medical" }[new URLSearchParams(location.search).get("tab") || ""] || "overview"));
   const [administrationOpen, setAdministrationOpen] = useState(false);
   const [dirty, setDirty] = useState(false);
@@ -46,19 +49,18 @@ export function ClientReferenceView({ client, card, appointments, upcoming, edit
     return () => { active = false; };
   }, [blocker, editState.dirty, editState.pending, t]);
   async function selectTab(next: string) {
-    if (!dirty || await clinical.current?.beforeLeave()) { setDirty(false); setTab(next); }
+    if (!dirty || await clinical.current?.beforeLeave()) { setDirty(false); setTab(next); if (next === "overview" && medical) void summary.refetch(); }
   }
   const returnTo = typeof location.state?.clientReturnTo === "string" && /^\/app\/clients(?:\?|$)/.test(location.state.clientReturnTo)
     ? location.state.clientReturnTo : "/app/clients";
   const options = [
     { value: "overview", label: t("crmCard.overview") },
-    ...(medical ? [{ value: "medical", label: t("medical.clinical.title") }] : []),
-    { value: "visits", label: t("appointments.title") },
+    ...(medical ? [{ value: "medical", label: t("clients.pageMedicalTab") }] : []),
+    { value: "visits", label: t("clients.pageVisits") },
     { value: "files", label: t(medical ? "medical.documents.title" : "crmCard.attachments") },
-    ...(canPay ? [{ value: "payments", label: t("payments.title") }] : []),
-    { value: "history", label: t("tasks.history") },
-    { value: "tasks", label: t("nav.tasks") },
+    ...(canPay ? [{ value: "payments", label: t("clients.pagePayment") }] : []),
   ];
+  const panels = [...options, { value: "history", label: t("tasks.history") }, { value: "tasks", label: t("nav.tasks") }];
   const visitRows = (items: Appointment[]) => <div className="entity-visit-list">
     {items.length ? items.map(item => <Link key={item.id} to={`/app/appointments/${item.id}`} state={{ recordReturnTo: `/app/clients/${client.id}` }} className="entity-visit-row platforma-focus-ring">
       <span>{formatDateTime(item.start_at, timeZone, true, language)}</span>
@@ -67,41 +69,27 @@ export function ClientReferenceView({ client, card, appointments, upcoming, edit
       <StatusBadge status={item.status} />
     </Link>) : <p className="entity-empty">{t("appointments.emptyTitle")}</p>}
   </div>;
-  return <article className="entity-reference-page" data-testid="client-reference-page">
+  return <article className="entity-reference-page client-reference-page" data-testid="client-reference-page">
     <nav aria-label={t("common.back")} className="entity-breadcrumb"><Link to={returnTo}>{t("nav.clients")}</Link><span aria-hidden>/</span><span>{client.full_name}</span></nav>
-    <Link to={returnTo} className="entity-back platforma-focus-ring"><ArrowLeft size={18} />{t("common.back")}</Link>
+    <Link to={returnTo} className="entity-back platforma-focus-ring"><ArrowLeft size={20} />{t("clients.pageBack")}</Link>
     <header className="entity-identity">
-      <span className="entity-avatar" aria-hidden><UserRound size={30} /></span>
-      <div className="entity-heading"><h1>{client.full_name}</h1><p>{t("common.client")} · № {client.id}</p></div>
+      <span className="entity-avatar" aria-hidden><UserRound size={36} strokeWidth={1.7} /></span>
+      <div className="entity-heading"><h1>{client.full_name}</h1><p>{medical ? t("medical.clinical.title") : t("common.client")}{medical && summary.data && !summary.error && summary.data.overview.active_record ? ` · № ${summary.data.overview.active_record.number}` : !medical ? ` · № ${client.id}` : ""}</p></div>
       <div className="entity-header-actions">
-        {canEdit && <Button variant="secondary" data-testid="client-edit-action" onClick={onEdit}><Pencil size={17} />{t("clients.edit")}</Button>}
-        {canBook && <Link className="entity-primary platforma-focus-ring" to={`/app/appointments?create=1&client=${client.id}`}><CalendarDays size={18} />{t("appointments.create")}</Link>}
+        {canEdit && <Button variant="secondary" data-testid="client-edit-action" onClick={onEdit}><Pencil size={17} />{t("clients.pageEdit")}</Button>}
+        {canBook && <Link className="entity-primary platforma-focus-ring" to={`/app/appointments?create=1&client=${client.id}`}><CalendarDays size={18} />{t(medical ? "clients.pageBook" : "appointments.create")}</Link>}
       </div>
     </header>
     <Tabs value={tab} onChange={next => void selectTab(next)} options={options} appearance="underline" ariaLabel={client.full_name} idPrefix="client-page" className="entity-page-tabs" />
-    {options.map(option => <div key={option.value} role="tabpanel" id={`client-page-panel-${option.value}`} aria-labelledby={`client-page-tab-${option.value}`} hidden={tab !== option.value}>
-      {tab === option.value && option.value === "overview" && <div className="entity-page-columns">
-        <div className="entity-page-main">
-          {medical && <ClientMedicalSummary businessId={client.business} clientId={client.id} appointmentId={upcoming?.id || appointments[0]?.id} userId={userId} />}
-          {upcoming && <section className="entity-next-visit"><CalendarDays size={27} aria-hidden /><div><p>{t("clients.card.nextAppointment")}</p><h2>{formatDateTime(upcoming.start_at, timeZone, true, language)}</h2><p>{upcoming.resource_name} · {upcoming.service_name}</p></div><Link className="entity-primary platforma-focus-ring" to={`/app/appointments/${upcoming.id}`} state={{ recordReturnTo: `/app/clients/${client.id}` }}>{t("clients.pageOpenAppointment")}<ArrowRight size={17} /></Link></section>}
-          <section className="entity-page-section"><h2>{t("appointments.title")}</h2>{visitRows(appointments.slice(0, 5))}<Link className="entity-text-link" to={`/app/appointments?client=${client.id}`}>{t("appointments.title")}<ArrowRight size={16} /></Link></section>
-          {medical && <section className="entity-page-section entity-medical-link"><div><h2>{t("medical.clinical.title")}</h2></div><Button variant="secondary" onClick={() => void selectTab("medical")}>{t("medical.clinical.open")}<ArrowRight size={18} /></Button></section>}
-          {card.conversations.length > 0 && <section className="entity-page-section"><h2>{t("crmCard.messages")}</h2><ConversationsList conversations={card.conversations} /></section>}
-        </div>
-        <aside className="entity-context-panel">
-          <section><h2>{t("clients.contacts")}</h2><div className="entity-contact-row"><Phone size={19} />{client.phone ? <a href={`tel:${client.phone.replace(/[^+\d]/g, "")}`}>{client.phone}</a> : <span>{t("clients.phoneMissing")}</span>}</div><div className="entity-contact-row"><Mail size={19} />{client.email ? <a href={`mailto:${client.email}`}>{client.email}</a> : <span>{t("clients.emailMissing")}</span>}</div></section>
-          <section><h2>{t("clients.notes")}</h2><p className="entity-note">{client.notes || t("crmCard.noNotes")}</p>{canEdit && <Button variant="ghost" onClick={onEdit}>{t("clients.edit")}</Button>}</section>
-          {(card.tags.length > 0 || canEdit) && <section><h2>{t("clients.tag")}</h2><div className="entity-tags">{card.tags.map(tag => <span key={tag.id}>{tag.tag_name}</span>)}</div>{canEdit && <Button variant="ghost" onClick={onTag}>{t("clients.addTag")}</Button>}</section>}
-          <section className="entity-secondary-actions"><PaymentsButton client={client} />{extraActions}</section>
-        </aside>
-      </div>}
-      {tab === option.value && option.value === "medical" && medical && <DentalClientClinical businessId={client.business} clientId={client.id} userId={userId} navigationRef={clinical} onDirtyChange={setDirty} />}
-      {tab === option.value && option.value === "visits" && <section className="entity-page-section">{visitRows(appointments)}<Link className="entity-text-link" to={`/app/appointments?view=plans&client=${client.id}`}>{t("plans.title")}</Link></section>}
+    {panels.map(option => <div key={option.value} role="tabpanel" id={`client-page-panel-${option.value}`} aria-label={option.label} hidden={tab !== option.value}>
+      {tab === option.value && option.value === "overview" && <ClientPatientOverview client={client} appointments={recentAppointments} upcoming={upcoming} medical={medical} summary={summary} timeZone={timeZone} canBook={canBook} onMedical={() => void selectTab("medical")} onVisits={() => void selectTab("visits")} />}
+      {tab === option.value && option.value === "medical" && medical && <><DentalClientClinical businessId={client.business} clientId={client.id} userId={userId} navigationRef={clinical} onDirtyChange={setDirty} /><details className="entity-administration" onToggle={event => setAdministrationOpen(event.currentTarget.open)}><summary>{t("medical.pageAdministration")}</summary>{administrationOpen && <PatientAdministrationPanel businessId={client.business} clientId={client.id} clientName={client.full_name} userId={userId} />}</details></>}
+      {tab === option.value && option.value === "visits" && <section className="entity-page-section">{visitRows(appointments)}<Link className="entity-text-link" to={`/app/appointments?client=${client.id}`}>{t("clients.viewAll")}<ArrowRight size={16} /></Link><Link className="entity-text-link" to={`/app/appointments?view=plans&client=${client.id}`}>{t("plans.title")}</Link></section>}
       {tab === option.value && option.value === "files" && <>{medical && <DentalClientClinical key="documents" initialTab="documents" businessId={client.business} clientId={client.id} userId={userId} navigationRef={clinical} onDirtyChange={setDirty} />}<EntityAttachmentsPanel data={card} entity={{ type: "client", id: client.id }} readOnly={!canEdit} /></>}
       {tab === option.value && option.value === "payments" && canPay && <ClientPaymentsPanel client={client} userId={userId} timeZone={timeZone} />}
       {tab === option.value && option.value === "history" && <TimelineList cardTimeline={card.timeline} />}
       {tab === option.value && option.value === "tasks" && <TasksList tasks={card.tasks} />}
     </div>)}
-    {medical && tab === "overview" && <details className="entity-administration" onToggle={event => setAdministrationOpen(event.currentTarget.open)}><summary>{t("medical.pageAdministration")}</summary>{administrationOpen && <PatientAdministrationPanel businessId={client.business} clientId={client.id} clientName={client.full_name} userId={userId} />}</details>}
+    <details className="client-more"><summary>{t("clients.card.more")}</summary><div className="entity-secondary-actions"><Button variant="ghost" onClick={() => void selectTab("history")}>{t("tasks.history")}</Button><Button variant="ghost" onClick={() => void selectTab("tasks")}>{t("nav.tasks")}</Button>{canEdit && <Button variant="ghost" onClick={onTag}>{t("clients.addTag")}</Button>}<PaymentsButton client={client} />{extraActions}</div>{card.tags.length > 0 && <div className="entity-tags">{card.tags.map(tag => <span key={tag.id}>{tag.tag_name}</span>)}</div>}{card.conversations.length > 0 && <ConversationsList conversations={card.conversations} />}</details>
   </article>;
 }

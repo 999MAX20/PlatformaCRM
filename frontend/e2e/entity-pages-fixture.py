@@ -37,6 +37,29 @@ with transaction.atomic():
     BusinessMember.objects.create(business_id=appointment.business_id, user=owner, role="owner")
     Client.objects.filter(pk=appointment.client_id).update(full_name=f"Анна Тестова {suffix}", notes="Предпочитает утренние приёмы. Синтетические данные.")
     Client.objects.bulk_create([Client(business_id=appointment.business_id, full_name=f"Synthetic list row {suffix}-{index}") for index in range(21)])
+    if "--reference" in sys.argv:
+        from apps.medical.models import MedicalEncounter, PatientProfile
+        from apps.medical.encounter_services import save_primary_encounter_draft
+        from apps.medical.identity_crypto import encrypt_medical_value
+        from datetime import timedelta
+        from django.utils import timezone
+        patient = PatientProfile.objects.get(client_id=appointment.client_id)
+        patient.demographics_encrypted = encrypt_medical_value(json.dumps({"date_of_birth": "1990-03-14"}), purpose="demographics", business_id=appointment.business_id, subject_id=appointment.client_id)
+        patient.save(update_fields=["demographics_encrypted"])
+        Client.objects.filter(pk=appointment.client_id).update(phone="+77000000024", notes="Предпочитает утренние приёмы. Синтетическая карточка для проверки интерфейса.")
+        encounter = MedicalEncounter.objects.get(appointment_id=appointment.pk)
+        doctor = get_user_model().objects.get(email=result["email"])
+        role = BusinessMember.objects.get(business_id=appointment.business_id, user=doctor).business_role
+        RolePermission.objects.create(business_role=role, resource="clients", action="update", scope="all", is_allowed=True)
+        RolePermission.objects.create(business_role=role, resource="payments", action="view", scope="all", is_allowed=True)
+        save_primary_encounter_draft(actor=doctor, business_id=appointment.business_id, patient_id=patient.pk,
+            encounter_id=encounter.pk, expected_revision=encounter.revision,
+            content={"allergies": "Пенициллин (тестовые данные)", "diagnosis": "Тестовое заключение", "plan": "Контрольный осмотр"}, idempotency_key=f"reference-{suffix}")
+        for days in (30, 60, 90):
+            start = timezone.now() - timedelta(days=days)
+            Appointment.objects.create(business_id=appointment.business_id, branch_id=appointment.branch_id,
+                client_id=appointment.client_id, resource_id=appointment.resource_id, service_id=appointment.service_id,
+                start_at=start, end_at=start + timedelta(hours=1), status="completed")
     actors = {}
     for kind in ("head", "reception", "assistant"):
         actor = get_user_model().objects.create_user(username=f"page-{kind}-{suffix}", email=f"page-{kind}-{suffix}@example.test",

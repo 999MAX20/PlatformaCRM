@@ -30,11 +30,6 @@ function asNumericId(value: string | undefined): number | null {
 }
 
 export function ClientWorkspacePage() {
-  // Owner-requested blank route while the reference-based replacement is specified.
-  return null;
-}
-
-export function RetainedClientWorkspacePage() {
   const { t } = useI18n();
   const navigate = useNavigate();
   const { business } = useActiveBusiness();
@@ -75,6 +70,11 @@ export function RetainedClientWorkspacePage() {
       }
     },
   });
+  const recentAppointmentsQuery = useQuery({
+    queryKey: ["appointments", "client-completed", clientId, business?.id, user?.id],
+    enabled: Boolean(clientId && business && hasPermission(user, business.id, "appointments", "view")),
+    queryFn: () => appointmentsApi.workspace({ business: business!.id, client: clientId!, status: "completed", ordering: "-start_at", page_size: 3 }),
+  });
   const tasksQuery = useQuery({
     queryKey: ["tasks", "client-workspace", clientId, business?.id, user?.id],
     queryFn: () =>
@@ -94,13 +94,13 @@ export function RetainedClientWorkspacePage() {
 
   const pageError =
     cardQuery.error ||
-    appointmentsQuery.error || nextAppointmentQuery.error ||
+    appointmentsQuery.error || nextAppointmentQuery.error || recentAppointmentsQuery.error ||
     tasksQuery.error ||
     conversationsQuery.error;
   const isLoading =
     cardQuery.isLoading ||
     appointmentsQuery.isLoading ||
-    nextAppointmentQuery.isLoading ||
+    nextAppointmentQuery.isLoading || recentAppointmentsQuery.isLoading ||
     tasksQuery.isLoading ||
     conversationsQuery.isLoading;
   const card = cardQuery.data;
@@ -125,7 +125,7 @@ export function RetainedClientWorkspacePage() {
   if (isLoading) return <EntityWorkspaceLoadingState />;
   if (pageError && (!cardQuery.data || ["authentication", "permission", "not_found"].includes(normalizeAppError(pageError).category)))
     return (
-      <ErrorState error={pageError} action={<Button variant="secondary" onClick={() => { void cardQuery.refetch(); void appointmentsQuery.refetch(); if (nextAppointmentQuery.isEnabled) void nextAppointmentQuery.refetch(); if (tasksQuery.isEnabled) void tasksQuery.refetch(); if (conversationsQuery.isEnabled) void conversationsQuery.refetch(); }}>{t("common.retry")}</Button>} />
+      <ErrorState error={pageError} action={<Button variant="secondary" onClick={() => { void cardQuery.refetch(); void appointmentsQuery.refetch(); if (recentAppointmentsQuery.isEnabled) void recentAppointmentsQuery.refetch(); if (nextAppointmentQuery.isEnabled) void nextAppointmentQuery.refetch(); if (tasksQuery.isEnabled) void tasksQuery.refetch(); if (conversationsQuery.isEnabled) void conversationsQuery.refetch(); }}>{t("common.retry")}</Button>} />
     );
   if (!client) {
     return (
@@ -141,10 +141,10 @@ export function RetainedClientWorkspacePage() {
 
   return (
     <>
-      {pageError && <ErrorState error={pageError} action={<Button variant="secondary" onClick={() => { void cardQuery.refetch(); void appointmentsQuery.refetch(); if (nextAppointmentQuery.isEnabled) void nextAppointmentQuery.refetch(); if (tasksQuery.isEnabled) void tasksQuery.refetch(); if (conversationsQuery.isEnabled) void conversationsQuery.refetch(); }}>{t("common.retry")}</Button>} />}
+      {pageError && <ErrorState error={pageError} action={<Button variant="secondary" onClick={() => { void cardQuery.refetch(); void appointmentsQuery.refetch(); if (recentAppointmentsQuery.isEnabled) void recentAppointmentsQuery.refetch(); if (nextAppointmentQuery.isEnabled) void nextAppointmentQuery.refetch(); if (tasksQuery.isEnabled) void tasksQuery.refetch(); if (conversationsQuery.isEnabled) void conversationsQuery.refetch(); }}>{t("common.retry")}</Button>} />}
       <ClientReferenceView key={`${business?.id}:${client.id}:${user?.id}`}
         editState={editState} client={client} card={{ ...card, tasks: related.tasks, conversations: related.conversations }}
-        appointments={related.appointments} upcoming={nextAppointmentQuery.error ? undefined : nextAppointmentQuery.data ?? undefined} timeZone={business?.timezone || "Asia/Almaty"}
+        appointments={related.appointments} recentAppointments={recentAppointmentsQuery.data?.results ?? []} upcoming={nextAppointmentQuery.error ? undefined : nextAppointmentQuery.data ?? undefined} timeZone={business?.timezone || "Asia/Almaty"}
         userId={Number(user?.id)} medical={!client.is_archived && user?.capabilities?.[String(business?.id)]?.modules?.medical_records === true}
         canEdit={canEdit} canBook={!client.is_archived && hasPermission(user, business?.id, "appointments", "create")}
         onEdit={() => actions.setEditOpen(true)} onTag={() => actions.setTagOpen(true)}
