@@ -1,5 +1,9 @@
 # DENTAL-MCS-20261122: полная реализация медицинского ТЗ
 
+## Локальная БД и dev24.11
+
+24.11.2026: по прямому поручению владельца применены27 существующих миграций к локальной PostgreSQL127.0.0.1:55432/platformacrm (integrations0014–0015, medical0034–0057, procurement0001). До записи проверены local profile/план; pg_dump custom backup и pg_restore --list PASS. Evidence: output/local-db-maintenance/dental-migrations-20261124-215007 (before.dump, scope.json, migrate.log, counts-before/after.json, result.json). migrate --check и Django system check PASS; прежние business tables counts неизменны, изменились только auth_permission744→872, content_type186→218 и django_migrations244→271. Таблица medical_appointmentassistant существует. ./dev.ps1 exit0: backend8000/frontend5173, Redis, scanner/updater и worker запущены из canonical checkout; health/API proxy/worker checks PASS. Код/данные сценариев не менялись, seed/reset/CI/deployment не выполнялись. Это устраняет отставание схемы, но не доказывает полную функциональную приёмку текущего UI; параллельные изменения страниц сохранены.
+
 ## Новый утверждённый scope24.11: отдельные страницы клиента и записи
 
 Scope/основание: owner approved заменить черновое содержимое двух страниц по imagegen-референсам exec-0c447717/exec-960322f8 и убрать большие модальные карточки из Clients/Records/Calendar. Последовательность CLIENT-PAGE → APPOINTMENT-PAGE. Canonical root C:\Users\user\Desktop\PlatformaCRM, branch codex/ui-testing-toolkit, starting base cffcb0ec; auth/Google/YCloud WIP сохраняется и не входит в публикацию. Gap: утверждённое изменение интерфейса; сервер, API, схема, роли, изоляция и медицинские жизненные циклы переиспользуются. Малые формы создания/редактирования/переноса остаются. Полное ТЗ, закупки/бот/AI/архив не возобновлялись, CI запрещён.
