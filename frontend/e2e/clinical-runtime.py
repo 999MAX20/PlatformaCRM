@@ -797,7 +797,11 @@ if files_fixture and len(sys.argv) > 1 and sys.argv[1] in ("files-scan", "docume
     sys.exit(0)
 if len(sys.argv) > 1 and sys.argv[1] in ("revoke", "restore"):
     from apps.medical.models import MedicalRoleAssignment
-    MedicalRoleAssignment.objects.filter(member__business__slug="medical-role").update(revoked_at=timezone.now() if sys.argv[1] == "revoke" else None)
+    assignments = MedicalRoleAssignment.objects.filter(member__business__slug="medical-role")
+    if len(sys.argv) > 2:
+        appointment = Appointment.objects.select_related("resource").get(pk=int(sys.argv[2]), business__slug="medical-role")
+        assignments = assignments.filter(member__user_id=appointment.resource.linked_user_id)
+    assignments.update(revoked_at=timezone.now() if sys.argv[1] == "revoke" else None)
     sys.exit(0)
 if files_fixture:
     from medical_assistance_fixture import install_synthetic_assistance

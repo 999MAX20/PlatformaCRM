@@ -11,8 +11,9 @@ for (const [language, dictionary] of Object.entries({ ru, kk, en })) {
   for (const mobile of [false, true]) {
     test(`tooth chart ${language} ${mobile ? "mobile" : "desktop"}`, async ({ page }, info) => {
       test.setTimeout(90_000);
-      execFileSync(process.env.E2E_PYTHON!, ["e2e/clinical-runtime.py", "restore"], { env: process.env, windowsHide: true, stdio: "pipe" });
-      const id = 9 + ["ru", "kk", "en"].indexOf(language) * 2 + Number(mobile);
+      const fixtureOutput = execFileSync(process.env.E2E_PYTHON!, ["e2e/clinical-runtime.py", "files-new-appointment"],
+        { env: process.env, windowsHide: true, encoding: "utf8" });
+      const id = JSON.parse(fixtureOutput.trim().split(/\r?\n/).at(-1)!).appointment_id;
       const t = (key: string) => dictionary[key as keyof typeof dictionary];
       await page.setViewportSize(mobile ? { width: 390, height: 844 } : { width: 1440, height: 1000 });
       await page.addInitScript(lang => localStorage.setItem("ai_smb_language", lang), language);
@@ -25,8 +26,8 @@ for (const [language, dictionary] of Object.entries({ ru, kk, en })) {
       await expect(page).toHaveURL(/\/app\//);
       const headers = { Authorization: `Bearer ${token}` };
       const api = process.env.E2E_API_BASE_URL!;
-      const scope = { business_id: 1, patient_id: id };
       const context = await (await page.request.get(`${api}/api/medical/encounters/appointment-context/?business_id=1&appointment_id=${id}`, { headers })).json();
+      const scope = { business_id: context.business_id, patient_id: context.patient.id };
       const record = await page.request.post(`${api}/api/medical/records/`, { headers: { ...headers, "Idempotency-Key": `tooth-record-${id}` },
         data: { ...scope, appointment_id: id, expected_patient_revision: 1, number: `TOOTH-${id}` } });
       expect(record.status()).toBe(201);
@@ -175,7 +176,7 @@ for (const [language, dictionary] of Object.entries({ ru, kk, en })) {
         await expect(inspector).not.toBeVisible();
         await expect(tooth).toBeFocused();
       }
-      const snapshot = await page.request.get(`${api}/api/medical/tooth-observations/snapshot/?business_id=1&patient_id=${id}&appointment_id=${id}`, { headers });
+      const snapshot = await page.request.get(`${api}/api/medical/tooth-observations/snapshot/?business_id=1&patient_id=${scope.patient_id}&appointment_id=${id}`, { headers });
       expect(snapshot.status()).toBe(200);
       const positions = (await snapshot.json()).observations;
       expect(positions.find((row: { surface: string }) => row.surface === "a")).toMatchObject({ revision: 2, observation: "Synthetic surface a revision 2" });
@@ -239,11 +240,15 @@ for (const [language, dictionary] of Object.entries({ ru, kk, en })) {
       await workspace.getByRole("tab", { name: t("medical.clinical.note"), exact: true }).click();
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       if (language === "ru" && mobile) {
-        execFileSync(process.env.E2E_PYTHON!, ["e2e/clinical-runtime.py", "revoke"], { env: process.env, windowsHide: true, stdio: "pipe" });
-        await workspace.getByRole("tab", { name: t("medical.tooth.title"), exact: true }).click();
-        await expect(workspace.getByText(t("medical.denied"), { exact: true })).toBeVisible();
-        await expect(complaint).toHaveCount(0);
-        await expect(chart).toHaveCount(0);
+        try {
+          execFileSync(process.env.E2E_PYTHON!, ["e2e/clinical-runtime.py", "revoke", String(id)], { env: process.env, windowsHide: true, stdio: "pipe" });
+          await workspace.getByRole("tab", { name: t("medical.tooth.title"), exact: true }).click();
+          await expect(workspace.getByText(t("medical.denied"), { exact: true })).toBeVisible();
+          await expect(complaint).toHaveCount(0);
+          await expect(chart).toHaveCount(0);
+        } finally {
+          execFileSync(process.env.E2E_PYTHON!, ["e2e/clinical-runtime.py", "restore", String(id)], { env: process.env, windowsHide: true, stdio: "pipe" });
+        }
       }
     });
   }
