@@ -133,3 +133,15 @@ class MedicalDocumentPortalView(PrivateResponseMixin, AuthCookieCsrfMixin, APIVi
         response["Content-Disposition"] = f'{"attachment" if download else "inline"}; filename="document.pdf"'
         response["Content-Security-Policy"] = "default-src 'none'; sandbox"
         return response
+
+
+class MedicalDocumentPortalArchiveView(MedicalDocumentPortalView):
+    http_method_names = ["get", "head", "options"]
+
+    def get(self, request, business_slug):
+        from .issuance_archive import portal_archive
+        response = HttpResponse(portal_archive(business_slug=business_slug,
+            token=request.COOKIES.get(self.cookie_name)), content_type="application/zip")
+        response["Content-Disposition"] = 'attachment; filename="documents.zip"'
+        response["Content-Security-Policy"] = "default-src 'none'; sandbox"
+        return response

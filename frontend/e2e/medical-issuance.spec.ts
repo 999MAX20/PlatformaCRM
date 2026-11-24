@@ -51,6 +51,14 @@ test("personally hand code, activate, open exact PDF and revoke", async ({ page,
   await patient.screenshot({ path: info.outputPath("portal-desktop.png") });
   await patient.setViewportSize({ width: 390, height: 844 });
   await patient.screenshot({ path: info.outputPath("portal-mobile.png") });
+  const archiveButton=patient.getByRole("button",{name:ru["medical.issue.archive"],exact:true});
+  await patient.route("**/api/medical/portal/*/archive/",route=>route.fulfill({status:503,json:{detail:"Synthetic archive unavailable"}}));
+  await archiveButton.click();await expect(patient.getByRole("alert")).toContainText(ru["medical.issue.archiveUnavailable"]);await expect(patient.getByRole("heading",{name:entry.title,exact:true})).toBeVisible();
+  await patient.unroute("**/api/medical/portal/*/archive/");
+  const downloaded=patient.waitForEvent("download");await archiveButton.click();const archive=await downloaded;
+  expect(archive.suggestedFilename()).toBe("documents.zip");const archivePath=await archive.path();
+  const summary=JSON.parse(execFileSync(process.env.E2E_PYTHON!,["-c","import sys,zipfile,json; z=zipfile.ZipFile(sys.argv[1]); m=json.loads(z.read('manifest.json')); print(json.dumps({'kind':m['kind'],'count':len(m['documents']),'paths':z.namelist()}))",archivePath!],{windowsHide:true,encoding:"utf8"}));
+  expect(summary.kind).toBe("issued-document-package");expect(summary.count).toBe(1);expect(summary.paths).toContain("index.html");
   const view = patient.getByRole("link", { name: ru["medical.issue.view"], exact: true });
   const file = (await view.getAttribute("href"))!;
   const pdf = await patient.evaluate(async url => { const response = await fetch(url, { credentials: "include" }); return { status: response.status, type: response.headers.get("content-type"), size: (await response.arrayBuffer()).byteLength }; }, file);
@@ -66,7 +74,7 @@ test("personally hand code, activate, open exact PDF and revoke", async ({ page,
   await dialog.getByRole("textbox", { name: ru["medical.issue.reason"], exact: true }).fill("Synthetic lost code");
   await dialog.getByRole("button", { name: ru["medical.issue.revoke"], exact: true }).click();
   await expect(dialog.getByText(ru["medical.issue.saved"], { exact: true })).toBeVisible();
-  await patient.getByRole("button", { name: ru["common.refresh"], exact: true }).click();
+  await archiveButton.click();
   await expect(patient.getByRole("heading", { name: entry.title })).toHaveCount(0);
   expect(await patient.evaluate(async url => (await fetch(url, { credentials: "include" })).status, file)).toBe(403);
   await patientContext.close();

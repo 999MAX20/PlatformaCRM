@@ -1,4 +1,4 @@
-К15: field assistance dc7a65eb, шаблоны e5050fce, помощь назначениям ecb6093a опубликованы; inline ghost-text локально принят. Бот/AI внешняя приёмка открыты. Далее независимый К16: архив разрешённого пациенту комплекта; полный архив клиники остаётся отдельным остатком. Evidence: docs/testing/task-state/DENTAL-MCS-20261122.md. Без CI/рабочих миграций.
+К15 local field/order assistance и ghost-text опубликованы dc7a65eb/e5050fce/ecb6093a/7f71fa15. К16 ZIP разрешённого комплекта локально принят; публикация готовится. Полный архив, обработка закупок, бот/внешние подтверждения и итоговая приёмка остаются открыты. Evidence: docs/testing/task-state/DENTAL-MCS-20261122.md. Без CI/рабочих миграций.
 
 QA-016-20261121 LOCAL VERIFIED: automatic tasks searchable by displayed RU/KK/EN title; editor preserves original copy on unrelated edits. 66 backend, 9 node, 6 desktop/mobile browser scenarios, build/types/i18n/check/drift PASS; Code 8a240ad3 pushed to main; CI44937543011 queued (not PASS). Working DB untouched. [Evidence](docs/testing/evidence/qa-016-task-search-20261121.md).
 

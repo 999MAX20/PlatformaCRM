@@ -18,8 +18,11 @@ function Portal({ slug }: { slug: string }) {
   const [code, setCode] = useState("");
   const [loading, setLoading] = useState(true);
   const [pending, setPending] = useState(false);
-  const [error, setError] = useState<"unavailable" | "retry" | "throttled" | null>(null);
+  const [error, setError] = useState<"unavailable" | "retry" | "throttled" | "archiveUnavailable" | null>(null);
   const controller = useRef(new AbortController());
+  const currentDocuments = useRef(documents); currentDocuments.current = documents;
+  const downloads = useRef(new Set<string>());
+  useEffect(() => () => { downloads.current.forEach(url => URL.revokeObjectURL(url)); downloads.current.clear(); }, []);
   const busy = useRef(false);
   const unavailable = (cause: unknown) => axios.isAxiosError(cause) && [401, 403, 404].includes(cause.response?.status ?? 0);
   useEffect(() => {
@@ -34,12 +37,23 @@ function Portal({ slug }: { slug: string }) {
     const expiry = window.setTimeout(() => { setDocuments(null); setError("unavailable"); }, Math.max(0, Math.min(Date.parse(documents.expires_at), Date.parse(documents.session_expires_at)) - Date.now()));
     return () => window.clearTimeout(expiry);
   }, [documents]);
-  async function run(action: "login" | "refresh" | "logout") {
+  async function run(action: "login" | "refresh" | "logout" | "archive") {
     if (busy.current) return;
     busy.current = true; setPending(true); setError(null);
     const signal = controller.current.signal;
     try {
-      if (action === "logout") { await api.logout(slug, signal); if (!signal.aborted) { setDocuments(null); setCode(""); } }
+      if (action === "archive") {
+        const expected = currentDocuments.current;
+        if (!expected) return;
+        const blob = await api.archive(slug, signal);
+        if (!signal.aborted && currentDocuments.current === expected && Math.min(Date.parse(expected.expires_at), Date.parse(expected.session_expires_at)) > Date.now()) {
+          const url = URL.createObjectURL(blob); downloads.current.add(url);
+          const link = document.createElement("a"); link.href = url; link.download = "documents.zip";
+          document.body.appendChild(link); link.click(); link.remove();
+          window.setTimeout(() => { URL.revokeObjectURL(url); downloads.current.delete(url); }, 10_000);
+        }
+      }
+      else if (action === "logout") { await api.logout(slug, signal); if (!signal.aborted) { setDocuments(null); setCode(""); } }
       else {
         if (action === "login") await api.login(slug, code, signal);
         const result = await api.documents(slug, signal);
@@ -48,7 +62,7 @@ function Portal({ slug }: { slug: string }) {
     } catch (cause) {
       if (!signal.aborted) {
         if (unavailable(cause)) { setDocuments(null); setError("unavailable"); }
-        else setError(axios.isAxiosError(cause) && cause.response?.status === 429 ? "throttled" : "retry");
+        else setError(axios.isAxiosError(cause) && cause.response?.status === 429 ? "throttled" : action === "archive" ? "archiveUnavailable" : "retry");
       }
     } finally { busy.current = false; if (!signal.aborted) setPending(false); }
   }
@@ -58,6 +72,7 @@ function Portal({ slug }: { slug: string }) {
       {loading ? <LoadingState /> : documents ? <section className="space-y-4" aria-label={t("medical.issue.portalTitle")}>
         <p className="text-sm text-platforma-subtle">{t("medical.issue.until", { date: new Date(documents.expires_at).toLocaleString(locale) })}</p>
         {documents.synthetic ? <p className="text-sm">{t("medical.issue.synthetic")}</p> : null}
+        <Button size="lg" disabled={pending || !documents.documents.length} isLoading={pending} onClick={() => void run("archive")}>{t("medical.issue.archive")}</Button>
         <ul className="divide-y divide-platforma-border rounded-xl border border-platforma-border bg-platforma-surface">
           {documents.documents.map(item => <li key={item.id} className="space-y-3 p-4">
             <div><h2 className="break-words font-semibold">{item.title}</h2><p className="text-sm text-platforma-subtle">{t("medical.issue.version", { revision: item.revision })}</p></div>
@@ -74,7 +89,7 @@ function Portal({ slug }: { slug: string }) {
         <Input label={t("medical.issue.code")} value={code} required maxLength={40} autoComplete="off" spellCheck={false} disabled={pending} onChange={event => setCode(event.target.value)} />
         <Button type="submit" size="lg" isLoading={pending} disabled={!code.trim()}>{t("medical.issue.open")}</Button>
       </form>}
-      {error ? <ErrorState message={t(`medical.issue.${error}`)} action={error === "retry" && documents ? <Button onClick={() => void run("refresh")}>{t("common.retry")}</Button> : undefined} /> : null}
+      {error ? <ErrorState message={t(`medical.issue.${error}`)} action={documents && ["retry", "archiveUnavailable"].includes(error) ? <Button onClick={() => void run(error === "archiveUnavailable" ? "archive" : "refresh")}>{t("common.retry")}</Button> : undefined} /> : null}
     </div>
   </main>;
 }

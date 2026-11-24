@@ -40,6 +40,8 @@ export const medicalPortalApi = {
     publicClient.post(portalPath(slug), { code }, await csrf(signal)),
   documents: async (slug: string, signal?: AbortSignal) =>
     (await publicClient.get<PortalDocuments>(portalPath(slug), { signal })).data,
+  archive: async (slug: string, signal?: AbortSignal) =>
+    (await publicClient.get<Blob>(`${portalPath(slug)}archive/`, { signal, responseType: "blob" })).data,
   logout: async (slug: string, signal?: AbortSignal) => publicClient.delete(portalPath(slug), await csrf(signal)),
   fileUrl: (slug: string, id: string, download = false) => `${baseURL}${portalPath(slug)}files/${encodeURIComponent(id)}/${download ? "?download=1" : ""}`,
 };

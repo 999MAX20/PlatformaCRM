@@ -1,4 +1,6 @@
 export const medical = {
+  "medical.issue.archive": "Download ZIP package",
+  "medical.issue.archiveUnavailable": "Could not prepare the archive. Try again or download the documents individually.",
   "medical.assistance.useCompletion": "Use for completion",
   "medical.assistance.noContinuation": "The current text does not match the start of this template.",
   "medical.assistance.templateChanged": "Could not confirm the template. Your input is retained; select the template again or continue manually.",

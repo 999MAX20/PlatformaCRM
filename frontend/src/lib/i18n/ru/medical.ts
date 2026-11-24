@@ -1,4 +1,6 @@
 export const medical = {
+  "medical.issue.archive": "Скачать комплект ZIP",
+  "medical.issue.archiveUnavailable": "Не удалось собрать архив. Попробуйте ещё раз или скачайте документы по отдельности.",
   "medical.assistance.useCompletion": "Использовать для подсказки",
   "medical.assistance.noContinuation": "Текущий текст не совпадает с началом выбранного шаблона.",
   "medical.assistance.templateChanged": "Не удалось подтвердить шаблон. Ввод сохранён; выберите шаблон заново или продолжите вручную.",

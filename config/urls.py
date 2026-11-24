@@ -15,7 +15,7 @@ from apps.medical.file_views import MedicalFileViewSet
 from apps.medical.template_views import MedicalDocumentTemplateViewSet
 from apps.medical.credential_views import MedicalCredentialViewSet
 from apps.medical.document_views import MedicalDocumentViewSet
-from apps.medical.issuance_views import MedicalDocumentGrantViewSet, MedicalDocumentPortalView
+from apps.medical.issuance_views import MedicalDocumentGrantViewSet, MedicalDocumentPortalView, MedicalDocumentPortalArchiveView
 from apps.medical.assistant_views import AppointmentAssistantViewSet
 from apps.medical.reception_views import ReceptionBookingRequestViewSet
 from apps.procurement.views import PurchaseRequestViewSet
@@ -271,6 +271,7 @@ router.register("pricing/kaspi/change-logs", KaspiPriceChangeLogViewSet, basenam
 
 urlpatterns = [
     path("api/medical/portal/<slug:business_slug>/", MedicalDocumentPortalView.as_view(), name="medical-document-portal"),
+    path("api/medical/portal/<slug:business_slug>/archive/", MedicalDocumentPortalArchiveView.as_view(), name="medical-document-portal-archive"),
     path("api/medical/portal/<slug:business_slug>/files/<uuid:public_id>/", MedicalDocumentPortalView.as_view(), name="medical-document-portal-pdf"),
     path("api/billing/businesses/<int:business_id>/orders/", merchant_orders),
     path("api/billing/businesses/<int:business_id>/orders/<uuid:order_id>/<slug:action>/", merchant_card),

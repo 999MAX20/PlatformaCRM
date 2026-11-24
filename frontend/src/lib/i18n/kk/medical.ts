@@ -1,4 +1,6 @@
 export const medical = {
+  "medical.issue.archive": "ZIP жинағын жүктеп алу",
+  "medical.issue.archiveUnavailable": "Мұрағатты жинау мүмкін болмады. Қайталап көріңіз немесе құжаттарды жеке жүктеп алыңыз.",
   "medical.assistance.useCompletion": "Ұсыныс үшін пайдалану",
   "medical.assistance.noContinuation": "Ағымдағы мәтін таңдалған үлгінің басына сәйкес келмейді.",
   "medical.assistance.templateChanged": "Үлгіні растау мүмкін болмады. Мәтін сақталды; үлгіні қайта таңдаңыз немесе қолмен жалғастырыңыз.",
