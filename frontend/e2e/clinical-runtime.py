@@ -694,7 +694,7 @@ if templates_fixture and len(sys.argv) > 1 and sys.argv[1] == "template-new-serv
         name="Synthetic document service " + secrets.token_hex(12))
     print(json.dumps({"id": service.pk, "name": service.name}))
     sys.exit(0)
-if files_fixture and len(sys.argv) > 1 and sys.argv[1] == "files-new-appointment":
+if len(sys.argv) > 1 and sys.argv[1] == "files-new-appointment":
     from django.db import transaction
     with transaction.atomic():
         business = Business.objects.get(slug="medical-role")

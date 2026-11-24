@@ -9,12 +9,12 @@ import { requireIsolatedEnvironment } from "./isolated-environment.mjs";
 
 requireIsolatedEnvironment();
 const dictionaries = { ru, kk, en };
-let appointmentId = 0;
 for (const language of ["ru", "kk", "en"] as const) {
   for (const mobile of [false, true]) {
-    const id = ++appointmentId;
     test(`clinical ${language} ${mobile ? "mobile" : "desktop"}: calendar to saved draft`, async ({ page }, info) => {
-      execFileSync(process.env.E2E_PYTHON!, ["e2e/clinical-runtime.py", "restore"], { env: process.env, windowsHide: true, stdio: "pipe" });
+      const fixtureOutput = execFileSync(process.env.E2E_PYTHON!, ["e2e/clinical-runtime.py", "files-new-appointment"],
+        { env: process.env, windowsHide: true, encoding: "utf8" });
+      const id = JSON.parse(fixtureOutput.trim().split(/\r?\n/).at(-1)!).appointment_id;
       const t = dictionaries[language];
       await page.setViewportSize(mobile ? { width: 390, height: 844 } : { width: 1440, height: 1000 });
       await page.addInitScript(value => localStorage.setItem("ai_smb_language", value), language);
@@ -38,6 +38,10 @@ for (const language of ["ru", "kk", "en"] as const) {
       await workspace.getByRole("button", { name: t["medical.clinical.start"], exact: true }).click();
       const complaint = workspace.getByLabel(t["medical.clinical.complaints"], { exact: true });
       await complaint.fill(`Synthetic clinical complaint ${id}`);
+      const examination = workspace.getByLabel(t["medical.clinical.examination"], { exact: true });
+      const diagnosis = workspace.getByLabel(t["medical.clinical.diagnosis"], { exact: true });
+      await examination.fill(`Synthetic examination ${id}`);
+      await diagnosis.fill(`Synthetic diagnosis ${id}`);
       const allergies = workspace.getByLabel(t["medical.clinical.allergies"], { exact: true });
       const contraindications = workspace.getByLabel(t["medical.clinical.contraindications"], { exact: true });
       await expect(allergies).toHaveValue("");
@@ -127,6 +131,8 @@ for (const language of ["ru", "kk", "en"] as const) {
       await openClinicalWorkspace(page, true);
       await expect(complaint).toHaveValue(`Synthetic clinical complaint ${id}`);
       await expect(allergies).toHaveValue(`Synthetic allergy ${id} — оқу`);
+      await expect(examination).toHaveValue(`Synthetic examination ${id}`);
+      await expect(diagnosis).toHaveValue(`Synthetic diagnosis ${id}`);
       await expect(contraindications).toHaveValue(`Synthetic contraindication ${id}`);
       await expect(marker).toBeChecked();
       await expect(sectionReason).toHaveValue(`Synthetic consultation only ${id}`);
@@ -189,6 +195,18 @@ for (const language of ["ru", "kk", "en"] as const) {
       await expect(workspace).not.toBeVisible();
       await openClinicalWorkspace(page, true);
       await expect(complaint).toHaveValue(`Saved on close ${id}`);
+      page.once("dialog", dialog => dialog.accept());
+      await marker.uncheck();
+      await procedures.fill(`Synthetic performed treatment ${id}`);
+      await workspace.getByRole("button", { name: t["medical.clinical.save"], exact: true }).click();
+      await expect(workspace.getByText(t["common.saved"], { exact: true })).toBeVisible();
+      await page.keyboard.press("Escape");
+      await expect(workspace).not.toBeVisible();
+      await openClinicalWorkspace(page, true);
+      await expect(procedures).toHaveValue(`Synthetic performed treatment ${id}`);
+      await expect(marker).not.toBeChecked();
+      await expect(examination).toHaveValue(`Synthetic examination ${id}`);
+      await expect(diagnosis).toHaveValue(`Synthetic diagnosis ${id}`);
 
     });
   }
