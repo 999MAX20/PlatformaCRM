@@ -1,4 +1,12 @@
 export const medical = {
+  "medical.assistance.dictate": "Диктовать",
+  "medical.assistance.stopSeconds": "Остановить · {seconds} с",
+  "medical.assistance.microphoneUnavailable": "Микрофон недоступен. Продолжайте ввод вручную.",
+  "medical.assistance.format": "Оформить текст",
+  "medical.assistance.preview": "Предложение — проверьте перед принятием",
+  "medical.assistance.accept": "Принять · Tab",
+  "medical.assistance.dismiss": "Отклонить · Esc",
+  "medical.assistance.unavailable": "Помощь недоступна. Продолжайте ввод вручную.",
   "procurement.prompt.title": "Нужно что-нибудь заказать?",
   "procurement.prompt.body": "Добавьте материалы для клиники или следующего приёма",
   "procurement.prompt.yes": "Да, добавить",

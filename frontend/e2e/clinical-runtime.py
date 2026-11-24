@@ -775,6 +775,9 @@ if len(sys.argv) > 1 and sys.argv[1] in ("revoke", "restore"):
     from apps.medical.models import MedicalRoleAssignment
     MedicalRoleAssignment.objects.filter(member__business__slug="medical-role").update(revoked_at=timezone.now() if sys.argv[1] == "revoke" else None)
     sys.exit(0)
+if files_fixture:
+    from medical_assistance_fixture import install_synthetic_assistance
+    install_synthetic_assistance()
 if template_docx_fixture:
     from unittest.mock import patch
     from apps.core.tests_file_scanning import clean_result

@@ -102,6 +102,7 @@ export function ClinicalDraftForm({ context, onDirty, onDenied, onReload, onComp
     </div>
     {!context.actions.save_draft ? <p role="status" className="text-sm text-platforma-subtle">{t("medical.clinical.readOnly")}</p> : null}
     {clinicalFields.filter(field => view !== "plan" || field === "plan").map(field => <ClinicalSectionInput key={field} field={field} content={content}
+      assistance={{scope:{business_id:context.business_id,patient_id:context.patient.id,encounter_id:context.encounter!.id,expected_revision:revision},onDenied}}
       bookingAccess={{ context, revision, onReload, onDenied, unsaved: dirty }}
       planAccess={{ scope: { business_id: context.business_id, patient_id: context.patient.id,
         encounter_id: context.encounter!.id, appointment_id: context.appointment.id }, onDenied }}

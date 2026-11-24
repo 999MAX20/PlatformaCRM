@@ -1,4 +1,4 @@
-К13 опубликован b9495f96; К14 авторская заявка/история и предложение после приёма локально приняты, публикация в процессе. Обработка закупок открыта; назначение ролей ожидает решения. Evidence: docs/testing/task-state/DENTAL-MCS-20261122.md. Без CI/рабочих миграций.
+К14 авторская заявка/история и предложение после приёма опубликованы 8f782a2e; К15 форматирование/диктовка текущего поля локально проверены, публикация готовится. Полные К14/К15 и оставшиеся этапы открыты; внешние AI-политики выключены. Evidence: docs/testing/task-state/DENTAL-MCS-20261122.md. Без CI/рабочих миграций.
 
 QA-016-20261121 LOCAL VERIFIED: automatic tasks searchable by displayed RU/KK/EN title; editor preserves original copy on unrelated edits. 66 backend, 9 node, 6 desktop/mobile browser scenarios, build/types/i18n/check/drift PASS; Code 8a240ad3 pushed to main; CI44937543011 queued (not PASS). Working DB untouched. [Evidence](docs/testing/evidence/qa-016-task-search-20261121.md).
 

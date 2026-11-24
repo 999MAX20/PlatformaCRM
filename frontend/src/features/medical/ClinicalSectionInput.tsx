@@ -2,12 +2,15 @@ import type { ClinicalContent, ClinicalField, ClinicalPlanAccess, ClinicalPlanBo
 import { Textarea } from "../../components/ui/Textarea";
 import { useI18n } from "../../lib/i18n";
 import { ClinicalPlanSteps } from "./ClinicalPlanSteps";
+import { ClinicalFieldAssistance } from "./ClinicalFieldAssistance";
+import type { AssistanceScope } from "../../api/medicalAssistance";
 
-export function ClinicalSectionInput({ field, content, onChange, disabled = false, readOnly = false, planAccess, bookingAccess }: {
+export function ClinicalSectionInput({ field, content, onChange, disabled = false, readOnly = false, planAccess, bookingAccess, assistance }: {
   field: ClinicalField; content: ClinicalContent; onChange: (value: ClinicalContent) => void;
   disabled?: boolean; readOnly?: boolean;
   planAccess?: ClinicalPlanAccess;
   bookingAccess?: ClinicalPlanBookingAccess;
+  assistance?: {scope:Omit<AssistanceScope,"field">;onDenied:(cause:unknown)=>void};
 }) {
   const { t } = useI18n();
   const label = t(`medical.clinical.${field}`);
@@ -35,6 +38,8 @@ export function ClinicalSectionInput({ field, content, onChange, disabled = fals
       onChange={event => onChange(notApplicable
         ? { ...content, not_applicable: { ...content.not_applicable, [field]: event.target.value } }
         : { ...content, [field]: event.target.value })} />
+    {assistance&&!notApplicable&&!readOnly?<ClinicalFieldAssistance scope={{...assistance.scope,field}} text={content[field]??""} disabled={disabled}
+      onAccept={text=>onChange({...content,[field]:text})} onDenied={assistance.onDenied}/>:null}
     <label className="flex min-h-11 cursor-pointer items-center gap-3 text-sm">
       <input type="checkbox" className="platforma-focus-ring h-5 w-5 shrink-0 accent-brand-600"
         checked={notApplicable} disabled={disabled || readOnly}
