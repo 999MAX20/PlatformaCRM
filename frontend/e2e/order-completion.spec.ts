@@ -26,6 +26,7 @@ for(const locale of ["ru","kk"] as const)test(`approved completion ${locale}: ac
  await choose();const completion=editor.getByTestId("order-template-completion");await expect(input).toHaveValue(entry.prefix);
  await input.focus();await page.keyboard.press("Escape");await expect(editor).toBeVisible();await expect(completion.getByRole("button",{name:t["medical.assistance.accept"],exact:true})).toHaveCount(0);
  await choose();await input.fill("Nonmatching manual text");await expect(completion).toContainText(t["medical.assistance.noContinuation"]);await input.fill(entry.prefix);
+ await expect(completion.getByTestId("order-template-ghost")).toBeVisible();await expect(completion.getByTestId("order-template-ghost")).toContainText(entry.expected);
  await page.setViewportSize({width:1440,height:1000});await editor.screenshot({path:info.outputPath("completion-desktop.png")});await page.setViewportSize({width:390,height:844});await editor.screenshot({path:info.outputPath("completion-mobile.png")});
  const path="**/api/medical/orders/preview/**";
  let started!:()=>void,release!:()=>void,finished!:()=>void;const began=new Promise<void>(r=>started=r),held=new Promise<void>(r=>release=r),done=new Promise<void>(r=>finished=r);
