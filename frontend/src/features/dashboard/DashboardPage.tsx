@@ -9,6 +9,7 @@ import { hasPermission } from "../../lib/permissions";
 import { useAuth } from "../auth/AuthProvider";
 import { OperationalDashboard } from "./OperationalDashboard";
 import { OwnerDashboard } from "./OwnerDashboard";
+import { PurchaseEntry } from "../procurement/PurchaseEntry";
 
 export function DashboardPage() {
   const { business, isLoading: businessLoading } = useActiveBusiness();
@@ -33,6 +34,7 @@ export function DashboardPage() {
   if (businessLoading) return <PageSkeleton />;
   if (!business) return <ErrorState message={t("dashboard.noBusiness")} />;
   return <div className="space-y-4 pb-8" data-testid="dashboard-workspace-ready">
+    <PurchaseEntry key={business.id} businessId={Number(business.id)} />
     <OperationalDashboard data={workQueues.data} error={workQueues.error} loading={workQueues.isLoading}
       retry={() => {
         void workQueues.refetch();

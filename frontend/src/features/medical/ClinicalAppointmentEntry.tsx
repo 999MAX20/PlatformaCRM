@@ -1,4 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
+import { offerPurchaseAfterCompletion } from "../procurement/PurchasePrompt";
+import type { PurchasePromptScope } from "../../api/medicalPurchasePrompt";
 import { refreshAppointmentQueries } from "../../lib/appointmentCache";
 import { ClinicalViewNavigationProvider } from "./clinicalViewNavigation";
 import { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState, type Ref } from "react";
@@ -56,6 +58,12 @@ export function ClinicalAppointmentEntry({ businessId, appointmentId, embedded =
   const workspacePending = useRef(false);
   const onWorkspacePending = useCallback((value: boolean) => { workspacePending.current = value; }, []);
   const leaveRequest = useRef<((allowed: boolean) => void) | null>(null);
+  const completionOffer = useRef<PurchasePromptScope | null>(null);
+  const offerAfterLeave = useCallback(() => {
+    const scope = completionOffer.current; completionOffer.current = null;
+    if (scope) offerPurchaseAfterCompletion(scope);
+  }, []);
+  useEffect(() => () => offerAfterLeave(), [offerAfterLeave]);
   const documentEditor = useRef(false);
   const onDocumentEditor = useCallback((value: boolean) => { documentEditor.current = value; }, []);
   const canEditDocument = useCallback(() => !draftControl.current?.isPending(), []);
@@ -76,7 +84,7 @@ export function ClinicalAppointmentEntry({ businessId, appointmentId, embedded =
   function resolveLeave(allowed: boolean) {
     leaveRequest.current?.(allowed); leaveRequest.current = null;
   }
-  const finishClose = () => { setConfirmClose(false); if (!embedded) setOpen(false); setDirty(false); resolveLeave(true); };
+  const finishClose = () => { setConfirmClose(false); if (!embedded) setOpen(false); setDirty(false); resolveLeave(true); offerAfterLeave(); };
   const keepEditing = () => { setConfirmClose(false); resolveLeave(false); };
   useImperativeHandle(navigationRef, () => ({ beforeLeave: async () => {
     if (fileGuard.current.pending || (fileGuard.current.dirty && !window.confirm(t("medical.clinical.discard")))) return false;
@@ -85,7 +93,9 @@ export function ClinicalAppointmentEntry({ businessId, appointmentId, embedded =
       setCloseFailed(false); setConfirmClose(true);
       return new Promise<boolean>(resolve => { leaveRequest.current = resolve; });
     }
-    return !dirty || window.confirm(t("medical.clinical.discard"));
+    const allowed = !dirty || window.confirm(t("medical.clinical.discard"));
+    if (allowed) offerAfterLeave();
+    return allowed;
   } }));
   useEffect(() => () => resolveLeave(false), []);
   const close = () => {
@@ -106,6 +116,7 @@ export function ClinicalAppointmentEntry({ businessId, appointmentId, embedded =
   const denied = useCallback((cause: unknown) => { setContext(null); setError(cause); setDirty(false); setConfirmClose(false); }, []);
   const reload = () => { setLoading(true); setContext(null); setError(null); setRefresh(value => value + 1); };
   const completedEncounter = () => {
+    if (context?.encounter) completionOffer.current = { business_id: businessId, encounter_id: context.encounter.id };
     setContext(null); setDirty(false); setCompleted(true); setError(null);
     memory.tab = "overview";
     void refreshAppointmentQueries(cache);

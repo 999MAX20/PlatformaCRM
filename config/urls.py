@@ -18,6 +18,8 @@ from apps.medical.document_views import MedicalDocumentViewSet
 from apps.medical.issuance_views import MedicalDocumentGrantViewSet, MedicalDocumentPortalView
 from apps.medical.assistant_views import AppointmentAssistantViewSet
 from apps.medical.reception_views import ReceptionBookingRequestViewSet
+from apps.procurement.views import PurchaseRequestViewSet
+from apps.medical.procurement_prompt_views import MedicalProcurementPromptViewSet
 from apps.medical.document_rule_views import MedicalDocumentKindViewSet
 from apps.medical.order_views import MedicalOrderViewSet
 from apps.medical.record_views import MedicalRecordViewSet
@@ -167,6 +169,8 @@ router.register("medical/documents", MedicalDocumentViewSet, basename="medical-d
 router.register("medical/document-grants", MedicalDocumentGrantViewSet, basename="medical-document-grant")
 router.register("medical/appointment-assistants", AppointmentAssistantViewSet, basename="medical-appointment-assistant")
 router.register("reception/booking-requests", ReceptionBookingRequestViewSet, basename="reception-booking-request")
+router.register("procurement/requests", PurchaseRequestViewSet, basename="purchase-request")
+router.register("medical/purchase-prompts", MedicalProcurementPromptViewSet, basename="medical-purchase-prompt")
 router.register("medical/document-kinds", MedicalDocumentKindViewSet, basename="medical-document-kind")
 router.register("medical/orders", MedicalOrderViewSet, basename="medical-order")
 router.register("medical/records", MedicalRecordViewSet, basename="medical-record")

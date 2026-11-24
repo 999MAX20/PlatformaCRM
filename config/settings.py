@@ -130,6 +130,7 @@ INSTALLED_APPS = [
     "apps.branches",
     "apps.clients",
     "apps.medical",
+    "apps.procurement",
     "apps.payments",
     "apps.crm",
     "apps.services",

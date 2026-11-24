@@ -9,6 +9,7 @@ import uuid
 from apps.businesses.models import TimeStampedModel
 from .file_models import MedicalAttachment, MedicalAttachmentRevision
 from .document_artifact_models import MedicalDocumentArtifact
+from .procurement_prompt import MedicalProcurementPrompt
 from .document_finalization_models import MedicalDocumentFinalization
 from .signing_models import MedicalSigningSession, MedicalSigningEvent
 from .issuance_models import (MedicalDocumentGrant, MedicalDocumentGrantItem, MedicalDocumentGrantEvent,

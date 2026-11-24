@@ -14,6 +14,7 @@ import { Header } from "./Header";
 import { MobileNav } from "./MobileNav";
 import { PageHeaderContext, type PageHeaderConfig } from "./PageHeaderContext";
 import { Sidebar } from "./Sidebar";
+import { PurchasePrompt } from "../../features/procurement/PurchasePrompt";
 
 const CommandPalette = lazy(() => import("./CommandPalette").then((module) => ({ default: module.CommandPalette })));
 
@@ -130,6 +131,7 @@ export function AppLayout() {
         </div>
       </PageHeaderContext.Provider>
       <CommandPaletteController />
+      <PurchasePrompt />
     </div>
   );
 }
