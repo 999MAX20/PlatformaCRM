@@ -3,18 +3,89 @@ import { execFileSync } from "node:child_process";
 import { ru } from "../src/lib/i18n/ru";
 import { kk } from "../src/lib/i18n/kk";
 import { requireIsolatedEnvironment } from "./isolated-environment.mjs";
+import { openClinicalWorkspace } from "./clinical-card-navigation";
 
 requireIsolatedEnvironment();
 test("personally hand code, activate, open exact PDF and revoke", async ({ page, browser }, info) => {
-  const entry = JSON.parse(execFileSync(process.env.E2E_PYTHON!, ["e2e/clinical-runtime.py", "issuance-prepare"],
+  test.setTimeout(180_000); // One fresh encounter across doctor, receptionist and recipient sessions.
+  const entry = JSON.parse(execFileSync(process.env.E2E_PYTHON!, ["e2e/clinical-runtime.py", "issuance-prepare", "core"],
     { env: process.env, windowsHide: true, encoding: "utf8" }).trim().split(/\r?\n/).at(-1)!);
   await page.addInitScript(() => localStorage.setItem("ai_smb_language", "ru"));
   await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto("/login");
   await page.locator('input[name="email"]').fill(entry.email);
   await page.locator('input[name="password"]').fill(process.env.E2E_PASSWORD!);
+  const login = page.waitForResponse(r => r.url().endsWith("/api/auth/token/") && r.request().method() === "POST");
   await page.locator('form button[type="submit"]').click();
+  const headers = { Authorization: `Bearer ${(await (await login).json()).access}` };
   await expect(page).toHaveURL(/\/app\//);
+  const appointment = await (await page.request.get(`${process.env.E2E_API_BASE_URL}/api/appointments/${entry.appointment_id}/`, { headers })).json();
+  await page.goto(`/app/calendar?appointment=${entry.appointment_id}&date=${appointment.start_at.slice(0, 10)}&view=day`);
+  await openClinicalWorkspace(page);
+  const workspace = page.getByTestId("clinical-workspace");
+  await workspace.getByRole("tab", { name: ru["medical.clinical.note"], exact: true }).click();
+  for (const field of ["complaints", "anamnesis", "allergies", "contraindications", "examination", "diagnosis", "procedures", "plan", "epicrisis"] as const) {
+    await workspace.getByRole("textbox", { name: ru[`medical.clinical.${field}`], exact: true }).fill(`Synthetic ${field} ${entry.appointment_id}`);
+  }
+  await workspace.getByRole("button", { name: ru["medical.clinical.save"], exact: true }).click();
+  await workspace.getByRole("button", { name: ru["medical.reception.request"], exact: true }).click();
+  const followUp = page.getByTestId("clinical-follow-up");
+  const recommended = new Date(appointment.start_at); recommended.setUTCDate(recommended.getUTCDate() + 7);
+  const date = recommended.toISOString().slice(0, 10);
+  await followUp.getByLabel(ru["medical.reception.from"], { exact: true }).fill(date);
+  await followUp.getByLabel(ru["medical.reception.until"], { exact: true }).fill(date);
+  const sent = page.waitForResponse(r => r.url().endsWith("/api/reception/booking-requests/") && r.request().method() === "POST");
+  await followUp.getByRole("button", { name: ru["medical.reception.send"], exact: true }).click();
+  const response = await sent;
+  expect(response.status()).toBe(201);
+  const requestId = (await response.json()).id;
+  await followUp.getByRole("button", { name: ru["common.back"], exact: true }).click();
+  await workspace.getByRole("button", { name: ru["medical.completion.title"], exact: true }).click();
+  const completion = page.getByTestId("encounter-completion");
+  await expect(completion).toContainText(ru["medical.completion.ready"]);
+  await completion.getByRole("textbox", { name: ru["medical.completion.earlyReason"], exact: true }).fill(`Synthetic core completion ${entry.appointment_id}`);
+  await completion.getByRole("button", { name: ru["medical.completion.confirm"], exact: true }).click();
+  await expect(page.getByTestId("encounter-completed")).toBeVisible();
+  await expect(page.getByRole("button", { name: ru["appointment.actionConfirm"], exact: true })).toHaveCount(0);
+  await page.screenshot({ path: info.outputPath("core-completed-desktop.png") });
+
+  const receptionist = JSON.parse(execFileSync(process.env.E2E_PYTHON!, ["e2e/clinical-runtime.py", "reception-new-member", String(entry.appointment_id), "issue"],
+    { env: process.env, windowsHide: true, encoding: "utf8" }).trim().split(/\r?\n/).at(-1)!);
+  const receptionContext = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
+  page = await receptionContext.newPage();
+  await page.addInitScript(() => localStorage.setItem("ai_smb_language", "ru"));
+  await page.goto(`${process.env.E2E_BASE_URL}/login`);
+  await page.locator('input[name="email"]').fill(receptionist.email);
+  await page.locator('input[name="password"]').fill(process.env.E2E_PASSWORD!);
+  const receptionLogin = page.waitForResponse(r => r.url().endsWith("/api/auth/token/") && r.request().method() === "POST");
+  await page.locator('form button[type="submit"]').click();
+  const receptionHeaders = { Authorization: `Bearer ${(await (await receptionLogin).json()).access}` };
+  await expect(page).toHaveURL(/\/app\//);
+  const completed = await page.request.get(`${process.env.E2E_API_BASE_URL}/api/appointments/${entry.appointment_id}/`, { headers: receptionHeaders });
+  expect(completed.status()).toBe(200);
+  expect((await completed.json()).status).toBe("completed");
+  const denied = await page.request.get(`${process.env.E2E_API_BASE_URL}/api/medical/encounters/appointment-context/`, {
+    headers: receptionHeaders, params: { business_id: appointment.business, appointment_id: entry.appointment_id },
+  });
+  expect(denied.status()).toBe(403);
+  await page.getByTestId("desktop-sidebar").getByRole("link", { name: ru["medical.reception.queue"], exact: true }).click();
+  const row = page.getByTestId(`reception-request-${requestId}`);
+  await expect(page.getByTestId("reception-queue")).not.toContainText(`Synthetic diagnosis ${entry.appointment_id}`);
+  await row.getByRole("button", { name: ru["medical.reception.claim"], exact: true }).click();
+  await row.getByRole("button", { name: ru["medical.reception.book"], exact: true }).click();
+  const booking = page.getByTestId("reception-booking");
+  await booking.getByLabel(ru["appointment.date"], { exact: true }).fill(date);
+  await booking.getByRole("combobox", { name: new RegExp(`^${ru["appointment.slot"]}`) }).click();
+  await page.getByRole("option").filter({ hasText: /^\d{1,2}:\d{2}/ }).first().click();
+  await page.setViewportSize({ width: 390, height: 844 });
+  await booking.getByTestId("appointment-submit").evaluate(node => node.scrollIntoView({ block: "center", behavior: "instant" }));
+  await page.screenshot({ path: info.outputPath("core-repeat-mobile.png") });
+  page.once("dialog", dialog => dialog.accept());
+  const booked = page.waitForResponse(r => r.url().endsWith(`/api/reception/booking-requests/${requestId}/book/`));
+  await booking.getByTestId("appointment-submit").click();
+  expect((await booked).status()).toBe(200);
+  await expect(row).toContainText(ru["medical.reception.state.booked"]);
+  await page.setViewportSize({ width: 1440, height: 1000 });
   await page.goto(`/app/clients/${entry.client_id}`);
   const administration = page.getByTestId("patient-administration");
   await administration.getByLabel(ru["medical.branch"], { exact: true }).click();
@@ -78,6 +149,7 @@ test("personally hand code, activate, open exact PDF and revoke", async ({ page,
   await expect(patient.getByRole("heading", { name: entry.title })).toHaveCount(0);
   expect(await patient.evaluate(async url => (await fetch(url, { credentials: "include" })).status, file)).toBe(403);
   await patientContext.close();
+  await receptionContext.close();
 });
 
 test("issuance KK retains input on failure and clears denied data", async ({ page }, info) => {

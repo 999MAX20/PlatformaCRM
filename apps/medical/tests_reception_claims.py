@@ -107,3 +107,34 @@ class ReceptionClaimTests(TestCase):
         self.item.save()
         with self.assertRaises(InvalidTransition):
             self.claim()
+
+    def test_completed_visit_does_not_block_reception_or_notify_doctor_without_basis(self):
+        from .reception_notifications import notice_access
+        self.appointment.status = "completed"
+        self.appointment.save(update_fields=["status"])
+        item, _ = self.claim()
+        self.assertEqual(item.assignee_id, self.reception_member.pk)
+        self.assertFalse(item.notices.filter(recipient=self.doctor, revision=item.revision).exists())
+        with self.assertRaises(PermissionDenied):
+            notice_access(self.doctor, item)
+
+    def test_completed_visit_notification_requires_surviving_participation_and_role(self):
+        from .models import TreatmentParticipation
+        from .reception_notifications import notice_access
+        self.appointment.status = "completed"
+        self.appointment.save(update_fields=["status"])
+        now = timezone.now()
+        participation = TreatmentParticipation.objects.create(patient=self.patient, member=self.member,
+            branch=self.first, proposed_by=self.owner, state="active", proposed_at=now, accepted_at=now)
+        item, _ = self.claim()
+        self.assertEqual(notice_access(self.doctor, item), "doctor")
+        self.assignment.revoked_at = now
+        self.assignment.save(update_fields=["revoked_at"])
+        with self.assertRaises(PermissionDenied):
+            notice_access(self.doctor, item)
+        self.assignment.revoked_at = None
+        self.assignment.save(update_fields=["revoked_at"])
+        participation.state, participation.closed_at, participation.closed_by = "ended", now, self.doctor
+        participation.save()
+        with self.assertRaises(PermissionDenied):
+            notice_access(self.doctor, item)

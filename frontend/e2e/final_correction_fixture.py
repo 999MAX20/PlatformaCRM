@@ -5,7 +5,7 @@ from django.db import transaction
 
 
 @transaction.atomic
-def prepare(*, issuable=False):
+def prepare(*, issuable=False, follow_up=False):
     from completion_fixture import prepare_completion
     from apps.branches.models import BranchAccess
     from apps.businesses.models import BusinessMember, BusinessRole, RolePermission
@@ -15,7 +15,7 @@ def prepare(*, issuable=False):
     from apps.medical.document_rule_services import save_document_rules
     from apps.medical.document_services import save_primary_document_draft
     from apps.medical.document_review_services import transition_document_review
-    entry = prepare_completion()
+    entry = prepare_completion(follow_up=follow_up)
     encounter = MedicalEncounter.objects.select_related("patient", "primary_clinician__user", "business").get(appointment_id=entry["appointment_id"])
     actor = encounter.primary_clinician.user
     actor.full_name = "Synthetic correction clinician"

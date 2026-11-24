@@ -411,7 +411,7 @@ if len(sys.argv) > 1 and sys.argv[1] == "issuance-prepare":
     from apps.medical.models import MedicalEncounter, MedicalRoleAssignment
     from apps.businesses.models import RolePermission
     settings.MEDICAL_SYNTHETIC_SIGNING_ENABLED = True
-    entry = finalize_fixture(prepare(issuable=True))
+    entry = finalize_fixture(prepare(issuable=True, follow_up=len(sys.argv) > 2 and sys.argv[2] == "core"))
     encounter = MedicalEncounter.objects.select_related("business").get(appointment_id=entry["appointment_id"])
     role = MedicalRoleAssignment.objects.get(member=encounter.primary_clinician).business_role
     RolePermission.objects.create(business_role=role, resource="medical_documents", action="issue", scope="own")
@@ -641,7 +641,8 @@ if files_fixture and len(sys.argv) > 1 and sys.argv[1] == "reception-new-member"
     from apps.businesses.models import BusinessMember, BusinessRole, RolePermission
     from apps.branches.models import BranchAccess
     from apps.medical.models import MedicalRoleAssignment
-    appointment = Appointment.objects.get(pk=int(sys.argv[2]), business__slug="medical-role")
+    from django.db.models import Q
+    appointment = Appointment.objects.filter(Q(business__slug="medical-role") | Q(business__slug__startswith="completion-")).get(pk=int(sys.argv[2]))
     marker = uuid4().hex
     receptionist = get_user_model().objects.create_user(username=f"reception-{marker}",
         email=f"reception-{marker}@example.test", password=os.environ["E2E_PASSWORD"],
@@ -660,6 +661,8 @@ if files_fixture and len(sys.argv) > 1 and sys.argv[1] == "reception-new-member"
         for action in actions:
             RolePermission.objects.create(business_role=role, resource=resource, action=action,
                 scope="business", is_allowed=True)
+    if len(sys.argv) > 3 and sys.argv[3] == "issue":
+        RolePermission.objects.create(business_role=role, resource="medical_documents", action="issue", scope="business", is_allowed=True)
     print(json.dumps({"email": receptionist.email, "name": receptionist.full_name,
         "member_id": member.pk, "branch_id": appointment.branch_id}))
     sys.exit(0)

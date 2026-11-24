@@ -30,7 +30,7 @@ def notice_access(actor, item):
                 appointment_id=item.source_appointment_id)
             return "doctor"
         except PermissionDenied:
-            for identifier in TreatmentParticipation.objects.filter(business=item.business, patient=item.patient,
+            for identifier in TreatmentParticipation.objects.filter(patient__business=item.business, patient=item.patient,
                     member=item.referring_clinician, state="active").values_list("pk", flat=True):
                 try:
                     assert_treatment_medical_basis(actor=actor, business=item.business,

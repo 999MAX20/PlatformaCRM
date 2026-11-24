@@ -9,7 +9,7 @@ from django.utils import timezone
 
 
 @transaction.atomic
-def prepare_completion(*, actual=False):
+def prepare_completion(*, actual=False, follow_up=False):
     from apps.branches.models import Branch, BranchAccess
     from apps.businesses.models import Business, BusinessMember, BusinessCapability, BusinessRole, RolePermission
     from apps.clients.models import Client
@@ -56,6 +56,18 @@ def prepare_completion(*, actual=False):
     patient.save(update_fields=["demographics_encrypted"])
     service = Service.objects.create(business=business, name="Synthetic consultation")
     specialist = Resource.objects.create(business=business, name="Synthetic clinician", linked_user=doctor)
+    if follow_up:
+        from apps.branches.models import BranchService, SpecialistBranch, ScheduleDay
+        service.duration_minutes = 30
+        service.price_from = 100
+        service.save(update_fields=["duration_minutes", "price_from"])
+        BranchService.objects.create(business=business, branch=branch, service=service, duration_minutes=30, price_from=100)
+        staff_branch = SpecialistBranch.objects.create(business=business, branch=branch, resource=specialist)
+        staff_branch.services.add(service)
+        for weekday in range(7):
+            for target in (None, specialist):
+                ScheduleDay.objects.create(business=business, branch=branch, resource=target, weekday=weekday,
+                    intervals=[{"start": "08:00", "end": "20:00"}])
     start = timezone.now() + timedelta(days=1)
     appointment = Appointment.objects.create(business=business, branch=branch, client=client, service=service,
         resource=specialist, start_at=start, end_at=start + timedelta(hours=1))
