@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, ExternalLink } from "lucide-react";
-import { useId, useRef, useState } from "react";
+import { useCallback, useId, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { normalizeAppError } from "../../../api/appError";
 import { crmCardsApi } from "../../../api/crmCards";
@@ -43,6 +43,14 @@ export function AppointmentCardModal({ entity, onClose, onOpenEntity, onBack }: 
   const navigate = useNavigate();
   const id = useId();
   const [tab, setTab] = useState<Tab>(entity.initialTab && entity.initialTab in labels ? entity.initialTab as Tab : dental ? "clinical" : "overview");
+  const [clinicalUnavailable, setClinicalUnavailable] = useState(false);
+  const showAdministrativeOverview = useCallback(() => {
+    const focused = document.activeElement;
+    const restoreFocus = focused?.id === `${id}-clinical` || document.getElementById(`${id}-panel`)?.contains(focused);
+    setClinicalUnavailable(true);
+    setTab("overview");
+    if (restoreFocus) requestAnimationFrame(() => document.getElementById(`${id}-overview`)?.focus());
+  }, [id]);
   const [dirty, setDirty] = useState(false);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [panelPending, setPanelPending] = useState(false);
@@ -55,7 +63,7 @@ export function AppointmentCardModal({ entity, onClose, onOpenEntity, onBack }: 
   const data = concealed ? undefined : query.data;
   const appointment = data?.appointment;
   const canEdit = !!appointment && !appointment.is_archived && data?.available_action_details?.some(action => action.id === "add_note" && action.allowed) === true;
-  const primary: Tab[] = [...(dental ? ["clinical" as const] : []), ...(["overview", "timeline", "tasks"] as const).filter(value => value !== "tasks" || hasPermission(user, business?.id, "tasks", "view"))];
+  const primary: Tab[] = [...(dental && !clinicalUnavailable ? ["clinical" as const] : []), ...(["overview", "timeline", "tasks"] as const).filter(value => value !== "tasks" || hasPermission(user, business?.id, "tasks", "view"))];
   const secondary = (["files", "notes", "details", "messages"] as const).filter(value => !(dental && value === "details")).filter(value => value !== "messages" || hasPermission(user, business?.id, "conversations", "view"));
   async function attempt(action: () => void) {
     if (pending || confirming.current) return;
@@ -70,7 +78,7 @@ export function AppointmentCardModal({ entity, onClose, onOpenEntity, onBack }: 
     setDirty(false); action();
   }
   const changeTab = (next: Tab) => { if (next !== tab) void attempt(() => setTab(next)); };
-  const panel = data && appointment ? tab === "clinical" && dental ? <ClinicalAppointmentEntry businessId={appointment.business} appointmentId={appointment.id} embedded navigationRef={clinical} onDirtyChange={setDirty} />
+  const panel = data && appointment ? tab === "clinical" && dental && !clinicalUnavailable ? <ClinicalAppointmentEntry businessId={appointment.business} appointmentId={appointment.id} embedded navigationRef={clinical} onDirtyChange={setDirty} onInitialAccessDenied={showAdministrativeOverview} />
     : tab === "overview" ? <AppointmentCardOverview data={data} timeZone={zone} canEdit={canEdit && !query.isError} onDirtyChange={setDirty} onPendingChange={setPanelPending} onHistory={() => changeTab("timeline")} />
     : tab === "timeline" ? <EntityTimeline data={data} locale={language} timeZone={zone} />
     : tab === "tasks" ? <EntityTasksPanel data={data} entity={entity} />

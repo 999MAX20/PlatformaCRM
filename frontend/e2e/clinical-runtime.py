@@ -574,6 +574,24 @@ if len(sys.argv) > 1 and sys.argv[1] == "overview-demographics":
             business_id=patient.business_id, subject_id=patient.client_id, purpose="demographics")
         patient.save(update_fields=["demographics_encrypted"])
     sys.exit(0)
+if files_fixture and len(sys.argv) > 1 and sys.argv[1] == "ordinary-new-appointment":
+    from uuid import uuid4
+    from django.db import transaction
+    from apps.accounts.google_auth_signup import create_owner_account
+    from apps.services.models import Service
+    with transaction.atomic():
+        marker = uuid4().hex[:12]
+        owner, business = create_owner_account({"email": f"ordinary-{marker}@example.test",
+            "password": os.environ["E2E_PASSWORD"], "business_name": f"Synthetic ordinary {marker}",
+            "business_type": "beauty"})
+        client = Client.objects.create(business=business, full_name=f"Synthetic client {marker}")
+        service = Service.objects.create(business=business, name=f"Synthetic service {marker}", duration_minutes=30)
+        start = timezone.now() + timedelta(days=2)
+        appointment = Appointment.objects.create(business=business, client=client, service=service,
+            branch=business.branches.get(), start_at=start, end_at=start + timedelta(minutes=30))
+    print(json.dumps({"email": owner.email, "appointment_id": appointment.pk,
+        "date": start.date().isoformat(), "client_name": client.full_name}))
+    sys.exit(0)
 if files_fixture and len(sys.argv) > 1 and sys.argv[1] == "reception-new-appointment":
     from uuid import uuid4
     from django.db import transaction
@@ -614,7 +632,8 @@ if files_fixture and len(sys.argv) > 1 and sys.argv[1] == "reception-new-appoint
         appointment = Appointment.objects.create(business=business, client=client, service=services[0],
             resource=resource, branch=branch, start_at=start, end_at=start + timedelta(minutes=30))
     print(json.dumps({"appointment_id": appointment.pk, "client_id": client.pk,
-        "service_search": f"Reception {marker}", "alternative_service": services[1].name}))
+        "service_search": f"Reception {marker}", "alternative_service": services[1].name,
+        "branch_name": branch.name, "doctor_email": source.resource.linked_user.email, "timezone": business.timezone}))
     sys.exit(0)
 if files_fixture and len(sys.argv) > 1 and sys.argv[1] == "reception-new-member":
     from uuid import uuid4

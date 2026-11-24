@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { execFileSync } from "node:child_process";
 import { openClinicalWorkspace } from "./clinical-card-navigation";
+import { formatDateTime } from "../src/lib/format";
 import { requireIsolatedEnvironment } from "./isolated-environment.mjs";
 import { ru as t } from "../src/lib/i18n/ru";
 import { kk } from "../src/lib/i18n/kk";
@@ -8,7 +9,32 @@ import { en } from "../src/lib/i18n/en";
 
 requireIsolatedEnvironment();
 
-test("ordinary calendar form: fresh booking and mobile layout", async ({ page }, info) => {
+test("ordinary CRM appointment keeps administrative tabs without clinical requests", async ({ page }, info) => {
+  const output = execFileSync(process.env.E2E_PYTHON!, ["e2e/clinical-runtime.py", "ordinary-new-appointment"],
+    { env: process.env, windowsHide: true, encoding: "utf8" });
+  const fixture = JSON.parse(output.trim().split(/\r?\n/).at(-1)!);
+  await page.addInitScript(() => localStorage.setItem("ai_smb_language", "ru"));
+  await page.goto("/login");
+  await page.locator('input[name="email"]').fill(fixture.email);
+  await page.locator('input[name="password"]').fill(process.env.E2E_PASSWORD!);
+  await page.locator('form button[type="submit"]').click();
+  await expect(page).toHaveURL(/\/app\//);
+  const clinicalRequests: string[] = [];
+  page.on("request", request => { if (request.url().includes("/medical/encounters/appointment-context/")) clinicalRequests.push(request.url()); });
+  await page.goto(`/app/calendar?appointment=${fixture.appointment_id}&date=${fixture.date}&view=day`);
+  await page.getByRole("button", { name: t["calendar.openCard"], exact: true }).click();
+  await expect(page.getByRole("tab", { name: t["crmCard.overview"], exact: true })).toHaveAttribute("aria-selected", "true");
+  await expect(page.getByRole("tab", { name: t["medical.clinical.title"], exact: true })).toHaveCount(0);
+  await page.getByRole("tab", { name: t["crmCard.timeline"], exact: true }).click();
+  await expect(page.getByRole("tab", { name: t["crmCard.timeline"], exact: true })).toHaveAttribute("aria-selected", "true");
+  await page.getByRole("tab", { name: t["crmCard.overview"], exact: true }).click();
+  await expect(page.getByRole("dialog")).toContainText(fixture.client_name);
+  await expect(page.getByRole("tabpanel", { name: t["crmCard.overview"], exact: true })).toBeVisible();
+  expect(clinicalRequests).toEqual([]);
+  await page.screenshot({ path: info.outputPath("ordinary-crm-overview.png") });
+});
+
+test("ordinary calendar form: reception booking to doctor card and mobile layout", async ({ page, browser }, info) => {
   const runFixture = (...args: string[]) => JSON.parse(execFileSync(process.env.E2E_PYTHON!,
     ["e2e/clinical-runtime.py", ...args], { env: process.env, windowsHide: true, encoding: "utf8" }).trim().split(/\r?\n/).at(-1)!);
   const fixture = runFixture("reception-new-appointment");
@@ -58,6 +84,90 @@ test("ordinary calendar form: fresh booking and mobile layout", async ({ page },
   expect(appointment.branch).toBe(source.branch);
   expect(appointment.notes).toBe(note);
   await expect(form).toBeHidden();
+  const clinicalUrl = `${base}/api/medical/encounters/appointment-context/`;
+  const denied = await page.request.get(clinicalUrl, { headers,
+    params: { business_id: appointment.business, appointment_id: appointment.id } });
+  expect(denied.status()).toBe(403);
+  let releaseContext!: () => void;
+  const pendingContext = new Promise<void>(resolve => { releaseContext = resolve; });
+  await page.route("**/api/medical/encounters/appointment-context/**", async route => {
+    await pendingContext; await route.continue();
+  });
+  await page.goto(`/app/calendar?appointment=${appointment.id}&date=${appointment.start_at.slice(0, 10)}&view=day`);
+  await page.getByTestId("calendar-workspace-ready").waitFor();
+  await page.getByRole("tab", { name: t["medical.clinical.title"], exact: true }).focus();
+  releaseContext();
+  await expect(page.getByRole("tab", { name: t["crmCard.overview"], exact: true })).toHaveAttribute("aria-selected", "true");
+  await expect(page.getByRole("tab", { name: t["crmCard.overview"], exact: true })).toBeFocused();
+  await page.unroute("**/api/medical/encounters/appointment-context/**");
+  await expect(page.getByRole("tab", { name: t["medical.clinical.title"], exact: true })).toHaveCount(0);
+  await expect(page.getByTestId("clinical-workspace")).toHaveCount(0);
+  await page.screenshot({ path: info.outputPath("core-reception-overview-mobile.png") });
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.screenshot({ path: info.outputPath("core-reception-overview-desktop.png") });
+
+  const doctorContext = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
+  const doctor = await doctorContext.newPage();
+  try {
+    await doctor.addInitScript(() => localStorage.setItem("ai_smb_language", "ru"));
+    await doctor.goto("/login");
+    await doctor.locator('input[name="email"]').fill(fixture.doctor_email);
+    await doctor.locator('input[name="password"]').fill(process.env.E2E_PASSWORD!);
+    await doctor.locator('form button[type="submit"]').click();
+    await expect(doctor).toHaveURL(/\/app\//);
+    await doctor.route("**/api/medical/encounters/appointment-context/**", route => route.fulfill({ status: 503, json: { detail: "Synthetic unavailable" } }));
+    await doctor.goto(`/app/calendar?appointment=${appointment.id}&date=${appointment.start_at.slice(0, 10)}&view=day`);
+    await openClinicalWorkspace(doctor);
+    const workspace = doctor.getByTestId("clinical-workspace");
+    await expect(workspace.getByRole("alert")).toBeVisible();
+    await expect(doctor.getByRole("tab", { name: t["medical.clinical.title"], exact: true })).toHaveAttribute("aria-selected", "true");
+    await doctor.unroute("**/api/medical/encounters/appointment-context/**");
+    await workspace.getByRole("button", { name: t["common.retry"], exact: true }).click();
+    await workspace.getByLabel(t["medical.clinical.number"], { exact: true }).fill(`CORE-${appointment.id}`);
+    await workspace.getByRole("button", { name: t["medical.clinical.createRecord"], exact: true }).click();
+    await workspace.getByRole("button", { name: t["medical.clinical.start"], exact: true }).click();
+    const complaint = `Synthetic core clinical note ${crypto.randomUUID()}`;
+    await workspace.getByRole("textbox", { name: t["medical.clinical.complaints"], exact: true }).fill(complaint);
+    await workspace.getByRole("button", { name: t["medical.clinical.save"], exact: true }).click();
+    await expect(workspace.getByText(t["common.saved"], { exact: true })).toBeVisible();
+    await doctor.screenshot({ path: info.outputPath("core-doctor-calendar-desktop.png") });
+    await doctor.goto(`/app/clients?client=${fixture.client_id}&tab=timeline`);
+    const profile = doctor.getByRole("dialog", { name: t["common.client"], exact: true });
+    await profile.getByRole("tab", { name: t["medical.clinical.title"], exact: true }).click();
+    await profile.getByRole("combobox", { name: t["medical.branch"] }).click();
+    await doctor.getByRole("option", { name: fixture.branch_name, exact: true }).click();
+    const entry = doctor.getByTestId("client-clinical-entry");
+    await entry.getByRole("combobox", { name: t["medical.clientEntry.appointment"] }).click();
+    await doctor.getByRole("option", { name: formatDateTime(appointment.start_at, fixture.timezone, true, "ru-RU"), exact: true }).click();
+    await expect(workspace.getByRole("textbox", { name: t["medical.clinical.complaints"], exact: true })).toHaveValue(complaint);
+    await doctor.setViewportSize({ width: 390, height: 844 });
+    await workspace.getByRole("textbox", { name: t["medical.clinical.complaints"], exact: true }).scrollIntoViewIfNeeded();
+    await doctor.screenshot({ path: info.outputPath("core-doctor-client-mobile.png") });
+    expect(await doctor.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await page.reload();
+    await page.getByTestId("calendar-workspace-ready").waitFor();
+    await expect(page.getByRole("tab", { name: t["crmCard.overview"], exact: true })).toHaveAttribute("aria-selected", "true");
+    await expect(page.getByTestId("clinical-workspace")).toHaveCount(0);
+    await expect(page.locator("body")).not.toContainText(complaint);
+
+    await doctor.goto(`/app/calendar?appointment=${appointment.id}&date=${appointment.start_at.slice(0, 10)}&view=day`);
+    await openClinicalWorkspace(doctor);
+    const field = workspace.getByRole("textbox", { name: t["medical.clinical.complaints"], exact: true });
+    await expect(field).toHaveValue(complaint);
+    await field.fill(`${complaint} unsaved`);
+    await doctor.route("**/api/medical/encounters/*/draft/", route => route.fulfill({ status: 409, json: { detail: "Synthetic stale version" } }));
+    await workspace.getByRole("button", { name: t["medical.clinical.save"], exact: true }).click();
+    await expect(workspace).toContainText(t["medical.clinical.conflict"]);
+    await expect(field).toHaveValue(`${complaint} unsaved`);
+    await doctor.route("**/api/medical/encounters/appointment-context/**", route => route.fulfill({ status: 403, json: { detail: "Synthetic revoked read on reload" } }));
+    doctor.once("dialog", dialog => dialog.accept());
+    await workspace.locator("div.sticky").getByRole("button", { name: t["medical.clinical.reload"], exact: true }).click();
+    await expect(workspace).toContainText(t["medical.denied"]);
+    await expect(field).toHaveCount(0);
+    await expect(doctor.getByRole("tab", { name: t["medical.clinical.title"], exact: true })).toHaveAttribute("aria-selected", "true");
+  } finally {
+    await doctorContext.close();
+  }
 });
 
 for (const mode of ["book", "link", "recovery", "handover", "handover_kk", "handover_en"] as const) test(`follow-up request ${mode}: desktop/mobile, retained retry and return focus`, async ({ page, browser }, info) => {

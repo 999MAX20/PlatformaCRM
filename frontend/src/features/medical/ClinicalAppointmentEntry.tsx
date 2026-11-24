@@ -30,8 +30,8 @@ import { MedicalFilesWorkspace, type MedicalFilesState, type MedicalFilesNavigat
 
 export type ClinicalEntryHandle = { beforeLeave: () => Promise<boolean> };
 
-export function ClinicalAppointmentEntry({ businessId, appointmentId, embedded = false, navigationRef, onDirtyChange }: {
-  businessId: number; appointmentId: number; embedded?: boolean; navigationRef?: Ref<ClinicalEntryHandle>; onDirtyChange?: (dirty: boolean) => void;
+export function ClinicalAppointmentEntry({ businessId, appointmentId, embedded = false, navigationRef, onDirtyChange, onInitialAccessDenied }: {
+  businessId: number; appointmentId: number; embedded?: boolean; navigationRef?: Ref<ClinicalEntryHandle>; onDirtyChange?: (dirty: boolean) => void; onInitialAccessDenied?: () => void;
 }) {
   const { t } = useI18n();
   const { user } = useAuth();
@@ -68,6 +68,7 @@ export function ClinicalAppointmentEntry({ businessId, appointmentId, embedded =
   const onDocumentEditor = useCallback((value: boolean) => { documentEditor.current = value; }, []);
   const canEditDocument = useCallback(() => !draftControl.current?.isPending(), []);
   const [admitted, setAdmitted] = useState(false);
+  const admittedScope = useRef<string | null>(null);
   useUnsavedEntryWarning(dirty || fileState.dirty);
   useEffect(() => { onDirtyChange?.(dirty || fileState.dirty); }, [dirty, fileState.dirty, onDirtyChange]);
   const focusId = `clinical-open-${businessId}-${appointmentId}`;
@@ -75,11 +76,15 @@ export function ClinicalAppointmentEntry({ businessId, appointmentId, embedded =
     const controller = new AbortController();
     setLoading(true); setContext(null); setError(null); setDirty(false);
     medicalClinicalApi.appointmentContext({ business_id: businessId, appointment_id: appointmentId }, controller.signal)
-      .then(value => { if (!controller.signal.aborted) { setContext(value); setAdmitted(true); } })
-      .catch(cause => { if (!controller.signal.aborted) setError(cause); })
+      .then(value => { if (!controller.signal.aborted) { setContext(value); setAdmitted(true); admittedScope.current = `${businessId}:${appointmentId}`; } })
+      .catch(cause => {
+        if (controller.signal.aborted) return;
+        setError(cause);
+        if (axios.isAxiosError(cause) && cause.response?.status === 403 && admittedScope.current !== `${businessId}:${appointmentId}`) onInitialAccessDenied?.();
+      })
       .finally(() => { if (!controller.signal.aborted) setLoading(false); });
     return () => controller.abort();
-  }, [businessId, appointmentId, refresh, open]);
+  }, [businessId, appointmentId, refresh, open, onInitialAccessDenied]);
   const status = axios.isAxiosError(error) ? error.response?.status : undefined;
   function resolveLeave(allowed: boolean) {
     leaveRequest.current?.(allowed); leaveRequest.current = null;
