@@ -1,4 +1,6 @@
 export const clients: Record<string, string> = {
+  "clients.pageNoPayments": "Платежей пока нет",
+  "clients.pageOpenAppointment": "Открыть приём",
   "clients.editConflictTitle": "Карточка клиента изменилась",
   "clients.editConflictDescription": "Ваши изменения не сохранены, но остались в форме. Просмотрите актуальные значения. Продолжение сохранит ваш ввод и обновит остальные поля; затем проверьте форму и сохраните её.",
   "clients.editConflictReview": "Посмотреть актуальные значения",

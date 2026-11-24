@@ -1,4 +1,6 @@
 export const clients: Record<string, string> = {
+  "clients.pageNoPayments": "Әзірге төлемдер жоқ",
+  "clients.pageOpenAppointment": "Қабылдауды ашу",
   "clients.editConflictTitle": "Клиент карточкасы өзгерді",
   "clients.editConflictDescription": "Өзгерістеріңіз сақталмады, бірақ нысанда қалды. Соңғы мәндерді қарап шығыңыз. Жалғастырғанда енгізген өзгерістеріңіз сақталып, басқа өрістер жаңартылады. Содан кейін нысанды тексеріп, сақтаңыз.",
   "clients.editConflictReview": "Соңғы мәндерді қарау",

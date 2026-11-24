@@ -12,8 +12,8 @@ import { ClinicalAppointmentEntry, type ClinicalEntryHandle } from "./ClinicalAp
 import { ClinicalParticipationEntry } from "./ClinicalParticipationEntry";
 import { HeadDocumentsWorkspace } from "./documents/DocumentWorkspace";
 
-export function ClientClinicalEntry({ businessId, branchId, clientId, embedded = false, navigationRef, onDirtyChange }: {
-  businessId: number; branchId: number; clientId: number; embedded?: boolean; navigationRef?: Ref<ClinicalEntryHandle>; onDirtyChange?: (dirty: boolean) => void;
+export function ClientClinicalEntry({ businessId, branchId, clientId, embedded = false, navigationRef, onDirtyChange, initialTab }: {
+  initialTab?: "documents"; businessId: number; branchId: number; clientId: number; embedded?: boolean; navigationRef?: Ref<ClinicalEntryHandle>; onDirtyChange?: (dirty: boolean) => void;
 }) {
   const { t, language } = useI18n();
   const [data, setData] = useState<ClientClinicalAppointments | null>(null);
@@ -53,7 +53,7 @@ export function ClientClinicalEntry({ businessId, branchId, clientId, embedded =
       {data.next_before_id !== null ? <Button size="lg" variant="secondary" onClick={() => void navigate(() => setCursor(data.next_before_id!))}>{t("medical.clinical.older")}</Button> : null}
     </div>
     {data.results.some(item => String(item.id) === selected) ?
-      <ClinicalAppointmentEntry key={`${businessId}:${clientId}:${branchId}:${selected}`} businessId={businessId} appointmentId={Number(selected)} embedded={embedded} navigationRef={clinical} onDirtyChange={onDirtyChange} /> : null}
+      <ClinicalAppointmentEntry key={`${businessId}:${clientId}:${branchId}:${selected}`} businessId={businessId} appointmentId={Number(selected)} embedded={embedded} initialTab={initialTab} navigationRef={clinical} onDirtyChange={onDirtyChange} /> : null}
     {selected === "participation" && data.participation ? <ClinicalParticipationEntry key={`participation:${data.participation.id}`}
       businessId={businessId} patientId={data.participation.patient_id} participationId={data.participation.id}
       navigationRef={clinical} onDirtyChange={onDirtyChange} onDenied={setError} /> : null}

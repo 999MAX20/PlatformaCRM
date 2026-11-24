@@ -30,15 +30,15 @@ import { MedicalFilesWorkspace, type MedicalFilesState, type MedicalFilesNavigat
 
 export type ClinicalEntryHandle = { beforeLeave: () => Promise<boolean> };
 
-export function ClinicalAppointmentEntry({ businessId, appointmentId, embedded = false, navigationRef, onDirtyChange, onInitialAccessDenied }: {
-  businessId: number; appointmentId: number; embedded?: boolean; navigationRef?: Ref<ClinicalEntryHandle>; onDirtyChange?: (dirty: boolean) => void; onInitialAccessDenied?: () => void;
+export function ClinicalAppointmentEntry({ businessId, appointmentId, embedded = false, navigationRef, onDirtyChange, onInitialAccessDenied, initialTab }: {
+  initialTab?: ClinicalTab; businessId: number; appointmentId: number; embedded?: boolean; navigationRef?: Ref<ClinicalEntryHandle>; onDirtyChange?: (dirty: boolean) => void; onInitialAccessDenied?: () => void;
 }) {
   const { t } = useI18n();
   const { user } = useAuth();
   const cache = useQueryClient();
   const [completed, setCompleted] = useState(false);
   const memory = useMemo(() => clinicalCardMemory(`${businessId}:${user?.id}`, appointmentId), [businessId, user?.id, appointmentId]);
-  const [tab, setTabState] = useState<ClinicalTab>(memory.tab);
+  const [tab, setTabState] = useState<ClinicalTab>(initialTab ?? memory.tab);
   const setTab = (next: ClinicalTab) => { memory.tab = next; setTabState(next); };
   const historyMemory: HistoryMemory = useRef(memory.history);
   const [context, setContext] = useState<AppointmentClinicalContext | null>(null);

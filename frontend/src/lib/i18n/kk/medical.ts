@@ -1,4 +1,5 @@
 export const medical = {
+  "medical.pageAdministration": "Пациент деректері және қолжетімділік",
   "medical.issue.archive": "ZIP жинағын жүктеп алу",
   "medical.issue.archiveUnavailable": "Мұрағатты жинау мүмкін болмады. Қайталап көріңіз немесе құжаттарды жеке жүктеп алыңыз.",
   "medical.assistance.useCompletion": "Ұсыныс үшін пайдалану",

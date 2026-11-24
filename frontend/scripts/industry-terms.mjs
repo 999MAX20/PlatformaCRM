@@ -6,6 +6,7 @@ const medicalModuleKeys = new Set(["medical.fullName", "medical.create", "medica
   "medical.fields.clinicAddress", "medical.fields.clinicPhone", "medical.fields.doctorName",
   "medical.credentials.clinic", "medical.credentials.license", "medical.credentials.specialty",
   "medical.credentials.position", "medical.credentials.qualification", "medical.credentials.internal"]);
+medicalModuleKeys.add("medical.pageAdministration");
 medicalModuleKeys.add("medical.roles.kind.doctor");
 medicalModuleKeys.add("medical.roles.resource.medical_patients");
 medicalModuleKeys.add("medical.templates.draftStatus");

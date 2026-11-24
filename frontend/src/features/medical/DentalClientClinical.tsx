@@ -11,8 +11,8 @@ import { ClientClinicalEntry } from "./ClientClinicalEntry";
 import type { ClinicalEntryHandle } from "./ClinicalAppointmentEntry";
 import { PatientParticipationEntry } from "./ParticipationEntry";
 
-export function DentalClientClinical({ businessId, clientId, userId, navigationRef, onDirtyChange }: {
-  businessId: number; clientId: number; userId: number; navigationRef: Ref<ClinicalEntryHandle>; onDirtyChange: (dirty: boolean) => void;
+export function DentalClientClinical({ businessId, clientId, userId, navigationRef, onDirtyChange, initialTab }: {
+  initialTab?: "documents"; businessId: number; clientId: number; userId: number; navigationRef: Ref<ClinicalEntryHandle>; onDirtyChange: (dirty: boolean) => void;
 }) {
   const { t } = useI18n();
   const [branch, setBranch] = useState("");
@@ -36,7 +36,7 @@ export function DentalClientClinical({ businessId, clientId, userId, navigationR
       <DocumentIssuanceEntry key={`issue:${selected}`} businessId={businessId} clientId={clientId} branchId={Number(selected)} beforeOpen={() => clinical.current?.beforeLeave() ?? Promise.resolve(true)} onOpenChange={onActualOpen} />
       <ActualVisitEntry key={`actual:${selected}`} scope={{ business_id: businessId, client_id: clientId, branch_id: Number(selected) }}
         beforeOpen={() => clinical.current?.beforeLeave() ?? Promise.resolve(true)} onOpenChange={onActualOpen} />
-      <ClientClinicalEntry key={selected} businessId={businessId} clientId={clientId} branchId={Number(selected)} embedded navigationRef={clinical} onDirtyChange={onDirtyChange} />
+      <ClientClinicalEntry key={selected} businessId={businessId} clientId={clientId} branchId={Number(selected)} embedded initialTab={initialTab} navigationRef={clinical} onDirtyChange={onDirtyChange} />
       <div className="border-t border-platforma-border pt-4">
         <PatientParticipationEntry key={`team:${selected}`} businessId={businessId} clientId={clientId} branchId={Number(selected)} />
       </div>

@@ -1,4 +1,5 @@
 export const medical = {
+  "medical.pageAdministration": "Данные пациента и доступ",
   "medical.issue.archive": "Скачать комплект ZIP",
   "medical.issue.archiveUnavailable": "Не удалось собрать архив. Попробуйте ещё раз или скачайте документы по отдельности.",
   "medical.assistance.useCompletion": "Использовать для подсказки",

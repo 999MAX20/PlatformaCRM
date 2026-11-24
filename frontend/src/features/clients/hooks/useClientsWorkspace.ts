@@ -1,5 +1,5 @@
 import { useCrmFilters, crmFilterParams } from "../../../components/crm/useCrmFilters";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useNavigate, useSearchParams } from "react-router";
 
@@ -59,9 +59,9 @@ export function useClientsWorkspace({
   const setQuickFilter = (quick: ClientQuickFilter) => updateFilter({ quick });
   const debouncedSearch = useDebouncedValue(search, 350);
   const filterParams = crmFilterParams("clients", { ...filterState, search: debouncedSearch });
-  const [ordering, setOrdering] = useState("-created_at");
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(DEFAULT_CLIENTS_PAGE_SIZE);
+  const [ordering, setOrdering] = useState(searchParams.get("ordering") || "-created_at");
+  const [page, setPage] = useState(Math.max(1, Number(searchParams.get("page")) || 1));
+  const [pageSize, setPageSize] = useState([20, 50, 100].includes(Number(searchParams.get("page_size"))) ? Number(searchParams.get("page_size")) : DEFAULT_CLIENTS_PAGE_SIZE);
   const [visibleClientColumns, setVisibleClientColumns] = useState<
     Set<ClientTableColumn>
   >(() => {
@@ -164,12 +164,16 @@ export function useClientsWorkspace({
     setCreateOpen(true);
   }, []);
 
+  const returnParams = new URLSearchParams(searchParams);
+  returnParams.delete("client"); returnParams.delete("tab");
+  returnParams.set("page", String(page)); returnParams.set("page_size", String(pageSize)); returnParams.set("ordering", ordering);
+  const clientReturnTo = `/app/clients?${returnParams}`;
   const openClientCard = useCallback(
     (clientId: number, initialTab?: CrmCardTab) => {
       setSelectedClientId(clientId);
-      setDrawerEntity({ type: "client", id: clientId, initialTab });
+      navigate(`/app/clients/${clientId}${initialTab ? `?tab=${initialTab}` : ""}`, { state: { clientReturnTo } });
     },
-    [],
+    [navigate, clientReturnTo],
   );
 
   const closeClientCard = useCallback(() => {
@@ -184,8 +188,8 @@ export function useClientsWorkspace({
 
   const selectClient = useCallback((clientId: number) => {
     setSelectedClientId(clientId);
-    setDrawerEntity({ type: "client", id: clientId });
-  }, []);
+    navigate(`/app/clients/${clientId}`, { state: { clientReturnTo } });
+  }, [navigate, clientReturnTo]);
 
   const toggleClientColumn = useCallback((column: ClientTableColumn) => {
     setVisibleClientColumns((current) => {
@@ -235,14 +239,18 @@ export function useClientsWorkspace({
     }
   }, [searchParams]);
 
+  const previousFilters = useRef(JSON.stringify([filterParams, ordering]));
   useEffect(() => {
-    setPage(1);
+    const next = JSON.stringify([filterParams, ordering]);
+    if (previousFilters.current !== next) setPage(1);
+    previousFilters.current = next;
   }, [JSON.stringify(filterParams), ordering]);
 
   useEffect(() => {
+    if (!filteredClients.isSuccess || filteredClients.isPlaceholderData) return;
     const safePage = Math.min(page, totalPages);
     if (safePage !== page) setPage(safePage);
-  }, [page, totalPages]);
+  }, [page, totalPages, filteredClients.isSuccess, filteredClients.isPlaceholderData]);
 
   const tagList = unwrapList<Tag>(tagsQuery.data);
   const taggedObjectList = unwrapList<TaggedObject>(taggedObjects.data);

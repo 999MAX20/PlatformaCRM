@@ -2,56 +2,27 @@ import { useActiveBusiness } from "../../hooks/useBusiness";
 import { useAuth } from "../auth/AuthProvider";
 import { hasPermission } from "../../lib/permissions";
 import { useQuery } from "@tanstack/react-query";
-import { Phone } from "lucide-react";
-import { useMemo } from "react";
-import { Link, useNavigate, useParams } from "react-router";
-import { EntityCustomFieldsPanel } from "../../components/crm/drawers/EntityCustomFieldsPanel";
+import { useMemo, useState } from "react";
+import { useNavigate, useParams } from "react-router";
+import { ClientReferenceView } from "./components/ClientReferenceView";
 
 import { appointmentsApi } from "../../api/appointments";
-import { getApiErrorMessage } from "../../api/client";
+import { normalizeAppError } from "../../api/appError";
 import { crmCardsApi } from "../../api/crmCards";
 import { inboxApi } from "../../api/inbox";
 import { tasksApi } from "../../api/tasks";
 import { ClientForm } from "../../components/forms/ClientForm";
-import {
-  CrmActionBar,
-  EntityWorkspaceEmptyState,
-  EntityWorkspaceErrorState,
-  EntityWorkspaceAside,
-  EntityWorkspaceAvatar,
-  EntityWorkspaceBody,
-  EntityWorkspaceHeader,
-  EntityWorkspaceLoadingState,
-  EntityWorkspaceMain,
-  EntityWorkspaceMetrics,
-  EntityWorkspaceRoot,
-} from "../../components/crm";
+import { EntityWorkspaceEmptyState, EntityWorkspaceErrorState, EntityWorkspaceLoadingState } from "../../components/crm";
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
 import { Modal } from "../../components/ui/Modal";
 import { ErrorState } from "../../components/ui/StateViews";
+import { dateInTimeZone } from "../../lib/format";
 import { useI18n } from "../../lib/i18n";
 import { useClientWorkspaceActions } from "./hooks/useClientWorkspaceActions";
+import { useUnsavedEntryWarning } from "../auth/useUnsavedEntryWarning";
 import { useRestoreClient } from "./hooks/useRestoreClient";
-import { PaymentsButton } from "../payments/PaymentsButton";
-import { PatientAdministrationPanel } from "../medical/PatientAdministrationPanel";
-import {
-  ActionPanel,
-  AppointmentsList,
-  ClientContactPanel,
-  ClientWorkspaceMetric,
-  ClientWorkspaceSection,
-  ConversationsList,
-  TasksList,
-  TimelineList,
-  clientWorkspaceIcons,
-} from "./components/ClientWorkspaceSections";
-
 const RELATED_PAGE_SIZE = 8;
-const supportedClientActionIds = new Set([
-  "create_appointment",
-  "create_task",
-]);
 
 function asNumericId(value: string | undefined): number | null {
   const id = Number(value);
@@ -67,6 +38,9 @@ export function ClientWorkspacePage() {
   const clientId = asNumericId(routeId);
   const actions = useClientWorkspaceActions(clientId);
   const restoreClient = useRestoreClient();
+  const [editState, setEditState] = useState({ dirty: false, pending: false });
+  useUnsavedEntryWarning(editState.dirty || editState.pending);
+  const closeEdit = () => { if (!editState.pending && (!editState.dirty || window.confirm(t("medical.clinical.discard")))) actions.setEditOpen(false); };
 
   const cardQuery = useQuery({
     queryKey: ["crm-card", "client", clientId, business?.id, user?.id],
@@ -82,6 +56,19 @@ export function ClientWorkspacePage() {
         page_size: RELATED_PAGE_SIZE,
       }),
     enabled: Boolean(clientId && business && hasPermission(user, business.id, "appointments", "view")),
+  });
+  const nextAppointmentQuery = useQuery({
+    queryKey: ["appointments", "client-next", clientId, business?.id, user?.id],
+    enabled: Boolean(clientId && business && hasPermission(user, business.id, "appointments", "view")),
+    queryFn: async () => {
+      const now = Date.now();
+      for (let page = 1; ; page += 1) {
+        const result = await appointmentsApi.workspace({ business: business!.id, client: clientId!, workflow: "planned",
+          start_from: dateInTimeZone(new Date(now - 86400000).toISOString(), business!.timezone), ordering: "start_at", page, page_size: 100 });
+        const next = result.results.find(item => Date.parse(item.end_at) >= now);
+        if (next || !result.next) return next ?? null;
+      }
+    },
   });
   const tasksQuery = useQuery({
     queryKey: ["tasks", "client-workspace", clientId, business?.id, user?.id],
@@ -102,12 +89,13 @@ export function ClientWorkspacePage() {
 
   const pageError =
     cardQuery.error ||
-    appointmentsQuery.error ||
+    appointmentsQuery.error || nextAppointmentQuery.error ||
     tasksQuery.error ||
     conversationsQuery.error;
   const isLoading =
     cardQuery.isLoading ||
     appointmentsQuery.isLoading ||
+    nextAppointmentQuery.isLoading ||
     tasksQuery.isLoading ||
     conversationsQuery.isLoading;
   const card = cardQuery.data;
@@ -130,9 +118,9 @@ export function ClientWorkspacePage() {
   if (!clientId)
     return <EntityWorkspaceErrorState message={t("clients.notFoundTitle")} />;
   if (isLoading) return <EntityWorkspaceLoadingState />;
-  if (pageError)
+  if (pageError && (!cardQuery.data || ["authentication", "permission", "not_found"].includes(normalizeAppError(pageError).category)))
     return (
-      <EntityWorkspaceErrorState message={getApiErrorMessage(pageError)} />
+      <ErrorState error={pageError} action={<Button variant="secondary" onClick={() => { void cardQuery.refetch(); void appointmentsQuery.refetch(); if (nextAppointmentQuery.isEnabled) void nextAppointmentQuery.refetch(); if (tasksQuery.isEnabled) void tasksQuery.refetch(); if (conversationsQuery.isEnabled) void conversationsQuery.refetch(); }}>{t("common.retry")}</Button>} />
     );
   if (!client) {
     return (
@@ -143,197 +131,36 @@ export function ClientWorkspacePage() {
     );
   }
 
-  const counts = card?.meta?.related_counts;
   const canEdit = !client.is_archived && card.available_action_details?.some(action => action.id === "add_note" && action.allowed) === true;
   const canArchive = hasPermission(user, client.business, "clients", "delete");
-  const executableActions = (card.available_action_details || []).filter(
-    (action) => !client.is_archived && action.allowed && supportedClientActionIds.has(action.id),
-  );
 
   return (
     <>
-      <EntityWorkspaceRoot>
-        <EntityWorkspaceHeader
-          backLabel={t("common.back")}
-          onBack={() => navigate("/app/clients")}
-          avatar={
-            <EntityWorkspaceAvatar>
-              {client.full_name.slice(0, 2).toUpperCase()}
-            </EntityWorkspaceAvatar>
-          }
-          title={client.full_name}
-          subtitle={client.phone || client.email || t("clients.noContacts")}
-          actions={
-            <>
-              <PaymentsButton client={client} />
-              {canEdit && <Button
-                data-testid="client-edit-action"
-                type="button"
-                variant="secondary"
-                onClick={() => actions.setEditOpen(true)}
-                disabled={actions.saveClientMutation.isPending}
-              >
-                {t("clients.edit")}
-              </Button>}
-              {canEdit && <Button
-                type="button"
-                variant="secondary"
-                onClick={() => actions.setTagOpen(true)}
-                disabled={actions.addTagMutation.isPending}
-              >
-                {t("clients.addTag")}
-              </Button>}
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={() => navigate("/app/clients")}
-              >
-                {t("nav.clients")}
-              </Button>
-              <Button
-                type="button"
-                disabled={!client.phone}
-                onClick={() =>
-                  client.phone &&
-                  window.open(`tel:${client.phone.replace(/\D/g, "")}`, "_self")
-                }
-              >
-                <Phone size={16} />
-                {t("clients.call")}
-              </Button>
-              {canArchive && (client.is_archived ? <Button
-                type="button"
-                variant="secondary"
-                isLoading={restoreClient.isPending}
-                onClick={() => void restoreClient.restore(client)}
-              >{t("clients.restoreAction")}</Button> : <Button
-                type="button"
-                variant="warning"
-                isLoading={actions.archiveMutation.isPending}
-                onClick={() => void actions.requestArchiveClient(client)}
-              >
-                {t("clients.archiveAction")}
-              </Button>)}
-            </>
-          }
-        />
-
-        <EntityWorkspaceMetrics>
-          <ClientWorkspaceMetric
-            label={t("clients.metricBookings")}
-            value={counts?.appointments ?? related.appointments.length}
-          />
-          <ClientWorkspaceMetric
-            label={t("clients.metricDialogs")}
-            value={counts?.conversations ?? related.conversations.length}
-          />
-          <ClientWorkspaceMetric
-            label={t("clients.activeTasks")}
-            value={counts?.tasks ?? related.tasks.length}
-          />
-        </EntityWorkspaceMetrics>
-
-        <EntityWorkspaceBody>
-          <EntityWorkspaceAside>
-            <ClientWorkspaceSection
-              title={t("clients.contacts")}
-              icon={clientWorkspaceIcons.contacts}
-            >
-              <ClientContactPanel client={client} />
-            </ClientWorkspaceSection>
-            <ClientWorkspaceSection
-              title={t("clients.tagsAndNotes")}
-              icon={clientWorkspaceIcons.tags}
-            >
-              <div className="space-y-3">
-                <div className="flex flex-wrap gap-2">
-                  {card.tags.length ? (
-                    card.tags.map((tag) => (
-                      <span
-                        key={tag.id}
-                        className="rounded-full bg-brand-50 px-2.5 py-1 text-xs font-bold text-brand-700"
-                      >
-                        {tag.tag_name || t("clients.tag")}
-                      </span>
-                    ))
-                  ) : (
-                    <span className="text-sm font-semibold text-platforma-faint">
-                      {t("clients.noTagsYet")}
-                    </span>
-                  )}
-                </div>
-                {client.notes ? (
-                  <p className="rounded-control bg-surface-muted p-3 text-sm font-medium leading-6 text-platforma-subtle">
-                    {client.notes}
-                  </p>
-                ) : null}
-              </div>
-            </ClientWorkspaceSection>
-            <ClientWorkspaceSection
-              title={t("clients.quickActions")}
-              icon={clientWorkspaceIcons.actions}
-            >
-              {executableActions.length ? (
-                <CrmActionBar
-                  actions={executableActions}
-                  onExecute={(action) => {
-                    if (action.id === "create_appointment")
-                      navigate(`/app/appointments?create=1&client=${client.id}`);
-                    if (action.id === "create_task")
-                      navigate(`/app/tasks?create=1&client=${client.id}`);
-                  }}
-                />
-              ) : (
-                <ActionPanel actions={executableActions} />
-              )}
-            </ClientWorkspaceSection>
-          </EntityWorkspaceAside>
-
-          <EntityWorkspaceMain>
-            {!client.is_archived && user?.capabilities?.[String(business?.id)]?.modules?.medical_records === true && business ?
-              <PatientAdministrationPanel key={`${business.id}:${client.id}:${user.id}`} businessId={Number(business.id)} clientId={Number(client.id)} clientName={client.full_name} userId={Number(user.id)} /> : null}
-            {card?.custom_fields.length ? <div className="lg:col-span-2"><EntityCustomFieldsPanel data={card} entity={{ type: "client", id: client.id }} readOnly={!canEdit} /></div> : null}
-            <ClientWorkspaceSection
-              title={t("nav.tasks")}
-              icon={clientWorkspaceIcons.tasks}
-            >
-              <TasksList tasks={related.tasks} />
-            </ClientWorkspaceSection>
-            <ClientWorkspaceSection
-              title={t("appointments.title")}
-              icon={clientWorkspaceIcons.appointments}
-            >
-              <AppointmentsList appointments={related.appointments} />
-              {hasPermission(user, business?.id, "appointments", "view") ? <Link className="platforma-focus-ring inline-flex rounded py-2 text-brand-700" to={`/app/appointments?view=plans&client=${client.id}`}>{t("plans.title")}</Link> : null}
-                {counts && counts.appointments > related.appointments.length ? <Link className="platforma-focus-ring text-brand-700" to={`/app/appointments?client=${client.id}`}>{t("appointments.title")} ({counts.appointments})</Link> : null}
-            </ClientWorkspaceSection>
-            <ClientWorkspaceSection
-              title={t("crmCard.messages")}
-              icon={clientWorkspaceIcons.conversations}
-              className="lg:col-span-2"
-            >
-              <ConversationsList conversations={related.conversations} />
-            </ClientWorkspaceSection>
-            <ClientWorkspaceSection
-              title={t("crmCard.timeline")}
-              icon={clientWorkspaceIcons.timeline}
-              className="lg:col-span-2"
-            >
-              <TimelineList cardTimeline={card.timeline} />
-            </ClientWorkspaceSection>
-          </EntityWorkspaceMain>
-        </EntityWorkspaceBody>
-      </EntityWorkspaceRoot>
+      {pageError && <ErrorState error={pageError} action={<Button variant="secondary" onClick={() => { void cardQuery.refetch(); void appointmentsQuery.refetch(); if (nextAppointmentQuery.isEnabled) void nextAppointmentQuery.refetch(); if (tasksQuery.isEnabled) void tasksQuery.refetch(); if (conversationsQuery.isEnabled) void conversationsQuery.refetch(); }}>{t("common.retry")}</Button>} />}
+      <ClientReferenceView key={`${business?.id}:${client.id}:${user?.id}`}
+        editState={editState} client={client} card={{ ...card, tasks: related.tasks, conversations: related.conversations }}
+        appointments={related.appointments} upcoming={nextAppointmentQuery.error ? undefined : nextAppointmentQuery.data ?? undefined} timeZone={business?.timezone || "Asia/Almaty"}
+        userId={Number(user?.id)} medical={!client.is_archived && user?.capabilities?.[String(business?.id)]?.modules?.medical_records === true}
+        canEdit={canEdit} canBook={!client.is_archived && hasPermission(user, business?.id, "appointments", "create")}
+        onEdit={() => actions.setEditOpen(true)} onTag={() => actions.setTagOpen(true)}
+        extraActions={<>
+          {hasPermission(user, business?.id, "tasks", "create") && <Button variant="secondary" onClick={() => navigate(`/app/tasks?create=1&client=${client.id}`)}>{t("taskWorkspace.create")}</Button>}
+          {canArchive && (client.is_archived
+            ? <Button variant="secondary" isLoading={restoreClient.isPending} onClick={() => void restoreClient.restore(client)}>{t("clients.restoreAction")}</Button>
+            : <Button variant="warning" isLoading={actions.archiveMutation.isPending} onClick={() => void actions.requestArchiveClient(client)}>{t("clients.archiveAction")}</Button>)}
+        </>}
+      />
 
       <Modal
         title={t("clients.editTitle")}
         open={actions.editOpen && canEdit}
-        onClose={() => actions.setEditOpen(false)}
+        onClose={closeEdit}
       >
         {actions.business?.id ? (
           <ClientForm
             businessId={actions.business.id}
             initial={client}
+            onStateChange={setEditState}
             onSubmit={(payload) =>
               actions.saveClientMutation.mutateAsync(payload)
             }
