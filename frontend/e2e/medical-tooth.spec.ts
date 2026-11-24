@@ -10,7 +10,7 @@ requireIsolatedEnvironment();
 for (const [language, dictionary] of Object.entries({ ru, kk, en })) {
   for (const mobile of [false, true]) {
     test(`tooth chart ${language} ${mobile ? "mobile" : "desktop"}`, async ({ page }, info) => {
-      test.setTimeout(90_000);
+      test.setTimeout(120_000);
       const fixtureOutput = execFileSync(process.env.E2E_PYTHON!, ["e2e/clinical-runtime.py", "files-new-appointment"],
         { env: process.env, windowsHide: true, encoding: "utf8" });
       const id = JSON.parse(fixtureOutput.trim().split(/\r?\n/).at(-1)!).appointment_id;
@@ -184,6 +184,30 @@ for (const [language, dictionary] of Object.entries({ ru, kk, en })) {
       if (language === "en" && mobile) expect(positions.find((row: { surface: string }) => row.surface === "constructor"))
         .toMatchObject({ revision: 2, observation: "Synthetic surface constructor revision 2" });
       expect(positions.find((row: { surface: string }) => !row.surface)).toMatchObject({ revision: language === "ru" && mobile ? 4 : 3 });
+      if (language === "ru" || language === "kk") {
+        for (const status of ["not_examined", "no_findings", "observation", "absent"] as const) {
+          await chart.locator('[data-focus-return-id="tooth-12"]').click();
+          await inspector.getByRole("combobox", { name: new RegExp(`^${t("medical.tooth.status")} `) }).click();
+          await page.getByRole("option", { name: t(`medical.tooth.status.${status}`), exact: true }).click();
+          if (status === "observation") await observation.fill(`Synthetic state observation ${id}`);
+          if (status === "absent") {
+            await page.keyboard.press("Escape");
+            await expect(unsaved).toBeVisible();
+            await unsaved.getByRole("button", { name: t("medical.clinical.continueEditing"), exact: true }).click();
+            await expect(inspector.getByRole("combobox", { name: new RegExp(`^${t("medical.tooth.status")} `) })).toContainText(t("medical.tooth.status.absent"));
+            await page.screenshot({ path: info.outputPath("state-editor.png") });
+          }
+          await inspector.getByRole("button", { name: t("medical.tooth.save"), exact: true }).click();
+          await expect(inspector).not.toBeVisible();
+          await expect(chart.locator('[data-focus-return-id="tooth-12"]')).toHaveAccessibleName(`${t("medical.tooth.tooth")} 12: ${t(`medical.tooth.status.${status}`)}`);
+        }
+        await chart.locator('[data-focus-return-id="tooth-12"]').click();
+        await expect(inspector.getByTestId("tooth-version")).toContainText(t("medical.tooth.status.absent"));
+        await inspector.locator('button[aria-pressed]').last().click();
+        await expect(inspector.getByTestId("tooth-version")).toContainText(t("medical.tooth.status.not_examined"));
+        await page.keyboard.press("Escape");
+        await page.screenshot({ path: info.outputPath("states-chart.png") });
+      }
       await chart.getByLabel(t("medical.tooth.asOf"), { exact: true }).fill("2000-01-01T12:00");
       await chart.getByRole("button", { name: t("medical.tooth.show"), exact: true }).click();
       await expect(chart.getByRole("button", { name: `${t("medical.tooth.tooth")} 11: ${t("medical.tooth.empty")}`, exact: true })).toBeVisible();
@@ -249,6 +273,24 @@ for (const [language, dictionary] of Object.entries({ ru, kk, en })) {
         } finally {
           execFileSync(process.env.E2E_PYTHON!, ["e2e/clinical-runtime.py", "restore", String(id)], { env: process.env, windowsHide: true, stdio: "pipe" });
         }
+      }
+      if (language === "ru") {
+        const nextOutput = execFileSync(process.env.E2E_PYTHON!, ["e2e/clinical-runtime.py", "files-new-appointment", String(id)],
+          { env: process.env, windowsHide: true, encoding: "utf8" });
+        const nextId = JSON.parse(nextOutput.trim().split(/\r?\n/).at(-1)!).appointment_id;
+        const next = await (await page.request.get(`${api}/api/medical/encounters/appointment-context/?business_id=1&appointment_id=${nextId}`, { headers })).json();
+        expect(next.patient.id).toBe(scope.patient_id);
+        const nextEncounter = await page.request.post(`${api}/api/medical/encounters/`, { headers: { ...headers, "Idempotency-Key": `tooth-next-${nextId}` },
+          data: { ...scope, appointment_id: nextId, record_id: (await record.json()).id, expected_patient_revision: next.patient.revision,
+            expected_appointment_updated_at: next.appointment.updated_at } });
+        expect(nextEncounter.status()).toBe(201);
+        await page.goto(`/app/calendar?appointment=${nextId}&date=${next.appointment.start_at.slice(0, 10)}`);
+        await openClinicalWorkspace(page);
+        await workspace.getByRole("tab", { name: t("medical.tooth.title"), exact: true }).click();
+        await expect(chart.locator('[data-focus-return-id="tooth-12"]')).toHaveAccessibleName(`${t("medical.tooth.tooth")} 12: ${t("medical.tooth.status.absent")}`);
+        await chart.locator('[data-focus-return-id="tooth-12"]').click();
+        await expect(inspector.getByTestId("tooth-version")).toContainText(t("medical.tooth.status.absent"));
+        await page.screenshot({ path: info.outputPath("state-next-visit.png") });
       }
     });
   }

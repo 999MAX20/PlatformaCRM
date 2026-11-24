@@ -4,7 +4,7 @@ import { historyScopeKey } from "./clinicalHistoryNavigation";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import axios from "axios";
 import type { AppointmentClinicalContext, ClinicalReadScope } from "../../api/medicalClinical";
-import { medicalToothApi, type ToothObservation, type ToothHistory, type ToothSnapshot } from "../../api/medicalTooth";
+import { medicalToothApi, toothStatuses, type ToothObservation, type ToothHistory, type ToothSnapshot } from "../../api/medicalTooth";
 import { getApiErrorMessage } from "../../api/client";
 import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
@@ -20,6 +20,7 @@ import { ToothPlanSteps } from "./ToothPlanSteps";
 import type { ClinicalDraftControl } from "./ClinicalDraftForm";
 
 type Denied = (cause: unknown) => void;
+const stateMarks = { not_examined: "?", no_findings: "✓", observation: "•", absent: "−" } as const;
 function denied(cause: unknown) { return axios.isAxiosError(cause) && [401, 403].includes(cause.response?.status ?? 0); }
 
 export function ToothChart({ context, onDenied, onFiles }: { context: AppointmentClinicalContext; onDenied: Denied; onFiles?: (tooth: number) => void }) {
@@ -132,17 +133,22 @@ function ChartData({ scope, context, asOf, onDenied, navigation, onNavigation, o
             {mode === "mixed" ? <p className="text-xs text-platforma-subtle">{t(primary ? "medical.tooth.primary" : "medical.tooth.permanent")}</p> : null}
             <div className="flex overflow-x-auto pb-2">{numbers.map(tooth => {
               const observed = rows.some(row => row.tooth === tooth);
+              const status = rows.find(row => row.tooth === tooth && !row.surface)?.tooth_status;
+              const label = status ? t(`medical.tooth.status.${status}`) : t(observed ? "medical.tooth.observed" : "medical.tooth.empty");
               return <button type="button" key={tooth} className={`platforma-focus-ring flex min-h-11 min-w-11 shrink-0 cursor-pointer flex-col items-center rounded-control px-0.5 py-2 transition-colors hover:bg-surface-hover ${observed ? "bg-brand-50 text-brand-700" : "text-platforma-subtle"}`}
-                aria-label={`${t("medical.tooth.tooth")} ${tooth}: ${t(observed ? "medical.tooth.observed" : "medical.tooth.empty")}`}
+                aria-label={`${t("medical.tooth.tooth")} ${tooth}: ${label}`} title={label}
                 data-focus-return-id={`tooth-${tooth}`} onClick={() => { onNavigation({ ...navigation, focusedTooth: tooth }); setSelected(tooth); }}>
                 <ToothShape tooth={tooth} />
-                <span className="text-sm font-semibold tabular-nums">{tooth}{observed ? " •" : ""}</span>
+                <span className="text-sm font-semibold tabular-nums">{tooth}{status ? ` ${stateMarks[status]}` : observed ? " •" : ""}</span>
               </button>;
             })}</div>
           </div>;
         })}
       </section>)}
     </div>
+    <ul className="flex flex-wrap gap-x-4 gap-y-2 text-sm" aria-label={t("medical.tooth.status")}>
+      {toothStatuses.map(status => <li key={status}><span aria-hidden="true">{stateMarks[status]} </span>{t(`medical.tooth.status.${status}`)}</li>)}
+    </ul>
     <p className="text-sm text-platforma-subtle">{t("medical.tooth.select")}</p>
     <Modal open={selected !== null} onClose={close} closeOnBackdrop={false} size="lg" title={`${t("medical.tooth.tooth")} ${selected ?? ""}`}
       focusReturnId={`tooth-${selected}`} testId="tooth-inspector">
@@ -220,6 +226,7 @@ function ToothVersion({ id, scope, onDenied }: { id: number; scope: ClinicalRead
   if (error) return <ErrorState message={getApiErrorMessage(error)} action={<Button size="lg" variant="secondary" onClick={() => setAttempt(x => x + 1)}>{t("common.retry")}</Button>} />;
   if (!version) return <LoadingState />;
   return <div className="space-y-2" data-testid="tooth-version">
+    {!version.surface ? <p className="text-sm font-medium">{t("medical.tooth.status")}: {t(version.tooth_status ? `medical.tooth.status.${version.tooth_status}` : "medical.tooth.status.unspecified")}</p> : null}
     <p className="whitespace-pre-wrap break-words text-sm">{version.observation}</p>
     <p className="break-words text-sm text-platforma-subtle">{version.author_name} · {formatDateTime(version.observed_at, undefined, true, localeByLanguage[language])}</p>
     {version.reason ? <p className="whitespace-pre-wrap break-words text-sm">{version.reason}</p> : null}

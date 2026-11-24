@@ -9,11 +9,16 @@ from apps.core.domain_errors import InvalidTransition
 from .identity_crypto import MedicalDataUnavailable, decrypt_medical_value, encrypt_medical_value
 from .models import DentalToothHistory, DentalToothState, MedicalEncounter
 
+TOOTH_STATUSES = ("not_examined", "no_findings", "observation", "absent")
+
 
 def validate_tooth_content(content):
-    if not isinstance(content, dict) or not {"observation", "reason"} <= set(content) or set(content) - {"observation", "reason", "surface_protocol"}:
+    if not isinstance(content, dict) or not {"observation", "reason"} <= set(content) or set(content) - {"observation", "reason", "surface_protocol", "tooth_status"}:
         raise ValidationError({"content": "Provide an observation and a correction reason field."})
-    if (not isinstance(content["observation"], str) or not content["observation"].strip()
+    if "tooth_status" in content and content["tooth_status"] not in TOOTH_STATUSES:
+        raise ValidationError({"tooth_status": "Select an approved tooth state."})
+    if (not isinstance(content["observation"], str)
+            or (not content["observation"].strip() and content.get("tooth_status") not in ("not_examined", "no_findings", "absent"))
             or len(content["observation"]) > 32768 or not isinstance(content["reason"], str)
             or len(content["reason"]) > 2000):
         raise ValidationError({"content": "Provide observation text up to 32768 characters and reason up to 2000."})
@@ -37,9 +42,13 @@ def _metadata(history):
 
 
 @transaction.atomic
-def append_tooth_history(*, tooth_state, encounter, author, observation, reason="", observed_at=None, surface_protocol=None):
+def append_tooth_history(*, tooth_state, encounter, author, observation, reason="", observed_at=None, surface_protocol=None, tooth_status=None):
     """Internal storage step; caller authorizes and audits in the enclosing transaction."""
     content = {"observation": observation, "reason": reason}
+    if tooth_status is not None:
+        if tooth_state.surface:
+            raise ValidationError({"tooth_status": "Tooth state applies to the whole tooth."})
+        content["tooth_status"] = tooth_status
     if surface_protocol is not None:
         content["surface_protocol"] = surface_protocol
     content = validate_tooth_content(content)

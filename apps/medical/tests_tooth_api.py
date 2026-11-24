@@ -60,6 +60,17 @@ class ToothObservationAPITests(TestCase):
             self.private(response)
         self.assertEqual(DentalToothHistory.objects.count(), 1)
 
+    def test_state_only_save_and_historical_read(self):
+        first = self.save(tooth_status="absent", observation="")
+        self.assertEqual(first.status_code, 201, first.data)
+        second = self.save(token="state-next", expected_tooth_revision=1,
+            tooth_status="not_examined", observation="")
+        self.assertEqual(second.status_code, 201, second.data)
+        self.assertEqual(self.read(first.data["history_id"]).data["tooth_status"], "absent")
+        snapshot = self.api.get(f"{self.url}snapshot/", {**self.scope, "appointment_id": self.appointment.pk})
+        self.assertEqual(snapshot.data["observations"][0]["tooth_status"], "not_examined")
+        self.assertEqual(self.save(token="invalid", tooth_status="healthy").status_code, 400)
+
     def test_strict_validation_and_missing_key(self):
         for change in ({"author_id": self.owner.pk}, {"tooth": 19}, {"observation": ""},
                        {"expected_tooth_revision": -1}):

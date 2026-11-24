@@ -703,10 +703,14 @@ if len(sys.argv) > 1 and sys.argv[1] == "files-new-appointment":
         business = Business.objects.get(slug="medical-role")
         source = Appointment.objects.filter(business=business).order_by("pk").first()
         index = Appointment.objects.filter(business=business).order_by("-pk").values_list("pk", flat=True).first() + 1
-        client = Client.objects.create(business=business, full_name=f"Synthetic file patient {index}")
-        PatientProfile.objects.create(business=business, client=client, created_by=business.owner,
-            identity_status="verified", verified_at=timezone.now(), verified_by=business.owner,
-            verification_evidence_encrypted="synthetic-fixture-only")
+        if len(sys.argv) > 2:
+            previous = Appointment.objects.get(business=business, pk=int(sys.argv[2]))
+            client = previous.client
+        else:
+            client = Client.objects.create(business=business, full_name=f"Synthetic file patient {index}")
+            PatientProfile.objects.create(business=business, client=client, created_by=business.owner,
+                identity_status="verified", verified_at=timezone.now(), verified_by=business.owner,
+                verification_evidence_encrypted="synthetic-fixture-only")
         appointment = Appointment.objects.create(business=business, client=client, service_id=source.service_id,
             resource_id=source.resource_id, branch_id=source.branch_id,
             start_at=source.start_at + timedelta(days=index), end_at=source.end_at + timedelta(days=index))

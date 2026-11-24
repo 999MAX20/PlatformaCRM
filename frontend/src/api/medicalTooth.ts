@@ -1,6 +1,9 @@
 import { apiClient } from "./client";
 import type { ClinicalReadScope, ClinicalScope, EncounterState } from "./medicalClinical";
 
+export const toothStatuses = ["not_examined", "no_findings", "observation", "absent"] as const;
+export type ToothStatus = typeof toothStatuses[number];
+
 export type ToothObservation = {
   history_id: number;
   tooth_state_id: number;
@@ -15,6 +18,7 @@ export type ToothObservation = {
   created_at: string;
   observation: string;
   reason: string;
+  tooth_status?: ToothStatus;
   surface_protocol?: { reference: string; approval_reference: string };
 };
 export type ToothSnapshot = {
@@ -51,6 +55,7 @@ export type ToothSaveRequest = ClinicalScope & {
   expected_tooth_revision: number;
   observation: string;
   reason?: string;
+  tooth_status?: ToothStatus;
   participation_id?: number;
 };
 export type ToothSaveResult = {

@@ -58,6 +58,38 @@ class PrimaryToothObservationTests(TestCase):
         self.assertEqual(DentalToothHistory.objects.count(), 2)
         self.assertEqual(MedicalAuditEvent.objects.count(), 2)
 
+    def test_explicit_states_preserve_legacy_history_and_omitted_state(self):
+        legacy, _ = self.save()
+        self.assertNotIn("tooth_status", read_tooth_history(legacy))
+        for revision, status in enumerate(("not_examined", "no_findings", "observation", "absent"), start=1):
+            text = "Synthetic finding" if status == "observation" else ""
+            row, _ = self.save(expected_tooth_revision=revision, tooth_status=status,
+                observation=text, idempotency_key=status)
+            self.assertEqual(read_tooth_history(row)["tooth_status"], status)
+            self.assertNotIn(status, row.content_encrypted)
+        latest, _ = self.save(expected_tooth_revision=5, idempotency_key="legacy-client")
+        self.assertEqual(read_tooth_history(latest)["tooth_status"], "absent")
+        self.assertNotIn("tooth_status", read_tooth_history(legacy))
+        replay, repeated = self.save(expected_tooth_revision=4, tooth_status="absent",
+            observation="", idempotency_key="absent")
+        self.assertTrue(repeated)
+        self.assertEqual(replay.revision, 5)
+        with self.assertRaises(CRMCommandConflict):
+            self.save(expected_tooth_revision=4, tooth_status="no_findings", observation="", idempotency_key="absent")
+
+    def test_state_validation_and_denied_role_leave_no_history(self):
+        for values in ({"tooth_status": "healthy"}, {"tooth_status": True},
+                       {"tooth_status": "observation", "observation": ""},
+                       {"tooth_status": "absent", "surface": "synthetic_surface"}):
+            with self.subTest(values=values), self.assertRaises(ValidationError):
+                self.save(**values)
+        for kind in ("assistant", "reception"):
+            self.assignment.kind = kind
+            self.assignment.save(update_fields=["kind"])
+            with self.subTest(kind=kind), self.assertRaises(PermissionDenied):
+                self.save(tooth_status="absent", observation="")
+        self.assertFalse(DentalToothHistory.objects.exists())
+
     def test_reused_key_changed_payload_is_rejected(self):
         self.save()
         with self.assertRaises(CRMCommandConflict):

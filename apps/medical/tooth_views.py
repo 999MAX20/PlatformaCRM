@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from .encounter_views import EncounterReadSerializer, EncounterScopeSerializer
 from .tooth_reads import read_tooth_observation, read_tooth_snapshot, read_tooth_revision_history, read_tooth_surface_options
 from .tooth_services import save_primary_tooth_observation
+from .tooth_content import TOOTH_STATUSES
 
 
 class ToothObservationSerializer(EncounterScopeSerializer):
@@ -16,7 +17,8 @@ class ToothObservationSerializer(EncounterScopeSerializer):
     expected_patient_revision = serializers.IntegerField(min_value=1)
     expected_encounter_revision = serializers.IntegerField(min_value=1)
     expected_tooth_revision = serializers.IntegerField(min_value=0)
-    observation = serializers.CharField(max_length=32768, trim_whitespace=False)
+    observation = serializers.CharField(max_length=32768, trim_whitespace=False, allow_blank=True)
+    tooth_status = serializers.ChoiceField(choices=TOOTH_STATUSES, required=False)
     reason = serializers.CharField(required=False, allow_blank=True, max_length=2000, trim_whitespace=False)
     participation_id = serializers.IntegerField(required=False, min_value=1)
 

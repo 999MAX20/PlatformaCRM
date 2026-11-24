@@ -1,7 +1,7 @@
 import { useEffect, useId, useImperativeHandle, useRef, useState, type Ref } from "react";
 import axios from "axios";
 import { medicalClinicalApi, type AppointmentClinicalContext } from "../../api/medicalClinical";
-import { medicalToothApi, type ToothSurfaceOptions } from "../../api/medicalTooth";
+import { medicalToothApi, toothStatuses, type ToothStatus, type ToothSurfaceOptions } from "../../api/medicalTooth";
 import { getApiErrorMessage } from "../../api/client";
 import { Button } from "../../components/ui/Button";
 import { Textarea } from "../../components/ui/Textarea";
@@ -18,6 +18,7 @@ export function ToothEditor({ context, tooth, revisions, control, onSaved, onDen
   const { t, language } = useI18n();
   const surfaceHelpId = useId();
   const [surface, setSurface] = useState("");
+  const [toothStatus, setToothStatus] = useState<ToothStatus | "">("");
   const [options, setOptions] = useState<ToothSurfaceOptions | null>(null);
   const [optionsError, setOptionsError] = useState<unknown>(null);
   const [optionsAttempt, setOptionsAttempt] = useState(0);
@@ -32,7 +33,8 @@ export function ToothEditor({ context, tooth, revisions, control, onSaved, onDen
   const dirtyNow = useRef(false);
   const controller = useRef(new AbortController());
   const request = useRef<{ fingerprint: string; key: string } | null>(null);
-  const dirty = Boolean(observation || reason);
+  const dirty = Boolean(observation || reason || toothStatus);
+  const validContent = Boolean(observation.trim() || (!surface && toothStatus && toothStatus !== "observation"));
   useUnsavedEntryWarning(dirty);
   useEffect(() => {
     const active = new AbortController();
@@ -64,12 +66,13 @@ export function ToothEditor({ context, tooth, revisions, control, onSaved, onDen
   async function save(): Promise<boolean> {
     if (saving.current || conflict || !fresh?.actions.save_draft || !fresh.encounter) return false;
     if (!dirtyNow.current) return true;
-    if (!observation.trim()) return false;
+    if (!validContent) return false;
     if (surface && (!options?.reference || !options.surfaces.some(item => item.code === surface))) return false;
     saving.current = true; setPending(true); setError(null);
     const payload = { business_id: fresh.business_id, patient_id: fresh.patient.id, encounter_id: fresh.encounter.id,
       tooth, expected_patient_revision: fresh.patient.revision, expected_encounter_revision: fresh.encounter.revision,
       expected_tooth_revision: revisions.get(surface) ?? 0, observation, reason,
+      ...(!surface && toothStatus ? { tooth_status: toothStatus } : {}),
       ...(surface ? { surface, surface_reference: options!.reference! } : {}) };
     const fingerprint = JSON.stringify(payload);
     if (request.current?.fingerprint !== fingerprint) request.current = { fingerprint, key: crypto.randomUUID() };
@@ -96,12 +99,15 @@ export function ToothEditor({ context, tooth, revisions, control, onSaved, onDen
       onChange={event => { if (!dirtyNow.current && !saving.current && !conflict) setSurface(event.target.value); }} />
     {dirty ? <p id={surfaceHelpId} className="text-sm text-platforma-subtle">{t("medical.tooth.surfaceLocked")}</p> : null}
     {optionsError ? <ErrorState message={getApiErrorMessage(optionsError)} action={<Button type="button" size="lg" variant="secondary" onClick={() => setOptionsAttempt(x => x + 1)}>{t("common.retry")}</Button>} /> : !options ? <LoadingState /> : null}
-    <Textarea label={t("medical.tooth.observation")} aria-label={t("medical.tooth.observation")} value={observation} maxLength={32768} required disabled={pending} readOnly={conflict}
-      onChange={event => { dirtyNow.current = Boolean(event.target.value || reason); setObservation(event.target.value); }} />
+    {!surface ? <Select label={t("medical.tooth.status")} value={toothStatus} disabled={pending || conflict}
+      options={[{ value: "", label: t("medical.tooth.status.keep") }, ...toothStatuses.map(value => ({ value, label: t(`medical.tooth.status.${value}`) }))]}
+      onChange={event => { const value = event.target.value as ToothStatus | ""; setToothStatus(value); dirtyNow.current = Boolean(observation || reason || value); }} /> : null}
+    <Textarea label={t("medical.tooth.observation")} aria-label={t("medical.tooth.observation")} value={observation} maxLength={32768} required={Boolean(surface) || !toothStatus || toothStatus === "observation"} disabled={pending} readOnly={conflict}
+      onChange={event => { dirtyNow.current = Boolean(event.target.value || reason || toothStatus); setObservation(event.target.value); }} />
     <Textarea label={t("medical.tooth.reason")} aria-label={t("medical.tooth.reason")} value={reason} maxLength={2000} disabled={pending} readOnly={conflict}
-      onChange={event => { dirtyNow.current = Boolean(observation || event.target.value); setReason(event.target.value); }} />
+      onChange={event => { dirtyNow.current = Boolean(observation || event.target.value || toothStatus); setReason(event.target.value); }} />
     {error ? <ErrorState message={conflict ? t("medical.clinical.conflict") : getApiErrorMessage(error)} /> : null}
     {conflict ? <Button type="button" size="lg" variant="secondary" onClick={() => { if (!dirtyNow.current || window.confirm(t("medical.clinical.discard"))) onReload(); }}>{t("medical.clinical.reload")}</Button> : null}
-    <Button type="submit" size="lg" isLoading={pending} disabled={!observation.trim() || conflict}>{t("medical.tooth.save")}</Button>
+    <Button type="submit" size="lg" isLoading={pending} disabled={!validContent || conflict}>{t("medical.tooth.save")}</Button>
   </form>;
 }
