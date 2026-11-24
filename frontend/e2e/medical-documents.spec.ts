@@ -74,10 +74,15 @@ test("assistant workspace: accept prepare and lose revoked access", async ({ pag
   await inbox.getByRole("button", { name: ru["medical.assistants.accept"], exact: true }).click();
   await inbox.getByRole("button", { name: ru["medical.assistants.open"], exact: true }).click();
   const workspace = page.getByTestId("assistant-drafts");
+  const templateExportRequests: string[] = [];
+  page.on("request", request => { if (/\/document-templates\/versions\/\d+\/docx-/.test(request.url())) templateExportRequests.push(request.url()); });
   await workspace.getByRole("button", { name: ru["medical.documents.create"], exact: true }).click();
   await workspace.getByRole("button", { name: new RegExp(title) }).click();
   const text = workspace.getByRole("textbox", { name: ru["medical.documents.text"], exact: true });
   await expect(text).toBeVisible();
+  await expect(text).toHaveValue(/^Synthetic source Synthetic file patient /);
+  expect(await text.inputValue()).not.toContain("{{patient.full_name}}");
+  await expect(workspace.getByRole("button", { name: ru["medical.documents.confirmReview"], exact: true })).toHaveCount(0);
   await text.fill(`Synthetic assistant draft ${entry.appointment_id}`);
   page.once("dialog", dialog => dialog.dismiss());
   await inbox.getByRole("button", { name: ru["medical.assistants.back"], exact: true }).click();
@@ -125,11 +130,54 @@ test("assistant workspace: accept prepare and lose revoked access", async ({ pag
   await expect(reopen).toBeFocused();
   await page.keyboard.press("Enter");
   await expect(workspace.getByRole("button", { name: new RegExp(title) })).toBeEnabled();
+  const doctorContext = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
+  try {
+    const doctor = await doctorContext.newPage();
+    await doctor.addInitScript(() => localStorage.setItem("ai_smb_language", "ru"));
+    await login(doctor, "medical-role-doctor@example.test");
+    await doctor.goto(`/app/calendar?appointment=${entry.appointment_id}&date=${appointment.start_at.slice(0, 10)}&view=day`);
+    await openClinicalWorkspace(doctor);
+    await doctor.getByTestId("clinical-workspace").getByRole("tab", { name: ru["medical.documents.title"], exact: true }).click();
+    const documents = doctor.getByTestId("medical-documents");
+    await documents.getByRole("button", { name: new RegExp(title) }).click();
+    const detail = documents.getByTestId("medical-document-detail");
+    await expect(detail.getByTestId("medical-document-text")).toHaveText(`Synthetic corrected draft ${entry.appointment_id}`);
+    await expect(detail).toContainText(assistant.name);
+    const review = detail.getByTestId("document-review");
+    await review.getByRole("button", { name: ru["medical.documents.submitReview"], exact: true }).click();
+    await review.getByRole("button", { name: ru["medical.documents.confirmReview"], exact: true }).click();
+    await expect(detail.getByText(ru["medical.documents.reviewed"], { exact: true })).toBeVisible();
+    const pdf = detail.getByTestId("medical-document-pdf");
+    await pdf.getByRole("button", { name: ru["medical.documents.pdfPreview"], exact: true }).click();
+    await expect(pdf.getByRole("status")).toContainText(ru["medical.files.pending"]);
+    fixture("document-artifacts-scan", String(entry.appointment_id));
+    await pdf.getByRole("button", { name: ru["common.retry"], exact: true }).click();
+    await expect(pdf.getByTestId("medical-pdf-text")).toContainText(`Synthetic corrected draft ${entry.appointment_id}`);
+    await expect(pdf.locator("canvas")).toBeVisible();
+    await pdf.scrollIntoViewIfNeeded();
+    await doctor.screenshot({ path: info.outputPath("assistant-doctor-reviewed-pdf.png") });
+    await doctor.evaluate(() => {
+      const original = window.open.bind(window);
+      window.open = (...args) => {
+        const target = original(...args);
+        if (target) target.print = () => { target.document.documentElement.dataset.printRequested = "true"; };
+        return target;
+      };
+    });
+    const printing = doctor.waitForEvent("popup");
+    await pdf.getByRole("button", { name: ru["medical.documents.print"], exact: true }).click();
+    const printPage = await printing;
+    await expect(printPage.locator("html")).toHaveAttribute("data-print-requested", "true");
+    await expect(printPage.locator("img")).toHaveCount(1);
+    expect(await printPage.locator("img").evaluate((element: HTMLImageElement) => element.complete && element.naturalWidth > 500)).toBe(true);
+    await printPage.screenshot({ path: info.outputPath("assistant-doctor-print.png") });
+  } finally { await doctorContext.close(); }
   await command(`/api/medical/appointment-assistants/${invitation.id}/revoke/`, { business_id: assistant.business_id, expected_revision: 2 });
   await workspace.getByRole("button", { name: new RegExp(title) }).click();
   await expect(inbox.getByRole("alert")).toContainText(ru["medical.denied"]);
   await expect(workspace).toHaveCount(0);
   await expect(inbox).not.toContainText(title);
+  expect(templateExportRequests).toEqual([]);
 });
 
 test("appointment assistant management: invite and revoke inline", async ({ page }, info) => {

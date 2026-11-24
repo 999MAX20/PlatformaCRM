@@ -103,7 +103,7 @@ for (const [language, t] of [["ru", ru], ["kk", kk], ["en", en]] as const) {
     test.setTimeout(150_000);
     await page.setViewportSize({ width, height: 900 });
     const token = await login(page, language);
-    const title = `Synthetic review ${language} ${width}`;
+    const title = `Synthetic review ${language} ${width} ${crypto.randomUUID()}`;
     const response = await page.request.post(`${process.env.E2E_API_BASE_URL}/api/medical/document-templates/`, {
       headers: { Authorization: `Bearer ${token}`, "Idempotency-Key": title },
       data: { business_id: 1, title, text: "Synthetic review text", reason: "", metadata: { language, category: "Synthetic review category", specialty: "Synthetic review specialty", service_ids: [] } },

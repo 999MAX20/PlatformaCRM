@@ -62,10 +62,11 @@ export function DocumentEditor({ scope, version, control }: {
   </div>;
 }
 
-export function DocumentForm({ scope, version, preview, control, submitDocument }: {
+export function DocumentForm({ scope, version, preview, control, submitDocument, templateExport = true }: {
   scope: Pick<DocumentDraft, "business_id" | "patient_id" | "encounter_id" | "participation_id">;
   version: DocumentVersion | null; preview: DocumentPreview; control: RoleFormControl;
   submitDocument?: (payload: DocumentDraft, key: string) => Promise<unknown>;
+  templateExport?: boolean;
 }) {
   const { t } = useI18n();
   const template = preview.template;
@@ -82,7 +83,7 @@ export function DocumentForm({ scope, version, preview, control, submitDocument 
     submit={(data, key) => submitDocument ? submitDocument(data, key) : version ? api.update(version.document_id, { ...data, expected_document_revision: version.revision }, key) : api.create(data, key)}>
     <h2 className="break-words text-base font-semibold">{template.template.title}</h2>
     <p className="text-sm text-platforma-subtle">{t("medical.documents.sourceVersion", { revision: template.revision })}</p>
-    <TemplateDocx key={template.version_id} businessId={scope.business_id} versionId={template.version_id} onDenied={control.onDenied} />
+    {templateExport ? <TemplateDocx key={template.version_id} businessId={scope.business_id} versionId={template.version_id} onDenied={control.onDenied} /> : null}
     {!version && preview.missing_fields.length ? <p role="status" className="text-sm text-platforma-subtle">
       {t("medical.documents.missingFields", { count: preview.missing_fields.length })}
     </p> : null}

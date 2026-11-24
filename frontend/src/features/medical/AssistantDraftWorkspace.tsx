@@ -86,7 +86,7 @@ export function AssistantDraftWorkspace({ businessId, invitationId, guard, onDra
     {editor && workspace?.encounter_id ? <>
       <Button size="lg" variant="secondary" onClick={leaveEditor}>{t("medical.documents.back")}</Button>
       <DocumentForm key={`${editor.preview.template.version_id}:${editor.version?.revision ?? "new"}`} scope={{ business_id: businessId, patient_id: workspace.patient_id, encounter_id: workspace.encounter_id }}
-        version={editor.version} preview={editor.preview} control={control} submitDocument={(payload, key) => {
+        version={editor.version} preview={editor.preview} control={control} templateExport={false} submitDocument={(payload, key) => {
           const { participation_id: _participation, ...data } = payload;
           return api.saveDocument(invitationId, { ...data, ...(editor.version ? { document_id: editor.version.document_id, expected_document_revision: editor.version.revision } : {}) }, key);
         }} />
