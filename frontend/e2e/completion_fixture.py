@@ -9,7 +9,7 @@ from django.utils import timezone
 
 
 @transaction.atomic
-def prepare_completion(*, actual=False, follow_up=False):
+def prepare_completion(*, actual=False, follow_up=False, open_encounter=True):
     from apps.branches.models import Branch, BranchAccess
     from apps.businesses.models import Business, BusinessMember, BusinessCapability, BusinessRole, RolePermission
     from apps.clients.models import Client
@@ -71,10 +71,11 @@ def prepare_completion(*, actual=False, follow_up=False):
     start = timezone.now() + timedelta(days=1)
     appointment = Appointment.objects.create(business=business, branch=branch, client=client, service=service,
         resource=specialist, start_at=start, end_at=start + timedelta(hours=1))
-    record, _ = open_dental_record(actor=doctor, business_id=business.pk, patient_id=patient.pk,
-        appointment_id=appointment.pk, expected_patient_revision=patient.revision, number=f"SYN-{suffix}", idempotency_key="record")
-    open_primary_encounter(actor=doctor, business_id=business.pk, patient_id=patient.pk, record_id=record.pk,
-        appointment_id=appointment.pk, expected_patient_revision=patient.revision,
-        expected_appointment_updated_at=appointment.updated_at, idempotency_key="encounter")
+    if open_encounter:
+        record, _ = open_dental_record(actor=doctor, business_id=business.pk, patient_id=patient.pk,
+            appointment_id=appointment.pk, expected_patient_revision=patient.revision, number=f"SYN-{suffix}", idempotency_key="record")
+        open_primary_encounter(actor=doctor, business_id=business.pk, patient_id=patient.pk, record_id=record.pk,
+            appointment_id=appointment.pk, expected_patient_revision=patient.revision,
+            expected_appointment_updated_at=appointment.updated_at, idempotency_key="encounter")
     return {"appointment_id": appointment.pk, "client_id": client.pk, "email": email,
         "actual_start": (timezone.now() - timedelta(minutes=10)).isoformat(), "timezone": business.timezone}

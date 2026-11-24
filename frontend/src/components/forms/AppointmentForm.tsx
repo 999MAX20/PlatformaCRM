@@ -95,6 +95,7 @@ export function AppointmentForm({
   fixedContext = false,
   fixedClient = false,
   fixedBranch = false,
+  useBranchServices = false,
   hideNotes = false,
   onDirtyChange,
   currency = "KZT",
@@ -110,6 +111,7 @@ export function AppointmentForm({
   fixedContext?: boolean;
   fixedClient?: boolean;
   fixedBranch?: boolean;
+  useBranchServices?: boolean;
   hideNotes?: boolean;
   onDirtyChange?: (dirty: boolean) => void;
   currency?: string;
@@ -138,7 +140,10 @@ export function AppointmentForm({
   });
   const { getRecoverableMessage } = useActionFeedback();
   const branch = useBranchBooking(businessId, initial?.branch || prefill?.branch);
-  const selectableServices = services.filter(
+  const selectableServices = useBranchServices && branch.enabled
+    ? (branch.catalog?.offers || []).filter(offer => offer.is_active).map(offer => ({
+      id: offer.service, name: offer.service_name, duration_minutes: offer.duration_minutes, price_from: offer.price_from,
+    })) : services.filter(
     (service) => ((service.is_active && !service.is_archived) && (!branch.enabled || branch.catalog?.offers.some((offer) => offer.service === service.id))) || service.id === initial?.service,
   ).map((service) => {
     const offer = branch.catalog?.offers.find((item) => item.service === service.id);

@@ -78,9 +78,20 @@ if files_fixture and len(sys.argv) > 1 and sys.argv[1] == "order-completion-prep
     print(json.dumps(prepare()))
     sys.exit(0)
 
+if files_fixture and len(sys.argv) > 1 and sys.argv[1] == "plan-booking-prepare":
+    from completion_fixture import prepare_completion
+    from apps.businesses.models import BusinessCapability
+    from apps.scheduling.models import Appointment
+    entry = prepare_completion(actual=True, follow_up=True, open_encounter=False)
+    appointment = Appointment.objects.get(pk=entry["appointment_id"])
+    BusinessCapability.objects.create(business=appointment.business, module_key="visit_plans", is_enabled=True)
+    print(json.dumps(entry))
+    sys.exit(0)
+
 if files_fixture and len(sys.argv) > 1 and sys.argv[1] in ("completion-prepare", "actual-visit-prepare"):
     from completion_fixture import prepare_completion
-    print(json.dumps(prepare_completion(actual=sys.argv[1] == "actual-visit-prepare")))
+    print(json.dumps(prepare_completion(actual=sys.argv[1] == "actual-visit-prepare",
+        follow_up=len(sys.argv) > 2 and sys.argv[2] == "core")))
     sys.exit(0)
 
 from datetime import timedelta

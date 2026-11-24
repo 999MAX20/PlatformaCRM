@@ -119,7 +119,7 @@ function BookingDialog({ step, access, onClose }: { step: Step; access: Clinical
       }}>{t("common.retry")}</Button>} /> : !loaded || catalog.services.isPending || catalog.resources.isPending ? <LoadingState /> :
         unavailable || business?.id !== context.business_id ? <p role="alert">{t("medical.plan.reviewBooking")}</p> : <>
           <AppointmentForm businessId={context.business_id} clients={[loaded.client]} services={catalog.services.data || []}
-            resources={catalog.resources.data || []} leads={[]} recordFirst fixedClient fixedContext={Boolean(linked)}
+            resources={catalog.resources.data || []} leads={[]} recordFirst fixedClient useBranchServices fixedContext={Boolean(linked)}
             currency={business.currency} timeZone={business.timezone} onDirtyChange={setDirty} onSubmit={book}
             prefill={{ client: context.patient.client_id, branch: linked?.branch || context.appointment.branch_id,
               service: linked?.service, resource: linked?.resource, responsible_user: linked?.responsible_user || loaded.plan?.responsible_user || user?.id }} />

@@ -94,6 +94,7 @@ export function CalendarBookingDialog({
     >
       <AppointmentForm
         recordFirst
+        useBranchServices
         currency={business.currency}
         businessId={business.id}
         clients={clientItems}

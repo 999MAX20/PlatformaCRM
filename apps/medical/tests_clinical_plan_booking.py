@@ -73,6 +73,38 @@ class ClinicalPlanBookingTests(TestCase):
         self.assertEqual(saved["plan_steps"][0]["teeth"], [11])
         self.assertEqual(saved["plan_steps"][0]["visit_step"]["id"], result["visit_step_id"])
 
+    def test_booked_visit_completion_updates_plan_without_rewriting_source_history(self):
+        from .encounter_content import CLINICAL_FIELDS
+        from .encounter_services import open_primary_encounter, save_primary_encounter_draft
+        from .encounter_completion import complete_primary_encounter, read_encounter_completion
+        from .clinical_plan_reads import list_patient_visit_plans
+
+        booked = self.book()
+        appointment = Appointment.objects.get(pk=booked["appointment_id"])
+        scope = dict(actor=self.doctor, business_id=self.business.pk, patient_id=self.patient.pk)
+        planned = list_patient_visit_plans(**scope, appointment_id=appointment.pk)
+        self.assertEqual(planned["results"][0]["steps"][0]["status"], "created")
+        RolePermission.objects.create(business_role=self.role, resource="medical_records",
+            action="create", scope="own", is_allowed=True)
+        version, _ = open_primary_encounter(**scope, appointment_id=appointment.pk,
+            record_id=self.encounter_record.record_id, expected_patient_revision=self.patient.revision,
+            expected_appointment_updated_at=appointment.updated_at, idempotency_key="next-visit")
+        current, _ = save_primary_encounter_draft(**scope, encounter_id=version.encounter_id,
+            expected_revision=version.revision, content={field: "Synthetic completed visit" for field in CLINICAL_FIELDS},
+            idempotency_key="next-content")
+        readiness = read_encounter_completion(**scope, encounter_id=current.encounter_id)
+        self.assertEqual(readiness["documents"], [])  # Explicit isolated no-required-document scenario.
+        self.assertTrue(readiness["ready"])
+        complete_primary_encounter(**scope, encounter_id=current.encounter_id, expected_revision=current.revision,
+            expected_appointment_updated_at=appointment.updated_at, reason="Synthetic early completion",
+            idempotency_key="next-complete")
+        appointment.refresh_from_db()
+        self.assertEqual(appointment.status, "completed")
+        # Read from the still-authorized source visit; completion does not extend access.
+        completed = list_patient_visit_plans(**scope, appointment_id=self.appointment.pk)
+        self.assertEqual(completed["results"][0]["steps"][0]["status"], "completed")
+        self.assertEqual(read_encounter_revision(self.source)["content"], self.content)
+
     def test_existing_unscheduled_step_is_used_without_another_plan(self):
         plan = VisitPlan.objects.create(business=self.business, client=self.patient_client, responsible_user=self.doctor, created_by=self.doctor)
         step = VisitPlanStep.objects.create(plan=plan, service=self.service, resource=self.staff, branch=self.first, position=1)

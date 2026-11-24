@@ -1,5 +1,6 @@
 import { openClinicalWorkspace } from "./clinical-card-navigation";
 import { test, expect } from "@playwright/test";
+import { execFileSync } from "node:child_process";
 import AxeBuilder from "@axe-core/playwright";
 import { ru } from "../src/lib/i18n/ru";
 import { kk } from "../src/lib/i18n/kk";
@@ -7,16 +8,18 @@ import { en } from "../src/lib/i18n/en";
 import { requireIsolatedEnvironment } from "./isolated-environment.mjs";
 
 requireIsolatedEnvironment();
-let sequence = 7;
 for (const language of ["ru", "kk", "en"] as const) for (const mobile of [false, true]) {
-  const id = ++sequence;
   test(`clinical booking ${language} ${mobile ? "mobile" : "desktop"}: confirmed calendar conversion`, async ({ page }, info) => {
     test.setTimeout(90_000);
+    const output = execFileSync(process.env.E2E_PYTHON!, ["e2e/clinical-runtime.py", "plan-booking-prepare"],
+      { env: process.env, windowsHide: true, encoding: "utf8" });
+    const entry = JSON.parse(output.trim().split(/\r?\n/).at(-1)!);
+    const id = entry.appointment_id;
     const t = { ru, kk, en }[language];
     await page.setViewportSize({ width: mobile ? 390 : 1440, height: 1000 });
     await page.addInitScript(value => localStorage.setItem("ai_smb_language", value), language);
     await page.goto("/login");
-    await page.locator('input[name="email"]').fill("medical-role-doctor@example.test");
+    await page.locator('input[name="email"]').fill(entry.email);
     await page.locator('input[name="password"]').fill(process.env.E2E_PASSWORD!);
     const login = page.waitForResponse(r => r.url().endsWith("/api/auth/token/") && r.request().method() === "POST");
     const me = page.waitForResponse(r => r.url().endsWith("/api/auth/me/") && r.status() === 200);
@@ -47,7 +50,7 @@ for (const language of ["ru", "kk", "en"] as const) for (const mobile of [false,
     await expect(client).toHaveValue(context.patient.full_name);
     await expect(client).toHaveAttribute("readonly", "");
     await dialog.getByRole("combobox", { name: new RegExp(`^${t["appointment.resource"]}`) }).click();
-    await page.getByRole("option", { name: "Specialist", exact: true }).click();
+    await page.getByRole("option", { name: "Synthetic clinician", exact: true }).click();
     const future = new Date(); future.setUTCDate(future.getUTCDate() + 3);
     await dialog.getByLabel(t["appointment.date"], { exact: true }).fill(future.toISOString().slice(0, 10));
     await expect(dialog.getByTestId("appointment-submit")).toBeEnabled();
@@ -89,7 +92,7 @@ for (const language of ["ru", "kk", "en"] as const) for (const mobile of [false,
     await dialog.screenshot({ path: info.outputPath("booking-result.png") });
     await dialog.getByRole("button", { name: t["common.close"], exact: true }).last().click();
     await expect(dialog).not.toBeVisible();
-    await expect(workspace.getByTestId("clinical-visit-link")).toContainText("Synthetic service");
+    await expect(workspace.getByTestId("clinical-visit-link")).toContainText("Synthetic consultation");
     await workspace.getByTestId("clinical-plan-steps").screenshot({ path: info.outputPath("booked-clinical-plan.png") });
     await openBooking.click();
     await expect(dialog.getByRole("alert")).toHaveText(t["medical.plan.reviewBooking"]);
@@ -113,7 +116,7 @@ for (const language of ["ru", "kk", "en"] as const) for (const mobile of [false,
       await page.getByPlaceholder(t["common.search"], { exact: true }).fill(context.patient.full_name);
       await page.getByRole("option", { name: context.patient.full_name, exact: true }).click();
       await ordinary.getByRole("combobox", { name: new RegExp(`^${t["appointment.resource"]}`) }).click();
-      await page.getByRole("option", { name: "Specialist", exact: true }).click();
+      await page.getByRole("option", { name: "Synthetic clinician", exact: true }).click();
       await expect(ordinary.getByTestId("appointment-submit")).toBeEnabled();
       await ordinary.getByRole("combobox", { name: new RegExp(`^${t["appointment.slot"]}`) }).click();
       await page.getByRole("option").filter({ hasText: /^\d{1,2}:\d{2}/ }).first().click();
