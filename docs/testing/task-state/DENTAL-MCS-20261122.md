@@ -14,6 +14,8 @@ Skills zani-review-frontend, antislop during/ui/layoutmobile/human, design-taste
 
 ### Результат текущего UI-этапа24.11
 
+Доставка UI-среза: code726956d35e8ad3b22e0d751a038f7e75154cf3ad normal-push в origin/main; remote SHA подтверждён. Scoped diff/committed-range hygiene PASS,11 ссылок UI-ТЗ и registry JSON проверены. Чужой WIP исключён частичным staging shared docs. CI/deployment не запускались.
+
 В canonical checkout на базе9f4a4f22 реализованы две колонки, компактные summary,
 модальные жалобы/осмотр/план/лечение, drawer зуба440px (mobile full-width), меню
 статуса, перенос, завершение, существующие дополнительные действия. Сохранены
