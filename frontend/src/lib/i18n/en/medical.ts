@@ -1,4 +1,7 @@
 export const medical = {
+  "medical.assistance.useCompletion": "Use for completion",
+  "medical.assistance.noContinuation": "The current text does not match the start of this template.",
+  "medical.assistance.templateChanged": "Could not confirm the template. Your input is retained; select the template again or continue manually.",
   "medical.assistance.dictate": "Dictate",
   "medical.assistance.stopSeconds": "Stop · {seconds} s",
   "medical.assistance.microphoneUnavailable": "Microphone is unavailable. Continue entering text manually.",

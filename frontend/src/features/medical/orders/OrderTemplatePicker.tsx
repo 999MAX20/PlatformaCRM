@@ -10,9 +10,10 @@ import { useI18n } from "../../../lib/i18n";
 import { medicalRoleDenied } from "../roles/useMedicalRolePage";
 import { TemplateSearch } from "../templates/TemplateSearch";
 
-export function OrderTemplatePicker({ scope, orderId, onApply, onClose, onDenied }: {
+export function OrderTemplatePicker({ scope, orderId, onApply, onSuggest, onClose, onDenied }: {
   scope: OrderScope; orderId?: number; onApply: (preview: OrderPreview) => void;
   onClose: () => void; onDenied: (cause: unknown) => void;
+  onSuggest?: (preview: OrderPreview) => void;
 }) {
   const { t } = useI18n();
   const [filters, setFilters] = useState<Filters>({});
@@ -52,6 +53,7 @@ export function OrderTemplatePicker({ scope, orderId, onApply, onClose, onDenied
         {preview.unknown_fields.length ? <p role="status">{t("medical.documents.unknownFields", { count: preview.unknown_fields.length })}</p> : null}
         <Textarea label={t("medical.orders.text")} value={preview.document_text} readOnly rows={8} />
         <Button size="lg" onClick={() => onApply(preview)}>{t("medical.orders.applyTemplate")}</Button>
+        {onSuggest ? <Button size="lg" variant="secondary" disabled={Boolean(preview.missing_fields.length || preview.unknown_fields.length)} onClick={() => onSuggest(preview)}>{t("medical.assistance.useCompletion")}</Button> : null}
       </> : <>
         {!rows.length ? <p role="status">{t("medical.templates.noMatches")}</p> : null}
         <ul className="divide-y divide-platforma-border">{rows.map(row => <li className="py-2" key={row.template_id}>

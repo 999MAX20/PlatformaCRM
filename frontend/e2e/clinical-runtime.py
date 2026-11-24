@@ -73,6 +73,11 @@ if files_fixture and len(sys.argv) > 1 and sys.argv[1].startswith("participation
         ("participation-closure-prepare", "participation-closure-prepare-head") else resolve(int(sys.argv[2]))))
     sys.exit(0)
 
+if files_fixture and len(sys.argv) > 1 and sys.argv[1] == "order-completion-prepare":
+    from order_completion_fixture import prepare
+    print(json.dumps(prepare()))
+    sys.exit(0)
+
 if files_fixture and len(sys.argv) > 1 and sys.argv[1] in ("completion-prepare", "actual-visit-prepare"):
     from completion_fixture import prepare_completion
     print(json.dumps(prepare_completion(actual=sys.argv[1] == "actual-visit-prepare")))

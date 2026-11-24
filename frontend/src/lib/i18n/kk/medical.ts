@@ -1,4 +1,7 @@
 export const medical = {
+  "medical.assistance.useCompletion": "Ұсыныс үшін пайдалану",
+  "medical.assistance.noContinuation": "Ағымдағы мәтін таңдалған үлгінің басына сәйкес келмейді.",
+  "medical.assistance.templateChanged": "Үлгіні растау мүмкін болмады. Мәтін сақталды; үлгіні қайта таңдаңыз немесе қолмен жалғастырыңыз.",
   "medical.assistance.dictate": "Диктант",
   "medical.assistance.stopSeconds": "Тоқтату · {seconds} с",
   "medical.assistance.microphoneUnavailable": "Микрофон қолжетімсіз. Қолмен енгізуді жалғастырыңыз.",

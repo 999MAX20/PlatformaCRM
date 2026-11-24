@@ -10,6 +10,7 @@ import { useI18n } from "../../../lib/i18n";
 import { MedicalRoleCommand, type RoleFormControl } from "../roles/MedicalRoleCommand";
 import { medicalRoleDenied } from "../roles/useMedicalRolePage";
 import { OrderTemplatePicker } from "./OrderTemplatePicker";
+import { OrderTemplateCompletion } from "./OrderTemplateCompletion";
 
 export function OrderEditor({ scope, version, control }: { scope: OrderScope; version: OrderVersion | null; control: RoleFormControl }) {
   const { t } = useI18n();
@@ -34,6 +35,7 @@ function OrderForm({ scope, access, version, control }: { scope: OrderScope; acc
   const [reason, setReason] = useState("");
   const [picker, setPicker] = useState(false);
   const [source, setSource] = useState<OrderPreview | null>(null);
+  const [hint, setHint] = useState<OrderPreview | null>(null);
   const provenance = source?.template_source ?? version?.template_source;
   const dirty = Boolean(source) || JSON.stringify(content) !== JSON.stringify(version?.content ?? { kind: "other", text: "", medication: {} }) || Boolean(reason);
   const payload = { business_id: scope.business_id, patient_id: scope.patient_id, encounter_id: scope.encounter_id,
@@ -56,14 +58,17 @@ function OrderForm({ scope, access, version, control }: { scope: OrderScope; acc
       {medicationFields.map(field => <Input key={field} label={t(`medical.orders.field.${field}`)} value={content.medication[field] ?? ""}
         maxLength={2000} onChange={event => setContent({ ...content, medication: { ...content.medication, [field]: event.target.value } })} />)}
     </div> : null}
-    <Textarea label={t("medical.orders.text")} value={content.text} maxLength={32768} rows={6}
-      onChange={event => setContent({ ...content, text: event.target.value })} />
+    <OrderTemplateCompletion scope={scope} orderId={version?.order_id} hint={hint} text={content.text}
+      onChange={text => setContent({ ...content, text })} onDismiss={() => setHint(null)} onDenied={control.onDenied}
+      isSaving={() => control.guard.current.pending}
+      onAccept={preview => { setContent({ ...content, text: preview.document_text }); setSource(preview); setHint(null); }} />
     {version ? <Textarea label={t("medical.reason")} value={reason} maxLength={2000} onChange={event => setReason(event.target.value)} /> : null}
   </MedicalRoleCommand>
     {picker ? <OrderTemplatePicker scope={scope} orderId={version?.order_id} onClose={() => setPicker(false)} onDenied={control.onDenied}
+      onSuggest={preview => { setHint(preview); setPicker(false); }}
       onApply={preview => {
         if (content.text && !window.confirm(t("medical.orders.replaceText"))) return;
-        setContent({ ...content, text: preview.document_text }); setSource(preview); setPicker(false);
+        setContent({ ...content, text: preview.document_text }); setSource(preview); setHint(null); setPicker(false);
       }} /> : null}
   </>;
 }

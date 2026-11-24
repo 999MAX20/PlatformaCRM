@@ -1,4 +1,7 @@
 export const medical = {
+  "medical.assistance.useCompletion": "Использовать для подсказки",
+  "medical.assistance.noContinuation": "Текущий текст не совпадает с началом выбранного шаблона.",
+  "medical.assistance.templateChanged": "Не удалось подтвердить шаблон. Ввод сохранён; выберите шаблон заново или продолжите вручную.",
   "medical.assistance.dictate": "Диктовать",
   "medical.assistance.stopSeconds": "Остановить · {seconds} с",
   "medical.assistance.microphoneUnavailable": "Микрофон недоступен. Продолжайте ввод вручную.",
