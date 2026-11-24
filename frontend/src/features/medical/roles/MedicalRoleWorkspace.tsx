@@ -11,6 +11,7 @@ import { MedicalRoleMemberPanel } from "./MedicalRoleMemberPanel";
 import { MedicalRolePageStatus } from "./MedicalRolePageStatus";
 import { useMedicalRolePage } from "./useMedicalRolePage";
 import type { RoleDraftState } from "./MedicalRoleCommand";
+import { ReceptionDutyForm } from "../ReceptionDutyForm";
 
 export function MedicalRoleWorkspace({ businessId, active, onDraft }: { businessId: number; active: boolean; onDraft: (state: RoleDraftState) => void }) {
   const { t } = useI18n();
@@ -19,7 +20,7 @@ export function MedicalRoleWorkspace({ businessId, active, onDraft }: { business
   const [attempt, setAttempt] = useState(0);
   const [query, setQuery] = useState("");
   const [search, setSearch] = useState("");
-  const [dialog, setDialog] = useState<"create" | number | null>(null);
+  const [dialog, setDialog] = useState<"create" | "duty" | number | null>(null);
   const [version, setVersion] = useState(0);
   const guard = useRef<RoleDraftState>({ dirty: false, pending: false });
   const focusReturn = useRef("medical-role-create");
@@ -40,8 +41,8 @@ export function MedicalRoleWorkspace({ businessId, active, onDraft }: { business
     guard.current = { dirty: false, pending: false }; onDraft(guard.current); setDialog(null);
   }
   function saved() { setDialog(null); setVersion(value => value + 1); }
-  function openDialog(value: "create" | number) {
-    focusReturn.current = value === "create" ? "medical-role-create" : `medical-role-member-${value}`;
+  function openDialog(value: "create" | "duty" | number) {
+    focusReturn.current = value === "create" ? "medical-role-create" : value === "duty" ? "medical-reception-duty" : `medical-role-member-${value}`;
     setDialog(value);
   }
   if (!active && !access) return null;
@@ -51,6 +52,7 @@ export function MedicalRoleWorkspace({ businessId, active, onDraft }: { business
     {!access.can_assign ? <p role="status" className="text-sm text-platforma-subtle">{t("medical.roles.moduleDisabled")}</p> : null}
     <div className="flex flex-wrap gap-2">
       <Button id="medical-role-create" disabled={!access.can_assign} onClick={() => openDialog("create")}>{t("medical.roles.create")}</Button>
+      <Button id="medical-reception-duty" variant="secondary" disabled={!access.can_assign} onClick={() => openDialog("duty")}>{t("medical.reception.duty")}</Button>
       <Button variant="secondary" onClick={() => setAttempt(value => value + 1)}>{t("medical.clinical.reload")}</Button>
     </div>
     <form className="flex flex-wrap items-end gap-3" onSubmit={event => { event.preventDefault(); setQuery(search.trim()); }}>
@@ -59,9 +61,9 @@ export function MedicalRoleWorkspace({ businessId, active, onDraft }: { business
     </form>
     <MemberList key={`${query}:${version}`} businessId={businessId} query={query} onDenied={denied} onSelect={openDialog} />
     <RoleList key={version} businessId={businessId} onDenied={denied} />
-    <Modal title={t(dialog === "create" ? "medical.roles.create" : "medical.roles.memberAccess")} open={dialog !== null}
+    <Modal title={t(dialog === "create" ? "medical.roles.create" : dialog === "duty" ? "medical.reception.duty" : "medical.roles.memberAccess")} open={dialog !== null}
       onClose={close} closeOnBackdrop={false} size="lg" focusReturnId={focusReturn.current}>
-      {dialog === "create" ? <MedicalRoleDefinitionForm businessId={businessId} access={access}
+      {dialog === "duty" ? <ReceptionDutyForm businessId={businessId} control={{ guard, onDraft, onSaved: saved, onDenied: denied }} /> : dialog === "create" ? <MedicalRoleDefinitionForm businessId={businessId} access={access}
         control={{ guard, onDraft, onSaved: saved, onDenied: denied }} /> : typeof dialog === "number" ?
         <MedicalRoleMemberPanel businessId={businessId} memberId={dialog} guard={guard} onDraft={onDraft} onDenied={denied} /> : null}
     </Modal>

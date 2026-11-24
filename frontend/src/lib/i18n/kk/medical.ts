@@ -1,4 +1,18 @@
 export const medical = {
+  "medical.reception.notice.new.onsite": "{patient}: {initiator} тапсырмасы, пациент қазір келеді",
+  "medical.reception.duty": "Ресепшн кезекшілері",
+  "medical.reception.dutySave": "Кезекшілікті сақтау",
+  "medical.reception.dutyLead": "Ауысым жетекшісі",
+  "medical.reception.dutyDeputy": "Орынбасар",
+  "medical.reception.noDeputy": "Орынбасар тағайындалмаған",
+  "medical.reception.leadAvailable": "Жетекші осы ауысымда қолжетімді",
+  "medical.reception.dutyTimezone": "Құрылғы уақыты: {zone}",
+  "medical.reception.dutyStart": "Кезекшіліктің басталуы",
+  "medical.reception.dutyEnd": "Кезекшіліктің аяқталуы",
+  "medical.reception.notice.new": "{patient}: {initiator} маманынан жаңа тапсырма",
+  "medical.reception.notice.changed": "{patient}: тапсырма нәтижесі өзгерді",
+  "medical.reception.notice.escalated": "{patient}: тапсырманы қабылдау мерзімі өтті",
+
   "medical.reception.contactTitle": "Байланыс нәтижесі",
   "medical.reception.contactPolicy": "Жауап жоқ болса, бұл бас тарту емес. Жұмыс уақытында қайта хабарласыңыз; екі жұмыс күніндегі әрекеттерден кейін «байланысу мүмкін болмады» деп жабуға болады. Тек ұйымдастырушылық мәліметтерді жазыңыз.",
   "medical.reception.contactOutcome": "Не болды",

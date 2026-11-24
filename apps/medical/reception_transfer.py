@@ -58,6 +58,8 @@ def transfer_reception_request(*, actor, business_id, request_id, expected_revis
         write_actor_audit_log(actor=actor, business=business, action=AuditLog.Actions.UPDATE, instance=item,
             metadata={"kind": "medical_follow_up_transferred", "revision": item.revision,
                 "from_member_id": previous, "to_member_id": assignee_id, "reason": reason, "state": item.state})
+        from .reception_notifications import notify_reception
+        notify_reception(item, "changed")
         return CRMCommandResult(data={}, resource=item)
 
     result = run_idempotent_crm_command(business=business, actor=actor, action="medical.reception.transfer",

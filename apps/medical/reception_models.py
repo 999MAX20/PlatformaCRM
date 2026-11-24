@@ -114,3 +114,28 @@ class ReceptionContactAttempt(models.Model):
 
     class Meta:
         constraints = [models.CheckConstraint(condition=models.Q(cycle__gte=1, outcome__in=["no_answer", "contacted"]), name="medical_contact_attempt_valid")]
+
+
+class ReceptionDuty(models.Model):
+    business = models.ForeignKey("businesses.Business", on_delete=models.PROTECT)
+    branch = models.OneToOneField("branches.Branch", on_delete=models.PROTECT, related_name="reception_duty")
+    lead = models.ForeignKey("businesses.BusinessMember", on_delete=models.PROTECT, related_name="reception_duties")
+    deputy = models.ForeignKey("businesses.BusinessMember", on_delete=models.PROTECT, related_name="reception_deputy_duties", null=True, blank=True)
+    lead_available = models.BooleanField(default=True)
+    starts_at = models.DateTimeField()
+    ends_at = models.DateTimeField()
+    revision = models.PositiveIntegerField(default=1)
+
+    class Meta:
+        constraints = [models.CheckConstraint(condition=models.Q(ends_at__gt=models.F("starts_at"), revision__gte=1), name="medical_reception_duty_period")]
+
+
+class ReceptionNotice(models.Model):
+    request = models.ForeignKey(ReceptionBookingRequest, on_delete=models.PROTECT, related_name="notices")
+    notification = models.OneToOneField("notifications.Notification", on_delete=models.CASCADE, related_name="medical_reception_notice")
+    revision = models.PositiveIntegerField()
+    kind = models.CharField(max_length=16, choices=[("new", "New"), ("changed", "Changed"), ("escalated", "Escalated")])
+    recipient = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["request", "revision", "kind", "recipient"], name="medical_reception_notice_once")]

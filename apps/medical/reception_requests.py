@@ -62,6 +62,8 @@ def request_primary_follow_up(*, actor, business_id, patient_id, encounter_id, e
         item.save(force_insert=True)
         write_actor_audit_log(actor=actor, business=business, action=AuditLog.Actions.CREATE, instance=item,
             metadata={"kind": "medical_follow_up_requested", "revision": item.revision, "state": item.state})
+        from .reception_notifications import notify_reception
+        notify_reception(item, "new")
         return CRMCommandResult(data={"existing": False}, status_code=201, resource=item)
 
     result = run_idempotent_crm_command(business=business, actor=actor, action="medical.reception.request",

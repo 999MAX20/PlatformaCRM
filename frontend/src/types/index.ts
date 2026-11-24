@@ -168,6 +168,7 @@ export type Notification = {
   is_read: boolean;
   kind?: "work" | "announcement";
   message_key?: string;
+  message_params?: Record<string, string>;
   author_name?: string;
   opened_at?: string | null;
   acknowledged_at?: string | null;

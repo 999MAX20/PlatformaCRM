@@ -335,6 +335,35 @@ if len(sys.argv) > 2 and sys.argv[1] == "clinical-representatives-populate":
             relation.revoked_at, relation.revoked_by, relation.revocation_encrypted = now, appointment.business.owner, "synthetic"
         relation.save()
     sys.exit(0)
+if len(sys.argv) > 2 and sys.argv[1] == "reception-duty-request":
+    from apps.medical.models import MedicalEncounter
+    from apps.medical.reception_requests import request_primary_follow_up
+    from datetime import timedelta
+    encounter = MedicalEncounter.objects.select_related("primary_clinician__user", "appointment").get(appointment_id=int(sys.argv[2]))
+    now = django.utils.timezone.now()
+    item, _ = request_primary_follow_up(actor=encounter.primary_clinician.user,business_id=encounter.business_id,
+        patient_id=encounter.patient_id,encounter_id=encounter.pk,expected_revision=encounter.revision,
+        service_id=encounter.appointment.service_id,preferred_resource_id=encounter.appointment.resource_id,
+        recommended_from=now.date(),recommended_until=now.date()+timedelta(days=14),patient_in_clinic=True,idempotency_key="synthetic-live-queue")
+    print(json.dumps({"request_id":item.pk}));sys.exit(0)
+if len(sys.argv) > 1 and sys.argv[1] == "reception-duty-prepare":
+    from completion_fixture import prepare_completion
+    from apps.medical.models import MedicalEncounter
+    from apps.medical.tests_reception_claims import reception_member
+    from apps.businesses.models import BusinessMember
+    from django.contrib.auth import get_user_model
+    entry = prepare_completion()
+    encounter = MedicalEncounter.objects.select_related("business__owner", "branch").get(appointment_id=entry["appointment_id"])
+    business = encounter.business
+    owner = get_user_model().objects.create_user(username=f"duty-owner-{business.pk}", email=f"duty-owner-{business.pk}@example.test", password=os.environ["E2E_PASSWORD"])
+    business.owner = owner; business.save(update_fields=["owner"])
+    BusinessMember.objects.create(business=business,user=owner,role="owner")
+    lead, lead_member, _ = reception_member(business, owner, encounter.branch, f"duty-lead-{business.pk}")
+    deputy, deputy_member, _ = reception_member(business, owner, encounter.branch, f"duty-deputy-{business.pk}")
+    for user, name in [(lead,"Synthetic shift lead"),(deputy,"Synthetic shift deputy")]:
+        user.set_password(os.environ["E2E_PASSWORD"]); user.full_name=name; user.save()
+    print(json.dumps(entry | {"owner_email":owner.email,"lead_email":lead.email,"business_id":business.pk,"branch_id":encounter.branch_id,"lead_id":lead_member.pk,"deputy_id":deputy_member.pk}))
+    sys.exit(0)
 if len(sys.argv) > 1 and sys.argv[1] == "reception-contact-prepare":
     from completion_fixture import prepare_completion
     from apps.medical.models import MedicalEncounter

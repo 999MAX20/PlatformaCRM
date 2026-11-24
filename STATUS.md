@@ -1,4 +1,4 @@
-К13 контакты/отказ/возобновление локально приняты (backend/API/PG/UI/build/schema); публикация в процессе, далее смены/эскалация. К12 опубликован006a8212. Полный остаток/доказательства: docs/testing/task-state/DENTAL-MCS-20261122.md. CI не запускался.
+К13 дежурные/эскалация/уведомления/обновление очереди локально приняты; публикация в процессе. Контакты опубликованыa67255e0. Далее администратор оформляет рекомендации без эмуляции врача. Доказательства: docs/testing/task-state/DENTAL-MCS-20261122.md. Без CI.
 
 QA-016-20261121 LOCAL VERIFIED: automatic tasks searchable by displayed RU/KK/EN title; editor preserves original copy on unrelated edits. 66 backend, 9 node, 6 desktop/mobile browser scenarios, build/types/i18n/check/drift PASS; Code 8a240ad3 pushed to main; CI44937543011 queued (not PASS). Working DB untouched. [Evidence](docs/testing/evidence/qa-016-task-search-20261121.md).
 

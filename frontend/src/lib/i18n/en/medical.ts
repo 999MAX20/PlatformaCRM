@@ -1,4 +1,18 @@
 export const medical = {
+  "medical.reception.notice.new.onsite": "{patient}: request from {initiator}, patient is coming to reception",
+  "medical.reception.duty": "Reception duty",
+  "medical.reception.dutySave": "Save duty",
+  "medical.reception.dutyLead": "Shift lead",
+  "medical.reception.dutyDeputy": "Deputy",
+  "medical.reception.noDeputy": "No deputy assigned",
+  "medical.reception.leadAvailable": "Lead is available for this shift",
+  "medical.reception.dutyTimezone": "Device time: {zone}",
+  "medical.reception.dutyStart": "Duty starts",
+  "medical.reception.dutyEnd": "Duty ends",
+  "medical.reception.notice.new": "{patient}: new request from {initiator}",
+  "medical.reception.notice.changed": "{patient}: booking request updated",
+  "medical.reception.notice.escalated": "{patient}: booking request acceptance is overdue",
+
   "medical.reception.contactTitle": "Contact outcome",
   "medical.reception.contactPolicy": "No answer is not a refusal. Retry during working hours; close as unreachable only after attempts across two working days. Record organizational information only.",
   "medical.reception.contactOutcome": "What happened",

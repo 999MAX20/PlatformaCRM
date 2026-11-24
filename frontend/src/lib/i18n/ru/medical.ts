@@ -1,4 +1,18 @@
 export const medical = {
+  "medical.reception.notice.new.onsite": "{patient}: поручение от {initiator}, пациент сейчас подойдёт",
+  "medical.reception.duty": "Дежурные ресепшна",
+  "medical.reception.dutySave": "Сохранить дежурство",
+  "medical.reception.dutyLead": "Старший смены",
+  "medical.reception.dutyDeputy": "Заместитель",
+  "medical.reception.noDeputy": "Заместитель не назначен",
+  "medical.reception.leadAvailable": "Старший доступен в этой смене",
+  "medical.reception.dutyTimezone": "Время устройства: {zone}",
+  "medical.reception.dutyStart": "Начало дежурства",
+  "medical.reception.dutyEnd": "Конец дежурства",
+  "medical.reception.notice.new": "{patient}: новое поручение от {initiator}",
+  "medical.reception.notice.changed": "{patient}: результат поручения изменился",
+  "medical.reception.notice.escalated": "{patient}: просрочено принятие поручения",
+
   "medical.reception.contactTitle": "Результат связи",
   "medical.reception.contactPolicy": "Нет ответа — не отказ. Повторите контакт в рабочее время; закрытие «не удалось связаться» доступно после попыток в два рабочих дня. Пишите только организационные сведения.",
   "medical.reception.contactOutcome": "Что произошло",

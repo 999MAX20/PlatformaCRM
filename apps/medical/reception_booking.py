@@ -58,6 +58,8 @@ def book_reception_request(*, actor, business_id, request_id, expected_revision,
         item.save(update_fields=["booked_appointment", "state", "closed_at", "revision"])
         write_actor_audit_log(actor=actor, business=business, action=AuditLog.Actions.UPDATE, instance=item,
             metadata={"kind": "medical_follow_up_booked", "revision": item.revision, "state": item.state})
+        from .reception_notifications import notify_reception
+        notify_reception(item, "changed")
         return CRMCommandResult(data={}, resource=appointment)
 
     result = run_idempotent_crm_command(business=business, actor=actor, action="medical.reception.book",

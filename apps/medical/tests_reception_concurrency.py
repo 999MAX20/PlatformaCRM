@@ -112,6 +112,17 @@ class ReceptionClaimConcurrencyTests(TransactionTestCase):
     claim = claim_fixtures.ReceptionClaimTests.claim
     parallel = concurrency.OrderConcurrencyTests.parallel
 
+    def test_overlapping_workers_publish_one_escalation(self):
+        from django.utils import timezone
+        from .models import ReceptionDuty, ReceptionNotice
+        from .reception_notifications import escalate_reception_request
+        now = timezone.now()
+        ReceptionDuty.objects.create(business=self.business, branch=self.first, lead=self.reception_member,
+            starts_at=now-timedelta(hours=1), ends_at=now+timedelta(hours=1))
+        ReceptionBookingRequest.objects.filter(pk=self.item.pk).update(acceptance_due_at=now-timedelta(minutes=1))
+        self.assertCountEqual(self.parallel([lambda: escalate_reception_request(self.item.pk), lambda: escalate_reception_request(self.item.pk)]), [True,False])
+        self.assertEqual(ReceptionNotice.objects.filter(kind="escalated").count(),1)
+
     def test_two_receptionists_cannot_both_accept(self):
         self.assertCountEqual(self.parallel([lambda: self.claim()[1],
             lambda: self.claim(actor=self.colleague)[1]]), [False, "conflict"])

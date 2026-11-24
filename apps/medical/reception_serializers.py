@@ -15,6 +15,7 @@ class ReceptionPageSerializer(ReceptionBusinessSerializer):
 
 class ReceptionQueueSerializer(ReceptionPageSerializer):
     branch_id = serializers.IntegerField(min_value=1)
+    request_id = serializers.IntegerField(min_value=1, required=False)
     state = serializers.ChoiceField(choices=ReceptionBookingRequest.States.values, required=False)
 
 

@@ -57,7 +57,7 @@ export const medicalReceptionApi = {
     (await apiClient.get<ReceptionCandidates>(root + `${id}/candidates/`, { params: scope, signal })).data,
   catalog: async (scope: FollowUpScope & { kind: "service" | "staff"; search?: string }, signal?: AbortSignal) =>
     (await apiClient.get<FollowUpOptions>(root + "catalog/", { params: scope, signal })).data,
-  queue: (scope: ReceptionPageScope & { branch_id: number; state?: ReceptionState }, signal?: AbortSignal) =>
+  queue: (scope: ReceptionPageScope & { branch_id: number; state?: ReceptionState; request_id?: number }, signal?: AbortSignal) =>
     read(scope, "", signal),
   primary: (scope: FollowUpScope, signal?: AbortSignal) => read(scope, "primary/", signal),
   create: (payload: FollowUpDraft, key: string, signal?: AbortSignal) => command("", payload, key, signal),

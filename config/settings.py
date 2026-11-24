@@ -454,6 +454,7 @@ YCLOUD_WEBHOOK_SECRET = env("YCLOUD_WEBHOOK_SECRET", default="")
 GOOGLE_RETENTION_ENABLED = env.bool("GOOGLE_RETENTION_ENABLED", default=False)
 
 CELERY_BEAT_SCHEDULE = {
+    "medical-reception-escalation": {"task": "medical.escalate_reception", "schedule": 30.0},
     "google-retention": {"task": "integrations.cleanup_google_data", "schedule": 300.0,
                          "options": {"queue": "integrations"}},
     "google-calendars": {"task": "integrations.process_google_calendars", "schedule": 60.0,

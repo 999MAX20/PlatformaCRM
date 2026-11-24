@@ -14,8 +14,8 @@ import { useI18n } from "../../lib/i18n";
 import { realtimeIntervals } from "../../lib/realtime";
 import type { Id, Notification } from "../../types";
 
-export function notificationText(notification: Notification, t: (key: string) => string) {
-  return notification.message_key ? t(notification.message_key) : notification.text;
+export function notificationText(notification: Notification, t: (key: string, params?: Record<string, string>) => string) {
+  return notification.message_key ? t(notification.message_key, notification.message_params) : notification.text;
 }
 
 export function NotificationInspector({ id, business, onClose }: { id: Id; business: Id; onClose: () => void }) {

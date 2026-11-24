@@ -58,9 +58,37 @@ class MedicalRoleAssignSerializer(MedicalRoleRevokeSerializer):
     all_branches = serializers.BooleanField()
 
 
+class ReceptionDutyReadSerializer(MedicalRoleScopeSerializer):
+    branch_id = serializers.IntegerField(min_value=1, required=False)
+    after_id = serializers.IntegerField(min_value=0, default=0)
+    search = serializers.CharField(max_length=100, required=False, allow_blank=True)
+    kind = serializers.ChoiceField(choices=("branches", "members"), default="branches")
+
+
+class ReceptionDutyWriteSerializer(MedicalRoleScopeSerializer):
+    branch_id = serializers.IntegerField(min_value=1)
+    lead_id = serializers.IntegerField(min_value=1)
+    deputy_id = serializers.IntegerField(min_value=1, allow_null=True)
+    lead_available = serializers.BooleanField()
+    starts_at = serializers.DateTimeField()
+    ends_at = serializers.DateTimeField()
+    expected_revision = serializers.IntegerField(min_value=0)
+    reason = serializers.CharField(max_length=1000)
+
+
 class MedicalRoleManagementViewSet(viewsets.GenericViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = MedicalRoleScopeSerializer
+
+    @action(detail=False, methods=["get", "post"], url_path="reception-duty")
+    def reception_duty(self, request):
+        from .reception_duties import read_reception_duty, save_reception_duty
+        if request.method == "GET":
+            return self._read(request, ReceptionDutyReadSerializer, read_reception_duty)
+        serializer = ReceptionDutyWriteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response(save_reception_duty(actor=request.user, **serializer.validated_data,
+            idempotency_key=request.headers.get("Idempotency-Key")))
 
     def get_serializer_class(self):
         if self.action == "roles" and self.request.method == "POST":

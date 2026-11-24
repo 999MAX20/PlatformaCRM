@@ -109,6 +109,8 @@ def update_reception_contact(*, actor, business_id, request_id, expected_revisio
             metadata={"kind": "medical_follow_up_contact", "revision": item.revision, "state": item.state,
                 "outcome": action, "cycle": item.contact_cycle, "reason": reason,
                 "previous_appointment_id": previous_booking if action == "reopen" else None})
+        from .reception_notifications import notify_reception
+        notify_reception(item, "changed")
         return CRMCommandResult(data={}, resource=item)
 
     result = run_idempotent_crm_command(business=business, actor=actor, action="medical.reception.contact",

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useBlocker, useNavigate } from "react-router";
+import { useBlocker, useNavigate, useSearchParams } from "react-router";
 import axios from "axios";
 import { medicalReceptionApi as api, type ReceptionRequest } from "../../api/medicalReception";
 import { getApiErrorMessage } from "../../api/client";
@@ -38,7 +38,9 @@ function ReceptionQueue({ businessId, timeZone, branches }: {
 }) {
   const { t, language } = useI18n();
   const navigate = useNavigate();
-  const [branch, setBranch] = useState(branches.length === 1 ? String(branches[0].id) : "");
+  const [params, setParams] = useSearchParams();
+  const targetRequest = Number(params.get("request")) || undefined;
+  const [branch, setBranch] = useState(branches.some(row => String(row.id) === params.get("branch")) ? params.get("branch")! : branches.length === 1 ? String(branches[0].id) : "");
   const [rows, setRows] = useState<ReceptionRequest[]>([]);
   const [next, setNext] = useState<number | null>(null);
   const [selected, setSelected] = useState<ReceptionRequest | null>(null);
@@ -51,30 +53,52 @@ function ReceptionQueue({ businessId, timeZone, branches }: {
   const guard = useRef({ dirty: false, pending: false });
   const controller = useRef<AbortController | null>(null);
   const retry = useRef<{ fingerprint: string; key: string } | null>(null);
+  const loadedCount = useRef(0); loadedCount.current = rows.length;
   const onDirty = useCallback((value: boolean) => { guard.current.dirty = value; setDirty(value); }, []);
   const onPending = useCallback((value: boolean) => { guard.current.pending = value; setBusy(value); }, []);
   const denied = useCallback((cause: unknown) => { setRows([]); setSelected(null); setNext(null); setError(cause); onDirty(false); }, [onDirty]);
+  useEffect(() => {
+    const target = params.get("branch");
+    if (target && !guard.current.dirty && !guard.current.pending && branches.some(row => String(row.id) === target)) setBranch(target);
+  }, [params, branches]);
   useUnsavedEntryWarning(dirty || busy);
   const blocker = useBlocker(() => guard.current.pending || guard.current.dirty);
   useEffect(() => {
     if (blocker.state !== "blocked") return;
     if (!guard.current.pending && window.confirm(t("medical.clinical.discard"))) blocker.proceed(); else blocker.reset();
   }, [blocker, t]);
-  const load = useCallback(async (offset = 0) => {
+  const load = useCallback(async (offset = 0, quiet = false) => {
     controller.current?.abort();
     const active = new AbortController(); controller.current = active;
     if (!branch || !branches.some(item => String(item.id) === branch)) { setRows([]); setNext(null); return; }
-    setLoading(true); setError(null); if (!offset) setRows([]);
+    if (!quiet) { setLoading(true); setError(null); if (!offset) setRows([]); }
     try {
-      const page = await api.queue({ business_id: businessId, branch_id: Number(branch), offset }, active.signal);
-      if (!active.signal.aborted) { setRows(previous => offset ? [...previous, ...page.results] : page.results); setNext(page.next_offset); }
+      const page = await api.queue({ business_id: businessId, branch_id: Number(branch), offset, request_id: targetRequest }, active.signal);
+      if (quiet) {
+        while (!active.signal.aborted && page.next_offset !== null && page.results.length < loadedCount.current) {
+          const nextPage = await api.queue({ business_id: businessId, branch_id: Number(branch), offset: page.next_offset, request_id: targetRequest }, active.signal);
+          page.results.push(...nextPage.results); page.next_offset = nextPage.next_offset;
+        }
+      }
+      if (!active.signal.aborted) { setRows(previous => offset ? [...previous, ...page.results] : page.results); setNext(page.next_offset); setError(null); }
     } catch (cause) {
       if (!active.signal.aborted) {
         if (axios.isAxiosError(cause) && [401, 403, 404].includes(cause.response?.status ?? 0)) denied(cause); else setError(cause);
       }
     } finally { if (!active.signal.aborted) setLoading(false); }
-  }, [businessId, branch, branches, denied]);
+  }, [businessId, branch, branches, denied, targetRequest]);
   useEffect(() => { void load(); return () => controller.current?.abort(); }, [load]);
+  useEffect(() => {
+    if (!branch || selected || loading || busy) return;
+    let stopped = false; let timer: ReturnType<typeof setTimeout>;
+    const refresh = async () => {
+      if (stopped) return;
+      if (document.visibilityState === "visible" && navigator.onLine) await load(0, true);
+      if (!stopped) timer = setTimeout(() => void refresh(), 3000);
+    };
+    timer = setTimeout(() => void refresh(), 3000);
+    return () => { stopped = true; clearTimeout(timer); };
+  }, [branch, selected, loading, busy, load]);
   useEffect(() => {
     if (!selected && !loading && returnFocus.current !== null) {
       document.getElementById(`reception-row-${returnFocus.current}`)?.focus(); returnFocus.current = null;
@@ -104,7 +128,8 @@ function ReceptionQueue({ businessId, timeZone, branches }: {
     <h1 className="text-xl font-semibold">{t("medical.reception.queue")}</h1>
     <Select label={t("medical.branch")} value={branch} disabled={!!selected || busy} options={[
       { value: "", label: t("medical.selectBranch") }, ...branches.map(item => ({ value: item.id, label: item.name })),
-    ]} onChange={event => setBranch(event.target.value)} />
+    ]} onChange={event => { setBranch(event.target.value); setParams({}); }} />
+    {targetRequest && !selected ? <Button size="lg" variant="secondary" onClick={() => setParams({})}>{t("medical.reception.queue")}</Button> : null}
     {selected ? <>
       <Button size="lg" variant="secondary" disabled={busy} onClick={back}>{t("common.back")}</Button>
       {mode === "contact" ? <ReceptionContactForm key={selected.id} businessId={businessId} row={selected} timeZone={timeZone} onDirty={onDirty} onPending={onPending} onDenied={denied} onDone={finish} /> : mode === "handover" ? <ReceptionHandover key={selected.id} businessId={businessId} row={selected} timeZone={timeZone} onDirty={onDirty} onPending={onPending} onDenied={denied} onDone={finish} /> : mode === "book" ? <ReceptionBookingForm key={selected.id} businessId={businessId} row={selected} onDirty={onDirty} onPending={onPending} onDenied={denied} onDone={finish} /> :

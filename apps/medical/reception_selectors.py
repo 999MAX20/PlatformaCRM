@@ -103,7 +103,7 @@ def list_reception_candidates(*, actor, business_id, request_id, offset=0, limit
 
 
 @transaction.atomic
-def list_reception_requests(*, actor, business_id, branch_id, offset=0, limit=25, state=None):
+def list_reception_requests(*, actor, business_id, branch_id, offset=0, limit=25, state=None, request_id=None):
     _page(offset, limit)
     if state is not None and state not in ReceptionBookingRequest.States.values:
         raise ValidationError({"state": "Select a supported request state."})
@@ -116,6 +116,9 @@ def list_reception_requests(*, actor, business_id, branch_id, offset=0, limit=25
     clients = scope_queryset(Client.objects.filter(business=business, is_archived=False), actor, business,
         Resources.CLIENTS, Actions.VIEW)
     items = _requests(business).filter(branch=branch, patient__client_id__in=clients.values("pk"))
+    if request_id is not None:
+        if type(request_id) is not int or request_id <= 0: raise ValidationError({"request_id": "Select a valid request."})
+        items = items.filter(pk=request_id)
     if state is not None:
         items = items.filter(state=state)
     page = list(items.order_by("-patient_in_clinic", "created_at", "pk")[offset:offset + limit + 1])

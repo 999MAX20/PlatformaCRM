@@ -1,9 +1,10 @@
 from .assistant_notifications import AssistantNotificationSource
 from .participation_notifications import ParticipationNotificationSource
+from .reception_notifications import ReceptionNotificationSource
 
 
 class MedicalNotificationSource:
-    sources = (ParticipationNotificationSource, AssistantNotificationSource)
+    sources = (ParticipationNotificationSource, AssistantNotificationSource, ReceptionNotificationSource)
     related_paths = tuple(path for source in sources for path in source.related_paths)
 
     @classmethod
