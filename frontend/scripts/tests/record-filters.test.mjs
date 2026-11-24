@@ -85,7 +85,8 @@ test("card return preserves list context and rejects external or unrelated desti
   assert.equal(recordReturnPath(list), list);
   const plan = "/app/appointments?view=plans&plan=7";
   assert.equal(recordReturnPath(plan), plan);
-  for (const value of [null, 3, "https://evil.test", "//evil.test", "/app/appointments/7", "/app/clients", "/app/appointments?x=\n"]) {
+  for (const value of ["/app/calendar?date=2026-11-24&view=month", "/app/clients/42", "/app/clients?page=2"]) assert.equal(recordReturnPath(value), value);
+  for (const value of [null, 3, "https://evil.test", "//evil.test", "/app/appointments/7", "/app/clients/42/evil", "/app/appointments?x=\n"]) {
     assert.equal(recordReturnPath(value), "/app/appointments");
   }
 });

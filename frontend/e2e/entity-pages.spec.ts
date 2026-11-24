@@ -5,6 +5,114 @@ import { ru } from "../src/lib/i18n/ru";
 import { kk } from "../src/lib/i18n/kk";
 
 requireIsolatedEnvironment();
+for (const role of ["head", "primary-head", "reception", "assistant"] as const) test(`appointment page role ${role}`, async ({ page }) => {
+  const output = execFileSync(process.env.E2E_PYTHON!, ["e2e/entity-pages-fixture.py", ...(role === "primary-head" ? ["--primary-head"] : [])], { env: process.env, windowsHide: true, encoding: "utf8" });
+  const fixture = JSON.parse(output.trim().split(/\r?\n/).at(-1)!);
+  await page.addInitScript(() => localStorage.setItem("ai_smb_language", "ru"));
+  await page.goto("/login");
+  await page.locator('input[name="email"]').fill(role === "primary-head" ? fixture.email : fixture[`${role}_email`]);
+  await page.locator('input[name="password"]').fill(process.env.E2E_PASSWORD!);
+  await page.locator('form button[type="submit"]').click();
+  await expect(page).toHaveURL(/\/app\//);
+  const access = page.waitForResponse(response => response.url().includes("/encounters/appointment-context/") && response.request().method() === "GET");
+  await page.goto(`/app/appointments/${fixture.appointment_id}`);
+  expect((await access).status()).toBe(role === "primary-head" ? 200 : 403);
+  const screen = page.getByTestId("appointment-reference-page");
+  await expect(screen).toBeVisible();
+  if (role === "primary-head") {
+    await expect(screen.getByLabel(ru["medical.clinical.complaints"], { exact: true })).toBeVisible();
+    await expect(screen.getByRole("button", { name: ru["medical.clinical.save"], exact: true })).toBeVisible();
+  } else await expect(screen.getByTestId("clinical-appointment-entry")).toHaveCount(0);
+});
+
+test("appointment page: clinical desktop and mobile", async ({ page }, info) => {
+  const output = execFileSync(process.env.E2E_PYTHON!, ["e2e/entity-pages-fixture.py"], { env: process.env, windowsHide: true, encoding: "utf8" });
+  const fixture = JSON.parse(output.trim().split(/\r?\n/).at(-1)!);
+  await page.addInitScript(() => localStorage.setItem("ai_smb_language", "ru"));
+  await page.setViewportSize({ width: 1536, height: 1024 });
+  await page.goto("/login");
+  await page.locator('input[name="email"]').fill(fixture.email);
+  await page.locator('input[name="password"]').fill(process.env.E2E_PASSWORD!);
+  await page.locator('form button[type="submit"]').click();
+  await expect(page).toHaveURL(/\/app\//);
+  await page.goto(`/app/appointments/${fixture.appointment_id}`);
+  const screen = page.getByTestId("appointment-reference-page");
+  await expect(screen.getByTestId("tooth-chart")).toBeVisible();
+  const complaints = screen.getByLabel(ru["medical.clinical.complaints"], { exact: true });
+  await complaints.fill(`Page appointment ${fixture.appointment_id}`);
+  await screen.locator("#appointment-page-tab-history").click();
+  const guard = page.getByTestId("clinical-unsaved");
+  await expect(guard).toBeVisible();
+  await guard.getByRole("button", { name: ru["medical.clinical.continueEditing"], exact: true }).click();
+  await expect(complaints).toHaveValue(`Page appointment ${fixture.appointment_id}`);
+  await screen.getByRole("button", { name: ru["medical.clinical.save"], exact: true }).click();
+  await expect(screen.getByRole("status").filter({ hasText: ru["common.saved"] })).toBeVisible();
+  await screen.getByRole("button", { name: /^Зуб 16:/ }).click();
+  const tooth = screen.getByTestId("tooth-inspector");
+  await expect(tooth).toBeVisible();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await tooth.getByLabel(ru["medical.tooth.observation"], { exact: true }).fill(`Tooth observation ${fixture.appointment_id}`);
+  page.once("dialog", dialog => dialog.dismiss());
+  await screen.locator("#appointment-page-tab-history").click();
+  await expect(tooth.getByLabel(ru["medical.tooth.observation"], { exact: true })).toHaveValue(`Tooth observation ${fixture.appointment_id}`);
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await page.screenshot({ path: info.outputPath("appointment-tooth-desktop.png"), fullPage: true });
+  await tooth.getByRole("button", { name: ru["medical.tooth.save"], exact: true }).click();
+  await expect(tooth).toHaveCount(0);
+  for (const width of [1536, 390]) {
+    await page.setViewportSize({ width, height: 1024 });
+    await page.evaluate(() => window.scrollTo(0, 0));
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    await page.screenshot({ path: info.outputPath(`appointment-${width}.png`), fullPage: true });
+  }
+  await screen.getByRole("button", { name: ru["medical.completion.title"], exact: true }).click();
+  const completion = screen.getByTestId("encounter-completion");
+  await expect(completion).toBeVisible();
+  await screen.locator("#appointment-page-tab-history").click();
+  await expect(completion).toBeVisible();
+  await screen.getByRole("link", { name: ru["common.back"], exact: true }).click();
+  await expect(page).toHaveURL(new RegExp(`/app/appointments/${fixture.appointment_id}`));
+  await completion.getByRole("button", { name: ru["medical.completion.back"], exact: true }).click();
+  await screen.locator("#appointment-page-tab-documents").click();
+  await expect(screen.getByTestId("medical-documents")).toBeVisible();
+  await screen.locator("#appointment-page-tab-visit").click();
+  await complaints.fill("Discard this independent draft");
+  await screen.locator("#appointment-page-tab-history").click();
+  await page.getByTestId("clinical-unsaved").getByRole("button", { name: ru["medical.clinical.leaveUnsaved"], exact: true }).click();
+  await screen.locator("#appointment-page-tab-visit").click();
+  await expect(complaints).toHaveValue(`Page appointment ${fixture.appointment_id}`);
+});
+
+test("appointment administrative page and navigation", async ({ page }, info) => {
+  const output = execFileSync(process.env.E2E_PYTHON!, ["e2e/entity-pages-fixture.py"], { env: process.env, windowsHide: true, encoding: "utf8" });
+  const fixture = JSON.parse(output.trim().split(/\r?\n/).at(-1)!);
+  await page.addInitScript(() => localStorage.setItem("ai_smb_language", "ru"));
+  await page.goto("/login");
+  await page.locator('input[name="email"]').fill(fixture.owner_email);
+  await page.locator('input[name="password"]').fill(process.env.E2E_PASSWORD!);
+  await page.locator('form button[type="submit"]').click();
+  await expect(page).toHaveURL(/\/app\//);
+  await page.goto(`/app/appointments?client=${fixture.client_id}`);
+  await page.getByRole("row").filter({ hasText: "Анна Тестова" }).click();
+  await expect(page).toHaveURL(new RegExp(`/app/appointments/${fixture.appointment_id}`));
+  const screen = page.getByTestId("appointment-reference-page");
+  await expect(screen.getByTestId("clinical-appointment-entry")).toHaveCount(0);
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await expect(screen.getByRole("button", { name: ru["appointment.actionComplete"], exact: true })).toHaveCount(0);
+  await screen.getByRole("link", { name: ru["common.back"], exact: true }).click();
+  await expect(page).toHaveURL(new RegExp(`client=${fixture.client_id}`));
+  await page.goto(`/app/calendar?appointment=${fixture.appointment_id}&view=month`);
+  await expect(page).toHaveURL(new RegExp(`/app/appointments/${fixture.appointment_id}`));
+  await screen.getByRole("link", { name: ru["common.back"], exact: true }).click();
+  await expect(page).toHaveURL(/\/app\/calendar\?view=month/);
+  await page.goto(`/app/clients/${fixture.client_id}`);
+  await page.getByTestId("client-reference-page").getByRole("tab", { name: ru["appointments.title"], exact: true }).click();
+  await page.locator(`[href="/app/appointments/${fixture.appointment_id}"]`).click();
+  await expect(screen).toBeVisible();
+  await screen.getByRole("link", { name: ru["common.back"], exact: true }).click();
+  await expect(page).toHaveURL(new RegExp(`/app/clients/${fixture.client_id}`));
+});
+
 for (const language of ["ru", "kk"] as const) test(`client clinical page ${language}: save and protect draft`, async ({ page }, info) => {
   const output = execFileSync(process.env.E2E_PYTHON!, ["e2e/entity-pages-fixture.py"], { env: process.env, windowsHide: true, encoding: "utf8" });
   const fixture = JSON.parse(output.trim().split(/\r?\n/).at(-1)!);

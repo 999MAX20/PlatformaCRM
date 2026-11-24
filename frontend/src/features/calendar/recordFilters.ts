@@ -58,6 +58,6 @@ export function recordWorkspaceParams(params: URLSearchParams, today: string, bu
 
 export function recordReturnPath(value: unknown) {
   return typeof value === "string" && !/[\r\n\t]/.test(value) &&
-    (value === "/app/appointments" || value.startsWith("/app/appointments?"))
+    /^\/app\/(?:appointments|calendar|clients(?:\/\d+)?)(?:\?[^#]*)?$/.test(value)
     ? value : "/app/appointments";
 }

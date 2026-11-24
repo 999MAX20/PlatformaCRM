@@ -41,3 +41,24 @@
 @media(max-width:767px) { .entity-reference-page { padding-top:0; } .entity-page-columns { grid-template-columns:minmax(0, 1fr); } .entity-identity { gap:12px; margin:12px 0 20px; } .entity-avatar { width:48px; height:48px; } .entity-heading h1 { font-size:24px; } .entity-heading p { font-size:14px; } .entity-header-actions { width:100%; margin:4px 0 0; } .entity-header-actions > * { flex:1; } .entity-page-tabs { gap:4px; margin-bottom:20px; } .entity-page-tabs [role=tab] { font-size:14px; } .entity-next-visit, .entity-context-panel { padding:18px; } .entity-next-visit > svg { display:none; } .entity-next-visit .entity-primary { width:100%; } .entity-reference-page h2 { font-size:18px; } .entity-medical-link { align-items:flex-start; flex-direction:column; } }
 .entity-clinical-warning { display:flex; gap:14px; align-items:flex-start; padding:18px 20px; margin-bottom:20px; border-radius:10px; background:var(--platforma-warning-soft); color:var(--platforma-warning); overflow-wrap:anywhere; }
 .entity-clinical-warning svg { flex-shrink:0; }
+.appointment-reference-page .entity-context-panel section > div { border:0; box-shadow:none; padding:0; background:transparent; }
+.appointment-reference-page .entity-context-panel h2 { margin-bottom:16px; }
+.appointment-clinical-field, .appointment-odontogram { padding:18px; border:1px solid var(--platforma-border); background:var(--platforma-surface); border-radius:12px; }
+.appointment-clinical-field > details > summary { font-size:13px; color:var(--platforma-muted); cursor:pointer; min-height:28px; }
+.appointment-secondary-field { border-bottom:1px solid var(--platforma-border); }
+.appointment-secondary-field > summary { min-height:44px; padding:10px 0; cursor:pointer; font-weight:600; }
+.appointment-secondary-field > summary > span { display:block; margin:4px 0 4px 18px; font-weight:400; font-size:14px; color:var(--platforma-muted); max-height:44px; overflow:hidden; }
+.appointment-odontogram > details { font-size:13px; color:var(--platforma-muted); }
+.appointment-odontogram [data-focus-return-id^=tooth-] { flex:1; min-width:32px; }
+.appointment-odontogram [data-focus-return-id^=tooth-] svg { width:100%; max-width:48px; height:100px; }
+.appointment-odontogram [data-focus-return-id^=tooth-][aria-pressed=true] { outline:2px solid var(--platforma-brand); outline-offset:-2px; background:var(--platforma-brand-soft); }
+@media(max-width:767px) { .appointment-clinical-field, .appointment-odontogram { padding:14px; } }
+.appointment-tooth-inspector { padding:16px; border:1px solid var(--platforma-border); border-radius:10px; background:var(--platforma-surface); min-width:0; }
+.appointment-tooth-inspector > header { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px; }
+.appointment-tooth-inspector h3 { font-size:18px; font-weight:650; }
+.tooth-illustration { display:block; flex-shrink:0; width:100%; max-width:48px; height:108px; background-image:url('/assets/dental/tooth-atlas.png'); background-size:800% 100%; background-repeat:no-repeat; }
+.appointment-clinical-actions { display:flex; flex-direction:column; gap:12px; margin-top:24px; }
+.appointment-clinical-actions[hidden] { display:none; }
+.appointment-reference-page .entity-context-panel section > div > div > div { background:transparent; padding:8px 0; }
+@media(min-width:1101px) { .appointment-reference-page .entity-page-columns { grid-template-columns:minmax(0,1fr) minmax(280px,26%); } }
+@media(min-width:1400px) { .appointment-tooth-grid { display:grid; grid-template-columns:minmax(0,1fr) 260px; gap:12px; align-items:start; } .appointment-tooth-grid > * { grid-column:1; min-width:0; } .appointment-tooth-grid > .appointment-tooth-inspector { grid-column:2; grid-row:1 / span 8; margin-top:0; } }

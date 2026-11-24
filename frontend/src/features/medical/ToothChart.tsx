@@ -1,7 +1,7 @@
 import { useToothNavigation } from "./clinicalViewNavigation";
 import { ToothShape } from "./ToothShape";
 import { historyScopeKey } from "./clinicalHistoryNavigation";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useImperativeHandle, type Ref, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import axios from "axios";
 import type { AppointmentClinicalContext, ClinicalReadScope } from "../../api/medicalClinical";
 import { medicalToothApi, toothStatuses, type ToothObservation, type ToothHistory, type ToothSnapshot } from "../../api/medicalTooth";
@@ -19,14 +19,16 @@ import { ToothEditor } from "./ToothEditor";
 import { ToothPlanSteps } from "./ToothPlanSteps";
 import type { ClinicalDraftControl } from "./ClinicalDraftForm";
 
+type ToothNavigationHandle = { beforeLeave: () => Promise<boolean> };
+type InlineProps = { navigationRef?: Ref<ToothNavigationHandle>; onOpenChange?: (open: boolean) => void };
 type Denied = (cause: unknown) => void;
 const stateMarks = { not_examined: "?", no_findings: "✓", observation: "•", absent: "−" } as const;
 function denied(cause: unknown) { return axios.isAxiosError(cause) && [401, 403].includes(cause.response?.status ?? 0); }
 
-export function ToothChart({ context, onDenied, onFiles }: { context: AppointmentClinicalContext; onDenied: Denied; onFiles?: (tooth: number) => void }) {
+export function ToothChart({ context, onDenied, onFiles, compact = false, navigationRef, onOpenChange }: InlineProps & { compact?: boolean; context: AppointmentClinicalContext; onDenied: Denied; onFiles?: (tooth: number) => void }) {
   const scope = useMemo(() => ({ business_id: context.business_id, patient_id: context.patient.id,
     appointment_id: context.appointment.id }), [context]);
-  return <ToothChartRead key={historyScopeKey(scope)} scope={scope} context={context} onDenied={onDenied} onFiles={onFiles} />;
+  return <ToothChartRead key={historyScopeKey(scope)} scope={scope} context={context} onDenied={onDenied} onFiles={onFiles} compact={compact} navigationRef={navigationRef} onOpenChange={onOpenChange} />;
 }
 
 export function ParticipationToothChart({ businessId, patientId, participationId, onDenied, onFiles }: {
@@ -37,24 +39,30 @@ export function ParticipationToothChart({ businessId, patientId, participationId
   return <ToothChartRead key={historyScopeKey(scope)} scope={scope} onDenied={onDenied} onFiles={onFiles} />;
 }
 
-function ToothChartRead({ scope, context, onDenied, onFiles }: {
+function ToothChartRead({ scope, context, onDenied, onFiles, compact = false, navigationRef, onOpenChange }: InlineProps & {
+  compact?: boolean;
   scope: ClinicalReadScope; context?: AppointmentClinicalContext; onDenied: Denied;
   onFiles?: (tooth: number) => void;
 }) {
   const { t } = useI18n();
   const [navigation, setNavigation] = useToothNavigation(scope);
+  const chartNavigation = useRef<ToothNavigationHandle>(null);
+  useImperativeHandle(navigationRef, () => ({ beforeLeave: () => chartNavigation.current?.beforeLeave() ?? Promise.resolve(true) }));
   const { date, asOf } = navigation;
-  return <section className="space-y-4" data-testid="tooth-chart">
-    <form className="flex flex-wrap items-end gap-3" onSubmit={event => { event.preventDefault(); if (date) setNavigation({ ...navigation, asOf: new Date(date).toISOString() }); }}>
+  return <section className={compact ? "appointment-odontogram space-y-4" : "space-y-4"} data-testid="tooth-chart">
+    {compact && <h2>{t("medical.tooth.title")}</h2>}
+    <details open={compact ? undefined : true}><summary hidden={!compact}>{t("medical.tooth.asOf")}</summary>
+    <div className="flex flex-wrap items-end gap-3">
       <Input type="datetime-local" label={t("medical.tooth.asOf")} value={date} onChange={event => setNavigation({ ...navigation, date: event.target.value })} />
-      <Button type="submit" size="lg" variant="secondary" disabled={!date}>{t("medical.tooth.show")}</Button>
-      {asOf ? <Button size="lg" variant="secondary" onClick={() => { setNavigation({ ...navigation, date: "", asOf: undefined }); }}>{t("medical.tooth.current")}</Button> : null}
-    </form>
-    <ChartData navigation={navigation} onNavigation={setNavigation} key={asOf ?? "current"} scope={scope} context={context} asOf={asOf} onDenied={onDenied} onFiles={onFiles} />
+      <Button type="button" size="lg" variant="secondary" disabled={!date || !Number.isFinite(new Date(date).getTime())} onClick={async () => { if (compact && !(await chartNavigation.current?.beforeLeave())) return; setNavigation({ ...navigation, asOf: new Date(date).toISOString() }); }}>{t("medical.tooth.show")}</Button>
+      {asOf ? <Button type="button" size="lg" variant="secondary" onClick={async () => { if (compact && !(await chartNavigation.current?.beforeLeave())) return; setNavigation({ ...navigation, date: "", asOf: undefined }); }}>{t("medical.tooth.current")}</Button> : null}
+    </div></details>
+    <ChartData compact={compact} navigationRef={chartNavigation} onOpenChange={onOpenChange} navigation={navigation} onNavigation={setNavigation} key={asOf ?? "current"} scope={scope} context={context} asOf={asOf} onDenied={onDenied} onFiles={onFiles} />
   </section>;
 }
 
-function ChartData({ scope, context, asOf, onDenied, navigation, onNavigation, onFiles }: {
+function ChartData({ scope, context, asOf, onDenied, navigation, onNavigation, onFiles, compact = false, navigationRef, onOpenChange }: InlineProps & {
+  compact?: boolean;
   scope: ClinicalReadScope; context?: AppointmentClinicalContext; asOf?: string; onDenied: Denied;
   navigation: ReturnType<typeof useToothNavigation>[0]; onNavigation: ReturnType<typeof useToothNavigation>[1];
   onFiles?: (tooth: number) => void;
@@ -89,6 +97,13 @@ function ChartData({ scope, context, asOf, onDenied, navigation, onNavigation, o
     try { if (await editor.current?.save()) finish(); else setCloseFailed(true); }
     finally { closePending.current = false; setClosing(false); }
   }
+  useEffect(() => { onOpenChange?.(selected !== null); return () => onOpenChange?.(false); }, [selected, onOpenChange]);
+  async function beforeLeave() {
+    if (closePending.current || editor.current?.isPending()) return false;
+    if (editor.current?.isDirty() && !window.confirm(t("medical.clinical.discard"))) return false;
+    finish(); return true;
+  }
+  useImperativeHandle(navigationRef, () => ({ beforeLeave }));
   useEffect(() => {
     const controller = new AbortController();
     setRows(null); setError(null);
@@ -117,8 +132,8 @@ function ChartData({ scope, context, asOf, onDenied, navigation, onNavigation, o
   if (error) return <ErrorState message={getApiErrorMessage(error)} action={<Button size="lg" variant="secondary" onClick={() => setAttempt(x => x + 1)}>{t("common.retry")}</Button>} />;
   if (!rows) return <LoadingState />;
   const quadrants = [1, 2, 4, 3];
-  return <div ref={chartRef} className="space-y-4">
-    <Select label={t("medical.tooth.title")} value={mode} onChange={event => { onNavigation({ ...navigation, mode: event.target.value, focusedTooth: undefined }); setSelected(null); }}
+  return <div ref={chartRef} className={compact && selected !== null ? "appointment-tooth-grid space-y-4" : "space-y-4"}>
+    <Select label={t("medical.tooth.title")} value={mode} onChange={async event => { const mode = event.target.value; if (compact && !(await beforeLeave())) return; onNavigation({ ...navigation, mode, focusedTooth: undefined }); setSelected(null); }}
       options={["permanent", "primary", "mixed"].map(value => ({ value, label: t(`medical.tooth.${value}`) }))} />
     <p className="hidden text-sm text-platforma-subtle md:block">{t("medical.tooth.orientation")}</p>
     <div className="md:hidden"><Select label={t("medical.tooth.orientation")} value={quadrant} onChange={event => onNavigation({ ...navigation, quadrant: Number(event.target.value), focusedTooth: undefined })}
@@ -136,9 +151,9 @@ function ChartData({ scope, context, asOf, onDenied, navigation, onNavigation, o
               const status = rows.find(row => row.tooth === tooth && !row.surface)?.tooth_status;
               const label = status ? t(`medical.tooth.status.${status}`) : t(observed ? "medical.tooth.observed" : "medical.tooth.empty");
               return <button type="button" key={tooth} className={`platforma-focus-ring flex min-h-11 min-w-11 shrink-0 cursor-pointer flex-col items-center rounded-control px-0.5 py-2 transition-colors hover:bg-surface-hover ${observed ? "bg-brand-50 text-brand-700" : "text-platforma-subtle"}`}
-                aria-label={`${t("medical.tooth.tooth")} ${tooth}: ${label}`} title={label}
-                data-focus-return-id={`tooth-${tooth}`} onClick={() => { onNavigation({ ...navigation, focusedTooth: tooth }); setSelected(tooth); }}>
-                <ToothShape tooth={tooth} />
+                aria-label={`${t("medical.tooth.tooth")} ${tooth}: ${label}`} aria-pressed={selected === tooth} title={label}
+                data-focus-return-id={`tooth-${tooth}`} onClick={async () => { if (compact && !(await beforeLeave())) return; onNavigation({ ...navigation, focusedTooth: tooth }); setSelected(tooth); }}>
+                <ToothShape tooth={tooth} illustrated={compact} />
                 <span className="text-sm font-semibold tabular-nums">{tooth}{status ? ` ${stateMarks[status]}` : observed ? " •" : ""}</span>
               </button>;
             })}</div>
@@ -150,7 +165,23 @@ function ChartData({ scope, context, asOf, onDenied, navigation, onNavigation, o
       {toothStatuses.map(status => <li key={status}><span aria-hidden="true">{stateMarks[status]} </span>{t(`medical.tooth.status.${status}`)}</li>)}
     </ul>
     <p className="text-sm text-platforma-subtle">{t("medical.tooth.select")}</p>
-    <Modal open={selected !== null} onClose={close} closeOnBackdrop={false} size="lg" title={`${t("medical.tooth.tooth")} ${selected ?? ""}`}
+    {compact ? selected !== null && <section className="appointment-tooth-inspector" data-testid="tooth-inspector">
+      <header><h3>{t("medical.tooth.tooth")} {selected}</h3><Button type="button" variant="ghost" onClick={close}>{t("common.close")}</Button></header>
+      {selected !== null ? <div className="space-y-4">
+        {onFiles && !asOf ? <Button size="lg" variant="secondary" onClick={() => {
+          if (closePending.current || editor.current?.isPending()) return;
+          filesDestination.current = selected; close();
+        }}>{t("medical.files.title")}</Button> : null}
+        <ToothPlanSteps key={`${selected}-${asOf ?? "current"}`} scope={scope} tooth={selected} asOf={asOf} onDenied={onDenied} />
+        {asOf || !context ? <p className="text-sm text-platforma-subtle">{t("medical.tooth.readOnly")}</p> : null}
+        {!rows.some(row => row.tooth === selected) ? <p>{t("medical.tooth.empty")}</p> : rows.filter(row => row.tooth === selected).map(row =>
+          <Observation key={row.history_id} row={row} scope={scope} onDenied={onDenied} />)}
+        {!asOf && context ? <ToothEditor key={selected} context={context} tooth={selected}
+          revisions={new Map(rows.filter(row => row.tooth === selected).map(row => [row.surface, row.current_revision]))}
+          control={editor} onSaved={reload} onReload={reload} onDenied={onDenied} /> : null}
+      </div> : null}
+
+    </section> : <Modal open={selected !== null} onClose={close} closeOnBackdrop={false} size="lg" title={`${t("medical.tooth.tooth")} ${selected ?? ""}`}
       focusReturnId={`tooth-${selected}`} testId="tooth-inspector">
       {selected !== null ? <div className="space-y-4">
         {onFiles && !asOf ? <Button size="lg" variant="secondary" onClick={() => {
@@ -165,7 +196,7 @@ function ChartData({ scope, context, asOf, onDenied, navigation, onNavigation, o
           revisions={new Map(rows.filter(row => row.tooth === selected).map(row => [row.surface, row.current_revision]))}
           control={editor} onSaved={reload} onReload={reload} onDenied={onDenied} /> : null}
       </div> : null}
-    </Modal>
+    </Modal>}
     <Modal open={confirmClose && selected !== null} onClose={() => { if (!closePending.current) { filesDestination.current = null; setConfirmClose(false); } }}
       closeOnBackdrop={false} size="sm" title={t("medical.clinical.unsavedTitle")} testId="tooth-unsaved">
       <div className="space-y-4">

@@ -1,4 +1,4 @@
-export function ToothShape({ tooth }: { tooth: number }) {
+export function ToothShape({ tooth, illustrated = false }: { tooth: number; illustrated?: boolean }) {
   const position = tooth % 10;
   const quadrant = Math.floor(tooth / 10);
   const primary = quadrant > 4;
@@ -6,6 +6,10 @@ export function ToothShape({ tooth }: { tooth: number }) {
   const molar = position >= (primary ? 4 : 6);
   const premolar = !primary && position >= 4 && position <= 5;
   const canine = position === 3;
+  if (illustrated) {
+    const cell = primary && position >= 4 ? position + 2 : position;
+    return <span aria-hidden="true" className="tooth-illustration" style={{ backgroundPosition: `${(cell - 1) * 100 / 7}% center`, transform: lower ? "scaleY(-1)" : undefined }} />;
+  }
   const crown = molar
     ? "M9 39 C5 34 5 23 10 19 C14 15 19 19 24 17 C29 15 36 15 39 21 C43 28 41 35 38 39 C30 43 17 43 9 39Z"
     : premolar

@@ -5,7 +5,8 @@ import { ClinicalPlanSteps } from "./ClinicalPlanSteps";
 import { ClinicalFieldAssistance } from "./ClinicalFieldAssistance";
 import type { AssistanceScope } from "../../api/medicalAssistance";
 
-export function ClinicalSectionInput({ field, content, onChange, disabled = false, readOnly = false, planAccess, bookingAccess, assistance }: {
+export function ClinicalSectionInput({ field, content, onChange, disabled = false, readOnly = false, planAccess, bookingAccess, assistance, compact = false }: {
+  compact?: boolean;
   field: ClinicalField; content: ClinicalContent; onChange: (value: ClinicalContent) => void;
   disabled?: boolean; readOnly?: boolean;
   planAccess?: ClinicalPlanAccess;
@@ -30,14 +31,16 @@ export function ClinicalSectionInput({ field, content, onChange, disabled = fals
     }
     onChange(next);
   }
-  return <div className="space-y-2">
+  return <div className={compact ? "appointment-clinical-field space-y-2" : "space-y-2"}>
     <Textarea label={notApplicable ? t("medical.clinical.notApplicableReason", { field: label }) : label}
       aria-label={notApplicable ? t("medical.clinical.notApplicableReason", { field: label }) : label}
       value={notApplicable ? reason : content[field] ?? ""} disabled={disabled} readOnly={readOnly}
+      rows={compact ? 2 : undefined}
       required={notApplicable} maxLength={notApplicable ? 2000 : 32768}
       onChange={event => onChange(notApplicable
         ? { ...content, not_applicable: { ...content.not_applicable, [field]: event.target.value } }
         : { ...content, [field]: event.target.value })} />
+    <details open={!compact || notApplicable ? true : undefined}><summary hidden={!compact}>{t("appointments.actions")}</summary>
     {assistance&&!notApplicable&&!readOnly?<ClinicalFieldAssistance scope={{...assistance.scope,field}} text={content[field]??""} disabled={disabled}
       onAccept={text=>onChange({...content,[field]:text})} onDenied={assistance.onDenied}/>:null}
     <label className="flex min-h-11 cursor-pointer items-center gap-3 text-sm">
@@ -47,6 +50,7 @@ export function ClinicalSectionInput({ field, content, onChange, disabled = fals
         onChange={event => toggle(event.target.checked)} />
       {t("medical.clinical.notApplicable")}
     </label>
+    </details>
     {field === "plan" && !notApplicable ? <ClinicalPlanSteps content={content} onChange={onChange}
       disabled={disabled} readOnly={readOnly} planAccess={planAccess} bookingAccess={bookingAccess} /> : null}
   </div>;

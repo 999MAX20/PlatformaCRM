@@ -199,9 +199,7 @@ export function CalendarPage() {
       dateInTimeZone(appointment.start_at, business?.timezone || "Asia/Almaty"),
     );
     setSelectedAppointmentId(appointment.id);
-    if (user?.capabilities?.[String(appointment.business)]?.modules?.medical_records === true) {
-      setInspectorOpen(false); setCardAppointmentId(appointment.id);
-    } else setInspectorOpen(true);
+    setInspectorOpen(false); setCardAppointmentId(appointment.id);
   }, [business?.id, business?.timezone, deepLinkedAppointment.data, user?.id]);
 
   function setNotice(
@@ -397,11 +395,7 @@ export function CalendarPage() {
 
 
   function selectAppointment(appointment: Appointment) {
-    setSelectedAppointmentId(appointment.id);
-    if (user?.capabilities?.[String(appointment.business)]?.modules?.medical_records === true) {
-      setInspectorOpen(false); setCardAppointmentId(appointment.id);
-    } else setInspectorOpen(true);
-    updateCalendar({ day: dateInTimeZone(appointment.start_at, businessTimeZone) });
+    openAppointmentWorkspace(appointment);
   }
 
   function openAppointmentWorkspace(appointment: Appointment) {

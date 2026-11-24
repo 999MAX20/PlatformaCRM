@@ -1,10 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { CalendarClock, Check, RotateCcw, X } from "lucide-react";
+import { ArrowLeft, CalendarClock, Check, RotateCcw, X } from "lucide-react";
 import type { ReactNode } from "react";
-import { useRef, useState } from "react";
-import { Link, useLocation, useNavigate, useParams } from "react-router";
-import { EntityCustomFieldsPanel } from "../../components/crm/drawers/EntityCustomFieldsPanel";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Link, useBlocker, useLocation, useNavigate, useParams } from "react-router";
+import { ClinicalAppointmentEntry, type ClinicalEntryHandle } from "../medical/ClinicalAppointmentEntry";
+import { Tabs } from "../../components/ui/Tabs";
+import "../medical/entityPages.css";
 import { EntityAttachmentsPanel } from "../../components/crm/drawers/EntityAttachmentsPanel";
+import { EntityNotesPanel } from "../../components/crm/drawers/EntityNotesPanel";
 
 import {
   appointmentsApi,
@@ -16,13 +19,7 @@ import { useActionConfirm } from "../../components/actions/ActionConfirmProvider
 import { useActionFeedback } from "../../components/actions/useActionFeedback";
 import {
   EntityWorkspaceEmptyState,
-  EntityWorkspaceAside,
-  EntityWorkspaceAvatar,
-  EntityWorkspaceBody,
-  EntityWorkspaceHeader,
   EntityWorkspaceLoadingState,
-  EntityWorkspaceMain,
-  EntityWorkspaceMetrics,
   EntityWorkspaceRoot,
 } from "../../components/crm";
 import { AppointmentRescheduleForm } from "../../components/forms/AppointmentRescheduleForm";
@@ -32,7 +29,7 @@ import { StatusBadge } from "../../components/ui/StatusBadge";
 import { Badge } from "../../components/ui/Badge";
 import { ErrorState } from "../../components/ui/StateViews";
 import { Modal } from "../../components/ui/Modal";
-import { formatDateTime } from "../../lib/format";
+import { dateInTimeZone, formatDateTime } from "../../lib/format";
 import { refreshAppointmentQueries } from "../../lib/appointmentCache";
 import { useI18n } from "../../lib/i18n";
 import { useActiveBusiness } from "../../hooks/useBusiness";
@@ -42,6 +39,8 @@ import { useAuth } from "../auth/AuthProvider";
 import { recordReturnPath } from "./recordFilters";
 import { hasPermission } from "../../lib/permissions";
 import { TaskEditor } from "../tasks/components/TaskEditor";
+import { useUnsavedEntryWarning } from "../auth/useUnsavedEntryWarning";
+import { ClinicalPageSlots } from "../medical/clinicalPageSlots";
 
 function asNumericId(value: string | undefined): number | null {
   const id = Number(value);
@@ -71,6 +70,43 @@ export function AppointmentWorkspacePage() {
   const reschedulePending = useRef(false);
   const [rescheduleOpen, setRescheduleOpen] = useState(false);
   const [taskOpen, setTaskOpen] = useState(false);
+  const [tab, setTab] = useState(() => ({ timeline: "history", files: "files", tasks: "tasks" }[new URLSearchParams(location.search).get("tab") || ""] || "visit"));
+  const [rescheduleDirty, setRescheduleDirty] = useState(false);
+  useUnsavedEntryWarning(rescheduleDirty);
+  const closeReschedule = () => { if (!reschedulePending.current && (!rescheduleDirty || window.confirm(t("medical.clinical.discard")))) setRescheduleOpen(false); };
+  const [clinicalDirty, setClinicalDirty] = useState(false);
+  const [clinicalEpoch, setClinicalEpoch] = useState(0);
+  const [saveSlot, setSaveSlot] = useState<HTMLDivElement | null>(null);
+  const [completionSlot, setCompletionSlot] = useState<HTMLDivElement | null>(null);
+  const [panelDirty, setPanelDirty] = useState(false);
+  const [panelPending, setPanelPending] = useState(false);
+  useUnsavedEntryWarning(panelDirty || panelPending);
+  const clinical = useRef<ClinicalEntryHandle>(null);
+  const medical = user?.capabilities?.[String(business?.id)]?.modules?.medical_records === true;
+  const [deniedScope, setDeniedScope] = useState("");
+  const scope = `${business?.id}:${appointmentId}:${user?.id}`;
+  const denied = useCallback(() => { setDeniedScope(scope); setTab("visit"); }, [scope]);
+  const clinicalEnabled = medical && deniedScope !== scope;
+  const blocker = useBlocker(clinicalDirty || rescheduleDirty || panelDirty || panelPending);
+  useEffect(() => {
+    if (blocker.state !== "blocked") return;
+    if (reschedulePending.current || panelPending) { blocker.reset(); return; }
+    if (panelDirty && !window.confirm(t("medical.clinical.discard"))) { blocker.reset(); return; }
+    if (rescheduleDirty && !window.confirm(t("medical.clinical.discard"))) { blocker.reset(); return; }
+    let active = true;
+    void (clinical.current?.beforeLeave() ?? Promise.resolve(true)).then(allowed => {
+      if (active) { if (allowed) blocker.proceed(); else blocker.reset(); }
+    });
+    return () => { active = false; };
+  }, [blocker, rescheduleDirty, panelDirty, panelPending, t]);
+  async function selectTab(next: string) {
+    if (panelPending || (panelDirty && !window.confirm(t("medical.clinical.discard")))) return;
+    setPanelDirty(false);
+    if (!clinicalDirty || await clinical.current?.beforeLeave()) {
+      if (clinicalDirty) setClinicalEpoch(value => value + 1);
+      setClinicalDirty(false); setTab(next);
+    }
+  }
 
   const cardQuery = useQuery({
     queryKey: ["crm-card", "appointment", appointmentId, business?.id, user?.id],
@@ -87,6 +123,7 @@ export function AppointmentWorkspacePage() {
   const canUpdateAppointment = !!appointment && !appointment.is_archived &&
     cardQuery.data?.available_action_details?.some(action =>
       action.resource === "appointments" && action.action === "update" && action.allowed) === true;
+  const canAddNote = !!appointment && !appointment.is_archived && cardQuery.data?.available_action_details?.some(action => action.id === "add_note" && action.allowed) === true;
   const statusActions =
     appointment && canUpdateAppointment
       ? getAllowedStatusActions(appointment)
@@ -172,7 +209,7 @@ export function AppointmentWorkspacePage() {
   const pageError = cardQuery.error || resources.error;
   if (pageError && normalizeAppError(pageError).status === 404)
     return <EntityWorkspaceEmptyState title={t("actions.errorUnavailable")} />;
-  if (pageError)
+  if (pageError && (!appointment || [401, 403, 404].includes(normalizeAppError(pageError).status || 0)))
     return (
       <EntityWorkspaceRoot><ErrorState error={pageError} action={<Button variant="secondary" onClick={() => { void cardQuery.refetch(); void resources.refetch(); }}>{t("common.retry")}</Button>} /></EntityWorkspaceRoot>
     );
@@ -198,70 +235,82 @@ export function AppointmentWorkspacePage() {
 
   return (
     <>
-      <EntityWorkspaceRoot>
-        <EntityWorkspaceHeader
-          backLabel={t("common.back")}
-          onBack={() => navigate(recordReturnPath(location.state?.recordReturnTo))}
-          avatar={
-            <EntityWorkspaceAvatar>
-              {title.slice(0, 2).toUpperCase()}
-            </EntityWorkspaceAvatar>
-          }
-          title={title}
-          subtitle={subtitle}
-          status={isPlanned ? undefined : appointment.status}
-          actions={
-            <>
-              {client ? (
-                <Button
-                  type="button"
-                  variant="secondary"
-                  onClick={() => navigate(`/app/clients/${client.id}`)}
-                >
-                  {t("leads.openClient")}
-                </Button>
-              ) : null}
-              {lead ? (
-                <Button
-                  type="button"
-                  variant="secondary"
-                  onClick={() => navigate(`/app/leads/${lead.id}`)}
-                >
-                  {t("crmCard.leadNumber", { id: lead.id })}
-                </Button>
-              ) : null}
-            </>
-          }
-        />
+      <ClinicalPageSlots.Provider value={{ save: saveSlot, completion: completionSlot }}><article className="entity-reference-page appointment-reference-page" data-testid="appointment-reference-page">
+        <nav className="entity-breadcrumb" aria-label={t("common.back")}><Link to={recordReturnPath(location.state?.recordReturnTo)}>{t("appointments.title")}</Link><span aria-hidden>/</span><span>{title}</span></nav>
+        <Link className="entity-back platforma-focus-ring" to={recordReturnPath(location.state?.recordReturnTo)}><ArrowLeft size={18} />{t("common.back")}</Link>
+        <header className="entity-identity">
+          <div className="entity-heading"><h1>{title}</h1><p>{subtitle}</p></div>
+          <div className="entity-header-actions">
+            <StatusBadge status={appointment.status} />
+            {client && <Link className="entity-text-link" to={`/app/clients/${client.id}`}>{t("leads.openClient")}</Link>}
+            {canReschedule && <Button variant="secondary" disabled={clinicalDirty || panelDirty || panelPending} onClick={() => setRescheduleOpen(true)}><RotateCcw size={16} />{t("appointments.reschedule")}</Button>}
+            <div ref={setSaveSlot} hidden={tab !== "visit"} />
+          </div>
+        </header>
+        <Tabs value={tab} onChange={next => void selectTab(next)} appearance="underline" idPrefix="appointment-page" className="entity-page-tabs" ariaLabel={title}
+          options={[{ value: "visit", label: t("calendar.visit") }, ...(clinicalEnabled ? [{ value: "documents", label: t("medical.documents.title") }, { value: "medicalHistory", label: t("medical.clinical.history") }] : []), { value: "history", label: t("tasks.history") }, { value: "files", label: t("crmCard.attachments") }, { value: "notes", label: t("crmCard.notes") }, { value: "tasks", label: t("nav.tasks") }]} />
+        {pageError && <ErrorState error={pageError} action={<Button variant="secondary" onClick={() => void cardQuery.refetch()}>{t("common.retry")}</Button>} />}
+        <div className="entity-page-columns">
+          <div className="entity-page-main">
+            {clinicalEnabled && ["visit", "documents", "medicalHistory"].filter(value => value !== (["documents", "medicalHistory"].includes(tab) ? tab : "visit")).map(value => <section key={value} role="tabpanel" id={`appointment-page-panel-${value}`} aria-labelledby={`appointment-page-tab-${value}`} hidden />)}
+            <section role="tabpanel" id={`appointment-page-panel-${["documents", "medicalHistory"].includes(tab) ? tab : "visit"}`} aria-labelledby={`appointment-page-tab-${["documents", "medicalHistory"].includes(tab) ? tab : "visit"}`} hidden={!["visit", "documents", "medicalHistory"].includes(tab)}>
+              {clinicalEnabled ? <ClinicalAppointmentEntry key={`${scope}:${clinicalEpoch}`} businessId={appointment.business} appointmentId={appointment.id} embedded pageLayout
+                initialTab="encounter" externalTab={tab === "documents" ? "documents" : tab === "medicalHistory" ? "history" : "encounter"} navigationRef={clinical} onDirtyChange={setClinicalDirty} onInitialAccessDenied={denied} /> :
+                <section className="entity-page-section"><h2>{appointment.service_name || t("calendar.visit")}</h2><p className="entity-note">{appointment.notes || t("crmCard.noNotes")}</p></section>}
+              {lead && <Link className="entity-text-link" to={`/app/leads/${lead.id}`}>{t("crmCard.leadNumber", { id: lead.id })}</Link>}
+              {appointment.source_conversation && <Link className="entity-text-link" to={`/app/conversations/${appointment.source_conversation}`}>{t("nav.conversations")}</Link>}
+            </section>
+            <section role="tabpanel" id="appointment-page-panel-history" aria-labelledby="appointment-page-tab-history" hidden={tab !== "history"}>            <AppointmentSection
+              title={t("tasks.history")}
+              className="lg:col-span-2"
+            >
+              <div className="space-y-2">
+                {timeline.map((event) => (
+                  <ActivityRow key={event.id} event={event} />
+                ))}
+                {cardQuery.data?.meta?.has_more.timeline ? <Link className="platforma-focus-ring text-brand-700" to={`/app/timeline?entity_type=Appointment&entity_id=${appointment.id}`}>{t("nav.timeline")}</Link> : null}
+                {!timeline.length ? (
+                  <p className="text-sm font-semibold text-platforma-subtle">
+                    {t("tasks.noHistory")}
+                  </p>
+                ) : null}
+              </div>
+            </AppointmentSection>
+</section>
+            <section role="tabpanel" id="appointment-page-panel-tasks" aria-labelledby="appointment-page-tab-tasks" hidden={tab !== "tasks"}>            <AppointmentSection title={t("nav.tasks")}>
+              <div className="space-y-2">
+                {tasks.map((task) => (
+                  <TaskRow
+                    key={task.id}
+                    task={task}
+                    onOpen={() => navigate(`/app/tasks/${task.id}`)}
+                  />
+                ))}
+                {cardQuery.data?.meta?.has_more.tasks ? <Link className="platforma-focus-ring text-brand-700" to={`/app/tasks?tab=all&appointment_ids=${appointment.id}`}>{t("nav.tasks")}</Link> : null}
+                {!tasks.length ? (
+                  <p className="text-sm font-semibold text-platforma-subtle">
+                    {t("taskWorkspace.empty")}
+                  </p>
+                ) : null}
+              </div>
+            </AppointmentSection>
 
-        <EntityWorkspaceMetrics>
-          <AppointmentMetric
-            label={t("tasks.status")}
-            value={isPlanned ? t("records.planned") : t(`status.${appointment.status}`)}
-          />
-          <AppointmentMetric
-            label={t("records.service")}
-            value={appointment.service_name || t("common.service")}
-          />
-          <AppointmentMetric
-            label={t("appointment.resource")}
-            value={appointment.resource_name || t("appointment.noResource")}
-          />
-          <AppointmentMetric
-            label={t("tasks.dueAt")}
-            value={formatDateTime(appointment.start_at, business?.timezone, true, language)}
-          />
-          <AppointmentMetric label={t("nav.tasks")} value={cardQuery.data?.meta?.related_counts.tasks ?? tasks.length} />
-        </EntityWorkspaceMetrics>
-
-        <EntityWorkspaceBody>
-          <EntityWorkspaceAside>
-            <AppointmentSection title={t("calendar.visit")}>
+</section>
+            <section role="tabpanel" id="appointment-page-panel-files" aria-labelledby="appointment-page-tab-files" hidden={tab !== "files"}>
+              {tab === "files" && cardQuery.data && <EntityAttachmentsPanel data={cardQuery.data} entity={{ type: "appointment", id: appointment.id }} readOnly={!canUpdateAppointment || !!pageError} onDirtyChange={setPanelDirty} onPendingChange={setPanelPending} />}
+            </section>
+            <section role="tabpanel" id="appointment-page-panel-notes" aria-labelledby="appointment-page-tab-notes" hidden={tab !== "notes"}>
+              {tab === "notes" && cardQuery.data && <EntityNotesPanel data={cardQuery.data} entity={{ type: "appointment", id: appointment.id }} readOnly={!canAddNote || !!pageError} onDirtyChange={setPanelDirty} onPendingChange={setPanelPending} locale={language} timeZone={business?.timezone || "UTC"} />}
+            </section>
+          </div>
+          <aside className="entity-context-panel">            <AppointmentSection title={t("calendar.visit")}>
               <div className="flex flex-wrap gap-2">
                 {isPlanned ? <Badge variant="info">{t("records.planned")}</Badge> : <StatusBadge status={appointment.status} />}
                 {appointment.status === "confirmed" ? <StatusBadge status="confirmed" /> : null}
               </div>
               <div className="mt-3 space-y-2 text-sm font-semibold text-platforma-subtle">
+                <MetaRow label={t("appointment.service")} value={appointment.service_name || t("common.service")} />
+                <MetaRow label={t("appointment.resource")} value={appointment.resource_name || t("appointment.noResource")} />
                 {appointment.responsible_user_name && <MetaRow label={t("appointment.responsible")} value={appointment.responsible_user_name} />}
                 {appointment.branch_name && <MetaRow label={t("branches.branch")} value={`${appointment.branch_name} · ${appointment.branch_address}`} />}
                 <MetaRow
@@ -282,7 +331,7 @@ export function AppointmentWorkspacePage() {
 
             <AppointmentSection title={t("appointments.actions")}>
               <div className="grid gap-2">
-                {statusActions.map((status, index) => (
+                {statusActions.filter(status => !medical || status !== "completed").map((status, index) => (
                   <Button
                     key={status}
                     data-appointment-action-id={status}
@@ -295,6 +344,7 @@ export function AppointmentWorkspacePage() {
                           : "secondary"
                     }
                     isLoading={statusMutation.isPending}
+                    disabled={clinicalDirty || panelDirty || panelPending || !!pageError}
                     onClick={() => {
                       if (status === "cancelled" || status === "no_show" || (status === "completed" && Date.now() < new Date(appointment.end_at).getTime()))
                         void requestReasonAction(status);
@@ -308,6 +358,7 @@ export function AppointmentWorkspacePage() {
                 {canReschedule ? (
                   <Button
                     data-appointment-action-id="reschedule"
+                    disabled={clinicalDirty || panelDirty || panelPending || !!pageError}
                     type="button"
                     variant="secondary"
                     onClick={() => setRescheduleOpen(true)}
@@ -318,85 +369,25 @@ export function AppointmentWorkspacePage() {
                 {appointment.visit_plan ? <Button variant="secondary" onClick={() => navigate(`/app/appointments?view=plans&plan=${appointment.visit_plan}`)}>{t("plans.plan")}</Button> : null}
                 {hasPermission(user, business?.id, "appointments", "create") && client ? <Button variant="secondary" onClick={() => navigate(`/app/appointments?create=1&client=${client.id}&service=${appointment.service || ""}&resource=${appointment.resource || ""}&branch=${appointment.branch || ""}`)}>{t("appointments.repeatBooking")}</Button> : null}
                 {hasPermission(user, business?.id, "tasks", "create") ? <Button variant="secondary" onClick={() => setTaskOpen(true)}>{t("taskWorkspace.create")}</Button> : null}
-                <Button variant="secondary" onClick={() => navigate(`/app/calendar?appointment=${appointment.id}`)}>{t("nav.calendar")}</Button>
+                <Button variant="secondary" onClick={() => navigate(`/app/calendar?date=${dateInTimeZone(appointment.start_at, business?.timezone || "UTC")}`)}>{t("nav.calendar")}</Button>
               </div>
             </AppointmentSection>
-          </EntityWorkspaceAside>
-
-          <EntityWorkspaceMain>
-            {cardQuery.data?.custom_fields.length ? <div className="lg:col-span-2"><EntityCustomFieldsPanel data={cardQuery.data} entity={{ type: "appointment", id: appointment.id }} /></div> : null}
-            <AppointmentSection title={t("tasks.links")}>
-              <div className="flex flex-wrap gap-2">
-                {client ? (
-                  <EntityLink
-                    onClick={() => navigate(`/app/clients/${client.id}`)}
-                  >
-                    {client.full_name || t("common.client")}
-                  </EntityLink>
-                ) : null}
-                {lead ? (
-                  <EntityLink onClick={() => navigate(`/app/leads/${lead.id}`)}>
-                    {t("crmCard.leadNumber", { id: lead.id })}
-                  </EntityLink>
-                ) : null}
-                {appointment.source_conversation ? <EntityLink onClick={() => navigate(`/app/conversations/${appointment.source_conversation}`)}>{t("nav.conversations")}</EntityLink> : null}
-                {!client && !lead ? (
-                  <p className="text-sm font-semibold text-platforma-subtle">
-                    {t("tasks.noLinkedEntities")}
-                  </p>
-                ) : null}
-              </div>
-            </AppointmentSection>
-
-            <AppointmentSection title={t("nav.tasks")}>
-              <div className="space-y-2">
-                {tasks.map((task) => (
-                  <TaskRow
-                    key={task.id}
-                    task={task}
-                    onOpen={() => navigate(`/app/tasks/${task.id}`)}
-                  />
-                ))}
-                {cardQuery.data?.meta?.has_more.tasks ? <Link className="platforma-focus-ring text-brand-700" to={`/app/tasks?tab=all&appointment_ids=${appointment.id}`}>{t("nav.tasks")}</Link> : null}
-                {!tasks.length ? (
-                  <p className="text-sm font-semibold text-platforma-subtle">
-                    {t("taskWorkspace.empty")}
-                  </p>
-                ) : null}
-              </div>
-            </AppointmentSection>
-
-            <AppointmentSection
-              title={t("tasks.history")}
-              className="lg:col-span-2"
-            >
-              <div className="space-y-2">
-                {timeline.map((event) => (
-                  <ActivityRow key={event.id} event={event} />
-                ))}
-                {cardQuery.data?.meta?.has_more.timeline ? <Link className="platforma-focus-ring text-brand-700" to={`/app/timeline?entity_type=Appointment&entity_id=${appointment.id}`}>{t("nav.timeline")}</Link> : null}
-                {!timeline.length ? (
-                  <p className="text-sm font-semibold text-platforma-subtle">
-                    {t("tasks.noHistory")}
-                  </p>
-                ) : null}
-              </div>
-            </AppointmentSection>
-            {cardQuery.data ? <EntityAttachmentsPanel data={cardQuery.data} entity={{ type: "appointment", id: appointment.id }} readOnly={!canUpdateAppointment} /> : null}
-          </EntityWorkspaceMain>
-        </EntityWorkspaceBody>
-      </EntityWorkspaceRoot>
+            <div ref={setCompletionSlot} className="appointment-clinical-actions" hidden={tab !== "visit"} />
+</aside>
+        </div>
+      </article></ClinicalPageSlots.Provider>
 
       <Modal
         title={t("appointments.rescheduleTitle")}
         open={rescheduleOpen}
-        onClose={() => { if (!reschedulePending.current) setRescheduleOpen(false); }}
+        onClose={closeReschedule}
       >
         <AppointmentRescheduleForm
           appointment={appointment}
           businessId={appointment.business}
           resources={resources.data || []}
-          onCancel={() => { if (!reschedulePending.current) setRescheduleOpen(false); }}
+          onCancel={closeReschedule}
+          onDirtyChange={setRescheduleDirty}
           onSubmit={(payload) => rescheduleMutation.mutateAsync(payload)}
           isSubmitting={rescheduleMutation.isPending}
           timeZone={business?.timezone || "Asia/Almaty"}
@@ -425,21 +416,6 @@ function getAppointmentActionIcon(status: Appointment["status"]) {
   return <CalendarClock size={16} />;
 }
 
-function AppointmentMetric({
-  label,
-  value,
-}: {
-  label: string;
-  value: ReactNode;
-}) {
-  return (
-    <div className="rounded-card border border-platforma-border bg-platforma-card px-4 py-3">
-      <p className="text-xs font-semibold uppercase text-platforma-muted">{label}</p>
-      <p className="mt-1 truncate text-sm font-bold text-platforma-text">{value}</p>
-    </div>
-  );
-}
-
 function AppointmentSection({
   title,
   className,
@@ -465,24 +441,6 @@ function MetaRow({ label, value }: { label: string; value: ReactNode }) {
       <span>{label}</span>
       <span className="text-right text-platforma-text">{value}</span>
     </div>
-  );
-}
-
-function EntityLink({
-  onClick,
-  children,
-}: {
-  onClick: () => void;
-  children: ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      className="rounded-full bg-brand-50 px-3 py-1.5 text-sm font-semibold text-brand-700 transition hover:bg-brand-100"
-      onClick={onClick}
-    >
-      {children}
-    </button>
   );
 }
 

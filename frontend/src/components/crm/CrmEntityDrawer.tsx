@@ -24,7 +24,6 @@ import { Drawer } from "../ui/Overlay";
 import { ErrorState, LoadingState } from "../ui/StateViews";
 import { Button } from "../ui/Button";
 import type { Client } from "../../types";
-import { AppointmentCardModal } from "./appointment-card/AppointmentCardModal";
 
 export type { CrmCardTab, CrmDrawerEntity } from "./drawers/types";
 
@@ -38,12 +37,11 @@ export type ClientDrawerActions = {
 export function CrmEntityDrawer(props: { entity: CrmDrawerEntity | null; onClose: () => void; clientActions?: ClientDrawerActions }) {
   const { business } = useActiveBusiness();
   const { user } = useAuth();
-  if (props.entity?.type === "client") return <ClientPageNavigation entity={props.entity} onClose={props.onClose} />;
-  if (props.entity?.type === "appointment") return <EntityCardNavigation key={`${user?.id}:${business?.id}:${props.entity.type}:${props.entity.id}`} entity={props.entity} onClose={props.onClose} clientActions={props.clientActions} />;
+  if (props.entity?.type === "client" || props.entity?.type === "appointment") return <EntityPageNavigation key={`${user?.id}:${business?.id}:${props.entity.type}:${props.entity.id}`} entity={props.entity} onClose={props.onClose} />;
   return <LegacyEntityDrawer {...props} />;
 }
 
-function ClientPageNavigation({ entity, onClose }: { entity: CrmDrawerEntity; onClose: () => void }) {
+function EntityPageNavigation({ entity, onClose }: { entity: CrmDrawerEntity; onClose: () => void }) {
   const navigate = useNavigate();
   const location = useLocation();
   const started = useRef(false);
@@ -51,26 +49,14 @@ function ClientPageNavigation({ entity, onClose }: { entity: CrmDrawerEntity; on
     if (started.current) return;
     started.current = true;
     const suffix = entity.initialTab ? `?tab=${entity.initialTab}` : "";
-    navigate(`/app/clients/${entity.id}${suffix}`, { state: { clientReturnTo: location.pathname + location.search } });
+    const query = new URLSearchParams(location.search);
+    query.delete("appointment");
+    if (location.pathname === "/app/clients") query.delete("client");
+    const returnTo = location.pathname + (query.size ? `?${query}` : "");
+    navigate(`/app/${entity.type === "client" ? "clients" : "appointments"}/${entity.id}${suffix}`, { state: { [entity.type === "client" ? "clientReturnTo" : "recordReturnTo"]: returnTo } });
     onClose();
   }, [entity.id, entity.initialTab, location.pathname, location.search, navigate, onClose]);
   return null;
-}
-
-function EntityCardNavigation({ entity, onClose }: { entity: CrmDrawerEntity; onClose: () => void; clientActions?: ClientDrawerActions }) {
-  const [history, setHistory] = useState<CrmDrawerEntity[]>([entity]);
-  const opener = useRef(document.activeElement instanceof HTMLElement ? document.activeElement : null);
-  const focusReturnId = useRef(opener.current?.dataset.focusReturnId);
-  const close = () => { onClose(); requestAnimationFrame(() => {
-    const target = focusReturnId.current ? document.querySelector<HTMLElement>(`[data-focus-return-id="${CSS.escape(focusReturnId.current)}"]`) : opener.current;
-    if (target?.isConnected) target.focus({ preventScroll: true });
-  }); };
-  const current = history.at(-1)!;
-  const open = (next: CrmDrawerEntity) => setHistory(items => [...items, next]);
-  const back = history.length > 1 ? () => setHistory(items => items.slice(0, -1)) : undefined;
-  return current.type === "client"
-    ? <ClientPageNavigation key={`client:${current.id}`} entity={current} onClose={close} />
-    : <AppointmentCardModal key={`appointment:${current.id}`} entity={current} onClose={close} onOpenEntity={open} onBack={back} />;
 }
 
 function LegacyEntityDrawer({
