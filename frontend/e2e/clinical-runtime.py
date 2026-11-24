@@ -335,6 +335,20 @@ if len(sys.argv) > 2 and sys.argv[1] == "clinical-representatives-populate":
             relation.revoked_at, relation.revoked_by, relation.revocation_encrypted = now, appointment.business.owner, "synthetic"
         relation.save()
     sys.exit(0)
+if len(sys.argv) > 1 and sys.argv[1] == "reception-administrative-prepare":
+    from completion_fixture import prepare_completion
+    from apps.medical.models import MedicalEncounter
+    from apps.medical.tests_reception_claims import reception_member
+    from apps.businesses.models import RolePermission
+    from apps.scheduling.models import Resource, Appointment
+    entry=prepare_completion()
+    encounter=MedicalEncounter.objects.select_related("business__owner","branch").get(appointment_id=entry["appointment_id"])
+    receptionist,member,_=reception_member(encounter.business,encounter.business.owner,encounter.branch,f"admin-{encounter.pk}")
+    receptionist.set_password(os.environ["E2E_PASSWORD"]);receptionist.full_name="Synthetic referral author";receptionist.save()
+    RolePermission.objects.create(business_role=member.business_role,resource="appointments",action="view",scope="business",is_allowed=True)
+    staff=Resource.objects.create(business=encounter.business,name="Synthetic specialist without login",resource_type="staff")
+    Appointment.objects.filter(pk=entry["appointment_id"]).update(resource=staff)
+    print(json.dumps(entry|{"email":receptionist.email,"business_id":encounter.business_id,"branch_id":encounter.branch_id,"staff_id":staff.pk}));sys.exit(0)
 if len(sys.argv) > 2 and sys.argv[1] == "reception-duty-request":
     from apps.medical.models import MedicalEncounter
     from apps.medical.reception_requests import request_primary_follow_up

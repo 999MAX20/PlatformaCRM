@@ -16,6 +16,7 @@ from . import tests_reception_transfer as transfer_fixtures
 from . import tests_order_concurrency as concurrency
 from .tests_patient_services import key
 from .reception_contacts import update_reception_contact
+from . import tests_reception_administration as administration_fixtures
 
 
 @skipUnless(connection.vendor == "postgresql", "Reception handover races require PostgreSQL row locks")
@@ -130,6 +131,22 @@ class ReceptionClaimConcurrencyTests(TransactionTestCase):
         self.assertIn(self.item.assignee_id, [self.reception_member.pk, self.colleague_member.pk])
         self.assertEqual(self.item.revision, 2)
         self.assertEqual(AuditLog.objects.filter(entity_type="ReceptionBookingRequest", action="update").count(), 1)
+
+
+@skipUnless(connection.vendor == "postgresql", "Administrative referral races require PostgreSQL row locks")
+@override_settings(MEDICAL_DATA_KEYS={"test":key(7)}, MEDICAL_DATA_ACTIVE_KEY_ID="test", MEDICAL_IDENTITY_INDEX_KEY=key(8))
+class ReceptionAdministrationConcurrencyTests(TransactionTestCase):
+    def setUp(self):
+        administration_fixtures.ReceptionAdministrationTests.setUpTestData.__func__(self)
+        administration_fixtures.ReceptionAdministrationTests.setUp(self)
+
+    request=administration_fixtures.ReceptionAdministrationTests.request
+    parallel=concurrency.OrderConcurrencyTests.parallel
+
+    def test_distinct_commands_keep_one_source_referral(self):
+        self.assertCountEqual(self.parallel([lambda:self.request(idempotency_key="one")[1],lambda:self.request(idempotency_key="two")[1]]),[False,True])
+        self.assertEqual(ReceptionBookingRequest.objects.count(),1)
+        self.assertEqual(AuditLog.objects.filter(entity_type="ReceptionBookingRequest").count(),1)
 
 
 @skipUnless(connection.vendor == "postgresql", "Reception booking races require PostgreSQL row locks")

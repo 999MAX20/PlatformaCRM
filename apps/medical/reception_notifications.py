@@ -24,7 +24,7 @@ def notice_access(actor, item):
             or item.patient.client.business_id != item.business_id):
         raise PermissionDenied()
     assert_can(actor, item.business, Resources.CLIENTS, Actions.VIEW, obj=item.patient.client)
-    if item.referring_clinician.user_id == actor.pk:
+    if item.referring_clinician_id and item.referring_clinician.user_id == actor.pk:
         try:
             assert_appointment_medical_basis(actor=actor, business=item.business, patient_id=item.patient_id,
                 appointment_id=item.source_appointment_id)
@@ -59,7 +59,7 @@ def _notify_reception(item, kind, recipients=None):
                 business_id=item.business_id, is_active=True, user__is_active=True,
                 medical_role_assignment__kind="reception", medical_role_assignment__revoked_at__isnull=True)]
         else:
-            recipients = [item.referring_clinician.user] + ([item.assignee.user] if item.assignee_id else [])
+            recipients = [item.created_by] + ([item.referring_clinician.user] if item.referring_clinician_id else []) + ([item.assignee.user] if item.assignee_id else [])
     for recipient in {user.pk: user for user in recipients}.values():
         try: notice_access(recipient, item)
         except (PermissionDenied, ModuleDisabled): continue
@@ -117,8 +117,9 @@ class ReceptionNotificationSource:
         if (notification.business_id != item.business_id or notification.recipient_id != row.recipient_id or
                 notification.channel != "system" or notification.kind != "work" or notification.action_url != ROUTE):
             return {"message_key": "notification.work.notifications", "action_url": ""}
-        doctor = item.referring_clinician.user_id == notification.recipient_id
+        doctor = item.referring_clinician_id and item.referring_clinician.user_id == notification.recipient_id
         url = f"/app/clients/{item.patient.client_id}" if doctor else f"{ROUTE}?branch={item.branch_id}&request={item.pk}"
         return {"message_key": f"medical.reception.notice.{row.kind}{'.onsite' if row.kind == 'new' and item.patient_in_clinic else ''}",
             "message_params": {"patient": item.patient.client.full_name,
-                "initiator": item.referring_clinician.user.full_name or item.referring_clinician.user.get_full_name()}, "action_url": url}
+                "initiator": item.referring_resource.name if item.referring_resource_id else
+                    item.referring_clinician.user.full_name or item.referring_clinician.user.get_full_name()}, "action_url": url}

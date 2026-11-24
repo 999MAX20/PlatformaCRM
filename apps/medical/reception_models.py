@@ -21,7 +21,9 @@ class ReceptionBookingRequest(models.Model):
         related_name="follow_up_requests")
     branch = models.ForeignKey("branches.Branch", on_delete=models.PROTECT)
     referring_clinician = models.ForeignKey("businesses.BusinessMember", on_delete=models.PROTECT,
-        related_name="referred_booking_requests")
+        related_name="referred_booking_requests", null=True, blank=True)
+    referring_resource = models.ForeignKey("scheduling.Resource", on_delete=models.PROTECT,
+        related_name="referred_booking_requests", null=True, blank=True)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT,
         related_name="created_reception_requests")
     created_at = models.DateTimeField(default=timezone.now)
@@ -47,6 +49,7 @@ class ReceptionBookingRequest(models.Model):
 
     class Meta:
         constraints = [
+            models.CheckConstraint(condition=models.Q(referring_clinician__isnull=False) | models.Q(referring_resource__isnull=False), name="medical_reception_referrer"),
             models.UniqueConstraint(fields=["business", "patient", "source_appointment", "service"],
                 condition=models.Q(state__in=["new", "pending"]), name="medical_reception_open"),
             models.CheckConstraint(condition=models.Q(revision__gte=1), name="medical_reception_revision"),
@@ -86,6 +89,9 @@ class ReceptionBookingRequest(models.Model):
         if not Resource.objects.filter(pk=self.preferred_resource_id, business_id=self.business_id,
                 resource_type="staff").exists():
             raise ValidationError({"preferred_resource": "Select a specialist of this business."})
+        if self.referring_resource_id is not None and not Resource.objects.filter(pk=self.referring_resource_id,
+                business_id=self.business_id, resource_type="staff").exists():
+            raise ValidationError({"referring_resource": "Select the referring specialist of this business."})
         for field in ("source_appointment", "booked_appointment"):
             identifier = getattr(self, field + "_id")
             if identifier is not None and not Appointment.objects.filter(pk=identifier, business_id=self.business_id,
@@ -97,7 +103,7 @@ class ReceptionBookingRequest(models.Model):
         if not BusinessMember.objects.filter(business_id=self.business_id, user_id=self.created_by_id).exists():
             raise ValidationError({"created_by": "Select a member of this business."})
         if not self._state.adding:
-            fields = ("business_id", "patient_id", "source_appointment_id", "referring_clinician_id",
+            fields = ("business_id", "patient_id", "source_appointment_id", "referring_clinician_id", "referring_resource_id",
                       "created_by_id", "created_at")
             previous = type(self).objects.filter(pk=self.pk).values(*fields).first()
             if previous is None or any(previous[field] != getattr(self, field) for field in fields):

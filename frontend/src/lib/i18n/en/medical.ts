@@ -1,4 +1,11 @@
 export const medical = {
+  "medical.reception.administrative": "Record a follow-up recommendation",
+  "medical.reception.administrativeSave": "Send to reception",
+  "medical.reception.administrativeHint": "You are recording an organizational request. The original visit specialist is recorded as the referrer; you remain the author of this request.",
+  "medical.reception.sourceAppointment": "Source visit and specialist",
+  "medical.reception.chooseOption": "Select an option",
+  "medical.reception.referrer": "Recommended by",
+
   "medical.reception.notice.new.onsite": "{patient}: request from {initiator}, patient is coming to reception",
   "medical.reception.duty": "Reception duty",
   "medical.reception.dutySave": "Save duty",
@@ -176,7 +183,7 @@ export const medical = {
   "medical.reception.state.pending": "Reception is handling the request",
   "medical.reception.state.booked": "Patient booked",
   "medical.reception.state.declined": "Patient declined",
-  "medical.reception.state.expired": "Processing deadline passed",
+  "medical.reception.state.expired": "Unable to contact",
   "medical.reception.state.cancelled": "Request cancelled",
   "medical.notifications.assistant_invited": "You have been invited to assist with an appointment.",
   "medical.assistants.mine": "My assistant appointments",

@@ -54,7 +54,8 @@ def list_reception_history(*, actor, business_id, request_id, offset=0, limit=25
         "from_name": members.get(event.metadata.get("from_member_id")),
         "to_name": members.get(event.metadata.get("to_member_id")),
         "outcome": event.metadata.get("outcome"), "cycle": event.metadata.get("cycle"),
-        "reason": event.metadata.get("reason", "") if event.metadata["kind"] in ("medical_follow_up_transferred", "medical_follow_up_contact") else ""}
+        "reason": event.metadata.get("reason", "") if event.metadata["kind"] in ("medical_follow_up_transferred", "medical_follow_up_contact") or
+            (event.metadata["kind"] == "medical_follow_up_requested" and event.metadata.get("source") == "administrator") else ""}
         for event in events[:limit]]
     write_patient_audit(actor=actor, business=business, patient=item.patient, action="read")
     return {"results": results, "next_offset": offset + limit if len(events) > limit else None}

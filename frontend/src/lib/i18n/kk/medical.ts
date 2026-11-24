@@ -1,4 +1,11 @@
 export const medical = {
+  "medical.reception.administrative": "Қайта қабылдау ұсынысын рәсімдеу",
+  "medical.reception.administrativeSave": "Ресепшнге жіберу",
+  "medical.reception.administrativeHint": "Сіз ұйымдастырушылық тапсырма жасайсыз. Бастапқы қабылдау маманы ұсынысты берген тұлға ретінде көрсетіледі, тапсырма авторы сіз боласыз.",
+  "medical.reception.sourceAppointment": "Бастапқы қабылдау және маман",
+  "medical.reception.chooseOption": "Мәнді таңдаңыз",
+  "medical.reception.referrer": "Ұсынысты берген",
+
   "medical.reception.notice.new.onsite": "{patient}: {initiator} тапсырмасы, пациент қазір келеді",
   "medical.reception.duty": "Ресепшн кезекшілері",
   "medical.reception.dutySave": "Кезекшілікті сақтау",
@@ -176,7 +183,7 @@ export const medical = {
   "medical.reception.state.pending": "Ресепшн өңдеуде",
   "medical.reception.state.booked": "Пациент жазылды",
   "medical.reception.state.declined": "Пациент бас тартты",
-  "medical.reception.state.expired": "Өңдеу мерзімі өтті",
+  "medical.reception.state.expired": "Байланысу мүмкін болмады",
   "medical.reception.state.cancelled": "Тапсырма тоқтатылды",
   "medical.notifications.assistant_invited": "Сізді қабылдауға ассистент ретінде шақырды.",
   "medical.assistants.mine": "Ассистент ретіндегі қабылдауларым",

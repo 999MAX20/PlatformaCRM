@@ -141,6 +141,7 @@ function ReceptionQueue({ businessId, timeZone, branches }: {
         <div className="min-w-0 space-y-1 break-words text-sm">
           <p className="text-base font-semibold">{row.client_name}</p>
           <p>{row.service_name} · {row.preferred_resource_name}</p>
+          <p>{t("medical.reception.referrer")}: {row.referring_clinician_name}</p>
           <p>{row.recommended_from} — {row.recommended_until}</p>
           <p>{t(`medical.reception.state.${row.state}`)}{row.assignee_name ? ` · ${row.assignee_name}` : ""}</p>
           {row.contact_attempts ? <p>{t("medical.reception.attemptCount", { count: row.contact_attempts })}</p> : null}

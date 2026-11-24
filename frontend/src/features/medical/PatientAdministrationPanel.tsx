@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { AdministrativeFollowUp } from "./AdministrativeFollowUp";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { branchesApi } from "../../api/branches";
@@ -38,6 +39,7 @@ export function PatientAdministrationPanel({ businessId, clientId, clientName, u
       {valid && revoked ? <ErrorState message={t("medical.denied")} action={<Button variant="secondary" onClick={() => { setRevoked(false); onIdentityChanged(); }}>{t("common.retry")}</Button>} /> : valid ? <>
         <DocumentIssuanceEntry key={`issue:${businessId}:${clientId}:${selected}`} businessId={businessId} clientId={clientId} branchId={Number(selected)} />
         <ActualVisitEntry key={`actual:${businessId}:${clientId}:${selected}`} scope={{ business_id: businessId, client_id: clientId, branch_id: Number(selected) }} />
+        <AdministrativeFollowUp key={`administrative-follow-up:${businessId}:${clientId}:${selected}`} scope={{ business_id: businessId, client_id: clientId, branch_id: Number(selected) }} />
         <ClientClinicalEntry key={`clinical-entry:${businessId}:${clientId}:${userId}:${selected}`} businessId={businessId} clientId={clientId} branchId={Number(selected)} />
         <PatientParticipationEntry key={`participation:${businessId}:${clientId}:${userId}:${selected}`} businessId={businessId} clientId={clientId} branchId={Number(selected)} />
         <CorrectionAccessPanel key={`clinical-corrections:${businessId}:${clientId}:${userId}:${selected}`} scope={{ business_id: businessId, branch_id: Number(selected), client_id: clientId }} />

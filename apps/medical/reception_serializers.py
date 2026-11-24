@@ -8,6 +8,27 @@ class ReceptionBusinessSerializer(StrictSerializer):
     business_id = serializers.IntegerField(min_value=1)
 
 
+class ReceptionAdministrativeOptionsSerializer(ReceptionBusinessSerializer):
+    branch_id = serializers.IntegerField(min_value=1)
+    client_id = serializers.IntegerField(min_value=1)
+    kind = serializers.ChoiceField(choices=("appointments", "services", "staff"))
+    after_id = serializers.IntegerField(min_value=0, default=0)
+    search = serializers.CharField(max_length=100, required=False, allow_blank=True)
+
+
+class ReceptionAdministrativeSerializer(ReceptionBusinessSerializer):
+    branch_id = serializers.IntegerField(min_value=1)
+    client_id = serializers.IntegerField(min_value=1)
+    source_appointment_id = serializers.IntegerField(min_value=1)
+    expected_updated_at = serializers.DateTimeField()
+    service_id = serializers.IntegerField(min_value=1)
+    preferred_resource_id = serializers.IntegerField(min_value=1)
+    recommended_from = serializers.DateField()
+    recommended_until = serializers.DateField()
+    patient_in_clinic = serializers.BooleanField()
+    reason = serializers.CharField(max_length=1000)
+
+
 class ReceptionPageSerializer(ReceptionBusinessSerializer):
     offset = serializers.IntegerField(min_value=0, max_value=10000, default=0)
     limit = serializers.IntegerField(min_value=1, max_value=50, default=25)

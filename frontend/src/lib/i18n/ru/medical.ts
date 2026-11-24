@@ -1,4 +1,11 @@
 export const medical = {
+  "medical.reception.administrative": "Оформить рекомендацию на повторный приём",
+  "medical.reception.administrativeSave": "Передать на ресепшн",
+  "medical.reception.administrativeHint": "Вы оформляете организационное поручение. Специалист исходного визита будет указан как передавший рекомендацию, автором поручения останетесь вы.",
+  "medical.reception.sourceAppointment": "Исходный визит и специалист",
+  "medical.reception.chooseOption": "Выберите значение",
+  "medical.reception.referrer": "Рекомендовал",
+
   "medical.reception.notice.new.onsite": "{patient}: поручение от {initiator}, пациент сейчас подойдёт",
   "medical.reception.duty": "Дежурные ресепшна",
   "medical.reception.dutySave": "Сохранить дежурство",
@@ -176,7 +183,7 @@ export const medical = {
   "medical.reception.state.pending": "В работе у ресепшна",
   "medical.reception.state.booked": "Пациент записан",
   "medical.reception.state.declined": "Пациент отказался",
-  "medical.reception.state.expired": "Срок обработки истёк",
+  "medical.reception.state.expired": "Не удалось связаться",
   "medical.reception.state.cancelled": "Поручение отменено",
   "medical.notifications.assistant_invited": "Вас пригласили ассистентом на приём.",
   "medical.assistants.mine": "Мои приёмы ассистента",

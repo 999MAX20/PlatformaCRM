@@ -1,4 +1,5 @@
 from django.db import transaction
+from django.db.models import Q
 from django.utils import timezone
 from rest_framework.exceptions import PermissionDenied, ValidationError
 
@@ -34,7 +35,7 @@ def _rows(items, actor, business, *, can_manage=False):
             "source_appointment_id": item.source_appointment_id, "service_id": item.service_id,
             "service_name": item.service.name, "preferred_resource_id": item.preferred_resource_id,
             "preferred_resource_name": item.preferred_resource.name,
-            "referring_clinician_name": item.referring_clinician.user.full_name,
+            "referring_clinician_name": item.referring_resource.name if item.referring_resource_id else item.referring_clinician.user.full_name,
             "assignee_id": item.assignee_id, "assignee_name": item.assignee.user.full_name if item.assignee_id else None,
             "assigned_to_me": assigned_to_me,
             "actions": {"claim": can_manage and open_request and item.assignee_id is None,
@@ -66,10 +67,10 @@ def _rows(items, actor, business, *, can_manage=False):
 
 def _requests(business):
     return ReceptionBookingRequest.objects.select_related("patient__client", "service", "preferred_resource",
-        "referring_clinician__user", "assignee__user", "booked_appointment").filter(business=business,
+        "referring_clinician__user", "referring_resource", "assignee__user", "booked_appointment").filter(business=business,
         patient__business=business, patient__client__business=business, branch__business=business,
-        source_appointment__business=business, service__business=business, preferred_resource__business=business,
-        referring_clinician__business=business)
+        source_appointment__business=business, service__business=business, preferred_resource__business=business).filter(
+        Q(referring_clinician__business=business) | Q(referring_clinician__isnull=True, referring_resource__business=business))
 
 
 def _page(offset, limit):

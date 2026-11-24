@@ -51,6 +51,9 @@ def prepare_completion(*, actual=False):
     patient = PatientProfile.objects.create(business=business, client=client, created_by=source.owner,
         identity_status="verified", verified_at=timezone.now(), verified_by=source.owner,
         verification_evidence_encrypted="synthetic-fixture-only")
+    from apps.medical.identity_crypto import encrypt_medical_value
+    patient.demographics_encrypted = encrypt_medical_value("{}", purpose="demographics", business_id=business.pk, subject_id=client.pk)
+    patient.save(update_fields=["demographics_encrypted"])
     service = Service.objects.create(business=business, name="Synthetic consultation")
     specialist = Resource.objects.create(business=business, name="Synthetic clinician", linked_user=doctor)
     start = timezone.now() + timedelta(days=1)
