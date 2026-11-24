@@ -30,6 +30,11 @@ function asNumericId(value: string | undefined): number | null {
 }
 
 export function ClientWorkspacePage() {
+  // Owner-requested blank route while the reference-based replacement is specified.
+  return null;
+}
+
+export function RetainedClientWorkspacePage() {
   const { t } = useI18n();
   const navigate = useNavigate();
   const { business } = useActiveBusiness();

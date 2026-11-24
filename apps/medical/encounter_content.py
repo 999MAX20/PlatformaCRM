@@ -17,7 +17,7 @@ CLINICAL_TEXT_LIMIT = 32768
 
 
 def validate_clinical_draft(content):
-    if not isinstance(content, dict) or set(content) - (CLINICAL_TEXT_FIELDS | {"not_applicable", "plan_steps"}):
+    if not isinstance(content, dict) or set(content) - (CLINICAL_TEXT_FIELDS | {"not_applicable", "plan_steps", "procedure_items"}):
         raise ValidationError({"content": "Provide supported clinical fields."})
     values = {key: value for key, value in content.items() if key in CLINICAL_TEXT_FIELDS}
     if any(not isinstance(value, str) or len(value) > CLINICAL_TEXT_LIMIT for value in values.values()):
@@ -62,6 +62,31 @@ def validate_clinical_draft(content):
         if steps and "plan" in values.get("not_applicable", {}):
             raise ValidationError({"content": "A non-applicable plan cannot contain steps."})
         values["plan_steps"] = [dict(step) for step in steps]
+    if "procedure_items" in content:
+        items = content["procedure_items"]
+        if not isinstance(items, list) or len(items) > 100:
+            raise ValidationError({"content": "Provide at most 100 performed treatment items."})
+        seen = set()
+        for item in items:
+            if (not isinstance(item, dict) or set(item) != {"id", "service_name", "teeth", "description", "duration_minutes"}
+                    or not isinstance(item["id"], str)
+                    or not isinstance(item["service_name"], str) or not item["service_name"].strip() or len(item["service_name"]) > 255
+                    or not isinstance(item["description"], str) or len(item["description"]) > 4000
+                    or type(item["duration_minutes"]) is not int or not 1 <= item["duration_minutes"] <= 1440
+                    or not isinstance(item["teeth"], list) or len(item["teeth"]) > len(FDI_TOOTH_NUMBERS)
+                    or any(type(tooth) is not int or tooth not in FDI_TOOTH_NUMBERS for tooth in item["teeth"])
+                    or len(item["teeth"]) != len(set(item["teeth"]))):
+                raise ValidationError({"content": "Provide a treatment name, FDI teeth, description and duration from 1 to 1440 minutes."})
+            try:
+                canonical = str(UUID(item["id"]))
+            except ValueError:
+                raise ValidationError({"content": "Provide a valid treatment identifier."}) from None
+            if canonical != item["id"] or canonical in seen:
+                raise ValidationError({"content": "Treatment identifiers must be canonical and unique."})
+            seen.add(canonical)
+        if items and "procedures" in values.get("not_applicable", {}):
+            raise ValidationError({"content": "A non-applicable procedures section cannot contain treatment items."})
+        values["procedure_items"] = [{**item, "teeth": list(item["teeth"])} for item in items]
     return values
 
 

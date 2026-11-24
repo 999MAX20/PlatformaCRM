@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, CalendarClock, Check, RotateCcw, X } from "lucide-react";
+import { ArrowLeft, ChevronDown, CalendarClock, CalendarDays, Check, RotateCcw, X, Stethoscope, UserRound, MapPin } from "lucide-react";
 import type { ReactNode } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useBlocker, useLocation, useNavigate, useParams } from "react-router";
@@ -26,7 +26,6 @@ import { AppointmentRescheduleForm } from "../../components/forms/AppointmentRes
 import { formatTimelineEventText } from "../../components/crm/drawers/timelineHelpers";
 import { Button } from "../../components/ui/Button";
 import { StatusBadge } from "../../components/ui/StatusBadge";
-import { Badge } from "../../components/ui/Badge";
 import { ErrorState } from "../../components/ui/StateViews";
 import { Modal } from "../../components/ui/Modal";
 import { dateInTimeZone, formatDateTime } from "../../lib/format";
@@ -41,6 +40,8 @@ import { hasPermission } from "../../lib/permissions";
 import { TaskEditor } from "../tasks/components/TaskEditor";
 import { useUnsavedEntryWarning } from "../auth/useUnsavedEntryWarning";
 import { ClinicalPageSlots } from "../medical/clinicalPageSlots";
+import { ActionMenu, type ActionMenuItem } from "../../components/ui/ActionMenu";
+import "../medical/appointmentReference.css";
 
 function asNumericId(value: string | undefined): number | null {
   const id = Number(value);
@@ -78,6 +79,7 @@ export function AppointmentWorkspacePage() {
   const [clinicalEpoch, setClinicalEpoch] = useState(0);
   const [saveSlot, setSaveSlot] = useState<HTMLDivElement | null>(null);
   const [completionSlot, setCompletionSlot] = useState<HTMLDivElement | null>(null);
+  const [contextSlot, setContextSlot] = useState<HTMLDivElement | null>(null);
   const [panelDirty, setPanelDirty] = useState(false);
   const [panelPending, setPanelPending] = useState(false);
   useUnsavedEntryWarning(panelDirty || panelPending);
@@ -224,43 +226,60 @@ export function AppointmentWorkspacePage() {
 
   const title =
     client?.full_name || appointment.client_name || t("common.client");
-  const isPlanned = ["created", "confirmed", "rescheduled"].includes(appointment.status);
   const subtitle = [
     appointment.service_name || t("common.service"),
-    formatDateTime(appointment.start_at, business?.timezone, true, language),
+    `${formatDateTime(appointment.start_at, business?.timezone, true, language)}–${new Intl.DateTimeFormat(language, { hour: "2-digit", minute: "2-digit", timeZone: business?.timezone || "UTC" }).format(new Date(appointment.end_at))}`,
     appointment.resource_name || t("appointment.noResource"),
   ]
     .filter(Boolean)
     .join(" / ");
 
+  const transitionItems: ActionMenuItem[] = statusActions.filter(status => !medical || status !== "completed").map(status => ({
+    key: status, label: getAppointmentActionLabel(status, t), icon: status === "confirmed" ? Check : X,
+    disabled: clinicalDirty || panelDirty || panelPending || !!pageError || statusMutation.isPending,
+    onSelect: () => {
+      if (status === "cancelled" || status === "no_show" || (status === "completed" && Date.now() < new Date(appointment.end_at).getTime())) void requestReasonAction(status);
+      else statusMutation.mutate({ status, expected_updated_at: appointment.updated_at });
+    },
+  }));
+  const menuItems: ActionMenuItem[] = [];
+  menuItems.push({ key: "calendar", label: t("nav.calendar"), icon: CalendarClock, onSelect: () => navigate(`/app/calendar?date=${dateInTimeZone(appointment.start_at, business?.timezone || "UTC")}`) });
+  if (appointment.visit_plan) menuItems.push({ key: "plan", label: t("plans.plan"), icon: CalendarClock, onSelect: () => navigate(`/app/appointments?view=plans&plan=${appointment.visit_plan}`) });
+  if (hasPermission(user, business?.id, "appointments", "create") && client) menuItems.push({ key: "repeat", label: t("appointments.repeatBooking"), icon: CalendarClock, onSelect: () => navigate(`/app/appointments?create=1&client=${client.id}&service=${appointment.service || ""}&resource=${appointment.resource || ""}&branch=${appointment.branch || ""}`) });
+  if (hasPermission(user, business?.id, "tasks", "create")) menuItems.push({ key: "new-task", label: t("taskWorkspace.create"), icon: CalendarClock, onSelect: () => setTaskOpen(true) });
+  for (const [key, label] of [["notes", t("crmCard.notes")], ["files", t("crmCard.attachments")], ["tasks", t("nav.tasks")]]) {
+    menuItems.push({ key, label, icon: CalendarClock, onSelect: () => void selectTab(key) });
+  }
+
   return (
     <>
-      <ClinicalPageSlots.Provider value={{ save: saveSlot, completion: completionSlot }}><article className="entity-reference-page appointment-reference-page" data-testid="appointment-reference-page">
+      <ClinicalPageSlots.Provider value={{ save: saveSlot, completion: completionSlot, context: contextSlot }}><article className="entity-reference-page appointment-reference-page" data-testid="appointment-reference-page">
         <nav className="entity-breadcrumb" aria-label={t("common.back")}><Link to={recordReturnPath(location.state?.recordReturnTo)}>{t("appointments.title")}</Link><span aria-hidden>/</span><span>{title}</span></nav>
         <Link className="entity-back platforma-focus-ring" to={recordReturnPath(location.state?.recordReturnTo)}><ArrowLeft size={18} />{t("common.back")}</Link>
         <header className="entity-identity">
-          <div className="entity-heading"><h1>{title}</h1><p>{subtitle}</p></div>
+          <div className="entity-heading"><div className="appointment-title-row"><h1>{title}</h1>{client && <Link className="entity-text-link" to={`/app/clients/${client.id}`}>{t("leads.openClient")}</Link>}</div><p>{subtitle}</p></div>
           <div className="entity-header-actions">
-            <StatusBadge status={appointment.status} />
-            {client && <Link className="entity-text-link" to={`/app/clients/${client.id}`}>{t("leads.openClient")}</Link>}
+            {transitionItems.length ? <ActionMenu label={t("medical.page.status")} items={transitionItems}
+              triggerClassName="appointment-status-trigger" triggerContent={<><StatusBadge status={appointment.status} /><ChevronDown size={16} /></>} /> : <StatusBadge status={appointment.status} />}
             {canReschedule && <Button variant="secondary" disabled={clinicalDirty || panelDirty || panelPending} onClick={() => setRescheduleOpen(true)}><RotateCcw size={16} />{t("appointments.reschedule")}</Button>}
+            <ActionMenu label={t("appointments.actions")} items={menuItems} />
             <div ref={setSaveSlot} hidden={tab !== "visit"} />
           </div>
         </header>
-        <Tabs value={tab} onChange={next => void selectTab(next)} appearance="underline" idPrefix="appointment-page" className="entity-page-tabs" ariaLabel={title}
-          options={[{ value: "visit", label: t("calendar.visit") }, ...(clinicalEnabled ? [{ value: "documents", label: t("medical.documents.title") }, { value: "medicalHistory", label: t("medical.clinical.history") }] : []), { value: "history", label: t("tasks.history") }, { value: "files", label: t("crmCard.attachments") }, { value: "notes", label: t("crmCard.notes") }, { value: "tasks", label: t("nav.tasks") }]} />
+        <Tabs value={tab === "history" ? "history" : "visit"} onChange={next => void selectTab(next)} appearance="underline" idPrefix="appointment-page" className="entity-page-tabs" ariaLabel={title}
+          options={[{ value: "visit", label: t("calendar.visit") }, { value: "history", label: t("tasks.history") }]} />
         {pageError && <ErrorState error={pageError} action={<Button variant="secondary" onClick={() => void cardQuery.refetch()}>{t("common.retry")}</Button>} />}
         <div className="entity-page-columns">
           <div className="entity-page-main">
-            {clinicalEnabled && ["visit", "documents", "medicalHistory"].filter(value => value !== (["documents", "medicalHistory"].includes(tab) ? tab : "visit")).map(value => <section key={value} role="tabpanel" id={`appointment-page-panel-${value}`} aria-labelledby={`appointment-page-tab-${value}`} hidden />)}
-            <section role="tabpanel" id={`appointment-page-panel-${["documents", "medicalHistory"].includes(tab) ? tab : "visit"}`} aria-labelledby={`appointment-page-tab-${["documents", "medicalHistory"].includes(tab) ? tab : "visit"}`} hidden={!["visit", "documents", "medicalHistory"].includes(tab)}>
+            <section role="tabpanel" id={`appointment-page-panel-${tab === "history" ? "history" : "visit"}`} aria-labelledby={`appointment-page-tab-${tab === "history" ? "history" : "visit"}`}>
               {clinicalEnabled ? <ClinicalAppointmentEntry key={`${scope}:${clinicalEpoch}`} businessId={appointment.business} appointmentId={appointment.id} embedded pageLayout
-                initialTab="encounter" externalTab={tab === "documents" ? "documents" : tab === "medicalHistory" ? "history" : "encounter"} navigationRef={clinical} onDirtyChange={setClinicalDirty} onInitialAccessDenied={denied} /> :
+                initialTab="encounter" externalTab={tab === "history" ? "history" : "encounter"} navigationRef={clinical} onDirtyChange={setClinicalDirty} onInitialAccessDenied={denied} /> :
                 <section className="entity-page-section"><h2>{appointment.service_name || t("calendar.visit")}</h2><p className="entity-note">{appointment.notes || t("crmCard.noNotes")}</p></section>}
               {lead && <Link className="entity-text-link" to={`/app/leads/${lead.id}`}>{t("crmCard.leadNumber", { id: lead.id })}</Link>}
               {appointment.source_conversation && <Link className="entity-text-link" to={`/app/conversations/${appointment.source_conversation}`}>{t("nav.conversations")}</Link>}
             </section>
-            <section role="tabpanel" id="appointment-page-panel-history" aria-labelledby="appointment-page-tab-history" hidden={tab !== "history"}>            <AppointmentSection
+            <section hidden={tab !== "history"}>
+              <AppointmentSection
               title={t("tasks.history")}
               className="lg:col-span-2"
             >
@@ -277,7 +296,7 @@ export function AppointmentWorkspacePage() {
               </div>
             </AppointmentSection>
 </section>
-            <section role="tabpanel" id="appointment-page-panel-tasks" aria-labelledby="appointment-page-tab-tasks" hidden={tab !== "tasks"}>            <AppointmentSection title={t("nav.tasks")}>
+            <Modal open={tab === "tasks"} title={t("nav.tasks")} onClose={() => void selectTab("visit")}><AppointmentSection title={t("nav.tasks")}>
               <div className="space-y-2">
                 {tasks.map((task) => (
                   <TaskRow
@@ -295,31 +314,24 @@ export function AppointmentWorkspacePage() {
               </div>
             </AppointmentSection>
 
-</section>
-            <section role="tabpanel" id="appointment-page-panel-files" aria-labelledby="appointment-page-tab-files" hidden={tab !== "files"}>
+</Modal>
+            <Modal open={tab === "files"} title={t("crmCard.attachments")} onClose={() => void selectTab("visit")} closeOnBackdrop={false}>
               {tab === "files" && cardQuery.data && <EntityAttachmentsPanel data={cardQuery.data} entity={{ type: "appointment", id: appointment.id }} readOnly={!canUpdateAppointment || !!pageError} onDirtyChange={setPanelDirty} onPendingChange={setPanelPending} />}
-            </section>
-            <section role="tabpanel" id="appointment-page-panel-notes" aria-labelledby="appointment-page-tab-notes" hidden={tab !== "notes"}>
+            </Modal>
+            <Modal open={tab === "notes"} title={t("crmCard.notes")} onClose={() => void selectTab("visit")} closeOnBackdrop={false}>
               {tab === "notes" && cardQuery.data && <EntityNotesPanel data={cardQuery.data} entity={{ type: "appointment", id: appointment.id }} readOnly={!canAddNote || !!pageError} onDirtyChange={setPanelDirty} onPendingChange={setPanelPending} locale={language} timeZone={business?.timezone || "UTC"} />}
-            </section>
+            </Modal>
           </div>
-          <aside className="entity-context-panel">            <AppointmentSection title={t("calendar.visit")}>
-              <div className="flex flex-wrap gap-2">
-                {isPlanned ? <Badge variant="info">{t("records.planned")}</Badge> : <StatusBadge status={appointment.status} />}
-                {appointment.status === "confirmed" ? <StatusBadge status="confirmed" /> : null}
-              </div>
-              <div className="mt-3 space-y-2 text-sm font-semibold text-platforma-subtle">
-                <MetaRow label={t("appointment.service")} value={appointment.service_name || t("common.service")} />
-                <MetaRow label={t("appointment.resource")} value={appointment.resource_name || t("appointment.noResource")} />
+          <aside className="appointment-context"><div className="entity-context-panel">{deniedScope === scope && <p role="status" className="appointment-access-notice">{t("medical.page.accessDenied")}</p>}<AppointmentSection title={t("calendar.visit")}>
+              <div className="appointment-visit-meta">
+                <MetaRow icon={<Stethoscope size={22} />} label={t("appointment.service")} value={appointment.service_name || t("common.service")} />
+                <MetaRow icon={<UserRound size={22} />} label={t("appointment.resource")} value={appointment.resource_name || t("appointment.noResource")} />
                 {appointment.responsible_user_name && <MetaRow label={t("appointment.responsible")} value={appointment.responsible_user_name} />}
-                {appointment.branch_name && <MetaRow label={t("branches.branch")} value={`${appointment.branch_name} · ${appointment.branch_address}`} />}
+                {appointment.branch_name && <MetaRow icon={<MapPin size={22} />} label={t("branches.branch")} value={appointment.branch_name} />}
                 <MetaRow
+                  icon={<CalendarDays size={22} />}
                   label={t("tasks.dueAt")}
                   value={formatDateTime(appointment.start_at, business?.timezone, true, language)}
-                />
-                <MetaRow
-                  label={t("appointment.source")}
-                  value={t(`appointment.source.${appointment.source}`)}
                 />
                 {appointment.notes ? (
                   <p className="rounded-control bg-surface-subtle p-3 leading-6">
@@ -328,50 +340,9 @@ export function AppointmentWorkspacePage() {
                 ) : null}
               </div>
             </AppointmentSection>
-
-            <AppointmentSection title={t("appointments.actions")}>
-              <div className="grid gap-2">
-                {statusActions.filter(status => !medical || status !== "completed").map((status, index) => (
-                  <Button
-                    key={status}
-                    data-appointment-action-id={status}
-                    type="button"
-                    variant={
-                      status === "cancelled" || status === "no_show"
-                        ? "warning"
-                        : index === 0
-                          ? "primary"
-                          : "secondary"
-                    }
-                    isLoading={statusMutation.isPending}
-                    disabled={clinicalDirty || panelDirty || panelPending || !!pageError}
-                    onClick={() => {
-                      if (status === "cancelled" || status === "no_show" || (status === "completed" && Date.now() < new Date(appointment.end_at).getTime()))
-                        void requestReasonAction(status);
-                      else statusMutation.mutate({ status, expected_updated_at: appointment.updated_at });
-                    }}
-                  >
-                    {getAppointmentActionIcon(status)}
-                    {getAppointmentActionLabel(status, t)}
-                  </Button>
-                ))}
-                {canReschedule ? (
-                  <Button
-                    data-appointment-action-id="reschedule"
-                    disabled={clinicalDirty || panelDirty || panelPending || !!pageError}
-                    type="button"
-                    variant="secondary"
-                    onClick={() => setRescheduleOpen(true)}
-                  >
-                    <RotateCcw size={16} /> {t("appointments.reschedule")}
-                  </Button>
-                ) : null}
-                {appointment.visit_plan ? <Button variant="secondary" onClick={() => navigate(`/app/appointments?view=plans&plan=${appointment.visit_plan}`)}>{t("plans.plan")}</Button> : null}
-                {hasPermission(user, business?.id, "appointments", "create") && client ? <Button variant="secondary" onClick={() => navigate(`/app/appointments?create=1&client=${client.id}&service=${appointment.service || ""}&resource=${appointment.resource || ""}&branch=${appointment.branch || ""}`)}>{t("appointments.repeatBooking")}</Button> : null}
-                {hasPermission(user, business?.id, "tasks", "create") ? <Button variant="secondary" onClick={() => setTaskOpen(true)}>{t("taskWorkspace.create")}</Button> : null}
-                <Button variant="secondary" onClick={() => navigate(`/app/calendar?date=${dateInTimeZone(appointment.start_at, business?.timezone || "UTC")}`)}>{t("nav.calendar")}</Button>
-              </div>
-            </AppointmentSection>
+            <div ref={setContextSlot} />
+            </div>
+            {appointment.status === "completed" && hasPermission(user, business?.id, "appointments", "create") && client && <Button variant="primary" onClick={() => navigate(`/app/appointments?create=1&client=${client.id}&service=${appointment.service || ""}&resource=${appointment.resource || ""}&branch=${appointment.branch || ""}`)}>{t("appointments.repeatBooking")}</Button>}
             <div ref={setCompletionSlot} className="appointment-clinical-actions" hidden={tab !== "visit"} />
 </aside>
         </div>
@@ -409,13 +380,6 @@ function getAppointmentActionLabel(
   return t(`status.${status}`);
 }
 
-function getAppointmentActionIcon(status: Appointment["status"]) {
-  if (status === "confirmed" || status === "completed")
-    return <Check size={16} />;
-  if (status === "cancelled" || status === "no_show") return <X size={16} />;
-  return <CalendarClock size={16} />;
-}
-
 function AppointmentSection({
   title,
   className,
@@ -435,9 +399,10 @@ function AppointmentSection({
   );
 }
 
-function MetaRow({ label, value }: { label: string; value: ReactNode }) {
+function MetaRow({ label, value, icon }: { label: string; value: ReactNode; icon?: ReactNode }) {
   return (
-    <div className="flex items-center justify-between gap-3 rounded-control bg-surface-subtle px-3 py-2">
+    <div className="appointment-meta-row">
+      {icon && <span aria-hidden="true">{icon}</span>}
       <span>{label}</span>
       <span className="text-right text-platforma-text">{value}</span>
     </div>

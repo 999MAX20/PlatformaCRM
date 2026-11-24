@@ -4,6 +4,84 @@
 
 24.11.2026: по прямому поручению владельца применены27 существующих миграций к локальной PostgreSQL127.0.0.1:55432/platformacrm (integrations0014–0015, medical0034–0057, procurement0001). До записи проверены local profile/план; pg_dump custom backup и pg_restore --list PASS. Evidence: output/local-db-maintenance/dental-migrations-20261124-215007 (before.dump, scope.json, migrate.log, counts-before/after.json, result.json). migrate --check и Django system check PASS; прежние business tables counts неизменны, изменились только auth_permission744→872, content_type186→218 и django_migrations244→271. Таблица medical_appointmentassistant существует. ./dev.ps1 exit0: backend8000/frontend5173, Redis, scanner/updater и worker запущены из canonical checkout; health/API proxy/worker checks PASS. Код/данные сценариев не менялись, seed/reset/CI/deployment не выполнялись. Это устраняет отставание схемы, но не доказывает полную функциональную приёмку текущего UI; параллельные изменения страниц сохранены.
 
+## Текущий этап:24.11 страница записи по принятым макетам
+
+Уточнение владельца после визуального просмотра: текущая раскладка отклонена; требуется близкое совпадение с appointment-spec-preview-v1.png. Предыдущий срез (два текстовых блока) → доказанное несовпадение таблицы/плана/рекомендаций → минимальное расширение существующего encrypted clinical content полем procedure_items, отдельные строки плана и рекомендаций, компактный tooth summary + drawer. Новых моделей/миграций/ACL нет. Поля выполненного лечения сохраняются версионно; старый procedures-текст сохраняется. Проверки server: content validation/encrypted history/completion presence плюс зависимые encounter suites и system/schema drift в isolated DB; UI: actual save/reload, editor/modals, desktop1536×1024/mobile390, финальный build. Роли и регистрация остаются вне scope. Исходный HEAD возобновления9f4a4f22; чужой auth WIP не изменяется.
+
+Owner разрешил анализ/описание14 компонентов и первый этап реализации записи. Старт81c1a239, codex/ui-testing-toolkit, canonical root прежний. Наш предыдущий WIP: null wrappers двух страниц, spec/assets и scoped-doc notices; чужие auth/Google/YCloud изменения сохраняются. Клиент остаётся пустым. Scope: восстановление записи, compact layout/modal clinical inputs/tooth drawer, существующие plan/completion/booking и permissions. Gap UI и расширение content-контракта выполненного лечения, согласованное уточнением выше; старый procedures=text сохраняется. Роли/регистрация/working DB вне этапа.
+
+Skills zani-review-frontend, antislop during/ui/layoutmobile/human, design-taste app screens: пользовательский референс важнее defaults; компактные token-based размеры; доступные dialogs/focus/dirty guards; desktop1536 и mobile390. Проверки: affected UI flow чтение/редактирование/отмена/apply/save/error/доступ/зубы/завершение, скриншоты и сравнение; итоговый build/types/i18n один раз. Без CI и общих backend suites. Пользователь сообщил, что browser access включён; проверить новым inventory. Permissions/tenant сохраняются; notifications/BusinessEvent/AI/migrations N/A. Анализ компонентов добавлен в §10 UI-ТЗ, source documents сохранены.
+
+### Результат текущего UI-этапа24.11
+
+В canonical checkout на базе9f4a4f22 реализованы две колонки, компактные summary,
+модальные жалобы/осмотр/план/лечение, drawer зуба440px (mobile full-width), меню
+статуса, перенос, завершение, существующие дополнительные действия. Сохранены
+версии/ACL/tenant isolation; новый procedure_items использует текущие endpoints.
+Отмена и неприменимость выполненной работы доступны через меню таблицы; старый
+текст не потерян. Клиент остаётся намеренно пустым по прежнему поручению.
+
+Серверные доказательства (изолированный SQLite, актуальный medical diff):
+- content19PASS: output/local-dental-demo/k08-focused-1795540369989537800.log;
+- затронутые encounter API+completion19PASS: k08-focused-1795540780291488400.log;
+- API после добавленного regression12PASS: k08-focused-1795541061943512500.log.
+Прогоны пересекаются, их количества не складываются. Проверены шифрованная история,
+валидация, idempotency, stale409 и отзыв доступа403. `check` и
+`makemigrations --check --dry-run` PASS: output/appointment-reference-system.log.
+Финальный `npm run build` (i18n8474/tsc/app/widget) PASS:
+output/appointment-reference-final-build.log; прежнее предупреждение chunk>500kB.
+
+CUA Chrome, local63693, отдельные синтетические клиники: actual add/apply/save/reload
+позиции лечения, жалобы, plan_steps/рекомендации, tooth-save, dirty-close/continue,
+Escape и возврат фокуса к зубу, native required validation, readonly история,
+перенос на25Nov10:00 и подтверждение, запрет неполного завершения. На предыдущей
+синтетической записи15 проверено успешное завершение и серверное закрытие медицинского
+контекста по действующим правилам. Повторная запись15 достигла формы, но исходная
+fixture не содержала услуг филиала; новая fixture16 подготовлена с follow_up=True.
+Рабочая БД не использовалась. Полный повторный booking-submit не заявлен этим срезом.
+
+Screenshots captured AND inspected: output/appointment-reference/desktop.png,
+tooth-drawer.png, mobile.png, mobile-drawer.png, mobile-treatment.png.
+Desktop1536×1024: базовый заполненный сценарий с одной строкой лечения и длинным
+состоянием зуба помещается, нижняя граница рекомендаций984–1000px. Mobile390×844:
+нет горизонтального overflow страницы, таблица прокручивается внутри, modal footer
+видим, drawer прокручивается. Большие списки/важные предупреждения могут потребовать
+прокрутки; универсальная вместимость любого объёма в один экран не заявлена.
+RU визуально проверен; KK/EN проверены словари/типы, отдельная визуальная приёмка
+переводов этого среза не проводилась. Общая оболочка CRM и atlas зубов переиспользованы;
+это близкая композиция, не pixel-perfect копия raster. Пустые mock-карточки документов
+не добавлялись. В последних console events ошибок нет.
+
+Сбой полного screenshot восстановлен через documented Page.bringToFront; текущий
+снимок получен на нужной странице. Дополнительный preview-runtime не стартовал за180s
+и завершён его finally; вместо новой БД переиспользована существующая изолированная
+fixture. Основной preview63693 продолжает работать (session91752); временный viewport
+сброшен, вкладка помечена deliverable. Не хранить пароль в docs.
+
+Остаток: внешний pixel-review владельца, отдельные KK/EN visual checks, пауза документов/
+шаблонов/ЭЦП/бота/архива/закупок, новая ролевая модель и страница клиента. Эти границы
+не закрывают весь dental roadmap и не являются live/pilot/deployment acceptance.
+CI не запускался. Публикация фиксируется после scoped diff hygiene; чужой auth/Google/
+YCloud WIP не включать. CRM contract, UI-spec, frontend, capabilities/registry/README
+согласованы; другие паспорта/operational docs не меняются, поскольку новых моделей,
+сервисов, env или инфраструктуры нет.
+
+## 24.11: очистка страниц и точная спецификация референсов
+
+Новое поручение владельца в side conversation: убрать весь контент индивидуальных страниц клиента/записи, подготовить подробное UI-ТЗ; роли/регистрация только анализ. Прежние страницы опубликованы, но визуальное соответствие не принято → явное изменение scope → временно не монтировать содержимое двух страниц, сохранить реализацию для переиспользования. Списки/календарь, данные, API, права, регистрация и рабочая БД вне изменений. Пустая страница намеренна, это промежуточное состояние, не готовность пилота.
+
+Начальный HEAD 81c1a23972c94f0c4a882f98c69ce51b1bee6bb2, branch codex/ui-testing-toolkit, canonical root C:\Users\user\Desktop\PlatformaCRM. Два page-файла и registry изначально чистые; auth/Google/YCloud и текущие docs/checkpoint имеют чужой WIP, сохраняется. В shared docs добавлять только scoped-заметки. Разрешение на передачу поручения другому чату отсутствует, сообщений не отправлять.
+
+Контракт: минимальная обратимая остановка рендера страниц; API/DB/permission/notification/BusinessEvent/AI/migration impact отсутствует. Проверки: diff hygiene, frontend build/types один раз, локальная визуальная проверка при доступном браузере. CUA сообщает Local browser use is disabled in Work settings; обход запрещён, visual acceptance остаётся непроверенной. Skills antislop during + ui: пользовательские референсы определяют дизайн, без новых декоративных блоков/ассетов, существующие слои сохраняются. Для текущей пустой области размеры/формы/focus/states N/A, поскольку компонентов нет; для будущих страниц обязательны все профильные проверки из ТЗ.
+
+Спецификация: [dental-entity-pages-reference-spec.md](../../current/dental-entity-pages-reference-spec.md). Раздел ролей является предложением, не действующим access-контрактом. Предыдущие PASS ниже относятся к прежнему содержимому, не к новому дизайну.
+
+Результат текущего поручения: обе публичные page-функции возвращают null; сохранённые Retained* компоненты не имеют callers (rg проверен), page-specific hooks/queries не монтируются. Общие route guards/оболочка сохранены. UI-ТЗ333 строки, регистрация в docs registry/README, frontend/capabilities/STATUS синхронизированы scoped-заметками. Два пользовательских reference PNG сохранены в docs/current/assets/dental-reference; SHA256 совпали с оригиналами. Backend, access contract, рабочая БД и signup код не изменены этой задачей; основной чат не опрашивался и сообщение ему не отправлялось.
+
+Проверки на dirty snapshot от81c1a239: `npm run build` из frontend EXIT0 (check:i18n8449 keys, tsc-b, Vite app+widget PASS), полный лог output/dental-pages-clear-build.log. Vite warning: chunks>500kB; отдельная оптимизация bundle не выполнялась. `git diff --check` PASS; JSON registry parsing PASS;3 относительные ссылки нового ТЗ существуют, trailing whitespace отсутствует; статический поиск маршрутов подтверждает прежние публичные exports, Retained* только определения. Backend tests/CI не запускались: сервер не менялся. Anti Slop: purpose/сохранение данных/отсутствие фиктивных элементов PASS по diff; responsive/focus/loading N/A для пустого page-content, общая оболочка не менялась; R35 visual acceptance НЕ ПРОВЕРЕНА из-за browser-disabled. Не выдавать это за готовые новые страницы.
+
+Доставка: локально, без commit/push из-за неполной обязательной UI-проверки (AGENTS §5–6). Чужой WIP не staged/committed. Следующий шаг текущей приёмки: открыть оба маршрута desktop/mobile после восстановления browser access, убедиться в пустом page-content и сохранённой оболочке. Следующая продуктовая задача, не начатая здесь: реализация §4–8 нового UI-ТЗ. Ролевой раздел требует отдельного утверждения и поручения; прямой доступ/выдача ролей не менялись.
+
 ## Новый утверждённый scope24.11: отдельные страницы клиента и записи
 
 Scope/основание: owner approved заменить черновое содержимое двух страниц по imagegen-референсам exec-0c447717/exec-960322f8 и убрать большие модальные карточки из Clients/Records/Calendar. Последовательность CLIENT-PAGE → APPOINTMENT-PAGE. Canonical root C:\Users\user\Desktop\PlatformaCRM, branch codex/ui-testing-toolkit, starting base cffcb0ec; auth/Google/YCloud WIP сохраняется и не входит в публикацию. Gap: утверждённое изменение интерфейса; сервер, API, схема, роли, изоляция и медицинские жизненные циклы переиспользуются. Малые формы создания/редактирования/переноса остаются. Полное ТЗ, закупки/бот/AI/архив не возобновлялись, CI запрещён.

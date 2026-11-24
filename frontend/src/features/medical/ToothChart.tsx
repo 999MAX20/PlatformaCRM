@@ -10,6 +10,7 @@ import { Button } from "../../components/ui/Button";
 import { Input } from "../../components/ui/Input";
 import { Select } from "../../components/ui/Select";
 import { Modal } from "../../components/ui/Modal";
+import { Drawer, OverlayBackdropProvider } from "../../components/ui/Overlay";
 import { ErrorState, LoadingState } from "../../components/ui/StateViews";
 import { useI18n } from "../../lib/i18n";
 import { formatDateTime } from "../../lib/format";
@@ -132,10 +133,30 @@ function ChartData({ scope, context, asOf, onDenied, navigation, onNavigation, o
   if (error) return <ErrorState message={getApiErrorMessage(error)} action={<Button size="lg" variant="secondary" onClick={() => setAttempt(x => x + 1)}>{t("common.retry")}</Button>} />;
   if (!rows) return <LoadingState />;
   const quadrants = [1, 2, 4, 3];
-  return <div ref={chartRef} className={compact && selected !== null ? "appointment-tooth-grid space-y-4" : "space-y-4"}>
-    <Select label={t("medical.tooth.title")} value={mode} onChange={async event => { const mode = event.target.value; if (compact && !(await beforeLeave())) return; onNavigation({ ...navigation, mode, focusedTooth: undefined }); setSelected(null); }}
+  const sequence = quadrants.flatMap(q => (mode === "mixed" ? [false, true] : [mode === "primary"]).flatMap(primary => {
+    const teeth = Array.from({ length: primary ? 5 : 8 }, (_, index) => (q + (primary ? 4 : 0)) * 10 + index + 1);
+    return q === 1 || q === 4 ? teeth.reverse() : teeth;
+  }));
+  async function selectTooth(tooth: number) {
+    if (compact && !(await beforeLeave())) return;
+    onNavigation({ ...navigation, focusedTooth: tooth }); setSelected(tooth);
+  }
+  const focusedTooth = navigation.focusedTooth ?? rows[0]?.tooth ?? null;
+  const focusedObservation = rows.find(row => row.tooth === focusedTooth && !row.surface) ?? rows.find(row => row.tooth === focusedTooth);
+  const closeConfirmation = (
+      <div className="space-y-4">
+        {closeFailed ? <p role="alert">{t("medical.clinical.closeFailed")}</p> : null}
+        <div className="flex flex-wrap gap-3">
+          <Button size="lg" isLoading={closing} onClick={() => void saveAndClose()}>{t("medical.clinical.saveClose")}</Button>
+          <Button size="lg" variant="secondary" disabled={closing} onClick={() => { filesDestination.current = null; setConfirmClose(false); }}>{t("medical.clinical.continueEditing")}</Button>
+          <Button size="lg" variant="secondary" disabled={closing} onClick={finish}>{t("medical.clinical.leaveUnsaved")}</Button>
+        </div>
+      </div>
+  );
+  return <div ref={chartRef} className={compact ? "appointment-chart-data space-y-2" : "space-y-4"}>
+    <Select label={compact ? undefined : t("medical.tooth.title")} aria-label={t("medical.tooth.title")} value={mode} onChange={async event => { const mode = event.target.value; if (compact && !(await beforeLeave())) return; onNavigation({ ...navigation, mode, focusedTooth: undefined }); setSelected(null); }}
       options={["permanent", "primary", "mixed"].map(value => ({ value, label: t(`medical.tooth.${value}`) }))} />
-    <p className="hidden text-sm text-platforma-subtle md:block">{t("medical.tooth.orientation")}</p>
+    {!compact && <p className="hidden text-sm text-platforma-subtle md:block">{t("medical.tooth.orientation")}</p>}
     <div className="md:hidden"><Select label={t("medical.tooth.orientation")} value={quadrant} onChange={event => onNavigation({ ...navigation, quadrant: Number(event.target.value), focusedTooth: undefined })}
       options={quadrants.map(value => ({ value, label: t(`medical.tooth.q${value}`) }))} /></div>
     <div className="grid min-w-0 gap-4 md:grid-cols-2">
@@ -152,6 +173,7 @@ function ChartData({ scope, context, asOf, onDenied, navigation, onNavigation, o
               const label = status ? t(`medical.tooth.status.${status}`) : t(observed ? "medical.tooth.observed" : "medical.tooth.empty");
               return <button type="button" key={tooth} className={`platforma-focus-ring flex min-h-11 min-w-11 shrink-0 cursor-pointer flex-col items-center rounded-control px-0.5 py-2 transition-colors hover:bg-surface-hover ${observed ? "bg-brand-50 text-brand-700" : "text-platforma-subtle"}`}
                 aria-label={`${t("medical.tooth.tooth")} ${tooth}: ${label}`} aria-pressed={selected === tooth} title={label}
+                data-tooth-state={status ?? (observed ? "observation" : "not_examined")} data-tooth-focused={focusedTooth === tooth ? "true" : undefined}
                 data-focus-return-id={`tooth-${tooth}`} onClick={async () => { if (compact && !(await beforeLeave())) return; onNavigation({ ...navigation, focusedTooth: tooth }); setSelected(tooth); }}>
                 <ToothShape tooth={tooth} illustrated={compact} />
                 <span className="text-sm font-semibold tabular-nums">{tooth}{status ? ` ${stateMarks[status]}` : observed ? " •" : ""}</span>
@@ -164,9 +186,26 @@ function ChartData({ scope, context, asOf, onDenied, navigation, onNavigation, o
     <ul className="flex flex-wrap gap-x-4 gap-y-2 text-sm" aria-label={t("medical.tooth.status")}>
       {toothStatuses.map(status => <li key={status}><span aria-hidden="true">{stateMarks[status]} </span>{t(`medical.tooth.status.${status}`)}</li>)}
     </ul>
-    <p className="text-sm text-platforma-subtle">{t("medical.tooth.select")}</p>
-    {compact ? selected !== null && <section className="appointment-tooth-inspector" data-testid="tooth-inspector">
+    {!compact && <p className="text-sm text-platforma-subtle">{t("medical.tooth.select")}</p>}
+    {compact && <aside className="appointment-tooth-summary">
+      <h3>{focusedTooth ? `${t("medical.tooth.tooth")} ${focusedTooth}` : t("medical.tooth.tooth")}</h3>
+      {focusedTooth ? <>
+        <p className="appointment-tooth-summary-label">{t("medical.tooth.status")}</p>
+        <p className="appointment-tooth-summary-state">{t(`medical.tooth.status.${focusedObservation?.tooth_status ?? (focusedObservation ? "observation" : "not_examined")}`)}</p>
+        <p className="appointment-tooth-summary-label">{t("medical.tooth.observation")}</p>
+        <p className="appointment-tooth-summary-note">{focusedObservation?.observation || t("medical.tooth.empty")}</p>
+        <Button variant="primary" onClick={() => void selectTooth(focusedTooth)}>{t("medical.page.editTooth")}</Button>
+      </> : <p>{t("medical.tooth.select")}</p>}
+    </aside>}
+    {compact ? <OverlayBackdropProvider blur={false}><Drawer open={selected !== null} onClose={close} closeOnBackdrop={false} size="custom" className="appointment-tooth-drawer" backdropClassName="appointment-tooth-backdrop"
+      ariaLabel={`${t("medical.tooth.tooth")} ${selected ?? ""}`} testId="tooth-inspector">
+      <section className="appointment-tooth-inspector">
       <header><h3>{t("medical.tooth.tooth")} {selected}</h3><Button type="button" variant="ghost" onClick={close}>{t("common.close")}</Button></header>
+      {confirmClose && <section role="alert" className="rounded-control border border-platforma-border p-3"><h3>{t("medical.clinical.unsavedTitle")}</h3>{closeConfirmation}</section>}
+      {selected !== null && <div className="appointment-tooth-navigation">
+        <Button variant="secondary" disabled={sequence.indexOf(selected) <= 0} onClick={() => void selectTooth(sequence[sequence.indexOf(selected) - 1])}>{t("medical.page.previousTooth")}</Button>
+        <Button variant="secondary" disabled={sequence.indexOf(selected) < 0 || sequence.indexOf(selected) >= sequence.length - 1} onClick={() => void selectTooth(sequence[sequence.indexOf(selected) + 1])}>{t("medical.page.nextTooth")}</Button>
+      </div>}
       {selected !== null ? <div className="space-y-4">
         {onFiles && !asOf ? <Button size="lg" variant="secondary" onClick={() => {
           if (closePending.current || editor.current?.isPending()) return;
@@ -181,7 +220,7 @@ function ChartData({ scope, context, asOf, onDenied, navigation, onNavigation, o
           control={editor} onSaved={reload} onReload={reload} onDenied={onDenied} /> : null}
       </div> : null}
 
-    </section> : <Modal open={selected !== null} onClose={close} closeOnBackdrop={false} size="lg" title={`${t("medical.tooth.tooth")} ${selected ?? ""}`}
+    </section></Drawer></OverlayBackdropProvider> : <Modal open={selected !== null} onClose={close} closeOnBackdrop={false} size="lg" title={`${t("medical.tooth.tooth")} ${selected ?? ""}`}
       focusReturnId={`tooth-${selected}`} testId="tooth-inspector">
       {selected !== null ? <div className="space-y-4">
         {onFiles && !asOf ? <Button size="lg" variant="secondary" onClick={() => {
@@ -197,16 +236,9 @@ function ChartData({ scope, context, asOf, onDenied, navigation, onNavigation, o
           control={editor} onSaved={reload} onReload={reload} onDenied={onDenied} /> : null}
       </div> : null}
     </Modal>}
-    <Modal open={confirmClose && selected !== null} onClose={() => { if (!closePending.current) { filesDestination.current = null; setConfirmClose(false); } }}
+    <Modal open={!compact && confirmClose && selected !== null} onClose={() => { if (!closePending.current) { filesDestination.current = null; setConfirmClose(false); } }}
       closeOnBackdrop={false} size="sm" title={t("medical.clinical.unsavedTitle")} testId="tooth-unsaved">
-      <div className="space-y-4">
-        {closeFailed ? <p role="alert">{t("medical.clinical.closeFailed")}</p> : null}
-        <div className="flex flex-wrap gap-3">
-          <Button size="lg" isLoading={closing} onClick={() => void saveAndClose()}>{t("medical.clinical.saveClose")}</Button>
-          <Button size="lg" variant="secondary" disabled={closing} onClick={() => { filesDestination.current = null; setConfirmClose(false); }}>{t("medical.clinical.continueEditing")}</Button>
-          <Button size="lg" variant="secondary" disabled={closing} onClick={finish}>{t("medical.clinical.leaveUnsaved")}</Button>
-        </div>
-      </div>
+      {closeConfirmation}
     </Modal>
   </div>;
 }

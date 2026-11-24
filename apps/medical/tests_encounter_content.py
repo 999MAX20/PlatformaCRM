@@ -82,6 +82,36 @@ class EncounterContentTests(TestCase):
         self.assertEqual(MedicalEncounterRevision.objects.count(), 1)
         self.assertNotIn("diagnosis", read_encounter_revision(first)["content"])
 
+    def test_performed_treatment_items_preserve_encrypted_history(self):
+        item = {"id": "00000000-0000-4000-8000-000000000001", "service_name": "Оқу қызметі",
+                "teeth": [16, 55], "description": "Synthetic treatment", "duration_minutes": 30}
+        first = self.append(content={"procedures": "Previous narrative", "procedure_items": [item]})
+        self.advance()
+        second = self.append(content={"procedure_items": []})
+        self.assertEqual(read_encounter_revision(first)["content"]["procedure_items"], [item])
+        self.assertEqual(read_encounter_revision(second)["content"]["procedure_items"], [])
+        self.assertNotIn(item["service_name"], first.content_encrypted)
+
+    def test_performed_treatment_validation_and_completion_presence(self):
+        from .encounter_completion_requirements import encounter_completion_requirements
+        from .encounter_content import CLINICAL_FIELDS
+        item = {"id": "00000000-0000-4000-8000-000000000001", "service_name": "Synthetic",
+                "teeth": [16], "description": "", "duration_minutes": 30}
+        invalid = [False, [item] * 101, [item, item], [{**item, "id": "invalid"}],
+                   [{**item, "teeth": [19]}], [{**item, "teeth": [16, 16]}],
+                   [{**item, "duration_minutes": True}], [{**item, "duration_minutes": 0}],
+                   [{**item, "service_name": " "}], [{**item, "description": "x" * 4001}],
+                   [{**item, "business_id": 123}]]
+        for items in invalid:
+            with self.subTest(items=items), self.assertRaises(ValidationError):
+                validate_clinical_draft({"procedure_items": items})
+        with self.assertRaises(ValidationError):
+            validate_clinical_draft({"procedure_items": [item], "not_applicable": {"procedures": "Reason"}})
+        content = {key: "Synthetic" for key in CLINICAL_FIELDS if key != "procedures"}
+        version = self.append(content={**content, "procedure_items": [item]})
+        with patch("apps.medical.encounter_completion_requirements.encounter_document_requirements", return_value=[]):
+            self.assertTrue(encounter_completion_requirements(version)["ready"])
+
     def test_plan_steps_preserve_order_and_exact_historical_content(self):
         steps = [{"id": "00000000-0000-4000-8000-000000000001", "description": "Synthetic first — оқу"},
                  {"id": "00000000-0000-4000-8000-000000000002", "description": "Synthetic second"}]

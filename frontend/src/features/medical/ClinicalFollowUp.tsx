@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useImperativeHandle, useRef, useState, type Ref } from "react";
 import axios from "axios";
 import type { ClinicalPlanBookingAccess } from "../../api/medicalClinical";
 import { medicalReceptionApi, type FollowUpOption, type ReceptionResult } from "../../api/medicalReception";
@@ -10,7 +10,7 @@ import { useI18n } from "../../lib/i18n";
 import { useUnsavedEntryWarning } from "../auth/useUnsavedEntryWarning";
 import { FollowUpOptionPicker } from "./FollowUpOptionPicker";
 
-export function ClinicalFollowUp({ access, onClose }: { access: ClinicalPlanBookingAccess; onClose: () => void }) {
+export function ClinicalFollowUp({ access, onClose, closeControl }: { access: ClinicalPlanBookingAccess; onClose: () => void; closeControl?: Ref<{ close: () => void }> }) {
   const { t } = useI18n();
   const { context } = access;
   const scope = { business_id: context.business_id, patient_id: context.patient.id, encounter_id: context.encounter!.id };
@@ -37,6 +37,7 @@ export function ClinicalFollowUp({ access, onClose }: { access: ClinicalPlanBook
   function close() {
     if (!inFlight.current && (!dirty || window.confirm(t("medical.clinical.discard")))) onClose();
   }
+  useImperativeHandle(closeControl, () => ({ close }));
   async function submit() {
     if (inFlight.current || conflict || !service || !staff) return;
     const payload = { ...scope, expected_revision: access.revision, service_id: service.id,
@@ -59,7 +60,7 @@ export function ClinicalFollowUp({ access, onClose }: { access: ClinicalPlanBook
   }
   return <section className="space-y-4" data-testid="clinical-follow-up">
     <div className="flex flex-wrap items-center justify-between gap-3 border-b border-platforma-border pb-3">
-      <h2 ref={title} tabIndex={-1} className="text-base font-semibold">{t("medical.reception.request")}</h2>
+      {!closeControl && <h2 ref={title} tabIndex={-1} className="text-base font-semibold">{t("medical.reception.request")}</h2>}
       <Button type="button" size="lg" variant="secondary" disabled={pending} onClick={close}>{t("common.back")}</Button>
     </div>
     {result ? <div className="space-y-2" role="status">

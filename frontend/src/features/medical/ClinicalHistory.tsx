@@ -156,5 +156,11 @@ function VersionReader({ versionId, scope, onDenied }: { versionId: number; scop
       {data.reason ? <div><dt className="text-sm font-semibold text-platforma-subtle">{t("medical.reason")}</dt><dd className="mt-1 whitespace-pre-wrap break-words text-sm">{data.reason}</dd></div> : null}
     </dl>
     <ClinicalPlanStepsRead content={data.content} />
+    {!!data.content.procedure_items?.length && <section className="space-y-2"><h3 className="font-semibold">{t("medical.page.treatment")}</h3>
+      <ul className="space-y-2">{data.content.procedure_items.map(item => <li key={item.id} className="break-words border-t border-platforma-border pt-2">
+        <strong>{item.service_name}</strong> · {item.teeth.join(", ")} · {t("medical.page.minutes", { count: item.duration_minutes })}
+        <p className="whitespace-pre-wrap">{item.description}</p>
+      </li>)}</ul>
+    </section>}
   </article>;
 }

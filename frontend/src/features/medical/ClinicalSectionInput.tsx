@@ -19,11 +19,12 @@ export function ClinicalSectionInput({ field, content, onChange, disabled = fals
   const notApplicable = reason !== undefined;
   function toggle(checked: boolean) {
     const current = notApplicable ? reason : content[field];
-    if ((current?.trim() || (field === "plan" && content.plan_steps?.length)) && !window.confirm(t("medical.clinical.replaceSection"))) return;
+    if ((current?.trim() || (field === "plan" && content.plan_steps?.length) || (field === "procedures" && content.procedure_items?.length)) && !window.confirm(t("medical.clinical.replaceSection"))) return;
     const reasons = { ...content.not_applicable };
     const next: ClinicalContent = { ...content, not_applicable: reasons };
     delete next[field];
     if (field === "plan" && checked) delete next.plan_steps;
+    if (field === "procedures" && checked) delete next.procedure_items;
     if (checked) reasons[field] = "";
     else {
       delete reasons[field];

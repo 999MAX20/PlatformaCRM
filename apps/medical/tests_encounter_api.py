@@ -95,6 +95,25 @@ class MedicalEncounterAPITests(TestCase):
         self.assert_private(denied)
         self.assertEqual(self.read(opened.data["version_id"]).status_code, 403)
 
+    def test_treatment_items_roundtrip_revision_replay_and_revocation(self):
+        item = {"id": "00000000-0000-4000-8000-000000000001", "service_name": "Synthetic treatment",
+                "teeth": [16], "description": "Private observation", "duration_minutes": 20}
+        content = {"procedure_items": [item]}
+        opened = self.open(content=content)
+        self.assertEqual(opened.status_code, 201, opened.data)
+        self.assertEqual(self.read(opened.data["version_id"]).data["content"], content)
+        self.assertTrue(self.open(content=content).data["replayed"])
+        url = f"{self.url}{opened.data['id']}/draft/"
+        payload = {**self.scope, "expected_revision": 1, "content": {"procedure_items": []}}
+        saved = self.api.post(url, payload, format="json", HTTP_IDEMPOTENCY_KEY="treatment-remove")
+        self.assertEqual(saved.status_code, 200, saved.data)
+        self.assertEqual(self.read(opened.data["version_id"]).data["content"], content)
+        stale = self.api.post(url, payload, format="json", HTTP_IDEMPOTENCY_KEY="treatment-stale")
+        self.assertEqual(stale.status_code, 409)
+        self.assignment.branches.clear()
+        self.assertEqual(self.api.post(url, payload, format="json", HTTP_IDEMPOTENCY_KEY="treatment-denied").status_code, 403)
+        self.assertEqual(self.read(opened.data["version_id"]).status_code, 403)
+
     def test_risk_fields_are_versioned_private_and_not_inferred_for_old_records(self):
         opened = self.open()
         risks = {"allergies": "Synthetic allergy — оқу", "contraindications": "Synthetic contraindication"}

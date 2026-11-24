@@ -33,7 +33,9 @@ export type ClinicalBookingRequest = ClinicalScope & { expected_revision: number
   expected_duration_minutes: number; confirmed: true; notes: string };
 export type ClinicalBookingResult = { version_id: number; revision: number; plan_id: number;
   visit_step_id: number; appointment_id: number; replayed: boolean };
+export type ClinicalProcedureItem = { id: string; service_name: string; teeth: number[]; description: string; duration_minutes: number };
 export type ClinicalContent = Partial<Record<ClinicalField, string>> & {
+  procedure_items?: ClinicalProcedureItem[];
   not_applicable?: Partial<Record<ClinicalField, string>>;
   plan_steps?: { id: string; description: string; visit_step?: ClinicalVisitStep; teeth?: number[] }[];
 };

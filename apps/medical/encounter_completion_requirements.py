@@ -18,7 +18,8 @@ def encounter_completion_requirements(version):
         raise MedicalDataUnavailable()
     content = read_encounter_revision(version)["content"]
     missing = [field for field in CLINICAL_FIELDS
-        if not content.get(field, "").strip() and not content.get("not_applicable", {}).get(field, "").strip()]
+        if not content.get(field, "").strip() and not content.get("not_applicable", {}).get(field, "").strip()
+        and not (field == "procedures" and content.get("procedure_items"))]
     documents = encounter_document_requirements(encounter)
     return {"ready": not missing and all(item["ready"] for item in documents),
         "missing_fields": missing, "documents": documents}

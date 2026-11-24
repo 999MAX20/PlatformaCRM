@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useImperativeHandle, useRef, useState, type Ref } from "react";
 import { medicalClinicalApi, type AppointmentClinicalContext, type EncounterCompletion as Completion } from "../../api/medicalClinical";
 import { getApiErrorMessage } from "../../api/client";
 import { Button } from "../../components/ui/Button";
@@ -8,7 +8,8 @@ import { ErrorState, LoadingState } from "../../components/ui/StateViews";
 import { useI18n } from "../../lib/i18n";
 import { medicalRoleDenied } from "./roles/useMedicalRolePage";
 
-export function EncounterCompletion({ context, onBack, onCompleted, onDenied }: {
+export function EncounterCompletion({ context, onBack, onCompleted, onDenied, closeControl }: {
+  closeControl?: Ref<{ close: () => void }>;
   context: AppointmentClinicalContext; onBack: () => void; onCompleted: () => void; onDenied: (cause: unknown) => void;
 }) {
   const { t } = useI18n();
@@ -22,6 +23,10 @@ export function EncounterCompletion({ context, onBack, onCompleted, onDenied }: 
   const request = useRef<{ fingerprint: string; key: string } | null>(null);
   const controller = useRef(new AbortController());
   const heading = useRef<HTMLHeadingElement>(null);
+  const close = () => {
+    if (!busy.current && (!reason || window.confirm(t("medical.clinical.discard")))) onBack();
+  };
+  useImperativeHandle(closeControl, () => ({ close }));
   useEffect(() => { heading.current?.focus(); }, []);
   useEffect(() => {
     const active = new AbortController(); controller.current = active;
@@ -51,7 +56,7 @@ export function EncounterCompletion({ context, onBack, onCompleted, onDenied }: 
     } finally { busy.current = false; if (!signal.aborted) setPending(false); }
   }
   return <section className="min-w-0 space-y-4" data-testid="encounter-completion">
-    <h2 ref={heading} tabIndex={-1} className="text-base font-semibold">{t("medical.completion.title")}</h2>
+    {!closeControl && <h2 ref={heading} tabIndex={-1} className="text-base font-semibold">{t("medical.completion.title")}</h2>}
     {error ? <ErrorState message={conflict ? t("medical.clinical.conflict") : getApiErrorMessage(error)} /> : null}
     {!value && !error ? <LoadingState /> : null}
     {value ? <>
@@ -67,7 +72,7 @@ export function EncounterCompletion({ context, onBack, onCompleted, onDenied }: 
       </form> : null}
     </> : null}
     <div className="flex flex-wrap gap-2">
-      <Button type="button" size="lg" variant="secondary" disabled={pending} onClick={onBack}>{t("medical.completion.back")}</Button>
+      <Button type="button" size="lg" variant="secondary" disabled={pending} onClick={close}>{t("medical.completion.back")}</Button>
       <Button type="button" size="lg" variant="secondary" disabled={pending} onClick={() => setAttempt(n => n + 1)}>{t("medical.clinical.reload")}</Button>
     </div>
   </section>;

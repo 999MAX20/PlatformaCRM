@@ -3,7 +3,9 @@ import { offerPurchaseAfterCompletion } from "../procurement/PurchasePrompt";
 import type { PurchasePromptScope } from "../../api/medicalPurchasePrompt";
 import { refreshAppointmentQueries } from "../../lib/appointmentCache";
 import { ClinicalViewNavigationProvider } from "./clinicalViewNavigation";
-import { useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState, type Ref, type RefObject } from "react";
+import { useCallback, useContext, useEffect, useImperativeHandle, useMemo, useRef, useState, type Ref, type RefObject } from "react";
+import { createPortal } from "react-dom";
+import { ClinicalPageSlots } from "./clinicalPageSlots";
 import axios from "axios";
 import { medicalClinicalApi, type AppointmentClinicalContext } from "../../api/medicalClinical";
 import { getApiErrorMessage } from "../../api/client";
@@ -126,7 +128,7 @@ export function ClinicalAppointmentEntry({ businessId, appointmentId, embedded =
   const denied = useCallback((cause: unknown) => { setContext(null); setError(cause); setDirty(false); setConfirmClose(false); }, []);
   const reload = () => { setLoading(true); setContext(null); setError(null); setRefresh(value => value + 1); };
   const completedEncounter = () => {
-    if (context?.encounter) completionOffer.current = { business_id: businessId, encounter_id: context.encounter.id };
+    if (context?.encounter && !pageLayout) completionOffer.current = { business_id: businessId, encounter_id: context.encounter.id };
     setContext(null); setDirty(false); setCompleted(true); setError(null);
     memory.tab = "overview";
     void refreshAppointmentQueries(cache);
@@ -136,7 +138,7 @@ export function ClinicalAppointmentEntry({ businessId, appointmentId, embedded =
     <ClinicalWorkspace toothNavigation={toothNavigation} onToothOpen={setToothOpen} pageLayout={pageLayout} onCompleted={completedEncounter} compact={embedded} onPending={onWorkspacePending} historyMemory={historyMemory} tab={tab} onTabChange={setTab} draftControl={draftControl} context={context} onChanged={reload} onDirty={setDirty} onDenied={denied}
       onDocumentEditor={onDocumentEditor} canEditDocument={canEditDocument} onFilesState={onFilesState} /> : null;
   if (!open && (status === 401 || status === 403)) return null;
-  return <div className="mt-4" data-testid="clinical-appointment-entry">
+  return <div className={pageLayout ? "appointment-clinical-entry" : "mt-4"} data-testid="clinical-appointment-entry">
     {loading && !open ? <LoadingState /> : !open && error ? <ErrorState
       message={status === 404 ? t("medical.clinical.noProfile") : getApiErrorMessage(error)}
       action={<Button size="lg" variant="secondary" onClick={reload}>{t("common.retry")}</Button>} /> : null}
@@ -175,6 +177,7 @@ function ClinicalWorkspace({ onCompleted, context, onChanged, onDirty, onDenied,
 }) {
   const { t } = useI18n();
   const [number, setNumber] = useState("");
+  const pageSlots = useContext(ClinicalPageSlots);
   const tabPrefix = `clinical-${context.appointment.id}`;
   const planScope = useMemo(() => ({ business_id: context.business_id, patient_id: context.patient.id,
     appointment_id: context.appointment.id }), [context]);
@@ -211,30 +214,33 @@ function ClinicalWorkspace({ onCompleted, context, onChanged, onDirty, onDenied,
       }
     } finally { if (!signal.aborted) setPending(false); }
   }
-  return <div className="min-w-0 space-y-4">
+  const administration = <>
     <aside className="flex min-w-0 flex-wrap items-center gap-x-5 gap-y-2 border-b border-platforma-border pb-3">
       {!compact ? <h2 className="break-words text-lg font-semibold text-platforma-text">{context.patient.full_name}</h2> : null}
       <p className="text-sm text-platforma-subtle">{t(`medical.${context.patient.identity_status}`)}</p>
       {context.active_record ? <p className="break-words text-sm">{t("medical.clinical.number")}: {context.active_record.number}</p> : null}
       {context.patient.identity_status !== "verified" ? <p role="status" className="text-sm text-platforma-subtle">{t("medical.clinical.verifyFirst")}</p> : null}
-      {compact ? <SourceProposalEntry scope={{ business_id: context.business_id, patient_id: context.patient.id, source_appointment_id: context.appointment.id }} /> : null}
+      {compact && !pageLayout ? <SourceProposalEntry scope={{ business_id: context.business_id, patient_id: context.patient.id, source_appointment_id: context.appointment.id }} /> : null}
     </aside>
     <details open={pageLayout ? undefined : true}><summary hidden={!pageLayout} className="entity-text-link">{t("medical.pageAdministration")}</summary><AppointmentAssistants key={`${context.business_id}:${context.appointment.id}`} scope={planScope} onPending={setAssistantPending} /></details>
+    </>;
+  return <div className={pageLayout ? "appointment-clinical-workspace" : "min-w-0 space-y-4"}>
+    {pageLayout && pageSlots?.context ? createPortal(<details className="appointment-administration"><summary>{t("medical.pageAdministration")}</summary>{administration}</details>, pageSlots.context) : administration}
     <div className="min-w-0 space-y-4">
-      <details open={pageLayout ? undefined : true}><summary hidden={!pageLayout} className="entity-clinical-sections">{t("medical.clinical.title")}</summary>
+      {!pageLayout && <details open><summary hidden className="entity-clinical-sections">{t("medical.clinical.title")}</summary>
       <Tabs value={tab} onChange={async next => { if (pageLayout && toothNavigation.current && !(await toothNavigation.current.beforeLeave())) return; onTabChange(next); }} idPrefix={tabPrefix} ariaLabel={t("medical.clinical.title")}
         className="[&_[role=tab]]:min-h-11" appearance="underline"
         options={[{ value: "overview", label: t("medical.overview.title") }, { value: "encounter", label: t("medical.clinical.note") }, { value: "history", label: t("medical.clinical.history") }, { value: "teeth", label: t("medical.tooth.title") },
           { value: "plan", label: t("medical.clinical.plan") }, { value: "files", label: t("medical.files.title") }, { value: "documents", label: t("medical.documents.title") }, { value: "orders", label: t("medical.orders.title") }]} />
-      </details>
-      <div role="tabpanel" id={`${tabPrefix}-panel-overview`} aria-labelledby={`${tabPrefix}-tab-overview`} hidden={tab !== "overview"}>
+      </details>}
+      <div role={pageLayout ? undefined : "tabpanel"} id={`${tabPrefix}-panel-overview`} aria-labelledby={pageLayout ? undefined : `${tabPrefix}-tab-overview`} hidden={tab !== "overview"}>
         {tab === "overview" ? <ClinicalOverview context={context} onDenied={onDenied} onNavigate={next => {
           onTabChange(next);
           requestAnimationFrame(() => document.getElementById(`${tabPrefix}-tab-${next}`)?.focus());
         }} /> : null}
       </div>
-      <div role="tabpanel" id={`${tabPrefix}-panel-${tab === "plan" ? "encounter" : "plan"}`} aria-labelledby={`${tabPrefix}-tab-${tab === "plan" ? "encounter" : "plan"}`} hidden />
-      <div role="tabpanel" id={`${tabPrefix}-panel-${tab === "plan" ? "plan" : "encounter"}`} aria-labelledby={`${tabPrefix}-tab-${tab === "plan" ? "plan" : "encounter"}`} hidden={tab !== "encounter" && tab !== "plan"} className="space-y-4">
+      <div role={pageLayout ? undefined : "tabpanel"} id={`${tabPrefix}-panel-${tab === "plan" ? "encounter" : "plan"}`} aria-labelledby={pageLayout ? undefined : `${tabPrefix}-tab-${tab === "plan" ? "encounter" : "plan"}`} hidden />
+      <div role={pageLayout ? undefined : "tabpanel"} id={`${tabPrefix}-panel-${tab === "plan" ? "plan" : "encounter"}`} aria-labelledby={pageLayout ? undefined : `${tabPrefix}-tab-${tab === "plan" ? "plan" : "encounter"}`} hidden={tab !== "encounter" && tab !== "plan"} className="space-y-4">
       {tab === "plan" ? <ClinicalVisitPlans scope={planScope} entry="plan" /> : null}
       {context.encounter ? <ClinicalDraftForm interactionBlocked={toothEditorOpen} pageLayout={pageLayout} chart={pageLayout ? <ToothChart context={context} onDenied={onDenied} compact navigationRef={toothNavigation} onOpenChange={onToothEditorOpen} /> : undefined} onCompleted={onCompleted} view={tab === "plan" ? "plan" : "encounter"} draftControl={draftControl} context={context} onDirty={onDirty} onDenied={onDenied} onReload={onChanged} /> : <>
         <p className="text-sm text-platforma-subtle">{t(context.active_record ? "medical.clinical.noEncounter" : "medical.clinical.noRecord")}</p>
@@ -249,25 +255,25 @@ function ClinicalWorkspace({ onCompleted, context, onChanged, onDirty, onDenied,
           }}>{t("medical.clinical.reload")}</Button> : undefined} /> : null}
       </>}
       </div>
-      <div role="tabpanel" id={`${tabPrefix}-panel-teeth`} aria-labelledby={`${tabPrefix}-tab-teeth`} hidden={tab !== "teeth"}>
+      <div role={pageLayout ? undefined : "tabpanel"} id={`${tabPrefix}-panel-teeth`} aria-labelledby={pageLayout ? undefined : `${tabPrefix}-tab-teeth`} hidden={tab !== "teeth"}>
         {tab === "teeth" ? <ToothChart context={context} onDenied={onDenied} onFiles={fileScope ? tooth => {
           if (!filesNavigation.current?.openTooth(tooth)) return;
           onTabChange("files");
           requestAnimationFrame(() => document.getElementById(`${tabPrefix}-tab-files`)?.focus());
         } : undefined} /> : null}
       </div>
-      <div role="tabpanel" id={`${tabPrefix}-panel-history`} aria-labelledby={`${tabPrefix}-tab-history`} hidden={tab !== "history"}>
+      <div role={pageLayout ? undefined : "tabpanel"} id={`${tabPrefix}-panel-history`} aria-labelledby={pageLayout ? undefined : `${tabPrefix}-tab-history`} hidden={tab !== "history"}>
         {tab === "history" ? <ClinicalHistory context={context} onDenied={onDenied} memory={historyMemory} /> : null}
       </div>
-      <div role="tabpanel" id={`${tabPrefix}-panel-documents`} aria-labelledby={`${tabPrefix}-tab-documents`} hidden={tab !== "documents"}>
+      <div role={pageLayout ? undefined : "tabpanel"} id={`${tabPrefix}-panel-documents`} aria-labelledby={pageLayout ? undefined : `${tabPrefix}-tab-documents`} hidden={tab !== "documents"}>
         {context.encounter ? <DocumentWorkspace context={context} active={tab === "documents"} onEditor={onDocumentEditor} canEdit={canEditDocument} /> :
           <p className="text-sm text-platforma-subtle">{t("medical.clinical.noEncounter")}</p>}
       </div>
-      <div role="tabpanel" id={`${tabPrefix}-panel-orders`} aria-labelledby={`${tabPrefix}-tab-orders`} hidden={tab !== "orders"}>
+      <div role={pageLayout ? undefined : "tabpanel"} id={`${tabPrefix}-panel-orders`} aria-labelledby={pageLayout ? undefined : `${tabPrefix}-tab-orders`} hidden={tab !== "orders"}>
         {context.encounter ? <OrderWorkspace context={context} active={tab === "orders"} onEditor={onDocumentEditor} canEdit={canEditDocument} /> :
           <p className="text-sm text-platforma-subtle">{t("medical.clinical.noEncounter")}</p>}
       </div>
-      <div role="tabpanel" id={`${tabPrefix}-panel-files`} aria-labelledby={`${tabPrefix}-tab-files`} hidden={tab !== "files"}>
+      <div role={pageLayout ? undefined : "tabpanel"} id={`${tabPrefix}-panel-files`} aria-labelledby={pageLayout ? undefined : `${tabPrefix}-tab-files`} hidden={tab !== "files"}>
         {fileScope ? <MedicalFilesWorkspace scope={fileScope} active={tab === "files"} onState={onFilesState} onDenied={onDenied} navigationRef={filesNavigation} /> :
           <p className="text-sm text-platforma-subtle">{t("medical.clinical.noRecord")}</p>}
       </div>
