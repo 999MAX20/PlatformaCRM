@@ -70,8 +70,7 @@ export function ClientReferenceView({ client, card, appointments, recentAppointm
     </Link>) : <p className="entity-empty">{t("appointments.emptyTitle")}</p>}
   </div>;
   return <article className="entity-reference-page client-reference-page" data-testid="client-reference-page">
-    <nav aria-label={t("common.back")} className="entity-breadcrumb"><Link to={returnTo}>{t("nav.clients")}</Link><span aria-hidden>/</span><span>{client.full_name}</span></nav>
-    <Link to={returnTo} className="entity-back platforma-focus-ring"><ArrowLeft size={20} />{t("clients.pageBack")}</Link>
+    <nav aria-label={t("common.back")} className="client-navigation"><Link to={returnTo} className="entity-back platforma-focus-ring"><ArrowLeft size={18} />{t("clients.pageBack")}</Link></nav>
     <header className="entity-identity">
       <span className="entity-avatar" aria-hidden><UserRound size={36} strokeWidth={1.7} /></span>
       <div className="entity-heading"><h1>{client.full_name}</h1><p>{medical ? t("medical.clinical.title") : t("common.client")}{medical && summary.data && !summary.error && summary.data.overview.active_record ? ` · № ${summary.data.overview.active_record.number}` : !medical ? ` · № ${client.id}` : ""}</p></div>
