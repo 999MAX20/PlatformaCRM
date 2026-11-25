@@ -10,6 +10,8 @@ import { RecordsPage, LegacyRecordsPage, ImportWorkspacePage } from "./routeLoad
 import { PageLoader, UserStartRedirect, BusinessRouteRedirect, SettingsAccessRoute, IntegrationsSettingsRedirect } from "./routeGuards";
 import { DashboardPage, AccountPage, ClientsPage, PaymentsPage, ClientWorkspacePage, TasksPage, TaskWorkspacePage, CalendarPage, AppointmentWorkspacePage, ConversationsPage, TimelinePage, BotsPage, BotDetailPage, PricingPage, AIAgentsPage, AutomationsPage, ResourcesPage, ServicesPage, BranchesPage, CompanyPage, BusinessPage, AnalyticsPage, SettingsPage, WorkingHoursPage, SupportListPage, SupportDetailPage } from "./routeLoaders";
 export const merchantFeatureRoutes = [
+  { path: "patients", ...merchantRoutePermission("clients"), element: <PageLoader><ClientsPage /></PageLoader> },
+  { path: "patients/:id", ...merchantRoutePermission("clients"), element: <PageLoader><ClientWorkspacePage /></PageLoader> },
   { path: "integrations/google/callback", resource: "integrations", permissionAction: "manage", element: <PageLoader><GoogleCallback /></PageLoader> },
   { path: "voice/history", resource: "ai_assistant", permissionAction: "suggest", element: <PageLoader><VoiceHistoryPage /></PageLoader> },
   { path: "settings/voice", resource: "ai_assistant", permissionAction: "suggest", element: <PageLoader><VoiceSettingsPage /></PageLoader> },

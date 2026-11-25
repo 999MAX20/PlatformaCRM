@@ -12,6 +12,7 @@ import { ClientPaymentsPanel } from "./ClientPaymentsPanel";
 import { useAuth } from "../../auth/AuthProvider";
 import { hasPermission } from "../../../lib/permissions";
 import { ClientPatientOverview } from "./ClientPatientOverview";
+import { usePatientRoute } from "../../medical/PatientWorkspaceScope";
 import { useClientMedicalSummary } from "../hooks/useClientMedicalSummary";
 import { DentalClientClinical } from "../../medical/DentalClientClinical";
 import type { ClinicalEntryHandle } from "../../medical/ClinicalAppointmentEntry";
@@ -29,6 +30,7 @@ type Props = {
 
 export function ClientReferenceView({ client, card, appointments, recentAppointments, upcoming, editState, medical, userId, timeZone, canEdit, canBook, onEdit, onTag, extraActions }: Props) {
   const { t, language } = useI18n();
+  const patientPath = usePatientRoute();
   const location = useLocation();
   const { user } = useAuth();
   const canPay = hasPermission(user, client.business, "payments") && hasPermission(user, client.business, "clients");
@@ -51,8 +53,8 @@ export function ClientReferenceView({ client, card, appointments, recentAppointm
   async function selectTab(next: string) {
     if (!dirty || await clinical.current?.beforeLeave()) { setDirty(false); setTab(next); if (next === "overview" && medical) void summary.refetch(); }
   }
-  const returnTo = typeof location.state?.clientReturnTo === "string" && /^\/app\/clients(?:\?|$)/.test(location.state.clientReturnTo)
-    ? location.state.clientReturnTo : "/app/clients";
+  const returnTo = patientPath(typeof location.state?.clientReturnTo === "string" && /^\/app\/(?:clients|patients)(?:\?|$)/.test(location.state.clientReturnTo)
+    ? location.state.clientReturnTo : "/app/clients");
   const options = [
     { value: "overview", label: t("crmCard.overview") },
     ...(medical ? [{ value: "medical", label: t("clients.pageMedicalTab") }] : []),
@@ -62,7 +64,7 @@ export function ClientReferenceView({ client, card, appointments, recentAppointm
   ];
   const panels = [...options, { value: "history", label: t("tasks.history") }, { value: "tasks", label: t("nav.tasks") }];
   const visitRows = (items: Appointment[]) => <div className="entity-visit-list">
-    {items.length ? items.map(item => <Link key={item.id} to={`/app/appointments/${item.id}`} state={{ recordReturnTo: `/app/clients/${client.id}` }} className="entity-visit-row platforma-focus-ring">
+    {items.length ? items.map(item => <Link key={item.id} to={`/app/appointments/${item.id}`} state={{ recordReturnTo: patientPath(`/app/clients/${client.id}`) }} className="entity-visit-row platforma-focus-ring">
       <span>{formatDateTime(item.start_at, timeZone, true, language)}</span>
       <span>{item.resource_name || t("appointment.noResource")}</span>
       <strong>{item.service_name || t("common.service")}</strong>

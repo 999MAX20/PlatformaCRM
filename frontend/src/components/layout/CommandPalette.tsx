@@ -12,6 +12,7 @@ import { useActiveBusiness } from "../../hooks/useBusiness";
 import { useEntityData } from "../../hooks/useEntityData";
 import { cn } from "../../lib/cn";
 import { useI18n } from "../../lib/i18n";
+import { usePatientRoute } from "../../features/medical/PatientWorkspaceScope";
 import { hasPermission } from "../../lib/permissions";
 
 type CommandDefinition = {
@@ -47,6 +48,7 @@ function commandScore(source: string, query: string) {
 
 export function CommandPalette({ onClose }: { onClose: () => void }) {
   const { t, language } = useI18n();
+  const patientPath = usePatientRoute();
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const { user } = useAuth();
@@ -144,7 +146,7 @@ export function CommandPalette({ onClose }: { onClose: () => void }) {
                 type="button"
                 className={cn("platforma-focus-ring flex w-full items-center gap-3 rounded-control px-3 py-3 text-left transition", index === 0 ? "bg-brand-50" : "hover:bg-surface-hover")}
                 onClick={() => {
-                  navigate(command.to);
+                  navigate(patientPath(command.to));
                   onClose();
                   setQuery("");
                 }}

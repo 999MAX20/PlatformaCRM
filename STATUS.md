@@ -1,3 +1,5 @@
+DENTAL-MCS-20261122:25.11 терминология пациента и /app/patients реализованы для dentistry, core Client/API/БД сохранены.35 focused checks и build/types/i18n PASS; Chrome RU/EN/KK, desktop/mobile, legacy redirect и переход запись→пациент проверены. Русский язык восстановлен. Evidence: checkpoint «Терминология пациента и маршруты25.11». Scoped publication подготовлена; без deployment/CI.
+
 DENTAL-MCS-20261122:25.11 плотность пациента выровнена со страницей записи: Manrope30/16px, компактная шапка, контакты по содержимому. Chrome100%1536×640 и mobile390, вкладки/Ещё/возврат, build/types/i18n PASS. Только UI-компоновка; API/права неизменны, CI не запускался. Evidence: checkpoint «Плотность страницы пациента25.11».
 
 LOCAL-DEV-20261124: dev поднят,27 миграций применены к локальной БД после проверенного backup; migrate/system/health PASS. Прежние бизнес-строки по количеству сохранены. Подробности в DENTAL-MCS-20261122, раздел «Локальная БД и dev24.11».

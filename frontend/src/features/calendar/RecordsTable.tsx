@@ -7,6 +7,7 @@ import { StatusBadge } from "../../components/ui/StatusBadge";
 import { Badge } from "../../components/ui/Badge";
 import { formatDateTime } from "../../lib/format";
 import { useI18n } from "../../lib/i18n";
+import { usePatientRoute } from "../medical/PatientWorkspaceScope";
 import type { Appointment } from "../../types";
 
 type RecordsTableProps = { records: Appointment[]; timeZone: string; showBranch?: boolean; onOpen?: (id: number) => void };
@@ -19,6 +20,7 @@ export function RecordsTable(props: RecordsTableProps) {
 
 export function RecordsTableView({ records, timeZone, showBranch = false, onOpen, customColumns, toolbar }: RecordsTableProps & { customColumns: ReturnType<typeof useCustomColumns>["columns"]; toolbar?: ReactNode }) {
   const { t, language } = useI18n();
+  const patientPath = usePatientRoute();
   const navigate = useNavigate();
   const location = useLocation();
   const openRecord = (id: number) => onOpen ? onOpen(id) : navigate(`/app/appointments/${id}`, { state: { recordReturnTo: location.pathname + location.search } });
@@ -42,7 +44,7 @@ export function RecordsTableView({ records, timeZone, showBranch = false, onOpen
             <th key={key} scope="col" className="px-4 py-3 font-medium">{t(key)}</th>)}{customColumns.map(column => <th key={column.id} scope="col" className="px-4 py-3 font-medium">{column.header}</th>)}</tr>
         </thead>
         <tbody>{records.map(record => <tr key={record.id} tabIndex={0} aria-label={`${t("appointments.card")} #${record.id}`} onClick={event => activate(event, record.id)} onKeyDown={event => { if (event.target === event.currentTarget) activate(event, record.id); }} className="platforma-focus-ring cursor-pointer border-b border-platforma-border last:border-0 hover:bg-surface-hover focus-visible:bg-surface-hover">
-          <td className="px-4 py-3">{record.client ? <Link className="platforma-focus-ring rounded font-medium text-brand-700 underline-offset-4 hover:underline" to={`/app/clients/${record.client}`}>{title(record)}</Link> : title(record)}</td>
+          <td className="px-4 py-3">{record.client ? <Link className="platforma-focus-ring rounded font-medium text-brand-700 underline-offset-4 hover:underline" to={patientPath(`/app/clients/${record.client}`)}>{title(record)}</Link> : title(record)}</td>
           <td className="whitespace-nowrap px-4 py-3">{formatDateTime(record.start_at, timeZone, true, language)}</td>
           <td className="px-4 py-3">{record.service_name}</td><td className="px-4 py-3">{record.resource_name}</td>
           <td className="px-4 py-3">{status(record)}</td>{showBranch && <td className="px-4 py-3">{record.branch_name}</td>}
@@ -51,7 +53,7 @@ export function RecordsTableView({ records, timeZone, showBranch = false, onOpen
       </table>
     </div>
     <ul className="divide-y divide-platforma-border md:hidden">{records.map(record => <li key={record.id} onClick={event => activate(event, record.id)} className="cursor-pointer space-y-2 p-4 hover:bg-surface-hover">
-      <div className="flex flex-wrap items-center justify-between gap-2">{record.client ? <Link className="platforma-focus-ring rounded font-semibold text-brand-700" to={`/app/clients/${record.client}`}>{title(record)}</Link> : title(record)}{status(record)}</div>
+      <div className="flex flex-wrap items-center justify-between gap-2">{record.client ? <Link className="platforma-focus-ring rounded font-semibold text-brand-700" to={patientPath(`/app/clients/${record.client}`)}>{title(record)}</Link> : title(record)}{status(record)}</div>
       <button type="button" className="platforma-focus-ring rounded text-left text-sm" aria-label={`${t("appointments.card")} #${record.id}`} onClick={() => openRecord(record.id)}>{formatDateTime(record.start_at, timeZone, true, language)}</button>
       <p className="text-sm text-platforma-subtle">{[record.service_name, record.resource_name, record.branch_name].filter(Boolean).join(" · ")}</p>
       {!!customColumns.length && <dl className="grid grid-cols-2 gap-2 text-sm">{customColumns.map(column => <div key={column.id}><dt className="text-xs text-platforma-muted">{column.header}</dt><dd>{column.cell(record)}</dd></div>)}</dl>}

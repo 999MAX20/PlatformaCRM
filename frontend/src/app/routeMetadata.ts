@@ -47,7 +47,7 @@ export function merchantNavigationItem<Icon>(id: MerchantRouteId, icon: Icon) {
 
 // Preserve the existing title precedence and legacy display aliases.
 const headerIds: MerchantRouteId[] = ["appointments", "clients", "payments", "deals", "leads", "tasks", "calendar", "conversations", "services", "resources", "workingHours", "analytics", "timeline", "aiAgents", "bots", "automations", "integrations", "settings", "account", "support"];
-const legacyHeaderAliases: Array<[string, MerchantRouteId]> = [["/app/services", "services"], ["/app/resources", "resources"], ["/app/working-hours", "workingHours"]];
+const legacyHeaderAliases: Array<[string, MerchantRouteId]> = [["/app/patients", "clients"], ["/app/services", "services"], ["/app/resources", "resources"], ["/app/working-hours", "workingHours"]];
 export function getRouteTitle(pathname: string, t: (key: string) => string) {
   const match = headerIds.find(id => pathname === routeMetadata[id].path || pathname.startsWith(`${routeMetadata[id].path}/`));
   if (match) return t(routeMetadata[match].label);

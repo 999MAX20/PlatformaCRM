@@ -11,6 +11,7 @@ import { Modal } from "../../components/ui/Modal";
 import { ErrorState, LoadingState } from "../../components/ui/StateViews";
 import { useI18n } from "../../lib/i18n";
 import { PatientRegistrationForm } from "./PatientRegistrationForm";
+import { usePatientRoute } from "./PatientWorkspaceScope";
 import type { RoleDraftState } from "./roles/MedicalRoleCommand";
 
 export function PatientSearchEntry({ businessId, userId }: { businessId: number; userId: number }) {
@@ -46,6 +47,7 @@ function PatientSearchForm({ scope, canCreate, creating, onCreatingChange, creat
   onCreatingChange: (value: boolean) => void; creationGuard: { current: RoleDraftState } }) {
   const { t } = useI18n();
   const navigate = useNavigate();
+  const patientPath = usePatientRoute();
   const [kind, setKind] = useState<PatientSearchKind>("name");
   const [query, setQuery] = useState("");
   const [archived, setArchived] = useState(false);
@@ -81,7 +83,7 @@ function PatientSearchForm({ scope, canCreate, creating, onCreatingChange, creat
   }
   if (denied) return <ErrorState message={t("medical.denied")} />;
   if (creating) return <PatientRegistrationForm scope={scope} initialKind={kind} initialQuery={query} hasMatches={!!page?.results.length}
-    guard={creationGuard} onCancel={() => onCreatingChange(false)} onSaved={clientId => void navigate(`/app/clients/${clientId}`)}
+    guard={creationGuard} onCancel={() => onCreatingChange(false)} onSaved={clientId => void navigate(patientPath(`/app/clients/${clientId}`))}
     onDenied={() => { setQuery(""); setPage(null); setSubmitted(null); setDenied(true); }} />;
   return <div className="space-y-4">
     <form className="space-y-4" onSubmit={event => { event.preventDefault(); void search(); }}>
@@ -109,7 +111,7 @@ function PatientSearchForm({ scope, canCreate, creating, onCreatingChange, creat
             {item.identity_status ? <p>{t(`medical.${item.identity_status}`)}</p> : null}
             {item.is_archived ? <p>{t("clients.card.archived")}</p> : null}
           </div>
-          <Button variant="secondary" size="lg" className="shrink-0" onClick={() => void navigate(`/app/clients/${item.client_id}`)} aria-label={`${t("common.open")}: ${item.full_name}`}>{t("common.open")}</Button>
+          <Button variant="secondary" size="lg" className="shrink-0" onClick={() => void navigate(patientPath(`/app/clients/${item.client_id}`))} aria-label={`${t("common.open")}: ${item.full_name}`}>{t("common.open")}</Button>
         </li>)}
       </ul>}
       {page.next_offset !== null ? <Button variant="secondary" size="lg" disabled={loading} onClick={() => void search(page.next_offset!)}>{t("medical.search.more")}</Button> : null}

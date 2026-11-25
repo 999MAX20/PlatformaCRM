@@ -19,6 +19,18 @@ function setup() {
   return { requests, ...api };
 }
 
+test("patient navigation preserves the shared client prefetch", async () => {
+  for (const path of ["/app/clients", "/app/patients", "/app/patients/164"]) {
+    const h = setup();
+    const pending = [];
+    h.prefetchRouteData(path, { prefetchQuery: options => {
+      const request = options.queryFn(); pending.push(request); return request;
+    } }, 7);
+    await Promise.all(pending);
+    assert.deepEqual(h.requests.map(request => request.name), ["clients", "leads", "deals"]);
+  }
+});
+
 test("task locale participates in list and summary parameters and cache identity", () => {
   const h = setup();
   const ru = h.taskWorkspaceParams(7, new URLSearchParams(), "Связаться", "ru");

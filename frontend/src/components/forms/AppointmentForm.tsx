@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router";
 import { z } from "zod";
+import { usePatientRoute } from "../../features/medical/PatientWorkspaceScope";
 
 import { appointmentsApi, type AppointmentCreatePayload } from "../../api/appointments";
 import { teamApi } from "../../api/team";
@@ -51,13 +52,14 @@ function SetupNotice({
   to: string;
   action: string;
 }) {
+  const patientPath = usePatientRoute();
   return (
     <StatusNotice
       tone="warning"
       title={title}
       description={description}
       action={(
-        <Link className="platforma-focus-ring inline-flex rounded-control px-2 py-1 font-semibold text-platforma-warning underline-offset-4 hover:underline" to={to}>
+        <Link className="platforma-focus-ring inline-flex rounded-control px-2 py-1 font-semibold text-platforma-warning underline-offset-4 hover:underline" to={patientPath(to)}>
           {action}
         </Link>
       )}

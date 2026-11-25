@@ -14,6 +14,7 @@ import { appointmentsApi } from "../../../api/appointments";
 import { formatDateTime } from "../../../lib/format";
 import { refreshAppointmentQueries } from "../../../lib/appointmentCache";
 import { useI18n } from "../../../lib/i18n";
+import { usePatientRoute } from "../../../features/medical/PatientWorkspaceScope";
 import type { CrmCardPayload } from "../../../types";
 import { useNotification } from "../../notifications/NotificationProvider";
 import { Button } from "../../ui/Button";
@@ -33,6 +34,7 @@ function sourceLabel(source: string, t: (key: string) => string) {
 
 export function AppointmentDrawerContent({ data, entity }: { data: CrmCardPayload; entity: CrmDrawerEntity }) {
   const { t, language } = useI18n();
+  const patientPath = usePatientRoute();
   const { business } = useActiveBusiness();
   const timeZone = business?.timezone || "Asia/Qyzylorda";
   const showNotification = useNotification();
@@ -171,7 +173,7 @@ export function AppointmentDrawerContent({ data, entity }: { data: CrmCardPayloa
         {appointment.branch_name && <SummaryItem icon={MapPin} label={t("records.branch")} value={appointment.branch_name} />}
       </div>
 
-      {client && <Link className="platforma-focus-ring inline-flex rounded py-2 text-brand-700" to={`/app/clients/${client.id}`}>{t("leads.openClient")}</Link>}
+      {client && <Link className="platforma-focus-ring inline-flex rounded py-2 text-brand-700" to={patientPath(`/app/clients/${client.id}`)}>{t("leads.openClient")}</Link>}
 
       <div className={drawerSurfaceClass}>
         <div className="mb-3 flex flex-wrap items-start justify-between gap-3">

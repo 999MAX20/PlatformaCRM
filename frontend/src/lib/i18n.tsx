@@ -118,3 +118,19 @@ export function useI18n() {
   if (!context) throw new Error("useI18n must be used inside I18nProvider");
   return context;
 }
+
+export function TerminologyProvider({ transform, children }: {
+  transform: (key: string, template: string) => string;
+  children: ReactNode;
+}) {
+  const parent = useI18n();
+  const value = useMemo<I18nContextValue>(() => ({
+    ...parent,
+    t: (key, vars) => {
+      const template = transform(key, parent.t(key));
+      if (!vars) return template;
+      return Object.entries(vars).reduce((text, [name, value]) => text.split(`{${name}}`).join(String(value)), template);
+    },
+  }), [parent, transform]);
+  return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
+}

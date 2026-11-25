@@ -9,6 +9,7 @@ import { formatDateTime } from "../../lib/format";
 import { cn } from "../../lib/cn";
 import { useEntityData } from "../../hooks/useEntityData";
 import { useI18n } from "../../lib/i18n";
+import { usePatientRoute } from "../../features/medical/PatientWorkspaceScope";
 import { Button } from "../ui/Button";
 import type { Appointment, BotConversation, Client, Service, Task } from "../../types";
 
@@ -24,6 +25,7 @@ type SearchItem = {
 
 export function GlobalSearch() {
   const { t, language } = useI18n();
+  const patientPath = usePatientRoute();
   const [open, setOpen] = useState(false);
   const [mobileExpanded, setMobileExpanded] = useState(false);
   const [query, setQuery] = useState("");
@@ -60,7 +62,7 @@ export function GlobalSearch() {
         title: client.full_name,
         subtitle: [client.phone, client.email, client.source].filter(Boolean).join(" · "),
         type: "client",
-        to: `/app/clients?client=${client.id}`,
+        to: patientPath(`/app/clients?client=${client.id}`),
         icon: User,
         haystack: [client.full_name, client.phone, client.email, client.notes, client.source].join(" "),
       })),
@@ -92,7 +94,7 @@ export function GlobalSearch() {
         haystack: [task.title, task.description, clientName(task.client), task.status, task.priority].join(" "),
       })),
     ];
-  }, [recordSearch.records, botConversations.data, clients.data, services.data, tasks.data, t, language]);
+  }, [recordSearch.records, botConversations.data, clients.data, services.data, tasks.data, t, language, patientPath]);
 
   const results = useMemo(() => {
     const value = query.trim().toLowerCase();

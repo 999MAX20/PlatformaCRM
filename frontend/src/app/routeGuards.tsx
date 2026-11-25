@@ -14,6 +14,7 @@ import { useI18n } from "../lib/i18n";
 import { hasPermission, permissionForbiddenMessage } from "../lib/permissions";
 import { getUserStartPath } from "../lib/startPage";
 import { BusinessAccessRevoked } from "../features/auth/BusinessAccessRevoked";
+import { PatientWorkspaceScope } from "../features/medical/PatientWorkspaceScope";
 import { useTemplateAccess } from "../features/medical/templates/useTemplateAccess";
 import { useCredentialAccess } from "../features/medical/credentials/useCredentialAccess";
 import { ErrorState } from "../components/ui/StateViews";
@@ -28,7 +29,7 @@ export function MerchantRoute({ children }: { children: React.ReactNode }) {
     return <Navigate to="/platform" replace />;
   if (isMerchantUser && user?.business_access_revoked && !user.businesses.length)
     return <BusinessAccessRevoked />;
-  return isMerchantUser ? children : <Navigate to="/login" replace />;
+  return isMerchantUser ? <PatientWorkspaceScope>{children}</PatientWorkspaceScope> : <Navigate to="/login" replace />;
 }
 export function PlatformRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading, isPlatformUser } = useAuth();

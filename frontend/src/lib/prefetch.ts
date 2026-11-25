@@ -35,7 +35,7 @@ export function prefetchRouteData(path: string, queryClient: QueryClient, busine
     return;
   }
 
-  if (path.startsWith(routeMetadata.clients.path)) {
+  if (path.startsWith(routeMetadata.clients.path) || /^\/app\/patients(?:\/|$)/.test(path)) {
     void Promise.allSettled([
       queryClient.prefetchQuery({ queryKey: ["clients"], queryFn: clientsApi.list, ...prefetchOptions }),
       queryClient.prefetchQuery({ queryKey: ["leads"], queryFn: leadsApi.list, ...prefetchOptions }),

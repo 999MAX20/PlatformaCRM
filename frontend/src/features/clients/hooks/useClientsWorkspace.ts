@@ -25,6 +25,7 @@ import type {
   Translate,
 } from "../types";
 import { clientSourceOptions } from "../utils";
+import { usePatientRoute } from "../../medical/PatientWorkspaceScope";
 
 const DEFAULT_CLIENTS_PAGE_SIZE = 20;
 const RELATED_PAGE_SIZE = 100;
@@ -40,6 +41,7 @@ export function useClientsWorkspace({
 }) {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+  const patientPath = usePatientRoute();
   const [createOpen, setCreateOpen] = useState(false);
   const [segmentOpen, setSegmentOpen] = useState(false);
   const [tagOpen, setTagOpen] = useState(false);
@@ -167,13 +169,13 @@ export function useClientsWorkspace({
   const returnParams = new URLSearchParams(searchParams);
   returnParams.delete("client"); returnParams.delete("tab");
   returnParams.set("page", String(page)); returnParams.set("page_size", String(pageSize)); returnParams.set("ordering", ordering);
-  const clientReturnTo = `/app/clients?${returnParams}`;
+  const clientReturnTo = patientPath(`/app/clients?${returnParams}`);
   const openClientCard = useCallback(
     (clientId: number, initialTab?: CrmCardTab) => {
       setSelectedClientId(clientId);
-      navigate(`/app/clients/${clientId}${initialTab ? `?tab=${initialTab}` : ""}`, { state: { clientReturnTo } });
+      navigate(patientPath(`/app/clients/${clientId}${initialTab ? `?tab=${initialTab}` : ""}`), { state: { clientReturnTo } });
     },
-    [navigate, clientReturnTo],
+    [navigate, clientReturnTo, patientPath],
   );
 
   const closeClientCard = useCallback(() => {

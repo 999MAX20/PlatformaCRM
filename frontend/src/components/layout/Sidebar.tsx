@@ -28,6 +28,7 @@ import { hasPermission } from "../../lib/permissions";
 import { prefetchRouteData } from "../../lib/prefetch";
 import { realtimeIntervals, realtimeQueryOptions } from "../../lib/realtime";
 import { useTemplateAccess } from "../../features/medical/templates/useTemplateAccess";
+import { usePatientRoute } from "../../features/medical/PatientWorkspaceScope";
 import { useCredentialAccess } from "../../features/medical/credentials/useCredentialAccess";
 import { useAssistantAccess } from "../../features/medical/useAssistantAccess";
 import { useReceptionAccess } from "../../features/medical/useReceptionAccess";
@@ -124,6 +125,7 @@ export function Sidebar({
   onNavigate?: () => void;
 }) {
   const { t } = useI18n();
+  const patientPath = usePatientRoute();
   const queryClient = useQueryClient();
   const location = useLocation();
   const { user } = useAuth();
@@ -173,10 +175,11 @@ export function Sidebar({
           items: group.items.flatMap((item): SidebarItem[] => item.to === "/app/appointments"
             ? [item, ...(assistant.allowed ? [{ to: "/app/medical/assistants", label: "medical.assistants.mine", icon: UserCheck }] : []),
               ...(reception.allowed ? [{ to: "/app/medical/reception", label: "medical.reception.queue", icon: UserCheck }] : [])]
-            : [item]).map((item) => filterSidebarItem(item, user, business?.id, templates.allowed || credentials.allowed)).filter(Boolean) as SidebarItem[],
+            : [item]).map(item => ({ ...item, to: item.to ? patientPath(item.to) : item.to }))
+            .map((item) => filterSidebarItem(item, user, business?.id, templates.allowed || credentials.allowed)).filter(Boolean) as SidebarItem[],
         }))
         .filter((group) => group.items.length),
-    [business?.id, mobileDrawer, user, templates.allowed, credentials.allowed, assistant.allowed, reception.allowed],
+    [business?.id, mobileDrawer, user, templates.allowed, credentials.allowed, assistant.allowed, reception.allowed, patientPath],
   );
   return (
     <aside

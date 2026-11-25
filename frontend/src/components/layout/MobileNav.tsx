@@ -12,6 +12,7 @@ import { useAuth } from "../../features/auth/AuthProvider";
 import { Button } from "../ui/Button";
 import { Drawer } from "../ui/Overlay";
 import { Sidebar } from "./Sidebar";
+import { usePatientRoute } from "../../features/medical/PatientWorkspaceScope";
 
 export const mobileNavigationDrawerId = "mobile-navigation-drawer";
 
@@ -24,9 +25,11 @@ const bottomItems = [
 
 export function MobileNav({ open, onOpen, onClose }: { open: boolean; onOpen: () => void; onClose: () => void }) {
   const { t } = useI18n();
+  const patientPath = usePatientRoute();
   const { user } = useAuth();
   const { business } = useActiveBusiness();
-  const visibleBottomItems = bottomItems.filter((item) => !item.resource || hasPermission(user, business?.id, item.resource));
+  const visibleBottomItems = bottomItems.filter((item) => !item.resource || hasPermission(user, business?.id, item.resource))
+    .map(item => ({ ...item, to: patientPath(item.to) }));
   const inboxSummary = useQuery({
     queryKey: ["inbox-summary", business?.id],
     queryFn: inboxApi.getSummary,

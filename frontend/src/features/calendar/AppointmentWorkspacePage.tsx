@@ -36,6 +36,7 @@ import { useEntityData } from "../../hooks/useEntityData";
 import type { ActivityEvent, Appointment, Task } from "../../types";
 import { useAuth } from "../auth/AuthProvider";
 import { recordReturnPath } from "./recordFilters";
+import { usePatientRoute } from "../medical/PatientWorkspaceScope";
 import { hasPermission } from "../../lib/permissions";
 import { TaskEditor } from "../tasks/components/TaskEditor";
 import { useUnsavedEntryWarning } from "../auth/useUnsavedEntryWarning";
@@ -58,6 +59,7 @@ function getAllowedStatusActions(appointment: Appointment) {
 
 export function AppointmentWorkspacePage() {
   const { t, language } = useI18n();
+  const patientPath = usePatientRoute();
   const navigate = useNavigate();
   const location = useLocation();
   const confirmAction = useActionConfirm();
@@ -254,10 +256,10 @@ export function AppointmentWorkspacePage() {
   return (
     <>
       <ClinicalPageSlots.Provider value={{ save: saveSlot, completion: completionSlot, context: contextSlot }}><article className="entity-reference-page appointment-reference-page" data-testid="appointment-reference-page">
-        <nav className="entity-breadcrumb" aria-label={t("common.back")}><Link to={recordReturnPath(location.state?.recordReturnTo)}>{t("appointments.title")}</Link><span aria-hidden>/</span><span>{title}</span></nav>
-        <Link className="entity-back platforma-focus-ring" to={recordReturnPath(location.state?.recordReturnTo)}><ArrowLeft size={18} />{t("common.back")}</Link>
+        <nav className="entity-breadcrumb" aria-label={t("common.back")}><Link to={patientPath(recordReturnPath(location.state?.recordReturnTo))}>{t("appointments.title")}</Link><span aria-hidden>/</span><span>{title}</span></nav>
+        <Link className="entity-back platforma-focus-ring" to={patientPath(recordReturnPath(location.state?.recordReturnTo))}><ArrowLeft size={18} />{t("common.back")}</Link>
         <header className="entity-identity">
-          <div className="entity-heading"><div className="appointment-title-row"><h1>{title}</h1>{client && <Link className="entity-text-link" to={`/app/clients/${client.id}`}>{t("leads.openClient")}</Link>}</div><p>{subtitle}</p></div>
+          <div className="entity-heading"><div className="appointment-title-row"><h1>{title}</h1>{client && <Link className="entity-text-link" to={patientPath(`/app/clients/${client.id}`)}>{t("leads.openClient")}</Link>}</div><p>{subtitle}</p></div>
           <div className="entity-header-actions">
             {transitionItems.length ? <ActionMenu label={t("medical.page.status")} items={transitionItems}
               triggerClassName="appointment-status-trigger" triggerContent={<><StatusBadge status={appointment.status} /><ChevronDown size={16} /></>} /> : <StatusBadge status={appointment.status} />}
