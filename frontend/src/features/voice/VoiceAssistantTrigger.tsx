@@ -1,11 +1,10 @@
-import { lazy, Suspense, useEffect, useId, useRef, useState } from "react";
-import { createPortal } from "react-dom";
+import { lazy, Suspense, useId, useRef, useState } from "react";
 import { useLocation } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Mic, X } from "lucide-react";
 import { speechApi } from "../../api/speech";
 import { Button } from "../../components/ui/Button";
-import { PopoverSurface } from "../../components/ui/Overlay";
+import { Drawer, OverlayBackdropProvider } from "../../components/ui/Overlay";
 import { ErrorState, LoadingState } from "../../components/ui/StateViews";
 import { useAuth } from "../auth/AuthProvider";
 import { useActiveBusiness } from "../../hooks/useBusiness";
@@ -27,32 +26,20 @@ export function VoiceAssistantTrigger({ currentEntity, label, initialConversatio
 function ScopedTrigger({ userId, businessId, currentEntity, currentBranch, label, initialConversation }: { userId: Id; businessId: Id; currentEntity?: ReturnType<typeof voiceCardContext>; currentBranch?: number; label?: string; initialConversation?: string }) {
   const panelId = useId();
   const { t } = useI18n(); const { preferences } = useVoicePreferences(userId); const [open, setOpen] = useState(false);
-  const button = useRef<HTMLButtonElement>(null); const panel = useRef<HTMLDivElement>(null);
+  const button = useRef<HTMLButtonElement>(null);
   const status = useQuery({ queryKey: ["voice-status", userId, businessId], queryFn: () => speechApi.status(businessId), enabled: open, retry: false, staleTime: 0 });
   const close = () => { setOpen(false); button.current?.focus(); };
-  useEffect(() => {
-    if (!open) return;
-    panel.current?.focus();
-    const outside = (event: PointerEvent) => { if (!panel.current?.contains(event.target as Node) && !button.current?.contains(event.target as Node)) setOpen(false); };
-    const escape = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && !event.defaultPrevented && !document.querySelector('[role="dialog"][aria-modal="true"]')) {
-        event.preventDefault(); close();
-      }
-    };
-    document.addEventListener("pointerdown", outside);
-    document.addEventListener("keydown", escape);
-    return () => { document.removeEventListener("pointerdown", outside); document.removeEventListener("keydown", escape); };
-  }, [open]);
   if (!preferences.visible && !label) return null;
   return <><Button ref={button} variant={label ? "primary" : "ghost"} size={label ? "md" : "icon"} aria-label={label || t("voice.title")} aria-expanded={open} aria-controls={open ? panelId : undefined}
     onClick={() => setOpen(value => !value)}><Mic size={20} aria-hidden="true" />{label}</Button>
-    {open && createPortal(<PopoverSurface ref={panel} id={panelId} role="dialog" aria-label={t("voice.title")} tabIndex={-1}
-      className="fixed inset-x-2 top-16 z-[80] max-h-[calc(100dvh-5rem)] overflow-y-auto bg-surface-card p-4 shadow-premium sm:left-auto sm:right-4 sm:w-[400px]"
-      onKeyDown={event => { if (event.key === "Escape" && !event.defaultPrevented) { event.preventDefault(); event.stopPropagation(); close(); } }}>
-      <header className="mb-2 flex items-center justify-between gap-3"><h2 className="text-sm font-medium">{t("voice.title")}</h2>
-        <Button size="icon" variant="ghost" aria-label={t("common.close")} onClick={close}><X size={18} aria-hidden="true" /></Button></header>
+    <OverlayBackdropProvider blur={false}><Drawer open={open} onClose={close} id={panelId} ariaLabel={t("voice.title")}
+      size="detail" closeOnBackdrop={false} className="h-dvh bg-surface-card">
+      <header className="flex min-h-16 shrink-0 items-center justify-between gap-3 border-b border-platforma-border px-5"><h2 className="text-lg font-semibold">{t("voice.title")}</h2>
+        <Button size="icon" variant="ghost" className="min-h-11 min-w-11" aria-label={t("common.close")} onClick={close}><X size={18} aria-hidden="true" /></Button></header>
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-4">
       {status.isLoading && <LoadingState />}
       {status.error && <ErrorState error={status.error} action={<Button onClick={() => status.refetch()}>{t("common.retry")}</Button>} />}
       {!status.isError && status.data && <Suspense fallback={<LoadingState />}><VoicePanel key={status.data.business} userId={userId} status={status.data} currentEntity={currentEntity} currentBranch={currentBranch} initialConversation={initialConversation} /></Suspense>}
-    </PopoverSurface>, button.current?.closest('[role="dialog"][aria-modal="true"]') || document.body)}</>;
+      </div>
+    </Drawer></OverlayBackdropProvider></>;
 }

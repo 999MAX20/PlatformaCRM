@@ -47,7 +47,8 @@ CRM: [http://127.0.0.1:5173](http://127.0.0.1:5173).
 но выводится предупреждение и код2. Порядок/ограничения —
 [локальный запуск](docs/current/operations.md#единая-команда-local-dev--06112026).
 
-Voice input: microphone in the authenticated header → Send → ordinary permitted
+Voice input: microphone in the authenticated header → right sidebar → record →
+review/edit transcript → Send → ordinary permitted
 action or clarification → result link. New clients and tasks require preview and
 confirmation, including a new client created together with appointments; the request
 can be edited or cancelled. Backend permissions, version checks and idempotency remain mandatory.
@@ -59,6 +60,11 @@ Audio is transient, without TTS or continuous listening. Local synthetic checks
 do not certify broad recognition quality or deployment. The independent voice path requires
 `ai_core.0009_interface_voice_conversations`; verified in disposable databases,
 applied to the local working database with an owner-authorized backup on05.11.
+The optional Scribe v3 Live path displays interim words during recording and keeps
+the final text editable. `ELEVENLABS_SCRIBE_REALTIME_ENABLED` defaults to False;
+it requires the existing direct-provider/privacy gates. The server issues a single-use
+token capped at75seconds; the browser streams audio directly to ElevenLabs with
+logging disabled. This implementation is not live-provider or customer-pilot acceptance.
 Direct ElevenLabs `scribe_v3` is **disabled for customer audio**;56 isolated tests and
 initial3 RU clips passed; broader synthetic verification exposed name/phone/negation
 failures. Current accuracy and bounded spend are in the evidence below.

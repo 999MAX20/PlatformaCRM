@@ -1,4 +1,10 @@
 export const voice = {
+  "voice.liveConnecting": "Сөйлеуді тануға қосылуда…",
+  "voice.listening": "Тыңдап тұрмын",
+  "voice.speakNow": "Сұрауыңызды айтыңыз",
+  "voice.partialTranscript": "Сөйлеген сайын мәтін нақтыланады. Жазбаны тоқтатқан соң оны түзете аласыз.",
+  "voice.liveInterrupted": "Сөйлеуді тану үзілді. Толық емес мәтінді тексеріңіз немесе сұрауды қайта жазыңыз.",
+  "voice.batchTranscription": "Қазіргі режимде мәтін жазба тоқтағаннан кейін пайда болады.",
   "voice.history": "Көмекші әрекеттерінің тарихы",
   "voice.requests": "Сұраулар",
   "voice.results": "Нәтиже",

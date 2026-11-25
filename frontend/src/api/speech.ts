@@ -1,9 +1,12 @@
 import { apiClient } from "./client";
 import type { Id } from "../types";
 
-export type SpeechStatus = { business: Id; ready: boolean; max_seconds: number; max_bytes: number };
+export type SpeechStatus = { business: Id; ready: boolean; realtime_ready?: boolean; max_seconds: number; max_bytes: number };
 export type SpeechLanguage = "auto" | "ru" | "kk";
 export const speechApi = {
+  async session(business: Id, signal: AbortSignal) {
+    return (await apiClient.post<{ token: string; max_seconds: number }>("/api/ai/speech/session/", { business }, { signal, timeout: 15000 })).data;
+  },
   async status(business: Id) {
     return (await apiClient.get<SpeechStatus>("/api/ai/speech/", { params: { business } })).data;
   },

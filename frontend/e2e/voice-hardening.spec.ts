@@ -65,7 +65,7 @@ test("recording sends KK profile and only opted-in card reference", async ({ pag
     const record = panel.getByRole("button", { name: kk["voice.record"], exact: true });
     await expect(record).toBeEnabled();
     await record.click();
-    const send = panel.getByRole("button", { name: kk["agentChat.send"], exact: true });
+    const send = panel.getByRole("button", { name: kk["voice.stop"], exact: true });
     await expect(send).toBeVisible();
     await page.waitForTimeout(600);
     await send.click();

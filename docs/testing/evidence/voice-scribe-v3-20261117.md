@@ -1,5 +1,49 @@
 # VOICE-SCRIBE-V3-20261117: прямое подключение и synthetic-проверка
 
+## Realtime panel — 25.11.2026
+
+User approved implementation after the voice-status/design review. Base
+`03f8cd634839d9569757f0bdcd91deb7688290b9`, canonical checkout, existing
+`codex/ui-testing-toolkit` branch. Foreign account/integration/medical WIP preserved.
+Prior batch capture and domain guards are reused; the new requirement is live words
+and a right sidebar. This section does not replace historical accuracy failures.
+
+Implemented: shared520px Drawer (mobile fullscreen), live partial replacement,
+editable final transcript and explicit Send. Existing CRM preview/confirmation,
+correction clarification, permission/version/idempotency checks remain. Batch STT
+also presents an editable transcript. On interruption partial text can be explicitly
+recovered; close/cancel stops capture and socket, with no automatic retry or fallback.
+RU/KK/EN labels reuse product tokens and shared controls; no dependency added.
+
+Backend issues one-use `realtime_scribe` tokens with75s session cap through an
+authenticated, tenant-scoped, throttled, non-cacheable endpoint. Browser uses fixed
+Scribe v3 Live URL/model, PCM16/16kHz, manual commit, logging disabled. Long-term key
+stays server-side. Realtime adds an opt-in flag, default False, plus all existing
+AI/voice/ElevenLabs/privacy gates. Provider warning closes the stream; this cannot
+substitute for account-level Zero Retention/no-training eligibility. Unused tokens
+expire after15min per provider contract and cannot be revoked by this app; CRM
+permission rechecks do not revoke an already issued speech credential.
+
+Local verification complete: final backend111/111PASS in isolated SQLite, system
+check and migration drift PASS; Node audio/error/stream19/19PASS; build/types/i18n/
+widget and bundle-budget PASS (large locale/PDF chunk warnings remain). Browser
+16/16PASS with mocked STT/planner and real isolated CRM API, RU/KK/EN320–1440px.
+All17 screenshots inspected: geometry, wrapping, partial/edit/recovery, review states
+and keyboard focus/close verified. No new domain service or migration; token endpoint
+reuses actor/Business authorization. No notification/BusinessEvent changes.
+An initial Node failure from extensionless import was corrected; final19 all pass.
+Browser evidence is reused after that import-extension/indentation-only change;
+build/Node were repeated. No rendering or interaction behavior changed.
+Exact commands, logs and screenshot manifest are in the existing
+`output/voice-scribe-v3-20261117/CHECKPOINT.md`.
+
+Remaining: real-provider protocol/account/billing acceptance and real-human
+RU/KK/mixed speech quality. Scoped implementation/local verification have no open
+items; publication is recorded in the delivery response/checkpoint. No paid call, feature activation,
+deployment, working-DB change or CI run in this task. This is not customer-pilot readiness.
+Source protocol: [realtime API](https://elevenlabs.io/docs/api-reference/speech-to-text/v-1-speech-to-text-realtime),
+[single-use tokens](https://elevenlabs.io/docs/api-reference/tokens/create).
+
 ## Pilot candidate follow-up 20261119
 
 Local follow-up authorized through Manager; starting source `b9415d71e89167fcbf74c55187009481da066389`, current branch `codex/ui-testing-toolkit`, canonical checkout. Subsequently the user explicitly authorized the exact D01–D04 live repeat within 200 ElevenLabs credits and $0.15 OpenRouter, after local PASS. No customer activation, commit/push or shared STATUS/PRIMARY edits authorized. Results below do not replace the historical live FAIL.

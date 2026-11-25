@@ -35,15 +35,16 @@ export function useVoiceRecorder() {
     generation.current++; release(); setState("idle"); setSeconds(0); setLevel(0); setWaveform([]); setError("");
   }, [release]);
   useEffect(() => () => { generation.current++; release(); }, [release]);
-  const start = async (deviceId: string, meterOnly = false) => {
+  const start = async (deviceId: string, meterOnly = false, onChunk?: (samples: Float32Array) => void) => {
     cancel(); setError(""); setState("requesting");
     const version = generation.current;
     let pendingStream: MediaStream | null = null;
     let pendingContext: AudioContext | null = null;
     try {
       if (!navigator.mediaDevices?.getUserMedia || !window.AudioContext) throw new Error("unsupported");
-      const context = new AudioContext();
+      const context = new AudioContext(onChunk ? { sampleRate: 16000 } : undefined);
       pendingContext = context;
+      if (onChunk && context.sampleRate !== 16000) throw new Error("unsupported_sample_rate");
       await context.resume();
       await context.audioWorklet.addModule(workletUrl);
       if (generation.current !== version) { void context.close().catch(() => {}); return; }
@@ -75,6 +76,7 @@ export function useVoiceRecorder() {
         if (current.frames === 0 && !current.finish) setState("recording");
         current.frames += data.samples.length;
         if (!meterOnly) current.chunks.push(data.samples);
+        onChunk?.(data.samples);
         const elapsed = current.frames / context.sampleRate;
         if (elapsed - lastUpdate >= 1 / 30) {
           lastUpdate = elapsed; setSeconds(Math.min(60, elapsed));
@@ -91,12 +93,14 @@ export function useVoiceRecorder() {
       current.watchdog = window.setInterval(() => {
         if (!current.finish && performance.now() - lastChunk > (current.frames ? 2000 : 5000)) interrupt();
       }, 500);
+      return true;
     } catch (cause) {
       pendingStream?.getTracks().forEach(track => track.stop());
       if (pendingContext && pendingContext !== capture.current?.context) void pendingContext.close().catch(() => {});
       if (generation.current !== version) return;
       release(); setState("idle");
       setError(cause instanceof DOMException && cause.name === "NotAllowedError" ? "permission" : "device");
+      return false;
     }
   };
   const stop = async () => {

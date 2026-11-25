@@ -9,6 +9,7 @@ from rest_framework.views import APIView
 
 from apps.ai_core.conversation_access import voice_access
 from apps.ai_core.providers.base import AIProviderError
+from apps.ai_core.providers.elevenlabs_realtime import create_session_token, realtime_ready
 from apps.ai_core.speech import MAX_AUDIO_BYTES, MAX_AUDIO_SECONDS, transcribe_audio
 from apps.ai_core.speech_configuration import speech_ready
 from apps.ai_core.speech_context import speech_name_terms
@@ -70,7 +71,7 @@ class SpeechView(APIView):
         business_id = serializers.IntegerField(min_value=1).run_validation(request.query_params.get("business"))
         business = speech_scope(request.user, business_id)
         return Response({"business": business.pk,
-            "ready": speech_ready(),
+            "ready": speech_ready(), "realtime_ready": realtime_ready(),
             "max_seconds": MAX_AUDIO_SECONDS, "max_bytes": MAX_AUDIO_BYTES})
 
     def post(self, request):
@@ -93,3 +94,24 @@ class SpeechView(APIView):
         response = Response(result)
         response["Cache-Control"] = "no-store"
         return response
+
+
+class SpeechSessionView(APIView):
+    permission_classes = [IsAuthenticated]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "ai_assistant"
+
+    def finalize_response(self, request, response, *args, **kwargs):
+        response = super().finalize_response(request, response, *args, **kwargs)
+        response["Cache-Control"] = "private, no-store"
+        return response
+
+    def post(self, request):
+        business_id = serializers.IntegerField(min_value=1).run_validation(request.data.get("business"))
+        speech_scope(request.user, business_id)
+        try:
+            token = create_session_token()
+        except AIProviderError as exc:
+            return Response({"code": exc.code, "retryable": exc.retryable}, status=503)
+        speech_scope(request.user, business_id)
+        return Response({"token": token, "max_seconds": MAX_AUDIO_SECONDS})

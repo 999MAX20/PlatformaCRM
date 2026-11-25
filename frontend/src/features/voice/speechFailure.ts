@@ -1,5 +1,6 @@
 import axios from "axios";
 import { normalizeAppError } from "../../api/appError.ts";
+import { SpeechStreamError } from "../../api/speechStream.ts";
 
 const messages: Record<string, { key: string; retryable: boolean }> = {
   speech_payment_required: { key: "payment", retryable: false },
@@ -25,7 +26,7 @@ export function speechFailure(cause: unknown) {
     return { error, messageKey: `voice.speechError.${timeout ? "timeout" : "network"}`, retryable: true };
   }
   const data = axios.isAxiosError(cause) ? cause.response?.data : undefined;
-  const code = typeof data?.code === "string" ? data.code : "";
+  const code = cause instanceof SpeechStreamError ? cause.code : typeof data?.code === "string" ? data.code : "";
   const audioCode = data?.errors?.audio?.[0] ?? data?.audio?.[0];
   const policy = Object.prototype.hasOwnProperty.call(messages, code) ? messages[code]
     : typeof audioCode === "string" && Object.prototype.hasOwnProperty.call(messages, audioCode) ? messages[audioCode] : undefined;

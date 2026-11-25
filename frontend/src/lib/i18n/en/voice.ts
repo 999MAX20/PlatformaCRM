@@ -1,4 +1,10 @@
 export const voice = {
+  "voice.liveConnecting": "Connecting speech recognition…",
+  "voice.listening": "Listening",
+  "voice.speakNow": "Speak your request",
+  "voice.partialTranscript": "The text updates as you speak. You can edit it after stopping.",
+  "voice.liveInterrupted": "Speech recognition stopped. Review the incomplete text or record again.",
+  "voice.batchTranscription": "In the current mode, text appears after you stop recording.",
   "voice.history": "Assistant activity history",
   "voice.requests": "Requests",
   "voice.results": "Result",

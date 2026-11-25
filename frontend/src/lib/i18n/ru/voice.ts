@@ -1,4 +1,10 @@
 export const voice = {
+  "voice.liveConnecting": "Подключаем распознавание…",
+  "voice.listening": "Слушаю",
+  "voice.speakNow": "Произнесите запрос",
+  "voice.partialTranscript": "Текст уточняется по мере речи. После остановки его можно исправить.",
+  "voice.liveInterrupted": "Распознавание прервалось. Проверьте неполный текст или запишите запрос заново.",
+  "voice.batchTranscription": "В текущем режиме текст появится после остановки записи.",
   "voice.history": "История действий помощника",
   "voice.requests": "Запросы",
   "voice.results": "Результат",

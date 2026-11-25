@@ -62,7 +62,7 @@ from apps.ai_core.views import (
 )
 from apps.ai_core.crm_views import AIHistoryView, CRMReadView, CRMPlanView
 from apps.ai_core.agent_views import AIRuntimeAgentsView
-from apps.ai_core.speech_views import SpeechView
+from apps.ai_core.speech_views import SpeechView, SpeechSessionView
 from apps.ai_core.conversation_views import (
     AgentConversationListView, AgentConversationDetailView, AgentConversationTurnsView,
     AgentConversationResetView, AgentTurnCancelView, AgentTurnRetryView, AgentTurnConfirmView,
@@ -387,6 +387,7 @@ urlpatterns = [
     path("api/public-api/clients/", PublicApiClientsView.as_view(), name="public_api_clients"),
     path("api/ai/agents/", AIRuntimeAgentsView.as_view(), name="ai_runtime_agents"),
     path("api/ai/speech/", SpeechView.as_view(), name="ai_speech"),
+    path("api/ai/speech/session/", SpeechSessionView.as_view(), name="ai_speech_session"),
     path("api/ai/conversations/", AgentConversationListView.as_view(), name="ai_conversations"),
     path("api/ai/conversations/<uuid:conversation_id>/", AgentConversationDetailView.as_view(), name="ai_conversation"),
     path("api/ai/conversations/<uuid:conversation_id>/turns/", AgentConversationTurnsView.as_view(), name="ai_conversation_turns"),

@@ -151,6 +151,12 @@ GLOBAL-SEARCH-20261118: селектор страницы/CRM удалён; по
 задач/диалогов, несовпадение полей диалогов и неполные error states; это не полная готовность поиска.
 Evidence: docs/testing/evidence/global-search-20261118.md. c5fec11e normal-push origin/main подтверждён; CI464 in_progress, не green.
 
+VOICE realtime25Nov: approved right sidebar and live words implemented; editable final
+text, explicit Send and existing CRM confirmations retained. Final111backend,
+19Node,16browser, build/types/i18n/bundle/system/drift PASS;17screenshots inspected. Runtime activation,
+real-provider/human acceptance remain open; no paid call or deployment.
+Evidence: docs/testing/evidence/voice-scribe-v3-20261117.md#realtime-panel--25112026.
+
 VOICE-SCRIBE-V3-20261117: broad synthetic benchmark18Nov complete; customer activation off.
 64 utterances/298 conditions;295 HTTP200,2 provider429,1 local silence rejection.
 Paired KK WER1.36% explicit KK/RU vs6.53% auto; mixed names/phone/negation failures remain.

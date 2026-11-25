@@ -15362,3 +15362,20 @@ labels, keyboard chooser/cancel and resize chooser PASS; screenshots inspected.
 UI gate PASS within scope; full production account creation not performed. CI44542486686
 in_progress at inspection, not awaited. All task-owned test processes stopped/fixtures
 deleted. Evidence: [Google auth](../evidence/google-auth-20261119.md#static-google-entry-correction-2026-11-19).
+
+## VOICE-REALTIME-PANEL-20261125
+
+User approved the recommended right sidebar, live transcription and editable final
+text. Canonical PlatformaCRM, branch codex/ui-testing-toolkit, base03f8cd634839d9569757f0bdcd91deb7688290b9.
+Prior batch/domain guards reused; requirement gap closed locally with one-use
+Scribe v3 Live sessions, intermediate words, explicit Send and preserved CRM review.
+New realtime flag defaults False; no permanent key to browser, no retries/fallback.
+Final111backend +check/drift,19Node,16browser, build/types/i18n/widget/bundle PASS.
+17screenshots inspected RU/KK/EN320–1440, including recovery/clarification/approval;
+Escape/focus return, partial-before-stop, no CRM write before approval, microphone
+denial and batch transcript review verified. Mocked provider/planner, isolatedSQLite.
+Scoped code/local evidence complete. Remaining real-provider protocol/privacy/billing
+and human RU/KK/mixed accuracy; no activation/paidcalls/workingDB/deploy/CI.
+Foreign WIP preserved; publication details in checkpoint/delivery.
+Evidence: docs/testing/evidence/voice-scribe-v3-20261117.md#realtime-panel--25112026.
+Checkpoint: output/voice-scribe-v3-20261117/CHECKPOINT.md.

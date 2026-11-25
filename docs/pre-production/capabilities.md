@@ -589,6 +589,12 @@ Scoped остатка кода/проверок нет; human/fullD01/production
 
 ## Точность голосовой диктовки — 11.11.2026
 
+Дополнение25.11: реализована правая панель с промежуточными словами Scribe v3 Live
+и редактированием итогового текста перед отправкой; текущие подтверждения CRM
+сохранены. Realtime отдельно выключен по умолчанию и требует provider/privacy gates.
+Локально111backend/19Node/16browser, build/types/i18n, system/drift PASS;
+real-provider/human качество и пилот не подтверждены. [Текущий срез](../testing/evidence/voice-scribe-v3-20261117.md#realtime-panel--25112026).
+
 VOICE-RECOGNITION11.11: Scribe v2 и точное преобразование отдельных цифр телефона
 заменили ошибочный Whisper default.10 synthetic STT/API→CRM/replay PASS,118 backend
 и system/driftPASS. Отдельный дефект JSON-режима закрыт срезом VOICE-PLANNER11.11;
