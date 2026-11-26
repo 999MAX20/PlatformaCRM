@@ -4,6 +4,7 @@ import re
 
 from django.db import transaction
 from django.utils import timezone
+from django.utils.dateparse import parse_datetime
 from rest_framework.exceptions import PermissionDenied, ValidationError
 
 from apps.businesses.access import Actions, Resources, assert_can
@@ -81,7 +82,7 @@ def start(channel, actor, *, onboarding_type=YCloudConnection.OnboardingTypes.PL
 
 
 @transaction.atomic
-def confirm(connection, account):
+def confirm(connection, account, *, event_time=None):
     channel = lock_channel_for_setup(connection.channel)
     connection = YCloudConnection.objects.select_for_update().select_related("initiated_by").get(pk=connection.pk)
     actor = _current_actor(channel, connection.initiated_by)
@@ -91,7 +92,9 @@ def confirm(connection, account):
         if connection.waba_id != account.get("id"):
             raise client.YCloudError("binding_conflict")
         return
-    if connection.expires_at <= timezone.now():
+    if connection.status != "pending":
+        raise client.YCloudError("setup_changed")
+    if connection.expires_at <= (event_time or timezone.now()):
         raise client.YCloudError("signup_expired")
     if account.get("paymentMethodAttached") is not True:
         raise client.YCloudError("payment_not_attached", retryable=True)
@@ -110,7 +113,8 @@ def confirm(connection, account):
     connection.last_error = ""
     connection.save()
     channel.config_json.update({"phone_number_id": connection.phone_id, "business_account_id": waba_id,
-        "display_phone_number": connection.phone_number, "connection_verified": True})
+        "display_phone_number": connection.phone_number, "connection_verified": True,
+        "binding_event_time": (event_time or timezone.now()).isoformat()})
     channel.external_id = connection.phone_id
     channel.status = BotChannel.Statuses.ACTIVE
     channel.save(update_fields=["config_json", "external_id", "status", "updated_at"])
@@ -121,6 +125,35 @@ def confirm(connection, account):
     connector.save(update_fields=["status", "connected_at", "last_error", "updated_at"])
     write_actor_audit_log(actor=actor, action=AuditLog.Actions.UPDATE, instance=channel,
         business=channel.bot.business, metadata={"provider": "ycloud", "event": "signup_confirmed"})
+
+
+def apply_partner_removal(connection, account, event_time):
+    channel = lock_channel_for_setup(connection.channel)
+    if (connection.status != "connected" or connection.waba_id != account.get("id")
+            or (channel.config_json or {}).get("setup_revision") != connection.setup_revision
+            or (channel.config_json or {}).get("provider_mode") != "ycloud"):
+        return
+    connector = get_whatsapp_connector(channel)
+    binding_time = parse_datetime(channel.config_json.get("binding_event_time", "")) or connector.connected_at
+    if not binding_time or not event_time or event_time <= binding_time:
+        return
+    revision = uuid4().hex
+    connection.status = "disconnected"
+    connection.setup_revision = revision
+    connection.customer_id = uuid4()
+    connection.expires_at = timezone.now()
+    connection.waba_id = connection.phone_id = connection.phone_number = connection.last_error = ""
+    connection.save()
+    channel.config_json = {"provider_mode": "ycloud", "setup_revision": revision, "connection_verified": False}
+    channel.external_id = ""
+    channel.status = BotChannel.Statuses.DRAFT
+    channel.save(update_fields=["config_json", "external_id", "status", "updated_at"])
+    connector.status = BusinessConnector.Statuses.DISCONNECTED
+    connector.connected_at = None
+    connector.last_error = ""
+    connector.save(update_fields=["status", "connected_at", "last_error", "updated_at"])
+    write_actor_audit_log(actor=None, action=AuditLog.Actions.UPDATE, instance=channel,
+        business=channel.bot.business, metadata={"provider": "ycloud", "event": "partner_removed"})
 
 
 @transaction.atomic

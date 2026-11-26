@@ -2,6 +2,7 @@ import json
 import hashlib
 import hmac
 from unittest.mock import patch
+from uuid import uuid4
 
 from django.test import TestCase, override_settings
 from django.utils import timezone
@@ -177,6 +178,59 @@ class YCloudWebhookTests(YCloudOnboardingTests):
         from apps.integrations.ycloud.models import YCloudEvent
         self.assertEqual(YCloudEvent.objects.get().status, "pending")
         self.assertEqual(YCloudConnection.objects.get().status, "pending")
+
+    def test_delayed_confirmation_uses_signed_event_time(self):
+        from apps.integrations.ycloud.events import process
+
+        self.begin()
+        connection = YCloudConnection.objects.get()
+        expiry = timezone.now() - timezone.timedelta(minutes=1)
+        YCloudConnection.objects.update(expires_at=expiry)
+        for event_id, event_time, status in (
+            ("after-expiry", expiry, "failed"),
+            ("before-expiry", expiry - timezone.timedelta(seconds=1), "processed"),
+        ):
+            event = self.accept({
+                "id": event_id, "type": "whatsapp.business_account.updated",
+                "createTime": event_time.isoformat(),
+                "whatsappBusinessAccount": {"id": "waba-1", "updateEvent": "PARTNER_ADDED",
+                    "partnerCustomerId": str(connection.customer_id), "paymentMethodAttached": True},
+            })
+            with patch.object(client, "connected_number", return_value=self.number):
+                process(event.pk)
+            event.refresh_from_db()
+            self.assertEqual(event.status, status)
+        connection.refresh_from_db()
+        self.assertEqual(connection.status, "connected")
+
+    def test_partner_removal_clears_only_current_binding_and_allows_new_signup(self):
+        from apps.integrations.ycloud.events import process
+        from apps.integrations.whatsapp_credentials import get_whatsapp_connector
+
+        connection = self.bind()
+        for event_id, event_time, account, expected_status in (
+            ("wrong-customer", timezone.now(), {"partnerCustomerId": str(uuid4())}, "connected"),
+            ("wrong-waba", timezone.now(), {"id": "waba-other", "partnerCustomerId": str(connection.customer_id)}, "connected"),
+            ("old-removal", timezone.now() - timezone.timedelta(minutes=1), {}, "connected"),
+            ("current-removal", timezone.now(), {}, "disconnected"),
+        ):
+            event = self.accept({
+                "id": event_id, "type": "whatsapp.business_account.updated",
+                "createTime": event_time.isoformat(),
+                "whatsappBusinessAccount": {"id": "waba-1", "updateEvent": "PARTNER_REMOVED", **account},
+            })
+            if event:
+                process(event.pk)
+                process(event.pk)
+            connection.refresh_from_db()
+            self.assertEqual(connection.status, expected_status)
+        self.channel.refresh_from_db()
+        self.assertEqual(self.channel.status, "draft")
+        self.assertEqual(self.channel.external_id, "")
+        self.assertEqual(get_whatsapp_connector(self.channel).status, "disconnected")
+        self.begin()
+        connection.refresh_from_db()
+        self.assertEqual(connection.status, "pending")
 
     def test_inbound_reuses_inbox_event_and_deduplicates_distinct_event_ids(self):
         self.bind()

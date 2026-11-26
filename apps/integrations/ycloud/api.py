@@ -27,6 +27,8 @@ class YCloudSetupView(APIView):
         channel = self.channel(request, pk, Actions.VIEW)
         connection = YCloudConnection.objects.filter(channel=channel).first()
         state = connection.status if connection else "not_connected"
+        if state == "disconnected":
+            state = "not_connected"
         if connection and state == "pending" and connection.expires_at <= timezone.now():
             state = "expired"
         from apps.integrations.ycloud.history import history_status

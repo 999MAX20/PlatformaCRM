@@ -74,11 +74,16 @@ def accept(body, header):
     if not isinstance(data, dict):
         raise ValidationError("Invalid event object.")
     if kind == "whatsapp.business_account.updated":
-        try:
-            customer_id = UUID(str(data.get("partnerCustomerId", "")))
-        except ValueError:
-            return None  # Another partner customer, not a route into this CRM.
-        connection = YCloudConnection.objects.filter(customer_id=customer_id).first()
+        customer = data.get("partnerCustomerId")
+        waba = data.get("id")
+        if customer is None and data.get("updateEvent") == "PARTNER_REMOVED" and isinstance(waba, str) and waba:
+            connection = YCloudConnection.objects.filter(waba_id=waba, status="connected").first()
+        else:
+            try:
+                customer_id = UUID(str(customer))
+            except ValueError:
+                return None  # Another partner customer, not a route into this CRM.
+            connection = YCloudConnection.objects.filter(customer_id=customer_id).first()
     else:
         number = data.get("to") if key == "whatsappInboundMessage" else data.get("from")
         if not isinstance(number, str) or not number or not isinstance(data.get("wabaId"), str) or not data["wabaId"]:
@@ -97,8 +102,11 @@ def accept(body, header):
     from apps.integrations.sanitization import sanitize_config
     data = sanitize_config({name: value for name, value in data.items() if name in fields})
     # Whitelist the provider object: do not retain arbitrary top-level secrets/headers.
+    stored_payload = {key: data}
+    if kind == "whatsapp.business_account.updated" and isinstance(payload.get("createTime"), str):
+        stored_payload["createTime"] = payload["createTime"][:64]
     event, _ = YCloudEvent.objects.get_or_create(external_id=event_id, defaults={
-        "connection": connection, "kind": kind, "payload": {key: data}, "next_attempt_at": timezone.now(),
+        "connection": connection, "kind": kind, "payload": stored_payload, "next_attempt_at": timezone.now(),
     })
     if event.connection_id != connection.pk or event.kind != kind:
         raise ValidationError("Event identity conflict.")

@@ -35,10 +35,21 @@ def process(event_id):
         with transaction.atomic():
             if event.kind == "whatsapp.business_account.updated":
                 account = event.payload["whatsappBusinessAccount"]
-                if str(connection.customer_id) != account.get("partnerCustomerId"):
+                raw_time = event.payload.get("createTime")
+                try:
+                    event_time = parse_datetime(raw_time) if raw_time else None
+                except ValueError:
+                    event_time = None
+                if event_time and (timezone.is_naive(event_time) or event_time > event.created_at + timezone.timedelta(minutes=5)):
+                    event_time = None
+                customer = account.get("partnerCustomerId")
+                update = account.get("updateEvent")
+                if update == "PARTNER_REMOVED" and customer in (None, str(connection.customer_id)):
+                    onboarding.apply_partner_removal(connection, account, event_time)
+                elif str(connection.customer_id) != customer:
                     raise client.YCloudError("setup_changed")
-                if account.get("updateEvent") == "PARTNER_ADDED":
-                    onboarding.confirm(connection, account)
+                elif update == "PARTNER_ADDED":
+                    onboarding.confirm(connection, account, event_time=event_time or event.created_at)
             elif event.kind == "whatsapp.inbound_message.received":
                 inbound(connection, event.payload["whatsappInboundMessage"])
             elif event.kind == "whatsapp.smb.history":

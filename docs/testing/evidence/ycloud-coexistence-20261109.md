@@ -187,3 +187,9 @@ activation, billing commitment or guaranteed Free-plan eligibility inferred.
 - Rerun trigger: changed YCloud/history/Inbox contracts or relevant dependencies/configuration. No working DB/provider credentials, media downloads, deployment or real messages used. Full-project/release suite not run: scoped preparation, not release certification.
 
 Final focused run: 14/14 PASS on final history code and corrected connected-channel fixture; system/migration drift PASS. Log `output/ycloud-history-final-focused.log`. This supplements the 116-test dependent run, not an additional 14 distinct scenarios. Task-owned staged diff hygiene PASS; no dependency/schema changes.
+
+### 26 Nov 2026 — YCLOUD-LOCAL-7770-20261121, webhook lifecycle
+
+Previous result: YCloud delivered a signed install event and a text webhook, while final binding was absent. Local change: timely signed binding confirmations survive delayed processing, and a newer signed partner removal clears the matching active route and audits the transition. No provider settings, working data, credentials, or deployment changed. Exact candidate is the scoped YCloud diff from cd21689a. Live 7770 still requires provider-side offboarding or an actual binding confirmation. Automated checks use disposable SQLite and synthetic provider data.
+
+Verification: isolated SQLite Django check and migration drift passed; 78 passed, 8 PostgreSQL-only cases skipped in the seven YCloud suites. Native disposable PostgreSQL 17 via scripts/verify_ycloud.py passed all 40 tests in tests_ycloud, tests_ycloud_concurrency and tests_ycloud_coexistence_concurrency, plus Django check and migration drift. Live provider acceptance remains open.
