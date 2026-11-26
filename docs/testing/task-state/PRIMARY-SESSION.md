@@ -15419,7 +15419,8 @@ Initial §5 map (code inspection, not current PASS):
 - KPI/reward: source-backed read only; Pulse money core excluded from this scope;
   no calculated compensation support claimed without an implemented source.
 
-F2 remains after F1 candidate; character appearance is unresolved, no invented asset.
+F2 remains after F1 candidate; owner approved robot C and animated states in the
+updated external Formy specification. Original unresolved appearance note superseded.
 F3 depends on F1/F2 and agreed scenario set (§27); no new scenario is approved here.
 
 UI delta uses antislop-ui/human and zani-review-frontend: existing neutral/emerald
@@ -15495,11 +15496,11 @@ output/formy-f1-20261126/stop-browser (supervisor closes only its own children).
 Synthetic account/IDs are in browser-fixture.json. No real provider secrets/data.
 
 Delivery boundary: implemented/scoped backend and own/independent browser checks
-verified, including F1-UI-01. Shared STATUS/PRIMARY have foreign WIP; staged only
-this task's hunks. Origin URL verified; fetch main confirms HEAD equals origin/main,
-no foreign outgoing commits. Task-only commit/push and remote readback follow.
-CI not run (local-only), no deployment. Next: incorporate independent retest,
-publish task-only candidate, continue F1 remainder/F2; F3 depends on F1/F2 and owner
+verified, including F1-UI-01. Published51a735d7b69de70330f01d4c10d8af07b81969af by
+normal fast-forward push to origin/main; remote readback matches. Branch unchanged.
+Only11 task files/own shared-doc hunks committed; foreign WIP preserved. Real committed
+range c15454bf..51a735d7 diff hygiene PASS. No foreign outgoing commits.
+CI not run (local-only), no deployment. Next: continue F1 remainder/F2; F3 depends on F1/F2 and owner
 scenario set. This checkpoint is not full F1/F2/F3 closure.
 
 F1-UI-01 minimal delta: backend and review were verified → independent and own
@@ -15563,3 +15564,9 @@ Evidence `output/playwright/formy-independent-20261126/fixed-discard-*.png`,
 Mixed executed/rejected fallback is source-inspected, not newly browser-certified.
 No technical passport/README changes required: no endpoint/config/schema/setup
 change; voice-assistant and AI contracts updated for the changed behavior.
+Own browser session formy-f1 and runtime85695 stopped after evidence capture;
+disposable database removed by its context manager. Working database untouched.
+Latest owner decision verified in Orchestrator: robot C, static header portrait,
+animated idle/listening/thinking/responding and reduced-motion static states;
+references in `C:/Users/user/Desktop/Platforma_Formy_CRM_TZ.md` are accepted F2
+direction. No character invention/approval blocker remains. F3 scenario set still open.
