@@ -15379,3 +15379,187 @@ and human RU/KK/mixed accuracy; no activation/paidcalls/workingDB/deploy/CI.
 Foreign WIP preserved; publication details in checkpoint/delivery.
 Evidence: docs/testing/evidence/voice-scribe-v3-20261117.md#realtime-panel--25112026.
 Checkpoint: output/voice-scribe-v3-20261117/CHECKPOINT.md.
+
+# FORMY-F1-20261126 — internal command parity
+
+Owner scope: §24 external dental specification, F1 → F2 → F3; first candidate
+is task completion/cancellation through the existing voice/text conversation.
+Canonical root `C:/Users/user/Desktop/PlatformaCRM`, branch `codex/ui-testing-toolkit`,
+starting HEAD `c15454bfb918f42b4f86283893edec9fbfbd2b51`. All starting dirty paths
+are foreign WIP; shared access/appointment changes belong to CRM QA. No CI,
+working database, deployment or live provider calls. Acceptance chat:
+`01a21843-4faf-7450-8807-ce0b59305ec5`; start sent. Existing UI/form WIP preserved.
+
+Prior result: voice task creation and booking have confirmation and replay tests.
+New evidence: Buddy & Pulse v2 §5 requires task completion/cancellation;
+`voice_policy.py` rejects every task transition while `crm_transitions.py`
+already dispatches complete/cancel to existing domain services. Minimal delta:
+allow those two actions with mandatory review and retain every domain permission.
+Gap: code plus current acceptance evidence, not a new runtime or permission model.
+
+Skills: zani-evaluate-ai-grounding, zani-run-verification; Anti Slop during for
+affected UI. Applied requirements: exact reviewed target/action; current server
+rights and version; no write before confirmation; truthful result and replay.
+Risk: lifecycle mutation. Reuse conversation router/planner, ApprovalRequest,
+crm_transition, task services, existing activity/notification/audit mechanisms.
+No migration, new endpoint, new role policy or financial calculation.
+Checks: isolated failing regression before fix; complete/cancel, ambiguity,
+denial, tenant scope, stale version, repeat and rollback; affected voice/domain
+suites, system/drift; reachable UI and inspected screenshots for changed review.
+
+Initial §5 map (code inspection, not current PASS):
+- Create tasks: crm_create, existing voice direct/review tests; required title,
+  optional due_at/assignee subject to serializer and assignment policy.
+- Change tasks: staff CRM update/transition exists; voice only description notes.
+- Complete/cancel tasks: existing domain services; voice blocked (first candidate).
+- Reminders: inspect task due/reminder pathway before claiming support.
+- Read schedule/records: scoped conversation read/analytics; needs fresh acceptance.
+- Create/reschedule appointments: voice_schedule and crm_transition already exist,
+  required client/service/specialist/time, review and server availability recheck.
+- KPI/reward: source-backed read only; Pulse money core excluded from this scope;
+  no calculated compensation support claimed without an implemented source.
+
+F2 remains after F1 candidate; character appearance is unresolved, no invented asset.
+F3 depends on F1/F2 and agreed scenario set (§27); no new scenario is approved here.
+
+UI delta uses antislop-ui/human and zani-review-frontend: existing neutral/emerald
+tokens and existing review hierarchy, ENERGY/RHYTHM/MOTION 1/1/1. The task name
+and real record link let the employee identify the mutation target before approval.
+No new copy, layout system, character or asset. Preserve focus, wrapping and the
+existing confirm/cancel states. Current task preview is protected by conversation
+source/access checks and the same immutable target version as execution.
+Baseline: isolated two-test run failed both with voice_action_unavailable; no writes.
+Independent no-DB policy probe reproduced the same denial. After-fix results below.
+OpenRouter/Scribe usage by this executor: $0 / 0 credits. Central live operator is
+Приёмка Formy; owner aggregate OpenRouter cap $1, Scribe cap 1000 credits.
+
+Candidate F1-task-transitions-1 sent to acceptance and orchestrator. Product hashes:
+`apps/ai_core/voice_policy.py` ADC0CF8BF15635049572011AD48367B16177E426A1B4736D31E944C8EBCDDBBC;
+`apps/ai_core/crm_tools.py` 95F322C8C3C9664F7F89467E8B06BF61EBED69D35402C732DE225DE649C0BFFA;
+`frontend/src/features/voice/VoiceTurnResult.tsx` 1D696036966E5123B7CD093D4B27CF16B64C7E0CC46ADFA41C3EDD825F039807
+(replaces original 692DBF0F…E6A219 after adding 44px task-link target; both chats notified).
+Backend files remain stable; UI hash superseded by F1-UI-01 fix below.
+
+Checks on this dirty candidate, existing Python environment and npm dependencies:
+- Isolated `manage.py test apps.ai_core.tests_voice_task_transitions -v 2`:
+  9 PASS, including before-confirmation no-write, repeat, cancellation reason,
+  direct bypass, foreign task, stale version, audit rollback, actor revocation.
+  Log `output/formy-f1-20261126/focused-after.log`. Two additional role-denial
+  tests were added afterwards and passed in the combined gate below.
+- `npm run build` in frontend: PASS (i18n, tsc, main Vite, widget Vite), existing
+  large-chunk advisory; log `output/formy-f1-20261126/frontend-build.log`.
+- System check / migration drift: PASS; affected/dependent combined tests: 124 PASS,
+  192.792s execution, in `output/formy-f1-20261126/completion-backend.log`.
+  Exact labels are in its header, including all 11 new tests and voice/direct/review,
+  conversation target/execution, CRM tools and task domain suites. No skips/failures.
+- Final `npm run build` after the touch-target class change: PASS (i18n/types/main/widget);
+  log `output/formy-f1-20261126/frontend-build-final.log`, same large-chunk advisory.
+- UI: cua inventory/listBrowsers exposed only MCP Apps. Owner explicitly allowed
+  Playwright, used below; no native-Chrome fallback attempted.
+  Own disposable runtime `tmp/formy-f1-browser.py`, log/fixtures under the same
+  output directory; no shared or working database. Never reuse its synthetic data
+  as independent acceptance data.
+
+Command-map details after scoped inspection:
+| §5 request | Existing layer and input | Voice/text boundary and remaining evidence |
+| --- | --- | --- |
+| Create task | crm_tools ENTITIES.tasks, TaskSerializer; title, optional due_at/reminder_at/assignee/links | Existing reviewed create, direct tests retained; current transition gate does not certify all creation language variants |
+| Change task | crm_update fields and crm_transition; TASKS UPDATE and scoped target | Staff tool exists; voice accepts only description notes, other field edits remain a code gap |
+| Complete/cancel task | crm_transition → complete_task/cancel_task; exact ID/title, cancel reason >=3 chars | This candidate; TASKS VIEW/UPDATE and AI_PIPELINE APPROVE/EXECUTE, exact version/fingerprint, explicit review |
+| Reminder | Task.reminder_at, apps/tasks/reminders.py and TaskReminderDelivery | Available as task creation input; recurring/background delivery not newly certified; standalone reminder semantics not invented |
+| Read schedule/records | conversation_router/read_entities/assistant and existing scoped selectors | Current voice sources clients/tasks/appointments; no hidden-entity expansion, fresh language/read evidence remains |
+| Create/reschedule record | voice_schedule planner/commands, scheduling services | Existing fields and time/availability review retained; no change to booking/shared rights in this candidate |
+| KPI/reward read | voice workflow sources exclude compensation; analytics widgets are not a compensation calculation source | No reward read implementation claimed; Pulse money core outside §24 scope, missing source must not become generated money |
+
+Scope remains F1 → F2 → F3, no full-phase closure. F2 preliminary inspection found
+VoiceAssistantTrigger owns the global/card drawer and VoicePanel owns audio lifecycle;
+reuse those hooks and private conversation. Do not alter the accepted candidate's
+review component while its UI is under review. F3 scenario choice stays an owner
+decision. No new source tree, provider adapter, migration or dependency.
+
+Initial independent backend acceptance result read from
+`tmp/formy-acceptance-20261126/acceptance.md`: 31 tests + Django check PASS,
+no backend defect reproduced, backend hashes stable. UI was initially unavailable;
+later Playwright found F1-UI-01 below. Live RU/KK/STT remain unverified. This is their evidence,
+not an additional executor run. Their reported new spend is also $0 / 0 credits.
+
+Local fixture API smoke: initial direct login returned403 because the probe omitted
+normal CSRF bootstrap. Using `/api/auth/csrf/` plus its cookie/header made login
+succeed; all RU/KK/EN fixture conversations await_confirmation and tasks remain open.
+No product auth change. Fixture server uses canonical source, isolated_runtime and
+configure_browser_runtime (external sockets disabled); frontend56262/backend56261.
+Initial supervisor74462 was stopped after review TTL expired; fresh runtime is
+frontend58217/backend58216, owned supervisor85695, script tmp/formy-f1-browser.py.
+Stop by creating
+output/formy-f1-20261126/stop-browser (supervisor closes only its own children).
+Synthetic account/IDs are in browser-fixture.json. No real provider secrets/data.
+
+Delivery boundary: implemented/scoped backend and own/independent browser checks
+verified, including F1-UI-01. Shared STATUS/PRIMARY have foreign WIP; staged only
+this task's hunks. Origin URL verified; fetch main confirms HEAD equals origin/main,
+no foreign outgoing commits. Task-only commit/push and remote readback follow.
+CI not run (local-only), no deployment. Next: incorporate independent retest,
+publish task-only candidate, continue F1 remainder/F2; F3 depends on F1/F2 and owner
+scenario set. This checkpoint is not full F1/F2/F3 closure.
+
+F1-UI-01 minimal delta: backend and review were verified → independent and own
+Playwright discard reproduce stale confirmation text after cancelled/rejected →
+render localized terminal status, retain rejected task identity, preserve API.
+Risk: do not claim no changes for partially executed turns. Skills: existing UI/human
+plus antislop-copywriting; factual API-backed status, RU/KK/EN parity, no new design.
+Focused check: actual cancelled proposal across three locales and task readback;
+completion: build/i18n/types, affected screenshots, independent retest. Backend
+124 PASS reusable while its inputs remain unchanged; no new backend mutation.
+
+Playwright execution on disposable fixture (synthetic prepared plans, real UI/API;
+no free-text planner/STT/provider acceptance) under `output/formy-f1-20261126/`:
+- RU1440x900: Tab to real task link,56px height, visible2px emerald focus; next
+  Tab+Enter → HTTP200/completed, task2 done; link opens task2 card. Escape restores
+  launcher focus. `review-ru-desktop-focus.png`, `task-ru-completed.png` inspected.
+- KK390x844: exact task3/title/cancel/reason visible, confirm200 and cancelled.
+  `review-kk-mobile.png` inspected, no horizontal overflow.
+- EN320x740: synthetic one-request503 preserves proposal; screenshot
+  `review-en-error.png` captures disabled/loading controls, not the later alert.
+  Real discard then revealed F1-UI-01, independently reproduced as stale response.
+  After fix, task4 remains open; its link opens real card. RU/KK/EN cancelled result
+  reloaded and inspected at320px: `discard-ru-fixed.png`, `discard-kk-fixed.png`,
+  `discard-en-fixed.png`; explicit no-change status, no confirm, no overflow.
+- Actual API readback `browser-readback.log`: task2 done/completed_at, task3
+  cancelled/exact reason, task4 open/no completion timestamp. Backend replay safety
+  is covered by test_completion_requires_review_and_replay_preserves_completion;
+  no additional browser replay claim.
+- `npm run build` after F1-UI-01: exit0, i18n/types/main/widget PASS;
+  `frontend-build-ui01.log`, existing chunk-size advisory. Prior backend124 and
+  independent31 remain the named unchanged backend boundary.
+
+Limitations/attempts: initial expired proposal returned409 after >30 minutes;
+fresh fixture resolved this without weakening TTL. Old runtime log was overwritten
+on restart; CLI snapshot/tool result retains the409, not claimed as a fresh test.
+One concurrent auth refresh returned500: SQLite database locked while confirm
+returned200 and persisted done; trace in browser-backend.log, no clean-console
+claim and no auth changes. Shared i18n HMR invalidated context; full page navigation
+restored the flow. CLI selector assumed desktop complementary on mobile task card;
+fresh snapshot established dialog role and Open state, no product defect inferred.
+
+Scoped Anti Slop delivery gate:
+- Hard gate PASS in changed area: real record/title/ID, native44px+ link, Tab/Enter/
+  Escape, visible focus, real confirm/cancel effects,320/390/1440 geometry, localized
+  terminal status; loading/recovery preserved. New assets/media/theme/nav N/A.
+- Purpose PASS: task identity exists to review the exact mutation and open its
+  source; no decorative blocks or invented metrics/copy claims.
+- Direction PASS: existing neutral/emerald CRM, dials1/1/1, confirm remains focal;
+  no new composition or brand direction required for this bounded component.
+- Craft/copy PASS: screenshots visually inspected, actual task readback, factual
+  no-change status only when all actions rejected; RU/KK/EN equivalent. Full WCAG,
+  dark theme, whole widget, live microphone/planner and all §5 commands not certified.
+
+Final UI SHA25649350EBBEE01D665AA5CB33A86070FB996ECFC15E236133C9314876B0FDB6A25;
+voice locale hashes sent to acceptance with exact retest scenario. Backend product
+hashes above unchanged. Own UI checks PASS. Independent retest report read:
+panel AND history RU1440/EN390/KK320, six screenshots inspected, no stale request,
+no confirm, real task4 link/Open and readback no mutation: PASS, F1-UI-01 closed.
+Evidence `output/playwright/formy-independent-20261126/fixed-discard-*.png`,
+`fixed-history-*.png`, `readback-fixed-discard.json`; checker owns these results.
+Mixed executed/rejected fallback is source-inspected, not newly browser-certified.
+No technical passport/README changes required: no endpoint/config/schema/setup
+change; voice-assistant and AI contracts updated for the changed behavior.

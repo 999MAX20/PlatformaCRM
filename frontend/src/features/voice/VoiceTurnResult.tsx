@@ -19,13 +19,17 @@ export function VoiceTurnResult({ turn, busy, canExecute, onAction, readOnly = f
     ? formatDateTime(value, undefined, true, locale) : printable(value);
   if (turn.redacted) return <p role="status" className="text-sm text-platforma-subtle">{t("agentChat.redacted")}</p>;
   const pending = turn.status === "awaiting_confirmation";
+  const discarded = turn.status === "cancelled" && turn.actions.length > 0
+    && turn.actions.every(action => action.status === "rejected");
   const identityReview = pending && turn.actions.some(action => action.tool_name === "crm_create" && action.input_json.entity === "clients"
     || action.tool_name === "crm_schedule" && !object(object(action.input_json.values).client).id);
   const taskReview = pending && turn.actions.some(action => action.tool_name === "crm_create" && action.input_json.entity === "tasks");
   const processing = ["preparing", "executing"].includes(turn.status);
   return <div className="space-y-3 text-sm" aria-live="polite">
     <p role="status" className="whitespace-pre-wrap break-words leading-6">{processing ? t(`agentChat.status.${turn.status}`)
-      : pending ? t(identityReview ? "voice.reviewIdentity" : taskReview ? "voice.reviewTask" : "voice.review") : turn.status === "completed" && turn.actions.length ? t("voice.completed") : turn.response}</p>
+      : pending ? t(identityReview ? "voice.reviewIdentity" : taskReview ? "voice.reviewTask" : "voice.review")
+        : turn.status === "cancelled" ? t(discarded ? "voice.proposalDiscarded" : "agentChat.status.cancelled")
+          : turn.status === "completed" && turn.actions.length ? t("voice.completed") : turn.response}</p>
     {turn.actions.map(action => {
       const fields = object(action.input_json.values); const before = object(action.input_json.before);
       const record = object(action.output_json.record); const entity = String(action.output_json.entity || action.input_json.entity || "");
@@ -54,6 +58,10 @@ export function VoiceTurnResult({ turn, busy, canExecute, onAction, readOnly = f
       }
       return <section key={action.id} className="space-y-2 border-l-2 border-platforma-border pl-3" aria-label={t("aiCRM.review")}>
         <p className="font-medium">{t(`aiWorkflow.tool.${action.tool_name}`)} · {t(`aiWorkflow.source.${entity}`)}</p>
+        {(pending || discarded) && action.tool_name === "crm_transition" && entity === "tasks" && typeof target === "number" && <Link
+          className="platforma-focus-ring block min-h-11 break-words py-2 underline underline-offset-4" to={`/app/tasks?task=${target}`}>
+          {String(before.title || `#${target}`)} · #{target}
+        </Link>}
         {pending && action.tool_name === "crm_transition" && entity === "appointments" && <p className="break-words">
           {String(object(action.input_json.preview).client_name || "")} · {visitLabel(object(action.input_json.preview))}
           {typeof target === "number" && <Link className="platforma-focus-ring ml-2 underline" to={`/app/calendar?appointment=${target}`}>#{target}</Link>}

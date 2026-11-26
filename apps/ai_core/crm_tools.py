@@ -234,6 +234,8 @@ def prepare_command(*, business, user, tool, payload):
         preview_fields = set(payload.get("values", {}))
         if tool == "crm_transition":
             preview_fields.update({"status", "stage", "owner", "assignee", "responsible_user", "start_at", "resource"})
+            if payload["entity"] == "tasks":
+                preview_fields.add("title")
         prepared["before"] = {key: value for key, value in record.items() if key in preview_fields}
         if tool == "crm_transition" and payload["entity"] == "appointments":
             from apps.ai_core.agent_runtime import voice_runtime

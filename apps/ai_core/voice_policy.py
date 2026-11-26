@@ -22,8 +22,11 @@ When pending.schedule_draft exists, a short field correction to the unconfirmed
 booking also continues appointments/create, even when no question was asked.
 Do not treat an explicit cancellation, unrelated question or separate new request
 as a correction to that draft.
-Allowed: client/task/appointment creation, notes on clients/tasks/appointments,
+Allowed: client/task/appointment creation, task completion or cancellation,
+notes on clients/tasks/appointments,
 appointment reschedule or cancellation, dated visit plans, and factual read-only answers.
+Task completion/cancellation uses tasks/transition and requires review of the exact
+task. Cancellation needs the employee's reason; ask when it is missing, never invent it.
 Deletion, archive/restore, bulk actions, no-show, money, access changes are not
 supported here: explain the boundary and ask for an allowed request. Do not
 reinterpret an unsupported request as cancellation. Preserve the user's intent.
@@ -44,6 +47,8 @@ even when prefixed with a greeting. Never use chat to bypass CRM grounding.
 
 def requires_voice_creation_review(tool, payload):
     if tool == "crm_create" and payload.get("entity") in {"clients", "tasks"}:
+        return True
+    if tool == "crm_transition" and payload.get("entity") == "tasks":
         return True
     return tool == "crm_schedule" or (
         payload.get("entity") == "appointments" and tool in {"crm_create", "crm_transition"})
@@ -130,7 +135,7 @@ def validate_voice_plan(context, plan, message=""):
         entity, operation = step.get("entity"), step.get("operation")
         if entity not in {"clients", "tasks", "appointments"} or operation not in {"create", "update", "transition"}:
             raise PermissionDenied("voice_action_unavailable")
-        if operation == "transition" and entity != "appointments":
+        if operation == "transition" and entity not in {"appointments", "tasks"}:
             raise PermissionDenied("voice_action_unavailable")
 
 
@@ -165,6 +170,7 @@ def validate_voice_proposal(context, tool, payload):
         tool == "crm_create"
         or tool == "crm_update" and set(payload.get("values", {})) == ({"description"} if entity == "tasks" else {"notes"})
         or entity == "appointments" and tool == "crm_transition" and payload.get("action") in {"reschedule", "cancel"}
+        or entity == "tasks" and tool == "crm_transition" and payload.get("action") in {"complete", "cancel"}
     )
     if not allowed:
         raise PermissionDenied("voice_action_unavailable")
